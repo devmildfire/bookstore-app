@@ -1,7 +1,7 @@
-import React from 'react'
-import type { AppProps } from 'next/app'
+import React from 'react';
+import type { AppProps } from 'next/app';
 
 function MyApp({ Component, pageProps }: AppProps): React.ReactElement {
-  return <Component {...pageProps} />
+  return <Component {...pageProps} />;
 }
-export default MyApp
+export default MyApp;
