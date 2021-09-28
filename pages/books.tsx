@@ -6,12 +6,12 @@ const Book: NextPage = () => (
   <>
     <h2>
       <Link href="/books/first-book">
-        <a>To first book</a>
+        <a href="fakeHref">To first book</a>
       </Link>
     </h2>
     <h2>
       <Link href="/books/second-book">
-        <a>To second book</a>
+        <a href="fakeHref">To second book</a>
       </Link>
     </h2>
   </>
