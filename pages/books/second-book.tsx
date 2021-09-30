@@ -9,8 +9,8 @@ const SecondBook = (): React.ReactElement => (
     </Head>
     <h1>Second book</h1>
     <h2>
-      <Link href="/">
-        <a href="fakeHref">Back to home</a>
+      <Link href='/'>
+        <a href='fakeHref'>Back to home</a>
       </Link>
     </h2>
   </>

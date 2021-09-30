@@ -10,8 +10,8 @@ const Home: NextPage = () => (
     <>
       <MainPage />
       <h1>
-        <Link href="/books" passHref>
-          <a href="fakeHref">Books</a>
+        <Link href='/books' passHref>
+          <a href='fakeHref'>Books</a>
         </Link>
       </h1>
     </>

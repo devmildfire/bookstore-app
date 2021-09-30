@@ -35,6 +35,7 @@
           "ts": "never",
           "tsx": "never"
         }
-      ]
+      ],
+      "jsx-quotes": ["error", "prefer-single"]
     }
 }
