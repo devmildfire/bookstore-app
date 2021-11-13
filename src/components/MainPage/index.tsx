@@ -1,9 +1,13 @@
 import React from 'react';
 
-import styles from './MainPage.module.css';
+import styled from 'styled-components';
 
 const MainPage = (): React.ReactElement => (
-  <div className={styles.container}>Main Page</div>
+  <StyleWrapper>Main Page</StyleWrapper>
 );
 
 export default MainPage;
+
+const StyleWrapper = styled.div`
+  color: red;
+`;
