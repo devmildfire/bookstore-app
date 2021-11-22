@@ -24,30 +24,26 @@ const HeaderTab = ({
   title,
   link,
   submenu,
-}: IHeaderTab): React.ReactElement => {
-  console.log(title);
-
-  return (
-    <>
-      {link
-        ? (
-          <Link href={link} passHref>
-            <StyledLink href='fakeHref'>{title}</StyledLink>
-          </Link>
-        )
-        : (
-          <>
-            <StyledLink>{title}</StyledLink>
-            {submenu?.map((tab) => (
-              // <Link href={tab.link} passHref key={tab.title}>
-              //   <a href='fakeHref'>{tab.title}</a>
-              // </Link>
-              <Fragment key={tab.title} />
-            ))}
-          </>
-        )}
-    </>
-  );
-};
+}: IHeaderTab): React.ReactElement => (
+  <>
+    {link
+      ? (
+        <Link href={link} passHref>
+          <StyledLink href='fakeHref'>{title}</StyledLink>
+        </Link>
+      )
+      : (
+        <>
+          <StyledLink>{title}</StyledLink>
+          {submenu?.map((tab) => (
+            // <Link href={tab.link} passHref key={tab.title}>
+            //   <a href='fakeHref'>{tab.title}</a>
+            // </Link>
+            <Fragment key={tab.title} />
+          ))}
+        </>
+      )}
+  </>
+);
 
 export default HeaderTab;
