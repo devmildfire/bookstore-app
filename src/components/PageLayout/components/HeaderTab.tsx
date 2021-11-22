@@ -2,8 +2,6 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import colors from '../../../styles/colors';
-
 export type MenuItem = {
   title: string,
   link: string,
@@ -17,7 +15,7 @@ export type IHeaderTab = {
 
 const StyledLink = styled.a`
   :hover {
-    color: ${colors.red};
+    color: red;
     cursor: pointer;
   }
 `;

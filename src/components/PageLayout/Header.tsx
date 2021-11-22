@@ -5,15 +5,13 @@ import styled from 'styled-components';
 
 import HeaderTab, { MenuItem, IHeaderTab } from './components/HeaderTab';
 
-import colors from '../../styles/colors';
-
 const StyledWrapper = styled.div`
   width: 100%;
   position: sticky;
   top: 0;
   height: 80px;
   padding: 0 60px;
-  background-color: ${colors.black};
+  background-color: black;
   
   @media (max-width: 1440px) {
     padding: 0 40px;
@@ -29,7 +27,7 @@ const HeaderContent = styled.div`
   height: 100%;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid ${colors.grey70};
+  border-bottom: 1px solid grey;
 
   @media (max-width: 1024px) {
     padding: 0 20px;
