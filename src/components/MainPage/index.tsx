@@ -10,4 +10,7 @@ export default MainPage;
 
 const StyleWrapper = styled.div`
   color: red;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 `;
