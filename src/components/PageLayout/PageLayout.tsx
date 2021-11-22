@@ -6,6 +6,18 @@ import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 
+const StyledWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  background-color: black;
+  color: white;
+`;
+
+const Content = styled.div`
+  width: 100%;
+  min-height: 100vh;
+`;
+
 interface IPageLayout {
   children: React.ReactElement,
   headTitle?: string,
@@ -21,13 +33,13 @@ const PageLayout = ({
         {headTitle}
       </title>
     </Head>
-    <StyleWrapper>
+    <StyledWrapper>
       <Header />
-      <div className='children'>
+      <Content>
         {children}
-      </div>
+      </Content>
       <Footer />
-    </StyleWrapper>
+    </StyledWrapper>
   </>
 );
 
@@ -36,14 +48,3 @@ PageLayout.defaultProps = {
 };
 
 export default PageLayout;
-
-const StyleWrapper = styled.div`
-  width: 100%;
-  position: relative;
-  background-color: black;
-  color: white;
-
-  .children {
-    width: 100%;
-  }
-`;
