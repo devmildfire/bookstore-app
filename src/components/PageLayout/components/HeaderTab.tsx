@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import { colors } from '../../../styles/colors';
+import colors from '../../../styles/colors';
 
 export type MenuItem = {
   title: string,
