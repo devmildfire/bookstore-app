@@ -6,10 +6,12 @@ import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 
+import colors from '../../styles/colors';
+
 const StyledWrapper = styled.div`
   width: 100%;
   position: relative;
-  background-color: black;
+  background-color: ${colors.black};
   color: white;
 `;
 
