@@ -1,5 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import styled from 'styled-components';
+
+import colors from '../../../styles/colors';
 
 export type MenuItem = {
   title: string,
@@ -11,6 +14,13 @@ export type IHeaderTab = {
   link?: string,
   submenu?: MenuItem[],
 }
+
+const StyledLink = styled.a`
+  :hover {
+    color: ${colors.red};
+    cursor: pointer;
+  }
+`;
 
 const HeaderTab = ({
   title,
@@ -24,14 +34,19 @@ const HeaderTab = ({
       {link
         ? (
           <Link href={link} passHref>
-            <a href='fakeHref'>{title}</a>
+            <StyledLink href='fakeHref'>{title}</StyledLink>
           </Link>
         )
-        : submenu?.map((tab) => (
-          <Link href={tab.link} passHref key={tab.title}>
-            <a href='fakeHref'>{tab.title}</a>
-          </Link>
-        ))}
+        : (
+          <>
+            <StyledLink>{title}</StyledLink>
+            {/* {submenu?.map((tab) => (
+              <Link href={tab.link} passHref key={tab.title}>
+                <a href='fakeHref'>{tab.title}</a>
+              </Link>
+            ))} */}
+          </>
+        )}
     </>
   );
 };

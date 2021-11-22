@@ -11,6 +11,7 @@ export default {
   grey70: '#3c3f43',
   grey85: '#26292d',
 
+  red: 'red',
   redBase: '#A10202',
 
   white: '#ffffff',
