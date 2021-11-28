@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
+import Slider from './Slider';
+import booksData from '../../utils/booksData';
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -35,6 +37,7 @@ const PageLayout = ({
     </Head>
     <StyledWrapper>
       <Header />
+      <Slider books={booksData} />
       <Content>
         {children}
       </Content>

@@ -1,0 +1,58 @@
+const booksData = [
+  {
+    title: 'Аристотель в Казахстане',
+    author: 'Николай Старообрядцев',
+    yearOfPublication: 2019,
+    genre: 'роман',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleAristotle.jpg',
+  },
+  {
+    title: 'DELETED',
+    author: 'Катерина Кюне',
+    yearOfPublication: 2021,
+    genre: 'роман',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleDeleted.jpg',
+  },
+  {
+    title: 'КРАФТ',
+    author: 'Георгий Панкратов',
+    yearOfPublication: 2021,
+    genre: 'сборник повестей',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleCraft.jpg',
+  },
+  {
+    title: 'Аристотель в Казахстане',
+    author: 'Николай Старообрядцев',
+    yearOfPublication: 2019,
+    genre: 'роман',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleAristotle.jpg',
+  },
+  {
+    title: 'DELETED',
+    author: 'Катерина Кюне',
+    yearOfPublication: 2021,
+    genre: 'роман',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleDeleted.jpg',
+  },
+  {
+    title: 'КРАФТ',
+    author: 'Георгий Панкратов',
+    yearOfPublication: 2021,
+    genre: 'сборник повестей',
+    ageRestriction: '18+',
+    price: 300,
+    link: 'images/bookTitleCraft.jpg',
+  },
+];
+
+export default booksData;
