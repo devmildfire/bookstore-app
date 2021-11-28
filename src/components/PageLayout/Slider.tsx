@@ -64,6 +64,7 @@ const StyleWrapper = styled.div`
     margin: 0 auto;
     margin-top: 95px;
     margin-bottom: 60px;
+    z-index: 100;
   }
 
   .sliderContainer {

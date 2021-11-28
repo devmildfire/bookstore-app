@@ -12,6 +12,7 @@ const StyledWrapper = styled.div`
   height: 80px;
   padding: 0 60px;
   background-color: black;
+  z-index: 999;
   
   @media (max-width: 1440px) {
     padding: 0 40px;
