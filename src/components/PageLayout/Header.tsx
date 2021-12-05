@@ -61,6 +61,7 @@ const menu: IHeaderTab[] = [
   },
   {
     title: 'Книжная лавка',
+    link: '/books',
     submenu: books,
   },
   {

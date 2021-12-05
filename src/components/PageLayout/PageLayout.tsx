@@ -5,13 +5,11 @@ import styled from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
-import Slider from './Slider';
-import booksData from '../../utils/booksData';
 
 const StyledWrapper = styled.div`
   width: 100%;
   position: relative;
-  background-color: black;
+  background-color: #121212;
   color: white;
 `;
 
@@ -37,7 +35,6 @@ const PageLayout = ({
     </Head>
     <StyledWrapper>
       <Header />
-      <Slider books={booksData} />
       <Content>
         {children}
       </Content>

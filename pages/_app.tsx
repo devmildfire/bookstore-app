@@ -1,9 +1,15 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 
+import PageLayout from '../src/components/PageLayout/PageLayout';
+
 import '../src/Styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps): React.ReactElement {
-  return <Component {...pageProps} />;
+  return (
+    <PageLayout>
+      <Component {...pageProps} />
+    </PageLayout>
+  );
 }
 export default MyApp;

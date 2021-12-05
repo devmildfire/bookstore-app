@@ -2,24 +2,25 @@ import React from 'react';
 import Link from 'next/link';
 
 import styled from 'styled-components';
-import BookCard from '../src/components/BookCard';
-import booksData from '../src/utils/booksData';
+
+import BookCard from '../BookCard';
+import booksData from '../../utils/booksData';
 
 const NewProduct = (): React.ReactElement => (
   <StyleWrapper>
-    <h2 className='newProductTitle'>КНИЖНАЯ ЛАВКА</h2>
+    <h2 className='newProductTitle'>НОВИНКИ</h2>
     <div className='newProducts'>
       {booksData.map((book) => (
         <BookCard book={book} />
       ))}
     </div>
     <div className='buttonContainer'>
-      <Link href='/' passHref>
+      <Link href='/books' passHref>
         <button
           type='button'
           className='toBookStoreButton'
         >
-          <a href='fakeHref'>На главную</a>
+          <a href='fakeHref'>Перейти в книжную лавку</a>
         </button>
       </Link>
     </div>
@@ -32,7 +33,7 @@ const StyleWrapper = styled.div`
   .newProductTitle {
     display: flex;
     justify-content: center;
-    margin: 50px 0 80px;
+    margin: 204px 0 80px;
     font-family: Cheque;
     font-style: normal;
     font-weight: 900;
