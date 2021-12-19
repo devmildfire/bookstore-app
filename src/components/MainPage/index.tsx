@@ -1,12 +1,12 @@
 import React from 'react';
 
-// import Slider from '../PageLayout/Slider';
+import Slider from '../PageLayout/Slider';
 import NewProduct from '../NewProduct';
-// import booksData from '../../utils/booksData';
+import booksData from '../../utils/booksData';
 
 const MainPage = (): React.ReactElement => (
   <>
-    {/* <Slider books={booksData} /> */}
+    <Slider books={booksData} />
     <NewProduct />
   </>
 );
