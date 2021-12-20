@@ -1,6 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+
+import Popper from '../../Popper';
 
 export type MenuItem = {
   title: string,
@@ -9,7 +11,7 @@ export type MenuItem = {
 
 export type IHeaderTab = {
   title: string,
-  link?: string,
+  link: string,
   submenu?: MenuItem[],
 }
 
@@ -20,28 +22,41 @@ const StyledLink = styled.a`
   }
 `;
 
+const PopperContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  padding: 20px;
+`;
+
 const HeaderTab = ({
   title,
   link,
   submenu,
 }: IHeaderTab): React.ReactElement => (
   <>
-    {link
+    {!submenu
       ? (
         <Link href={link} passHref>
           <StyledLink href='fakeHref'>{title}</StyledLink>
         </Link>
       )
       : (
-        <>
-          <StyledLink>{title}</StyledLink>
-          {submenu?.map((tab) => (
-            // <Link href={tab.link} passHref key={tab.title}>
-            //   <a href='fakeHref'>{tab.title}</a>
-            // </Link>
-            <Fragment key={tab.title} />
-          ))}
-        </>
+        <Popper
+          target={
+            <StyledLink>{title}</StyledLink>
+          }
+          padding={20}
+        >
+          <PopperContainer>
+            {submenu?.map((tab) => (
+              <Link href={tab.link} passHref key={tab.title}>
+                <StyledLink href='fakeHref'>{tab.title}</StyledLink>
+              </Link>
+            ))}
+          </PopperContainer>
+        </Popper>
+
       )}
   </>
 );
