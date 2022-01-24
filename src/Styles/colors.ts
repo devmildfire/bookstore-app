@@ -1,9 +1,6 @@
-type Colors = {
-  [key: string]: string
-}
-
-const colors: Colors = {
+const colors = {
   black: '#18191b',
+  blackBase: '#121212',
 
   grey05: '#fafafa',
   grey10: '#f4f4f4',
@@ -15,7 +12,6 @@ const colors: Colors = {
   grey70: '#3c3f43',
   grey85: '#26292d',
 
-  red: 'red',
   redBase: '#A10202',
 
   white: '#ffffff',

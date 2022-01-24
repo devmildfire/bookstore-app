@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app';
 
 import PageLayout from '../src/components/PageLayout/PageLayout';
 
-import '../src/Styles/globals.css';
+import '../src/styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps): React.ReactElement {
   return (

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import Popper from '../../Popper';
 
+import colors from '../../../styles/colors';
+
 export type MenuItem = {
   title: string,
   link: string,
@@ -17,7 +19,7 @@ export type IHeaderTab = {
 
 const StyledLink = styled.a`
   :hover {
-    color: red;
+    color: ${colors.redBase};
     cursor: pointer;
   }
 `;
@@ -25,7 +27,7 @@ const StyledLink = styled.a`
 const PopperContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: black;
+  background-color: ${colors.blackBase};
   padding: 20px;
 `;
 
