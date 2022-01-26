@@ -10,17 +10,11 @@ html {
   box-sizing: inherit;
 }
 
-body {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #102327;
-  -webkit-text-size-adjust: 100%;
-}
-
 html,
 body {
   font-family: 'Montserrat', sans-serif;
   font-style: normal;
+  color: #102327;
   width: 100%;
   min-height: 100%;
 }
@@ -37,28 +31,11 @@ ol,
 ul {
   margin: 0;
   padding: 0;
-  font-size: 100%;
-  font-weight: normal;
 }
 
 ol,
 ul {
   list-style: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-th,
-td {
-  padding: 0;
-  text-align: left;
-}
-
-textarea {
-  resize: none;
 }
 
 input,
@@ -70,14 +47,6 @@ select {
   font: inherit;
   -webkit-font-smoothing: inherit;
   -webkit-appearance: none;
-}
-input,
-textarea,
-button,
-select,
-label,
-a {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 img,

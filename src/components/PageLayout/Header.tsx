@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 
 import HeaderTab, { MenuItem, IHeaderTab } from './components/HeaderTab';
+import Icon from '../Common/Icon';
 
 import colors from '../../styles/colors';
 
@@ -89,7 +89,7 @@ const Header = (): React.ReactElement => (
     <HeaderContent>
       <Link href='/' passHref>
         <a href='fakeHref'>
-          <ReactSVG src='chtivo-logo.svg' />
+          <Icon src='chtivo-logo.svg' />
         </a>
       </Link>
       {menu.map(({ title, link, submenu }) => (
