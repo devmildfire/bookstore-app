@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import HeaderTab, { MenuItem, IHeaderTab } from './components/HeaderTab';
 import Icon from '../Common/Icon';
 
-import colors from '../../styles/colors';
+import { colors } from '../../styles/colors';
 
 const StyledWrapper = styled.div`
   width: 100%;
