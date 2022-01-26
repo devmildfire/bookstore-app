@@ -1,4 +1,4 @@
-export default {
+const colors: any = {
   black: '#18191b',
   blackBase: '#121212',
 
@@ -15,4 +15,6 @@ export default {
   redBase: '#A10202',
 
   white: '#ffffff',
-} as const;
+};
+
+export default colors;
