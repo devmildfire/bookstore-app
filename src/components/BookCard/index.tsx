@@ -7,7 +7,7 @@ import Counter from '../Common/Counter';
 
 const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g;
 
-type BookCardProps = {
+ export type BookCardProps = {
   book: BooksData
 }
 
