@@ -40,7 +40,7 @@ const HeaderContent = styled.div`
 const books: MenuItem[] = [
   {
     title: 'Издания',
-    link: '/all-books',
+    link: '/books',
   },
   {
     title: 'Карты даров',
