@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
+import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
+
 import { BooksData } from '../../types/api';
 import Button from '../Common/Button';
 import Counter from '../Common/Counter';
@@ -46,11 +48,13 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   return (
     <StyledWrapper>
       <div className='cover'>
-        <img
-          className='cardImage'
-          src={link}
-          alt='Book logo'
-        />
+        <Link href='books/123' passHref>
+          <img
+            className='cardImage'
+            src={link}
+            alt='Book logo'
+          />
+        </Link>
         <div className='description'>
           <div className='descriptionText'>
             {parsedDescription}

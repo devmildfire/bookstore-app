@@ -1,11 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
-import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 
 import HeaderTab, { MenuItem, IHeaderTab } from './components/HeaderTab';
+import Icon from '../Common/Icon';
 
+<<<<<<< HEAD
 import colors from '../../Styles/colors';
+=======
+import colors from '../../utils/colors';
+>>>>>>> e40b81fa2b9c790adc6d32664f8cb2639220bef0
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -40,7 +44,7 @@ const HeaderContent = styled.div`
 const books: MenuItem[] = [
   {
     title: 'Издания',
-    link: '/all-books',
+    link: '/books',
   },
   {
     title: 'Карты даров',
@@ -89,7 +93,7 @@ const Header = (): React.ReactElement => (
     <HeaderContent>
       <Link href='/' passHref>
         <a href='fakeHref'>
-          <ReactSVG src='chtivo-logo.svg' />
+          <Icon src='chtivo-logo.svg' />
         </a>
       </Link>
       {menu.map(({ title, link, submenu }) => (

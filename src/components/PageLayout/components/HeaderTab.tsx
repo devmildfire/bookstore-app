@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Popper from '../../Popper';
 
-import colors from '../../../styles/colors';
+import colors from '../../../utils/colors';
 
 export type MenuItem = {
   title: string,
