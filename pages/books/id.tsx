@@ -212,6 +212,7 @@ const BookPage = (): React.ReactElement => (
         Познайте также
       </SimilarTitle>
       <SimilarBooks>
+        <></>
       </SimilarBooks>
     </Similar>
   </StyleWrapper>
@@ -449,6 +450,4 @@ const SimilarTitle = styled.h2`
   line-height: 53px;
   color: ${colors.red};
 `;
-const SimilarBooks = styled.div`
-
-`;
+const SimilarBooks = styled.div``;

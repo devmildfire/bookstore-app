@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-
 import styled from 'styled-components';
 import BookCard from '../src/components/BookCard';
 import booksData from '../src/utils/booksData';
