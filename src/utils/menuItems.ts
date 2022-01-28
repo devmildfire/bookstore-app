@@ -1,21 +1,20 @@
-export type Submenu = [{
+export type SubmenuItem = {
   subtitle: string,
   link?: string,
-  items?: [
+  items?:
     {
       title: string,
       link: string,
-    }
-  ]
-}]
+    }[]
+}
 
 export type MenuItem = {
   title: string,
-  link: string,
-  submenu?: Submenu
+  link?: string,
+  submenu?: SubmenuItem[]
 }
 
-const books = [
+const forReaders: SubmenuItem[] = [
   {
     subtitle: 'Книжная лавка',
     items: [
@@ -39,18 +38,29 @@ const books = [
   },
 ];
 
-const menu = [
+const forAuthors: SubmenuItem[] = [
+  {
+    subtitle: 'Предложить рукопись Чтиву',
+    link: '/suggest-manuscript',
+  },
+  {
+    subtitle: 'Предложить рассказ\nв журнал Русского Динозавра',
+    link: '/suggest-story-to-rd',
+  },
+];
+
+const menu: MenuItem[] = [
   {
     title: 'Главная',
     link: '/',
   },
   {
     title: 'Чтецам',
-    submenu: books,
+    submenu: forReaders,
   },
   {
     title: 'Авторам',
-    submenu: '/for-authors',
+    submenu: forAuthors,
   },
   {
     title: 'Партнёрам',

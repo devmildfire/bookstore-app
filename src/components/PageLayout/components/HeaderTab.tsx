@@ -1,28 +1,54 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
 import Popper from '../../Popper';
-import { MenuItem } from '../../../utils/colors';
+import { MenuItem } from '../../../utils/menuItems';
 
 import colors from '../../../utils/colors';
 
-export type MenuItem = {
-  title: string,
-  link: string,
-}
-
-export type IHeaderTab = {
-  title: string,
-  link: string,
-  submenu?: MenuItem[],
+export type HeaderTabProps = {
+  item: MenuItem
 }
 
 const StyledLink = styled.a`
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: normal;
+  color: ${colors.grey};
+  white-space: pre-wrap;
+
+  opacity: 0.7;
+  cursor: pointer;
+
   :hover {
     color: ${colors.redBase};
-    cursor: pointer;
+    opacity: 1;
   }
+`;
+
+const SubmenuTitle = styled.span`
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: normal;
+  color: ${colors.grey};
+  margin-bottom: 8px;
+
+  opacity: 0.7;
+  cursor: default;
+`;
+
+const SubmenuLink = styled(StyledLink)`
+  font-size: 14px;
+  line-height: 17px;
+  opacity: 0.5;
+  margin-top: 4px;
+`;
+
+const SubmenuItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
 `;
 
 const PopperContainer = styled.div`
@@ -32,13 +58,9 @@ const PopperContainer = styled.div`
   padding: 20px;
 `;
 
-const HeaderTab = ({{
-  title,
-  link,
-  submenu,
-} = item}: HeaderTabProps): React.ReactElement => (
-  <>
-    {!submenu
+const HeaderTab = ({ item: { title, link, submenu } } : HeaderTabProps): React.ReactElement => (
+  <Fragment key={title}>
+    {link
       ? (
         <Link href={link} passHref>
           <StyledLink href='fakeHref'>{title}</StyledLink>
@@ -47,21 +69,36 @@ const HeaderTab = ({{
       : (
         <Popper
           target={
-            <StyledLink>{title}</StyledLink>
+            <SubmenuTitle>{title}</SubmenuTitle>
           }
           padding={20}
         >
           <PopperContainer>
-            {submenu?.map((tab) => (
-              <Link href={tab.link} passHref key={tab.title}>
-                <StyledLink href='fakeHref'>{tab.title}</StyledLink>
-              </Link>
+            {submenu?.map(({ subtitle, link: submenuLink, items }) => (
+              <SubmenuItem key={subtitle}>
+                {submenuLink
+                  ? (
+                    <Link href={submenuLink} passHref key={subtitle}>
+                      <StyledLink href='fakeHref'>{subtitle}</StyledLink>
+                    </Link>
+                  )
+                  : (
+                    <>
+                      <SubmenuTitle>{subtitle}</SubmenuTitle>
+                      {items?.map(({ title: submenuTitle, link: subLink }) => (
+                        <Link href={subLink} passHref key={submenuTitle}>
+                          <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+              </SubmenuItem>
             ))}
           </PopperContainer>
         </Popper>
 
       )}
-  </>
+  </Fragment>
 );
 
 export default HeaderTab;
