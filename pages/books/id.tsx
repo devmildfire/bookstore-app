@@ -26,7 +26,7 @@ const BookPage = (): React.ReactElement =>
       <Book>
         <img
           className='bookImage'
-          src='../../public/images/bookTitleDeleted.jpg'
+          src='images/bookTitleDeleted.jpg'
           alt='Book logo'
         />
         <div className='bookInfo'>
@@ -150,7 +150,7 @@ const BookPage = (): React.ReactElement =>
               </a>
               <a href='http://t.me/username' className='contactLink' target='_blank' rel='noreferrer'>
                 <li className='contactsItem contactsItem-telegram'>
-                  <Icon src='../../public/images/telegram.svg' />
+                  <Icon src='/images/telegram.svg' />
                 </li>
               </a>
               <a href='http://vk.com' className='contactLink' target='_blank' rel='noreferrer'>
