@@ -4,7 +4,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 
 import Header from './Header';
-import Footer from './Footer';
+// import Footer from './Footer';
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -38,7 +38,7 @@ const PageLayout = ({
       <Content>
         {children}
       </Content>
-      <Footer />
+      {/* <Footer /> */}
     </StyledWrapper>
   </>
 );

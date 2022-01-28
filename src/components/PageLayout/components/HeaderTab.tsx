@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 import Popper from '../../Popper';
+import { MenuItem } from '../../../utils/colors';
 
 import colors from '../../../utils/colors';
 
@@ -31,11 +32,11 @@ const PopperContainer = styled.div`
   padding: 20px;
 `;
 
-const HeaderTab = ({
+const HeaderTab = ({{
   title,
   link,
   submenu,
-}: IHeaderTab): React.ReactElement => (
+} = item}: HeaderTabProps): React.ReactElement => (
   <>
     {!submenu
       ? (

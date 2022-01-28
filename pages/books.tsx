@@ -8,7 +8,7 @@ import booksData from '../src/utils/booksData';
 const NewProduct = (): React.ReactElement => (
   <StyleWrapper>
     <h2 className='newProductTitle'>КНИЖНАЯ ЛАВКА</h2>
-    <div className='newProducts'>
+    {/* <div className='newProducts'>
       {booksData.map((book) => (
         <BookCard book={book} />
       ))}
@@ -22,7 +22,11 @@ const NewProduct = (): React.ReactElement => (
           <a href='fakeHref'>На главную</a>
         </button>
       </Link>
-    </div>
+    </div> */}
+    <img
+      src='images/bookTitleDeleted.jpg'
+      alt='Book logo'
+    />
   </StyleWrapper>
 );
 
