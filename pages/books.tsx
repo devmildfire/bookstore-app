@@ -38,7 +38,6 @@ const StyleWrapper = styled.div`
     font-size: 60px;
     text-transform: uppercase;
     line-height: 72px;
-
     color: #DCDCDC;
   }
 
