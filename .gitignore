@@ -36,5 +36,10 @@ yarn-error.log*
 #history
 /.history/
 
+<<<<<<< HEAD
 # .idea
 /.idea
+=======
+#idea
+/.idea/
+>>>>>>> develop

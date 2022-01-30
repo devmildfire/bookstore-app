@@ -3,6 +3,7 @@ const Colors = {
   blackBase: '#121212',
 
   gray5: '#e0e0e0',
+  grey: '#DCDCDC',
   grey05: '#fafafa',
   grey10: '#f4f4f4',
   grey15: '#e9e9e9',

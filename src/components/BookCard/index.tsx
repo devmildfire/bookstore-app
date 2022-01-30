@@ -48,7 +48,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   return (
     <StyledWrapper>
       <div className='cover'>
-        <Link href='books/123' passHref>
+        <Link href='books' passHref>
           <img
             className='cardImage'
             src={link}
