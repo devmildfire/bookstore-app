@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../Common/Button';
+import {TBookProps} from './Book';
 
 const StyleWrapper = styled.div`
   padding: 44px 79px 40px 132px;
@@ -72,14 +73,14 @@ const PropsFooter = styled.div`
   line-height: 17px;
 `;
 
-const Props = () => (
+const Props = ({ book }: TBookProps):React.ReactElement => (
   <StyleWrapper>
     <PropsHeader>
       <PropsTitle>
         ЦИФРОВОЕ ИЗДАНИЕ
       </PropsTitle>
       <PropsPrice>
-        300₽
+        {book.price}
       </PropsPrice>
       <PropsDate>
         Дата релиза: дд.мм.гггг

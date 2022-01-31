@@ -1,5 +1,5 @@
 export interface BooksData {
-  id: number;
+  id: string;
   title: string;
   author: string | null;
   authors: string[] | null;

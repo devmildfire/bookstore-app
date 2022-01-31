@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import colors from '../../utils/colors';
+import {TBookProps} from './Book';
 
 const StyleWrapper = styled.div``;
 const Title = styled.h2`
@@ -27,7 +28,7 @@ const Banner = styled.img`
   height: 387px;
 `;
 
-const Similar = () => (
+const Similar = ({ book }: TBookProps): React.ReactElement => (
   <StyleWrapper>
     <Title>
       Познайте также
@@ -37,7 +38,7 @@ const Similar = () => (
         <Link href='/'>
           <BookLink>
             <Banner
-              src='/images/bookTitleDeleted.jpg'
+              src={book.banner}
               alt=''
             />
           </BookLink>

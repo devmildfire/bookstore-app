@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
+import { TBookProps } from './Book';
+import {spans} from 'next/dist/build/webpack/plugins/profiling-plugin';
 
 const Title = styled.h2`
   margin-bottom: 30px;
@@ -73,7 +75,7 @@ const ContactsLink = styled.a`
 
 `;
 
-const Author = (): ReactElement => (
+const Author = ({ book }: TBookProps): ReactElement => (
   <StyleWrapper>
     <Title>
       Об авторе
@@ -81,11 +83,17 @@ const Author = (): ReactElement => (
     <AuthorInfo>
       <AuthorFoto
         src='/images/authors/kune.jpg'
-        alt='Автор'
+        alt={`${book.author}`}
       />
       <AuthorDescr>
         <AuthorProps>
-          Катерина Кюне | Аскер | 24.03.1984
+          {book.author && book.author}
+          {book.authors && book.authors.map((name) => (
+            <span>
+              {`${name} `}
+            </span>
+          ))}
+          | Аскер | 24.03.1984
         </AuthorProps>
         <AuthorSpeech>
           «Мне всегда нравилось представлять себя кем-то другим:

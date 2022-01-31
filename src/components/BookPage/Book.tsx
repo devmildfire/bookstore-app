@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from "styled-components";
-import colors from "../../utils/colors";
+import styled from 'styled-components';
+import colors from '../../utils/colors';
+import { BooksData } from '../../types/api';
 
 const StyleWrapper = styled.div`
   margin-bottom: 200px;
@@ -10,6 +11,8 @@ const StyleWrapper = styled.div`
 
 const BookImage = styled.img`
   margin-right: 50px;
+  width: 510px;
+  height: 810px;
 `;
 
 const BookInfo = styled.div``;
@@ -56,45 +59,51 @@ const BookDescrText = styled.div`
   }
 `;
 
-const Book = (): React.ReactElement => (
-  <StyleWrapper>
-    <BookImage
-      src='/images/bookTitleDeleted_BookPage.jpg'
-      alt='Book logo'
-    />
-    <BookInfo>
-      <BookTitle>
-        DELETED
-      </BookTitle>
-      <BookAuthor>
-        Катерина Кюне
-      </BookAuthor>
-      <BookProps>
-        2021 | роман |18+
-      </BookProps>
-      <BookThesis>
-        ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ,
-        МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
-      </BookThesis>
-      <BookDescrText>
-        <p className='bookDescrParagraph'>
-          Стася работает бардонавткой,
-          кем-то вроде почтальона между нашим миром и
-          Бардо — так учёные назвали случайно открытое измерение,
-          куда на некоторое время после смерти попадает сознание умерших людей.
-        </p>
-        <p className='bookDescrParagraph'>
-          Стася хорошо себя чувствует среди мёртвых,
-          а вот в мире живых у неё полно проблем: письма и слежка бывшего парня,
-          постоянные разговоры отца о её никчёмности…
-        </p>
-        <p className='bookDescrParagraph'>
-          Но всего этого как будто недостаточно,
-          и в её жизни появляется ещё один преследователь — невидимый.
-        </p>
-      </BookDescrText>
-    </BookInfo>
-  </StyleWrapper>
-);
+export type TBookProps = {
+  book: BooksData,
+}
+
+const Book = ({ book }: TBookProps): React.ReactElement => {
+  const {
+    title,
+    author,
+    yearOfPublication,
+    genre,
+    ageRestriction,
+    link,
+    description,
+  } = book;
+
+  return (
+    <StyleWrapper>
+      <BookImage
+        src={link}
+        alt={title}
+      />
+      <BookInfo>
+        <BookTitle>
+          {title}
+        </BookTitle>
+        <BookAuthor>
+          {author}
+        </BookAuthor>
+        <BookProps>
+          {`${yearOfPublication} | ${genre} | ${ageRestriction} +`}
+        </BookProps>
+        <BookThesis>
+          ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ,
+          МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
+        </BookThesis>
+        <BookDescrText>
+          {description.map((el: string) => (
+            <p className='bookDescrParagraph'>
+              {el}
+            </p>
+          ))}
+        </BookDescrText>
+      </BookInfo>
+    </StyleWrapper>
+  );
+};
 
 export default Book;
