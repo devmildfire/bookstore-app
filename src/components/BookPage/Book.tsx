@@ -22,7 +22,6 @@ const BookTitle = styled.h1`
   font-family: Cheque;
   font-weight: 900;
   font-size: 80px;
-  line-height: 62.5%;
   color: ${colors.gray5};
 `;
 
@@ -88,7 +87,7 @@ const Book = ({ book }: TBookProps): React.ReactElement => {
           {author}
         </BookAuthor>
         <BookProps>
-          {`${yearOfPublication} | ${genre} | ${ageRestriction} +`}
+          {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
         </BookProps>
         <BookThesis>
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ,
