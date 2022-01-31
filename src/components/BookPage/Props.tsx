@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../Common/Button';
-import {TBookProps} from './Book';
+import { TBookProps } from './Book';
 
 const StyleWrapper = styled.div`
   padding: 44px 79px 40px 132px;

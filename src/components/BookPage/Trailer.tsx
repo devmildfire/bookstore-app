@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import {TBookProps} from './Book';
 
 const StyleWrapper = styled.div`
   margin-bottom: 200px;
@@ -17,7 +16,7 @@ const Title = styled.h2`
 
 const TrailerVideo = styled.img``;
 
-const Trailer = ({ book }: TBookProps): React.ReactElement => (
+const Trailer = (): React.ReactElement => (
   <StyleWrapper>
     <Title>
       Буктрейлер

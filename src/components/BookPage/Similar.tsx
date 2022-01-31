@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import colors from '../../utils/colors';
-import {TBookProps} from './Book';
+import { TBookProps } from './Book';
 
 const StyleWrapper = styled.div``;
 const Title = styled.h2`

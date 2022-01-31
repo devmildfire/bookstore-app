@@ -41,12 +41,12 @@ const BookPage = (): React.ReactElement => {
       <Head>
         <title>{book?.title}</title>
       </Head>
-      {book &&
-      (
+      {book
+      && (
         <>
           <Book book={book} />
           <Props book={book} />
-          <Trailer book={book} />
+          <Trailer />
           <Author book={book} />
           <Similar book={book} />
         </>

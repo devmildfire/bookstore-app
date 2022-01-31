@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 import { TBookProps } from './Book';
-import {spans} from 'next/dist/build/webpack/plugins/profiling-plugin';
 
 const Title = styled.h2`
   margin-bottom: 30px;
@@ -131,9 +130,9 @@ const Author = ({ book }: TBookProps): ReactElement => (
       Лауреат премии литературного журнала «Знамя». Автор повести «Здесь должна быть я».
     </AuthorAbout>
     <AuthorContacts>
-        <span>
-          Контакты:
-        </span>
+      <span>
+        Контакты:
+      </span>
       <ContactsList>
         <ContactsItem>
           <ContactsLink
