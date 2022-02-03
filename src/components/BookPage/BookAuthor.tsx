@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
+import contactIconsSrc from '../../utils/contactIconsData';
 
 const Title = styled.h2`
   margin-bottom: 30px;
@@ -43,8 +44,8 @@ const AuthorSpeech = styled.p`
 
 const AuthorAbout = styled.p`
   margin-bottom: 54px;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 24px;
+  line-height: 29px;
 `;
 
 const AuthorContacts = styled.div`
@@ -130,51 +131,17 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
         Контакты:
       </span>
       <ContactsList>
-        <ContactsItem>
-          <a
-            href='mailto:example@example.com'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <ReactSVG src='/email.svg' />
-          </a>
-        </ContactsItem>
-        <ContactsItem>
-          <a
-            href='http://instagram.com'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <ReactSVG src='/instagram.svg' />
-          </a>
-        </ContactsItem>
-        <ContactsItem>
-          <a
-            href='http://facebook.com'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <ReactSVG src='/facebook.svg' />
-          </a>
-        </ContactsItem>
-        <ContactsItem>
-          <a
-            href='http://t.me/username'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <ReactSVG src='/telegram.svg' />
-          </a>
-        </ContactsItem>
-        <ContactsItem>
-          <a
-            href='http://vk.com'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <ReactSVG src='/vk.svg' />
-          </a>
-        </ContactsItem>
+        {contactIconsSrc.map((iconSrc) => (
+          <ContactsItem>
+            <a
+              href='fakeHref'
+              target='_blank'
+              rel='noreferrer'
+            >
+              <ReactSVG src={iconSrc} />
+            </a>
+          </ContactsItem>
+        ))}
       </ContactsList>
     </AuthorContacts>
   </StyleWrapper>

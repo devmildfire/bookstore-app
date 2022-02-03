@@ -17,6 +17,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [like, setLike] = useState(false);
   const [inCardCount, setInCardCount] = useState(0);
   const {
+    id,
     link,
     title,
     genre,
@@ -46,78 +47,76 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   }, [inCardCount]);
 
   return (
-    <Link href={`/books/${book.id}`} passHref>
-      <a href='fakeHref'>
-        <StyledWrapper>
-          <div className='cover'>
-            <Link href='books' passHref>
-              <img
-                className='cardImage'
-                src={link}
-                alt='BookDescription logo'
-              />
-            </Link>
-            <div className='description'>
-              <div className='descriptionText'>
-                {parsedDescription}
-              </div>
-              <div className='descriptionInfo'>
-                {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
-              </div>
-            </div>
-          </div>
-          <div
-            className='cardTitle'
-          >
-            {title}
-          </div>
-          { author && (
-            <div
-              className='cardAuthor'
-            >
-              {author}
-            </div>
-          )}
-          {parsedAuthors && (
-            <div
-              className='cardAuthor'
-              dangerouslySetInnerHTML={{ __html: parsedAuthors }}
+    <StyledWrapper>
+      <div className='cover'>
+        <Link href={`/books/${id}`} passHref>
+          <a href='fakeHref'>
+            <img
+              className='cardImage'
+              src={link}
+              alt='BookDescription logo'
             />
-          )}
-          <div className='cardInfo'>
+          </a>
+        </Link>
+        <div className='description'>
+          <div className='descriptionText'>
+            {parsedDescription}
+          </div>
+          <div className='descriptionInfo'>
+            {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
+          </div>
+        </div>
+      </div>
+      <div
+        className='cardTitle'
+      >
+        {title}
+      </div>
+      { author && (
+        <div
+          className='cardAuthor'
+        >
+          {author}
+        </div>
+      )}
+      {parsedAuthors && (
+        <div
+          className='cardAuthor'
+          dangerouslySetInnerHTML={{ __html: parsedAuthors }}
+        />
+      )}
+      <div className='cardInfo'>
 
-            <div
-              className='cardPrice'
-            >
-              {oldPrice && (
-                <span className='oldPrice'>
-                  <del>{`${oldPrice}₽`}</del>
-                </span>
-              )}
-              <span>{`${price}₽`}</span>
-            </div>
-            <ReactSVG
-              src='like.svg'
-              className={like ? 'liked' : 'like'}
-              onClick={() => setLike((prev) => !prev)}
-            />
-          </div>
-          {inCardCount === 0 ? (
-            <Button
-              text='Добавить в корзину'
-              onClick={addToCart}
-              className='cardButtonBuy'
-            />
-          ) : (
-            <Counter
-              value={inCardCount}
-              addToCart={addToCart}
-              removeFromCart={removeFromCart}
-            />
+        <div
+          className='cardPrice'
+        >
+          {oldPrice && (
+            <span className='oldPrice'>
+              <del>{`${oldPrice}₽`}</del>
+            </span>
           )}
-        </StyledWrapper>
-      </a>
-    </Link>
+          <span>{`${price}₽`}</span>
+        </div>
+        <ReactSVG
+          src='like.svg'
+          className={like ? 'liked' : 'like'}
+          onClick={() => setLike((prev) => !prev)}
+        />
+      </div>
+      {inCardCount === 0 ? (
+        <Button
+          text='Добавить в корзину'
+          onClick={addToCart}
+          className='cardButtonBuy'
+        />
+      ) : (
+        <Counter
+          value={inCardCount}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+        />
+      )}
+    </StyledWrapper>
   );
 };
 

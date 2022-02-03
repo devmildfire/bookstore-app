@@ -4,7 +4,7 @@ import colors from '../../utils/colors';
 import { TBookProps } from '../../types/bookProps';
 
 const StyleWrapper = styled.div`
-  margin-bottom: 200px;
+  margin-bottom: 135px;
   display: flex;
   justify-content: space-between;  
 `;
@@ -15,13 +15,12 @@ const BookImage = styled.img`
   height: 810px;
 `;
 
-const BookInfo = styled.div``;
-
 const BookTitle = styled.h1`
   margin-bottom: 45px;
   font-family: Cheque;
   font-weight: 900;
   font-size: 80px;
+  line-height: 65%;
   color: ${colors.gray5};
 `;
 
@@ -41,7 +40,7 @@ const BookThesis = styled.div`
   color: ${colors.red};
 `;
 
-const BookProps = styled.div`
+const BookInfo = styled.div`
   margin-bottom: 129px;
   font-weight: 700;
   font-size: 14px;
@@ -75,28 +74,28 @@ const BookDescription = ({ book }: TBookProps): React.ReactElement => {
         src={link}
         alt={title}
       />
-      <BookInfo>
+      <div>
         <BookTitle>
           {title}
         </BookTitle>
         <BookAuthor>
           {author}
         </BookAuthor>
-        <BookProps>
+        <BookInfo>
           {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
-        </BookProps>
+        </BookInfo>
         <BookThesis>
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ,
           МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
         </BookThesis>
         <BookDescrText>
-          {description.map((el: string) => (
+          {description.map((paragraph: string) => (
             <p className='bookDescrParagraph'>
-              {el}
+              {paragraph}
             </p>
           ))}
         </BookDescrText>
-      </BookInfo>
+      </div>
     </StyleWrapper>
   );
 };

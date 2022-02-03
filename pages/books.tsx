@@ -9,11 +9,7 @@ const NewProduct = (): React.ReactElement => (
     <h2 className='newProductTitle'>КНИЖНАЯ ЛАВКА</h2>
     <div className='newProducts'>
       {booksData.map((book) => (
-        <Link href={`/books/${book.id}`} passHref>
-          <a href='/'>
-            <BookCard book={book} />
-          </a>
-        </Link>
+        <BookCard book={book} />
       ))}
     </div>
     <div className='buttonContainer'>

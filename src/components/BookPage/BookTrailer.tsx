@@ -14,9 +14,20 @@ const Title = styled.h2`
   line-height: 68px;
 `;
 
-const TrailerVideo = styled.iframe`
+const TrailerContainer = styled.div`
+  position:relative;
   width: 100%;
-  height: 472px;
+  padding-top: 56.25%;
+`;
+
+const TrailerVideo = styled.iframe`
+  position:absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;  
+  width: 100%;
+  height: 100%;
 `;
 
 const BookTrailer = (): React.ReactElement => (
@@ -24,13 +35,15 @@ const BookTrailer = (): React.ReactElement => (
     <Title>
       Буктрейлер
     </Title>
-    <TrailerVideo
-      src='https://www.youtube.com/embed/RbE7vmnkWvU'
-      title='YouTube video player'
-      frameBorder='0'
-      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-      allowFullScreen
-    />
+    <TrailerContainer>
+      <TrailerVideo
+        src='https://www.youtube.com/embed/RbE7vmnkWvU'
+        title='Буктрейлер'
+        frameBorder='0'
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+        allowFullScreen
+      />
+    </TrailerContainer>
   </StyleWrapper>
 );
 

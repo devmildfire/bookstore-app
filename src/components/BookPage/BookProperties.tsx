@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
 import Button from '../Common/Button';
+import bookPropsList from '../../utils/bookPropertiesData';
 
 const StyleWrapper = styled.div`
   padding: 44px 79px 40px 132px;
-  margin-bottom: 200px;
+  margin-bottom: 135px;
   border: 1px solid #930000;
   box-sizing: border-box;
 `;
@@ -25,7 +26,6 @@ const PropsTitle = styled.div`
 
 const PropsBody = styled.div`
   display: flex;
-  
 `;
 
 const PropsPrice = styled.div`
@@ -58,14 +58,6 @@ const PropsItem = styled.div`
   }
 `;
 
-const ReadersList = styled.ul`
-  margin-top: 20px;
-  display: flex;
-  justify-content:space-between;
-`;
-
-const ReadersItem = styled.div``;
-
 const PropsFooter = styled.div`
   max-width: 1054px;
   font-size: 14px;
@@ -97,28 +89,11 @@ const BookProperties = ({ book }: TBookProps):React.ReactElement => (
         />
       </PropsBtnBlock>
       <PropsItems>
-        <PropsItem>
-          Форматы: Fb2, Epub
-        </PropsItem>
-        <PropsItem>
-          Кол-во символов: 355000
-        </PropsItem>
-        <PropsItem>
-          <span>
-            Рекомендуемые читалки:
-          </span>
-          <ReadersList>
-            <ReadersItem>
-              eBoox: Android | iPhone
-            </ReadersItem>
-            <ReadersItem>
-              FBReader: Android | iPhone
-            </ReadersItem>
-            <ReadersItem>
-              KyBooks: iPhone
-            </ReadersItem>
-          </ReadersList>
-        </PropsItem>
+        {bookPropsList.map((bookPropsItem) => (
+          <PropsItem>
+            {bookPropsItem}
+          </PropsItem>
+        ))}
       </PropsItems>
     </PropsBody>
     <PropsFooter>

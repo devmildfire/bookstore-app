@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import colors from '../../utils/colors';
+import booksData from '../../utils/booksData';
 
 const Title = styled.h2`
   margin-bottom: 50px;
@@ -11,18 +11,22 @@ const Title = styled.h2`
   font-weight: 900;
   font-size: 44px;
   line-height: 53px;
-  color: ${colors.red};
 `;
+
 const BooksList = styled.ul`
   display: flex;
+  flex-wrap: wrap;
   justify-content:space-between;
 `;
-const BookItem = styled.li``;
+
+const BookItem = styled.li`
+  flex: 0 0 18.5%;  
+`;
 const BookLink = styled.a`
   cursor: pointer;
 `;
 const Banner = styled.img`
-  width: 247px;
+  width: 100%;
   height: 387px;
 `;
 
@@ -32,56 +36,23 @@ const SimilarBooks = (): React.ReactElement => (
       Познайте также
     </Title>
     <BooksList>
-      <BookItem>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src='/images/bookTitleDeleted.jpg'
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </BookItem>
-      <BookItem>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src='/images/bookTitleDeleted.jpg'
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </BookItem>
-      <BookItem>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src='/images/bookTitleDeleted.jpg'
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </BookItem>
-      <BookItem>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src='/images/bookTitleDeleted.jpg'
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </BookItem>
-      <BookItem>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src='/images/bookTitleDeleted.jpg'
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </BookItem>
+      {booksData.map((book, index) => {
+        if (index < 5) {
+          return (
+            <BookItem>
+              <Link href={`/books/${book.id}`}>
+                <BookLink>
+                  <Banner
+                    src={book.link}
+                    alt={book.title}
+                  />
+                </BookLink>
+              </Link>
+            </BookItem>
+          );
+        }
+        return null;
+      })}
     </BooksList>
   </div>
 );
