@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { TBookProps } from '../../types/bookProps';
 import Button from '../Common/Button';
-import { TBookProps } from './Book';
 
 const StyleWrapper = styled.div`
   padding: 44px 79px 40px 132px;
@@ -73,7 +72,7 @@ const PropsFooter = styled.div`
   line-height: 17px;
 `;
 
-const Props = ({ book }: TBookProps):React.ReactElement => (
+const BookProperties = ({ book }: TBookProps):React.ReactElement => (
   <StyleWrapper>
     <PropsHeader>
       <PropsTitle>
@@ -130,4 +129,4 @@ const Props = ({ book }: TBookProps):React.ReactElement => (
   </StyleWrapper>
 );
 
-export default Props;
+export default BookProperties;

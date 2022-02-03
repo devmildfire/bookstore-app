@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
-import { TBookProps } from './Book';
+import { TBookProps } from '../../types/bookProps';
 
 const Title = styled.h2`
   margin-bottom: 30px;
@@ -70,11 +70,7 @@ const ContactsItem = styled.li`
   }
 `;
 
-const ContactsLink = styled.a`
-
-`;
-
-const Author = ({ book }: TBookProps): ReactElement => (
+const BookAuthor = ({ book }: TBookProps): ReactElement => (
   <StyleWrapper>
     <Title>
       Об авторе
@@ -135,48 +131,53 @@ const Author = ({ book }: TBookProps): ReactElement => (
       </span>
       <ContactsList>
         <ContactsItem>
-          <ContactsLink
+          <a
             href='mailto:example@example.com'
             target='_blank'
+            rel='noreferrer'
           >
             <ReactSVG src='/email.svg' />
-          </ContactsLink>
+          </a>
         </ContactsItem>
         <ContactsItem>
-          <ContactsLink
+          <a
             href='http://instagram.com'
             target='_blank'
+            rel='noreferrer'
           >
             <ReactSVG src='/instagram.svg' />
-          </ContactsLink>
+          </a>
         </ContactsItem>
         <ContactsItem>
-          <ContactsLink
+          <a
             href='http://facebook.com'
             target='_blank'
+            rel='noreferrer'
           >
             <ReactSVG src='/facebook.svg' />
-          </ContactsLink>
+          </a>
         </ContactsItem>
         <ContactsItem>
-          <ContactsLink
+          <a
             href='http://t.me/username'
             target='_blank'
+            rel='noreferrer'
           >
             <ReactSVG src='/telegram.svg' />
-          </ContactsLink>
+          </a>
         </ContactsItem>
         <ContactsItem>
-          <ContactsLink
+          <a
             href='http://vk.com'
             target='_blank'
+            rel='noreferrer'
           >
             <ReactSVG src='/vk.svg' />
-          </ContactsLink>
+          </a>
         </ContactsItem>
       </ContactsList>
     </AuthorContacts>
   </StyleWrapper>
 );
 
-export default Author;
+export default BookAuthor;

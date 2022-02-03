@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import colors from '../../utils/colors';
-import { BooksData } from '../../types/api';
+import { TBookProps } from '../../types/bookProps';
 
 const StyleWrapper = styled.div`
   margin-bottom: 200px;
@@ -58,11 +58,7 @@ const BookDescrText = styled.div`
   }
 `;
 
-export type TBookProps = {
-  book: BooksData,
-}
-
-const Book = ({ book }: TBookProps): React.ReactElement => {
+const BookDescription = ({ book }: TBookProps): React.ReactElement => {
   const {
     title,
     author,
@@ -105,4 +101,4 @@ const Book = ({ book }: TBookProps): React.ReactElement => {
   );
 };
 
-export default Book;
+export default BookDescription;

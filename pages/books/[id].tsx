@@ -5,11 +5,11 @@ import Head from 'next/head';
 import styled from 'styled-components';
 
 import colors from '../../src/utils/colors';
-import Book from '../../src/components/BookPage/Book';
-import Props from '../../src/components/BookPage/Props';
-import Trailer from '../../src/components/BookPage/Trailer';
-import Author from '../../src/components/BookPage/Author';
-import Similar from '../../src/components/BookPage/Similar';
+import BookDescription from '../../src/components/BookPage/BookDescription';
+import BookProperties from '../../src/components/BookPage/BookProperties';
+import BookTrailer from '../../src/components/BookPage/BookTrailer';
+import BookAuthor from '../../src/components/BookPage/BookAuthor';
+import SimilarBooks from '../../src/components/BookPage/SimilarBooks';
 import getBookInfo from '../../src/utils/bookInfo';
 
 const StyleWrapper = styled.div`
@@ -44,11 +44,11 @@ const BookPage = (): React.ReactElement => {
       {book
       && (
         <>
-          <Book book={book} />
-          <Props book={book} />
-          <Trailer />
-          <Author book={book} />
-          <Similar book={book} />
+          <BookDescription book={book} />
+          <BookProperties book={book} />
+          <BookTrailer />
+          <BookAuthor book={book} />
+          <SimilarBooks />
         </>
       )}
     </StyleWrapper>

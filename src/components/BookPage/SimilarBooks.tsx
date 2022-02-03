@@ -2,9 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import colors from '../../utils/colors';
-import { TBookProps } from './Book';
 
-const StyleWrapper = styled.div``;
 const Title = styled.h2`
   margin-bottom: 50px;
   text-align: center;
@@ -19,7 +17,7 @@ const BooksList = styled.ul`
   display: flex;
   justify-content:space-between;
 `;
-const Book = styled.li``;
+const BookItem = styled.li``;
 const BookLink = styled.a`
   cursor: pointer;
 `;
@@ -28,23 +26,13 @@ const Banner = styled.img`
   height: 387px;
 `;
 
-const Similar = ({ book }: TBookProps): React.ReactElement => (
-  <StyleWrapper>
+const SimilarBooks = (): React.ReactElement => (
+  <div>
     <Title>
       Познайте также
     </Title>
     <BooksList>
-      <Book>
-        <Link href='/'>
-          <BookLink>
-            <Banner
-              src={book.banner}
-              alt=''
-            />
-          </BookLink>
-        </Link>
-      </Book>
-      <Book>
+      <BookItem>
         <Link href='/'>
           <BookLink>
             <Banner
@@ -53,8 +41,8 @@ const Similar = ({ book }: TBookProps): React.ReactElement => (
             />
           </BookLink>
         </Link>
-      </Book>
-      <Book>
+      </BookItem>
+      <BookItem>
         <Link href='/'>
           <BookLink>
             <Banner
@@ -63,8 +51,8 @@ const Similar = ({ book }: TBookProps): React.ReactElement => (
             />
           </BookLink>
         </Link>
-      </Book>
-      <Book>
+      </BookItem>
+      <BookItem>
         <Link href='/'>
           <BookLink>
             <Banner
@@ -73,8 +61,8 @@ const Similar = ({ book }: TBookProps): React.ReactElement => (
             />
           </BookLink>
         </Link>
-      </Book>
-      <Book>
+      </BookItem>
+      <BookItem>
         <Link href='/'>
           <BookLink>
             <Banner
@@ -83,9 +71,19 @@ const Similar = ({ book }: TBookProps): React.ReactElement => (
             />
           </BookLink>
         </Link>
-      </Book>
+      </BookItem>
+      <BookItem>
+        <Link href='/'>
+          <BookLink>
+            <Banner
+              src='/images/bookTitleDeleted.jpg'
+              alt=''
+            />
+          </BookLink>
+        </Link>
+      </BookItem>
     </BooksList>
-  </StyleWrapper>
+  </div>
 );
 
-export default Similar;
+export default SimilarBooks;

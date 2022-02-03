@@ -14,18 +14,24 @@ const Title = styled.h2`
   line-height: 68px;
 `;
 
-const TrailerVideo = styled.img``;
+const TrailerVideo = styled.iframe`
+  width: 100%;
+  height: 472px;
+`;
 
-const Trailer = (): React.ReactElement => (
+const BookTrailer = (): React.ReactElement => (
   <StyleWrapper>
     <Title>
       Буктрейлер
     </Title>
     <TrailerVideo
-      src='/images/trailerScreenShot.png'
-      alt='Trailer'
+      src='https://www.youtube.com/embed/RbE7vmnkWvU'
+      title='YouTube video player'
+      frameBorder='0'
+      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+      allowFullScreen
     />
   </StyleWrapper>
 );
 
-export default Trailer;
+export default BookTrailer;

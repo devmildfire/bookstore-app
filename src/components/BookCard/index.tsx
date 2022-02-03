@@ -9,7 +9,7 @@ import Counter from '../Common/Counter';
 
 const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g;
 
-export type BookCardProps = {
+type BookCardProps = {
   book: BooksData
 }
 
@@ -46,74 +46,78 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   }, [inCardCount]);
 
   return (
-    <StyledWrapper>
-      <div className='cover'>
-        <Link href='books' passHref>
-          <img
-            className='cardImage'
-            src={link}
-            alt='Book logo'
-          />
-        </Link>
-        <div className='description'>
-          <div className='descriptionText'>
-            {parsedDescription}
+    <Link href={`/books/${book.id}`} passHref>
+      <a href='fakeHref'>
+        <StyledWrapper>
+          <div className='cover'>
+            <Link href='books' passHref>
+              <img
+                className='cardImage'
+                src={link}
+                alt='BookDescription logo'
+              />
+            </Link>
+            <div className='description'>
+              <div className='descriptionText'>
+                {parsedDescription}
+              </div>
+              <div className='descriptionInfo'>
+                {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
+              </div>
+            </div>
           </div>
-          <div className='descriptionInfo'>
-            {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
+          <div
+            className='cardTitle'
+          >
+            {title}
           </div>
-        </div>
-      </div>
-      <div
-        className='cardTitle'
-      >
-        {title}
-      </div>
-      { author && (
-      <div
-        className='cardAuthor'
-      >
-        {author}
-      </div>
-      )}
-      {parsedAuthors && (
-      <div
-        className='cardAuthor'
-        dangerouslySetInnerHTML={{ __html: parsedAuthors }}
-      />
-      )}
-      <div className='cardInfo'>
-
-        <div
-          className='cardPrice'
-        >
-          {oldPrice && (
-          <span className='oldPrice'>
-            <del>{`${oldPrice}₽`}</del>
-          </span>
+          { author && (
+            <div
+              className='cardAuthor'
+            >
+              {author}
+            </div>
           )}
-          <span>{`${price}₽`}</span>
-        </div>
-        <ReactSVG
-          src='like.svg'
-          className={like ? 'liked' : 'like'}
-          onClick={() => setLike((prev) => !prev)}
-        />
-      </div>
-      {inCardCount === 0 ? (
-        <Button
-          text='Добавить в корзину'
-          onClick={addToCart}
-          className='cardButtonBuy'
-        />
-      ) : (
-        <Counter
-          value={inCardCount}
-          addToCart={addToCart}
-          removeFromCart={removeFromCart}
-        />
-      )}
-    </StyledWrapper>
+          {parsedAuthors && (
+            <div
+              className='cardAuthor'
+              dangerouslySetInnerHTML={{ __html: parsedAuthors }}
+            />
+          )}
+          <div className='cardInfo'>
+
+            <div
+              className='cardPrice'
+            >
+              {oldPrice && (
+                <span className='oldPrice'>
+                  <del>{`${oldPrice}₽`}</del>
+                </span>
+              )}
+              <span>{`${price}₽`}</span>
+            </div>
+            <ReactSVG
+              src='like.svg'
+              className={like ? 'liked' : 'like'}
+              onClick={() => setLike((prev) => !prev)}
+            />
+          </div>
+          {inCardCount === 0 ? (
+            <Button
+              text='Добавить в корзину'
+              onClick={addToCart}
+              className='cardButtonBuy'
+            />
+          ) : (
+            <Counter
+              value={inCardCount}
+              addToCart={addToCart}
+              removeFromCart={removeFromCart}
+            />
+          )}
+        </StyledWrapper>
+      </a>
+    </Link>
   );
 };
 
