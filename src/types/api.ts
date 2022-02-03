@@ -10,5 +10,6 @@ export interface BooksData {
   oldPrice: number | null;
   link: string;
   banner: string;
+  trailerSrc: string;
   description: string[];
 }

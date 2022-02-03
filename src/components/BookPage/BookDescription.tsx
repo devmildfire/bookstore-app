@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import colors from '../../utils/colors';
 import { TBookProps } from '../../types/bookProps';
 
-const StyleWrapper = styled.div`
+const StyleWrapper = styled.section`
   margin-bottom: 135px;
   display: flex;
   justify-content: space-between;  

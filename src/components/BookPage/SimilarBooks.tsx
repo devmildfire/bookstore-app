@@ -22,16 +22,14 @@ const BooksList = styled.ul`
 const BookItem = styled.li`
   flex: 0 0 18.5%;  
 `;
-const BookLink = styled.a`
-  cursor: pointer;
-`;
+
 const Banner = styled.img`
   width: 100%;
   height: 387px;
 `;
 
 const SimilarBooks = (): React.ReactElement => (
-  <div>
+  <section>
     <Title>
       Познайте также
     </Title>
@@ -41,12 +39,12 @@ const SimilarBooks = (): React.ReactElement => (
           return (
             <BookItem>
               <Link href={`/books/${book.id}`}>
-                <BookLink>
+                <a href='fakeHref'>
                   <Banner
                     src={book.link}
                     alt={book.title}
                   />
-                </BookLink>
+                </a>
               </Link>
             </BookItem>
           );
@@ -54,7 +52,7 @@ const SimilarBooks = (): React.ReactElement => (
         return null;
       })}
     </BooksList>
-  </div>
+  </section>
 );
 
 export default SimilarBooks;

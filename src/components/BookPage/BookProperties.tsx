@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
 import Button from '../Common/Button';
 import bookPropsList from '../../utils/bookPropertiesData';
+import colors from '../../utils/colors';
 
-const StyleWrapper = styled.div`
+const StyleWrapper = styled.section`
   padding: 44px 79px 40px 132px;
   margin-bottom: 135px;
-  border: 1px solid #930000;
+  border: 1px solid ${colors.red};
   box-sizing: border-box;
 `;
 

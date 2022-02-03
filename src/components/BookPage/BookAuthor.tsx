@@ -2,7 +2,12 @@ import React, { ReactElement } from 'react';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
+import colors from '../../utils/colors';
 import contactIconsSrc from '../../utils/contactIconsData';
+
+const StyleWrapper = styled.section`
+  margin-bottom: 105px;
+`;
 
 const Title = styled.h2`
   margin-bottom: 30px;
@@ -11,10 +16,6 @@ const Title = styled.h2`
   font-weight: 900;
   font-size: 57px;
   line-height: 68px;
-`;
-
-const StyleWrapper = styled.div`
-  margin-bottom: 105px;
 `;
 
 const AuthorInfo = styled.div`
@@ -68,6 +69,17 @@ const ContactsList = styled.ul`
 const ContactsItem = styled.li`
   &:not(:last-child) {
     margin-right: 30px;
+  }
+`;
+
+const ContactLink = styled.a`
+  & svg path {
+    transition: fill .3s ease-in-out;
+  }
+  
+  &:hover svg path {
+    fill: ${colors.redBase};
+    transition: fill .3s ease-in-out;
   }
 `;
 
@@ -133,13 +145,13 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
       <ContactsList>
         {contactIconsSrc.map((iconSrc) => (
           <ContactsItem>
-            <a
+            <ContactLink
               href='fakeHref'
               target='_blank'
               rel='noreferrer'
             >
               <ReactSVG src={iconSrc} />
-            </a>
+            </ContactLink>
           </ContactsItem>
         ))}
       </ContactsList>

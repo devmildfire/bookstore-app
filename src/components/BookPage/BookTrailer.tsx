@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import { TBookProps } from '../../types/bookProps';
 
-const StyleWrapper = styled.div`
+const StyleWrapper = styled.section`
   margin-bottom: 200px;
 `;
 
@@ -30,15 +31,15 @@ const TrailerVideo = styled.iframe`
   height: 100%;
 `;
 
-const BookTrailer = (): React.ReactElement => (
+const BookTrailer = ({ book }: TBookProps): React.ReactElement => (
   <StyleWrapper>
     <Title>
       Буктрейлер
     </Title>
     <TrailerContainer>
       <TrailerVideo
-        src='https://www.youtube.com/embed/RbE7vmnkWvU'
-        title='Буктрейлер'
+        src={book.trailerSrc}
+        title={book.title}
         frameBorder='0'
         allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
         allowFullScreen

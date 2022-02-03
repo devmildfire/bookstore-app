@@ -12,7 +12,7 @@ import BookAuthor from '../../src/components/BookPage/BookAuthor';
 import SimilarBooks from '../../src/components/BookPage/SimilarBooks';
 import getBookInfo from '../../src/utils/bookInfo';
 
-const StyleWrapper = styled.div`
+const StyleWrapper = styled.main`
   max-width: 1394px;
   padding: 30px 0 166px;
   margin: 0 auto;
@@ -46,7 +46,7 @@ const BookPage = (): React.ReactElement => {
         <>
           <BookDescription book={book} />
           <BookProperties book={book} />
-          <BookTrailer />
+          <BookTrailer book={book} />
           <BookAuthor book={book} />
           <SimilarBooks />
         </>
