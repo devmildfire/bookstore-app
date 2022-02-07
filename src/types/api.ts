@@ -1,5 +1,5 @@
 export interface BooksData {
-  id: number;
+  id: string;
   title: string;
   author: string | null;
   authors: string[] | null;
@@ -10,5 +10,6 @@ export interface BooksData {
   oldPrice: number | null;
   link: string;
   banner: string;
+  trailerSrc: string;
   description: string[];
 }

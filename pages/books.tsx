@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-
 import styled from 'styled-components';
 import BookCard from '../src/components/BookCard';
 import booksData from '../src/utils/booksData';
@@ -39,7 +38,6 @@ const StyleWrapper = styled.div`
     font-size: 60px;
     text-transform: uppercase;
     line-height: 72px;
-
     color: #DCDCDC;
   }
 

@@ -42,7 +42,7 @@ const Slider = React.memo(({ books }: SliderProps) => {
               <img
                 className='sliderImage'
                 src={book.banner}
-                alt='Book logo'
+                alt='BookDescription logo'
               />
             </SwiperSlide>
           ))}

@@ -2,8 +2,8 @@ const Colors = {
   black: '#18191b',
   blackBase: '#121212',
 
+  gray5: '#e0e0e0',
   grey: '#DCDCDC',
-
   grey05: '#fafafa',
   grey10: '#f4f4f4',
   grey15: '#e9e9e9',
@@ -15,8 +15,10 @@ const Colors = {
   grey85: '#26292d',
 
   redBase: '#A10202',
+  red: '#930000',
 
   white: '#ffffff',
+  whiteBase: '#dcdcdc',
 };
 
 export default Colors;

@@ -17,6 +17,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [like, setLike] = useState(false);
   const [inCardCount, setInCardCount] = useState(0);
   const {
+    id,
     link,
     title,
     genre,
@@ -48,12 +49,14 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   return (
     <StyledWrapper>
       <div className='cover'>
-        <Link href='books/123' passHref>
-          <img
-            className='cardImage'
-            src={link}
-            alt='Book logo'
-          />
+        <Link href={`/books/${id}`} passHref>
+          <a href='fakeHref'>
+            <img
+              className='cardImage'
+              src={link}
+              alt='BookDescription logo'
+            />
+          </a>
         </Link>
         <div className='description'>
           <div className='descriptionText'>
@@ -70,17 +73,17 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
         {title}
       </div>
       { author && (
-      <div
-        className='cardAuthor'
-      >
-        {author}
-      </div>
+        <div
+          className='cardAuthor'
+        >
+          {author}
+        </div>
       )}
       {parsedAuthors && (
-      <div
-        className='cardAuthor'
-        dangerouslySetInnerHTML={{ __html: parsedAuthors }}
-      />
+        <div
+          className='cardAuthor'
+          dangerouslySetInnerHTML={{ __html: parsedAuthors }}
+        />
       )}
       <div className='cardInfo'>
 
@@ -88,9 +91,9 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
           className='cardPrice'
         >
           {oldPrice && (
-          <span className='oldPrice'>
-            <del>{`${oldPrice}₽`}</del>
-          </span>
+            <span className='oldPrice'>
+              <del>{`${oldPrice}₽`}</del>
+            </span>
           )}
           <span>{`${price}₽`}</span>
         </div>

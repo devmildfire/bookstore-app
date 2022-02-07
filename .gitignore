@@ -36,5 +36,5 @@ yarn-error.log*
 #history
 /.history/
 
-#idea
-/.idea/
+# .idea
+/.idea

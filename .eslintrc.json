@@ -36,6 +36,7 @@
           "tsx": "never"
         }
       ],
-      "jsx-quotes": ["error", "prefer-single"]
+      "jsx-quotes": ["error", "prefer-single"],
+      "linebreak-style": "off"
     }
 }
