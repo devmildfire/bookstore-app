@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 // eslint-disable-next-line import/no-unresolved
 import 'swiper/css';
 import styled from 'styled-components';
+import breakPoints from '../../utils/breakPoints';
 import booksData from '../../utils/booksData';
 
 const params = {
@@ -22,12 +23,12 @@ const Title = styled.h2`
   font-size: 44px;
   line-height: 53px;
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     font-size: 40px;
     line-height: 48px;
   }
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     font-size: 24px;
     line-height: 28px;
   }
@@ -44,7 +45,7 @@ const BooksList = styled.ul`
   }
   
   .mySwiper {
-    @media screen and (max-width: 576px) {
+    @media ${breakPoints.sm} {
       margin: 0 -60px;
     }
   }
@@ -58,15 +59,15 @@ const Banner = styled.img`
   width: 100%;
   height: 387px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     height: 288.5px;
   }
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     height: 228.5px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     width: 120px;
     height: 190px;
   }
@@ -99,25 +100,8 @@ const SimilarBooks = (): React.ReactElement => {
         Познайте также
       </Title>
       <BooksList>
-        {!isSliderActive && booksData.map((book, index) => {
-          if (index < 5) {
-            return (
-              <BookItem>
-                <Link href={`/books/${book.id}`}>
-                  <a href='fakeHref'>
-                    <Banner
-                      src={book.link}
-                      alt={book.title}
-                    />
-                  </a>
-                </Link>
-              </BookItem>
-            );
-          }
-          return null;
-        })}
         {isSliderActive
-          && (
+          ? (
             <Swiper
               className='mySwiper'
               {...params}
@@ -140,7 +124,24 @@ const SimilarBooks = (): React.ReactElement => {
                 return null;
               })}
             </Swiper>
-          )}
+          )
+          : booksData.map((book, index) => {
+            if (index < 5) {
+              return (
+                <BookItem>
+                  <Link href={`/books/${book.id}`}>
+                    <a href='fakeHref'>
+                      <Banner
+                        src={book.link}
+                        alt={book.title}
+                      />
+                    </a>
+                  </Link>
+                </BookItem>
+              );
+            }
+            return null;
+          })}
       </BooksList>
     </section>
   );

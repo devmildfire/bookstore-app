@@ -4,6 +4,7 @@ import { TBookProps } from '../../types/bookProps';
 import Button from '../Common/Button';
 import bookPropsList from '../../utils/bookPropertiesData';
 import colors from '../../utils/colors';
+import breakPoints from '../../utils/breakPoints';
 
 const StyleWrapper = styled.section`
   padding: 44px 79px 40px 132px;
@@ -11,24 +12,24 @@ const StyleWrapper = styled.section`
   border: 1px solid ${colors.red};
   box-sizing: border-box;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     padding: 44px 24px 40px 60px;
     margin-bottom: 123px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     padding: 33px 19px 40px 30px;
     margin-bottom: 100px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     padding: 18px 19px 13px;
     margin-bottom: 70px;
   } 
 `;
 
 const InnerContainer = styled.div`
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     max-width: 250px;
     margin: 0 auto;
   }
@@ -40,17 +41,17 @@ const PropsHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     max-width: 777px;
     flex-wrap: wrap;
     margin-bottom: 35px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     max-width: 671px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     max-width: 243px;
     margin: 0 auto 21px;
   } 
@@ -61,12 +62,12 @@ const PropsTitle = styled.div`
   font-size: 40px;  
   line-height: 49px;  
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     font-size: 30px;
     line-height: 36px;
   } 
   
-   @media screen and (max-width: 576px) {
+   @media ${breakPoints.sm} {
     width: 100%;
     margin-bottom: 4px;
     font-size: 20px;
@@ -77,7 +78,7 @@ const PropsTitle = styled.div`
 const PropsBody = styled.div`
   display: flex;
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     flex-direction: column;
   }
 `;
@@ -87,12 +88,12 @@ const PropsPrice = styled.div`
   font-size: 40px;
   line-height: 49px;
   
-   @media screen and (max-width: 1024px) {
+   @media ${breakPoints.lg} {
     font-size: 30px;
     line-height: 36px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     font-size: 20px;
     line-height: 24px;
   } 
@@ -103,14 +104,14 @@ const PropsDate = styled.div`
   font-size: 20px;
   line-height: 24px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-top: 14px;
     width: 100%;
     font-size: 20px;
     line-height: 24px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     width: auto;
     margin-top: 0;
     font-size: 12px;
@@ -129,7 +130,7 @@ const PropsBtnBlock = styled.div`
     font-size: 16px;
     line-height: 20px;
     
-    @media screen and (max-width: 576px) {
+    @media ${breakPoints.sm} {
       width: 250px;
       height: 40px;
     } 
@@ -139,15 +140,15 @@ const PropsBtnBlock = styled.div`
     margin-bottom: 20px;
   }
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-right: 44px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     margin-right: 35px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin: 0 auto 5px;
     order: 1;
   } 
@@ -156,12 +157,12 @@ const PropsBtnBlock = styled.div`
 const PropsItems = styled.div`
   width: 100%;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     display: flex;
     flex-direction: column;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 24px;
   } 
 `;
@@ -175,27 +176,27 @@ const PropsItem = styled.div`
     margin-bottom: 15px;
     display: block;  
     
-    @media screen and (max-width: 576px) {    
+    @media ${breakPoints.sm} {    
       margin-bottom: 7px;
     }  
   }
   
   &:last-child {
-    @media screen and (max-width: 1440px) {
+    @media ${breakPoints.xl} {
       order: -1;   
       margin-bottom: 30px;
     }
     
-    @media screen and (max-width: 1024px) {
+    @media ${breakPoints.lg} {
       margin-bottom: 15px;
     }
     
-    @media screen and (max-width: 576px) {
+    @media ${breakPoints.sm} {
       margin-bottom: 10px;
     }
   }
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 15px; 
     
     &:nth-child(2) {
@@ -203,12 +204,12 @@ const PropsItem = styled.div`
     }     
   }  
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     font-size: 12px;
     line-height: 14px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 10px; 
     
     &:nth-child(2) {
@@ -222,7 +223,7 @@ const PropsFooter = styled.div`
   font-size: 14px;
   line-height: 17px;
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     font-size: 10px;
     line-height: 12px;
   }

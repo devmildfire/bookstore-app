@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import colors from '../../utils/colors';
+import breakPoints from '../../utils/breakPoints';
 import { TBookProps } from '../../types/bookProps';
 
 const StyleWrapper = styled.section`
@@ -8,11 +9,11 @@ const StyleWrapper = styled.section`
   display: flex;
   justify-content: space-between;  
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     margin-bottom: 70px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     flex-direction: column;
     align-items: center;
   }
@@ -23,23 +24,23 @@ const BookImage = styled.img`
   width: 510px;
   height: 810px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     width: 485px;
     height: 740px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     width: 312px;
     height: 480px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     width: 260px;
     height: 365px;
     margin-right: 20px;
   }
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-right: 0;
     margin-bottom: 20px;    
   }
@@ -53,22 +54,22 @@ const BookTitle = styled.h1`
   line-height: 65%;
   color: ${colors.gray5};
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 57px;
     font-size: 60px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     margin-bottom: 45px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     margin-bottom: 15px;
     font-size: 24px;
     line-height: 29px;
   }
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     text-align: center;
   }
 `;
@@ -79,12 +80,12 @@ const BookAuthor = styled.div`
   font-size: 30px;
   line-height: 37px;
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     font-size: 20px;
     line-height: 24px;
   }  
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     text-align: center;
     margin-bottom: 5px;
   } 
@@ -98,19 +99,19 @@ const BookThesis = styled.div`
   line-height: 34px;
   color: ${colors.red};
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 23px;
     font-size: 24px;
     line-height: 29px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     margin-bottom: 17px;
     font-size: 18px;
     line-height: 22px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     font-size: 14px;
     line-height: 17px;
   } 
@@ -122,15 +123,15 @@ const BookInfo = styled.div`
   font-size: 14px;
   line-height: 17px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 45px;
   } 
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     margin-bottom: 25px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     text-align: center;
     margin-bottom: 30px;
   } 
@@ -144,18 +145,18 @@ const BookDescrText = styled.div`
   .bookDescrParagraph:not(last-child) {
     margin-bottom: 20px;    
     
-    @media screen and (max-width: 1440px) {
+    @media ${breakPoints.xl} {
       margin-bottom: 10px;
     } 
   }
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     max-width: 474px;
     font-size: 16px;
     line-height: 19.5px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     
   } 
   

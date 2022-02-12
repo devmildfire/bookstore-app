@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 import Head from 'next/head';
 import styled from 'styled-components';
-
 import colors from '../../src/utils/colors';
+import breakPoints from '../../src/utils/breakPoints';
 import BookDescription from '../../src/components/BookPage/BookDescription';
 import BookProperties from '../../src/components/BookPage/BookProperties';
 import BookTrailer from '../../src/components/BookPage/BookTrailer';
@@ -18,21 +18,21 @@ const StyleWrapper = styled.main`
   margin: 0 auto;
   color: ${colors.whiteBase};
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     max-width: 1040px;
     padding: 30px 0 101px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     max-width: 830px;
     padding: 41px 0 87px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     padding: 20px 16px 71px;    
   } 
   
-  @media screen and (max-width: 576px) {    
+  @media ${breakPoints.sm} {    
     overflow: hidden;
   }
 `;

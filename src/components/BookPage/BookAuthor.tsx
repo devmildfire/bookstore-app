@@ -3,12 +3,13 @@ import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
 import colors from '../../utils/colors';
+import breakPoints from '../../utils/breakPoints';
 import contactIconsSrc from '../../utils/contactIconsData';
 
 const StyleWrapper = styled.section`
   margin-bottom: 105px;
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 70px;
   } 
 `;
@@ -21,16 +22,16 @@ const Title = styled.h2`
   font-size: 57px;
   line-height: 68px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 26px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     font-size: 40px;
     line-height: 48px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 30px;
     font-size: 24px;
     line-height: 28px;
@@ -42,16 +43,16 @@ const AuthorInfo = styled.div`
   margin-bottom: 40px;
   display: flex;
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     margin-bottom: 20px;
   } 
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     flex-direction: column;
     align-items: center;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 10px;
   }
 `;
@@ -59,17 +60,17 @@ const AuthorInfo = styled.div`
 const AuthorFoto = styled.img`
   margin-right: 40px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     width: 416px;
     height: 294px;
   }
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     margin-right: 0;
     margin-bottom: 20px;
   }
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     width: 288px;
     height: 200px;
   } 
@@ -84,17 +85,17 @@ const AuthorProps = styled.div`
   margin-bottom: 40px;
   font-weight: 700; 
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 25px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     margin-bottom: 19px;
     font-size: 18px;
     line-height: 22px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 15px;
     font-size: 16px;
     line-height: 20px;
@@ -113,19 +114,19 @@ const AuthorSpeech = styled.p`
   font-style: italic;
   font-weight: 400;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     max-width: 558px;
     font-size: 20px;
     line-height: 24px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     max-width: 406px;
     font-size: 16px;
     line-height: 19.5px;
   } 
   
-  @media screen and (max-width: 830px) {
+  @media ${breakPoints.md} {
     font-size: 15px;
   } 
 `;
@@ -146,7 +147,7 @@ const RedQuote = styled.span`
   line-height: 128px;
   color: ${colors.red};
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     top: -30px;
     right: -43px;
     font-size: 65px;
@@ -157,7 +158,7 @@ const RedQuote = styled.span`
     right: -8px;
   }
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     right: -58px;
     font-size: 51px;
     line-height: 62px;
@@ -173,16 +174,16 @@ const AuthorAbout = styled.p`
   font-size: 24px;
   line-height: 29px;
   
-  @media screen and (max-width: 1440px) {
+  @media ${breakPoints.xl} {
     margin-bottom: 33px;
   } 
   
-  @media screen and (max-width: 1024px) {
+  @media ${breakPoints.lg} {
     font-size: 16px;
     line-height: 19.5px;
   } 
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     margin-bottom: 22px;
   } 
 `;
@@ -197,13 +198,13 @@ const AuthorContacts = styled.div`
     margin-right: 25px;
     font-weight: 700;
     
-    @media screen and (max-width: 576px) {
+    @media ${breakPoints.sm} {
       font-size: 16px;
       line-height: 19.5px;
     } 
   }
   
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.sm} {
     & svg {
       width: 16.67px;
       height: 13.33px;
@@ -220,7 +221,7 @@ const ContactsItem = styled.li`
   &:not(:last-child) {
     margin-right: 30px;
     
-    @media screen and (max-width: 576px) {
+    @media ${breakPoints.sm} {
       margin-right: 21px;
     }
   }   
