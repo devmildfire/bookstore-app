@@ -7,6 +7,10 @@ import contactIconsSrc from '../../utils/contactIconsData';
 
 const StyleWrapper = styled.section`
   margin-bottom: 105px;
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 70px;
+  } 
 `;
 
 const Title = styled.h2`
@@ -16,37 +20,129 @@ const Title = styled.h2`
   font-weight: 900;
   font-size: 57px;
   line-height: 68px;
+  
+  @media screen and (max-width: 1440px) {
+    margin-bottom: 26px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    font-size: 40px;
+    line-height: 48px;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 30px;
+    font-size: 24px;
+    line-height: 28px;
+  } 
 `;
 
 const AuthorInfo = styled.div`
   margin-bottom: 40px;
   display: flex;
+  
+  @media screen and (max-width: 1024px) {
+    margin-bottom: 20px;
+  } 
+  
+  @media screen and (max-width: 830px) {
+    flex-direction: column;
+    align-items: center;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 10px;
+  }
 `;
 
 const AuthorFoto = styled.img`
   margin-right: 40px;
+  
+  @media screen and (max-width: 1440px) {
+    width: 416px;
+    height: 294px;
+  }
+  
+  @media screen and (max-width: 830px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  @media screen and (max-width: 576px) {
+    width: 288px;
+    height: 200px;
+  } 
 `;
 
 const AuthorDescr = styled.div`
   font-size: 24px;
-  line-height: 29px;
+  line-height: 29px;  
 `;
 
 const AuthorProps = styled.div`
   margin-bottom: 40px;
-  font-weight: 700;  
+  font-weight: 700; 
+  
+  @media screen and (max-width: 1440px) {
+    margin-bottom: 25px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    margin-bottom: 19px;
+    font-size: 18px;
+    line-height: 22px;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 400;
+    
+    & span {
+      display: block;
+      margin-top: 5px;
+    }
+  }
 `;
 
 const AuthorSpeech = styled.p`
   max-width: 661px;
   font-style: italic;
   font-weight: 400;
+  
+  @media screen and (max-width: 1440px) {
+    font-size: 20px;
+    line-height: 24px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    font-size: 16px;
+    line-height: 19.5px;
+  } 
+  
+  @media screen and (max-width: 830px) {
+    font-size: 15px;
+  } 
 `;
 
 const AuthorAbout = styled.p`
   margin-bottom: 54px;
   font-size: 24px;
   line-height: 29px;
+  
+  @media screen and (max-width: 1440px) {
+    margin-bottom: 33px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    font-size: 16px;
+    line-height: 19.5px;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 22px;
+  } 
 `;
 
 const AuthorContacts = styled.div`
@@ -58,7 +154,19 @@ const AuthorContacts = styled.div`
   span {
     margin-right: 25px;
     font-weight: 700;
+    
+    @media screen and (max-width: 576px) {
+      font-size: 16px;
+      line-height: 19.5px;
+    } 
   }
+  
+  @media screen and (max-width: 576px) {
+    & svg {
+      width: 16.67px;
+      height: 13.33px;
+    }
+  } 
 `;
 
 const ContactsList = styled.ul`
@@ -69,6 +177,11 @@ const ContactsList = styled.ul`
 const ContactsItem = styled.li`
   &:not(:last-child) {
     margin-right: 30px;
+    
+    @media screen and (max-width: 576px) {
+      margin-right: 21px;
+    }
+  } 
   }
 `;
 
@@ -101,7 +214,9 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
               {`${name} `}
             </span>
           ))}
-          | Аскер | 24.03.1984
+          <span>
+            | Аскер | 24.03.1984
+          </span>
         </AuthorProps>
         <AuthorSpeech>
           «Мне всегда нравилось представлять себя кем-то другим:

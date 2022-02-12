@@ -18,17 +18,19 @@ const StyleWrapper = styled.main`
   margin: 0 auto;
   color: ${colors.whiteBase};
   
-  .propsBtn {
-    margin: 0;
-    width: 300px;
-    height: 70px;
-    font-size: 16px;
-    line-height: 20px;
+  @media screen and (max-width: 1440px) {
+    max-width: 1040px;
+    padding: 30px 0 101px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    max-width: 830px;
+    padding: 41px 0 87px;
   }
   
-  .propsBtn:last-child {
-    margin-bottom: 20px;
-  }
+  @media screen and (max-width: 830px) {
+    padding: 20px 16px 71px;
+  } 
 `;
 
 const BookPage = (): React.ReactElement => {

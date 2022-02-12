@@ -3,7 +3,15 @@ import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
 
 const StyleWrapper = styled.section`
-  margin-bottom: 200px;
+  margin-bottom: 130px;
+  
+  @media screen and (max-width: 1024px) {
+    margin-bottom: 100px;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    margin-bottom: 70px;
+  } 
 `;
 
 const Title = styled.h2`
@@ -13,6 +21,21 @@ const Title = styled.h2`
   font-weight: 900;
   font-size: 57px;
   line-height: 68px;
+  
+  @media screen and (max-width: 1440px) {
+    margin-bottom: 26px;
+  } 
+  
+  @media screen and (max-width: 1024px) {
+    margin-bottom: 30px;
+    font-size: 40px;
+    line-height: 48px;
+  } 
+  
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
+    line-height: 28px;
+  } 
 `;
 
 const TrailerContainer = styled.div`

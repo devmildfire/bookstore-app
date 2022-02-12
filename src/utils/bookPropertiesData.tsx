@@ -2,9 +2,32 @@ import React from 'react';
 import styled from 'styled-components';
 
 const ReadersList = styled.ul`
-  margin-top: 20px;
   display: flex;
   justify-content:space-between;
+  
+  @media screen and (max-width: 1440px) {
+    flex-wrap: wrap;
+  } 
+  
+  @media screen and (max-width: 576px) {    
+    flex-direction: column; 
+  }
+`;
+
+const ReadersItem = styled.li`
+  margin-right: 15px;
+  
+  @media screen and (max-width: 1440px) {    
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+  
+  @media screen and (max-width: 1440px) {    
+    &:not(:last-child) {
+      margin-bottom: 4px;
+    }
+  }
 `;
 
 const readersList = [
@@ -23,9 +46,9 @@ const bookPropsList = [
       </span>
       <ReadersList>
         {readersList.map((reader) => (
-          <li>
+          <ReadersItem>
             {reader}
-          </li>
+          </ReadersItem>
         ))}
       </ReadersList>
     </>
