@@ -42,6 +42,12 @@ const BooksList = styled.ul`
   .swiper-slide {
     text-align: center;
   }
+  
+  .mySwiper {
+    @media screen and (max-width: 576px) {
+      margin: 0 -60px;
+    }
+  }
 `;
 
 const BookItem = styled.li`

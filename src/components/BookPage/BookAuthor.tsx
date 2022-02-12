@@ -38,6 +38,7 @@ const Title = styled.h2`
 `;
 
 const AuthorInfo = styled.div`
+  position: relative;
   margin-bottom: 40px;
   display: flex;
   
@@ -107,16 +108,19 @@ const AuthorProps = styled.div`
 `;
 
 const AuthorSpeech = styled.p`
+  position: relative;
   max-width: 661px;
   font-style: italic;
   font-weight: 400;
   
   @media screen and (max-width: 1440px) {
+    max-width: 558px;
     font-size: 20px;
     line-height: 24px;
   } 
   
   @media screen and (max-width: 1024px) {
+    max-width: 406px;
     font-size: 16px;
     line-height: 19.5px;
   } 
@@ -124,6 +128,44 @@ const AuthorSpeech = styled.p`
   @media screen and (max-width: 830px) {
     font-size: 15px;
   } 
+`;
+
+const Quotes = styled.span`
+  @media screen and (min-width: 960px) {
+    display: none;
+  } 
+`;
+
+const RedQuote = styled.span`
+  position: absolute;
+  right: -126px;
+  top: -40px;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 105px;
+  line-height: 128px;
+  color: ${colors.red};
+  
+  @media screen and (max-width: 1440px) {
+    top: -30px;
+    right: -43px;
+    font-size: 65px;
+    line-height: 80px;
+  }
+  
+  @media screen and (max-width: 1100px) {
+    right: -8px;
+  }
+  
+  @media screen and (max-width: 1024px) {
+    right: -58px;
+    font-size: 51px;
+    line-height: 62px;
+  }
+  
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
 `;
 
 const AuthorAbout = styled.p`
@@ -181,8 +223,7 @@ const ContactsItem = styled.li`
     @media screen and (max-width: 576px) {
       margin-right: 21px;
     }
-  } 
-  }
+  }   
 `;
 
 const ContactLink = styled.a`
@@ -208,7 +249,12 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
       />
       <AuthorDescr>
         <AuthorProps>
-          {book.author && book.author}
+          {book.author
+          && (
+            <span>
+              {`${book.author} `}
+            </span>
+          )}
           {book.authors && book.authors.map((name) => (
             <span>
               {`${name} `}
@@ -219,7 +265,11 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
           </span>
         </AuthorProps>
         <AuthorSpeech>
-          «Мне всегда нравилось представлять себя кем-то другим:
+          <RedQuote>
+            &#187;
+          </RedQuote>
+          <Quotes>&#171;</Quotes>
+          Мне всегда нравилось представлять себя кем-то другим:
           собакой, тюльпаном, соседом дядей Васей, путешественницей к другим планетам.
           В детстве я так играла. Мне хотелось прожить много разных жизней,
           попробовать много разных занятий. Писательство —
@@ -227,6 +277,7 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
           Можно оказаться там, куда тебе не добраться физически,
           исследовать то, к чему у тебя нет доступа.
           И даже то, чего не существует. Я просто продолжаю играть, вот и всё»
+          <Quotes>&#187;</Quotes>
         </AuthorSpeech>
       </AuthorDescr>
     </AuthorInfo>

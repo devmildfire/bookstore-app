@@ -29,8 +29,12 @@ const StyleWrapper = styled.main`
   }
   
   @media screen and (max-width: 830px) {
-    padding: 20px 16px 71px;
+    padding: 20px 16px 71px;    
   } 
+  
+  @media screen and (max-width: 576px) {    
+    overflow: hidden;
+  }
 `;
 
 const BookPage = (): React.ReactElement => {
