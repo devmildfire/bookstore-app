@@ -40,6 +40,7 @@ const ButtonWrap = styled.div`
 
     background: transparent;
     border: 1px solid #FFFFFF;
+    border-radius: 4px;
     cursor: pointer;
     transition: all .2s ease-out;
 

@@ -129,6 +129,7 @@ const StyleWrapper = styled.div`
       height: 50px;
       background: transparent;
       border: 1px solid #DCDCDC;
+      border-radius: 4px;
       color: #DCDCDC;
       transition: all .2s ease-out;
 
