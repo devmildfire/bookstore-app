@@ -3,10 +3,15 @@ import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 import { TBookProps } from '../../types/bookProps';
 import colors from '../../utils/colors';
+import breakPoints from '../../utils/breakPoints';
 import contactIconsSrc from '../../utils/contactIconsData';
 
 const StyleWrapper = styled.section`
   margin-bottom: 105px;
+  
+  @media ${breakPoints.sm} {
+    margin-bottom: 70px;
+  } 
 `;
 
 const Title = styled.h2`
@@ -16,37 +21,171 @@ const Title = styled.h2`
   font-weight: 900;
   font-size: 57px;
   line-height: 68px;
+  
+  @media ${breakPoints.xl} {
+    margin-bottom: 26px;
+  } 
+  
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+    line-height: 48px;
+  } 
+  
+  @media ${breakPoints.sm} {
+    margin-bottom: 30px;
+    font-size: 24px;
+    line-height: 28px;
+  } 
 `;
 
 const AuthorInfo = styled.div`
+  position: relative;
   margin-bottom: 40px;
   display: flex;
+  
+  @media ${breakPoints.lg} {
+    margin-bottom: 20px;
+  } 
+  
+  @media ${breakPoints.md} {
+    flex-direction: column;
+    align-items: center;
+  } 
+  
+  @media ${breakPoints.sm} {
+    margin-bottom: 10px;
+  }
 `;
 
 const AuthorFoto = styled.img`
   margin-right: 40px;
+  
+  @media ${breakPoints.xl} {
+    width: 416px;
+    height: 294px;
+  }
+  
+  @media ${breakPoints.md} {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  @media ${breakPoints.sm} {
+    width: 288px;
+    height: 200px;
+  } 
 `;
 
 const AuthorDescr = styled.div`
   font-size: 24px;
-  line-height: 29px;
+  line-height: 29px;  
 `;
 
 const AuthorProps = styled.div`
   margin-bottom: 40px;
-  font-weight: 700;  
+  font-weight: 700; 
+  
+  @media ${breakPoints.xl} {
+    margin-bottom: 25px;
+  } 
+  
+  @media ${breakPoints.lg} {
+    margin-bottom: 19px;
+    font-size: 18px;
+    line-height: 22px;
+  } 
+  
+  @media ${breakPoints.sm} {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 400;
+    
+    & span {
+      display: block;
+      margin-top: 5px;
+    }
+  }
 `;
 
 const AuthorSpeech = styled.p`
+  position: relative;
   max-width: 661px;
   font-style: italic;
   font-weight: 400;
+  
+  @media ${breakPoints.xl} {
+    max-width: 558px;
+    font-size: 20px;
+    line-height: 24px;
+  } 
+  
+  @media ${breakPoints.lg} {
+    max-width: 406px;
+    font-size: 16px;
+    line-height: 19.5px;
+  } 
+  
+  @media ${breakPoints.md} {
+    font-size: 15px;
+  } 
+`;
+
+const Quotes = styled.span`
+  @media screen and (min-width: 960px) {
+    display: none;
+  } 
+`;
+
+const RedQuote = styled.span`
+  position: absolute;
+  right: -126px;
+  top: -40px;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 105px;
+  line-height: 128px;
+  color: ${colors.red};
+  
+  @media ${breakPoints.xl} {
+    top: -30px;
+    right: -43px;
+    font-size: 65px;
+    line-height: 80px;
+  }
+  
+  @media screen and (max-width: 1100px) {
+    right: -8px;
+  }
+  
+  @media ${breakPoints.lg} {
+    right: -58px;
+    font-size: 51px;
+    line-height: 62px;
+  }
+  
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
 `;
 
 const AuthorAbout = styled.p`
   margin-bottom: 54px;
   font-size: 24px;
   line-height: 29px;
+  
+  @media ${breakPoints.xl} {
+    margin-bottom: 33px;
+  } 
+  
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+    line-height: 19.5px;
+  } 
+  
+  @media ${breakPoints.sm} {
+    margin-bottom: 22px;
+  } 
 `;
 
 const AuthorContacts = styled.div`
@@ -58,7 +197,19 @@ const AuthorContacts = styled.div`
   span {
     margin-right: 25px;
     font-weight: 700;
+    
+    @media ${breakPoints.sm} {
+      font-size: 16px;
+      line-height: 19.5px;
+    } 
   }
+  
+  @media ${breakPoints.sm} {
+    & svg {
+      width: 16.67px;
+      height: 13.33px;
+    }
+  } 
 `;
 
 const ContactsList = styled.ul`
@@ -69,7 +220,11 @@ const ContactsList = styled.ul`
 const ContactsItem = styled.li`
   &:not(:last-child) {
     margin-right: 30px;
-  }
+    
+    @media ${breakPoints.sm} {
+      margin-right: 21px;
+    }
+  }   
 `;
 
 const ContactLink = styled.a`
@@ -95,16 +250,27 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
       />
       <AuthorDescr>
         <AuthorProps>
-          {book.author && book.author}
+          {book.author
+          && (
+            <span>
+              {`${book.author} `}
+            </span>
+          )}
           {book.authors && book.authors.map((name) => (
             <span>
               {`${name} `}
             </span>
           ))}
-          | Аскер | 24.03.1984
+          <span>
+            | Аскер | 24.03.1984
+          </span>
         </AuthorProps>
         <AuthorSpeech>
-          «Мне всегда нравилось представлять себя кем-то другим:
+          <RedQuote>
+            &#187;
+          </RedQuote>
+          <Quotes>&#171;</Quotes>
+          Мне всегда нравилось представлять себя кем-то другим:
           собакой, тюльпаном, соседом дядей Васей, путешественницей к другим планетам.
           В детстве я так играла. Мне хотелось прожить много разных жизней,
           попробовать много разных занятий. Писательство —
@@ -112,6 +278,7 @@ const BookAuthor = ({ book }: TBookProps): ReactElement => (
           Можно оказаться там, куда тебе не добраться физически,
           исследовать то, к чему у тебя нет доступа.
           И даже то, чего не существует. Я просто продолжаю играть, вот и всё»
+          <Quotes>&#187;</Quotes>
         </AuthorSpeech>
       </AuthorDescr>
     </AuthorInfo>
