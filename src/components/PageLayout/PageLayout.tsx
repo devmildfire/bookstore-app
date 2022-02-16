@@ -1,16 +1,17 @@
 import React from 'react';
 import Head from 'next/head';
-
 import styled from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
 
+import colors from '../../utils/colors';
+
 const StyledWrapper = styled.div`
   width: 100%;
   position: relative;
-  background-color: #121212;
-  color: white;
+  background-color: ${colors.blackBase};
+  color: ${colors.white};
 `;
 
 const Content = styled.div`

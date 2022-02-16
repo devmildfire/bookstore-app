@@ -1,9 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 
+import Logo from '../../assets/images/logo.svg';
+import SearchIcon from '../../assets/icons/search.svg';
+import CartIcon from '../../assets/icons/shop-cart.svg';
+import SignOutIcon from '../../assets/icons/sign-out.svg';
 import HeaderTab from './components/HeaderTab';
+
 import colors from '../../utils/colors';
 import menu from '../../utils/menuItems';
 
@@ -37,21 +41,44 @@ const HeaderContent = styled.div`
   }
 `;
 
+const SearchIconStyled = styled(SearchIcon)`
+  cursor: pointer;
+
+  :hover {
+    fill: ${colors.redBase};
+  }
+`;
+
+const CartIconStyled = styled(CartIcon)`
+  cursor: pointer;
+
+  :hover {
+    stroke: ${colors.redBase};
+  }
+`;
+
+const SignOutIconStyled = styled(SignOutIcon)`
+  cursor: pointer;
+
+  :hover {
+    fill: ${colors.redBase};
+  }
+`;
+
 const Header = (): React.ReactElement => (
   <StyledWrapper>
     <HeaderContent>
-      <Link href='/' passHref>
-        <a href='fakeHref'>
-          <ReactSVG
-            src='chtivo-logo.svg'
-          />
-        </a>
+      <Link href='/'>
+        <Logo />
       </Link>
+      <SearchIconStyled />
       {menu.map((item) => (
         <HeaderTab
           item={item}
         />
       ))}
+      <CartIconStyled />
+      <SignOutIconStyled fill={colors.grey} />
     </HeaderContent>
   </StyledWrapper>
 );
