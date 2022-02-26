@@ -8,6 +8,7 @@ import Telegram from '../../assets/icons/footer-telegram.svg';
 import Vk from '../../assets/icons/footer-vk.svg';
 import Fb from '../../assets/icons/footer-facebook.svg';
 import Twitter from '../../assets/icons/footer-twitter.svg';
+import breakPoints from '../../utils/breakPoints';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>
@@ -113,18 +114,36 @@ const StyleWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-height: 280px;
   border-top: 1px solid red;
   color: ${colors.whiteBase};  
 `;
 
 const FooterContent = styled.div`
-  padding: 30px 0 40px;
+  padding: 30px 20px 40px;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
   width: 100%;
   max-width: 1394px;
+  
+  @media ${breakPoints.xl} {
+    max-width: 1024px;
+  }
+  
+  @media ${breakPoints.lg} {
+    max-width: 768px;
+  }
+  
+  @media ${breakPoints.md} {
+    max-width: 576px;
+    flex-wrap: wrap;    
+    align-items: center;
+  }
+  
+  @media ${breakPoints.sm} {    
+    flex-direction: column;
+    padding: 10px 0 25px;
+  }
 `;
 
 const FooterContacts = styled.div`
@@ -142,12 +161,27 @@ const FooterContacts = styled.div`
   span:last-child {
     color: ${colors.red};
   }
+  
+  @media ${breakPoints.md} {
+    padding: 0;
+  }
+  
+  @media ${breakPoints.sm} {
+    text-align: center;
+    margin-bottom: 30px;
+  }
 `;
 
 const FooterInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  @media ${breakPoints.md} {
+    width: 100%;
+    order: -1;
+    margin-bottom: 20px;
+  }
 `;
 
 const FooterTitle = styled.h2`
@@ -159,10 +193,16 @@ const FooterTitle = styled.h2`
   span:first-child {
     color: ${colors.red};
   }
+  
+  @media ${breakPoints.sm} {
+    font-size: 40px;
+    line-height: 49px;
+  }
 `;
 
 const FooterSocials = styled.ul`
   display: flex;
+  align-items: center;
 `;
 
 const SocialItem = styled.li`
@@ -220,6 +260,10 @@ const IconTwitter = styled(Twitter)`
 const FooterLogoLink = styled.a`
   margin-top: 34px;
   display: flex;
+  
+  @media ${breakPoints.md} {
+    margin: 0;
+  }
 `;
 
 const FooterLogo = styled(Logo)`
@@ -251,9 +295,29 @@ const FooterCopyright = styled.div`
   span span {
     color: ${colors.red};
   }
+  
+  @media ${breakPoints.sm} {
+     padding: 10px 0;
+    font-size: 8px;
+    line-height: 10px;
+  }
 `;
 
 const CopyrightContainer = styled.div`
   max-width: 1394px;
   margin: 0 auto;
+  padding: 0 20px;
+  
+  
+  @media ${breakPoints.xl} {
+    max-width: 1024px;
+  }
+  
+  @media ${breakPoints.lg} {
+    max-width: 768px;
+  }
+  
+  @media ${breakPoints.md} {
+    max-width: 576px;
+  }
 `;
