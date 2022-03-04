@@ -9,6 +9,7 @@ import Vk from '../../assets/icons/footer-vk.svg';
 import Fb from '../../assets/icons/footer-facebook.svg';
 import Twitter from '../../assets/icons/footer-twitter.svg';
 import breakPoints from '../../utils/breakPoints';
+import getCurrentYear from '../../utils/getCurrentYear';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>
@@ -99,7 +100,9 @@ const Footer = (): React.ReactElement => (
     <FooterCopyright>
       <CopyrightContainer>
         <span>
-          © 2017-2021&nbsp;
+          © 2017-
+          {getCurrentYear}
+          &nbsp;
           <span>Чти</span>
           во. Санкт-Петербург. Все права защищены.
         </span>
@@ -258,7 +261,7 @@ const IconTwitter = styled(Twitter)`
 `;
 
 const FooterLogoLink = styled.a`
-  margin-top: 34px;
+  margin-top: 56px;
   display: flex;
   
   @media ${breakPoints.md} {
