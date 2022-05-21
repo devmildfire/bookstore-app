@@ -33,8 +33,11 @@ yarn-error.log*
 # vercel
 .vercel
 
-#history
+# history
 /.history/
 
 # .idea
 /.idea
+
+# .vscode
+.vscode

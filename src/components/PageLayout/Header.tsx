@@ -19,7 +19,7 @@ const StyledWrapper = styled.div`
   padding: 0 60px;
   background-color: ${colors.blackBase};
   z-index: 999;
-  
+
   @media (max-width: 1440px) {
     padding: 0 40px;
   }
@@ -73,9 +73,7 @@ const Header = (): React.ReactElement => (
       </Link>
       <SearchIconStyled />
       {menu.map((item) => (
-        <HeaderTab
-          item={item}
-        />
+        <HeaderTab item={item} />
       ))}
       <CartIconStyled />
       <SignOutIconStyled fill={colors.grey} />

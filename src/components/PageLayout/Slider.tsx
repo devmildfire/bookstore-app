@@ -105,7 +105,7 @@ const StyleWrapper = styled.div`
   .swiper-pagination-bullet:not(:last-child) {
     margin-right: 20px;
   }
-  
+
   .swiper-pagination-bullet-active {
     width: 22px;
     height: 22px;
