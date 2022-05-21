@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import AboutList from '../src/components/AboutPage/AboutList';
+import AboutUs from '../src/components/AboutPage/AboutUs';
 import Video from '../src/components/AboutPage/Video';
 import Container from '../src/components/Common/Container';
 import breakPoints from '../src/utils/breakPoints';
 
-const StyledContainer = styled(Container)`
+const StyledWrapper = styled.main`
   display: flex;
   flex-direction: column;
-  padding-top: var(--paddingTop, 40px);
+  padding-top: 40px;
 
   & > :not(:last-child) {
     margin-bottom: var(--marginBottom, 170px);
@@ -27,16 +28,21 @@ const StyledContainer = styled(Container)`
   }
 
   @media ${breakPoints.sm} {
+    padding-top: 20px;
     --marginBottom: 70px;
-    --paddingTop: 20px;
   }
 `;
 
 const About = (): React.ReactElement => (
-  <StyledContainer>
-    <Video src='fakePath' />
-    <AboutList />
-  </StyledContainer>
+  <StyledWrapper>
+    <Container>
+      <Video src='fakePath' />
+    </Container>
+    <Container>
+      <AboutList />
+    </Container>
+    <AboutUs />
+  </StyledWrapper>
 );
 
 export default About;

@@ -8,7 +8,8 @@ export interface ContainerProps {
 }
 
 const StylesContainer = styled.div`
-  width: var(--width, 1400px);
+  position: relative;
+  max-width: var(--width, 1400px);
   margin: 0 auto;
 
   @media ${breakPoints.xl} {

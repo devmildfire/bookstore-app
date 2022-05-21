@@ -20,8 +20,8 @@ const Content = styled.div`
 `;
 
 interface IPageLayout {
-  children: React.ReactElement,
-  headTitle?: string,
+  children: React.ReactElement;
+  headTitle?: string;
 }
 
 const PageLayout = ({
@@ -30,22 +30,19 @@ const PageLayout = ({
 }: IPageLayout): React.ReactElement => (
   <>
     <Head>
-      <title>
-        {headTitle}
-      </title>
+      <title>{headTitle}</title>
     </Head>
     <StyledWrapper>
       <Header />
-      <Content>
-        {children}
-      </Content>
+      <Content>{children}</Content>
       <Footer />
     </StyledWrapper>
   </>
 );
 
 PageLayout.defaultProps = {
-  headTitle: 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
+  headTitle:
+    'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
 };
 
 export default PageLayout;

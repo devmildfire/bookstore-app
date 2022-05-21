@@ -15,23 +15,23 @@ export interface VideoProps {
 
 const StyledVideo = styled.video`
   width: 100%;
-  height: var(--height, 794px);
-  background-color: #C4C4C4;
+  height: 794px;
+  background-color: #c4c4c4;
 
   @media ${breakPoints.xl} {
-    --height: 585px;
+    height: 585px;
   }
 
   @media ${breakPoints.lg} {
-    --height: 464px;
+    height: 464px;
   }
 
   @media ${breakPoints.md} {
-    --height: 320px;
+    height: 320px;
   }
 
   @media ${breakPoints.sm} {
-    --height: 162px;
+    height: 162px;
   }
 `;
 
