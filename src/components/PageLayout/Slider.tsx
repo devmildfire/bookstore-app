@@ -6,9 +6,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { BooksData } from '../../types/api';
 
-import 'swiper/css';
-import 'swiper/css/pagination';
-
 type SliderProps = {
   books: BooksData[]
 }

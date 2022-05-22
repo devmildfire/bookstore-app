@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import breakPoints from '../../utils/breakPoints';
 
 export interface ContainerProps {
-  children?: React.ReactElement | React.ReactElement[];
   className?: string;
 }
 
 const StylesContainer = styled.div`
+  --width: 1400px;
   position: relative;
-  max-width: var(--width, 1400px);
+  max-width: var(--width);
+  width: 100%;
   margin: 0 auto;
 
   @media ${breakPoints.xl} {
@@ -29,7 +30,9 @@ const StylesContainer = styled.div`
   }
 `;
 
-const Container = (props: ContainerProps): React.ReactElement => {
+const Container = (
+  props: PropsWithChildren<ContainerProps>,
+): React.ReactElement => {
   const { children, className } = props;
   return <StylesContainer className={className}>{children}</StylesContainer>;
 };

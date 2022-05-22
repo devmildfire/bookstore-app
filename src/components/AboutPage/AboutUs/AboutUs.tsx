@@ -1,11 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
+import breakPoints from '../../../utils/breakPoints';
 import Container from '../../Common/Container';
+import Manifest from '../../Common/Manifest';
 import Text from '../../Common/Text';
 import Books from './Books';
 
 const StyledHeader = styled(Text)`
   text-transform: uppercase;
+`;
+
+const StyledDescriptionContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  gap: var(--containerMarginBottom);
+  --containerMarginBottom: 45px;
+
+  @media ${breakPoints.xl} {
+    --containerMarginBottom: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    --containerMarginBottom: 15px;
+  }
+`;
+
+const StyledManifestText = styled(Text)`
+  margin-left: auto;
 `;
 
 const AboutUs = () => (
@@ -17,7 +38,7 @@ const AboutUs = () => (
     </Container>
 
     <Books />
-    <Container>
+    <StyledDescriptionContainer>
       <Text component='p'>
         <Text variant='h2' fontFamily='serif'>
           Н
@@ -28,7 +49,11 @@ const AboutUs = () => (
         неформальными произведениями и считаем, что книгоиздание не должно быть
         бизнесом.
       </Text>
-    </Container>
+      <StyledManifestText variant='p'>
+        Узнать больше в
+        <Manifest />
+      </StyledManifestText>
+    </StyledDescriptionContainer>
   </div>
 );
 

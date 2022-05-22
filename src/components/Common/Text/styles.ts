@@ -26,8 +26,24 @@ const h2Font = css`
   }
 `;
 
+const h3Font = css`
+  font-size: 60px;
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 24px;
+  }
+`;
+
 const pFont = css`
   font-size: 24px;
+
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+  }
 
   @media ${breakPoints.sm} {
     font-size: 14px;
@@ -45,12 +61,25 @@ const spanFont = css`
   }
 `;
 
+const body1Font = css`
+  font-size: 16px;
+`;
+
+const body2Font = css`
+  font-size: 12px;
+
+  @media ${breakPoints.sm} {
+    font-size: 8px;
+  }
+`;
+
 const fontSizes: Record<string, FlattenSimpleInterpolation> = {
   h2: h2Font,
+  h3: h3Font,
   p: pFont,
   span: spanFont,
-  // body1: 14,
-  // body2: 12,
+  body1: body1Font,
+  body2: body2Font,
 };
 
 const StyledText = styled('span')`

@@ -1,0 +1,53 @@
+/* eslint-disable import/no-unresolved */
+import styled from 'styled-components';
+import { Swiper } from 'swiper/react';
+import breakPoints from '../../../utils/breakPoints';
+
+export const StyledWrapper = styled.div`
+  display: grid;
+  gap: 50px;
+`;
+
+export const StyledPagination = styled.div`
+  --size: 14px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  height: calc(var(--size) * 1.2);
+
+  .swiper-pagination-bullet {
+    display: inline-block;
+
+    width: var(--size);
+    height: var(--size);
+    opacity: 1;
+    background: #dcdcdc;
+
+    transition: transform ease-in 0.15s;
+    transform-origin: center;
+  }
+
+  .swiper-pagination-bullet:hover,
+  .swiper-pagination-bullet:focus-visible {
+    transform: scale(1.1);
+  }
+
+  .swiper-pagination-bullet-active {
+    color: #fff;
+    background-color: #930000;
+
+    transform: scale(1.2);
+  }
+
+  @media ${breakPoints.sm} {
+    --size: 10px;
+  }
+`;
+
+export const StyledSlider = styled(Swiper)`
+  height: auto;
+  width: 100%;
+`;

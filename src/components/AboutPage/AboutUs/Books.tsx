@@ -8,13 +8,13 @@ import Container from '../../Common/Container';
 
 const StyledWrapper = styled.div`
   --booksMarginTop: 0px;
-  position: relative;
-  height: calc(var(--booksHeight) + var(--booksMarginTop));
-
-  --maxBooksWidth: calc(100vw / 2);
+  --maxBooksWidth: calc(1920px / 2);
   --minBookWidth: 271px;
   --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
   --booksHeight: calc(var(--booksWidth) * 0.795);
+
+  position: relative;
+  height: calc(var(--booksHeight) + var(--booksMarginTop));
 
   @media ${breakPoints.xl} {
     --booksMarginTop: 60px;
@@ -70,18 +70,10 @@ const StyledPhrase = styled.div`
     width: 400px;
 
     padding-top: 30px;
-
-    .red {
-      font-size: 40px;
-    }
   }
 
   @media ${breakPoints.sm} {
     width: 100%;
-
-    .red {
-      font-size: 24px;
-    }
   }
 `;
 
@@ -90,7 +82,7 @@ const Books = () => (
     <Container>
       <StyledPhrase>
         <Text variant='p'>О том, чтобы превращать</Text>
-        <Text variant='h2' className='red' fontFamily='serif'>
+        <Text variant='h3' className='red' fontFamily='serif'>
           Деньги в книги,
         </Text>
         <Text variant='p'>а не наоборот</Text>
