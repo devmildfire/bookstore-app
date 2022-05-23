@@ -1,6 +1,7 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import { Property } from 'csstype';
 import breakPoints from '../../../utils/breakPoints';
-import { Align, FontFamily, Variant } from './types';
+import { FontFamily, Variant } from './types';
 
 const fontWeights: Record<string, number> = {
   h2: 900,
@@ -13,9 +14,10 @@ const fontFamilies: Record<string, string> = {
 };
 
 export interface StyledTextProps {
-  align: Align;
-  variant: Variant;
-  fontFamily: FontFamily;
+  readonly align: Property.TextAlignLast;
+  readonly variant: Variant;
+  readonly fontFamily: FontFamily;
+  readonly textTransform: Property.TextTransform;
 }
 
 const h2Font = css`
@@ -83,9 +85,11 @@ const fontSizes: Record<string, FlattenSimpleInterpolation> = {
 };
 
 const StyledText = styled('span')`
+  color: inherit, var(--white);
   line-height: 1.2em;
   font-weight: ${(props: StyledTextProps) => fontWeights[props.variant || 'body1'] || 400};
   text-align: ${(props: StyledTextProps) => props.align};
+  text-transform: ${(props: StyledTextProps) => props.textTransform};
   font-family: ${(props: StyledTextProps) => fontFamilies[props.fontFamily || 'sans']};
   ${(props: StyledTextProps) => fontSizes[props.variant]}
 `;

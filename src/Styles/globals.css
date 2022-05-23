@@ -1,55 +1,60 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,700&family=Roboto&display=swap');*/
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-ExtraBold.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-ExtraBold.ttf') format('truetype');
   font-style: normal;
   font-weight: 900;
 }
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-Bold.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-Bold.ttf') format('truetype');
   font-style: normal;
   font-weight: 700;
 }
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-SemiBold.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-SemiBold.ttf') format('truetype');
   font-style: normal;
   font-weight: 600;
 }
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-Medium.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-Medium.ttf') format('truetype');
   font-style: normal;
   font-weight: 500;
 }
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-Regular.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-Regular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
 }
 @font-face {
-  font-family: "Montserrat";
-  src: url("../../public/fonts/Montserrat-Light.ttf") format("truetype");
+  font-family: 'Montserrat';
+  src: url('../../public/fonts/Montserrat-Light.ttf') format('truetype');
   font-style: normal;
   font-weight: 300;
 }
 @font-face {
-font-family: "Cheque";
-src: url("../../public/fonts/Chequeblack.ttf") format("truetype");
+  font-family: 'Cheque';
+  src: url('../../public/fonts/Chequeblack.ttf') format('truetype');
   font-style: normal;
   font-weight: 900;
 }
 @font-face {
-  font-family: "Cheque";
-  src: url("../../public/fonts/Chequeregular.ttf") format("truetype");
+  font-family: 'Cheque';
+  src: url('../../public/fonts/Chequeregular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
 }
 
 html {
   box-sizing: border-box;
+
+  --red: #930000;
+  --white: #dcdcdc;
+  --black: #121212;
+  --grey: #c4c4c4;
 }
 
 *,

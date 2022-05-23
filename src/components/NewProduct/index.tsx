@@ -5,10 +5,20 @@ import styled from 'styled-components';
 
 import BookCard from '../BookCard';
 import booksData from '../../utils/booksData';
+import Text from '../Common/Text';
 
+// Зачем прокидывать в ссылку еще одну ссылку?
 const NewProduct = (): React.ReactElement => (
   <StyleWrapper>
-    <h2 className='newProductTitle'>НОВИНКИ</h2>
+    <Text
+      className='newProductTitle'
+      component='h2'
+      fontFamily='serif'
+      align='center'
+      textTransform='uppercase'
+    >
+      НОВИНКИ
+    </Text>
     <div className='newProducts'>
       {booksData.map((book) => (
         <BookCard book={book} />
@@ -16,10 +26,7 @@ const NewProduct = (): React.ReactElement => (
     </div>
     <div className='buttonContainer'>
       <Link href='/books' passHref>
-        <button
-          type='button'
-          className='toBookStoreButton'
-        >
+        <button type='button' className='toBookStoreButton'>
           <a href='fakeHref'>Перейти в книжную лавку</a>
         </button>
       </Link>
@@ -31,22 +38,12 @@ export default NewProduct;
 
 const StyleWrapper = styled.div`
   .newProductTitle {
-    display: flex;
-    justify-content: center;
     margin: 204px 0 80px;
-    font-family: Cheque;
-    font-style: normal;
-    font-weight: 900;
-    font-size: 60px;
-    text-transform: uppercase;
-    line-height: 72px;
-
-    color: #DCDCDC;
   }
 
   .newProducts {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     grid-column-gap: 219px;
     grid-row-gap: 100px;
     max-width: 1400px;
@@ -61,18 +58,18 @@ const StyleWrapper = styled.div`
     .toBookStoreButton {
       width: 320px;
       height: 70px;
-      color: #FFFFFF;
+      color: #ffffff;
       margin-top: 100px;
-  
+
       background: transparent;
-      border: 1px solid #FFFFFF;
+      border: 1px solid #ffffff;
       border-radius: 4px;
       cursor: pointer;
-      transition: all .2s ease-out;
-  
+      transition: all 0.2s ease-out;
+
       &:hover {
         color: #930000;
-        border: .5px solid rgb(220 220 220 / 50%);
+        border: 0.5px solid rgb(220 220 220 / 50%);
       }
     }
   }

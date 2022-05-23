@@ -30,7 +30,7 @@ const StyledManifestText = styled(Text)`
 `;
 
 const AboutUs = () => (
-  <div>
+  <section>
     <Container>
       <StyledHeader align='center' component='h2' fontFamily='serif'>
         О чем мы?
@@ -54,7 +54,7 @@ const AboutUs = () => (
         <Manifest />
       </StyledManifestText>
     </StyledDescriptionContainer>
-  </div>
+  </section>
 );
 
 export default AboutUs;

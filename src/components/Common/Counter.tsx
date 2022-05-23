@@ -4,35 +4,27 @@ import styled from 'styled-components';
 import Button from './Button';
 
 export type CounterProps = {
-  className?: string
-  value: number
-  addToCart: () => void
-  removeFromCart: () => void
-}
+  className?: string;
+  value: number;
+  addToCart: () => void;
+  removeFromCart: () => void;
+};
 
-const Counter = React.memo(({
-  addToCart,
-  removeFromCart,
-  value,
-}: CounterProps) => (
+const Counter = ({ addToCart, removeFromCart, value }: CounterProps) => (
   <StyleWrapper>
     <>
-      <Button
-        text='-'
-        className='counterButton'
-        onClick={removeFromCart}
-      />
+      <Button onClick={removeFromCart} variant='square'>
+        -
+      </Button>
       <div className='dropDownValue'>{value}</div>
-      <Button
-        text='+'
-        className='counterButton'
-        onClick={addToCart}
-      />
+      <Button onClick={addToCart} variant='square'>
+        +
+      </Button>
     </>
   </StyleWrapper>
-));
+);
 
-export default Counter;
+export default React.memo(Counter);
 
 // Styles
 const StyleWrapper = styled.div`
@@ -50,6 +42,6 @@ const StyleWrapper = styled.div`
     margin: 0 5px;
     width: 38px;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 `;

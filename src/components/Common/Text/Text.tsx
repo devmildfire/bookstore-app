@@ -14,8 +14,9 @@ export const Text = (props: TextProps): React.ReactElement => {
     className,
     component = 'span',
     variant = component,
-    align = 'start',
+    align = 'inherit',
     fontFamily = 'sans',
+    textTransform = 'initial',
   } = props;
 
   return (
@@ -25,6 +26,7 @@ export const Text = (props: TextProps): React.ReactElement => {
       variant={variant}
       className={className}
       fontFamily={fontFamily}
+      textTransform={textTransform}
     >
       {children}
     </StyledText>

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React from 'react';
 import styled from 'styled-components';
 import SwiperCore, { Autoplay, Pagination } from 'swiper';

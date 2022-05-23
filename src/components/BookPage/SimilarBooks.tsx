@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
-// eslint-disable-next-line import/no-unresolved
 import { Swiper, SwiperSlide } from 'swiper/react';
 import styled from 'styled-components';
 import breakPoints from '../../utils/breakPoints';

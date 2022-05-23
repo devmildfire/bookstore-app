@@ -59,7 +59,7 @@ const StyledPhrase = styled.div`
   }
 
   .red {
-    color: #930000;
+    color: var(--red);
   }
 
   @media ${breakPoints.xl} {

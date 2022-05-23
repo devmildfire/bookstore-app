@@ -73,7 +73,7 @@ const Header = (): React.ReactElement => (
       </Link>
       <SearchIconStyled />
       {menu.map((item) => (
-        <HeaderTab item={item} />
+        <HeaderTab item={item} key={item.title} />
       ))}
       <CartIconStyled />
       <SignOutIconStyled fill={colors.grey} />

@@ -10,7 +10,7 @@ import calculateDeviceInfo from '../../utils/calculateDeviceInfo';
 const DeviceInfoProvider = (
   props: PropsWithChildren<{}>,
 ): React.ReactElement => {
-  const [deviceInfo, setDeviceInfo] = useState(calculateDeviceInfo(99999));
+  const [deviceInfo, setDeviceInfo] = useState(calculateDeviceInfo(0));
   const { children } = props;
 
   const onResize = useCallback(() => {
@@ -28,6 +28,10 @@ const DeviceInfoProvider = (
       window.removeEventListener('resize', onResize);
     };
   }, [onResize]);
+
+  useEffect(() => {
+    onResize();
+  }, []);
 
   return (
     <DeviceInfoContext.Provider value={deviceInfo}>

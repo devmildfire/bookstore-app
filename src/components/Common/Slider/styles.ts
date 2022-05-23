@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import styled from 'styled-components';
 import { Swiper } from 'swiper/react';
 import breakPoints from '../../../utils/breakPoints';

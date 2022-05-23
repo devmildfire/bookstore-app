@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React from 'react';
 import type { AppProps } from 'next/app';
 import DeviceInfoProvider from '../src/components/DeviceInfoProvider';

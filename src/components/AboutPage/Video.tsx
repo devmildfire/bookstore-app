@@ -9,14 +9,14 @@ export interface Source {
 }
 
 export interface VideoProps {
-  src: string;
-  sources?: Source[];
+  readonly src: string;
+  readonly sources?: Source[];
 }
 
 const StyledVideo = styled.video`
   width: 100%;
   height: 794px;
-  background-color: #c4c4c4;
+  background-color: var(--grey);
 
   @media ${breakPoints.xl} {
     height: 585px;

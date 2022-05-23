@@ -1,18 +1,29 @@
-/* eslint-disable import/no-unresolved */
 import React, { PropsWithChildren, useMemo } from 'react';
-import { Autoplay, Pagination } from 'swiper';
+import { Autoplay, FreeMode, Pagination } from 'swiper';
 import { SwiperProps } from 'swiper/react';
 import { ClassNameProps } from '../../../types/className';
 import { StyledPagination, StyledSlider, StyledWrapper } from './styles';
 
 export interface SliderProps extends ClassNameProps {
+  readonly enabled?: boolean;
   readonly slidesPerView?: number;
   readonly withoutPagination?: boolean;
   readonly spaceBetween?: number;
+  readonly withoutTouch?: boolean;
+  readonly withoutSwipe?: boolean;
+  readonly withoutLoop?: boolean;
+  readonly freeMode?: boolean;
 }
 
 export const Slider = (props: PropsWithChildren<SliderProps>) => {
-  const { withoutPagination, ...params } = props;
+  const {
+    withoutPagination,
+    withoutTouch,
+    withoutSwipe,
+    withoutLoop,
+    enabled,
+    ...params
+  } = props;
 
   const swiperParams = useMemo<SwiperProps>(
     () => ({
@@ -25,10 +36,12 @@ export const Slider = (props: PropsWithChildren<SliderProps>) => {
         delay: 2500,
         disableOnInteraction: false,
       },
-      loop: true,
-      modules: [Autoplay, Pagination],
+      loop: !withoutLoop,
+      modules: [Autoplay, Pagination, FreeMode],
+      allowTouchMove: !withoutTouch,
+      preventInteractionOnTransition: withoutSwipe,
     }),
-    [withoutPagination],
+    [withoutPagination, withoutTouch, withoutSwipe, withoutLoop],
   );
   return (
     <StyledWrapper>

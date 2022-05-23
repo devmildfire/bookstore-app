@@ -1,12 +1,5 @@
-import React from 'react';
 import styled from 'styled-components';
-import breakPoints from '../../utils/breakPoints';
-import Text from '../Common/Text';
-
-export interface AboutCardProps {
-  readonly content: string;
-  readonly image?: string;
-}
+import breakPoints from '../../../utils/breakPoints';
 
 const StyledCard = styled.div`
   display: flex;
@@ -45,15 +38,4 @@ const StyledCard = styled.div`
   }
 `;
 
-const AboutCard = (props: AboutCardProps): React.ReactElement => {
-  const { content, image } = props;
-  return (
-    <StyledCard image={image}>
-      <Text component='span' align='center'>
-        {content}
-      </Text>
-    </StyledCard>
-  );
-};
-
-export default AboutCard;
+export default StyledCard;

@@ -101,7 +101,7 @@ const Footer = (): React.ReactElement => (
       <CopyrightContainer>
         <span>
           © 2017-
-          {getCurrentYear}
+          {getCurrentYear()}
           &nbsp;
           <span>Чти</span>
           во. Санкт-Петербург. Все права защищены.
@@ -118,7 +118,7 @@ const StyleWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   border-top: 1px solid red;
-  color: ${colors.whiteBase};  
+  color: ${colors.whiteBase};
 `;
 
 const FooterContent = styled.div`
@@ -128,22 +128,22 @@ const FooterContent = styled.div`
   margin: 0 auto;
   width: 100%;
   max-width: 1394px;
-  
+
   @media ${breakPoints.xl} {
     max-width: 1024px;
   }
-  
+
   @media ${breakPoints.lg} {
     max-width: 768px;
   }
-  
+
   @media ${breakPoints.md} {
     max-width: 576px;
-    flex-wrap: wrap;    
+    flex-wrap: wrap;
     align-items: center;
   }
-  
-  @media ${breakPoints.sm} {    
+
+  @media ${breakPoints.sm} {
     flex-direction: column;
     padding: 10px 0 25px;
   }
@@ -156,19 +156,19 @@ const FooterContacts = styled.div`
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
-  
+
   a:first-child {
     margin-bottom: 20px;
   }
-  
+
   span:last-child {
     color: ${colors.red};
   }
-  
+
   @media ${breakPoints.md} {
     padding: 0;
   }
-  
+
   @media ${breakPoints.sm} {
     text-align: center;
     margin-bottom: 30px;
@@ -179,7 +179,7 @@ const FooterInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   @media ${breakPoints.md} {
     width: 100%;
     order: -1;
@@ -192,11 +192,11 @@ const FooterTitle = styled.h2`
   font-weight: 700;
   font-size: 57px;
   line-height: 69px;
-  
+
   span:first-child {
     color: ${colors.red};
   }
-  
+
   @media ${breakPoints.sm} {
     font-size: 40px;
     line-height: 49px;
@@ -217,7 +217,7 @@ const SocialItem = styled.li`
 
 const IconInsta = styled(Insta)`
   transition: fill .3s ease-in-out;
- 
+
  :hover {
     fill: ${colors.redBase};
     transition: fill .3s ease-in-out;
@@ -226,7 +226,7 @@ const IconInsta = styled(Insta)`
 
 const IconTelegram = styled(Telegram)`
   transition: fill .3s ease-in-out;
- 
+
  :hover {
     fill: ${colors.redBase};
     transition: fill .3s ease-in-out;
@@ -235,7 +235,7 @@ const IconTelegram = styled(Telegram)`
 
 const IconVk = styled(Vk)`
   transition: fill .3s ease-in-out;
- 
+
  :hover {
     fill: ${colors.redBase};
     transition: fill .3s ease-in-out;
@@ -244,7 +244,7 @@ const IconVk = styled(Vk)`
 
 const IconFb = styled(Fb)`
   transition: fill .3s ease-in-out;
- 
+
  :hover {
     fill: ${colors.redBase};
     transition: fill .3s ease-in-out;
@@ -253,7 +253,7 @@ const IconFb = styled(Fb)`
 
 const IconTwitter = styled(Twitter)`
   transition: fill .3s ease-in-out;
- 
+
  :hover {
     fill: ${colors.redBase};
     transition: fill .3s ease-in-out;
@@ -263,7 +263,7 @@ const IconTwitter = styled(Twitter)`
 const FooterLogoLink = styled.a`
   margin-top: 56px;
   display: flex;
-  
+
   @media ${breakPoints.md} {
     margin: 0;
   }
@@ -273,16 +273,16 @@ const FooterLogo = styled(Logo)`
   margin-right: 17px;
 `;
 
-const FooterLogoText = styled.p`  
+const FooterLogoText = styled.p`
   span {
-    display: block;    
+    display: block;
     font-weight: 600;
     font-size: 20px;
-    line-height: 26px; 
+    line-height: 26px;
   }
-  
+
   span:first-child {
-    font-size: 15px; 
+    font-size: 15px;
     line-height: 20px;
   }
 `;
@@ -294,11 +294,11 @@ const FooterCopyright = styled.div`
   font-feature-settings: 'salt' on, 'liga' off;
   border-top: 1px solid rgba(220, 220, 220, 0.2);
   color: ${colors.whiteBase};
-  
+
   span span {
     color: ${colors.red};
   }
-  
+
   @media ${breakPoints.sm} {
      padding: 10px 0;
     font-size: 8px;
@@ -310,16 +310,16 @@ const CopyrightContainer = styled.div`
   max-width: 1394px;
   margin: 0 auto;
   padding: 0 20px;
-  
-  
+
+
   @media ${breakPoints.xl} {
     max-width: 1024px;
   }
-  
+
   @media ${breakPoints.lg} {
     max-width: 768px;
   }
-  
+
   @media ${breakPoints.md} {
     max-width: 576px;
   }

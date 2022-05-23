@@ -10,8 +10,8 @@ import Counter from '../Common/Counter';
 const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g;
 
 type BookCardProps = {
-  book: BooksData
-}
+  book: BooksData;
+};
 
 const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [like, setLike] = useState(false);
@@ -33,8 +33,9 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const parsedAuthors = authors
     ?.join(', ')
     .replace(SPACE_AFTER_AUTHOR_NAME_REGEXP, '&nbsp;');
-  const parsedDescription = description
-    .map((paragraph) => <p className='descriptionParagraph'>{paragraph}</p>);
+  const parsedDescription = description.map((paragraph) => (
+    <p className='descriptionParagraph'>{paragraph}</p>
+  ));
 
   const addToCart = useCallback(() => {
     setInCardCount((prev) => prev + 1);
@@ -51,34 +52,18 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
       <div className='cover'>
         <Link href={`/books/${id}`} passHref>
           <a href='fakeHref'>
-            <img
-              className='cardImage'
-              src={link}
-              alt='BookDescription logo'
-            />
+            <img className='cardImage' src={link} alt='BookDescription logo' />
           </a>
         </Link>
         <div className='description'>
-          <div className='descriptionText'>
-            {parsedDescription}
-          </div>
+          <div className='descriptionText'>{parsedDescription}</div>
           <div className='descriptionInfo'>
             {`${yearOfPublication} | ${genre} | ${ageRestriction}`}
           </div>
         </div>
       </div>
-      <div
-        className='cardTitle'
-      >
-        {title}
-      </div>
-      { author && (
-        <div
-          className='cardAuthor'
-        >
-          {author}
-        </div>
-      )}
+      <div className='cardTitle'>{title}</div>
+      {author && <div className='cardAuthor'>{author}</div>}
       {parsedAuthors && (
         <div
           className='cardAuthor'
@@ -86,10 +71,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
         />
       )}
       <div className='cardInfo'>
-
-        <div
-          className='cardPrice'
-        >
+        <div className='cardPrice'>
           {oldPrice && (
             <span className='oldPrice'>
               <del>{`${oldPrice}₽`}</del>
@@ -104,11 +86,9 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
         />
       </div>
       {inCardCount === 0 ? (
-        <Button
-          text='Добавить в корзину'
-          onClick={addToCart}
-          className='cardButtonBuy'
-        />
+        <Button onClick={addToCart} className='cardButtonBuy'>
+          Добавить в корзину
+        </Button>
       ) : (
         <Counter
           value={inCardCount}
@@ -125,7 +105,7 @@ export default BookCard;
 const StyledWrapper = styled.div`
   font-size: 16px;
   line-height: 20px;
-  color: #F5F5F5;
+  color: #f5f5f5;
   width: 320px;
   max-width: 320px;
 
@@ -144,7 +124,7 @@ const StyledWrapper = styled.div`
       width: 100%;
       padding: 20px 15px;
       background: rgba(19, 19, 19, 0.9);
-      transition: .5s ease-in-out;
+      transition: 0.5s ease-in-out;
       font-size: 12px;
       line-height: 15px;
 
@@ -161,7 +141,6 @@ const StyledWrapper = styled.div`
       bottom: 0;
     }
   }
-  
 
   .cardImage {
     height: 450px;
@@ -197,7 +176,7 @@ const StyledWrapper = styled.div`
   }
 
   .like {
-    transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
     &:hover {
       & > div {
         & > svg {
@@ -208,7 +187,7 @@ const StyledWrapper = styled.div`
   }
 
   .liked {
-    transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
     & > div {
       & > svg {
         fill: #930000;
@@ -219,17 +198,17 @@ const StyledWrapper = styled.div`
   .cardButtonBuy {
     width: 320px;
     height: 70px;
-    color: #FFFFFF;
+    color: #ffffff;
     margin-top: 40px;
 
     background: transparent;
-    border: 1px solid #FFFFFF;
+    border: 1px solid #ffffff;
     cursor: pointer;
-    transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
 
     &:hover {
       color: #930000;
-      border: .5px solid rgb(220 220 220 / 50%);
+      border: 0.5px solid rgb(220 220 220 / 50%);
     }
   }
 `;
