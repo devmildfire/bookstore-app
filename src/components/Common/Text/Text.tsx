@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
+import { ClassNameProps } from '../../../types/className';
 import StyledText, { StyledTextProps } from './styles';
 import { Component } from './types';
 
-export interface TextProps extends Partial<StyledTextProps> {
-  component?: Component;
-  children?: React.ReactNode | React.ReactNode[];
-  className?: string;
+export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
+  readonly component?: Component;
 }
 
-export const Text = (props: TextProps): React.ReactElement => {
+export const Text = (
+  props: PropsWithChildren<TextProps>,
+): React.ReactElement => {
   const {
     children,
     className,
@@ -17,6 +18,7 @@ export const Text = (props: TextProps): React.ReactElement => {
     align = 'inherit',
     fontFamily = 'sans',
     textTransform = 'initial',
+    color = 'white',
   } = props;
 
   return (
@@ -27,6 +29,7 @@ export const Text = (props: TextProps): React.ReactElement => {
       className={className}
       fontFamily={fontFamily}
       textTransform={textTransform}
+      color={color}
     >
       {children}
     </StyledText>

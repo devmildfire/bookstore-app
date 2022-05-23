@@ -1,5 +1,6 @@
 import React from 'react';
 import Text from '../../Common/Text';
+import WithArrow from '../../Common/WithArrow';
 import {
   StyledContent,
   StyledMainText,
@@ -22,7 +23,7 @@ const RD = (): React.ReactElement => (
         ы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
         литературном журнале арт-конгрегации
         {' '}
-        <Text variant='p' className='red'>
+        <Text variant='p' color='red'>
           Русский Динозавр
         </Text>
         {' '}
@@ -31,7 +32,9 @@ const RD = (): React.ReactElement => (
       <StyledSecondaryText component='p'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
       </StyledSecondaryText>
-      <Text>asdfasdfasdf</Text>
+      <WithArrow color='red' variant='p'>
+        Журнал Русского Динозавра
+      </WithArrow>
     </StyledContent>
   </StyledWrapper>
 );

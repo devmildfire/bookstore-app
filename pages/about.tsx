@@ -9,8 +9,8 @@ import breakPoints from '../src/utils/breakPoints';
 import stars from '../src/assets/images/stars.webp';
 import We from '../src/components/AboutPage/We';
 import Partners from '../src/components/AboutPage/Partners';
-import Text from '../src/components/Common/Text';
 import BeWithUs from '../src/components/AboutPage/BeWithUs';
+import Donate from '../src/components/AboutPage/Donate';
 
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
@@ -79,14 +79,7 @@ const About = (): React.ReactElement => (
         <Partners />
       </Container>
       <Container>
-        <Text
-          component='h2'
-          fontFamily='serif'
-          align='center'
-          textTransform='uppercase'
-        >
-          Задонатить Чтиву
-        </Text>
+        <Donate />
       </Container>
       <Container>
         <BeWithUs />

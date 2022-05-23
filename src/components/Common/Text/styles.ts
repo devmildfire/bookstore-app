@@ -1,7 +1,7 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import { Property } from 'csstype';
 import breakPoints from '../../../utils/breakPoints';
-import { FontFamily, Variant } from './types';
+import { Color, FontFamily, Variant } from './types';
 
 const fontWeights: Record<string, number> = {
   h2: 900,
@@ -13,11 +13,18 @@ const fontFamilies: Record<string, string> = {
   serif: "'Cheque', serif",
 };
 
+const colors: Record<Color, string> = {
+  inherit: 'inherit',
+  red: 'var(--red)',
+  white: 'var(--white)',
+};
+
 export interface StyledTextProps {
   readonly align: Property.TextAlignLast;
   readonly variant: Variant;
   readonly fontFamily: FontFamily;
   readonly textTransform: Property.TextTransform;
+  readonly color: Color;
 }
 
 const h2Font = css`
@@ -85,7 +92,7 @@ const fontSizes: Record<string, FlattenSimpleInterpolation> = {
 };
 
 const StyledText = styled('span')`
-  color: inherit, var(--white);
+  color: ${(props: StyledTextProps) => colors[props.color]};
   line-height: 1.2em;
   font-weight: ${(props: StyledTextProps) => fontWeights[props.variant || 'body1'] || 400};
   text-align: ${(props: StyledTextProps) => props.align};

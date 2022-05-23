@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import breakPoints from '../../../utils/breakPoints';
 import Container from '../../Common/Container';
-import Manifest from '../../Common/Manifest';
 import Text from '../../Common/Text';
+import WithArrow from '../../Common/WithArrow/WithArrow';
 import Books from './Books';
 
 const StyledHeader = styled(Text)`
@@ -51,7 +51,10 @@ const AboutUs = () => (
       </Text>
       <StyledManifestText variant='p'>
         Узнать больше в
-        <Manifest />
+        {' '}
+        <WithArrow color='red' variant='p'>
+          «Манифесте Чтива»
+        </WithArrow>
       </StyledManifestText>
     </StyledDescriptionContainer>
   </section>

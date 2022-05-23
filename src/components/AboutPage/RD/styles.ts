@@ -22,10 +22,8 @@ export const StyledContent = styled.div`
 
   > :last-child {
     align-self: end;
-  }
 
-  .red {
-    color: var(--red);
+    width: max-content;
   }
 
   padding-top: 78px;
