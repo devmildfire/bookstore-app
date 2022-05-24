@@ -1,16 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import AboutList from '../src/components/AboutPage/AboutList';
-import AboutUs from '../src/components/AboutPage/AboutUs';
-import RD from '../src/components/AboutPage/RD';
-import Video from '../src/components/AboutPage/Video';
-import Container from '../src/components/Common/Container';
-import breakPoints from '../src/utils/breakPoints';
-import stars from '../src/assets/images/stars.webp';
-import We from '../src/components/AboutPage/We';
-import Partners from '../src/components/AboutPage/Partners';
-import BeWithUs from '../src/components/AboutPage/BeWithUs';
-import Donate from '../src/components/AboutPage/Donate';
+import AboutList from '@/components/AboutPage/AboutList';
+import AboutUs from '@/components/AboutPage/AboutUs';
+import RD from '@/components/AboutPage/RD';
+import Video from '@/components/AboutPage/Video';
+import Container from '@/components/Common/Container';
+import breakPoints from '@/utils/breakPoints';
+import stars from '@/assets/images/stars.webp';
+import We from '@/components/AboutPage/We';
+import Partners from '@/components/AboutPage/Partners';
+import BeWithUs from '@/components/AboutPage/BeWithUs';
+import Donate from '@/components/AboutPage/Donate';
 
 const StyledWrapper = styled.main`
   --marginBottom: 170px;

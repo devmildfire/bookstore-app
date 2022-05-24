@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
 import styled from 'styled-components';
 
-import { BooksData } from '../../types/api';
+import { BooksData } from '@/types/api';
 import Button from '../Common/Button';
 import Counter from '../Common/Counter';
 

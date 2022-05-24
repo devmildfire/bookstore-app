@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Swiper } from 'swiper/react';
-import breakPoints from '../../../utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
   display: grid;

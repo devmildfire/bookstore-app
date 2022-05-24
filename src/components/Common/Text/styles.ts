@@ -1,6 +1,6 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import { Property } from 'csstype';
-import breakPoints from '../../../utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 import { Color, FontFamily, Variant } from './types';
 
 const fontWeights: Record<string, number> = {

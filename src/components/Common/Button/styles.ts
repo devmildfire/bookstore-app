@@ -1,5 +1,5 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import breakPoints from '../../../utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 import { Variant } from './types';
 
 export interface StyledButtonProps {

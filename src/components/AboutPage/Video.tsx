@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import React from 'react';
 import styled from 'styled-components';
-import breakPoints from '../../utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 
 export interface Source {
   readonly srcset: string;

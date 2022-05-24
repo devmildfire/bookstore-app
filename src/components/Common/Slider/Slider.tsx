@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useMemo } from 'react';
 import { Autoplay, FreeMode, Pagination } from 'swiper';
 import { SwiperProps } from 'swiper/react';
-import { ClassNameProps } from '../../../types/className';
+import { ClassNameProps } from '@/types/className';
 import { StyledPagination, StyledSlider, StyledWrapper } from './styles';
 
 export interface SliderProps extends ClassNameProps {

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Member } from '../../../types/member';
-import breakPoints from '../../../utils/breakPoints';
-import Text from '../../Common/Text';
+import { Member } from '@/types/member';
+import breakPoints from '@/utils/breakPoints';
+import Text from '@/components/Common/Text';
 
 const StyledCard = styled.div`
   display: grid;

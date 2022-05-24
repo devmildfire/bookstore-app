@@ -1,5 +1,5 @@
 import React from 'react';
-import { DeviceInfo } from '../types/deviceInfo';
+import { DeviceInfo } from '@/types/deviceInfo';
 
 export default React.createContext<DeviceInfo>({
   device: 'desktop',

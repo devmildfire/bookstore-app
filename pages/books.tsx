@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import BookCard from '../src/components/BookCard';
-import booksData from '../src/utils/booksData';
+import BookCard from '@/components/BookCard';
+import booksData from '@/utils/booksData';
 
 const NewProduct = (): React.ReactElement => (
   <StyleWrapper>
@@ -60,13 +60,13 @@ const StyleWrapper = styled.div`
       height: 70px;
       color: #FFFFFF;
       margin-top: 100px;
-  
+
       background: transparent;
       border: 1px solid #FFFFFF;
       border-radius: 4px;
       cursor: pointer;
       transition: all .2s ease-out;
-  
+
       &:hover {
         color: #930000;
         border: .5px solid rgb(220 220 220 / 50%);

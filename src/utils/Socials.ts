@@ -1,8 +1,8 @@
-import IconInsta from '../assets/icons/footer-insta.svg';
-import IconTelegram from '../assets/icons/footer-telegram.svg';
-import IconVk from '../assets/icons/footer-vk.svg';
-import IconFb from '../assets/icons/footer-facebook.svg';
-import IconTwitter from '../assets/icons/footer-twitter.svg';
+import IconInsta from '@/assets/icons/footer-insta.svg';
+import IconTelegram from '@/assets/icons/footer-telegram.svg';
+import IconVk from '@/assets/icons/footer-vk.svg';
+import IconFb from '@/assets/icons/footer-facebook.svg';
+import IconTwitter from '@/assets/icons/footer-twitter.svg';
 
 interface ISocialItem {
   icon: SVGAElement,

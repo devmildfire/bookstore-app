@@ -1,5 +1,5 @@
 import React from 'react';
-import Text from '../../Common/Text';
+import Text from '@/components/Common/Text';
 import StyledWrapper from './styles';
 import SubscribeForm from './SubscribeForm';
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import Text from '../../Common/Text';
-import image1 from '../../../assets/images/books1.png';
-import image2 from '../../../assets/images/books2.png';
-import breakPoints from '../../../utils/breakPoints';
-import Container from '../../Common/Container';
+import Text from '@/components/Common/Text';
+import image1 from '@/assets/images/books1.png';
+import image2 from '@/assets/images/books2.png';
+import breakPoints from '@/utils/breakPoints';
+import Container from '@/components/Common/Container';
 
 const StyledWrapper = styled.div`
   --booksMarginTop: 0px;

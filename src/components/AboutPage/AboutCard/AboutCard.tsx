@@ -1,11 +1,10 @@
 import React from 'react';
-import Text from '../../Common/Text';
+import Text from '@/components/Common/Text';
 import StyledCard from './styles';
+import { AboutInto } from '@/types/aboutInfo';
+import { ClassNameProps } from '@/types/className';
 
-export interface AboutCardProps {
-  readonly content: string;
-  readonly image?: string;
-}
+export interface AboutCardProps extends AboutInto, ClassNameProps {}
 
 const AboutCard = (props: AboutCardProps): React.ReactElement => {
   const { content, image } = props;

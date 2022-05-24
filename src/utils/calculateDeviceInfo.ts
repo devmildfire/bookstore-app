@@ -1,6 +1,6 @@
-import { DeviceInfo } from '../types/deviceInfo';
+import { DeviceInfo } from '@/types/deviceInfo';
 
-export default (width: string | number): DeviceInfo => {
+const calculateDeviceInfo = (width: string | number): DeviceInfo => {
   const deviceInfo: DeviceInfo = {
     device: 'mobile',
     isDesktop: false,
@@ -28,3 +28,5 @@ export default (width: string | number): DeviceInfo => {
 
   return deviceInfo;
 };
+
+export default calculateDeviceInfo;

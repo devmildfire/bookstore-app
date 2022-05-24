@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import DeviceInfoContext from '../../../contexts/DeviceInfoContext';
-import partners from '../../../mocks/partners';
-import breakPoints from '../../../utils/breakPoints';
-import Slide from '../../Common/Slide';
-import Slider from '../../Common/Slider';
+import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import breakPoints from '@/utils/breakPoints';
+import Slide from '@/components/Common/Slide';
+import Slider from '@/components/Common/Slider';
 import PartnerCard from './PartnerCard';
+import partners from '@/mocks/partners';
 
 const StyledList = styled(Slider)`
   display: flex;

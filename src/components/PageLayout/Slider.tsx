@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import SwiperCore, { Autoplay, Pagination } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { BooksData } from '../../types/api';
+import { BooksData } from '@/types/api';
 
 type SliderProps = {
   books: BooksData[]

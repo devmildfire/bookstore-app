@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 
-import colors from '../../utils/colors';
+import colors from '@/utils/colors';
 
 const StyledWrapper = styled.div`
   width: 100%;

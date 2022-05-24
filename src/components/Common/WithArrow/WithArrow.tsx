@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { PropsWithChildren } from 'react';
-import { ClassNameProps } from '../../../types/className';
-import { TextProps } from '../Text/Text';
+import { ClassNameProps } from '@/types/className';
+import { TextProps } from '../Text';
 import { StyledArrowIcon, StyledArrowProps, StyledText } from './styles';
 
 export interface WithArrowProps
@@ -21,7 +21,7 @@ const WithArrow = (
   return (
     <StyledText {...textParams}>
       <Link href='fakePath' passHref>
-        {children}
+        <a href='fakeHref'>{children}</a>
       </Link>
       <StyledArrowIcon offset={offset} position={position} />
     </StyledText>

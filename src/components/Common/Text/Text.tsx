@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { ClassNameProps } from '../../../types/className';
+import { ClassNameProps } from '@/types/className';
 import StyledText, { StyledTextProps } from './styles';
 import { Component } from './types';
 

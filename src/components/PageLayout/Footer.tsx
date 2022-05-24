@@ -1,15 +1,15 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import colors from '../../utils/colors';
-import Logo from '../../assets/icons/footer-logo.svg';
-import Insta from '../../assets/icons/footer-insta.svg';
-import Telegram from '../../assets/icons/footer-telegram.svg';
-import Vk from '../../assets/icons/footer-vk.svg';
-import Fb from '../../assets/icons/footer-facebook.svg';
-import Twitter from '../../assets/icons/footer-twitter.svg';
-import breakPoints from '../../utils/breakPoints';
-import getCurrentYear from '../../utils/getCurrentYear';
+import colors from '@/utils/colors';
+import Logo from '@/assets/icons/footer-logo.svg';
+import Insta from '@/assets/icons/footer-insta.svg';
+import Telegram from '@/assets/icons/footer-telegram.svg';
+import Vk from '@/assets/icons/footer-vk.svg';
+import Fb from '@/assets/icons/footer-facebook.svg';
+import Twitter from '@/assets/icons/footer-twitter.svg';
+import breakPoints from '@/utils/breakPoints';
+import getCurrentYear from '@/utils/getCurrentYear';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>

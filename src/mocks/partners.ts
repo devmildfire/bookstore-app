@@ -1,4 +1,4 @@
-import { Partner } from '../types/partner';
+import { Partner } from '@/types/partner';
 import readCafePhoto from '../../public/images/partners/read-cafe.webp';
 
 const partners: Partner[] = [

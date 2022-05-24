@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Partner } from '../../../types/partner';
-import breakPoints from '../../../utils/breakPoints';
+import { Partner } from '@/types/partner';
+import breakPoints from '@/utils/breakPoints';
 
 const StyledCard = styled.img`
   display: flex;

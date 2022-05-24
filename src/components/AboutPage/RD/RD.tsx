@@ -1,6 +1,6 @@
 import React from 'react';
-import Text from '../../Common/Text';
-import WithArrow from '../../Common/WithArrow';
+import Text from '@/components/Common/Text';
+import WithArrow from '@/components/Common/WithArrow';
 import {
   StyledContent,
   StyledMainText,

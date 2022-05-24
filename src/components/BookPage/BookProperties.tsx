@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TBookProps } from '../../types/bookProps';
+import { TBookProps } from '@/types/bookProps';
 import Button from '../Common/Button';
-import bookPropsList from '../../utils/bookPropertiesData';
-import colors from '../../utils/colors';
-import breakPoints from '../../utils/breakPoints';
+import bookPropsList from '@/utils/bookPropertiesData';
+import colors from '@/utils/colors';
+import breakPoints from '@/utils/breakPoints';
 
 const StyleWrapper = styled.section`
   padding: 44px 79px 40px 132px;

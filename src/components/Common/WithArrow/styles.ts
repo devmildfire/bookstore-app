@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ArrowIcon from '../../../assets/images/arrow.svg';
+import ArrowIcon from '@/assets/images/arrow.svg';
 import Text from '../Text';
 import { Offset, Position } from './types';
 

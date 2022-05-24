@@ -1,5 +1,5 @@
 import booksData from './booksData';
-import { BooksData } from '../types/api';
+import { BooksData } from '@/types/api';
 
 const getBookInfo = (id: string | string[] | undefined): BooksData | null => {
   let bookInfo = null;

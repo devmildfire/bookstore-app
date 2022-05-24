@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import WithArrow from '../../Common/WithArrow';
+import WithArrow from '@/components/Common/WithArrow';
 
 const StyledDonateText = styled(WithArrow)`
   max-width: max-content;

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import breakPoints from '../../../utils/breakPoints';
-import Container from '../../Common/Container';
-import Text from '../../Common/Text';
+import breakPoints from '@/utils/breakPoints';
+import Container from '@/components/Common/Container';
+import Text from '@/components/Common/Text';
 import Members from './Members';
 
 const StyledWrapper = styled(Container)`

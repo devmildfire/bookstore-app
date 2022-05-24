@@ -1,35 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import styled from 'styled-components';
-import breakPoints from '../../utils/breakPoints';
-import booksData from '../../utils/booksData';
-import DeviceInfoContext from '../../contexts/DeviceInfoContext';
+import breakPoints from '@/utils/breakPoints';
+import booksData from '@/utils/booksData';
+import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import Slide from '../Common/Slide';
+import Slider from '../Common/Slider';
+import Text from '../Common/Text';
 
-const params = {
-  slidesPerView: 3,
-  spaceBetween: 20,
-  loop: true,
-};
-
-const Title = styled.h2`
+const Title = styled(Text)`
   margin-bottom: 50px;
-  text-align: center;
-  font-family: Cheque;
-  font-style: normal;
-  font-weight: 900;
-  font-size: 44px;
-  line-height: 53px;
-
-  @media ${breakPoints.lg} {
-    font-size: 40px;
-    line-height: 48px;
-  }
-
-  @media ${breakPoints.sm} {
-    font-size: 24px;
-    line-height: 28px;
-  }
 `;
 
 const BooksList = styled.ul`
@@ -77,44 +57,42 @@ const Banner = styled.img`
 `;
 
 const SimilarBooks = (): React.ReactElement => {
-  const { isTabletVertical } = useContext(DeviceInfoContext);
+  const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
+  const books = useMemo(() => booksData.slice(0, 5), [booksData]);
 
   return (
     <section>
-      <Title>Познайте также</Title>
+      <Title component='h2' fontFamily='serif' align='center'>
+        Познайте также
+      </Title>
       <BooksList>
-        {isTabletVertical ? (
-          <Swiper className='mySwiper' {...params}>
-            {booksData.map((book, index) => {
-              if (index < 5) {
-                return (
-                  <SwiperSlide key={book.id}>
-                    <Link href={`/books/${book.id}`}>
-                      <a href='fakeHref'>
-                        <Banner src={book.link} alt={book.title} />
-                      </a>
-                    </Link>
-                  </SwiperSlide>
-                );
-              }
-              return null;
-            })}
-          </Swiper>
+        {isTabletVertical || isMobile ? (
+          <Slider
+            className='mySwiper'
+            slidesPerView={3}
+            spaceBetween={20}
+            withoutPagination
+          >
+            {books.map((book) => (
+              <Slide key={book.id}>
+                <Link href={`/books/${book.id}`} passHref>
+                  <a href='fakePath'>
+                    <Banner src={book.link} alt={book.title} />
+                  </a>
+                </Link>
+              </Slide>
+            ))}
+          </Slider>
         ) : (
-          booksData.map((book, index) => {
-            if (index < 5) {
-              return (
-                <BookItem>
-                  <Link href={`/books/${book.id}`}>
-                    <a href='fakeHref'>
-                      <Banner src={book.link} alt={book.title} />
-                    </a>
-                  </Link>
-                </BookItem>
-              );
-            }
-            return null;
-          })
+          books.map((book) => (
+            <BookItem>
+              <Link href={`/books/${book.id}`} passHref>
+                <a href='fakePath'>
+                  <Banner src={book.link} alt={book.title} />
+                </a>
+              </Link>
+            </BookItem>
+          ))
         )}
       </BooksList>
     </section>

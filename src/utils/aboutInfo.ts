@@ -1,6 +1,6 @@
-import { AboutCardProps } from '../components/AboutPage/AboutCard';
+import { AboutInto } from '@/types/aboutInfo';
 
-const aboutInfo: AboutCardProps[] = [
+const aboutInfo: AboutInto[] = [
   {
     content: 'Компактная эстетика — материальный носитель цифрового издания. ',
   },

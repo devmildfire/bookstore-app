@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import breakPoints from '../../../../utils/breakPoints';
-import Button from '../../../Common/Button';
+import breakPoints from '@/utils/breakPoints';
+import Button from '@/components/Common/Button';
 
 export const StyledForm = styled.form`
   display: grid;

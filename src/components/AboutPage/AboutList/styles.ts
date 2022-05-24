@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import breakPoints from '../../../utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 
 const StyledList = styled.section`
   display: flex;

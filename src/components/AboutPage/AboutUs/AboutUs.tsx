@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import breakPoints from '../../../utils/breakPoints';
-import Container from '../../Common/Container';
-import Text from '../../Common/Text';
-import WithArrow from '../../Common/WithArrow/WithArrow';
+import breakPoints from '@/utils/breakPoints';
+import Container from '@/components/Common/Container';
+import Text from '@/components/Common/Text';
+import WithArrow from '@/components/Common/WithArrow';
 import Books from './Books';
 
 const StyledHeader = styled(Text)`
@@ -36,7 +36,6 @@ const AboutUs = () => (
         О чем мы?
       </StyledHeader>
     </Container>
-
     <Books />
     <StyledDescriptionContainer>
       <Text component='p'>

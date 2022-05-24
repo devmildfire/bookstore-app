@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import DeviceInfoContext from '../../../contexts/DeviceInfoContext';
-import members from '../../../mocks/members';
-import Slide from '../../Common/Slide';
-import Slider from '../../Common/Slider';
+import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import Slide from '@/components/Common/Slide';
+import Slider from '@/components/Common/Slider';
 import MemberCard from './MemberCard';
+import members from '@/mocks/members';
 
-const Members = () => {
+const Members = (): React.ReactElement => {
   const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
   let count = 3;
   if (isMobile) {

@@ -2,10 +2,10 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Popper from '../../Popper';
-import { MenuItem } from '../../../utils/menuItems';
+import Popper from '@/components/Popper';
+import { MenuItem } from '@/utils/menuItems';
 
-import colors from '../../../utils/colors';
+import colors from '@/utils/colors';
 
 export type HeaderTabProps = {
   item: MenuItem

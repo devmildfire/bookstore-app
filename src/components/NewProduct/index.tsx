@@ -4,10 +4,9 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 import BookCard from '../BookCard';
-import booksData from '../../utils/booksData';
+import booksData from '@/utils/booksData';
 import Text from '../Common/Text';
 
-// Зачем прокидывать в ссылку еще одну ссылку?
 const NewProduct = (): React.ReactElement => (
   <StyleWrapper>
     <Text

@@ -2,14 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Logo from '../../assets/images/logo.svg';
-import SearchIcon from '../../assets/icons/search.svg';
-import CartIcon from '../../assets/icons/shop-cart.svg';
-import SignOutIcon from '../../assets/icons/sign-out.svg';
+import Logo from '@/assets/images/logo.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import CartIcon from '@/assets/icons/shop-cart.svg';
+import SignOutIcon from '@/assets/icons/sign-out.svg';
 import HeaderTab from './components/HeaderTab';
 
-import colors from '../../utils/colors';
-import menu from '../../utils/menuItems';
+import colors from '@/utils/colors';
+import menu from '@/utils/menuItems';
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -68,8 +68,10 @@ const SignOutIconStyled = styled(SignOutIcon)`
 const Header = (): React.ReactElement => (
   <StyledWrapper>
     <HeaderContent>
-      <Link href='/'>
-        <Logo />
+      <Link href='/' passHref>
+        <a href='fakePath'>
+          <Logo />
+        </a>
       </Link>
       <SearchIconStyled />
       {menu.map((item) => (

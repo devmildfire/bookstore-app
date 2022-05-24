@@ -1,4 +1,4 @@
-import { Member } from '../types/member';
+import { Member } from '@/types/member';
 import alenaPhoto from '../../public/images/members/alena-kupchinskay.webp';
 import nikolayPhoto from '../../public/images/members/nikolay-titov.webp';
 import polinaPhoto from '../../public/images/members/polina-sharafutdinova.webp';

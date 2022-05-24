@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import breakPoints from '../../../utils/breakPoints';
-import Text from '../../Common/Text';
-import RDImage from '../../../assets/images/dino.png';
+import breakPoints from '@/utils/breakPoints';
+import Text from '@/components/Common/Text';
+import RDImage from '@/assets/images/dino.png';
 
 export const StyledWrapper = styled.section`
   display: grid;
