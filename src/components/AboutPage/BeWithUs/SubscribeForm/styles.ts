@@ -16,7 +16,7 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledButton = styled(Button)`
-  @media ${breakPoints.sm} {
+  @media ${breakPoints.md} {
     width: 100%;
   }
 `;

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { ClassNameProps } from '@/types/className';
-import StyledText, { StyledTextProps } from './styles';
+import StyledText, { StyledTextProps, tagMap } from './styles';
 import { Component } from './types';
 
 export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
@@ -13,23 +13,23 @@ export const Text = (
   const {
     children,
     className,
-    component = 'span',
-    variant = component,
+    component,
+    variant = 'body1',
     align = 'inherit',
-    fontFamily = 'sans',
-    textTransform = 'initial',
     color = 'white',
+    ...params
   } = props;
+
+  const as = component || tagMap[variant];
 
   return (
     <StyledText
-      as={component}
+      as={as}
       align={align}
       variant={variant}
       className={className}
-      fontFamily={fontFamily}
-      textTransform={textTransform}
       color={color}
+      {...params}
     >
       {children}
     </StyledText>

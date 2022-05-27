@@ -7,10 +7,10 @@ import { ClassNameProps } from '@/types/className';
 export interface AboutCardProps extends AboutInto, ClassNameProps {}
 
 const AboutCard = (props: AboutCardProps): React.ReactElement => {
-  const { content, image } = props;
+  const { content, image, className } = props;
   return (
-    <StyledCard image={image}>
-      <Text component='span' align='center'>
+    <StyledCard className={className} image={image}>
+      <Text variant='body1' align='center'>
         {content}
       </Text>
     </StyledCard>

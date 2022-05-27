@@ -11,7 +11,7 @@ const squareStyle = css`
   min-width: 70px;
   min-height: 70px;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.sm} {
     min-width: 45px;
     min-height: 45px;
   }
@@ -21,7 +21,7 @@ const standardStyle = css`
   min-width: 250px;
   min-height: 70px;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.sm} {
     min-height: 50px;
   }
 `;
@@ -30,7 +30,7 @@ const wideStyle = css`
   min-width: 320px;
   min-height: 70px;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.sm} {
     min-width: 250px;
     min-height: 50px;
   }
@@ -40,7 +40,7 @@ const narrowStyle = css`
   min-width: 150px;
   min-height: 50px;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.sm} {
     min-width: 120px;
     min-height: 48px;
   }
@@ -53,35 +53,31 @@ const styles: Record<Variant, FlattenSimpleInterpolation> = {
   narrow: narrowStyle,
 };
 
-export const StyledBaseButton = styled.button`
+export const StyledButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
 
-  border: none;
+  ${(props: StyledButtonProps) => styles[props.variant]}
+  width: max-content;
+
+  background-color: var(--black);
+
+  border: 1px solid var(--borderColor);
+  border-radius: ${(props: StyledButtonProps) => (props.rounded ? '4' : '0')}px;
 
   text-decoration: none;
 
   transition: all 0.2s ease-out;
 
-  &:active {
-    background-color: transparent;
-  }
-`;
-
-export const StyledButton = styled(StyledBaseButton)`
-  border-radius: ${(props: StyledButtonProps) => (props.rounded ? '4' : '0')}px;
-
-  ${(props: StyledButtonProps) => styles[props.variant]}
-
-  background-color: var(--black);
-
   color: var(--white);
 
   &:hover,
   &:active {
-    background-color: var(--red);
+    background-color: var(--hoverBG);
+    color: var(--hoverColor);
+    fill: var(--hoverColor);
+    border-color: var(--hoverBorderColor);
   }
 
   &:focus-visible {
@@ -89,5 +85,19 @@ export const StyledButton = styled(StyledBaseButton)`
     border: 1px solid var(--black);
     color: var(--black);
     fill: var(--black);
+  }
+
+  &.outlined {
+    --borderColor: var(--white);
+    --hoverBG: var(--black);
+    --hoverColor: var(--red);
+    --hoverBorderColor: rgb(220 220 220 / 50%);
+  }
+
+  &.filled {
+    --borderColor: transparent;
+    --hoverBG: var(--red);
+    --hoverColor: var(--white);
+    --hoverBorderColor: transparent;
   }
 `;

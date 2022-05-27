@@ -16,12 +16,14 @@ const StyledCard = styled.div`
   @media ${breakPoints.xl} {
     width: 340px;
     height: 500px;
+
     padding: 33px 40px;
   }
 
   @media ${breakPoints.lg} {
     width: 270px;
     height: 400px;
+
     padding: 26px 32px;
   }
 
@@ -32,9 +34,17 @@ const StyledCard = styled.div`
   }
 
   @media ${breakPoints.sm} {
-    width: 165px;
-    height: 250px;
-    padding: 15px 8px;
+    width: 160px;
+    height: 180px;
+
+    padding: 15px 10px;
+
+    border-radius: 4px;
+
+    &.active {
+      width: 180px;
+      height: 220px;
+    }
   }
 `;
 

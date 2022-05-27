@@ -11,28 +11,26 @@ import {
 
 const RD = (): React.ReactElement => (
   <StyledWrapper>
-    <Text component='h2' fontFamily='serif' align='center'>
+    <Text variant='h2' align='center'>
       Литжурнал Русского Динозавра
     </Text>
     <StyledContent>
       <StyledRD />
-      <StyledMainText component='p'>
-        <Text variant='h2' fontFamily='serif'>
+      <StyledMainText variant='p'>
+        <Text variant='h2' component='span'>
           М
         </Text>
         ы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
-        литературном журнале арт-конгрегации
-        {' '}
-        <Text variant='p' color='red'>
+        литературном журнале арт-конгрегации &nbsp;
+        <Text variant='p' component='span' color='red'>
           Русский Динозавр
         </Text>
-        {' '}
-        — нашего творческого объединения мастеров арт-контента.
+        &nbsp;— нашего творческого объединения мастеров арт-контента.
       </StyledMainText>
-      <StyledSecondaryText component='p'>
+      <StyledSecondaryText variant='p'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
       </StyledSecondaryText>
-      <WithArrow color='red' variant='p'>
+      <WithArrow color='red' variant='p' component='span'>
         Журнал Русского Динозавра
       </WithArrow>
     </StyledContent>

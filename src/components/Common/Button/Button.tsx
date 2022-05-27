@@ -1,19 +1,43 @@
+import classNames from 'classnames';
+import Link from 'next/link';
 import React, { ButtonHTMLAttributes, memo, PropsWithChildren } from 'react';
 import Text from '../Text';
 import { StyledButton, StyledButtonProps } from './styles';
+import { StyleVariant } from './types';
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
-    Partial<StyledButtonProps> {}
+    Partial<StyledButtonProps> {
+  readonly href?: string;
+  readonly styleVariant?: StyleVariant;
+}
 
 const Button = (props: PropsWithChildren<ButtonProps>) => {
   const {
-    children, variant = 'standard', rounded = false, ...params
+    children,
+    className,
+    href,
+    rounded = false,
+    variant = 'standard',
+    styleVariant = 'filled',
+    ...params
   } = props;
+  const classes = classNames(styleVariant, className);
   return (
-    <StyledButton {...params} variant={variant} rounded={rounded}>
-      <Text component='span' variant='body1' key={0}>
-        {children}
+    <StyledButton
+      {...params}
+      variant={variant}
+      rounded={rounded}
+      className={classes}
+    >
+      <Text variant='span' color='inherit' key={0}>
+        {href ? (
+          <Link href={href} passHref>
+            <a href='fakeHref'>{children}</a>
+          </Link>
+        ) : (
+          children
+        )}
       </Text>
     </StyledButton>
   );

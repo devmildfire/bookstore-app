@@ -11,9 +11,7 @@ const StyledCard = styled.div`
 
   width: 340px;
 
-  .red {
-    color: #930000;
-
+  .top {
     margin-top: 5px;
   }
 
@@ -58,16 +56,22 @@ const MemberCard = (props: Member): React.ReactElement => {
   return (
     <StyledCard>
       <StyledPhoto src={photo} alt={member} />
-      <Text variant='body1' align='center'>
+      <Text variant='span' align='center'>
         {member}
       </Text>
-      <Text variant='body1' align='center'>
+      <Text variant='span' align='center'>
         {position}
       </Text>
-      <Text variant='body1' align='center'>
+      <Text variant='span' align='center'>
         {city}
       </Text>
-      <Text variant='body1' className='red' align='center'>
+      <Text
+        variant='span'
+        component='span'
+        className='top'
+        color='red'
+        align='center'
+      >
         {phrase}
       </Text>
     </StyledCard>

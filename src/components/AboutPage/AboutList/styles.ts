@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import Slide from '@/components/Common/Slide';
 
-const StyledList = styled.section`
+export const StyledList = styled.section`
   display: flex;
+  justify-content: space-between;
   gap: 16px;
 
   @media ${breakPoints.xl} {
@@ -22,4 +24,8 @@ const StyledList = styled.section`
   }
 `;
 
-export default StyledList;
+export const StyledSlide = styled(Slide)`
+  align-items: center;
+`;
+
+StyledSlide.displayName = Slide.displayName;

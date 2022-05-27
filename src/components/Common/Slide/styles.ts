@@ -5,5 +5,4 @@ import { SwiperSlide } from 'swiper/react';
 export default styled(SwiperSlide)`
   display: flex;
   justify-content: center;
-  align-items: center;
 `;

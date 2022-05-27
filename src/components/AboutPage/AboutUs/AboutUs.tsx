@@ -6,10 +6,6 @@ import Text from '@/components/Common/Text';
 import WithArrow from '@/components/Common/WithArrow';
 import Books from './Books';
 
-const StyledHeader = styled(Text)`
-  text-transform: uppercase;
-`;
-
 const StyledDescriptionContainer = styled(Container)`
   display: flex;
   flex-direction: column;
@@ -32,14 +28,14 @@ const StyledManifestText = styled(Text)`
 const AboutUs = () => (
   <section>
     <Container>
-      <StyledHeader align='center' component='h2' fontFamily='serif'>
+      <Text align='center' variant='h2'>
         О чем мы?
-      </StyledHeader>
+      </Text>
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      <Text component='p'>
-        <Text variant='h2' fontFamily='serif'>
+      <Text variant='p'>
+        <Text component='span' variant='h2' fontFamily='serif'>
           Н
         </Text>
         езависимое издательство Чтиво — дитя петербургского литандеграунда и
@@ -48,10 +44,9 @@ const AboutUs = () => (
         неформальными произведениями и считаем, что книгоиздание не должно быть
         бизнесом.
       </Text>
-      <StyledManifestText variant='p'>
-        Узнать больше в
-        {' '}
-        <WithArrow color='red' variant='p'>
+      <StyledManifestText variant='p' component='span'>
+        Узнать больше в &nbsp;
+        <WithArrow color='red' variant='p' component='span'>
           «Манифесте Чтива»
         </WithArrow>
       </StyledManifestText>

@@ -12,12 +12,7 @@ const StyledContainer = styled(Container)`
 
 const Partners = (): React.ReactElement => (
   <StyledContainer>
-    <Text
-      component='h2'
-      align='center'
-      fontFamily='serif'
-      textTransform='uppercase'
-    >
+    <Text variant='h2' align='center'>
       Наши партнеры
     </Text>
     <PartnersList />

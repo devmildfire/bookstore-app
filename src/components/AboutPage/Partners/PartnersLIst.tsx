@@ -33,9 +33,9 @@ const PartnersList = (): React.ReactElement => {
   const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
   let count = 3;
   if (isMobile) {
-    count = 1;
+    count = 1.5;
   } else if (isTabletVertical) {
-    count = 2;
+    count = 2.5;
   }
   return (
     <StyledList
@@ -43,8 +43,8 @@ const PartnersList = (): React.ReactElement => {
       withoutSwipe
       withoutTouch
       slidesPerView={count}
-      freeMode
       spaceBetween={20}
+      centeredSlides
     >
       {partners.map((partner) => (
         <Slide key={partner.id}>

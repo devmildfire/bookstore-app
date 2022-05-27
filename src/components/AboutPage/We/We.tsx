@@ -30,7 +30,7 @@ const StyledWrapper = styled(Container)`
 
 const We = (): React.ReactElement => (
   <StyledWrapper>
-    <Text component='h2' align='center' fontFamily='serif'>
+    <Text variant='h2' align='center'>
       Мы
     </Text>
     <Members />
