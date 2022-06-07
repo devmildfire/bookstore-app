@@ -50,6 +50,11 @@ src: url("../../public/fonts/Chequeblack.ttf") format("truetype");
 
 html {
   box-sizing: border-box;
+  
+  --red: #930000;
+  --white: #dcdcdc;
+  --black: #121212;
+  --grey: #c4c4c4;
 }
 
 *,
