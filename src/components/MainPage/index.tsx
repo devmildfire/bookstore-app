@@ -1,13 +1,13 @@
 import React from 'react';
-import Slider from '../PageLayout/Slider';
+import BooksSlider from '../PageLayout/BooksSlider';
 import NewProduct from '../NewProduct';
-import booksData from '@/utils/booksData';
+import booksData from '@/mocks/books';
 
 const MainPage = (): React.ReactElement => (
-  <>
-    <Slider books={booksData} />
+  <main>
+    <BooksSlider books={booksData} />
     <NewProduct />
-  </>
+  </main>
 );
 
 export default MainPage;

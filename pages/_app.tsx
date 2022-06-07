@@ -5,7 +5,7 @@ import PageLayout from '@/components/PageLayout/PageLayout';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
-import '@/Styles/globals.css';
+import '@/styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps): React.ReactElement {
   return (

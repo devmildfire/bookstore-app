@@ -1,0 +1,94 @@
+import React from 'react';
+
+import getCurrentYear from '@/utils/getCurrentYear';
+import Text from '@/components/Common/Text';
+import socials from '@/utils/socials';
+import contacts from '@/mocks/contacts';
+import {
+  CopyrightContainer,
+  FooterContact,
+  FooterContacts,
+  FooterContent,
+  FooterCopyright,
+  FooterInfo,
+  FooterLogo,
+  FooterLogoLink,
+  FooterLogoText,
+  FooterSocials,
+  FooterTitle,
+  Icon,
+  StyleWrapper,
+} from './styles';
+
+const Footer = (): React.ReactElement => (
+  <StyleWrapper>
+    <FooterContent>
+      <FooterContacts>
+        {contacts.map(({ content, hightLightContent, href }) => (
+          <FooterContact component='p'>
+            <a href={href}>
+              {content}
+              &nbsp;
+              <FooterContact component='span' color='red'>
+                {hightLightContent}
+              </FooterContact>
+            </a>
+          </FooterContact>
+        ))}
+      </FooterContacts>
+      <FooterInfo>
+        <FooterTitle variant='h2' fontFamily='sans'>
+          <FooterTitle
+            component='span'
+            variant='h2'
+            color='red'
+            fontFamily='sans'
+          >
+            Чти
+          </FooterTitle>
+          во
+        </FooterTitle>
+        <FooterSocials>
+          {socials.map((social) => (
+            <li>
+              <a href={social.href}>
+                <Icon as={social.icon as any} />
+              </a>
+            </li>
+          ))}
+        </FooterSocials>
+      </FooterInfo>
+      <FooterLogoLink
+        href='https://russiandino.ru/'
+        target='_blank'
+        rel='noreferrer'
+      >
+        <FooterLogo />
+        <FooterLogoText>
+          <Text variant='body1'>Made by</Text>
+          <Text component='span' variant='subtitle1'>
+            Russkiy
+          </Text>
+          <Text component='span' variant='subtitle1'>
+            Dinozavr
+          </Text>
+        </FooterLogoText>
+      </FooterLogoLink>
+    </FooterContent>
+    <FooterCopyright>
+      <CopyrightContainer>
+        <Text variant='body2'>
+          © 2017-
+          {getCurrentYear()}
+          &nbsp;
+          <Text variant='body2' color='red'>
+            Чти
+          </Text>
+          во. Санкт-Петербург. Все права защищены.
+        </Text>
+      </CopyrightContainer>
+    </FooterCopyright>
+  </StyleWrapper>
+);
+
+export default Footer;

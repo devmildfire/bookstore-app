@@ -81,7 +81,10 @@ h5,
 h6,
 p,
 ol,
-ul {
+ul,
+dl,
+dt,
+dd {
   margin: 0;
   padding: 0;
 }
@@ -115,4 +118,9 @@ video {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.swiper,
+.swiper-wrapper {
+  z-index: 0;
 }

@@ -5,8 +5,8 @@ import IconFb from '@/assets/icons/footer-facebook.svg';
 import IconTwitter from '@/assets/icons/footer-twitter.svg';
 
 interface ISocialItem {
-  icon: SVGAElement,
-  href: string,
+  readonly icon: SVGElement;
+  readonly href: string;
 }
 
 const socials: ISocialItem[] = [

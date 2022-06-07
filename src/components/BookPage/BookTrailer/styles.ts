@@ -1,9 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import { TBookProps } from '@/types/bookProps';
 
-const StyleWrapper = styled.section`
+export const StyleWrapper = styled.section`
   margin-bottom: 130px;
 
   @media ${breakPoints.lg} {
@@ -15,7 +13,7 @@ const StyleWrapper = styled.section`
   }
 `;
 
-const Title = styled.h2`
+export const Title = styled.h2`
   margin-bottom: 30px;
   text-align: center;
   font-family: Cheque;
@@ -39,14 +37,14 @@ const Title = styled.h2`
   }
 `;
 
-const TrailerContainer = styled.div`
-  position:relative;
+export const TrailerContainer = styled.div`
+  position: relative;
   width: 100%;
   padding-top: 56.25%;
 `;
 
-const TrailerVideo = styled.iframe`
-  position:absolute;
+export const TrailerVideo = styled.iframe`
+  position: absolute;
   left: 0;
   top: 0;
   right: 0;
@@ -54,22 +52,3 @@ const TrailerVideo = styled.iframe`
   width: 100%;
   height: 100%;
 `;
-
-const BookTrailer = ({ book }: TBookProps): React.ReactElement => (
-  <StyleWrapper>
-    <Title>
-      Буктрейлер
-    </Title>
-    <TrailerContainer>
-      <TrailerVideo
-        src={book.trailerSrc}
-        title={book.title}
-        frameBorder='0'
-        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-        allowFullScreen
-      />
-    </TrailerContainer>
-  </StyleWrapper>
-);
-
-export default BookTrailer;

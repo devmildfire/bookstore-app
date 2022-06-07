@@ -1,5 +1,5 @@
-import { BooksData } from './api';
+import { Book } from './book';
 
 export type TBookProps = {
-  book: BooksData,
+  readonly book: Book,
 }

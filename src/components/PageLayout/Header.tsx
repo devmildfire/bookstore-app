@@ -11,14 +11,14 @@ import HeaderTab from './components/HeaderTab';
 import colors from '@/utils/colors';
 import menu from '@/utils/menuItems';
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.header`
   width: 100%;
   position: sticky;
   top: 0;
   height: 80px;
   padding: 0 60px;
   background-color: ${colors.blackBase};
-  z-index: 999;
+  z-index: 1;
 
   @media (max-width: 1440px) {
     padding: 0 40px;
