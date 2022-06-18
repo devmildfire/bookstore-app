@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
-import { Book } from '@/types/api';
+import { Book } from '@/types/book';
 import Counter from '../Common/Counter';
 import {
   StyledWrapper,

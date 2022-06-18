@@ -22,9 +22,13 @@ export const Text = (
 
   const as = component || tagMap[variant];
 
+  /**
+   * Почему то выдает тип, в котором не as
+   * Но он там должен быть, по этому пока что any
+   */
   return (
     <StyledText
-      as={as}
+      as={as as any}
       align={align}
       variant={variant}
       className={className}

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import DeviceInfoContext from '@/contexts/DeviceInfoContext';
-import aboutInfo from '@/utils/aboutInfo';
+import aboutInfo from '@/mocks/aboutInfo';
 import AboutCard from '../AboutCard';
 import { StyledList, StyledSlide } from './styles';
 import Slider from '@/components/Common/Slider';

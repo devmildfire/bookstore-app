@@ -163,11 +163,11 @@ export interface StyledTextProps {
   readonly fontWeight?: Property.FontWeight;
 }
 
-const StyledText = styled.span<StyledTextProps>`
-  color: ${(props) => colors[props.color]};
+const StyledText = styled.span`
+  color: ${(props: StyledTextProps) => colors[props.color]};
   line-height: 1.2em;
   text-align: ${(props) => props.align};
-  ${(props) => styles[props.variant]}
+  ${(props: StyledTextProps) => styles[props.variant]}
 `;
 
 export default StyledText;

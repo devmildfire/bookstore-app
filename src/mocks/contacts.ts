@@ -1,6 +1,4 @@
-import { Contact } from '@/types/contact';
-
-const contacts: Contact[] = [
+const contacts = [
   {
     content: 'Тел.',
     hightLightContent: '(812) 915-83-67',

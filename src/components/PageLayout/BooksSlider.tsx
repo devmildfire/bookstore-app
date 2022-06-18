@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Book } from '@/types/api';
+import { Book } from '@/types/book';
 import Slider from '../Common/Slider';
 import Slide from '../Common/Slide';
 import Button from '../Common/Button';
