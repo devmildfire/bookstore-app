@@ -20,12 +20,11 @@ import {
 interface BookAuthorProps {
   readonly author: string | null;
   readonly authors: string[] | null;
-  readonly authorId: number;
+/*   readonly authorId: number; */
 }
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
-  const { author, authorId, authors } = props;
-  console.log(authorId);
+  const { author, authors } = props;
   return (
     <StyleWrapper>
       <Title>Об авторе</Title>

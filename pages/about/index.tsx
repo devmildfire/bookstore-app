@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { NextPage } from 'next';
 import AboutList from '@/components/AboutPage/AboutList';
 import AboutUs from '@/components/AboutPage/AboutUs';
 import RD from '@/components/AboutPage/RD';
@@ -12,7 +13,7 @@ import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
 import stars from '@/assets/images/stars.webp';
 
-const About = (): React.ReactElement => (
+const About: NextPage = () => (
   <StyledWrapper>
     <Container>
       <Video src='fakePath' />

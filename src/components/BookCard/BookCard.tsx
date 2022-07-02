@@ -27,7 +27,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [liked, setLike] = useState(false);
   const [inCardCount, setInCardCount] = useState(0);
   const {
-    id, link, title, price, oldPrice, author, authors, description,
+    id, link, title, price, newPrice: oldPrice, author, authors, description,
   } = book;
 
   const parsedAuthors = authors

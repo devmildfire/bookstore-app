@@ -1,15 +1,16 @@
+import { Author } from './author';
+
 export interface Book {
   readonly id: string;
   readonly title: string;
-  readonly author: string | null;
-  readonly authors: string[] | null;
+  readonly authors: Author[];
 
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
 
   readonly price: number;
-  readonly oldPrice: number | null;
+  readonly newPrice: number | null;
 
   readonly link: string;
   readonly banner: string;
