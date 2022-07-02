@@ -5,13 +5,11 @@ import styled from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 
-import colors from '../../utils/colors';
-
 const StyledWrapper = styled.div`
   width: 100%;
   position: relative;
-  background-color: ${colors.blackBase};
-  color: ${colors.white};
+  background-color: var(--black);
+  color: var(--white);
 `;
 
 const Content = styled.div`
@@ -19,33 +17,25 @@ const Content = styled.div`
   min-height: 100vh;
 `;
 
-interface IPageLayout {
-  children: React.ReactElement,
-  headTitle?: string,
+export interface PageLayoutProps {
+  readonly children: React.ReactElement;
+  readonly headTitle?: string;
 }
 
 const PageLayout = ({
   children,
-  headTitle,
-}: IPageLayout): React.ReactElement => (
+  headTitle = 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
+}: PageLayoutProps): React.ReactElement => (
   <>
     <Head>
-      <title>
-        {headTitle}
-      </title>
+      <title>{headTitle}</title>
     </Head>
     <StyledWrapper>
       <Header />
-      <Content>
-        {children}
-      </Content>
+      <Content>{children}</Content>
       <Footer />
     </StyledWrapper>
   </>
 );
-
-PageLayout.defaultProps = {
-  headTitle: 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
-};
 
 export default PageLayout;

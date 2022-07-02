@@ -1,42 +1,43 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "plugin:react/recommended",
-        "airbnb",
-        "plugin:import/errors",
-        "plugin:import/warnings",
-        "plugin:import/typescript"
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+    "no-use-before-define": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/extensions": [
+      "error",
+      "never",
+      {
+        "svg": "always",
+        "webp": "always",
+        "png": "always",
+        "jpeg": "always",
+        "jpg": "always",
+        "avif": "always",
+        "css": "always"
+      }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react",
-        "@typescript-eslint"
-    ],
-    "rules": {
-      "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
-      "no-use-before-define": "off",
-      "react/jsx-props-no-spreading": "off",
-      "import/extensions": [
-        "error",
-        "ignorePackages",
-        {
-          "js": "never",
-          "jsx": "never",
-          "ts": "never",
-          "tsx": "never"
-        }
-      ],
-      "jsx-quotes": ["error", "prefer-single"],
-      "linebreak-style": "off"
-    }
+    "import/no-unresolved": 0,
+    "jsx-quotes": ["error", "prefer-single"],
+    "linebreak-style": "off"
+  }
 }

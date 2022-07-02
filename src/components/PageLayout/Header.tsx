@@ -2,24 +2,24 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Logo from '../../assets/images/logo.svg';
-import SearchIcon from '../../assets/icons/search.svg';
-import CartIcon from '../../assets/icons/shop-cart.svg';
-import SignOutIcon from '../../assets/icons/sign-out.svg';
+import Logo from '@/assets/images/logo.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import CartIcon from '@/assets/icons/shop-cart.svg';
+import SignOutIcon from '@/assets/icons/sign-out.svg';
 import HeaderTab from './components/HeaderTab';
 
-import colors from '../../utils/colors';
-import menu from '../../utils/menuItems';
+import colors from '@/utils/colors';
+import menu from '@/utils/menuItems';
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.header`
   width: 100%;
   position: sticky;
   top: 0;
   height: 80px;
   padding: 0 60px;
   background-color: ${colors.blackBase};
-  z-index: 999;
-  
+  z-index: 1;
+
   @media (max-width: 1440px) {
     padding: 0 40px;
   }
@@ -68,14 +68,14 @@ const SignOutIconStyled = styled(SignOutIcon)`
 const Header = (): React.ReactElement => (
   <StyledWrapper>
     <HeaderContent>
-      <Link href='/'>
-        <Logo />
+      <Link href='/' passHref>
+        <a href='fakePath'>
+          <Logo />
+        </a>
       </Link>
       <SearchIconStyled />
       {menu.map((item) => (
-        <HeaderTab
-          item={item}
-        />
+        <HeaderTab item={item} key={item.title} />
       ))}
       <CartIconStyled />
       <SignOutIconStyled fill={colors.grey} />
