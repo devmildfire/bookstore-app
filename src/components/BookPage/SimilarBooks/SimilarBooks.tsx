@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import booksData from '@/mocks/books';
-import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import {

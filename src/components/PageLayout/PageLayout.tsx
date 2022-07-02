@@ -24,7 +24,7 @@ export interface PageLayoutProps {
 
 const PageLayout = ({
   children,
-  headTitle,
+  headTitle = 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
 }: PageLayoutProps): React.ReactElement => (
   <>
     <Head>
@@ -37,10 +37,5 @@ const PageLayout = ({
     </StyledWrapper>
   </>
 );
-
-PageLayout.defaultProps = {
-  headTitle:
-    'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
-};
 
 export default PageLayout;

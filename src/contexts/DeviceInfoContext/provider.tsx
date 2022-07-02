@@ -4,8 +4,8 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import DeviceInfoContext from '@/contexts/DeviceInfoContext';
 import calculateDeviceInfo from '@/utils/calculateDeviceInfo';
+import DeviceInfoContext from './context';
 
 const DeviceInfoProvider = (
   props: PropsWithChildren<{}>,

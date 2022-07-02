@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import MemberCard from './MemberCard';

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
-import DeviceInfoProvider from '@/components/DeviceInfoProvider';
 import PageLayout from '@/components/PageLayout/PageLayout';
+import { DeviceInfoProvider } from '@/contexts/DeviceInfoContext';
 
 import 'swiper/css';
 import 'swiper/css/pagination';

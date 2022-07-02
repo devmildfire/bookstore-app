@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import DeviceInfoContext from '@/contexts/DeviceInfoContext';
+import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import breakPoints from '@/utils/breakPoints';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
