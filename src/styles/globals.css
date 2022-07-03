@@ -50,9 +50,20 @@
 
 html {
   box-sizing: border-box;
-  --red: #930000;
-  --white: #dcdcdc;
-  --black: #121212;
+  --main-red-100:rgba(147, 0, 0, 1);
+  --main-red-90: rgba(147, 0, 0, 0.9);
+  --main-red-80: rgba(147, 0, 0, 0.8);
+  --main-red-70: rgba(147, 0, 0, 0.7);
+  --main-red-60: rgba(147, 0, 0, 0.6);
+  --main-red-50: rgba(147, 0, 0, 0.5);
+  --main-red-40: rgba(147, 0, 0, 0.4);
+  --main-red-30: rgba(147, 0, 0, 0.3);
+  --main-red-20: rgba(147, 0, 0, 0.2);
+  --main-red-10: rgba(147, 0, 0, 0.1);
+
+
+  --main-white: #dcdcdc;
+  --main-black: #121212;
   --grey: #c4c4c4;
 }
 

@@ -61,7 +61,7 @@ export const StyledButton = styled.button`
   ${(props: StyledButtonProps) => styles[props.variant]}
   width: max-content;
 
-  background-color: var(--black);
+  background-color: var(--main-black);
 
   border: 1px solid var(--borderColor);
   border-radius: ${(props: StyledButtonProps) => (props.rounded ? '4' : '0')}px;
@@ -70,7 +70,7 @@ export const StyledButton = styled.button`
 
   transition: all 0.2s ease-out;
 
-  color: var(--white);
+  color: var(--main-white);
 
   &:hover,
   &:active {
@@ -81,23 +81,23 @@ export const StyledButton = styled.button`
   }
 
   &:focus-visible {
-    background-color: var(--white);
-    border: 1px solid var(--black);
-    color: var(--black);
-    fill: var(--black);
+    background-color: var(--main-white);
+    border: 1px solid var(--main-black);
+    color: var(--main-black);
+    fill: var(--main-black);
   }
 
   &.outlined {
-    --borderColor: var(--white);
-    --hoverBG: var(--black);
-    --hoverColor: var(--red);
+    --borderColor: var(--main-white);
+    --hoverBG: var(--main-black);
+    --hoverColor: var(--main-red-100);
     --hoverBorderColor: rgb(220 220 220 / 50%);
   }
 
   &.filled {
     --borderColor: transparent;
-    --hoverBG: var(--red);
-    --hoverColor: var(--white);
+    --hoverBG: var(--main-red-100);
+    --hoverColor: var(--main-white);
     --hoverBorderColor: transparent;
   }
 `;

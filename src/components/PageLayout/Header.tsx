@@ -45,15 +45,20 @@ const SearchIconStyled = styled(SearchIcon)`
   cursor: pointer;
 
   :hover {
-    fill: ${colors.redBase};
+    fill: var(--main-red-100);
   }
 `;
 
 const CartIconStyled = styled(CartIcon)`
+  width: 14px;
+  height: 16px;
+
+  stroke: var(--main-white);
+
   cursor: pointer;
 
   :hover {
-    stroke: ${colors.redBase};
+    stroke: var(--main-red-100);
   }
 `;
 
@@ -61,7 +66,7 @@ const SignOutIconStyled = styled(SignOutIcon)`
   cursor: pointer;
 
   :hover {
-    fill: ${colors.redBase};
+    fill: var(--main-red-100);
   }
 `;
 

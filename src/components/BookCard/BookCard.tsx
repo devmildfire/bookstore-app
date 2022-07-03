@@ -1,23 +1,18 @@
-import React, { useCallback, useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import Link from '../Common/Link';
 import { Book } from '@/types/book';
-import Counter from '../Common/Counter';
 import {
   StyledWrapper,
   StyledLike,
-  StyledBookInfo,
-  StyledCover,
   StyledImage,
-  StyledDescription,
-  StyledTitle,
-  StyledAuthor,
   StyledPriceInfo,
-  StyledOldPrice,
+  StyledShopCard,
+  StyledInfo,
+  StyledIcons,
 } from './styles';
 import Text from '../Common/Text';
-import Button from '../Common/Button';
 
-const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g;
+/* const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g; */
 
 interface BookCardProps {
   readonly book: Book;
@@ -25,87 +20,39 @@ interface BookCardProps {
 
 const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [liked, setLike] = useState(false);
-  const [inCardCount, setInCardCount] = useState(0);
   const {
-    id, link, title, price, newPrice, authors, description,
+    id, link, price, newPrice,
   } = book;
-
-  const parsedAuthors = authors
-    ?.join(', ')
-    .replace(SPACE_AFTER_AUTHOR_NAME_REGEXP, '&nbsp;');
-  const parsedDescription = description.map((paragraph) => (
-    <Text component='p' variant='body2' key={paragraph}>
-      {paragraph}
-    </Text>
-  ));
-
-  const addToCart = useCallback(() => {
-    setInCardCount((prev) => prev + 1);
-  }, []);
-
-  const removeFromCart = useCallback(() => {
-    if (inCardCount > 0) {
-      setInCardCount((prev) => prev - 1);
-    }
-  }, [inCardCount]);
   return (
-    <StyledWrapper>
-      <StyledCover>
-        <Link href={`/books/${id}`} passHref>
-          <a href='fakeHref'>
-            <StyledImage
-              className='cardImage'
-              src={link}
-              alt='BookDescription logo'
-            />
-          </a>
-        </Link>
-        <StyledBookInfo>
-          <Text component='p' variant='body1'>
-            {title}
+    <StyledWrapper tabIndex={0}>
+      <Link href={`/books/${id}`}>
+        <StyledImage
+          className='cardImage'
+          src={link}
+          alt='BookDescription logo'
+        />
+      </Link>
+      <StyledInfo>
+        <StyledPriceInfo>
+          <Text variant='p' component='span' fontWeight={700}>
+            {`${newPrice || price}₽`}
           </Text>
-          <StyledDescription>{parsedDescription}</StyledDescription>
-        </StyledBookInfo>
-      </StyledCover>
-      <StyledTitle component='p' variant='subtitle1'>
-        {title}
-      </StyledTitle>
-      <StyledAuthor
-        // @ts-ignore
-        dangerouslySetInnerHTML={{ __html: parsedAuthors }}
-      />
-      <StyledPriceInfo>
-        <Text fontWeight={600}>
           {newPrice && (
-            <StyledOldPrice color='red' fontWeight='inherit' component='span'>
+            <Text color='red' fontWeight={700} component='span' variant='p'>
               <del>{`${price}₽`}</del>
-            </StyledOldPrice>
+            </Text>
           )}
-          {`${newPrice || price}₽`}
-        </Text>
-        <StyledLike
-          liked={liked}
-          onClick={() => setLike((prev) => !prev)}
-          role='button'
-          tabIndex={0}
-        />
-      </StyledPriceInfo>
-      {inCardCount ? (
-        <Counter
-          value={inCardCount}
-          increment={addToCart}
-          decrement={removeFromCart}
-        />
-      ) : (
-        <Button
-          onClick={addToCart}
-          variant='wide'
-          styleVariant='outlined'
-          rounded
-        >
-          Добавить в корзину
-        </Button>
-      )}
+        </StyledPriceInfo>
+        <StyledIcons>
+          <StyledShopCard tabIndex={0} />
+          <StyledLike
+            liked={liked}
+            onClick={() => setLike((prev) => !prev)}
+            role='button'
+            tabIndex={0}
+          />
+        </StyledIcons>
+      </StyledInfo>
     </StyledWrapper>
   );
 };

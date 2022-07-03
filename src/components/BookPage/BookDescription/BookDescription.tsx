@@ -9,22 +9,21 @@ import {
   StyledWrapper,
 } from './styles';
 import Text from '@/components/Common/Text';
+import { Author } from '@/types/author';
 
 interface BookDescriptionProps {
   readonly title: string;
-  readonly author: string | null;
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
   readonly link: string;
   readonly description: string[];
-  readonly authors: string[] | null;
+  readonly authors: Author[];
 }
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
     title,
-    author,
     publishDate,
     genre,
     ageRestriction,
@@ -39,7 +38,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
       <div>
         <StyledTitle variant='h2'>{title}</StyledTitle>
         <StyledAuthor variant='p' component='h3' fontWeight={700}>
-          {author || authors}
+          {authors.map((author) => author.name)}
         </StyledAuthor>
         <StyledInfo fontWeight={700}>
           {`${publishDate} | ${genre} | ${ageRestriction}`}

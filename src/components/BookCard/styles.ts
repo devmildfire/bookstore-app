@@ -1,110 +1,85 @@
 import styled from 'styled-components';
-import breakPoints from '@/utils/breakPoints';
 import Like from '@/assets/icons/like.svg';
-import Text from '../Common/Text';
+import ShopCart from '@/assets/icons/shop-cart.svg';
 
 export const StyledWrapper = styled.article`
+  width: 355px;
+
   font-size: 16px;
   line-height: 20px;
-  color: #f5f5f5;
-  max-width: 320px;
+  color: var(--main-white);
+
+  background-color: var(--main-black);
+
+  transform-origin: center;
+
+  transition: all 250ms ease-in;
+
+  :hover,
+  :focus-visible {
+    transform: scale(1.15);
+
+    box-shadow: 10px 10px 40px var(--main-red-30),
+      -10px -10px 40px var(--main-red-30);
+  }
+
+  :focus-visible {
+    outline: none;
+  }
 `;
 
 export const StyledLike = styled(Like)`
-  width: 20px;
-  height: 18px;
-  fill: var(--${(props) => (props.liked ? 'red' : 'white')});
+  width: 30px;
+  height: 25px;
+  fill: var(--${(props) => (props.liked ? 'main-red-100' : 'main-white')});
 
   transition: fill 0.2 ease-in-out;
 
   :hover,
   :focus-visible {
-    fill: var(--${(props) => (props.liked ? 'white' : 'red')});
+    fill: var(--${(props) => (props.liked ? 'main-white' : 'main-red-100')});
+  }
+
+  :focus-visible {
+    outline: none;
   }
 `;
 
-export const StyledBookInfo = styled.div`
-  position: absolute;
-  bottom: -100%;
-  left: 0;
-  right: 0;
+export const StyledInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  display: grid;
-  gap: 15px;
-
-  height: max-content;
-
-  padding: 20px 15px;
-
-  background-color: rgba(19, 19, 19, 0.9);
-
-  transition: 0.5s ease-in-out;
-`;
-
-export const StyledCover = styled.div`
-  position: relative;
-
-  height: 452px;
-  width: 320px;
-
-  margin-bottom: 25px;
-
-  box-shadow: 0.5px 0.5px 3px 1px rgb(207 207 236 / 20%);
-
-  overflow: hidden;
-
-  :hover ${StyledBookInfo} {
-    bottom: 0%;
-  }
-
-  @media ${breakPoints.sm} {
-    height: 365px;
-    width: 250px;
-
-    margin-bottom: 20px;
-  }
+  padding: 18px 35px;
 `;
 
 export const StyledImage = styled.img`
-  height: 450px;
-  width: 320px;
+  width: 100%;
+  height: 533px;
 
-  object.fit: cover;
-`;
-
-export const StyledDescription = styled.div`
-  display: grid;
-  gap: 1em;
-`;
-
-export const StyledTitle = styled(Text)`
-  margin-bottom: 10px;
-
-  @media ${breakPoints.sm} {
-    margin-bottom: 5px;
-  }
-`;
-
-export const StyledAuthor = styled(Text)`
-  margin-bottom: 23px;
-  min-height: 2em;
-
-  @media ${breakPoints.sm} {
-    margin-bottom: 10px;
-  }
+  object-fit: cover;
 `;
 
 export const StyledPriceInfo = styled.div`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 17px;
 
-  margin-bottom: 40px;
-
-  @media ${breakPoints.sm} {
-    margin-bottom: 20px;
-  }
+  width: max-content;
 `;
 
-export const StyledOldPrice = styled(Text)`
-  margin-right: 17px;
+export const StyledIcons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 40px;
+`;
+
+export const StyledShopCard = styled(ShopCart)`
+  width: 24px;
+  height: 28px;
+  stroke: var(--main-white);
+
+  :focus-visible {
+    outline: none;
+  }
 `;

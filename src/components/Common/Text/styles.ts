@@ -14,8 +14,8 @@ const fontFamilies: Record<string, string> = {
 
 const colors: Record<Color, string> = {
   inherit: 'inherit',
-  red: 'var(--red)',
-  white: 'var(--white)',
+  red: 'var(--main-red-100)',
+  white: 'var(--main-white)',
 };
 
 const h2Style = css<StyledTextProps>`

@@ -12,8 +12,8 @@ export const StyledButton = styled(Button)`
   border: 1px solid #dcdcdc;
 
   &:hover {
-    color: var(--red);
+    color: var(--main-red-100);
     border: 0.5px solid rgb(220 220 220 / 50%);
-    background-color: var(--black);
+    background-color: var(--main-black);
   }
 `;
