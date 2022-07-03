@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Author } from '@/types/author';
 // import contactIconsSrc from '@/utils/contactIconsData';
 import {
   AuthorAbout,
@@ -18,22 +19,25 @@ import {
 } from './styles';
 
 interface BookAuthorProps {
-  readonly author: string | null;
-  readonly authors: string[] | null;
-/*   readonly authorId: number; */
+  readonly authors: Author[];
+  /*   readonly authorId: number; */
 }
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
-  const { author, authors } = props;
+  const { authors } = props;
   return (
     <StyleWrapper>
       <Title>Об авторе</Title>
       <AuthorInfo>
-        <AuthorFoto src='/images/authors/kune.jpg' alt={`${author}`} />
+        <AuthorFoto
+          src='/images/authors/kune.jpg'
+          alt={`${authors[0].photo}`}
+        />
         <AuthorDescr>
           <AuthorProps>
-            {author && <span>{`${author} `}</span>}
-            {authors && authors.map((name) => <span>{`${name} `}</span>)}
+            {authors.map(({ name }) => (
+              <span>{`${{ name }} `}</span>
+            ))}
             <span>| Аскер | 24.03.1984</span>
           </AuthorProps>
           <AuthorSpeech>

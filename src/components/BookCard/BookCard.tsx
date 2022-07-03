@@ -19,15 +19,15 @@ import Button from '../Common/Button';
 
 const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g;
 
-type BookCardProps = {
-  book: Book;
-};
+interface BookCardProps {
+  readonly book: Book;
+}
 
 const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const [liked, setLike] = useState(false);
   const [inCardCount, setInCardCount] = useState(0);
   const {
-    id, link, title, price, newPrice: oldPrice, author, authors, description,
+    id, link, title, price, newPrice, authors, description,
   } = book;
 
   const parsedAuthors = authors
@@ -48,7 +48,6 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
       setInCardCount((prev) => prev - 1);
     }
   }, [inCardCount]);
-  const hasAuthor = !!author || !!parsedAuthors;
   return (
     <StyledWrapper>
       <StyledCover>
@@ -71,20 +70,18 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
       <StyledTitle component='p' variant='subtitle1'>
         {title}
       </StyledTitle>
-      {hasAuthor && (
-        <StyledAuthor
-          // @ts-ignore
-          dangerouslySetInnerHTML={{ __html: parsedAuthors || author }}
-        />
-      )}
+      <StyledAuthor
+        // @ts-ignore
+        dangerouslySetInnerHTML={{ __html: parsedAuthors }}
+      />
       <StyledPriceInfo>
         <Text fontWeight={600}>
-          {oldPrice && (
+          {newPrice && (
             <StyledOldPrice color='red' fontWeight='inherit' component='span'>
-              <del>{`${oldPrice}₽`}</del>
+              <del>{`${price}₽`}</del>
             </StyledOldPrice>
           )}
-          {`${price}₽`}
+          {`${newPrice || price}₽`}
         </Text>
         <StyledLike
           liked={liked}

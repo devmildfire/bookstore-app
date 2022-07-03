@@ -1,4 +1,5 @@
 import { Book, Reader, Worker } from '@/types/book';
+import { authors } from './authors';
 
 const readers: Reader[] = [
   {
@@ -67,8 +68,7 @@ const booksData: Book[] = [
   {
     id: '1',
     title: 'Аристотель в Казахстане',
-    author: null,
-    authors: ['О. Новокщёнов', 'А. Киреев', 'Д. Горшечников'],
+    authors: authors.slice(0, 2),
     publishDate: '2019-12-12',
     genre: 'роман',
     ageRestriction: '18+',
@@ -92,8 +92,7 @@ const booksData: Book[] = [
   {
     id: '2',
     title: 'DELETED',
-    author: 'Катерина Кюне',
-    authors: null,
+    authors: [authors[3]],
     publishDate: '2021-12-12',
     genre: 'роман',
     ageRestriction: '18+',
@@ -115,8 +114,7 @@ const booksData: Book[] = [
   {
     id: '3',
     title: 'КРАФТ',
-    author: 'Георгий Панкратов',
-    authors: null,
+    authors: [authors[4]],
     publishDate: '2021-12-12',
     genre: 'сборник повестей',
     ageRestriction: '18+',
@@ -138,8 +136,7 @@ const booksData: Book[] = [
   {
     id: '4',
     title: 'Аристотель в Казахстане',
-    author: null,
-    authors: ['О. Новокщёнов', 'А. Киреев', 'Д. Горшечников'],
+    authors: authors.slice(0, 2),
     publishDate: '2019-12-12',
     genre: 'роман',
     ageRestriction: '18+',
@@ -162,8 +159,7 @@ const booksData: Book[] = [
   {
     id: '5',
     title: 'DELETED',
-    author: 'Катерина Кюне',
-    authors: null,
+    authors: [authors[3]],
     publishDate: '2021-12-12',
     genre: 'роман',
     ageRestriction: '18+',
@@ -185,8 +181,7 @@ const booksData: Book[] = [
   {
     id: '6',
     title: 'КРАФТ',
-    author: 'Георгий Панкратов',
-    authors: null,
+    authors: [authors[4]],
     publishDate: '2021-12-12',
     genre: 'сборник повестей',
     ageRestriction: '18+',
