@@ -8,6 +8,7 @@ module.exports = {
 
     return config;
   },
+  reactStrictMode: true,
   async redirects() {
     return [
       {

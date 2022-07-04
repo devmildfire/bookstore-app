@@ -1,29 +1,23 @@
 import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import HomePage from '@/components/HomePage';
-import BooksList from '@/components/BooksList';
-import { Book } from '@/types/book';
-import booksData from '@/mocks/books';
+import Books from '@/components/Books';
+import { loadBooksThunk } from '@/models/books';
+import { wrapper } from '@/models';
 
-interface BooksPageProps {
-  readonly books: Book[];
-}
+const BooksPage: NextPage = () => (
+  <HomePage>
+    <Books />
+  </HomePage>
+);
 
-const Books: NextPage<BooksPageProps> = (props) => {
-  const { books } = props;
-  return (
-    <HomePage>
-      <BooksList books={books} />
-    </HomePage>
-  );
-};
-
-export const getServerSideProps: GetServerSideProps<
-  BooksPageProps
-> = async () => ({
-  props: {
-    books: booksData,
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async () => {
+    await store.dispatch(loadBooksThunk());
+    return {
+      props: {},
+    };
   },
-});
+);
 
-export default Books;
+export default BooksPage;

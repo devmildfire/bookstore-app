@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import booksData from '@/mocks/books';
 import Text from '../Common/Text';
-import BooksList from '../BooksList';
+import BooksList from '../Books/BooksList';
 import Container from '../Common/Container';
 import Button from '../Common/Button';
 

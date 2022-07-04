@@ -25,7 +25,7 @@ const Footer = (): React.ReactElement => (
     <FooterContent>
       <FooterContacts>
         {contacts.map(({ content, hightLightContent, href }) => (
-          <FooterContact component='p'>
+          <FooterContact component='p' key={href}>
             <a href={href}>
               {content}
               &nbsp;
@@ -50,7 +50,7 @@ const Footer = (): React.ReactElement => (
         </FooterTitle>
         <FooterSocials>
           {socials.map((social) => (
-            <li>
+            <li key={social.href}>
               <a href={social.href}>
                 <Icon as={social.icon as any} />
               </a>
@@ -65,7 +65,9 @@ const Footer = (): React.ReactElement => (
       >
         <FooterLogo />
         <FooterLogoText>
-          <Text variant='body1'>Made by</Text>
+          <Text component='span' variant='body1'>
+            Made by
+          </Text>
           <Text component='span' variant='subtitle1'>
             Russkiy
           </Text>
@@ -81,7 +83,7 @@ const Footer = (): React.ReactElement => (
           © 2017-
           {getCurrentYear()}
           &nbsp;
-          <Text variant='body2' color='red'>
+          <Text component='span' variant='body2' color='red'>
             Чти
           </Text>
           во. Санкт-Петербург. Все права защищены.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Link from '../Common/Link';
+import Link from '@/components/Common/Link';
 import { Book } from '@/types/book';
 import {
   StyledWrapper,
@@ -10,7 +10,7 @@ import {
   StyledInfo,
   StyledIcons,
 } from './styles';
-import Text from '../Common/Text';
+import Text from '@/components/Common/Text';
 
 /* const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g; */
 

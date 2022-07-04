@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import { Book } from '@/types/book';
+import { Book } from '@/models/books';
 import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
