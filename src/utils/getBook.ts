@@ -1,5 +1,5 @@
 import booksData from '@/mocks/books';
-import { Book } from '@/types/book';
+import { Book } from '@/models/books';
 
 const getBookInfo = (bookId: string | string[] | undefined): Book | null => {
   if (!bookId) {

@@ -16,7 +16,7 @@ import {
   StyledReadersItem,
 } from './styles';
 import Text from '@/components/Common/Text';
-import { Reader, Worker } from '@/types/book';
+import { Reader, Worker } from '@/models/books';
 
 interface BookPropertiesProps {
   readonly price: number;

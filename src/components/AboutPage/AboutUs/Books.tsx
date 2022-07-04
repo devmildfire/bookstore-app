@@ -58,7 +58,6 @@ const StyledPhrase = styled.div`
     text-align: end;
   }
 
-
   @media ${breakPoints.xl} {
     padding-top: 100px;
   }
@@ -79,7 +78,7 @@ const Books = () => (
     <Container>
       <StyledPhrase>
         <Text variant='p'>О том, чтобы превращать</Text>
-        <Text variant='h3' color='red' fontFamily='serif'>
+        <Text component='span' variant='h2' color='red' fontFamily='serif'>
           Деньги в книги,
         </Text>
         <Text variant='p'>а не наоборот</Text>

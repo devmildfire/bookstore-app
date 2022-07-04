@@ -1,4 +1,4 @@
-import { Book, Reader, Worker } from '@/types/book';
+import { Book, Reader, Worker } from '@/models/books';
 import { authors } from './authors';
 
 const readers: Reader[] = [
@@ -76,7 +76,7 @@ const booksData: Book[] = [
     newPrice: null,
     link: '/images/bookTitleAristotle.jpg',
     banner:
-      'https://via.placeholder.com/1920x600?text=Аристотель+в+Казахстане+хбдщдбдщ',
+      'https://via.placeholder.com/500x780?text=Аристотель+в+Казахстане+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/VR5WN4deUcU',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
@@ -99,7 +99,7 @@ const booksData: Book[] = [
     price: 300,
     newPrice: 350,
     link: '/images/bookTitleDeleted.jpg',
-    banner: 'https://via.placeholder.com/1920x600?text=DELETED+хбдщдбдщ',
+    banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/RbE7vmnkWvU',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
@@ -121,7 +121,7 @@ const booksData: Book[] = [
     price: 300,
     newPrice: null,
     link: '/images/bookTitleCraft.jpg',
-    banner: 'https://via.placeholder.com/1920x600?text=КРАФТ+хбдщдбдщ',
+    banner: 'https://via.placeholder.com/500x780?text=КРАФТ+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/6Wg-G_1bvi4',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
@@ -144,7 +144,7 @@ const booksData: Book[] = [
     newPrice: null,
     link: '/images/bookTitleAristotle.jpg',
     banner:
-      'https://via.placeholder.com/1920x600?text=Аристотель+в+Казахстане+хбдщдбдщ',
+      'https://via.placeholder.com/500x780?text=Аристотель+в+Казахстане+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/VR5WN4deUcU',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
@@ -166,7 +166,7 @@ const booksData: Book[] = [
     price: 300,
     newPrice: 350,
     link: '/images/bookTitleDeleted.jpg',
-    banner: 'https://via.placeholder.com/1920x600?text=DELETED+хбдщдбдщ',
+    banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/RbE7vmnkWvU',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
@@ -188,7 +188,7 @@ const booksData: Book[] = [
     price: 300,
     newPrice: null,
     link: '/images/bookTitleCraft.jpg',
-    banner: 'https://via.placeholder.com/1920x600?text=КРАФТ+хбдщдбдщ',
+    banner: 'https://via.placeholder.com/500x780?text=КРАФТ+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/6Wg-G_1bvi4',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',

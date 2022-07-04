@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { FC } from 'react';
 import { ClassNameProps } from '@/types/className';
 import StyledText, { StyledTextProps, tagMap } from './styles';
 import { Component } from './types';
@@ -7,9 +7,7 @@ export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
   readonly component?: Component;
 }
 
-export const Text = (
-  props: PropsWithChildren<TextProps>,
-): React.ReactElement => {
+export const Text: FC<TextProps> = (props) => {
   const {
     children,
     className,

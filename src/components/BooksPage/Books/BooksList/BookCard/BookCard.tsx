@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from '@/components/Common/Link';
-import { Book } from '@/types/book';
+import { Book } from '@/models/books';
 import {
   StyledWrapper,
   StyledLike,

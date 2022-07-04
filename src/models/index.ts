@@ -23,9 +23,12 @@ const reducer: Reducer<Store, AnyAction> = (state, action) => {
 };
 
 const makeStore = () => configureStore({
+  // @ts-ignore
   reducer,
   devTools: true,
 });
+
+export type AppDispatch = ReturnType<typeof makeStore>['dispatch']
 
 export const wrapper = createWrapper(makeStore, {
   debug: true,

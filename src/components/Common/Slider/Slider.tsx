@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Autoplay, FreeMode, Pagination } from 'swiper';
 import { SwiperProps } from 'swiper/react';
 import { ClassNameProps } from '@/types/className';
@@ -15,10 +15,11 @@ export interface SliderProps extends ClassNameProps {
   readonly freeMode?: boolean;
   readonly additionComponents?: React.ReactNode;
   readonly initialSlide?: number;
+  readonly withoutAutoplay?: boolean;
   readonly centeredSlides?: boolean;
 }
 
-export const Slider = (props: PropsWithChildren<SliderProps>) => {
+export const Slider: FC<SliderProps> = (props) => {
   const {
     withoutPagination,
     withoutTouch,
@@ -26,6 +27,7 @@ export const Slider = (props: PropsWithChildren<SliderProps>) => {
     withoutLoop,
     enabled,
     additionComponents,
+    withoutAutoplay,
     ...params
   } = props;
 
@@ -36,7 +38,7 @@ export const Slider = (props: PropsWithChildren<SliderProps>) => {
         clickable: true,
         renderBullet: (_, className) => `<span class="${className}"></span>`,
       },
-      autoplay: {
+      autoplay: !withoutAutoplay && {
         delay: 2500,
         disableOnInteraction: false,
       },
@@ -45,7 +47,13 @@ export const Slider = (props: PropsWithChildren<SliderProps>) => {
       allowTouchMove: !withoutTouch,
       preventInteractionOnTransition: withoutSwipe,
     }),
-    [withoutPagination, withoutTouch, withoutSwipe, withoutLoop],
+    [
+      withoutPagination,
+      withoutTouch,
+      withoutSwipe,
+      withoutLoop,
+      withoutAutoplay,
+    ],
   );
   return (
     <StyledWrapper>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from '@/components/Common/Container';
 import NavigationItem from './NavigationItem';
 import { StyledList } from './styles';
 
@@ -27,13 +28,13 @@ const navigationItems: NavItem[] = [
 ];
 
 const Navigation = (): React.ReactElement => (
-  <div>
+  <Container>
     <StyledList>
       {navigationItems.map((item) => (
         <NavigationItem {...item} key={item.path} />
       ))}
     </StyledList>
-  </div>
+  </Container>
 );
 
 export default Navigation;

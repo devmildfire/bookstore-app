@@ -18,6 +18,17 @@ const colors: Record<Color, string> = {
   white: 'var(--main-white)',
 };
 
+const h1Style = css<StyledTextProps>`
+  font-size: 90px;
+  font-weight: ${(props) => props.fontWeight || 900};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.serif};
+
+  @media ${breakPoints.sm} {
+    font-size: 24px;
+  }
+`;
+
 const h2Style = css<StyledTextProps>`
   font-size: 60px;
   font-weight: ${(props) => props.fontWeight || 900};
@@ -30,13 +41,13 @@ const h2Style = css<StyledTextProps>`
 `;
 
 const h3Style = css<StyledTextProps>`
-  font-size: 60px;
+  font-size: 40px;
   font-weight: ${(props) => props.fontWeight || 700};
   text-transform: ${(props) => props.textTransform || 'uppercase'};
   font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
   @media ${breakPoints.lg} {
-    font-size: 40px;
+    font-size: 32px;
   }
 
   @media ${breakPoints.sm} {
@@ -133,6 +144,7 @@ const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
 > = {
+  h1: h1Style,
   h2: h2Style,
   h3: h3Style,
   p: pStyle,
@@ -144,6 +156,7 @@ const styles: Record<
 };
 
 export const tagMap: Record<Variant, string> = {
+  h1: 'h1',
   h2: 'h2',
   h3: 'h3',
   body1: 'p',

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import Container from '../Common/Container';
+import Container from '@/components/Common/Container';
 import BooksList from './BooksList';
 
 const Books: FC = () => (

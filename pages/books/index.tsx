@@ -1,7 +1,7 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import HomePage from '@/components/HomePage';
-import Books from '@/components/Books';
+import Books from '@/components/BooksPage/Books';
 import { loadBooksThunk } from '@/models/books';
 import { wrapper } from '@/models';
 
