@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Link from '@/components/Common/Link';
 import { Book } from '@/models/books';
 import {
   StyledWrapper,
@@ -11,8 +10,8 @@ import {
   StyledIcons,
 } from './styles';
 import Text from '@/components/Common/Text';
-
-/* const SPACE_AFTER_AUTHOR_NAME_REGEXP = /(?<=[А-Я|Ё]\.)(\s)/g; */
+import usePrepareLink from '@/hooks/usePrepareLink';
+import { GET_PARAMS } from '@/consts/query';
 
 interface BookCardProps {
   readonly book: Book;
@@ -23,15 +22,19 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
   const {
     id, link, price, newPrice,
   } = book;
+  const path = usePrepareLink({
+    query: {
+      [GET_PARAMS.openProduct]: id,
+    },
+  });
+
   return (
-    <StyledWrapper tabIndex={0}>
-      <Link href={`/books/${id}`}>
-        <StyledImage
-          className='cardImage'
-          src={link}
-          alt='BookDescription logo'
-        />
-      </Link>
+    <StyledWrapper href={path} scroll={false}>
+      <StyledImage
+        className='cardImage'
+        src={link}
+        alt='BookDescription logo'
+      />
       <StyledInfo>
         <StyledPriceInfo>
           <Text variant='p' component='span' fontWeight={700}>

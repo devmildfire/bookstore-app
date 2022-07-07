@@ -1,11 +1,15 @@
 import React, { FC } from 'react';
-import Container from '@/components/Common/Container';
 import BooksList from './BooksList';
+import Text from '@/components/Common/Text';
+import { StyledWrapper } from './styles';
 
 const Books: FC = () => (
-  <Container>
+  <StyledWrapper>
+    <Text variant='h2' align='center'>
+      Издания
+    </Text>
     <BooksList />
-  </Container>
+  </StyledWrapper>
 );
 
 export default Books;

@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import Like from '@/assets/icons/like.svg';
 import ShopCart from '@/assets/icons/shop-cart.svg';
+import Link from '@/components/Common/Link';
 
-export const StyledWrapper = styled.article`
+export const StyledWrapper = styled(Link)`
+  display: block;
   width: 355px;
 
   font-size: 16px;
