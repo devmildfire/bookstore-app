@@ -5,7 +5,7 @@ import * as books from '@/api/books';
 import { Store } from '.';
 
 export interface Book {
-  readonly id: string;
+  readonly id: number;
   readonly title: string;
   readonly authors: Author[];
 
@@ -82,6 +82,10 @@ export const loadBooksThunk = createAsyncThunk('books/loadBooks', async () => {
 
 const selectBooksState = (state: Store): BooksState => state.books;
 
-export const selectBooks = (state: Store): Book[] => selectBooksState(state).list;
+export const selectBooks = (state: Store): Book[] =>
+  selectBooksState(state).list;
+
+export const selectBook = (state: Store, bookId: number): Book | null =>
+  selectBooks(state).find((book) => book.id === bookId) || null;
 
 export default store.reducer;

@@ -13,15 +13,14 @@ import Text from '@/components/Common/Text';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
 
-interface BookCardProps {
-  readonly book: Book;
-}
+interface BookCardProps
+  extends Pick<Book, 'id' | 'link' | 'price' | 'newPrice'> {}
 
-const BookCard = ({ book }: BookCardProps): React.ReactElement => {
-  const [liked, setLike] = useState(false);
+const BookCard = (props: BookCardProps): React.ReactElement => {
+  const [, setLike] = useState(false);
   const {
     id, link, price, newPrice,
-  } = book;
+  } = props;
   const path = usePrepareLink({
     query: {
       [GET_PARAMS.openProduct]: id,
@@ -49,7 +48,7 @@ const BookCard = ({ book }: BookCardProps): React.ReactElement => {
         <StyledIcons>
           <StyledShopCard tabIndex={0} />
           <StyledLike
-            liked={liked}
+            /* liked={liked} */
             onClick={() => setLike((prev) => !prev)}
             role='button'
             tabIndex={0}

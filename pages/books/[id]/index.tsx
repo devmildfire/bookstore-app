@@ -59,7 +59,7 @@ export const getServerSideProps: GetServerSideProps<BookPageProps> = async ({
   query,
 }) => {
   const { id } = query;
-  const book = getBook(id);
+  const book = getBook(Number(id));
 
   if (!book) {
     return {

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Text from '../Text';
 
 export const StyledLink = styled.a`
   color: var(--main-white);
@@ -9,5 +8,3 @@ export const StyledLink = styled.a`
     outline: none;
   }
 `;
-
-export const StyledText = styled(Text)``;

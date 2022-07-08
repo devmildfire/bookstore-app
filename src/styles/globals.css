@@ -50,7 +50,7 @@
 
 html {
   box-sizing: border-box;
-  --main-red-100:rgba(147, 0, 0, 1);
+  --main-red-100: rgba(147, 0, 0, 1);
   --main-red-90: rgba(147, 0, 0, 0.9);
   --main-red-80: rgba(147, 0, 0, 0.8);
   --main-red-70: rgba(147, 0, 0, 0.7);
@@ -60,7 +60,6 @@ html {
   --main-red-30: rgba(147, 0, 0, 0.3);
   --main-red-20: rgba(147, 0, 0, 0.2);
   --main-red-10: rgba(147, 0, 0, 0.1);
-
 
   --main-white: #dcdcdc;
   --main-black: #121212;
@@ -133,4 +132,28 @@ a {
 .swiper,
 .swiper-wrapper {
   z-index: 0;
+}
+
+/* FADE EFFECT */
+.fade {
+  transition: opacity 10000ms;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+}
+.fade-appear {
+  opacity: 0;
+}
+.fade-appear-active {
+  opacity: 1;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
 }

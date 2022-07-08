@@ -8,7 +8,7 @@ interface NavLinkProps extends LinkProps {}
 const NavLink: FC<NavLinkProps> = (props) => {
   const { href, ...linkProps } = props;
   const { asPath } = useRouter();
-  const isActive = asPath === href;
+  const isActive = asPath.includes(href);
 
   return <StyledNavLink href={href} isActive={isActive} {...linkProps} />;
 };

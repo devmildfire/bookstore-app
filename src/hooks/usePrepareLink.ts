@@ -1,19 +1,20 @@
 import { useRouter } from 'next/router';
+import { ID } from '@/types/common';
 
 interface UsePrepareLinkParams {
   readonly to?: string;
   readonly isChildPath?: boolean;
-  readonly query?: Record<string, string | string[]>;
+  readonly query?: Record<string, ID | Array<ID>>;
   readonly keepOldQuery?: boolean;
 }
 
 const setQueryParams = (
   newQuery: URLSearchParams,
-  query: Record<string, string | string[] | undefined>,
+  query: Record<string, ID | Array<ID> | undefined>,
 ): void => {
   Object.entries(query).forEach(([key, value]) => {
     const currentValue: string | null = newQuery.get(key);
-    const newValue: string[] = currentValue ? currentValue.split(',') : [];
+    const newValue: ID[] = currentValue ? currentValue.split(',') : [];
 
     if (Array.isArray(value)) {
       newValue.push(...value);

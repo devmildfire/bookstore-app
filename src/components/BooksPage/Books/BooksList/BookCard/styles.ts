@@ -5,7 +5,7 @@ import Link from '@/components/Common/Link';
 
 export const StyledWrapper = styled(Link)`
   display: block;
-  width: 355px;
+  max-width: 355px;
 
   font-size: 16px;
   line-height: 20px;
@@ -18,11 +18,9 @@ export const StyledWrapper = styled(Link)`
   transition: all 250ms ease-in;
 
   :hover,
-  :focus-visible {
-    transform: scale(1.15);
-
-    box-shadow: 10px 10px 40px var(--main-red-30),
-      -10px -10px 40px var(--main-red-30);
+  :focus-visible,
+  &.active {
+    transform: scale(1.05);
   }
 
   :focus-visible {
