@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import Container from '@/components/Common/Container';
 import Text from '@/components/Common/Text';
 import Members from './Members';
 
-const StyledWrapper = styled(Container)`
+const StyledWrapper = styled.div`
   display: grid;
   gap: 70px;
 

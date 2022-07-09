@@ -10,7 +10,7 @@ const ProductSlider = () => {
   const books = useTypedSelector(selectBooks);
   return (
     <Container>
-      <StyledSlider withoutAutoplay>
+      <StyledSlider>
         {books.map((book) => (
           <Slide key={book.id}>
             <ProductCard {...book} />

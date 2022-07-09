@@ -12,12 +12,13 @@ import {
 import Text from '@/components/Common/Text';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
+import IconButton from '@/components/Common/IconButton';
 
 interface BookCardProps
   extends Pick<Book, 'id' | 'link' | 'price' | 'newPrice'> {}
 
 const BookCard = (props: BookCardProps): React.ReactElement => {
-  const [, setLike] = useState(false);
+  const [liked, setLike] = useState(false);
   const {
     id, link, price, newPrice,
   } = props;
@@ -46,13 +47,12 @@ const BookCard = (props: BookCardProps): React.ReactElement => {
           )}
         </StyledPriceInfo>
         <StyledIcons>
-          <StyledShopCard tabIndex={0} />
-          <StyledLike
-            /* liked={liked} */
-            onClick={() => setLike((prev) => !prev)}
-            role='button'
-            tabIndex={0}
-          />
+          <IconButton>
+            <StyledShopCard />
+          </IconButton>
+          <IconButton onClick={() => setLike((prev) => !prev)}>
+            <StyledLike liked={liked} />
+          </IconButton>
         </StyledIcons>
       </StyledInfo>
     </StyledWrapper>

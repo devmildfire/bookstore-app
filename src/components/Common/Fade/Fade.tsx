@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 
 interface FadeProps {
   readonly open: boolean;
@@ -26,20 +26,20 @@ const Fade: React.FC<FadeProps> = (props) => {
     [timeout],
   );
 
-  if (!open) {
-    return null;
-  }
-
   return (
-    <motion.div
-      key='fade'
-      variants={variants}
-      initial='hidden'
-      animate='active'
-      exit='hidden'
-    >
-      {children}
-    </motion.div>
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          key='fade'
+          variants={variants}
+          initial='hidden'
+          animate='active'
+          exit='hidden'
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
