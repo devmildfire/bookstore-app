@@ -25,9 +25,7 @@ const ProductCard: FC<ProductCardProps> = (props): React.ReactElement => {
       <StyledBookName component='h2' variant='h1' color='red'>
         {title}
       </StyledBookName>
-      <StyledButton href={`/books/${id}`} rounded styleVariant='outlined'>
-        Познать
-      </StyledButton>
+      <StyledButton href={`/books/${id}`}>Познать</StyledButton>
     </StyledWrapper>
   );
 };

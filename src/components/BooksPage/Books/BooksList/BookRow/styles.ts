@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledWrapper = styled.main`
+export const StyledRowWrapper = styled.div`
   display: grid;
-  gap: 140px;
+  gap: 30px;
 `;

@@ -6,6 +6,9 @@ import Header from './Header';
 import Footer from './Footer';
 
 const StyledWrapper = styled.div`
+  display: grid;
+  gap: 100px;
+
   width: 100%;
   position: relative;
   background-color: var(--main-black);

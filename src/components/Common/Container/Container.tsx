@@ -1,10 +1,17 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import StyledContainer from './styles';
 
-const Container: FC<ClassNameProps> = (props) => {
+const Container = React.forwardRef<
+  HTMLDivElement,
+  React.PropsWithChildren<ClassNameProps>
+>((props, ref) => {
   const { children, className } = props;
-  return <StyledContainer className={className}>{children}</StyledContainer>;
-};
+  return (
+    <StyledContainer className={className} ref={ref}>
+      {children}
+    </StyledContainer>
+  );
+});
 
-export default Container;
+export default React.memo(Container);

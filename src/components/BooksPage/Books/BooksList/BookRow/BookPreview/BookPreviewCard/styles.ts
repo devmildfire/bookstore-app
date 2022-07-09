@@ -3,6 +3,9 @@ import Button from '@/components/Common/Button';
 import VideoPlayer from '@/components/Common/VideoPlayer';
 
 export const StyledWrapper = styled.div`
+  --text-content-width: 594px;
+  --preview-height: 600px;
+
   flex-basis: 100%;
 
   display: grid;
@@ -10,9 +13,7 @@ export const StyledWrapper = styled.div`
 
   position: relative;
 
-  height: 600px;
-
-  --text-content-width: 594px;
+  height: var(--preview-height);
 `;
 
 export const StyledForwardPlan = styled.div`
@@ -20,13 +21,13 @@ export const StyledForwardPlan = styled.div`
   z-index: 1;
 
   padding: 52px 0;
-  padding-left: 58px;
 `;
 
 export const StyledTextBlock = styled.div`
   display: grid;
   gap: 4px;
 
+  height: 100%;
   max-width: calc(var(--text-content-width) - 100px);
 `;
 
@@ -37,12 +38,16 @@ export const StyledBackground = styled.div`
   grid-template-columns: var(--text-content-width) 1fr;
 `;
 
-export const StyledTextBackground = styled.div`
-  background-color: var(--main-black);
+export const StyledPlayer = styled(VideoPlayer)`
+  height: var(--preview-height);
 `;
 
 /** TODO: вынести черный в переменные  */
-export const StyledPlayer = styled(VideoPlayer)`
+export const StyledShadowElement = styled.div`
+  position: absolute;
+  inset: 0;
+
+  height: var(--preview-height);
   background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0.7) 0%,
@@ -62,7 +67,7 @@ export const StyledDescription = styled.div`
 
   overflow: auto;
 
-  scroll-padding: 30px;
+  padding-right: 37px;
 `;
 
 export const StyledButton = styled(Button)`

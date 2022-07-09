@@ -1,9 +1,15 @@
 import styled from 'styled-components';
 import CrossIcon from '@/assets/icons/cross.svg';
 import IconButton from '../IconButton';
+import Container from '../Container';
 
-export const StyledWrapper = styled.div`
+export const StyledWrapper = styled(Container)`
   position: relative;
+
+  width: min(100vw, var(--max-width));
+  margin: 0 auto;
+
+  background-color: var(--key);
 `;
 
 export const StyledIconButton = styled(IconButton)`

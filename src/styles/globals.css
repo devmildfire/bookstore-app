@@ -15,12 +15,14 @@
 
   --main-white: #dcdcdc;
   --main-black: #121212;
+  --key: #000000;
   --grey: #c4c4c4;
 
   --popover-z-index: 100;
   --modal-z-index: 10;
   --upper-z-index: 2;
   --controls-z-index: 6;
+  --header-z-index: 8;
 
   --width: 1440px;
   --max-width: 1920px;

@@ -12,13 +12,9 @@ export interface CounterProps extends ClassNameProps {
 
 const Counter = ({ increment, decrement, value }: CounterProps) => (
   <StyledWrapper>
-    <Button onClick={decrement} variant='square'>
-      -
-    </Button>
+    <Button onClick={decrement}>-</Button>
     <Text className='dropDownValue'>{value}</Text>
-    <Button onClick={increment} variant='square'>
-      +
-    </Button>
+    <Button onClick={increment}>+</Button>
   </StyledWrapper>
 );
 

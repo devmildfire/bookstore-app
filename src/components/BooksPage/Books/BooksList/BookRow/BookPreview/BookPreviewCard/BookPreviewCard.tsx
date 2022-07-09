@@ -1,7 +1,6 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
 import usePrepareLink from '@/hooks/usePrepareLink';
-import useScrollTo from '@/hooks/useScrollTo';
 import getAuthorNames from '@/utils/getAuthorNames';
 import {
   StyledBackground,
@@ -9,41 +8,43 @@ import {
   StyledDescription,
   StyledForwardPlan,
   StyledPlayer,
-  StyledTextBackground,
+  StyledShadowElement,
   StyledTextBlock,
   StyledWrapper,
 } from './styles';
 import Text from '@/components/Common/Text';
-import useTypedSelector from '@/hooks/useTypedSelector';
-import { selectBook } from '@/models/books';
+import { Book } from '@/models/books';
 
-interface BookCardPreviewInfoProps {
-  readonly bookId: number;
-}
+interface BookPreviewCardProps
+  extends Pick<
+    Book,
+    | 'id'
+    | 'title'
+    | 'publishDate'
+    | 'genre'
+    | 'ageRestriction'
+    | 'description'
+    | 'trailerSrc'
+    | 'authors'
+    | 'link'
+  > {}
 
-const BookCardPreviewInfo: React.FC<BookCardPreviewInfoProps> = (props) => {
-  const { bookId } = props;
-  const book = useTypedSelector((state) => selectBook(state, bookId));
-  const [rootRef, setRootRef] = React.useState<HTMLElement | null>(null);
-  const id = book?.id;
-  const path = usePrepareLink({ to: `/books/${id}` });
-  useScrollTo(rootRef);
-  if (!book) {
-    return null;
-  }
+const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
   const {
-    title,
-    publishDate,
-    genre,
     ageRestriction,
-    description,
-    trailerSrc,
     authors,
+    description,
+    genre,
+    id,
     link,
-  } = book;
+    publishDate,
+    title,
+    trailerSrc,
+  } = props;
+  const path = usePrepareLink({ to: `/books/${id}` });
   const authorNames = getAuthorNames(authors);
   return (
-    <StyledWrapper ref={setRootRef}>
+    <StyledWrapper>
       <StyledForwardPlan>
         <StyledTextBlock>
           <Text variant='h2'>{title}</Text>
@@ -65,11 +66,13 @@ const BookCardPreviewInfo: React.FC<BookCardPreviewInfoProps> = (props) => {
         </StyledTextBlock>
       </StyledForwardPlan>
       <StyledBackground>
-        <StyledTextBackground />
-        <StyledPlayer src={trailerSrc} fallbackSrc={link} autoplay muted />
+        <div />
+        <StyledPlayer src={trailerSrc} fallbackSrc={link} autoplay muted>
+          <StyledShadowElement />
+        </StyledPlayer>
       </StyledBackground>
     </StyledWrapper>
   );
 };
 
-export default React.memo(BookCardPreviewInfo);
+export default React.memo(BookPreviewCard);

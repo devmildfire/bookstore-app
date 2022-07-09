@@ -48,12 +48,8 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
       </StyledHeader>
       <StyledBody>
         <StyledButtons>
-          <Button className='propsBtn' rounded styleVariant='outlined'>
-            Добавить в корзину
-          </Button>
-          <Button className='propsBtn' rounded styleVariant='outlined'>
-            Демо-версия
-          </Button>
+          <Button className='propsBtn'>Добавить в корзину</Button>
+          <Button className='propsBtn'>Демо-версия</Button>
         </StyledButtons>
         {/* Вынести в отдельный компонент */}
         <StyledProperties>

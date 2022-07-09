@@ -2,32 +2,33 @@ import * as React from 'react';
 import {
   AnimatePresence, motion, Transition, Variants,
 } from 'framer-motion';
-import { FADE_DURATION } from '@/consts/animation';
+import { COLLAPSE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
 
-interface FadeProps {
+interface CollapseProps {
   readonly open: boolean;
+  readonly duration?: number;
   readonly enterTimeout?: number;
   readonly exitTimeout?: number;
-  readonly duration?: number;
 }
-
 const variants: Variants = {
-  show: {
-    opacity: 1,
+  close: {
+    transform: 'scaleY(0)',
+    transformOrigin: 'top',
   },
-  hidden: {
-    opacity: 0,
+  open: {
+    transform: 'scaleY(1)',
+    transformOrigin: 'top',
   },
 };
 
-const Fade: React.FC<FadeProps> = (props) => {
+const Collapse: React.FC<CollapseProps> = (props) => {
   const {
-    children,
     open,
+    children,
     enterTimeout = 0,
     exitTimeout = 0,
-    duration = FADE_DURATION,
+    duration = COLLAPSE_DURATION,
   } = props;
   const isMount = useMountDelay({ open, enterTimeout, exitTimeout });
   const transition = React.useMemo<Transition>(
@@ -42,15 +43,14 @@ const Fade: React.FC<FadeProps> = (props) => {
   }
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {open && (
         <motion.div
-          key='fade'
           variants={variants}
           transition={transition}
-          initial='hidden'
-          animate='show'
-          exit='hidden'
+          initial='close'
+          animate='open'
+          exit='close'
         >
           {children}
         </motion.div>
@@ -59,4 +59,4 @@ const Fade: React.FC<FadeProps> = (props) => {
   );
 };
 
-export default React.memo<React.PropsWithChildren<FadeProps>>(Fade);
+export default React.memo<React.PropsWithChildren<CollapseProps>>(Collapse);

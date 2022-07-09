@@ -15,7 +15,7 @@ const SubscribeForm = (): React.ReactElement => {
   return (
     <StyledForm onSubmit={onSubmit}>
       <Input {...field} placeholder='E-mail' />
-      <StyledButton disabled={sended} rounded>
+      <StyledButton disabled={sended}>
         {sended ? 'Вы подписаны!' : 'Подписаться'}
       </StyledButton>
     </StyledForm>
