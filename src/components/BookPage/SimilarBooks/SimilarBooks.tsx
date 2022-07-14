@@ -30,7 +30,7 @@ const SimilarBooks = (): React.ReactElement => {
               <Slide key={book.id}>
                 <Link href={`/books/${book.id}`} passHref>
                   <a href='fakePath'>
-                    <Banner src={book.link} alt={book.title} />
+                    <Banner src={book.image} alt={book.title} />
                   </a>
                 </Link>
               </Slide>
@@ -41,7 +41,7 @@ const SimilarBooks = (): React.ReactElement => {
             <BookItem>
               <Link href={`/books/${book.id}`} passHref>
                 <a href='fakePath'>
-                  <Banner src={book.link} alt={book.title} />
+                  <Banner src={book.image} alt={book.title} />
                 </a>
               </Link>
             </BookItem>

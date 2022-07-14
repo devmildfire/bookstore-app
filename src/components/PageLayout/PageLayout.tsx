@@ -16,6 +16,9 @@ const StyledWrapper = styled.div`
 `;
 
 const Content = styled.div`
+  display: grid;
+  gap: 120px;
+
   width: 100%;
   min-height: 100vh;
 `;

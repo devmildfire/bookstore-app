@@ -16,7 +16,7 @@ interface BookDescriptionProps {
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
-  readonly link: string;
+  readonly image?: string;
   readonly description: string[];
   readonly authors: Author[];
 }
@@ -27,14 +27,14 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     publishDate,
     genre,
     ageRestriction,
-    link,
+    image,
     description,
     authors,
   } = props;
 
   return (
     <StyledWrapper>
-      <StyledImage src={link} alt={title} />
+      <StyledImage src={image} alt={title} />
       <div>
         <StyledTitle variant='h2'>{title}</StyledTitle>
         <StyledAuthor variant='p' component='h3' fontWeight={700}>

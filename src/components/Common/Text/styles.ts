@@ -177,7 +177,6 @@ export interface StyledTextProps {
 }
 
 const StyledText = styled.span`
-  word-break: break-all;
   color: ${(props: StyledTextProps) => colors[props.color]};
   line-height: 1.2em;
   text-align: ${(props) => props.align};

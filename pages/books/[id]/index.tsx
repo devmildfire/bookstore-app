@@ -1,36 +1,17 @@
+/* eslint-disable operator-linebreak */
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import { Book } from '@/models/books';
+import { Book, getBook } from '@/models/books';
 import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
 import BookAuthor from '@/components/BookPage/BookAuthor';
 import SimilarBooks from '@/components/BookPage/SimilarBooks';
-import getBook from '@/utils/getBook';
 import Container from '@/components/Common/Container';
-
-const StyleWrapper = styled(Container)`
-  display: grid;
-  gap: 170px;
-  padding: 30px 0 100px;
-  @media ${breakPoints.xl} {
-    gap: 150px;
-    padding-bottom: 70px;
-  }
-  @media ${breakPoints.lg} {
-    gap: 100px;
-  }
-  @media ${breakPoints.md} {
-    gap: 80px;
-    padding-bottom: 50px;
-  }
-  @media ${breakPoints} {
-    gap: 70px;
-  }
-`;
+import { wrapper } from '@/models';
 
 interface BookPageProps {
   readonly book: Book;
@@ -55,23 +36,42 @@ const BookPage = (props: BookPageProps): React.ReactElement => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<BookPageProps> = async ({
-  query,
-}) => {
-  const { id } = query;
-  const book = getBook(Number(id));
+export const getServerSideProps: GetServerSideProps<BookPageProps> =
+  wrapper.getServerSideProps<BookPageProps>((store) => async ({ query }) => {
+    const { id } = query;
+    const { data: book } = await store.dispatch(getBook.initiate(id as string));
 
-  if (!book) {
+    if (!book) {
+      return {
+        notFound: true,
+      };
+    }
+
     return {
-      notFound: true,
+      props: {
+        book,
+      },
     };
-  }
+  });
 
-  return {
-    props: {
-      book,
-    },
-  };
-};
+const StyleWrapper = styled(Container)`
+  display: grid;
+  gap: 170px;
+  padding: 30px 0 100px;
+  @media ${breakPoints.xl} {
+    gap: 150px;
+    padding-bottom: 70px;
+  }
+  @media ${breakPoints.lg} {
+    gap: 100px;
+  }
+  @media ${breakPoints.md} {
+    gap: 80px;
+    padding-bottom: 50px;
+  }
+  @media ${breakPoints} {
+    gap: 70px;
+  }
+`;
 
 export default BookPage;

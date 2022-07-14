@@ -4,23 +4,22 @@ import {
   StyledWrapper,
   StyledLike,
   StyledImage,
-  StyledPriceInfo,
   StyledShopCard,
   StyledInfo,
-  StyledIcons,
+  StyledActions,
 } from './styles';
-import Text from '@/components/Common/Text';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
 import IconButton from '@/components/Common/IconButton';
+import Price from '@/components/Common/Price';
 
 interface BookCardProps
-  extends Pick<Book, 'id' | 'link' | 'price' | 'newPrice'> {}
+  extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice'> {}
 
 const BookCard = (props: BookCardProps): React.ReactElement => {
   const [liked, setLike] = useState(false);
   const {
-    id, link, price, newPrice,
+    id, image, price, newPrice,
   } = props;
   const path = usePrepareLink({
     query: {
@@ -32,28 +31,19 @@ const BookCard = (props: BookCardProps): React.ReactElement => {
     <StyledWrapper href={path} scroll={false}>
       <StyledImage
         className='cardImage'
-        src={link}
+        src={image}
         alt='BookDescription logo'
       />
       <StyledInfo>
-        <StyledPriceInfo>
-          <Text variant='p' component='span' fontWeight={700}>
-            {`${newPrice || price}₽`}
-          </Text>
-          {newPrice && (
-            <Text color='red' fontWeight={700} component='span' variant='p'>
-              <del>{`${price}₽`}</del>
-            </Text>
-          )}
-        </StyledPriceInfo>
-        <StyledIcons>
+        <Price price={price} newPrice={newPrice} />
+        <StyledActions>
           <IconButton>
             <StyledShopCard />
           </IconButton>
           <IconButton onClick={() => setLike((prev) => !prev)}>
             <StyledLike liked={liked} />
           </IconButton>
-        </StyledIcons>
+        </StyledActions>
       </StyledInfo>
     </StyledWrapper>
   );

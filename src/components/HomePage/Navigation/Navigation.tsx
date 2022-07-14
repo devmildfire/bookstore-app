@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import Container from '@/components/Common/Container';
 import NavigationItem from './NavigationItem';
 import { StyledList } from './styles';
+import { ClassNameProps } from '@/types/className';
 
 interface NavItem {
   readonly path: string;
@@ -27,14 +28,17 @@ const navigationItems: NavItem[] = [
   },
 ];
 
-const Navigation = (): React.ReactElement => (
-  <Container>
-    <StyledList>
-      {navigationItems.map((item) => (
-        <NavigationItem {...item} key={item.path} />
-      ))}
-    </StyledList>
-  </Container>
-);
+const Navigation: React.FC<ClassNameProps> = (props) => {
+  const { className } = props;
+  return (
+    <Container className={className}>
+      <StyledList>
+        {navigationItems.map((item) => (
+          <NavigationItem {...item} key={item.path} />
+        ))}
+      </StyledList>
+    </Container>
+  );
+};
 
-export default Navigation;
+export default React.memo(Navigation);

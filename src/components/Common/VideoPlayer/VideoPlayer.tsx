@@ -5,7 +5,7 @@ import { StyledVideo, StyledWrapper } from './styles';
 interface VideoPlayerProps extends ClassNameProps {
   readonly src: string;
   readonly fallbackSrc?: string;
-  readonly autoplay?: boolean;
+  readonly autoPlay?: boolean;
   readonly controls?: boolean;
   readonly loop?: boolean;
   readonly muted?: boolean;

@@ -26,7 +26,7 @@ interface BookPreviewCardProps
     | 'description'
     | 'trailerSrc'
     | 'authors'
-    | 'link'
+    | 'image'
   > {}
 
 const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
@@ -36,7 +36,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
     description,
     genre,
     id,
-    link,
+    image,
     publishDate,
     title,
     trailerSrc,
@@ -67,7 +67,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
       </StyledForwardPlan>
       <StyledBackground>
         <div />
-        <StyledPlayer src={trailerSrc} fallbackSrc={link} autoplay muted>
+        <StyledPlayer src={trailerSrc} fallbackSrc={image} autoPlay>
           <StyledShadowElement />
         </StyledPlayer>
       </StyledBackground>

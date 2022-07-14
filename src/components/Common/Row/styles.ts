@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 
+export interface StyledRowProps {
+  readonly gap: number | [number, number];
+}
+
 /** TODO: переработать стили и вынести в отдельный копонент шаблон листа со строками */
-export const StyledWrapper = styled.div`
+export const StyledRow = styled.div<StyledRowProps>`
   display: flex;
 
-  gap: 168px;
+  gap: ${({ gap }) => (Array.isArray(gap) ? gap.join('px ') : gap)}px;
 `;

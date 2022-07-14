@@ -1,15 +1,18 @@
 /* eslint-disable import/no-cycle */
-import { AnyAction, combineReducers, configureStore } from '@reduxjs/toolkit';
+import {
+  addListener,
+  AnyAction,
+  combineReducers,
+  configureStore,
+} from '@reduxjs/toolkit';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { Reducer } from 'react';
-import books, { BooksState } from './books';
+import { booksApi } from './books';
+import { boxSetsApi } from './boxSets';
 
-export interface Store {
-  readonly books: BooksState;
-}
-
-const reducers = combineReducers<Store>({
-  books,
+const reducers = combineReducers({
+  [booksApi.reducerPath]: booksApi.reducer,
+  [boxSetsApi.reducerPath]: boxSetsApi.reducer,
 });
 
 const reducer: Reducer<Store, AnyAction> = (state, action) => {
@@ -22,13 +25,27 @@ const reducer: Reducer<Store, AnyAction> = (state, action) => {
   return reducers(state, action);
 };
 
-const makeStore = () => configureStore({
-  // @ts-ignore
-  reducer,
-  devTools: true,
-});
+const makeStore = () => {
+  const store = configureStore({
+    /* @ts-ignore */
+    reducer,
+    devTools: true,
+    /* @ts-ignore */
+    middleware: (getDefaultMiddleware) => {
+      const middleware = getDefaultMiddleware();
+      middleware.concat(boxSetsApi.middleware).concat(booksApi.middleware);
+      return middleware;
+    },
+  });
+  /* @ts-ignore */
+  addListener(store.dispatch);
 
-export type AppDispatch = ReturnType<typeof makeStore>['dispatch']
+  return store;
+};
+
+export type AppStore = ReturnType<typeof makeStore>;
+export type Store = ReturnType<typeof reducers>;
+export type AppDispatch = AppStore['dispatch'];
 
 export const wrapper = createWrapper(makeStore, {
   debug: true,

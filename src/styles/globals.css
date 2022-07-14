@@ -27,6 +27,7 @@
   --width: 1440px;
   --max-width: 1920px;
   --main-margin: calc((100vw - var(--width)) / 2);
+  --header-height: 80px;
 }
 
 @media screen and (max-width: 1440px) {

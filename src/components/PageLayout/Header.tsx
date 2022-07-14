@@ -15,7 +15,7 @@ const StyledWrapper = styled.header`
   width: 100%;
   position: sticky;
   top: 0;
-  height: 80px;
+  height: var(--header-height);
   padding: 0 60px;
   background-color: ${colors.blackBase};
   z-index: var(--header-z-index);

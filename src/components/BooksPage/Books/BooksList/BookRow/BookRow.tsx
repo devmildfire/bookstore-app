@@ -15,7 +15,7 @@ const BookRow: React.FC<BookRowProps> = (props) => {
   return (
     <StyledRowWrapper>
       <Container>
-        <Row>
+        <Row gap={168}>
           {books.map((book) => (
             <BookCard {...book} key={book.id} />
           ))}

@@ -1,0 +1,103 @@
+import { BoxSet } from '@/models/boxSets';
+import booksData from './books';
+
+const sets: BoxSet[] = [
+  {
+    id: 1,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 2,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 3,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 4,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 5,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 6,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 7,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 8,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 9,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 10,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 11,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 12,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: booksData,
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+];
+
+export default sets;

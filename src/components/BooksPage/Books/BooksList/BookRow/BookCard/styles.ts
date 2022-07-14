@@ -60,15 +60,7 @@ export const StyledImage = styled.img`
   object-fit: cover;
 `;
 
-export const StyledPriceInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 17px;
-
-  width: max-content;
-`;
-
-export const StyledIcons = styled.div`
+export const StyledActions = styled.div`
   display: flex;
   align-items: center;
   gap: 40px;

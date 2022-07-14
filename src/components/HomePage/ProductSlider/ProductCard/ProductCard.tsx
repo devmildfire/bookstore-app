@@ -13,12 +13,12 @@ interface ProductCardProps extends Book {}
 
 const ProductCard: FC<ProductCardProps> = (props): React.ReactElement => {
   const {
-    link, authors, title, id,
+    image, authors, title, id,
   } = props;
   const authorNames = getAuthorNames(authors);
   return (
     <StyledWrapper>
-      <StyledImage src={link} />
+      <StyledImage src={image} />
       <StyledAuthor variant='h3' color='white'>
         {authorNames}
       </StyledAuthor>
