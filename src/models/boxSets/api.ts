@@ -2,11 +2,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { HYDRATE } from 'next-redux-wrapper';
 import { ID } from '@/types/common';
 import { BoxSet } from './types';
+import { PUBLIC_URL } from '@/consts/env';
 
 export const boxSetsApi = createApi({
   reducerPath: 'box-sets/api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/api/box-sets',
+    baseUrl: `${PUBLIC_URL}/api/box-sets`,
   }),
   endpoints: (builder) => ({
     getBoxSets: builder.query<BoxSet[], undefined>({

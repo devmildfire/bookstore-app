@@ -3,11 +3,12 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 import { Book } from './types';
 import { ID } from '@/types/common';
+import { PUBLIC_URL } from '@/consts/env';
 
 export const booksApi = createApi({
   reducerPath: 'books/api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3000/api/books',
+    baseUrl: `${PUBLIC_URL}/api/books`,
   }),
   endpoints: (builder) => ({
     getBooks: builder.query<Book[], undefined>({
