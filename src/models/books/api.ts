@@ -8,7 +8,7 @@ import { PUBLIC_URL } from '@/consts/env';
 export const booksApi = createApi({
   reducerPath: 'books/api',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PUBLIC_URL}/api/books`,
+    baseUrl: `http://${PUBLIC_URL}/api/books`,
   }),
   endpoints: (builder) => ({
     getBooks: builder.query<Book[], undefined>({

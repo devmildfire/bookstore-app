@@ -7,7 +7,7 @@ import { PUBLIC_URL } from '@/consts/env';
 export const boxSetsApi = createApi({
   reducerPath: 'box-sets/api',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PUBLIC_URL}/api/box-sets`,
+    baseUrl: `http://${PUBLIC_URL}/api/box-sets`,
   }),
   endpoints: (builder) => ({
     getBoxSets: builder.query<BoxSet[], undefined>({
