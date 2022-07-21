@@ -19,6 +19,9 @@ export const StyledImage = styled.img`
   height: 493px;
 
   object-fit: cover;
+
+  filter: drop-shadow(-10px -10px 40px rgba(0, 0, 0, 0.8))
+    drop-shadow(10px 10px 40px rgba(0, 0, 0, 0.8));
 `;
 
 export const StyledAuthor = styled(Text)`

@@ -7,7 +7,7 @@ const sets: BoxSet[] = [
     title: 'Соединённые Штаты Литературы',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Произведения американских авторов',
   },
   {
@@ -15,7 +15,7 @@ const sets: BoxSet[] = [
     title: 'Весь Керуак',
     price: 1100,
     newPrice: 1200,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
   },
   {
@@ -23,7 +23,7 @@ const sets: BoxSet[] = [
     title: 'Весь Старообрядцев',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
   },
   {
@@ -31,7 +31,7 @@ const sets: BoxSet[] = [
     title: 'Соединённые Штаты Литературы',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Произведения американских авторов',
   },
   {
@@ -39,7 +39,7 @@ const sets: BoxSet[] = [
     title: 'Весь Керуак',
     price: 1100,
     newPrice: 1200,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
   },
   {
@@ -47,7 +47,7 @@ const sets: BoxSet[] = [
     title: 'Весь Старообрядцев',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
   },
   {
@@ -55,7 +55,7 @@ const sets: BoxSet[] = [
     title: 'Соединённые Штаты Литературы',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Произведения американских авторов',
   },
   {
@@ -63,7 +63,7 @@ const sets: BoxSet[] = [
     title: 'Весь Керуак',
     price: 1100,
     newPrice: 1200,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
   },
   {
@@ -71,7 +71,7 @@ const sets: BoxSet[] = [
     title: 'Весь Старообрядцев',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
   },
   {
@@ -79,7 +79,7 @@ const sets: BoxSet[] = [
     title: 'Соединённые Штаты Литературы',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Произведения американских авторов',
   },
   {
@@ -87,7 +87,7 @@ const sets: BoxSet[] = [
     title: 'Весь Керуак',
     price: 1100,
     newPrice: 1200,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
   },
   {
@@ -95,7 +95,7 @@ const sets: BoxSet[] = [
     title: 'Весь Старообрядцев',
     price: 1100,
     newPrice: null,
-    books: booksData,
+    books: booksData.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
   },
 ];

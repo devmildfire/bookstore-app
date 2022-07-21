@@ -1,4 +1,2 @@
-import DeviceInfoContext from './context';
-import DeviceInfoProvider from './provider';
-
-export { DeviceInfoContext, DeviceInfoProvider };
+export { default as DeviceInfoContext } from './context';
+export { default as DeviceInfoProvider } from './provider';

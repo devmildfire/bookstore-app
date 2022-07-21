@@ -2,16 +2,13 @@ import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import StyledContainer from './styles';
 
+interface ContainerProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    ClassNameProps {}
+
 const Container = React.forwardRef<
   HTMLDivElement,
-  React.PropsWithChildren<ClassNameProps>
->((props, ref) => {
-  const { children, className } = props;
-  return (
-    <StyledContainer className={className} ref={ref}>
-      {children}
-    </StyledContainer>
-  );
-});
+  React.PropsWithChildren<ContainerProps>
+>((props, ref) => <StyledContainer {...props} ref={ref} />);
 
 export default React.memo(Container);

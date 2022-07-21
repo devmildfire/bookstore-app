@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledCrossIcon, StyledIconButton, StyledWrapper } from './styles';
+import { StyledWrapper } from './styles';
 import Collapse from '../Collapse';
 import { COLLAPSE_DURATION } from '@/consts/animation';
 import useScrollTo from '@/hooks/useScrollTo';
 
 interface PreviewProps extends ClassNameProps {
   readonly open: boolean;
-  readonly exitHref: string;
   readonly duration?: number;
   readonly exitTimeout?: number;
   readonly enterTimeout?: number;
@@ -15,13 +14,7 @@ interface PreviewProps extends ClassNameProps {
 
 const Preview: React.FC<PreviewProps> = (props) => {
   const {
-    open,
-    children,
-    className,
-    duration,
-    exitTimeout,
-    enterTimeout,
-    exitHref,
+    open, children, className, duration, exitTimeout, enterTimeout,
   } = props;
 
   const [rootRef, setRootRef] = React.useState<HTMLElement | null>(null);
@@ -36,13 +29,10 @@ const Preview: React.FC<PreviewProps> = (props) => {
       enterTimeout={enterTimeout}
     >
       <StyledWrapper className={className} ref={setRootRef}>
-        <StyledIconButton href={exitHref} scroll={false} size='small'>
-          <StyledCrossIcon />
-        </StyledIconButton>
         {children}
       </StyledWrapper>
     </Collapse>
   );
 };
 
-export default React.memo<React.PropsWithChildren<PreviewProps>>(Preview);
+export default Preview;

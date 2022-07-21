@@ -10,7 +10,7 @@ export const StyledNavigation = styled(Navigation)`
   position: sticky;
   top: var(--header-height);
 
-  padding: 2rem var(--main-margin);
+  padding: 1rem var(--main-margin);
 
   margin: 0;
 

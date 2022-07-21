@@ -21,10 +21,8 @@ export const boxSetsApi = createApi({
     if (action.type === HYDRATE) {
       return action.payload[reducerPath];
     }
-
-    return undefined;
   },
 });
 
-export const { useGetBoxSetsQuery } = boxSetsApi;
-export const { getBoxSets } = boxSetsApi.endpoints;
+export const { useGetBoxSetsQuery, useGetBoxSetQuery } = boxSetsApi;
+export const { getBoxSets, getBoxSet } = boxSetsApi.endpoints;
