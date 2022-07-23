@@ -1,14 +1,31 @@
-import React, { PropsWithChildren } from 'react';
+import * as React from 'react';
+import Container from '../Common/Container';
+import Text from '../Common/Text';
 import ProductSlider from './ProductSlider';
-import { StyledNavigation, StyledWrapper } from './styles';
+import {
+  StyledContentWrapper,
+  StyledNavigation,
+  StyledWrapper,
+} from './styles';
 
-const HomePage = (props: PropsWithChildren<{}>): React.ReactElement => {
-  const { children } = props;
+interface HonePageProps {
+  readonly title: string;
+}
+
+const HomePage: React.FC<HonePageProps> = (props) => {
+  const { children, title } = props;
   return (
     <StyledWrapper>
       <ProductSlider />
       <StyledNavigation />
-      {children}
+      <StyledContentWrapper>
+        <Container>
+          <Text variant='h2' align='center'>
+            {title}
+          </Text>
+        </Container>
+        {children}
+      </StyledContentWrapper>
     </StyledWrapper>
   );
 };

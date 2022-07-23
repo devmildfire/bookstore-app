@@ -8,11 +8,18 @@ export const StyledWrapper = styled(Link)`
   grid-template-columns: max-content 1fr;
 
   gap: 29px;
+
+  &:hover * {
+    transition: color 0.25s ease-in-out;
+
+    color: inherit;
+  }
 `;
 
 export const StyledImage = styled(Image)`
   width: 120px;
   height: 168px;
+
 `;
 
 export const StyledText = styled.div`

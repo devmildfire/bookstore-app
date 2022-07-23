@@ -1,16 +1,15 @@
 import styled from 'styled-components';
-import Preview from '@/components/Common/Preview';
 import PreviewContent from '@/components/Common/PreviewContent';
+import PreviewHeader from '@/components/Common/PreviewHeader';
 
-export const StyledPreview = styled(Preview)`
-  width: min(100vw, var(--max-width));
-  margin: 0 auto;
+export const StyledPreviewHeader = styled(PreviewHeader)`
+  max-width: min(100vw, var(--max-width));
 `;
 
 export const StyledPreviewContent = styled(PreviewContent)`
-  padding-left: 318px;
-
   height: 600px;
+  width: min(100vw, var(--max-width));
 
-  margin: 0;
+  padding-left: 318px;
+  margin: 0 auto;
 `;

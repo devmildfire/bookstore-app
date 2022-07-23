@@ -1,6 +1,5 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
-import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
@@ -36,23 +35,27 @@ const BookPage = (props: BookPageProps): React.ReactElement => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<BookPageProps> =
-  wrapper.getServerSideProps<BookPageProps>((store) => async ({ query }) => {
-    const { id } = query;
-    const { data: book } = await store.dispatch(getBook.initiate(id as string));
+export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
+  (store) =>
+    async ({ query }) => {
+      const { id } = query;
+      const { data: book } = await store.dispatch(
+        getBook.initiate(id as string),
+      );
 
-    if (!book) {
+      if (!book) {
+        return {
+          notFound: true,
+        };
+      }
+
       return {
-        notFound: true,
+        props: {
+          book,
+        },
       };
-    }
-
-    return {
-      props: {
-        book,
-      },
-    };
-  });
+    },
+);
 
 const StyleWrapper = styled(Container)`
   display: grid;

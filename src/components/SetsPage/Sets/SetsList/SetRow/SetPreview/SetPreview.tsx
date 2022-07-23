@@ -7,7 +7,7 @@ import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
 import { COLLAPSE_DURATION, FADE_DURATION } from '@/consts/animation';
 import PreviewHeader from '@/components/Common/PreviewHeader';
-import PreviewContent from '@/components/Common/PreviewContent';
+import { StyledPreviewContent } from './styles';
 
 interface SetPreviewProps {
   readonly sets: BoxSet[];
@@ -26,7 +26,7 @@ const SetPreview: React.FC<SetPreviewProps> = (props) => {
       exitTimeout={COLLAPSE_DURATION}
     >
       <PreviewHeader exitHref='/sets' />
-      <PreviewContent>
+      <StyledPreviewContent>
         {sets.map((set) => (
           <Fade
             open={set.id === setId}
@@ -37,9 +37,9 @@ const SetPreview: React.FC<SetPreviewProps> = (props) => {
             <SetPreviewCard {...set} />
           </Fade>
         ))}
-      </PreviewContent>
+      </StyledPreviewContent>
     </Preview>
   );
 };
 
-export default SetPreview;
+export default React.memo(SetPreview);

@@ -5,7 +5,7 @@ import {
 import { FADE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
 
-interface FadeProps {
+export interface FadeProps {
   readonly open: boolean;
   readonly enterTimeout?: number;
   readonly exitTimeout?: number;
@@ -59,4 +59,4 @@ const Fade: React.FC<FadeProps> = (props) => {
   );
 };
 
-export default React.memo<React.PropsWithChildren<FadeProps>>(Fade);
+export default Fade;

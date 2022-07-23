@@ -1,23 +1,29 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import HomePage from '@/components/HomePage';
 import { getBoxSets } from '@/models/boxSets';
 import { wrapper } from '@/models';
 import Sets from '@/components/SetsPage/Sets';
+import { getPopularProducts } from '@/models/popularProducts';
 
 const SetsPage: NextPage = () => (
-  <HomePage>
+  <HomePage title='БОКС-СЕТЫ'>
     <Sets />
   </HomePage>
 );
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async () => {
-    await store.dispatch(getBoxSets.initiate(undefined));
-    return {
-      props: {},
-    };
-  });
+export const getStaticProps = wrapper.getStaticProps((store) => async () => {
+  const requests: Promise<unknown>[] = [
+    store.dispatch(getBoxSets.initiate(undefined)),
+    store.dispatch(getPopularProducts.initiate(undefined)),
+  ];
+
+  await Promise.all(requests);
+  return {
+    props: {},
+    revalidate: 5000,
+  };
+});
 
 export default SetsPage;

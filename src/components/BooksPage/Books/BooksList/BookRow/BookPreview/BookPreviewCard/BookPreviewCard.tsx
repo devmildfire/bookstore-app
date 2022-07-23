@@ -1,6 +1,5 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
-import usePrepareLink from '@/hooks/usePrepareLink';
 import getAuthorNames from '@/utils/getAuthorNames';
 import {
   StyledBackground,
@@ -41,7 +40,6 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
     title,
     trailerSrc,
   } = props;
-  const path = usePrepareLink({ to: `/books/${id}` });
   const authorNames = getAuthorNames(authors);
   return (
     <StyledWrapper>
@@ -62,7 +60,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
               <Text key={p}>{p}</Text>
             ))}
           </StyledDescription>
-          <StyledButton href={path}>Познать</StyledButton>
+          <StyledButton href={`/books/${id}`}>Познать</StyledButton>
         </StyledTextBlock>
       </StyledForwardPlan>
       <StyledBackground>

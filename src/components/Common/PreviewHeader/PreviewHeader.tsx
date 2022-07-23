@@ -1,23 +1,28 @@
 import * as React from 'react';
-import Container from '../Container';
-import { StyledCrossIcon, StyledHeader, StyledIconButton } from './styles';
+import { ClassNameProps } from '@/types/className';
+import {
+  StyledContainer,
+  StyledCrossIcon,
+  StyledHeader,
+  StyledIconButton,
+} from './styles';
 
-interface PreviewHeaderProps {
+interface PreviewHeaderProps extends ClassNameProps {
   readonly exitHref: string;
 }
 
 const PreviewHeader: React.FC<React.PropsWithChildren<PreviewHeaderProps>> = (
   props,
 ) => {
-  const { exitHref } = props;
+  const { exitHref, className } = props;
 
   return (
     <StyledHeader>
-      <Container>
+      <StyledContainer className={className}>
         <StyledIconButton href={exitHref} scroll={false} size='small'>
           <StyledCrossIcon />
         </StyledIconButton>
-      </Container>
+      </StyledContainer>
     </StyledHeader>
   );
 };

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import classNames from 'classnames';
 import { Book } from '@/models/books';
 import {
   StyledWrapper,
@@ -12,28 +13,28 @@ import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
 import IconButton from '@/components/Common/IconButton';
 import Price from '@/components/Common/Price';
+import useGetParam from '@/hooks/useGetParam';
 
 interface BookCardProps
-  extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice'> {}
+  extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'> {}
 
-const BookCard = (props: BookCardProps): React.ReactElement => {
-  const [liked, setLike] = useState(false);
+const BookCard: React.FC<BookCardProps> = (props) => {
   const {
-    id, image, price, newPrice,
+    id, image, price, newPrice, title,
   } = props;
+  const [liked, setLike] = React.useState(false);
+
   const path = usePrepareLink({
     query: {
       [GET_PARAMS.openProduct]: id,
     },
   });
+  const openBook = Number(useGetParam(GET_PARAMS.openProduct));
+  const classes = classNames({ active: openBook === id });
 
   return (
-    <StyledWrapper href={path} scroll={false}>
-      <StyledImage
-        className='cardImage'
-        src={image}
-        alt='BookDescription logo'
-      />
+    <StyledWrapper className={classes} href={path} scroll={false}>
+      <StyledImage src={image} alt={title} />
       <StyledInfo>
         <Price price={price} newPrice={newPrice} />
         <StyledActions>
@@ -49,4 +50,4 @@ const BookCard = (props: BookCardProps): React.ReactElement => {
   );
 };
 
-export default BookCard;
+export default React.memo(BookCard);

@@ -18,3 +18,8 @@ export const StyledNavigation = styled(Navigation)`
 
   z-index: var(--upper-z-index);
 `;
+
+export const StyledContentWrapper = styled.div`
+  display: grid;
+  gap: 90px;
+`;

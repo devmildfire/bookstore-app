@@ -8,13 +8,11 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import '@/styles/globals.css';
 
-function MyApp({ Component, pageProps }: AppProps): React.ReactElement {
-  return (
-    <DeviceInfoProvider>
-      <PageLayout>
-        <Component {...pageProps} />
-      </PageLayout>
-    </DeviceInfoProvider>
-  );
-}
+const MyApp = ({ Component, pageProps }: AppProps): React.ReactElement => (
+  <DeviceInfoProvider>
+    <PageLayout>
+      <Component {...pageProps} />
+    </PageLayout>
+  </DeviceInfoProvider>
+);
 export default wrapper.withRedux(MyApp);

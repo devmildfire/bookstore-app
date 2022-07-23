@@ -18,4 +18,4 @@ const SetPreviewCard: React.FC<SetPreviewCardProps> = (props) => {
   );
 };
 
-export default SetPreviewCard;
+export default React.memo(SetPreviewCard);

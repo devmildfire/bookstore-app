@@ -3,10 +3,10 @@ import BookPreviewCard from './BookPreviewCard';
 import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
 import { COLLAPSE_DURATION, FADE_DURATION } from '@/consts/animation';
-import { StyledPreview, StyledPreviewContent } from './styles';
+import { StyledPreviewContent, StyledPreviewHeader } from './styles';
 import { Book } from '@/models/books';
 import Fade from '@/components/Common/Fade';
-import PreviewHeader from '@/components/Common/PreviewHeader';
+import Preview from '@/components/Common/Preview';
 
 interface BookPreviewProps {
   readonly books: Book[];
@@ -20,12 +20,12 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
   const open = books.some((book) => book.id === bookId);
 
   return (
-    <StyledPreview
+    <Preview
       open={open}
       duration={COLLAPSE_DURATION}
       exitTimeout={COLLAPSE_DURATION}
     >
-      <PreviewHeader exitHref='/books' />
+      <StyledPreviewHeader exitHref='/books' />
       <StyledPreviewContent>
         {books.map((book) => (
           <Fade
@@ -38,7 +38,7 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
           </Fade>
         ))}
       </StyledPreviewContent>
-    </StyledPreview>
+    </Preview>
   );
 };
 

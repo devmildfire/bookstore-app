@@ -11,4 +11,4 @@ const Container = React.forwardRef<
   React.PropsWithChildren<ContainerProps>
 >((props, ref) => <StyledContainer {...props} ref={ref} />);
 
-export default React.memo(Container);
+export default Container;

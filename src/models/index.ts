@@ -9,10 +9,14 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { Reducer } from 'react';
 import { booksApi } from './books';
 import { boxSetsApi } from './boxSets';
+import { popularProductsApi } from './popularProducts';
+
+const apis = [boxSetsApi, booksApi, popularProductsApi];
 
 const reducers = combineReducers({
   [booksApi.reducerPath]: booksApi.reducer,
   [boxSetsApi.reducerPath]: boxSetsApi.reducer,
+  [popularProductsApi.reducerPath]: popularProductsApi.reducer,
 });
 
 const reducer: Reducer<Store, AnyAction> = (state, action) => {
@@ -33,7 +37,7 @@ const makeStore = () => {
     /* @ts-ignore */
     middleware: (getDefaultMiddleware) => {
       const middleware = getDefaultMiddleware();
-      middleware.concat(boxSetsApi.middleware).concat(booksApi.middleware);
+      apis.forEach((api) => middleware.concat(api.middleware));
       return middleware;
     },
   });
