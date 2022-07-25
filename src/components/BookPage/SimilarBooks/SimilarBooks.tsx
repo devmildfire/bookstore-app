@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
@@ -10,8 +10,7 @@ import { useGetBooksQuery } from '@/models/books';
 
 const SimilarBooks = (): React.ReactElement => {
   const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
-  const { data: books = [] } = useGetBooksQuery(undefined);
-  const similarBooks = useMemo(() => books.slice(0, 5), [books]);
+  const { data: books = [] } = useGetBooksQuery({ count: 5 });
   const isSlider = isTabletVertical || isMobile;
 
   return (
@@ -27,7 +26,7 @@ const SimilarBooks = (): React.ReactElement => {
             spaceBetween={20}
             withoutPagination
           >
-            {similarBooks.map((book) => (
+            {books.map((book) => (
               <Slide key={book.id}>
                 <Link href={`/books/${book.id}`} passHref>
                   <a href='fakePath'>
@@ -38,7 +37,7 @@ const SimilarBooks = (): React.ReactElement => {
             ))}
           </Slider>
         ) : (
-          similarBooks.map((book) => (
+          books.map((book) => (
             <BookItem>
               <Link href={`/books/${book.id}`} passHref>
                 <a href='fakePath'>

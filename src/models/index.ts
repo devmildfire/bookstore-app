@@ -12,12 +12,7 @@ import { boxSetsApi } from './boxSets';
 import { giftsApi } from './gifts';
 import { subscriptionApi } from './subscriptions';
 
-const apis = [
-  boxSetsApi,
-  booksApi,
-  giftsApi,
-  subscriptionApi,
-];
+const apis = [boxSetsApi, booksApi, giftsApi, subscriptionApi];
 
 const reducers = combineReducers({
   [booksApi.reducerPath]: booksApi.reducer,
@@ -43,8 +38,9 @@ const makeStore = () => {
     devTools: true,
     /* @ts-ignore */
     middleware: (getDefaultMiddleware) => {
-      const middleware = getDefaultMiddleware();
-      apis.forEach((api) => middleware.concat(api.middleware));
+      const middleware = getDefaultMiddleware().concat(
+        apis.map((api) => api.middleware),
+      );
       return middleware;
     },
   });
@@ -59,5 +55,5 @@ export type Store = ReturnType<typeof reducers>;
 export type AppDispatch = AppStore['dispatch'];
 
 export const wrapper = createWrapper(makeStore, {
-  debug: true,
+  debug: false,
 });

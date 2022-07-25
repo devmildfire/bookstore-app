@@ -64,6 +64,29 @@ const workers: Worker[] = [
 
 const formats: string[] = ['Fb2', 'Epub'];
 
+const book = {
+  id: 2,
+  title: 'DELETED',
+  authors: [authors[3]],
+  publishDate: '2021-12-12',
+  genre: 'роман',
+  ageRestriction: '18+',
+  price: 300,
+  newPrice: 350,
+  image: '/images/bookTitleDeleted.jpg',
+  banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
+  trailerSrc: './__mocks__/2022-07-06 12-28-28.webm',
+  description: [
+    'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
+    'Стася хорошо себя чувствует среди мёртвых, а вот в мире живых у неё полно проблем: письма и слежка бывшего парня, постоянные разговоры отца о её никчёмности…',
+    'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
+  ],
+  symbolCount: 355000,
+  formats,
+  readers,
+  workers,
+};
+
 const books: Book[] = [
   {
     id: 1,
@@ -311,5 +334,7 @@ const books: Book[] = [
     workers,
   },
 ];
+
+export const generateBook = (id: number): Book => ({ ...book, id });
 
 export default books;

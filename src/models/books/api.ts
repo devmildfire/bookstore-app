@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 import { Book } from './types';
 import { ID } from '@/types/common';
 import { BASE_API_URL, TAGS } from '@/consts/api';
+import { Pagination } from '@/types/api';
 
 export const booksApi = createApi({
   reducerPath: 'books/api',
@@ -12,8 +13,14 @@ export const booksApi = createApi({
     baseUrl: `${BASE_API_URL}/books`,
   }),
   endpoints: (builder) => ({
-    getBooks: builder.query<Book[], undefined>({
-      query: () => ({ url: '/' }),
+    getBooks: builder.query<Book[], Pagination>({
+      query: ({ count, page }) => ({
+        url: '/',
+        params: {
+          count,
+          page,
+        },
+      }),
       providesTags: [TAGS.BOOKS],
     }),
     getBook: builder.query<Book, ID>({

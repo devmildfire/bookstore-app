@@ -16,7 +16,7 @@ const SubscriptionPage: NextPage = () => (
 export const getStaticProps = wrapper.getStaticProps(
   ({ dispatch }) =>
     async () => {
-      const requests = [
+      const requests:Promise<unknown>[] = [
         dispatch(getPopularBooks.initiate(undefined)),
         dispatch(getSubscriptions.initiate(undefined)),
       ];
