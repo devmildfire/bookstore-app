@@ -2,19 +2,22 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { HYDRATE } from 'next-redux-wrapper';
 import { ID } from '@/types/common';
 import { BoxSet } from './types';
-import { BASE_API_URL } from '@/consts/api';
+import { BASE_API_URL, TAGS } from '@/consts/api';
 
 export const boxSetsApi = createApi({
   reducerPath: 'box-sets/api',
+  tagTypes: [TAGS.SETS, TAGS.SET],
   baseQuery: fetchBaseQuery({
     baseUrl: `${BASE_API_URL}/box-sets`,
   }),
   endpoints: (builder) => ({
     getBoxSets: builder.query<BoxSet[], undefined>({
       query: () => ({ url: '/' }),
+      providesTags: [TAGS.SETS],
     }),
     getBoxSet: builder.query<BoxSet, ID>({
       query: (id) => ({ url: `/${id}` }),
+      providesTags: [TAGS.SET],
     }),
   }),
   extractRehydrationInfo: (action, { reducerPath }) => {

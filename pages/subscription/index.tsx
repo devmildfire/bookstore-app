@@ -3,15 +3,19 @@ import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import HomePage from '@/components/HomePage';
 import { wrapper } from '@/models';
-import { getPopularProducts } from '@/models/popularProducts';
+import { getPopularBooks } from '@/models/books';
+import { getSubscriptions } from '@/models/subscription';
 
 const Subscription: NextPage = () => (
   <HomePage title='Чудеса подписки'> </HomePage>
 );
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async () => {
-    const requests = [store.dispatch(getPopularProducts.initiate(undefined))];
+  wrapper.getServerSideProps(({ dispatch }) => async () => {
+    const requests = [
+      dispatch(getPopularBooks.initiate(undefined)),
+      dispatch(getSubscriptions.initiate(undefined)),
+    ];
 
     await Promise.all(requests);
     return {

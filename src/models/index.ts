@@ -10,15 +10,20 @@ import { Reducer } from 'react';
 import { booksApi } from './books';
 import { boxSetsApi } from './boxSets';
 import { giftsApi } from './gifts';
-import { popularProductsApi } from './popularProducts';
+import { subscriptionApi } from './subscription';
 
-const apis = [boxSetsApi, booksApi, popularProductsApi, giftsApi];
+const apis = [
+  boxSetsApi,
+  booksApi,
+  giftsApi,
+  subscriptionApi,
+];
 
 const reducers = combineReducers({
   [booksApi.reducerPath]: booksApi.reducer,
   [boxSetsApi.reducerPath]: boxSetsApi.reducer,
-  [popularProductsApi.reducerPath]: popularProductsApi.reducer,
   [giftsApi.reducerPath]: giftsApi.reducer,
+  [subscriptionApi.reducerPath]: subscriptionApi.reducer,
 });
 
 const reducer: Reducer<Store, AnyAction> = (state, action) => {

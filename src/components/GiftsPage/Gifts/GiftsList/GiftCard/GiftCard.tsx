@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Gift } from '@/models/gifts';
 import {
   StyledPrice,
-  StyledImage,
   StyledImageWrapper,
   StyledInfo,
   StyledWrapper,
@@ -12,6 +11,7 @@ import IconButton from '@/components/Common/IconButton';
 import Text from '@/components/Common/Text';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
+import Image from '@/components/Common/Image';
 
 interface GiftCardProps extends Gift {}
 
@@ -20,7 +20,7 @@ const GiftCard: React.FC<GiftCardProps> = (props) => {
   return (
     <StyledWrapper>
       <StyledImageWrapper>
-        <StyledImage src={image} title={title} />
+        <Image src={image} title={title} />
         <StyledPrice price={price} />
       </StyledImageWrapper>
       <StyledInfo>

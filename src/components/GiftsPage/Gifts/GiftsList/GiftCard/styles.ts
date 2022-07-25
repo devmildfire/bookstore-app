@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Image from '@/components/Common/Image';
 import Price from '@/components/Common/Price';
 
 export const StyledWrapper = styled.div`
@@ -12,22 +11,22 @@ export const StyledImageWrapper = styled.div`
 
   width: 440px;
   height: 280px;
+
+  background: linear-gradient(
+    277.91deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(255, 255, 255, 0.5) 89.56%
+  );
+
+  border-radius: 10px;
+
+  overflow: hidden;
 `;
 
 export const StyledPrice = styled(Price)`
   position: absolute;
   bottom: 40px;
   right: 40px;
-`;
-
-export const StyledImage = styled(Image)`
-  background: linear-gradient(
-    187.91deg,
-    rgba(0, 0, 0, 0.5) 0%,
-    rgba(255, 255, 255, 0.5) 89.56%
-  );
-
-  border-radius: 10px;
 `;
 
 export const StyledInfo = styled.div`
