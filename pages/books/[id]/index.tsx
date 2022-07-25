@@ -36,12 +36,10 @@ const BookPage = (props: BookPageProps): React.ReactElement => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
-  (store) =>
+  ({ dispatch }) =>
     async ({ query }) => {
       const { id } = query;
-      const { data: book } = await store.dispatch(
-        getBook.initiate(id as string),
-      );
+      const { data: book } = await dispatch(getBook.initiate(id as string));
 
       if (!book) {
         return {

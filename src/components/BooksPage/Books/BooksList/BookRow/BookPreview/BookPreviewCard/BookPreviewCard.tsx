@@ -45,19 +45,26 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
     <StyledWrapper>
       <StyledForwardPlan>
         <StyledTextBlock>
-          <Text variant='h2'>{title}</Text>
-          <Text variant='p' component='h3'>
+          <Text variant='h2_2'>{title}</Text>
+          <Text variant='h3_4' textTransform='none'>
             {authorNames}
           </Text>
-          <Text variant='body1' color='red' textTransform='uppercase'>
+          <Text
+            variant='h4_1'
+            component='p'
+            color='red'
+            textTransform='uppercase'
+          >
             adfasdfadfasdfasdf
           </Text>
-          <Text variant='body1'>
-            {`${dayjs(publishDate).get('year')}|${genre}|${ageRestriction}`}
+          <Text variant='h4_1' component='p'>
+            {`${dayjs(publishDate).get('year')} | ${genre} | ${ageRestriction}`}
           </Text>
           <StyledDescription>
             {description.map((p) => (
-              <Text key={p}>{p}</Text>
+              <Text variant='h4_1' component='p' key={p}>
+                {p}
+              </Text>
             ))}
           </StyledDescription>
           <StyledButton href={`/books/${id}`}>Познать</StyledButton>

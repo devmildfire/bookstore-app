@@ -1,0 +1,43 @@
+import styled from 'styled-components';
+import Image from '@/components/Common/Image';
+import Price from '@/components/Common/Price';
+
+export const StyledWrapper = styled.div`
+  display: grid;
+  gap: 30px;
+`;
+
+export const StyledImageWrapper = styled.div`
+  position: relative;
+
+  width: 440px;
+  height: 280px;
+`;
+
+export const StyledPrice = styled(Price)`
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+`;
+
+export const StyledImage = styled(Image)`
+  background: linear-gradient(
+    187.91deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(255, 255, 255, 0.5) 89.56%
+  );
+
+  border-radius: 10px;
+`;
+
+export const StyledInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const StyledActions = styled.div`
+  display: flex;
+  gap: 30px;
+  align-items: center;
+`;

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Popper from '@/components/Popper';
+import Popper from '@/components/Common/Popper';
 import { MenuItem } from '@/utils/menuItems';
 
 import colors from '@/utils/colors';

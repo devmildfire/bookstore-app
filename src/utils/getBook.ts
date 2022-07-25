@@ -1,4 +1,4 @@
-import booksData from '@/mocks/books';
+import books from '@/mocks/books';
 import { Book } from '@/models/books';
 
 const getBookInfo = (bookId: number | number[] | undefined): Book | null => {
@@ -6,7 +6,7 @@ const getBookInfo = (bookId: number | number[] | undefined): Book | null => {
     return null;
   }
   return (
-    booksData.find(
+    books.find(
       ({ id }) =>
         id === bookId || (Array.isArray(bookId) && bookId.includes(id)),
     ) || null

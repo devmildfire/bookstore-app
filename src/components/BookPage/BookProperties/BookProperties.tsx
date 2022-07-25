@@ -34,12 +34,12 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
   return (
     <StyledWrapper>
       <StyledHeader>
-        <StyledHeaderText component='h3'>ЦИФРОВОЕ ИЗДАНИЕ</StyledHeaderText>
-        <StyledHeaderText component='p'>
+        <StyledHeaderText variant='h3_1'>ЦИФРОВОЕ ИЗДАНИЕ</StyledHeaderText>
+        <StyledHeaderText variant='h3_1' component='p'>
           {price}
           &#8381;
         </StyledHeaderText>
-        <StyledDate variant='subtitle1' component='p'>
+        <StyledDate variant='text'>
           Дата релиза:
           <time dateTime={new Date(publishDate).toDateString()}>
             {dayjs(publishDate).format('DD.MM.YYYY')}
@@ -48,8 +48,8 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
       </StyledHeader>
       <StyledBody>
         <StyledButtons>
-          <Button className='propsBtn'>Добавить в корзину</Button>
-          <Button className='propsBtn'>Демо-версия</Button>
+          <Button>Добавить в корзину</Button>
+          <Button>Демо-версия</Button>
         </StyledButtons>
         {/* Вынести в отдельный компонент */}
         <StyledProperties>

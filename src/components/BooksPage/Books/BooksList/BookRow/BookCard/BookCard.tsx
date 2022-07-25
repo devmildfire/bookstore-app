@@ -3,9 +3,7 @@ import classNames from 'classnames';
 import { Book } from '@/models/books';
 import {
   StyledWrapper,
-  StyledLike,
   StyledImage,
-  StyledShopCard,
   StyledInfo,
   StyledActions,
 } from './styles';
@@ -14,6 +12,8 @@ import { GET_PARAMS } from '@/consts/query';
 import IconButton from '@/components/Common/IconButton';
 import Price from '@/components/Common/Price';
 import useGetParam from '@/hooks/useGetParam';
+import Cart from '@/components/Common/Icons/Cart';
+import Like from '@/components/Common/Icons/Like';
 
 interface BookCardProps
   extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'> {}
@@ -39,10 +39,10 @@ const BookCard: React.FC<BookCardProps> = (props) => {
         <Price price={price} newPrice={newPrice} />
         <StyledActions>
           <IconButton>
-            <StyledShopCard />
+            <Cart />
           </IconButton>
           <IconButton onClick={() => setLike((prev) => !prev)}>
-            <StyledLike liked={liked} />
+            <Like isActive={liked} />
           </IconButton>
         </StyledActions>
       </StyledInfo>

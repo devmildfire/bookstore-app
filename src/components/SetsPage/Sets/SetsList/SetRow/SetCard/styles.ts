@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import ShopCart from '@/assets/icons/shop-cart.svg';
 import Link from '@/components/Common/Link';
-import Like from '@/assets/icons/like.svg';
 
 export const StyledWrapper = styled(Link)`
   display: grid;
@@ -38,31 +36,4 @@ export const StyledInfo = styled.div`
 export const StyledActions = styled.div`
   display: flex;
   gap: 40px;
-`;
-
-export const StyledShopCard = styled(ShopCart)`
-  width: 24px;
-  height: 28px;
-  stroke: var(--main-white);
-
-  :focus-visible {
-    outline: none;
-  }
-`;
-
-export const StyledLike = styled(Like)`
-  width: 30px;
-  height: 25px;
-  fill: var(--${(props) => (props.liked ? 'main-red-100' : 'main-white')});
-
-  transition: fill 0.2 ease-in-out;
-
-  :hover,
-  :focus-visible {
-    fill: var(--${(props) => (props.liked ? 'main-white' : 'main-red-100')});
-  }
-
-  :focus-visible {
-    outline: none;
-  }
 `;

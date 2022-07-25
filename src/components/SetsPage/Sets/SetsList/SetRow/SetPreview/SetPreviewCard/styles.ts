@@ -7,4 +7,5 @@ export const StyledWrapper = styled.div`
 
 export const StyledList = styled(List)`
   grid-template-columns: repeat(3, 1fr);
+  gap: 56px 150px;
 `;

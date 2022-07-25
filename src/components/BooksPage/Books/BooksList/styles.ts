@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import List from '@/components/Common/List';
 
-export const StyledProductsList = styled.div`
-  display: grid;
-
+export const StyledProductsList = styled(List)`
   row-gap: 100px;
 
   @media ${breakPoints.sm} {

@@ -17,7 +17,10 @@ export const StyledButton = styled.button<StyledIconButtonProps>`
 
   width: ${(props) => sizeMap[props.size]}px;
   height: ${(props) => sizeMap[props.size]}px;
+
   border-radius: 50%;
 
   background-color: transparent;
+
+  cursor: pointer;
 `;

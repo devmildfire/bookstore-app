@@ -10,4 +10,4 @@ const Sets: React.FC = () => (
   </StyledWrapper>
 );
 
-export default Sets;
+export default React.memo(Sets);

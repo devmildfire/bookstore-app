@@ -1,25 +1,23 @@
-import React, { FC } from 'react';
+import * as React from 'react';
+
 import { ClassNameProps } from '@/types/className';
 import StyledText, { StyledTextProps, tagMap } from './styles';
-import { Component } from './types';
 
 export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
-  readonly component?: Component;
+  readonly component?: keyof React.ReactHTML;
 }
 
-export const Text: FC<TextProps> = (props) => {
+export const Text: React.FC<TextProps> = (props) => {
   const {
     children,
-    className,
     component,
-    variant = 'body1',
+    variant = 'text',
     align = 'inherit',
     color = 'white',
-    ...params
+    ...rest
   } = props;
 
   const as = component || tagMap[variant];
-
   /**
    * Почему то выдает тип, в котором не as
    * Но он там должен быть, по этому пока что any
@@ -29,9 +27,8 @@ export const Text: FC<TextProps> = (props) => {
       as={as as any}
       align={align}
       variant={variant}
-      className={className}
       color={color}
-      {...params}
+      {...rest}
     >
       {children}
     </StyledText>

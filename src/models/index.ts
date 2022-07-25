@@ -9,14 +9,16 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { Reducer } from 'react';
 import { booksApi } from './books';
 import { boxSetsApi } from './boxSets';
+import { giftsApi } from './gifts';
 import { popularProductsApi } from './popularProducts';
 
-const apis = [boxSetsApi, booksApi, popularProductsApi];
+const apis = [boxSetsApi, booksApi, popularProductsApi, giftsApi];
 
 const reducers = combineReducers({
   [booksApi.reducerPath]: booksApi.reducer,
   [boxSetsApi.reducerPath]: boxSetsApi.reducer,
   [popularProductsApi.reducerPath]: popularProductsApi.reducer,
+  [giftsApi.reducerPath]: giftsApi.reducer,
 });
 
 const reducer: Reducer<Store, AnyAction> = (state, action) => {

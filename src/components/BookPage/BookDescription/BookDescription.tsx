@@ -32,23 +32,32 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     authors,
   } = props;
 
+  const year = new Date(publishDate).getFullYear();
+
   return (
     <StyledWrapper>
       <StyledImage src={image} alt={title} />
       <div>
-        <StyledTitle variant='h2'>{title}</StyledTitle>
-        <StyledAuthor variant='p' component='h3' fontWeight={700}>
+        <StyledTitle variant='h2_1'>{title}</StyledTitle>
+        <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {authors.map((author) => author.name)}
         </StyledAuthor>
-        <StyledInfo fontWeight={700}>
-          {`${publishDate} | ${genre} | ${ageRestriction}`}
+        <StyledInfo variant='h4_1' component='p' fontWeight={700}>
+          {`${year} | ${genre} | ${ageRestriction}`}
         </StyledInfo>
-        <StyledThesis variant='p' color='red' fontWeight={500}>
+        <StyledThesis variant='h3_3' component='p' color='red' fontWeight={500}>
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
         </StyledThesis>
         <StyledDescription>
           {description.map((paragraph: string) => (
-            <Text variant='p'>{paragraph}</Text>
+            <Text
+              variant='h3_3'
+              component='p'
+              fontWeight={400}
+              textTransform='none'
+            >
+              {paragraph}
+            </Text>
           ))}
         </StyledDescription>
       </div>

@@ -9,7 +9,7 @@ const SetPreviewCard: React.FC<SetPreviewCardProps> = (props) => {
   const { books } = props;
   return (
     <StyledWrapper>
-      <StyledList gap={[56, 150]}>
+      <StyledList>
         {books.map((book) => (
           <BookCard {...book} key={book.id} />
         ))}

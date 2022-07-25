@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 
-export interface StyledListProps {
-  readonly gap: number | [number, number];
-}
-
-export const StyledList = styled.div<StyledListProps>`
+export const StyledList = styled.div`
   display: grid;
 
-  gap: ${({ gap }) => (Array.isArray(gap) ? gap.join('px ') : gap)}px;
+  grid-template-columns: repeat(auto, auto-fit);
 `;

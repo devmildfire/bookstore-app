@@ -6,7 +6,7 @@ export interface StyledNavLinkProps extends LinkProps {
 }
 
 const StyledNavLink = styled(Link)<StyledNavLinkProps>`
-  color: var(--${(props) => (props.isActive ? 'main-red-100' : 'main-white')});
+  ${(props) => (props.isActive ? 'color: var(--main-red-100);' : '')}
 `;
 
 export default StyledNavLink;

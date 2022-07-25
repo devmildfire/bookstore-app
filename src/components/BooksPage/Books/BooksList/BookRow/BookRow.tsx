@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Book } from '@/models/books';
-import { StyledRowWrapper } from './styles';
+import { StyledRow, StyledRowWrapper } from './styles';
 import Container from '@/components/Common/Container';
-import Row from '@/components/Common/Row';
 import BookPreview from './BookPreview';
 import BookCard from './BookCard';
 
@@ -15,11 +14,11 @@ const BookRow: React.FC<BookRowProps> = (props) => {
   return (
     <StyledRowWrapper>
       <Container>
-        <Row gap={168}>
+        <StyledRow>
           {books.map((book) => (
             <BookCard {...book} key={book.id} />
           ))}
-        </Row>
+        </StyledRow>
       </Container>
       <BookPreview books={books} />
     </StyledRowWrapper>

@@ -2,7 +2,7 @@ import React from 'react';
 import StyledDonateText from './styles';
 
 const Donate = (): React.ReactElement => (
-  <StyledDonateText variant='h2' align='center'>
+  <StyledDonateText variant='h2_1' align='center'>
     Задонатить Чтиву
   </StyledDonateText>
 );

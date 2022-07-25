@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import NavLink from '@/components/Common/NavLink';
+import Text from '@/components/Common/Text';
 
 interface NavigationItemProps {
   readonly path: string;
@@ -11,7 +12,9 @@ const NavigationItem: FC<NavigationItemProps> = (props) => {
 
   return (
     <li>
-      <NavLink href={path}>{label}</NavLink>
+      <Text variant='h4_1' component='span'>
+        <NavLink href={path}>{label}</NavLink>
+      </Text>
     </li>
   );
 };

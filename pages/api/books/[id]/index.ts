@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import booksData from '@/mocks/books';
+import books from '@/mocks/books';
 import { Book } from '@/models/books';
 
 export default function handler(
@@ -7,5 +7,5 @@ export default function handler(
   res: NextApiResponse<Book | null>,
 ) {
   const id = Number(req.query.id);
-  res.status(200).json(booksData.find((book) => book.id === id) || null);
+  res.status(200).json(books.find((book) => book.id === id) || null);
 }

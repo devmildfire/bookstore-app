@@ -10,7 +10,7 @@ const AboutCard = (props: AboutCardProps): React.ReactElement => {
   const { content, image, className } = props;
   return (
     <StyledCard className={className} image={image}>
-      <Text variant='body1' align='center'>
+      <Text variant='text' align='center'>
         {content}
       </Text>
     </StyledCard>

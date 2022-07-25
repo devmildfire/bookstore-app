@@ -20,7 +20,7 @@ const HomePage: React.FC<HonePageProps> = (props) => {
       <StyledNavigation />
       <StyledContentWrapper>
         <Container>
-          <Text variant='h2' align='center'>
+          <Text variant='h2_1' align='center'>
             {title}
           </Text>
         </Container>

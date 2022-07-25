@@ -16,10 +16,10 @@ const BookCard: React.FC<BookCardProps> = (props) => {
     <StyledWrapper href={`/books/${id}`}>
       <StyledImage src={image} alt={title} />
       <StyledText>
-        <Text variant='p' fontWeight={700}>
+        <Text component='p' variant='h3_3'>
           {title}
         </Text>
-        <Text variant='span'>{author}</Text>
+        <Text variant='text'>{author}</Text>
       </StyledText>
     </StyledWrapper>
   );

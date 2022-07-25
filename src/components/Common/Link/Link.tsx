@@ -1,29 +1,28 @@
-import React, { forwardRef, memo, PropsWithChildren } from 'react';
+import * as React from 'react';
 import NextLink from 'next/link';
-import Text, { TextProps } from '../Text';
 import { StyledLink } from './styles';
+import { ClassNameProps } from '@/types/className';
 
-export interface LinkProps extends TextProps {
+export interface LinkProps extends ClassNameProps {
   readonly href: string;
   readonly scroll?: boolean;
 }
 
-const Link = memo(
-  forwardRef<HTMLAnchorElement, PropsWithChildren<LinkProps>>((props, ref) => {
-    const {
-      children, href, scroll, ...textProps
-    } = props;
+const Link = React.forwardRef<
+  HTMLAnchorElement,
+  React.PropsWithChildren<LinkProps>
+>((props, ref) => {
+  const {
+    children, href, scroll, className,
+  } = props;
 
-    return (
-      <NextLink href={href} passHref scroll={scroll}>
-        <StyledLink href='fakeHref' ref={ref}>
-          <Text variant='span' color='inherit' {...textProps}>
-            {children}
-          </Text>
-        </StyledLink>
-      </NextLink>
-    );
-  }),
-);
+  return (
+    <NextLink href={href} passHref scroll={scroll}>
+      <StyledLink href='fakeHref' ref={ref} className={className}>
+        {children}
+      </StyledLink>
+    </NextLink>
+  );
+});
 
 export default Link;

@@ -12,17 +12,20 @@ const BooksPage: NextPage = () => (
   </HomePage>
 );
 
-export const getStaticProps = wrapper.getStaticProps((store) => async () => {
-  const requests: Promise<unknown>[] = [
-    store.dispatch(getBooks.initiate(undefined)),
-    store.dispatch(getPopularProducts.initiate(undefined)),
-  ];
-  await Promise.all(requests);
+export const getStaticProps = wrapper.getStaticProps(
+  ({ dispatch }) =>
+    async () => {
+      const requests: Promise<unknown>[] = [
+        dispatch(getBooks.initiate(undefined)),
+        dispatch(getPopularProducts.initiate(undefined)),
+      ];
+      await Promise.all(requests);
 
-  return {
-    props: {},
-    revalidate: 5000,
-  };
-});
+      return {
+        props: {},
+        revalidate: 5000,
+      };
+    },
+);
 
 export default BooksPage;

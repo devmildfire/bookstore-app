@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { BoxSet } from '@/models/boxSets';
 import Container from '@/components/Common/Container';
-import Row from '@/components/Common/Row';
-import { StyledWrapper } from './styles';
+import { StyledRow, StyledWrapper } from './styles';
 import SetCard from './SetCard';
 import SetPreview from './SetPreview/SetPreview';
 
@@ -16,11 +15,11 @@ const SetsRow: React.FC<SetsRowProps> = (props) => {
   return (
     <StyledWrapper>
       <Container>
-        <Row gap={57}>
+        <StyledRow>
           {sets.map((set) => (
             <SetCard {...set} key={set.id} />
           ))}
-        </Row>
+        </StyledRow>
       </Container>
       <SetPreview sets={sets} />
     </StyledWrapper>

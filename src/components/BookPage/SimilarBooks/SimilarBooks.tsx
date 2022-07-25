@@ -1,21 +1,22 @@
 import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
-import booksData from '@/mocks/books';
 import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import {
   Banner, BookItem, BooksList, Title,
 } from './styles';
+import { useGetBooksQuery } from '@/models/books';
 
 const SimilarBooks = (): React.ReactElement => {
   const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
-  const books = useMemo(() => booksData.slice(0, 5), [booksData]);
+  const { data: books = [] } = useGetBooksQuery(undefined);
+  const similarBooks = useMemo(() => books.slice(0, 5), [books]);
   const isSlider = isTabletVertical || isMobile;
 
   return (
     <section>
-      <Title variant='h2' align='center'>
+      <Title variant='h2_1' align='center'>
         Познайте также
       </Title>
       <BooksList>
@@ -26,7 +27,7 @@ const SimilarBooks = (): React.ReactElement => {
             spaceBetween={20}
             withoutPagination
           >
-            {books.map((book) => (
+            {similarBooks.map((book) => (
               <Slide key={book.id}>
                 <Link href={`/books/${book.id}`} passHref>
                   <a href='fakePath'>
@@ -37,7 +38,7 @@ const SimilarBooks = (): React.ReactElement => {
             ))}
           </Slider>
         ) : (
-          books.map((book) => (
+          similarBooks.map((book) => (
             <BookItem>
               <Link href={`/books/${book.id}`} passHref>
                 <a href='fakePath'>

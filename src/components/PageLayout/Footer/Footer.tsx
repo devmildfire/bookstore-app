@@ -37,10 +37,10 @@ const Footer = (): React.ReactElement => (
         ))}
       </FooterContacts>
       <FooterInfo>
-        <FooterTitle variant='h2' fontFamily='sans'>
+        <FooterTitle variant='h2_1' fontFamily='sans'>
           <FooterTitle
             component='span'
-            variant='h2'
+            variant='h2_1'
             color='red'
             fontFamily='sans'
           >
@@ -65,13 +65,13 @@ const Footer = (): React.ReactElement => (
       >
         <FooterLogo />
         <FooterLogoText>
-          <Text component='span' variant='body1'>
+          <Text component='span' variant='h4_1'>
             Made by
           </Text>
-          <Text component='span' variant='subtitle1'>
+          <Text component='span' variant='h4_1'>
             Russkiy
           </Text>
-          <Text component='span' variant='subtitle1'>
+          <Text component='span' variant='h4_1'>
             Dinozavr
           </Text>
         </FooterLogoText>
@@ -79,11 +79,11 @@ const Footer = (): React.ReactElement => (
     </FooterContent>
     <FooterCopyright>
       <CopyrightContainer>
-        <Text variant='body2'>
+        <Text variant='h4_3' component='p'>
           © 2017-
           {getCurrentYear()}
           &nbsp;
-          <Text component='span' variant='body2' color='red'>
+          <Text component='span' variant='h4_3' color='red'>
             Чти
           </Text>
           во. Санкт-Петербург. Все права защищены.

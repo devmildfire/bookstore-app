@@ -24,7 +24,7 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
     return (
       <Link href={href} passHref scroll={scroll}>
         <StyledButton as='a' href='fakeHref' variant={variant} {...params}>
-          <Text variant='span' color='inherit' key={0}>
+          <Text variant='text' color='inherit' key={0}>
             {children}
           </Text>
         </StyledButton>
@@ -34,7 +34,7 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
 
   return (
     <StyledButton {...params} variant={variant} className={className}>
-      <Text variant='span' color='inherit' key={0}>
+      <Text variant='text' color='inherit' key={0}>
         {children}
       </Text>
     </StyledButton>

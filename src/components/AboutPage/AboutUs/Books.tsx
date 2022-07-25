@@ -77,11 +77,15 @@ const Books = () => (
   <StyledWrapper>
     <Container>
       <StyledPhrase>
-        <Text variant='p'>О том, чтобы превращать</Text>
-        <Text component='span' variant='h2' color='red' fontFamily='serif'>
+        <Text component='p' variant='h3_3' fontWeight={400} textTransform='none'>
+          О том, чтобы превращать
+        </Text>
+        <Text component='span' variant='h2_2'>
           Деньги в книги,
         </Text>
-        <Text variant='p'>а не наоборот</Text>
+        <Text component='p' variant='h3_3' fontWeight={400} textTransform='none'>
+          а не наоборот
+        </Text>
       </StyledPhrase>
     </Container>
     <StyledBooks />

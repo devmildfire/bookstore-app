@@ -13,17 +13,20 @@ const SetsPage: NextPage = () => (
   </HomePage>
 );
 
-export const getStaticProps = wrapper.getStaticProps((store) => async () => {
-  const requests: Promise<unknown>[] = [
-    store.dispatch(getBoxSets.initiate(undefined)),
-    store.dispatch(getPopularProducts.initiate(undefined)),
-  ];
+export const getStaticProps = wrapper.getStaticProps(
+  ({ dispatch }) =>
+    async () => {
+      const requests: Promise<unknown>[] = [
+        dispatch(getBoxSets.initiate(undefined)),
+        dispatch(getPopularProducts.initiate(undefined)),
+      ];
 
-  await Promise.all(requests);
-  return {
-    props: {},
-    revalidate: 5000,
-  };
-});
+      await Promise.all(requests);
+      return {
+        props: {},
+        revalidate: 5000,
+      };
+    },
+);
 
 export default SetsPage;

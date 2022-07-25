@@ -4,12 +4,21 @@ import type { GetServerSideProps, NextPage } from 'next';
 import HomePage from '@/components/HomePage';
 import { wrapper } from '@/models';
 import { getPopularProducts } from '@/models/popularProducts';
+import { getGifts } from '@/models/gifts';
+import Gifts from '@/components/GiftsPage/Gifts';
 
-const Gifts: NextPage = () => <HomePage title='Карты даров'> </HomePage>;
+const GiftsPage: NextPage = () => (
+  <HomePage title='Карты даров'>
+    <Gifts />
+  </HomePage>
+);
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async () => {
-    const requests = [store.dispatch(getPopularProducts.initiate(undefined))];
+  wrapper.getServerSideProps(({ dispatch }) => async () => {
+    const requests = [
+      dispatch(getPopularProducts.initiate(undefined)),
+      dispatch(getGifts.initiate(undefined)),
+    ];
 
     await Promise.all(requests);
     return {
@@ -17,4 +26,4 @@ export const getServerSideProps: GetServerSideProps =
     };
   });
 
-export default Gifts;
+export default GiftsPage;

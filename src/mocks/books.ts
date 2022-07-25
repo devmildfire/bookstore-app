@@ -64,7 +64,7 @@ const workers: Worker[] = [
 
 const formats: string[] = ['Fb2', 'Epub'];
 
-const booksData: Book[] = [
+const books: Book[] = [
   {
     id: 1,
     title: 'Аристотель в Казахстане',
@@ -312,4 +312,4 @@ const booksData: Book[] = [
   },
 ];
 
-export default booksData;
+export default books;

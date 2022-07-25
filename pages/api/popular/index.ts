@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import booksData from '@/mocks/books';
+import books from '@/mocks/books';
 
 export default function handler(_: NextApiRequest, res: NextApiResponse) {
-  res.json(booksData.slice(0, 5));
+  res.json(books.slice(0, 5));
 }
