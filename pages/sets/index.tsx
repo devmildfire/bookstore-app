@@ -5,7 +5,7 @@ import HomePage from '@/components/HomePage';
 import { getBoxSets } from '@/models/boxSets';
 import { wrapper } from '@/models';
 import Sets from '@/components/SetsPage/Sets';
-import { getPopularProducts } from '@/models/popularProducts';
+import { getPopularBooks } from '@/models/books';
 
 const SetsPage: NextPage = () => (
   <HomePage title='БОКС-СЕТЫ'>
@@ -18,7 +18,7 @@ export const getStaticProps = wrapper.getStaticProps(
     async () => {
       const requests: Promise<unknown>[] = [
         dispatch(getBoxSets.initiate(undefined)),
-        dispatch(getPopularProducts.initiate(undefined)),
+        dispatch(getPopularBooks.initiate(undefined)),
       ];
 
       await Promise.all(requests);

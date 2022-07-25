@@ -27,7 +27,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   align-items: center;
   justify-content: center;
 
-  min-height: 50px;
+  min-height: 60px;
   ${(props) => styles[props.variant]}
   width: max-content;
 

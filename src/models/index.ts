@@ -10,7 +10,7 @@ import { Reducer } from 'react';
 import { booksApi } from './books';
 import { boxSetsApi } from './boxSets';
 import { giftsApi } from './gifts';
-import { subscriptionApi } from './subscription';
+import { subscriptionApi } from './subscriptions';
 
 const apis = [
   boxSetsApi,

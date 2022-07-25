@@ -1,22 +1,41 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import Text from '../Text';
+import Text, { TextProps } from '../Text';
 import { StyledPriceInfo } from './styles';
 
 interface PriceProps extends ClassNameProps {
   readonly price: number;
   readonly newPrice?: number | null;
+  readonly priceTextProps?: TextProps;
+  readonly oldPriceTextProps?: TextProps;
 }
 
 const Price: React.FC<PriceProps> = (props) => {
-  const { price, newPrice, className } = props;
+  const {
+    price,
+    newPrice,
+    className,
+    priceTextProps = {},
+    oldPriceTextProps = {},
+  } = props;
   return (
     <StyledPriceInfo className={className}>
-      <Text variant='text' component='span' fontWeight={700}>
+      <Text
+        variant='text'
+        component='span'
+        fontWeight={700}
+        {...priceTextProps}
+      >
         {`${newPrice || price}₽`}
       </Text>
       {newPrice && (
-        <Text color='red' fontWeight={700} component='span' variant='text'>
+        <Text
+          color='red'
+          fontWeight={700}
+          component='span'
+          variant='text'
+          {...oldPriceTextProps}
+        >
           <del>{`${price}₽`}</del>
         </Text>
       )}

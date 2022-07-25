@@ -1,14 +1,16 @@
-import { Subscription } from '@/models/subscription';
+import { Subscription } from '@/models/subscriptions';
 
 const subscriptions: Subscription[] = [
   {
     id: 1,
+    image: '/images/subscription.webp',
     price: 150,
     title: 'БЛИЗОСТИ',
     features: ['Цифровые издания в день релиза', 'Аудиоиздания в день релиза'],
   },
   {
     id: 2,
+    image: '/images/subscription.webp',
     price: 300,
     title: 'ПРИЧАСТИЯ',
     features: [
@@ -19,6 +21,7 @@ const subscriptions: Subscription[] = [
   },
   {
     id: 3,
+    image: '/images/subscription.webp',
     price: 1000,
     title: 'ЕДИНСТВА',
     features: [

@@ -1,26 +1,32 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import HomePage from '@/components/HomePage';
 import { wrapper } from '@/models';
 import { getPopularBooks } from '@/models/books';
-import { getSubscriptions } from '@/models/subscription';
+import { getSubscriptions } from '@/models/subscriptions';
+import Subscriptions from '@/components/SubscriptionsPage/Subscriptions';
 
-const Subscription: NextPage = () => (
-  <HomePage title='Чудеса подписки'> </HomePage>
+const SubscriptionPage: NextPage = () => (
+  <HomePage title='Чудеса подписки'>
+    <Subscriptions />
+  </HomePage>
 );
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(({ dispatch }) => async () => {
-    const requests = [
-      dispatch(getPopularBooks.initiate(undefined)),
-      dispatch(getSubscriptions.initiate(undefined)),
-    ];
+export const getStaticProps = wrapper.getStaticProps(
+  ({ dispatch }) =>
+    async () => {
+      const requests = [
+        dispatch(getPopularBooks.initiate(undefined)),
+        dispatch(getSubscriptions.initiate(undefined)),
+      ];
 
-    await Promise.all(requests);
-    return {
-      props: {},
-    };
-  });
+      await Promise.all(requests);
+      return {
+        props: {},
+        revalidate: 5000,
+      };
+    },
+);
 
-export default Subscription;
+export default SubscriptionPage;

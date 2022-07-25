@@ -7,7 +7,7 @@ export const subscriptionApi = createApi({
   reducerPath: 'subscription/api',
   tagTypes: [TAGS.SUBSCRIPTIONS],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${BASE_API_URL}/subscription`,
+    baseUrl: `${BASE_API_URL}/subscriptions`,
   }),
   endpoints: (builder) => ({
     getSubscriptions: builder.query<Subscription[], undefined>({
