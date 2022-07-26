@@ -1,20 +1,11 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import List from '@/components/Common/List';
+import InfinityList from '@/components/InfinityList';
 
-export const StyledProductsList = styled(List)`
-  position: relative;
-
+export const StyledProductsList = styled(InfinityList)`
   row-gap: 100px;
 
   @media ${breakPoints.sm} {
     row-gap: 50px;
   }
-`;
-
-export const StyledIntersectingElement = styled.div`
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
 `;

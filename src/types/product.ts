@@ -1,5 +1,6 @@
-export interface Product {
-  readonly id: number;
+import { Item } from './common';
+
+export interface Product extends Item {
   readonly title: string;
   readonly image?: string;
   readonly price: number;

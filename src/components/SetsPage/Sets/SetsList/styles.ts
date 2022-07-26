@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import List from '@/components/Common/List';
+import InfinityList from '@/components/InfinityList';
 
-export const StyledList = styled(List)`
+export const StyledList = styled(InfinityList)`
   gap: 64px;
 `;

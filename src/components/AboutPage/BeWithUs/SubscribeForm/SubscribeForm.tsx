@@ -5,7 +5,7 @@ import { StyledButton, StyledForm } from './styles';
 
 const SubscribeForm = (): React.ReactElement => {
   const [sended, setSended] = useState(false);
-  const { reset, ...field } = useField();
+  const { ...field } = useField();
 
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();

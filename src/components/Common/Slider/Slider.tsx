@@ -25,7 +25,6 @@ export const Slider: FC<SliderProps> = (props) => {
     withoutTouch,
     withoutSwipe,
     withoutLoop,
-    enabled,
     additionComponents,
     withoutAutoplay,
     ...params

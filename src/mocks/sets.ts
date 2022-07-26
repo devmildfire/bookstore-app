@@ -1,6 +1,15 @@
 import { BoxSet } from '@/models/boxSets';
 import books from './books';
 
+export const set: BoxSet = {
+  id: 1,
+  title: 'Соединённые Штаты Литературы',
+  price: 1100,
+  newPrice: null,
+  books: books.slice(0, 6),
+  description: 'Произведения американских авторов',
+};
+
 const sets: BoxSet[] = [
   {
     id: 1,
@@ -99,5 +108,7 @@ const sets: BoxSet[] = [
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
   },
 ];
+
+export const generateSet = (id: number): BoxSet => ({ ...set, id });
 
 export default sets;

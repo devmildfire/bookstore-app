@@ -17,7 +17,7 @@ export const getStaticProps = wrapper.getStaticProps(
   ({ dispatch }) =>
     async () => {
       const requests: Promise<unknown>[] = [
-        dispatch(getBoxSets.initiate(undefined)),
+        dispatch(getBoxSets.initiate({ page: 1 })),
         dispatch(getPopularBooks.initiate(undefined)),
       ];
 

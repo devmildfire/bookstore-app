@@ -6,9 +6,12 @@ import { usePopper } from 'react-popper';
 export type IPopper = {
   target: React.ReactElement;
   children: React.ReactElement;
-  padding?: number
-}
+  padding?: number;
+};
 
+/** TODO: сделать рендер в портал */
+/** TODO: структурировать внутрянку */
+/** TODO: сделать анимацию */
 const Popper = ({
   target,
   children,
@@ -32,7 +35,10 @@ const Popper = ({
     () => ({
       name: 'offset',
       options: {
-        offset: ({ reference, popper }: any) => [(popper.width - reference.width) / 2 - padding, 0],
+        offset: ({ reference, popper }: any) => [
+          (popper.width - reference.width) / 2 - padding,
+          0,
+        ],
       },
     }),
     [padding],
@@ -56,10 +62,7 @@ const Popper = ({
 
   return (
     <>
-      <div
-        ref={buttonRef}
-        {...popperControls}
-      >
+      <div ref={buttonRef} {...popperControls}>
         {target}
       </div>
       {shouldShowPopper && (

@@ -3,6 +3,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { ID } from '@/types/common';
 import { BoxSet } from './types';
 import { BASE_API_URL, TAGS } from '@/consts/api';
+import { Pagination } from '@/types/api';
 
 export const boxSetsApi = createApi({
   reducerPath: 'box-sets/api',
@@ -11,8 +12,14 @@ export const boxSetsApi = createApi({
     baseUrl: `${BASE_API_URL}/box-sets`,
   }),
   endpoints: (builder) => ({
-    getBoxSets: builder.query<BoxSet[], undefined>({
-      query: () => ({ url: '/' }),
+    getBoxSets: builder.query<BoxSet[], Pagination>({
+      query: ({ count, page }) => ({
+        url: '/',
+        params: {
+          count,
+          page,
+        },
+      }),
       providesTags: [TAGS.SETS],
     }),
     getBoxSet: builder.query<BoxSet, ID>({

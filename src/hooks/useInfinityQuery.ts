@@ -1,53 +1,57 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { QueryDefinition } from '@reduxjs/toolkit/dist/query';
 import { UseQuery } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { Pagination } from '@/types/api';
 import { VoidFunction } from '@/types/common';
 
-type GetResultTypeFromEndpoint<QueryHook> = QueryHook extends UseQuery<
-  QueryDefinition<any, any, string, infer ResultType, string>
->
-  ? ResultType
-  : never;
-
-interface UseInfinityQueryOptions {
+export interface UseInfinityQueryOptions<
+  QueryHook extends UseQuery<QueryDefinition<Pagination, any, any, any>>
+> {
+  readonly useQuery: QueryHook;
   readonly startPage?: number;
 }
 
-interface UseInfinityQueryResult<Result> {
-  readonly data?: Result;
+export interface UseInfinityQueryResult<R> {
+  readonly data?: R;
   readonly fetchNextPage: VoidFunction;
 }
 
 const useInfinityQuery = <
-  QueryHook extends UseQuery<QueryDefinition<Pagination, any, any, any>>,
-  Result extends Array<unknown> = GetResultTypeFromEndpoint<QueryHook>
+  R extends Array<unknown>,
+  QueryHook extends UseQuery<QueryDefinition<Pagination, any, any, R>>
 >(
-    useQuery: QueryHook,
-    options: UseInfinityQueryOptions = {},
-  ): UseInfinityQueryResult<Result> => {
-  const { startPage = 1 } = options;
+    options: UseInfinityQueryOptions<QueryHook>,
+  ): UseInfinityQueryResult<R> => {
+  const { useQuery, startPage = 1 } = options;
   const [page, setPage] = useState<number>(startPage);
+  const shouldAddData = useRef<boolean>(false);
   const result = useQuery({ page });
-  const [data, setData] = useState<Result>(result.data);
+  const [data, setData] = useState<R | undefined>(result.data);
 
   useEffect(() => {
-    if (!result.isSuccess) {
+    if (!result.isSuccess || !shouldAddData.current) {
       return;
     }
-    setData((currentData) => [...currentData, ...result.data] as Result);
+    shouldAddData.current = false;
+    setData((currentResult) => [...(currentResult || []), ...result.data] as R);
   }, [result.data]);
 
   const fetchNextPage = useCallback(() => {
+    shouldAddData.current = true;
     setPage((currentPage) => currentPage + 1);
   }, []);
 
-  const response: UseInfinityQueryResult<Result> = {
+  const response: UseInfinityQueryResult<R> = {
     ...result,
     fetchNextPage,
   };
 
-  if (data.length) {
+  if (data?.length) {
     Object.assign(response, { data });
   }
 
