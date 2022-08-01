@@ -13,7 +13,9 @@ const sizeMap: Record<Size, number> = {
 };
 
 export const StyledButton = styled.button<StyledIconButtonProps>`
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-items: center;
 
   width: ${(props) => sizeMap[props.size]}px;
   height: ${(props) => sizeMap[props.size]}px;

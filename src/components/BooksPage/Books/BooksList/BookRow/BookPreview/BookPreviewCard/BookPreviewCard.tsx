@@ -14,8 +14,7 @@ import {
 import Text from '@/components/Common/Text';
 import { Book } from '@/models/books';
 
-interface BookPreviewCardProps
-  extends Pick<
+type BookPreviewCardProps = Pick<
     Book,
     | 'id'
     | 'title'
@@ -26,7 +25,7 @@ interface BookPreviewCardProps
     | 'trailerSrc'
     | 'authors'
     | 'image'
-  > {}
+  >
 
 const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
   const {

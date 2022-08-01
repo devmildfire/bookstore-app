@@ -9,7 +9,7 @@ import {
 } from './styles';
 import getAuthorNames from '@/utils/getAuthorNames';
 
-interface ProductCardProps extends Book {}
+type ProductCardProps = Book
 
 const ProductCard: FC<ProductCardProps> = (props): React.ReactElement => {
   const {

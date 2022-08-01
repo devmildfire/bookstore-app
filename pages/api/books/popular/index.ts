@@ -6,7 +6,7 @@ import { Book } from '@/models/books';
 export default function handler(
   _: NextApiRequest,
   res: NextApiResponse<Book[]>,
-) {
+): void {
   const books: Book[] = generateItems({
     generator: generateBook,
     pagination: {

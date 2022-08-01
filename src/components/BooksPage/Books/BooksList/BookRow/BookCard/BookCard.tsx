@@ -15,8 +15,7 @@ import useGetParam from '@/hooks/useGetParam';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 
-interface BookCardProps
-  extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'> {}
+type BookCardProps = Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'>
 
 const BookCard: React.FC<BookCardProps> = (props) => {
   const {

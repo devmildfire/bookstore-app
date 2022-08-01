@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import { StyledCart } from './styles';
 
-interface CartProps extends ClassNameProps {}
+type CartProps = ClassNameProps
 
 const Cart: React.FC<CartProps> = (props) => {
   const { className } = props;

@@ -14,8 +14,7 @@ import { GET_PARAMS } from '@/consts/query';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 
-interface SetCardProps
-  extends Pick<BoxSet, 'id' | 'price' | 'newPrice' | 'title' | 'description'> {}
+type SetCardProps = Pick<BoxSet, 'id' | 'price' | 'newPrice' | 'title' | 'description'>
 
 const SetCard: React.FC<SetCardProps> = (props) => {
   const {

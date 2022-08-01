@@ -3,7 +3,7 @@ import { BoxSet } from '@/models/boxSets';
 import BookCard from './BookCard';
 import { StyledList, StyledWrapper } from './styles';
 
-interface SetPreviewCardProps extends BoxSet {}
+type SetPreviewCardProps = BoxSet
 
 const SetPreviewCard: React.FC<SetPreviewCardProps> = (props) => {
   const { books } = props;

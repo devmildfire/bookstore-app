@@ -8,7 +8,7 @@ import { generateItems } from '@/utils/generateItems';
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Book[]>,
-) {
+): void {
   const { count = 15, page = 1 } = req.query as unknown as Pagination;
   const books: Book[] = generateItems({
     generator: generateBook,

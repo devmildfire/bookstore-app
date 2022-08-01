@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { LinkProps } from '../Link';
 import StyledNavLink from './styles';
 
-interface NavLinkProps extends LinkProps {}
+type NavLinkProps = LinkProps
 
 const NavLink: FC<NavLinkProps> = (props) => {
   const { href, ...linkProps } = props;

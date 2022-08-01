@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyledImage } from './styles';
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>
 
 const Image: React.FC<ImageProps> = (props) => <StyledImage {...props} />;
 

@@ -12,7 +12,7 @@ import Text, { TextProps } from '@/components/Common/Text';
 import Price from '@/components/Common/Price';
 import Button from '@/components/Common/Button';
 
-interface SubscriptionCardProps extends Subscription {}
+type SubscriptionCardProps = Subscription
 
 const priceTextProps: TextProps = {
   variant: 'h3_1',

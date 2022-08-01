@@ -1,16 +1,24 @@
 import { useCallback, useState } from 'react';
 import { VoidFunction } from '@/types/common';
 
-type UseToggleResponse = [boolean, VoidFunction];
+export interface UseToggleResult {
+  readonly value: boolean;
+  readonly toggleOn: VoidFunction;
+  readonly toggleOff: VoidFunction;
+}
 
-const useToggle = (defaultValue = false): UseToggleResponse => {
+const useToggle = (defaultValue = false): UseToggleResult => {
   const [value, setValue] = useState<boolean>(defaultValue);
 
-  const toggle = useCallback(() => {
-    setValue((state) => !state);
+  const toggleOn = useCallback(() => {
+    setValue(true);
   }, []);
 
-  return [value, toggle];
+  const toggleOff = useCallback(() => {
+    setValue(false);
+  }, []);
+
+  return { value, toggleOff, toggleOn };
 };
 
 export default useToggle;

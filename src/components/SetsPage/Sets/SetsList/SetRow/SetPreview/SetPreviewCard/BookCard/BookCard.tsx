@@ -4,8 +4,7 @@ import { StyledImage, StyledText, StyledWrapper } from './styles';
 import getAuthorNames from '@/utils/getAuthorNames';
 import Text from '@/components/Common/Text';
 
-interface BookCardProps
-  extends Pick<Book, 'id' | 'authors' | 'title' | 'image'> {}
+type BookCardProps = Pick<Book, 'id' | 'authors' | 'title' | 'image'>
 
 const BookCard: React.FC<BookCardProps> = (props) => {
   const {

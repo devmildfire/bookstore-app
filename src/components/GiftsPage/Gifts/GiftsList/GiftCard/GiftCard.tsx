@@ -13,7 +13,7 @@ import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import Image from '@/components/Common/Image';
 
-interface GiftCardProps extends Gift {}
+type GiftCardProps = Gift
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
   const { price, title, image } = props;
