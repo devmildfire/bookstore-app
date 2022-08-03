@@ -8,10 +8,10 @@ const useEvent = <F extends AnyFunction>(handler: F): F => {
     handlerRef.current = handler;
   }, [handler]);
 
-  return useCallback((...args) => {
+  return useCallback((...args: any[]) => {
     const fn = handlerRef.current;
     return fn(...args);
-  }, []);
+  }, []) as unknown as F;
 };
 
 export default useEvent;

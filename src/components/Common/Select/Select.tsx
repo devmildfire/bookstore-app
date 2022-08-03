@@ -1,29 +1,33 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { OnSelectValue, OptionType, SelectValue } from './types';
+import { SelectValue, Value } from './types';
 import { StyledWrapper } from './styles';
 import useToggle from '@/hooks/useToggle';
 import Control from './Control';
 import useKeyListener from '@/hooks/useKeyListener';
 import useClickAway from '@/hooks/useClickAway';
 import Menu from './Menu';
+import {
+  OptionsContextProvider,
+  OptionsProviderProps,
+} from './contexts/OptionsContext';
+import { StateProvider } from './contexts/StateContext';
 
-interface SelectProps<T extends SelectValue> extends ClassNameProps {
+interface SelectProps<T extends SelectValue, IsMulti extends boolean>
+  extends ClassNameProps,
+    Omit<OptionsProviderProps<T, IsMulti>, 'selectedValue' | 'isMulti'> {
   readonly title: string;
-  readonly options: OptionType<T>[];
-  readonly onChange: OnSelectValue<T>;
-  readonly value: OptionType<T> | null;
+  readonly value: Value<T, IsMulti>;
+  readonly isMulti?: IsMulti;
 }
 
-const Select = <T extends SelectValue>(
-  props: SelectProps<T>,
+const Select = <T extends SelectValue, IsMulti extends boolean = false>(
+  props: SelectProps<T, IsMulti>,
 ): React.ReactElement => {
   const {
-    title,
-    options,
-    onChange,
-    value,
+    title, options, onChange, value, isMulti = false,
   } = props;
+
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const { value: isOpen, toggleOff, toggleOn } = useToggle();
   const [isFocus, setFocus] = React.useState<boolean>(false);
@@ -53,22 +57,24 @@ const Select = <T extends SelectValue>(
 
   return (
     <StyledWrapper>
-      <Control
-        title={title}
-        isOpen={isOpen}
-        onOpen={toggleOn}
-        onClose={toggleOff}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        ref={rootRef}
-      />
-
-      <Menu
-        isOpen={isOpen}
-        onChange={onChange}
+      <OptionsContextProvider
         options={options}
+        onChange={onChange}
         value={value}
-      />
+        isMulti={isMulti}
+      >
+        <StateProvider
+          isOpen={isOpen}
+          onOpen={toggleOn}
+          onClose={toggleOff}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        >
+          <Control title={title} ref={rootRef} />
+
+          {isOpen && <Menu />}
+        </StateProvider>
+      </OptionsContextProvider>
     </StyledWrapper>
   );
 };

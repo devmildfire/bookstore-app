@@ -2,27 +2,23 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { OnSelectValue, OptionType, SelectValue } from '../../types';
 import { StyledOptionsList } from './styles';
 import usePagination from './hooks/usePagination';
 import useKeyListener from '@/hooks/useKeyListener';
 import Option from './Option';
+import { OptionsContext } from '../../contexts/OptionsContext';
 
-interface OptionsListProps<T extends SelectValue> extends ClassNameProps {
-  readonly options: OptionType<T>[];
-  readonly value: OptionType<T> | null;
-  readonly onChange: OnSelectValue<T>;
-}
+const OptionsList: React.FC<ClassNameProps> = (props): React.ReactElement => {
+  const { className } = props;
+  const { options, addValue, selectedValue } = React.useContext(OptionsContext);
+  const filteredOptions = React.useMemo(
+    () => options.filter((option) => !selectedValue.includes(option)),
+    [options, selectedValue],
+  );
 
-const OptionsList = <T extends SelectValue>(
-  props: OptionsListProps<T>,
-): React.ReactElement => {
-  const {
-    options, className, onChange, value,
-  } = props;
   const {
     current, nextElement, prevElement, setCurrent,
-  } = usePagination(options, value);
+  } = usePagination(filteredOptions);
 
   useKeyListener({
     onKeyDown: nextElement,
@@ -36,11 +32,11 @@ const OptionsList = <T extends SelectValue>(
 
   return (
     <StyledOptionsList className={className}>
-      {options.map((option) => (
+      {filteredOptions.map((option) => (
         <Option
           option={option}
           onHover={setCurrent}
-          onChange={onChange}
+          onChange={addValue}
           isCurrent={option === current}
           key={option.value}
         />

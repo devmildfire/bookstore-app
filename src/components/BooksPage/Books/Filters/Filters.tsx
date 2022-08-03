@@ -1,7 +1,12 @@
 import * as React from 'react';
-import Select, { OptionType, SelectValue } from '@/components/Common/Select';
+import Select, {
+  MultiValue,
+  OnChangeValue,
+  Option,
+  SelectValue,
+} from '@/components/Common/Select';
 
-const options: OptionType<SelectValue>[] = [
+const options: Option<SelectValue>[] = [
   {
     label: '2017',
     value: '2017',
@@ -25,14 +30,17 @@ const options: OptionType<SelectValue>[] = [
 ];
 
 const Filters: React.FC = () => {
-  const [value, setValue] = React.useState(options[0]);
+  const [value, setValue] = React.useState<MultiValue<SelectValue>>([
+    options[0],
+  ]);
   return (
     <div>
       <Select
-        onChange={setValue}
+        onChange={setValue as OnChangeValue<SelectValue, true>}
         options={options}
         title='Год издания'
         value={value}
+        isMulti
       />
     </div>
   );

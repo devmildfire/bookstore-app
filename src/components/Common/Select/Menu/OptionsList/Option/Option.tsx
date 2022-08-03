@@ -2,19 +2,17 @@ import classNames from 'classnames';
 import * as React from 'react';
 import Text from '@/components/Common/Text';
 import { StyledOption } from './styles';
-import { OnSelectValue, OptionType, SelectValue } from '../../../types';
+import { Handler, Option as OptionType, SelectValue } from '../../../types';
 import useKeyListener from '@/hooks/useKeyListener';
 
-interface OptionProps<T extends SelectValue> {
-  readonly option: OptionType<T>;
-  readonly onChange: OnSelectValue<T>;
-  readonly onHover: OnSelectValue<T>;
+interface OptionProps {
+  readonly option: OptionType<SelectValue>;
+  readonly onChange: Handler<SelectValue>;
+  readonly onHover: Handler<SelectValue>;
   readonly isCurrent: boolean;
 }
 
-const Option = <T extends SelectValue>(
-  props: OptionProps<T>,
-): React.ReactElement => {
+const Option: React.FC<OptionProps> = (props) => {
   const {
     option, onChange, isCurrent, onHover,
   } = props;

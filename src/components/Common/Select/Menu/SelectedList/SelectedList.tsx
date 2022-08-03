@@ -1,19 +1,17 @@
 import * as React from 'react';
-import { OptionType, SelectValue } from '../../types';
+import { ClassNameProps } from '@/types/className';
+import { OptionsContext } from '../../contexts/OptionsContext';
 import Selected from './Selected';
 import { StyledSelectedList } from './styles';
 
-interface SelectedListProps<T extends SelectValue> {
-  readonly value: OptionType<T> | null;
-}
-
-const SelectedList = <T extends SelectValue>(
-  props: SelectedListProps<T>,
-): React.ReactElement => {
-  const { value } = props;
+const SelectedList: React.FC<ClassNameProps> = (props) => {
+  const { className } = props;
+  const { selectedValue, deleteValue } = React.useContext(OptionsContext);
   return (
-    <StyledSelectedList>
-      <Selected value={value} />
+    <StyledSelectedList className={className}>
+      {selectedValue.map((value) => (
+        <Selected value={value} onDelete={deleteValue} />
+      ))}
     </StyledSelectedList>
   );
 };
