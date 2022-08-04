@@ -17,7 +17,7 @@ export interface OptionsProviderProps<
   readonly onChange: OnChangeValue<T, IsMulti>;
   readonly isMulti: IsMulti;
   readonly options: Option<T>[];
-  readonly value?: Value<T, IsMulti>;
+  readonly value: Value<T, IsMulti>;
 }
 
 const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
@@ -34,16 +34,20 @@ const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
     : [];
   const [selectedValue, setSelectedValue] = React.useState(initialValue);
 
+  React.useLayoutEffect(() => {
+    setSelectedValue(Array.isArray(value) ? value : value ? [value] : []);
+  }, [value]);
+
   /* Посмотреть что будет производительнее, useEvent или useCallback */
   const addValue: Handler<SelectValue> = useEvent((addingValue) => {
-    const newState = isMulti ? [...selectedValue, addingValue] : [addingValue];
-    setSelectedValue(newState);
+    const newState = isMulti
+      ? [...(value as Value<T, true>), addingValue]
+      : [addingValue];
     onChange((isMulti ? newState : newState[0] || null) as any);
   });
 
   const deleteValue: Handler<SelectValue> = useEvent((deletingValue) => {
     const newState = selectedValue.filter((option) => option !== deletingValue);
-    setSelectedValue(newState);
     onChange((isMulti ? newState : newState[0] || null) as any);
   });
 

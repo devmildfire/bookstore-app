@@ -1,10 +1,11 @@
 import * as React from 'react';
 import Select, {
-  MultiValue,
   OnChangeValue,
   Option,
   SelectValue,
 } from '@/components/Common/Select';
+import { GET_PARAMS } from '@/consts/query';
+import useStateSyncQuery, { GetValueByQuery } from '@/hooks/useStateSyncQuery';
 
 const options: Option<SelectValue>[] = [
   {
@@ -29,10 +30,24 @@ const options: Option<SelectValue>[] = [
   },
 ];
 
+const getValueByQuery: GetValueByQuery<
+  Option<SelectValue>,
+  Option<SelectValue>[]
+> = (values, value) => {
+  const selected = Array.isArray(value) ? value : [value];
+  return values.filter((option) => selected.includes(option.value.toString()));
+};
+
 const Filters: React.FC = () => {
-  const [value, setValue] = React.useState<MultiValue<SelectValue>>([
-    options[0],
-  ]);
+  const [value, setValue] = useStateSyncQuery({
+    queryName: GET_PARAMS.publishYear,
+    values: options,
+    shallow: false,
+    getValueByQuery,
+    getValueToQuery: (values) =>
+      values.map((option) => option.value.toString()),
+  });
+
   return (
     <div>
       <Select

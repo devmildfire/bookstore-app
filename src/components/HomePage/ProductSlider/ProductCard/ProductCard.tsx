@@ -19,10 +19,10 @@ const ProductCard: FC<ProductCardProps> = (props): React.ReactElement => {
   return (
     <StyledWrapper>
       <StyledImage src={image} />
-      <StyledAuthor variant='h3_1' color='white'>
+      <StyledAuthor variant='h3_1' textColor='white'>
         {authorNames}
       </StyledAuthor>
-      <StyledBookName component='h2' variant='h1' color='red'>
+      <StyledBookName component='h2' variant='h1' textColor='red'>
         {title}
       </StyledBookName>
       <StyledButton href={`/books/${id}`}>Познать</StyledButton>

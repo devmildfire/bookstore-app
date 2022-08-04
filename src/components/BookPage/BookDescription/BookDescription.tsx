@@ -45,7 +45,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
           {`${year} | ${genre} | ${ageRestriction}`}
         </StyledInfo>
-        <StyledThesis variant='h3_3' component='p' color='red' fontWeight={500}>
+        <StyledThesis variant='h3_3' component='p' textColor='red' fontWeight={500}>
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
         </StyledThesis>
         <StyledDescription>

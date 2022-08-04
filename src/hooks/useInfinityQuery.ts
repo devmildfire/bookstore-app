@@ -10,9 +10,11 @@ import { Pagination } from '@/types/api';
 import { VoidFunction } from '@/types/common';
 
 export interface UseInfinityQueryOptions<
-  QueryHook extends UseQuery<QueryDefinition<Pagination, any, any, any>>
+  QP extends Pagination,
+  QueryHook extends UseQuery<QueryDefinition<QP, any, any, any>>
 > {
   readonly useQuery: QueryHook;
+  readonly otherParams?: Omit<QP, keyof Pagination>;
   readonly startPage?: number;
 }
 
@@ -23,22 +25,29 @@ export interface UseInfinityQueryResult<R> {
 
 const useInfinityQuery = <
   R extends Array<unknown>,
-  QueryHook extends UseQuery<QueryDefinition<Pagination, any, any, R>>
+  QP extends Pagination,
+  QueryHook extends UseQuery<QueryDefinition<QP, any, any, R>>
 >(
-    options: UseInfinityQueryOptions<QueryHook>,
+    options: UseInfinityQueryOptions<QP, QueryHook>,
   ): UseInfinityQueryResult<R> => {
-  const { useQuery, startPage = 1 } = options;
+  const { useQuery, otherParams = {}, startPage = 1 } = options;
   const [page, setPage] = useState<number>(startPage);
   const shouldAddData = useRef<boolean>(false);
-  const result = useQuery({ page });
+  const result = useQuery({ page, ...otherParams } as any);
   const [data, setData] = useState<R | undefined>(result.data);
 
   useEffect(() => {
-    if (!result.isSuccess || !shouldAddData.current) {
+    if (!result.isSuccess) {
       return;
     }
+    if (shouldAddData.current) {
+      setData(
+        (currentResult) => [...(currentResult || []), ...result.data] as R,
+      );
+    } else {
+      setData(result.data);
+    }
     shouldAddData.current = false;
-    setData((currentResult) => [...(currentResult || []), ...result.data] as R);
   }, [result.data]);
 
   const fetchNextPage = useCallback(() => {

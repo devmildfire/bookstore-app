@@ -6,6 +6,10 @@ import { ID } from '@/types/common';
 import { BASE_API_URL, TAGS } from '@/consts/api';
 import { Pagination } from '@/types/api';
 
+export interface GetBooksQuery extends Pagination {
+  readonly publishYear?: string[] | null;
+}
+
 export const booksApi = createApi({
   reducerPath: 'books/api',
   tagTypes: [TAGS.BOOK, TAGS.BOOKS],
@@ -13,13 +17,10 @@ export const booksApi = createApi({
     baseUrl: `${BASE_API_URL}/books`,
   }),
   endpoints: (builder) => ({
-    getBooks: builder.query<Book[], Pagination>({
-      query: ({ count, page }) => ({
+    getBooks: builder.query<Book[], GetBooksQuery>({
+      query: (params) => ({
         url: '/',
-        params: {
-          count,
-          page,
-        },
+        params,
       }),
       providesTags: [TAGS.BOOKS],
     }),

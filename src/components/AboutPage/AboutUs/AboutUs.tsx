@@ -46,7 +46,7 @@ const AboutUs = () => (
       </Text>
       <StyledManifestText variant='text' component='span'>
         Узнать больше в &nbsp;
-        <WithArrow color='red' variant='text' component='span'>
+        <WithArrow textColor='red' variant='text' component='span'>
           «Манифесте Чтива»
         </WithArrow>
       </StyledManifestText>

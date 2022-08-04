@@ -51,7 +51,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
           <Text
             variant='h4_1'
             component='p'
-            color='red'
+            textColor='red'
             textTransform='uppercase'
           >
             adfasdfadfasdfasdf

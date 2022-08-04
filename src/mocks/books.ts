@@ -1,4 +1,5 @@
 import { Book, Reader, Worker } from '@/models/books';
+import getRandomBetween from '@/utils/getRandomBetween';
 import { authors } from './authors';
 
 const readers: Reader[] = [
@@ -335,6 +336,18 @@ const books: Book[] = [
   },
 ];
 
-export const generateBook = (id: number): Book => ({ ...book, id });
+const publishDate = [
+  '2021.01.01',
+  '2020.01.01',
+  '2019.01.01',
+  '2018.01.01',
+  '2017.01.01',
+];
+
+export const generateBook = (id: number): Book => ({
+  ...book,
+  id,
+  publishDate: publishDate[getRandomBetween(0, publishDate.length)],
+});
 
 export default books;

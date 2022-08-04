@@ -31,6 +31,7 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const { value: isOpen, toggleOff, toggleOn } = useToggle();
   const [isFocus, setFocus] = React.useState<boolean>(false);
+  const hasValue = Array.isArray(value) ? !!value.length : !!value;
 
   const onFocus = React.useCallback(() => {
     setFocus(true);
@@ -47,7 +48,7 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   useKeyListener({
     onKeyDown: toggleOff,
     keys: ['Escape', 'Enter', ' '],
-    condition: isFocus && isOpen,
+    condition: isOpen,
   });
   useClickAway({
     elementRef: rootRef,
@@ -64,7 +65,9 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
         isMulti={isMulti}
       >
         <StateProvider
+          isFocus={isFocus}
           isOpen={isOpen}
+          hasValue={hasValue}
           onOpen={toggleOn}
           onClose={toggleOff}
           onFocus={onFocus}

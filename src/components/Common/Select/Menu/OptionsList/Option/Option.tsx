@@ -40,7 +40,7 @@ const Option: React.FC<OptionProps> = (props) => {
       className={classNames({ active: isCurrent })}
       ref={ref}
     >
-      <Text variant='h4_1' component='span' color='inherit'>
+      <Text variant='h4_1' component='span' textColor='inherit'>
         {option.label}
       </Text>
     </StyledOption>

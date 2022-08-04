@@ -6,7 +6,8 @@ import { ClassNameProps } from '@/types/className';
 
 interface IconButtonProps
   extends Partial<StyledIconButtonProps>,
-    ClassNameProps {
+    ClassNameProps,
+    React.ButtonHTMLAttributes<HTMLButtonElement> {
   readonly onClick?: VoidFunction;
   readonly href?: string;
   readonly scroll?: boolean;
@@ -23,6 +24,7 @@ const IconButton = React.forwardRef<
     className,
     scroll,
     size = 'medium',
+    ...rest
   } = props;
   if (href) {
     return (
@@ -33,6 +35,7 @@ const IconButton = React.forwardRef<
           href='fakeHref'
           size={size}
           ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+          {...rest as any}
         >
           {children}
         </StyledButton>
@@ -45,6 +48,7 @@ const IconButton = React.forwardRef<
       onClick={onClick}
       size={size}
       ref={ref as React.ForwardedRef<HTMLButtonElement>}
+      {...rest}
     >
       {children}
     </StyledButton>

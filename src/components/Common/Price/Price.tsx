@@ -6,8 +6,8 @@ import { StyledPriceInfo } from './styles';
 interface PriceProps extends ClassNameProps {
   readonly price: number;
   readonly newPrice?: number | null;
-  readonly priceTextProps?: TextProps;
-  readonly oldPriceTextProps?: TextProps;
+  readonly priceTextProps?: TextProps<'span'>;
+  readonly oldPriceTextProps?: TextProps<'span'>;
 }
 
 const Price: React.FC<PriceProps> = (props) => {
@@ -30,7 +30,7 @@ const Price: React.FC<PriceProps> = (props) => {
       </Text>
       {newPrice && (
         <Text
-          color='red'
+          textColor='red'
           fontWeight={700}
           component='span'
           variant='text'

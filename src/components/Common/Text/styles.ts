@@ -179,14 +179,14 @@ export const tagMap: Record<Variant, string> = {
 export interface StyledTextProps {
   readonly align: Property.TextAlignLast;
   readonly variant: Variant;
-  readonly color: Color;
+  readonly textColor: Color;
   readonly textTransform?: Property.TextTransform;
   readonly fontFamily?: FontFamily;
   readonly fontWeight?: Property.FontWeight;
 }
 
 const StyledText = styled.span`
-  color: ${(props: StyledTextProps) => colors[props.color]};
+  color: ${(props: StyledTextProps) => colors[props.textColor]};
   line-height: 1.2em;
   letter-spacing: 0.03em;
   text-align: ${(props) => props.align};

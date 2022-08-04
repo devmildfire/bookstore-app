@@ -14,7 +14,7 @@ import Button from '@/components/Common/Button';
 
 type SubscriptionCardProps = Subscription
 
-const priceTextProps: TextProps = {
+const priceTextProps: TextProps<'span'> = {
   variant: 'h3_1',
   component: 'span',
 };

@@ -14,7 +14,10 @@ import { GET_PARAMS } from '@/consts/query';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 
-type SetCardProps = Pick<BoxSet, 'id' | 'price' | 'newPrice' | 'title' | 'description'>
+type SetCardProps = Pick<
+  BoxSet,
+  'id' | 'price' | 'newPrice' | 'title' | 'description'
+>;
 
 const SetCard: React.FC<SetCardProps> = (props) => {
   const {
@@ -24,9 +27,10 @@ const SetCard: React.FC<SetCardProps> = (props) => {
     query: {
       [GET_PARAMS.openProduct]: id,
     },
+    keepOldQuery: true,
   });
   return (
-    <StyledWrapper href={path} scroll={false}>
+    <StyledWrapper href={path} scroll={false} shallow>
       <StyledDescription>
         <Text variant='h3_3' fontWeight={700}>
           {title}

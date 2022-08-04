@@ -1,19 +1,25 @@
+/* eslint-disable no-undef */
 import * as React from 'react';
 
 import { ClassNameProps } from '@/types/className';
 import StyledText, { StyledTextProps, tagMap } from './styles';
 
-export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
-  readonly component?: keyof React.ReactHTML;
+export interface TextProps<E extends keyof HTMLElementTagNameMap>
+  extends Partial<StyledTextProps>,
+    ClassNameProps,
+    React.HTMLAttributes<HTMLElementTagNameMap[E]> {
+  readonly component?: E;
 }
 
-export const Text: React.FC<TextProps> = (props) => {
+export const Text = <E extends keyof HTMLElementTagNameMap>(
+  props: TextProps<E>,
+): React.ReactElement => {
   const {
     children,
     component,
     variant = 'text',
     align = 'inherit',
-    color = 'white',
+    textColor = 'white',
     ...rest
   } = props;
 
@@ -27,7 +33,7 @@ export const Text: React.FC<TextProps> = (props) => {
       as={as as any}
       align={align}
       variant={variant}
-      color={color}
+      textColor={textColor}
       {...rest}
     >
       {children}

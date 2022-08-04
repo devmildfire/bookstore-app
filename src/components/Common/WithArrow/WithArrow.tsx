@@ -7,7 +7,7 @@ import { StyledArrowIcon, StyledArrowProps, StyledText } from './styles';
 export interface WithArrowProps
   extends ClassNameProps,
     Partial<StyledArrowProps>,
-    TextProps {}
+    TextProps<'span'> {}
 
 const WithArrow = (
   props: PropsWithChildren<WithArrowProps>,

@@ -1,9 +1,7 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import { StyledOptionsList } from './styles';
-import usePagination from './hooks/usePagination';
+import usePagination from '../hooks/usePagination';
 import useKeyListener from '@/hooks/useKeyListener';
 import Option from './Option';
 import { OptionsContext } from '../../contexts/OptionsContext';
@@ -18,7 +16,10 @@ const OptionsList: React.FC<ClassNameProps> = (props): React.ReactElement => {
 
   const {
     current, nextElement, prevElement, setCurrent,
-  } = usePagination(filteredOptions);
+  } = usePagination(
+    filteredOptions,
+    { loop: true },
+  );
 
   useKeyListener({
     onKeyDown: nextElement,

@@ -29,7 +29,7 @@ const Footer = (): React.ReactElement => (
             <a href={href}>
               {content}
               &nbsp;
-              <FooterContact component='span' color='red'>
+              <FooterContact component='span' textColor='red'>
                 {hightLightContent}
               </FooterContact>
             </a>
@@ -41,7 +41,7 @@ const Footer = (): React.ReactElement => (
           <FooterTitle
             component='span'
             variant='h2_1'
-            color='red'
+            textColor='red'
             fontFamily='sans'
           >
             Чти
@@ -83,7 +83,7 @@ const Footer = (): React.ReactElement => (
           © 2017-
           {getCurrentYear()}
           &nbsp;
-          <Text component='span' variant='h4_3' color='red'>
+          <Text component='span' variant='h4_3' textColor='red'>
             Чти
           </Text>
           во. Санкт-Петербург. Все права защищены.

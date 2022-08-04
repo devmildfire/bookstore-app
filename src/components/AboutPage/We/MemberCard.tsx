@@ -69,7 +69,7 @@ const MemberCard = (props: Member): React.ReactElement => {
         variant='h4_1'
         component='p'
         className='top'
-        color='red'
+        textColor='red'
         align='center'
       >
         {phrase}

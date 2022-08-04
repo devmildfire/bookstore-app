@@ -12,21 +12,15 @@ interface ControlProps extends ClassNameProps {
 const Control = React.forwardRef<HTMLDivElement, ControlProps>((props, ref) => {
   const { title, className } = props;
   const {
-    isOpen, onBlur, onClose, onFocus, onOpen,
+    isOpen, isFocus, hasValue, onBlur, onClose, onFocus, onOpen,
   } = React.useContext(StateContext);
-  const arrowClasses = classNames({ active: isOpen });
+  const isActive = isOpen || isFocus || hasValue;
+  const arrowClasses = classNames({ active: isActive });
   const handler = isOpen ? onClose : onOpen;
   return (
-    <StyledControls
-      className={className}
-      onClick={handler}
-      onBlur={onBlur}
-      onFocus={onFocus}
-      tabIndex={0}
-      ref={ref}
-    >
-      <StyledPlaceholder>{title}</StyledPlaceholder>
-      <IconButton onClick={handler}>
+    <StyledControls className={className} ref={ref}>
+      <StyledPlaceholder onClick={handler}>{title}</StyledPlaceholder>
+      <IconButton onClick={handler} onBlur={onBlur} onFocus={onFocus}>
         <StyledArrow className={arrowClasses} />
       </IconButton>
     </StyledControls>

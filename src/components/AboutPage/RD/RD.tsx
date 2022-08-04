@@ -22,7 +22,7 @@ const RD = (): React.ReactElement => (
         </Text>
         ы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
         литературном журнале арт-конгрегации &nbsp;
-        <Text variant='text' component='span' color='red'>
+        <Text variant='text' component='span' textColor='red'>
           Русский Динозавр
         </Text>
         &nbsp;— нашего творческого объединения мастеров арт-контента.
@@ -30,7 +30,7 @@ const RD = (): React.ReactElement => (
       <StyledSecondaryText variant='text'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
       </StyledSecondaryText>
-      <WithArrow color='red' variant='text' component='span'>
+      <WithArrow textColor='red' variant='text' component='span'>
         Журнал Русского Динозавра
       </WithArrow>
     </StyledContent>

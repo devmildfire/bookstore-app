@@ -15,23 +15,30 @@ interface ItemRenderProps<T> {
 
 type ItemRender<T> = (props: ItemRenderProps<T>) => React.ReactNode;
 
-interface InfinityListProps<T>
+interface InfinityListProps<T, QP extends Pagination>
   extends ClassNameProps,
-    UseInfinityQueryOptions<
-      UseQuery<QueryDefinition<Pagination, any, any, any>>
-    > {
+    UseInfinityQueryOptions<QP, UseQuery<QueryDefinition<QP, any, any, any>>> {
   readonly inRow: number;
   readonly children: ItemRender<T>;
   readonly rootMargin?: string;
 }
 
-const InfinityList = <T, >(props: InfinityListProps<T>): React.ReactElement => {
+const InfinityList = <T, QP extends Pagination>(
+  props: InfinityListProps<T, QP>,
+): React.ReactElement => {
   const {
-    children, useQuery, className, startPage, inRow, rootMargin,
+    children,
+    useQuery,
+    className,
+    startPage,
+    inRow,
+    rootMargin,
+    otherParams,
   } = props;
   const { data = [], fetchNextPage } = useInfinityQuery({
     useQuery,
     startPage,
+    otherParams,
   });
   const ref = React.useRef<HTMLDivElement | null>(null);
   const rows: T[][] = React.useMemo(
