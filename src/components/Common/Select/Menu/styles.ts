@@ -2,14 +2,10 @@ import styled from 'styled-components';
 import List from '../../List';
 
 export const StyledMenuWrapper = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  z-index: var(--upper-z-index);
-
   display: grid;
   gap: 10px;
+
+  width: max-content;
 
   padding: 0 24px 18px;
 

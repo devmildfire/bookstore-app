@@ -1,12 +1,16 @@
 import { Author } from '@/types/author';
 import { Product } from '@/types/product';
 
+export type BookType = 'write' | 'book2' | 'audio' | 'digital';
+
 export interface Book extends Product {
   readonly authors: Author[];
 
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
+
+  readonly types: BookType[];
 
   readonly banner: string;
   readonly trailerSrc: string;

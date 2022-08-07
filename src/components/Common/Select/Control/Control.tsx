@@ -9,7 +9,7 @@ interface ControlProps extends ClassNameProps {
   readonly title: string;
 }
 
-const Control = React.forwardRef<HTMLDivElement, ControlProps>((props, ref) => {
+const Control: React.FC<ControlProps> = (props) => {
   const { title, className } = props;
   const {
     isOpen, isFocus, hasValue, onBlur, onClose, onFocus, onOpen,
@@ -18,13 +18,13 @@ const Control = React.forwardRef<HTMLDivElement, ControlProps>((props, ref) => {
   const arrowClasses = classNames({ active: isActive });
   const handler = isOpen ? onClose : onOpen;
   return (
-    <StyledControls className={className} ref={ref}>
+    <StyledControls className={className}>
       <StyledPlaceholder onClick={handler}>{title}</StyledPlaceholder>
       <IconButton onClick={handler} onBlur={onBlur} onFocus={onFocus}>
         <StyledArrow className={arrowClasses} />
       </IconButton>
     </StyledControls>
   );
-});
+};
 
 export default React.memo(Control);

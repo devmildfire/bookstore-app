@@ -19,7 +19,7 @@ export interface UseStateSyncQueryOptions<T, R> {
 }
 
 const useStateSyncQuery = <T, R = T>(
-  options: UseStateSyncQueryOptions<T, R>,
+  options: UseStateSyncQueryOptions<T, R>
 ): [R, (values: R) => void] => {
   const {
     queryName,
@@ -30,15 +30,14 @@ const useStateSyncQuery = <T, R = T>(
   } = options;
   const { query, isReady, push } = useRouter();
   const { [queryName]: value = '' } = query;
-  const startValue = getValueByQuery(values, (value as string).split(','));
-  const [state, setState] = useState<R>(startValue);
+  const [state, setState] = useState<R>(() => getValueByQuery(values, (value as string).split(',')));
 
   useLayoutEffect(() => {
     /* Синхронное установка текущего состояния, если был SSG */
     if (isReady) {
       const currentValue = getValueByQuery(
         values,
-        (value as string).split(','),
+        (value as string).split(',')
       );
       setState(currentValue);
     }
@@ -51,7 +50,6 @@ const useStateSyncQuery = <T, R = T>(
     setQueryParams(newQuery, {
       [queryName]: getValueToQuery(values),
     });
-
     push(`?${newQuery.toString()}`, undefined, {
       scroll: false,
       shallow,

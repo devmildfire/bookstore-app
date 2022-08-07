@@ -25,7 +25,7 @@ const SetCard: React.FC<SetCardProps> = (props) => {
   } = props;
   const path = usePrepareLink({
     query: {
-      [GET_PARAMS.openProduct]: id,
+      [GET_PARAMS.openProduct]: id.toString(),
     },
     keepOldQuery: true,
   });

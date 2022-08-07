@@ -1,21 +1,16 @@
 import { useRouter } from 'next/router';
-import { ID } from '@/types/common';
+import { ParsedURLQuery } from '@/types/common';
 import setQueryParams from '@/utils/setQueryParams';
 
 interface UsePrepareLinkParams {
   readonly to?: string;
   readonly isChildPath?: boolean;
-  readonly query?: Record<string, ID | Array<ID>>;
+  readonly query?: ParsedURLQuery;
   readonly keepOldQuery?: boolean;
 }
 
 const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
-  const {
-    isChildPath = false,
-    query = {},
-    keepOldQuery = false,
-    to,
-  } = params;
+  const { isChildPath = false, query = {}, keepOldQuery = false, to } = params;
   const router = useRouter();
 
   let newPathname: string = router.pathname;

@@ -1,13 +1,17 @@
 /* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Book, useGetBooksQuery } from '@/models/books';
+import { Book, BookType, useGetBooksQuery } from '@/models/books';
 import BookRow from './BookRow';
 import { StyledProductsList } from './styles';
 import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
 
 const BooksList: React.FC = () => {
+  /* TODO: сделать более красиво, может в функцию или на уровне хука */
   const publishYear: string[] | null = useGetParam(GET_PARAMS.publishYear)?.split(',') || null;
+  const productType: BookType[] | null = (useGetParam(
+    GET_PARAMS.productType,
+  )?.split(',') || null) as BookType[] | null;
 
   return (
     <StyledProductsList
@@ -16,6 +20,7 @@ const BooksList: React.FC = () => {
       rootMargin='300px'
       otherParams={{
         publishYear,
+        productType,
       }}
     >
       {({ rows }) =>

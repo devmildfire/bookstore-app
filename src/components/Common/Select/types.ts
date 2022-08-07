@@ -3,6 +3,7 @@ export type SelectValue = number | string;
 export type Option<T extends SelectValue> = {
   readonly value: T;
   readonly label: string;
+  readonly disabled?: boolean;
 };
 
 export type SingleValue<T extends SelectValue> = Option<T> | null;

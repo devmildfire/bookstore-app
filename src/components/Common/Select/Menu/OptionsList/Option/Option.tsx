@@ -7,14 +7,16 @@ import useKeyListener from '@/hooks/useKeyListener';
 
 interface OptionProps {
   readonly option: OptionType<SelectValue>;
-  readonly onChange: Handler<SelectValue>;
+  readonly onSelect: Handler<SelectValue>;
+  readonly onUnselect: Handler<SelectValue>;
   readonly onHover: Handler<SelectValue>;
   readonly isCurrent: boolean;
+  readonly isSelect: boolean;
 }
 
 const Option: React.FC<OptionProps> = (props) => {
   const {
-    option, onChange, isCurrent, onHover,
+    option, onSelect, onUnselect, isCurrent, onHover, isSelect,
   } = props;
   const ref = React.useRef<HTMLLIElement | null>(null);
 
@@ -23,8 +25,12 @@ const Option: React.FC<OptionProps> = (props) => {
   }, [onHover, option]);
 
   const onClick = React.useCallback(() => {
-    onChange(option);
-  }, [onChange, option]);
+    if (isSelect) {
+      onUnselect(option);
+    } else {
+      onSelect(option);
+    }
+  }, [isSelect, option, onUnselect, onSelect]);
 
   useKeyListener({
     onKeyDown: onClick,
@@ -35,9 +41,9 @@ const Option: React.FC<OptionProps> = (props) => {
   return (
     <StyledOption
       key={option.value}
-      onClick={onClick}
+      onClick={!option.disabled ? onClick : undefined}
       onMouseEnter={onMouseEnter}
-      className={classNames({ active: isCurrent })}
+      className={classNames({ active: isCurrent && !option.disabled })}
       ref={ref}
     >
       <Text variant='h4_1' component='span' textColor='inherit'>

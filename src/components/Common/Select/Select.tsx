@@ -21,6 +21,8 @@ interface SelectProps<T extends SelectValue, IsMulti extends boolean>
   readonly isMulti?: IsMulti;
 }
 
+/* TODO: Вынести в директорию packages */
+/* TODO: Сделать возможность располагать компоненты селекта в произвольном порядке */
 const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   props: SelectProps<T, IsMulti>,
 ): React.ReactElement => {
@@ -57,7 +59,7 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   });
 
   return (
-    <StyledWrapper>
+    <StyledWrapper ref={rootRef}>
       <OptionsContextProvider
         options={options}
         onChange={onChange}
@@ -73,9 +75,8 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
           onFocus={onFocus}
           onBlur={onBlur}
         >
-          <Control title={title} ref={rootRef} />
-
-          {isOpen && <Menu />}
+          <Control title={title} />
+          <Menu isOpen={isOpen} target={rootRef.current} />
         </StateProvider>
       </OptionsContextProvider>
     </StyledWrapper>

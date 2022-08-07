@@ -3,7 +3,14 @@ import type { NextPage } from 'next';
 import HomePage from '@/components/HomePage';
 import Books from '@/components/BooksPage/Books';
 import { wrapper } from '@/models';
-import { getBooks, getPopularBooks } from '@/models/books';
+import {
+  getAuthorFilter,
+  getBooks,
+  getPopularBooks,
+  getSortFilter,
+  getTypeFilter,
+  getYearFilter,
+} from '@/models/books';
 import { GET_PARAMS } from '@/consts/query';
 import getParam from '@/utils/getParam';
 
@@ -24,6 +31,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
             publishYear,
           }),
         ),
+        dispatch(getAuthorFilter.initiate(undefined)),
+        dispatch(getYearFilter.initiate(undefined)),
+        dispatch(getSortFilter.initiate(undefined)),
+        dispatch(getTypeFilter.initiate(undefined)),
         dispatch(getPopularBooks.initiate(undefined)),
       ];
       await Promise.all(requests);

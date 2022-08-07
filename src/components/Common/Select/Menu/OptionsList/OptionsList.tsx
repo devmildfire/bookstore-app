@@ -8,10 +8,12 @@ import { OptionsContext } from '../../contexts/OptionsContext';
 
 const OptionsList: React.FC<ClassNameProps> = (props): React.ReactElement => {
   const { className } = props;
-  const { options, addValue, selectedValue } = React.useContext(OptionsContext);
+  const {
+    options, addValue, deleteValue, selectedValue,
+  } = React.useContext(OptionsContext);
   const filteredOptions = React.useMemo(
-    () => options.filter((option) => !selectedValue.includes(option)),
-    [options, selectedValue],
+    () => options.filter((option) => !option.disabled),
+    [options],
   );
 
   const {
@@ -33,12 +35,14 @@ const OptionsList: React.FC<ClassNameProps> = (props): React.ReactElement => {
 
   return (
     <StyledOptionsList className={className}>
-      {filteredOptions.map((option) => (
+      {options.map((option) => (
         <Option
           option={option}
           onHover={setCurrent}
-          onChange={addValue}
+          onSelect={addValue}
+          onUnselect={deleteValue}
           isCurrent={option === current}
+          isSelect={selectedValue.includes(option)}
           key={option.value}
         />
       ))}

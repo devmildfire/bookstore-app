@@ -3,15 +3,20 @@ import { ClassNameProps } from '@/types/className';
 import OptionsList from './OptionsList';
 import SelectedList from './SelectedList';
 import { StyledMenuWrapper } from './styles';
+import Popper, { PopperProps } from '../../Popper';
 
-const Menu: React.FC<ClassNameProps> = (props) => {
-  const { className } = props;
+interface MenuProps extends ClassNameProps, PopperProps {}
+
+const Menu: React.FC<MenuProps> = (props) => {
+  const { className, isOpen, target } = props;
 
   return (
-    <StyledMenuWrapper className={className}>
-      <SelectedList />
-      <OptionsList />
-    </StyledMenuWrapper>
+    <Popper isOpen={isOpen} target={target}>
+      <StyledMenuWrapper className={className}>
+        <SelectedList />
+        <OptionsList />
+      </StyledMenuWrapper>
+    </Popper>
   );
 };
 

@@ -1,13 +1,15 @@
 import { HYDRATE } from 'next-redux-wrapper';
 /* eslint-disable import/no-cycle */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
-import { Book } from './types';
+import { Book, BookType } from './types';
 import { ID } from '@/types/common';
 import { BASE_API_URL, TAGS } from '@/consts/api';
 import { Pagination } from '@/types/api';
+import { Author } from '@/types/author';
 
 export interface GetBooksQuery extends Pagination {
   readonly publishYear?: string[] | null;
+  readonly productType?: BookType[] | null;
 }
 
 export const booksApi = createApi({
@@ -31,6 +33,18 @@ export const booksApi = createApi({
     getPopularBooks: builder.query<Book[], undefined>({
       query: () => ({ url: '/popular' }),
     }),
+    getYearFilter: builder.query<string[], undefined>({
+      query: () => '/filter/years',
+    }),
+    getTypeFilter: builder.query<string[], undefined>({
+      query: () => '/filter/type',
+    }),
+    getSortFilter: builder.query<string[], undefined>({
+      query: () => '/filter/sort',
+    }),
+    getAuthorFilter: builder.query<Author[], undefined>({
+      query: () => '/filter/authors',
+    }),
   }),
   extractRehydrationInfo: (action, { reducerPath }) => {
     if (action.type === HYDRATE) {
@@ -41,5 +55,21 @@ export const booksApi = createApi({
   },
 });
 
-export const { useGetBooksQuery, useGetBookQuery, useGetPopularBooksQuery } = booksApi;
-export const { getBooks, getBook, getPopularBooks } = booksApi.endpoints;
+export const {
+  useGetBooksQuery,
+  useGetBookQuery,
+  useGetPopularBooksQuery,
+  useGetAuthorFilterQuery,
+  useGetSortFilterQuery,
+  useGetTypeFilterQuery,
+  useGetYearFilterQuery,
+} = booksApi;
+export const {
+  getBooks,
+  getBook,
+  getPopularBooks,
+  getAuthorFilter,
+  getSortFilter,
+  getTypeFilter,
+  getYearFilter,
+} = booksApi.endpoints;

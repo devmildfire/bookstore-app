@@ -20,6 +20,12 @@ export interface OptionsProviderProps<
   readonly value: Value<T, IsMulti>;
 }
 
+const defaultValue: Option<SelectValue> = {
+  label: 'Empty',
+  value: 'Empty',
+  disabled: true,
+};
+
 const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
   props: React.PropsWithChildren<OptionsProviderProps<T, IsMulti>>,
 ): React.ReactElement => {
@@ -34,7 +40,7 @@ const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
     : [];
   const [selectedValue, setSelectedValue] = React.useState(initialValue);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     setSelectedValue(Array.isArray(value) ? value : value ? [value] : []);
   }, [value]);
 
@@ -57,7 +63,7 @@ const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
     isMulti,
     addValue,
     deleteValue,
-    options,
+    options: options.length ? options : [defaultValue],
   };
 
   return <Context.Provider value={provideValue}>{children}</Context.Provider>;

@@ -18,7 +18,7 @@ const useClickAway = (options: UseClickAwayOptions): void => {
 
     const handler = (evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
-      if (!target.contains(element) || target !== element) {
+      if (!element.contains(target)) {
         onClickAway();
       }
     };

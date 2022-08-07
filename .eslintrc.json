@@ -31,6 +31,17 @@
     "consistent-return": "off",
     "no-unused-vars": "off",
     "arrow-body-style": "off",
+    "object-curly-newline": "off",
+    "comma-dangle": [
+      "warn",
+      {
+        "arrays": "always",
+        "objects": "always",
+        "imports": "never",
+        "exports": "never",
+        "functions": "never"
+      }
+    ],
 
     /* REACT */
     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],

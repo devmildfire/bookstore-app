@@ -1,4 +1,4 @@
-import { Book, Reader, Worker } from '@/models/books';
+import { Book, BookType, Reader, Worker } from '@/models/books';
 import getRandomBetween from '@/utils/getRandomBetween';
 import { authors } from './authors';
 
@@ -65,7 +65,17 @@ const workers: Worker[] = [
 
 const formats: string[] = ['Fb2', 'Epub'];
 
-const book = {
+const publishDate = [
+  '2021.01.01',
+  '2020.01.01',
+  '2019.01.01',
+  '2018.01.01',
+  '2017.01.01',
+];
+
+const types: BookType[] = ['audio', 'digital', 'write'];
+
+const book: Book = {
   id: 2,
   title: 'DELETED',
   authors: [authors[3]],
@@ -83,6 +93,7 @@ const book = {
     'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
   ],
   symbolCount: 355000,
+  types,
   formats,
   readers,
   workers,
@@ -108,7 +119,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 35500,
-
+    types,
     formats,
     readers,
     workers,
@@ -131,6 +142,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 355000,
+    types,
     formats,
     readers,
     workers,
@@ -153,6 +165,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 235500,
+    types,
     formats,
     readers,
     workers,
@@ -176,6 +189,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 15000,
+    types,
     formats,
     readers,
     workers,
@@ -198,6 +212,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 15264,
+    types,
     formats,
     readers,
     workers,
@@ -220,6 +235,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
@@ -242,6 +258,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
@@ -264,6 +281,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
@@ -286,6 +304,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
@@ -308,6 +327,7 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
@@ -330,18 +350,11 @@ const books: Book[] = [
       'Но всего этого как будто недостаточно, и в её жизни появляется ещё один преследователь — невидимый.',
     ],
     symbolCount: 1656541,
+    types,
     formats,
     readers,
     workers,
   },
-];
-
-const publishDate = [
-  '2021.01.01',
-  '2020.01.01',
-  '2019.01.01',
-  '2018.01.01',
-  '2017.01.01',
 ];
 
 export const generateBook = (id: number): Book => ({

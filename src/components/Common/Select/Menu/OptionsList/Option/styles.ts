@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const StyledOption = styled.li`
   background-color: inherit;
 
-  :hover,
+  color: var(--main-white);
+
   &.active {
     color: var(--main-red-100);
   }

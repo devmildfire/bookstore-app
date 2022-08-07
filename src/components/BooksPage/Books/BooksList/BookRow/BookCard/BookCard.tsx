@@ -28,7 +28,7 @@ const BookCard: React.FC<BookCardProps> = (props) => {
 
   const path = usePrepareLink({
     query: {
-      [GET_PARAMS.openProduct]: id,
+      [GET_PARAMS.openProduct]: String(id),
     },
     keepOldQuery: true,
   });
