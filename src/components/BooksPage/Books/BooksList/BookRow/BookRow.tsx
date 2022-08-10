@@ -4,6 +4,8 @@ import { StyledRow, StyledRowWrapper } from './styles';
 import Container from '@/components/Common/Container';
 import BookPreview from './BookPreview';
 import BookCard from './BookCard';
+import useGetParam from '@/hooks/useGetParam';
+import { GET_PARAMS } from '@/consts/query';
 
 interface BookRowProps {
   readonly books: Book[];
@@ -11,18 +13,19 @@ interface BookRowProps {
 
 const BookRow: React.FC<BookRowProps> = (props) => {
   const { books, } = props;
+  const openBookId = Number(useGetParam(GET_PARAMS.openProduct));
   return (
     <StyledRowWrapper>
       <Container>
         <StyledRow>
           {books.map((book) => (
-            <BookCard {...book} key={book.id} />
+            <BookCard isOpen={openBookId === book.id} {...book} key={book.id} />
           ))}
         </StyledRow>
       </Container>
-      <BookPreview books={books} />
+      <BookPreview books={books} openBookId={openBookId} />
     </StyledRowWrapper>
   );
 };
 
-export default BookRow;
+export default React.memo(BookRow);

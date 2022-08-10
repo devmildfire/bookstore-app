@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BoxSet } from '@/models/boxSets';
-import BookCard from './BookCard';
+import BookCard from './SetBookCard';
 import { StyledList, StyledWrapper } from './styles';
 
 type SetPreviewCardProps = BoxSet

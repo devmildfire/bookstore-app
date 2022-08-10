@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import Price from '@/components/Common/Price';
+import ProductCard from '@/components/Common/ProductCard';
 
-export const StyledWrapper = styled.div`
+export const StyledWrapper = styled(ProductCard)`
   display: grid;
   gap: 30px;
 `;

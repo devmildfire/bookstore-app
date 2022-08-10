@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Link from '@/components/Common/Link';
+import Image from '@/components/Common/Image';
 
 export const StyledWrapper = styled(Link)`
   display: grid;
@@ -24,8 +25,14 @@ export const StyledDescription = styled.div`
   align-self: end;
 
   display: grid;
-  grid-template-rows: 1fr max-content;
+  grid-template-rows: 1fr max-content max-content;
   gap: 14px;
+`;
+
+export const StyledImage = styled(Image)`
+  justify-self: center;
+
+  padding: 30px 60px;
 `;
 
 export const StyledInfo = styled.div`

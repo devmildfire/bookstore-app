@@ -3,19 +3,13 @@ import useStateSyncQuery, {
   GetValueByQuery,
   GetValueToQuery
 } from '@/hooks/useStateSyncQuery';
-import { StyledSelectMenu } from './styles';
 import {
   OnChangeValue,
   Option,
   SelectValue
 } from '@/components/Common/Select/types';
 import { ClassNameProps } from '@/types/className';
-import {
-  Control,
-  OptionsList,
-  SelectContainer,
-  SelectedList
-} from '@/components/Common/Select';
+import Select from '@/components/Common/Select';
 
 interface FilterProps extends ClassNameProps {
   readonly options: Option<SelectValue>[];
@@ -43,20 +37,15 @@ const Filter: React.FC<FilterProps> = (props) => {
     getValueToQuery,
   });
   return (
-    <SelectContainer
+    <Select
       options={options}
       value={value}
+      title={title}
       onChange={setValue as OnChangeValue<SelectValue, true>}
       isMulti
       {...rest}
-    >
-      <Control title={title} />
-      <StyledSelectMenu>
-        <SelectedList />
-        <OptionsList />
-      </StyledSelectMenu>
-    </SelectContainer>
+    />
   );
 };
 
-export default React.memo(Filter);
+export default Filter;

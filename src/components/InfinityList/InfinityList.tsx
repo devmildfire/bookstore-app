@@ -2,13 +2,12 @@ import * as React from 'react';
 import { UseQuery } from '@reduxjs/toolkit/dist/query/react/buildHooks';
 import { QueryDefinition } from '@reduxjs/toolkit/dist/query';
 import { ClassNameProps } from '@/types/className';
-import { StyledIntersectingElement, StyledProductsList } from './styles';
+import { StyledIntersectingElement, StyledLoadingIndicator, StyledProductsList } from './styles';
 import useInfinityQuery, {
   UseInfinityQueryOptions
 } from '@/hooks/useInfinityQuery';
 import { Pagination } from '@/types/api';
 import separateOnRow from '@/utils/separateOnRow';
-import LoadingIndicator from '../Common/LoadingIndicator';
 
 interface ItemRenderProps<T> {
   readonly rows: T[][];
@@ -75,7 +74,7 @@ const InfinityList = <T, QP extends Pagination>(
   return (
     <StyledProductsList className={className}>
       {children({ rows, })}
-      {showLoadingIndicator && <LoadingIndicator />}
+      {showLoadingIndicator && <StyledLoadingIndicator />}
       <StyledIntersectingElement position='bottom' ref={ref} />
     </StyledProductsList>
   );

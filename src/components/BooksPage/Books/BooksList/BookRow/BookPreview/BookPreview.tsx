@@ -1,23 +1,27 @@
 import * as React from 'react';
 import BookPreviewCard from './BookPreviewCard';
-import useGetParam from '@/hooks/useGetParam';
-import { GET_PARAMS } from '@/consts/query';
 import { COLLAPSE_DURATION, FADE_DURATION } from '@/consts/animation';
 import { StyledPreviewContent, StyledPreviewHeader } from './styles';
 import { Book } from '@/models/books';
 import Fade from '@/components/Common/Fade';
 import Preview from '@/components/Common/Preview';
+import usePrepareLink from '@/hooks/usePrepareLink';
+import { GET_PARAMS } from '@/consts/query';
 
 interface BookPreviewProps {
   readonly books: Book[];
+  readonly openBookId: number;
 }
 
 const BookPreview: React.FC<BookPreviewProps> = (props) => {
-  const { books, } = props;
+  const { books, openBookId, } = props;
 
-  const bookId = Number(useGetParam(GET_PARAMS.openProduct));
+  const open = books.some((book) => book.id === openBookId);
 
-  const open = books.some((book) => book.id === bookId);
+  const exitHref = usePrepareLink({
+    deleteQuery: [GET_PARAMS.openProduct],
+    keepOldQuery: true,
+  });
 
   return (
     <Preview
@@ -25,11 +29,11 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
       duration={COLLAPSE_DURATION}
       exitTimeout={COLLAPSE_DURATION}
     >
-      <StyledPreviewHeader exitHref='/books' />
+      <StyledPreviewHeader exitHref={exitHref} />
       <StyledPreviewContent>
         {books.map((book) => (
           <Fade
-            open={book.id === bookId}
+            open={book.id === openBookId}
             key={book.id}
             enterTimeout={FADE_DURATION}
             exitTimeout={FADE_DURATION}
@@ -42,4 +46,4 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
   );
 };
 
-export default BookPreview;
+export default React.memo(BookPreview);

@@ -11,19 +11,19 @@ import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
 import IconButton from '@/components/Common/IconButton';
 import Price from '@/components/Common/Price';
-import useGetParam from '@/hooks/useGetParam';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
+import { ClassNameProps } from '@/types/className';
+import Link from '@/components/Common/Link';
 
-type BookCardProps = Pick<
-  Book,
-  'id' | 'image' | 'price' | 'newPrice' | 'title'
->;
+interface BookCardProps
+  extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'>,
+    ClassNameProps {
+  readonly isOpen: boolean;
+}
 
 const BookCard: React.FC<BookCardProps> = (props) => {
-  const {
-    id, image, price, newPrice, title,
-  } = props;
+  const { id, image, price, newPrice, title, isOpen, } = props;
   const [liked, setLike] = React.useState(false);
 
   const path = usePrepareLink({
@@ -32,13 +32,14 @@ const BookCard: React.FC<BookCardProps> = (props) => {
     },
     keepOldQuery: true,
   });
-  /* TODO вынести определение открытой книги на уровень листа или строки */
-  const openBook = Number(useGetParam(GET_PARAMS.openProduct));
-  const classes = classNames({ active: openBook === id, });
+
+  const classes = classNames('lighted', { active: isOpen, });
 
   return (
-    <StyledWrapper className={classes} href={path} scroll={false} shallow>
-      <StyledImage src={image} alt={title} />
+    <StyledWrapper>
+      <Link className={classes} href={path} scroll={false} shallow>
+        <StyledImage src={image} alt={title} />
+      </Link>
       <StyledInfo>
         <Price price={price} newPrice={newPrice} />
         <StyledActions>

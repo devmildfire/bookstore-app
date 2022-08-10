@@ -7,10 +7,17 @@ interface UsePrepareLinkParams {
   readonly isChildPath?: boolean;
   readonly query?: ParsedURLQuery;
   readonly keepOldQuery?: boolean;
+  readonly deleteQuery?: string[];
 }
 
 const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
-  const { isChildPath = false, query = {}, keepOldQuery = false, to } = params;
+  const {
+    to,
+    isChildPath = false,
+    query = {},
+    keepOldQuery = false,
+    deleteQuery = [],
+  } = params;
   const router = useRouter();
 
   let newPathname: string = router.pathname;
@@ -24,6 +31,9 @@ const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
   }
 
   setQueryParams(newQuery, query);
+  console.log(deleteQuery, newQuery.toString());
+
+  deleteQuery.forEach((queryName) => newQuery.delete(queryName));
 
   const stringNewQuery: string = newQuery.toString();
 

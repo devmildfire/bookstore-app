@@ -13,13 +13,13 @@ import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import Image from '@/components/Common/Image';
 
-type GiftCardProps = Gift
+type GiftCardProps = Gift;
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
   const { price, title, image, } = props;
   return (
     <StyledWrapper>
-      <StyledImageWrapper>
+      <StyledImageWrapper className='lighted'>
         <Image src={image} title={title} />
         <StyledPrice price={price} />
       </StyledImageWrapper>

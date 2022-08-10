@@ -4,6 +4,8 @@ import Container from '@/components/Common/Container';
 import { StyledRow, StyledWrapper } from './styles';
 import SetCard from './SetCard';
 import SetPreview from './SetPreview/SetPreview';
+import useGetParam from '@/hooks/useGetParam';
+import { GET_PARAMS } from '@/consts/query';
 
 interface SetsRowProps {
   readonly sets: BoxSet[];
@@ -11,13 +13,14 @@ interface SetsRowProps {
 
 const SetsRow: React.FC<SetsRowProps> = (props) => {
   const { sets, } = props;
+  const openSetId = Number(useGetParam(GET_PARAMS.openProduct));
 
   return (
     <StyledWrapper>
       <Container>
         <StyledRow>
           {sets.map((set) => (
-            <SetCard {...set} key={set.id} />
+            <SetCard isOpen={openSetId === set.id} {...set} key={set.id} />
           ))}
         </StyledRow>
       </Container>

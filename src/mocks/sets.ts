@@ -6,6 +6,7 @@ export const set: BoxSet = {
   title: 'Соединённые Штаты Литературы',
   price: 1100,
   newPrice: null,
+  image: 'images/sets/usa.svg',
   books: books.slice(0, 6),
   description: 'Произведения американских авторов',
 };

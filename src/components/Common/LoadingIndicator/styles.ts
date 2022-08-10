@@ -6,11 +6,14 @@ export const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 90px;
+  height: 90px;
 `;
 
 export const StyledLoading = styled.div`
-  width: 90px;
-  height: 90px;
+  height: 100%;
+  width: 100%;
 
   border: 7px dotted var(--main-white-100);
   border-bottom-color: var(--main-white-10);

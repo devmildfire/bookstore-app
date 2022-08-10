@@ -4,9 +4,9 @@ import { StyledImage, StyledText, StyledWrapper } from './styles';
 import getAuthorNames from '@/utils/getAuthorNames';
 import Text from '@/components/Common/Text';
 
-type BookCardProps = Pick<Book, 'id' | 'authors' | 'title' | 'image'>
+type SetBookCardProps = Pick<Book, 'id' | 'authors' | 'title' | 'image'>
 
-const BookCard: React.FC<BookCardProps> = (props) => {
+const SetBookCard: React.FC<SetBookCardProps> = (props) => {
   const {
     authors, id, title, image,
   } = props;
@@ -24,4 +24,4 @@ const BookCard: React.FC<BookCardProps> = (props) => {
   );
 };
 
-export default React.memo(BookCard);
+export default React.memo(SetBookCard);

@@ -7,19 +7,23 @@ import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
 
 const BooksList: React.FC = () => {
-  /* TODO: сделать более красиво, может в функцию или на уровне хука */
   const publishYear = useGetParam(GET_PARAMS.publishYear);
   const productType = useGetParam<BookType>(GET_PARAMS.productType);
+
+  const otherParams = React.useMemo(
+    () => ({
+      publishYear,
+      productType,
+    }),
+    [...(publishYear || []), ...(productType || [])]
+  );
 
   return (
     <StyledProductsList
       inRow={3}
       useQuery={useGetBooksQuery as any}
       rootMargin='300px'
-      otherParams={{
-        publishYear,
-        productType,
-      }}
+      otherParams={otherParams}
     >
       {({ rows, }) =>
         rows.map((row, i) => (

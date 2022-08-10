@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import Link from '@/components/Common/Link';
+import Image from '@/components/Common/Image';
+import ProductCard from '@/components/Common/ProductCard';
 
-export const StyledWrapper = styled(Link)`
+export const StyledWrapper = styled(ProductCard)`
   display: block;
   max-width: 355px;
 
@@ -10,16 +11,6 @@ export const StyledWrapper = styled(Link)`
   color: var(--main-white-100);
 
   background-color: var(--main-black);
-
-  transform-origin: center;
-
-  transition: all 250ms ease-in;
-
-  &:hover,
-  &:focus-visible,
-  &.active {
-    transform: scale(1.05);
-  }
 `;
 
 export const StyledInfo = styled.div`
@@ -30,11 +21,8 @@ export const StyledInfo = styled.div`
   padding: 18px 35px;
 `;
 
-export const StyledImage = styled.img`
-  width: 100%;
+export const StyledImage = styled(Image)`
   height: 533px;
-
-  object-fit: cover;
 `;
 
 export const StyledActions = styled.div`

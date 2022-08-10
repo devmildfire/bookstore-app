@@ -19,4 +19,6 @@ export const StyledMenu = styled(Menu)<StyledMenuProps>`
 export const StyledLoadingIndicator = styled(LoadingIndicator)`
   width: 40px;
   height: 40px;
+
+  margin: 0 auto;
 `;
