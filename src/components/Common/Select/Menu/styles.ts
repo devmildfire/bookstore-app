@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import List from '../../List';
 
-export const StyledMenuWrapper = styled.div`
-  display: grid;
-  gap: 10px;
+export interface StyledMenuWrapperProps {
+  readonly width?: number;
+}
 
-  width: max-content;
+export const StyledMenuWrapper = styled.div<StyledMenuWrapperProps>`
+  width: ${(props) => (props.width ? `${props.width}px` : 'max-content')};
 
   padding: 0 24px 18px;
 

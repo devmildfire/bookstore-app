@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import Text from '@/components/Common/Text';
 import { StyledOption } from './styles';
-import { Handler, Option as OptionType, SelectValue } from '../../../types';
+import { Handler, Option as OptionType, SelectValue } from '../types';
 import useKeyListener from '@/hooks/useKeyListener';
 
 interface OptionProps {

@@ -8,27 +8,24 @@ import useKeyListener from '@/hooks/useKeyListener';
 import useClickAway from '@/hooks/useClickAway';
 import Menu from './Menu';
 import {
-  OptionsContextProvider,
-  OptionsProviderProps,
-} from './contexts/OptionsContext';
+  ValuesContextProvider,
+  ValuesProviderProps,
+} from './contexts/ValuesContext';
 import { StateProvider } from './contexts/StateContext';
 
 interface SelectProps<T extends SelectValue, IsMulti extends boolean>
   extends ClassNameProps,
-    Omit<OptionsProviderProps<T, IsMulti>, 'selectedValue' | 'isMulti'> {
+    Omit<ValuesProviderProps<T, IsMulti>, 'selectedValue' | 'isMulti'> {
   readonly title: string;
   readonly value: Value<T, IsMulti>;
   readonly isMulti?: IsMulti;
 }
 
-/* TODO: Вынести в директорию packages */
 /* TODO: Сделать возможность располагать компоненты селекта в произвольном порядке */
 const Select = <T extends SelectValue, IsMulti extends boolean = false>(
-  props: SelectProps<T, IsMulti>,
+  props: SelectProps<T, IsMulti>
 ): React.ReactElement => {
-  const {
-    title, options, onChange, value, isMulti = false,
-  } = props;
+  const { title, options, onChange, value, isMulti = false } = props;
 
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const { value: isOpen, toggleOff, toggleOn } = useToggle();
@@ -60,7 +57,7 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
 
   return (
     <StyledWrapper ref={rootRef}>
-      <OptionsContextProvider
+      <ValuesContextProvider
         options={options}
         onChange={onChange}
         value={value}
@@ -78,7 +75,7 @@ const Select = <T extends SelectValue, IsMulti extends boolean = false>(
           <Control title={title} />
           <Menu isOpen={isOpen} target={rootRef.current} />
         </StateProvider>
-      </OptionsContextProvider>
+      </ValuesContextProvider>
     </StyledWrapper>
   );
 };

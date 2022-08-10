@@ -3,24 +3,24 @@ import { ClassNameProps } from '@/types/className';
 import { StyledOptionsList } from './styles';
 import usePagination from '../hooks/usePagination';
 import useKeyListener from '@/hooks/useKeyListener';
-import Option from './Option';
-import { OptionsContext } from '../../contexts/OptionsContext';
+import Option from '../Option';
+import {
+  valuesContext,
+  valuesHandlersContext,
+} from '../contexts/ValuesContext';
 
 const OptionsList: React.FC<ClassNameProps> = (props): React.ReactElement => {
   const { className } = props;
-  const {
-    options, addValue, deleteValue, selectedValue,
-  } = React.useContext(OptionsContext);
+  const { values: options, selectedValue } = React.useContext(valuesContext);
+  const { addValue, deleteValue } = React.useContext(valuesHandlersContext);
   const filteredOptions = React.useMemo(
     () => options.filter((option) => !option.disabled),
-    [options],
+    [options]
   );
 
-  const {
-    current, nextElement, prevElement, setCurrent,
-  } = usePagination(
+  const { current, nextElement, prevElement, setCurrent } = usePagination(
     filteredOptions,
-    { loop: true },
+    { loop: true }
   );
 
   useKeyListener({

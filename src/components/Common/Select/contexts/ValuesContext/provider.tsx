@@ -8,9 +8,14 @@ import {
   SelectValue,
   Value,
 } from '../../types';
-import Context, { OptionsContextOptions } from './context';
+import {
+  ValuesOptions,
+  valuesContext,
+  valuesHandlersContext,
+  ValuesHandlersOptions,
+} from './context';
 
-export interface OptionsProviderProps<
+export interface ValuesProviderProps<
   T extends SelectValue,
   IsMulti extends boolean
 > {
@@ -26,12 +31,10 @@ const defaultValue: Option<SelectValue> = {
   disabled: true,
 };
 
-const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
-  props: React.PropsWithChildren<OptionsProviderProps<T, IsMulti>>,
+const ValuesContextProvider = <T extends SelectValue, IsMulti extends boolean>(
+  props: React.PropsWithChildren<ValuesProviderProps<T, IsMulti>>
 ): React.ReactElement => {
-  const {
-    children, onChange, isMulti, options, value,
-  } = props;
+  const { children, onChange, isMulti, options, value } = props;
 
   const initialValue: Option<SelectValue>[] = value
     ? Array.isArray(value)
@@ -57,16 +60,26 @@ const OptionsProvider = <T extends SelectValue, IsMulti extends boolean>(
     onChange((isMulti ? newState : newState[0] || null) as any);
   });
 
-  const provideValue: OptionsContextOptions<IsMulti> = {
+  const provideValue: ValuesOptions<IsMulti> = {
     /* Чтобы сохранить контролируемость снаружи */
     selectedValue: value ? initialValue : selectedValue,
     isMulti,
-    addValue,
-    deleteValue,
-    options: options.length ? options : [defaultValue],
+    values: options.length ? options : [defaultValue],
+    hasValue: !!value,
   };
 
-  return <Context.Provider value={provideValue}>{children}</Context.Provider>;
+  const provideHandlers: ValuesHandlersOptions = {
+    addValue,
+    deleteValue,
+  };
+
+  return (
+    <valuesContext.Provider value={provideValue}>
+      <valuesHandlersContext.Provider value={provideHandlers}>
+        {children}
+      </valuesHandlersContext.Provider>
+    </valuesContext.Provider>
+  );
 };
 
-export default OptionsProvider;
+export default ValuesContextProvider;

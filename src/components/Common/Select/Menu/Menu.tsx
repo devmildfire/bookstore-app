@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import OptionsList from './OptionsList';
-import SelectedList from './SelectedList';
+import OptionsList from '../OptionsList';
+import SelectedList from '../SelectedList';
 import { StyledMenuWrapper } from './styles';
 import Popper, { PopperProps } from '../../Popper';
 
@@ -12,7 +12,7 @@ const Menu: React.FC<MenuProps> = (props) => {
 
   return (
     <Popper isOpen={isOpen} target={target}>
-      <StyledMenuWrapper className={className}>
+      <StyledMenuWrapper className={className} width={target?.offsetWidth}>
         <SelectedList />
         <OptionsList />
       </StyledMenuWrapper>

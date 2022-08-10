@@ -8,10 +8,8 @@ import { GET_PARAMS } from '@/consts/query';
 
 const BooksList: React.FC = () => {
   /* TODO: сделать более красиво, может в функцию или на уровне хука */
-  const publishYear: string[] | null = useGetParam(GET_PARAMS.publishYear)?.split(',') || null;
-  const productType: BookType[] | null = (useGetParam(
-    GET_PARAMS.productType,
-  )?.split(',') || null) as BookType[] | null;
+  const publishYear = useGetParam(GET_PARAMS.publishYear);
+  const productType = useGetParam<BookType>(GET_PARAMS.productType);
 
   return (
     <StyledProductsList
