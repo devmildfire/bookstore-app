@@ -11,3 +11,9 @@ export type AnyFunction = (...args: any[]) => any;
 export interface Item {
   readonly id: number;
 }
+
+export type AnyObject = Record<string, unknown>;
+
+export type AddType<T extends AnyObject, AT> = {
+  [K in keyof T]: T[K] | AT;
+};

@@ -10,7 +10,6 @@ export interface PopperProps extends ClassNameProps {
   readonly placement?: Placement;
 }
 
-/** TODO: сделать анимацию */
 const Popper: React.FC<PopperProps> = (props) => {
   const {
     target,

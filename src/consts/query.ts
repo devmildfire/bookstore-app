@@ -4,6 +4,8 @@ interface GetParams {
   readonly publishYear: string;
   readonly author: string;
   readonly sort: string;
+  readonly popup: string;
+  readonly bookId: string;
 }
 
 export const GET_PARAMS: GetParams = {
@@ -12,4 +14,6 @@ export const GET_PARAMS: GetParams = {
   productType: 'pt',
   publishYear: 'py',
   sort: 'sort',
+  popup: 'pp',
+  bookId: 'bki',
 };

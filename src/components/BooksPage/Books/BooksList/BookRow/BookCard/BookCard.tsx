@@ -15,6 +15,7 @@ import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import { ClassNameProps } from '@/types/className';
 import Link from '@/components/Common/Link';
+import { POPUPS } from '@/consts/popups';
 
 interface BookCardProps
   extends Pick<Book, 'id' | 'image' | 'price' | 'newPrice' | 'title'>,
@@ -33,6 +34,14 @@ const BookCard: React.FC<BookCardProps> = (props) => {
     keepOldQuery: true,
   });
 
+  const basketPath = usePrepareLink({
+    keepOldQuery: true,
+    query: {
+      [GET_PARAMS.popup]: POPUPS.addBasketBook,
+      [GET_PARAMS.bookId]: id.toString(),
+    },
+  });
+
   const classes = classNames('lighted', { active: isOpen, });
 
   return (
@@ -43,7 +52,7 @@ const BookCard: React.FC<BookCardProps> = (props) => {
       <StyledInfo>
         <Price price={price} newPrice={newPrice} />
         <StyledActions>
-          <IconButton>
+          <IconButton href={basketPath} scroll={false} shallow>
             <Cart />
           </IconButton>
           <IconButton onClick={() => setLike((prev) => !prev)}>

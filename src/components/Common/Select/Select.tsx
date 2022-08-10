@@ -12,7 +12,6 @@ export interface SelectProps<T extends SelectValue, IsMulti extends boolean>
   readonly menuClassName?: string;
 }
 
-/* TODO: Сделать возможность располагать компоненты селекта в произвольном порядке */
 const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   props: SelectProps<T, IsMulti>
 ): React.ReactElement => {

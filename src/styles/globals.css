@@ -28,11 +28,9 @@
   --key: #000000;
   --grey: #c4c4c4;
 
-  --popover-z-index: 100;
-  --modal-z-index: 10;
+  --low-z-index: -1;
+  --up-z-index: 1;
   --upper-z-index: 2;
-  --controls-z-index: 6;
-  --header-z-index: 8;
 
   --width: 1440px;
   --max-width: 1920px;
@@ -71,4 +69,24 @@ body {
   color: #102327;
   width: 100%;
   min-height: 100%;
+}
+
+.popup_open {
+  overflow: hidden;
+}
+
+.visibility-hidden {
+  position: absolute;
+  z-index: var(--low-z-index);
+
+  display: inline-block;
+
+  width: 1px;
+  height: 1px;
+
+  margin: -1px;
+
+  clip: rect(0, 0, 0, 0);
+
+  overflow: hidden;
 }

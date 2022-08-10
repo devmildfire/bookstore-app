@@ -19,8 +19,7 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
   const open = books.some((book) => book.id === openBookId);
 
   const exitHref = usePrepareLink({
-    deleteQuery: [GET_PARAMS.openProduct],
-    keepOldQuery: true,
+    deleteQuery: { [GET_PARAMS.openProduct]: true, },
   });
 
   return (

@@ -5,17 +5,18 @@ import BookRow from './BookRow';
 import { StyledProductsList } from './styles';
 import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
+import parseGetParams from '@/utils/parseGetParams';
 
 const BooksList: React.FC = () => {
-  const publishYear = useGetParam(GET_PARAMS.publishYear);
-  const productType = useGetParam<BookType>(GET_PARAMS.productType);
+  const publishYear = parseGetParams(useGetParam(GET_PARAMS.publishYear));
+  const productType = parseGetParams<BookType>(useGetParam(GET_PARAMS.productType));
 
   const otherParams = React.useMemo(
     () => ({
       publishYear,
       productType,
     }),
-    [...(publishYear || []), ...(productType || [])]
+    [...publishYear, ...productType]
   );
 
   return (

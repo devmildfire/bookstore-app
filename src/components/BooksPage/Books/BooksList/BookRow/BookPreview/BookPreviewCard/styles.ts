@@ -18,7 +18,7 @@ export const StyledWrapper = styled.div`
 
 export const StyledForwardPlan = styled.div`
   position: relative;
-  z-index: 1;
+  z-index: var(--up-z-index);
 
   padding: 52px 0;
 `;

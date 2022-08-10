@@ -10,7 +10,6 @@ interface MenuProps extends ClassNameProps {
 
 const Menu: React.FC<MenuProps> = (props) => {
   const { children, className, isOpen, ...rest } = props;
-  console.log('[Target]', rest.target);
   if (!rest.target || !isOpen) {
     return null;
   }

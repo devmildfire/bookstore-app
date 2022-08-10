@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { ParsedURLQuery } from '@/types/common';
+import { AddType, ParsedURLQuery } from '@/types/common';
 import setQueryParams from '@/utils/setQueryParams';
 
 interface UsePrepareLinkParams {
@@ -7,7 +7,7 @@ interface UsePrepareLinkParams {
   readonly isChildPath?: boolean;
   readonly query?: ParsedURLQuery;
   readonly keepOldQuery?: boolean;
-  readonly deleteQuery?: string[];
+  readonly deleteQuery?: AddType<ParsedURLQuery, boolean>;
 }
 
 const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
@@ -16,7 +16,7 @@ const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
     isChildPath = false,
     query = {},
     keepOldQuery = false,
-    deleteQuery = [],
+    deleteQuery,
   } = params;
   const router = useRouter();
 
@@ -26,14 +26,11 @@ const usePrepareLink = (params: UsePrepareLinkParams = {}): string => {
     newPathname = isChildPath ? [router.pathname, to].join('/') : to;
   }
 
-  if (keepOldQuery) {
-    setQueryParams(newQuery, router.query);
+  if (keepOldQuery || deleteQuery) {
+    setQueryParams(newQuery, router.query, deleteQuery);
   }
 
   setQueryParams(newQuery, query);
-  console.log(deleteQuery, newQuery.toString());
-
-  deleteQuery.forEach((queryName) => newQuery.delete(queryName));
 
   const stringNewQuery: string = newQuery.toString();
 
