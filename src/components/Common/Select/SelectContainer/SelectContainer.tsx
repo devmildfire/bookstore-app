@@ -2,13 +2,13 @@ import * as React from 'react';
 import useClickAway from '@/hooks/useClickAway';
 import {
   ValuesContextProvider,
-  ValuesProviderProps
-} from '../contexts/ValuesContext';
+  ValuesProviderProps,
+  StateProvider
+} from '../contexts';
 import { StyledWrapper } from './styles';
 import { SelectValue, Value } from '../types';
 import { ClassNameProps } from '@/types/className';
 import useToggle from '@/hooks/useToggle';
-import { StateProvider } from '../contexts/StateContext';
 
 export interface SelectContainerProps<
   T extends SelectValue,
@@ -31,6 +31,7 @@ const SelectContainer = <
     options,
     onChange,
     value,
+    className,
     isLoading = false,
     isMulti = false,
   } = props;
@@ -46,7 +47,7 @@ const SelectContainer = <
   });
 
   return (
-    <StyledWrapper ref={setRootRef}>
+    <StyledWrapper className={className} ref={setRootRef}>
       <ValuesContextProvider
         options={options}
         onChange={onChange}

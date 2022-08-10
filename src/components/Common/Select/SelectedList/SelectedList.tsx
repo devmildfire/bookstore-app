@@ -3,7 +3,7 @@ import { ClassNameProps } from '@/types/className';
 import {
   valuesContext,
   valuesHandlersContext
-} from '../contexts/ValuesContext';
+} from '../contexts';
 import Selected, { SelectedProps } from '../Selected';
 import { StyledSelectedList } from './styles';
 

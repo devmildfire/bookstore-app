@@ -10,7 +10,6 @@ export const StyledArrow = styled(Arrow)`
 
 export const StyledControls = styled.div`
   display: flex;
-  gap: 20px;
   align-items: center;
 
   padding: 18px 24px 0;
@@ -29,4 +28,6 @@ export const StyledControls = styled.div`
 export const StyledPlaceholder = styled(Text).attrs({
   variant: 'h4_1',
   component: 'span',
-})``;
+})`
+  padding: 0 10px;
+`;

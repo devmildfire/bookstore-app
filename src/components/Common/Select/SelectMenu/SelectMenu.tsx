@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledMenu } from './styles';
-import { stateContext } from '../contexts/StateContext';
+import { StyledLoadingIndicator, StyledMenu } from './styles';
+import { stateContext } from '../contexts';
 
 const SelectMenu: React.FC<ClassNameProps> = (props) => {
   const { className, children, } = props;
-  const { isOpen, root, } = React.useContext(stateContext);
+  const { isOpen, root, isLoading, } = React.useContext(stateContext);
 
   return (
     <StyledMenu
@@ -14,7 +14,7 @@ const SelectMenu: React.FC<ClassNameProps> = (props) => {
       isOpen={isOpen}
       target={root}
     >
-      {children}
+      {isLoading ? <StyledLoadingIndicator /> : children}
     </StyledMenu>
   );
 };

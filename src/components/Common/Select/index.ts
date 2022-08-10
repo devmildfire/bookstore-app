@@ -25,4 +25,6 @@ export type { SelectedListProps } from './SelectedList';
 
 export { default as usePagination } from './hooks/usePagination';
 
+export { default as hasValue } from './utils/hasValue';
+
 export * from './contexts';

@@ -14,6 +14,7 @@ import {
   valuesHandlersContext,
   ValuesHandlersOptions
 } from './context';
+import hasValue from '../../utils/hasValue';
 
 export interface ValuesProviderProps<
   T extends SelectValue,
@@ -35,8 +36,8 @@ const ValuesContextProvider = <T extends SelectValue, IsMulti extends boolean>(
   props: React.PropsWithChildren<ValuesProviderProps<T, IsMulti>>
 ): React.ReactElement => {
   const { children, onChange, isMulti, options, value, } = props;
-
-  const initialValue: Option<SelectValue>[] = value
+  const hasAnyValue = hasValue(value);
+  const initialValue = hasAnyValue
     ? Array.isArray(value)
       ? value
       : [value]
@@ -62,10 +63,10 @@ const ValuesContextProvider = <T extends SelectValue, IsMulti extends boolean>(
 
   const provideValue: ValuesOptions<IsMulti> = {
     /* Чтобы сохранить контролируемость снаружи */
-    selectedValue: value ? initialValue : selectedValue,
+    selectedValue: value ? initialValue : (selectedValue as any),
     isMulti,
     values: options.length ? options : [defaultValue],
-    hasValue: Array.isArray(value) ? !!value.length : !!value,
+    hasValue: hasAnyValue,
   };
 
   const provideHandlers: ValuesHandlersOptions = {

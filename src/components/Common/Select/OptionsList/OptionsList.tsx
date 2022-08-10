@@ -7,7 +7,7 @@ import Option, { OptionProps } from '../Option';
 import {
   valuesContext,
   valuesHandlersContext
-} from '../contexts/ValuesContext';
+} from '../contexts';
 
 export interface OptionsListProps extends ClassNameProps {
   readonly Component?: React.ComponentType<OptionProps>;

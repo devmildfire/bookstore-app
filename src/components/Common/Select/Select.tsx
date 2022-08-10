@@ -9,18 +9,19 @@ import OptionsList from './OptionsList';
 export interface SelectProps<T extends SelectValue, IsMulti extends boolean>
   extends SelectContainerProps<T, IsMulti> {
   readonly title: string;
+  readonly menuClassName?: string;
 }
 
 /* TODO: Сделать возможность располагать компоненты селекта в произвольном порядке */
 const Select = <T extends SelectValue, IsMulti extends boolean = false>(
   props: SelectProps<T, IsMulti>
 ): React.ReactElement => {
-  const { title, ...rest } = props;
+  const { title, menuClassName, ...rest } = props;
 
   return (
     <SelectContainer {...rest}>
       <Control title={title} />
-      <SelectMenu>
+      <SelectMenu className={menuClassName}>
         <SelectedList />
         <OptionsList />
       </SelectMenu>

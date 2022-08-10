@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import LoadingIndicator from '../../LoadingIndicator';
 import Menu from '../../Menu';
 
 export interface StyledMenuProps {
@@ -13,4 +14,9 @@ export const StyledMenu = styled(Menu)<StyledMenuProps>`
   padding-right: 18px;
 
   background-color: var(--main-black);
+`;
+
+export const StyledLoadingIndicator = styled(LoadingIndicator)`
+  width: 40px;
+  height: 40px;
 `;
