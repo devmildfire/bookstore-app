@@ -5,7 +5,7 @@ import { StyledCart } from './styles';
 type CartProps = ClassNameProps
 
 const Cart: React.FC<CartProps> = (props) => {
-  const { className } = props;
+  const { className, } = props;
   return <StyledCart className={className} />;
 };
 

@@ -12,7 +12,7 @@ export interface TextProps<E extends keyof HTMLElementTagNameMap>
 }
 
 export const Text = <E extends keyof HTMLElementTagNameMap>(
-  props: TextProps<E>,
+  props: TextProps<E>
 ): React.ReactElement => {
   const {
     children,

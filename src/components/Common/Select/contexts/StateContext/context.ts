@@ -3,12 +3,19 @@ import { VoidFunction } from '@/types/common';
 
 export interface StateContextOptions {
   readonly isOpen: boolean;
-  readonly isFocus: boolean;
-  readonly hasValue: boolean;
-  readonly onOpen: VoidFunction;
-  readonly onClose: VoidFunction;
-  readonly onFocus: VoidFunction;
-  readonly onBlur: VoidFunction;
+  readonly isLoading: boolean;
+  readonly root: HTMLElement | null;
 }
 
-export default createContext<StateContextOptions>(undefined as any);
+export interface StateHandlersContextOptions {
+  readonly onOpen: VoidFunction;
+  readonly onClose: VoidFunction;
+}
+
+export const stateContext = createContext<StateContextOptions>(
+  undefined as any
+);
+
+export const stateHandlersContext = createContext<StateHandlersContextOptions>(
+  undefined as any
+);

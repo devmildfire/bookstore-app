@@ -7,7 +7,7 @@ export const StyledCross = styled(Cross)`
   width: 33px;
   height: 33px;
 
-  fill: var(--main-white);
+  fill: var(--main-white-100);
 
   :hover,
   :focus-visible {

@@ -4,7 +4,7 @@ import {
   StyledContainer,
   StyledCrossIcon,
   StyledHeader,
-  StyledIconButton,
+  StyledIconButton
 } from './styles';
 
 interface PreviewHeaderProps extends ClassNameProps {
@@ -12,14 +12,14 @@ interface PreviewHeaderProps extends ClassNameProps {
 }
 
 const PreviewHeader: React.FC<React.PropsWithChildren<PreviewHeaderProps>> = (
-  props,
+  props
 ) => {
-  const { exitHref, className } = props;
+  const { exitHref, className, } = props;
 
   return (
     <StyledHeader>
       <StyledContainer className={className}>
-        <StyledIconButton href={exitHref} scroll={false} size='small'>
+        <StyledIconButton href={exitHref} scroll={false} shallow size='small'>
           <StyledCrossIcon />
         </StyledIconButton>
       </StyledContainer>

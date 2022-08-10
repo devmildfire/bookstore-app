@@ -7,7 +7,7 @@ export const StyledCart = styled(Cart)`
   width: 20px;
   height: 24px;
 
-  stroke: var(--main-white);
+  stroke: var(--main-white-100);
   fill: transparent;
 
   :hover,

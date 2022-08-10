@@ -7,7 +7,7 @@ export const StyledArrow = styled(Arrow)`
   width: 11px;
   height: 7px;
 
-  fill: var(--main-white);
+  fill: var(--main-white-100);
 
   :hover,
   :focus-visible {

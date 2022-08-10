@@ -60,7 +60,7 @@ const PopperContainer = styled.div`
 
 /* TODO: исправить таб с учетом нового popper'а */
 const HeaderTab = ({
-  item: { title, link, submenu },
+  item: { title, link, submenu, },
 }: HeaderTabProps): React.ReactElement => (
   <Fragment key={title}>
     {link ? (
@@ -70,7 +70,7 @@ const HeaderTab = ({
     ) : (
       <Popper isOpen padding={20} target={null}>
         <PopperContainer>
-          {submenu?.map(({ subtitle, link: submenuLink, items }) => (
+          {submenu?.map(({ subtitle, link: submenuLink, items, }) => (
             <SubmenuItem key={subtitle}>
               {submenuLink ? (
                 <Link href={submenuLink} passHref key={subtitle}>
@@ -79,7 +79,7 @@ const HeaderTab = ({
               ) : (
                 <>
                   <SubmenuTitle>{subtitle}</SubmenuTitle>
-                  {items?.map(({ title: submenuTitle, link: subLink }) => (
+                  {items?.map(({ title: submenuTitle, link: subLink, }) => (
                     <Link href={subLink} passHref key={submenuTitle}>
                       <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
                     </Link>

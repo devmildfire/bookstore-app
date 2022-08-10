@@ -5,7 +5,7 @@ import { StyledOption } from './styles';
 import { Handler, Option as OptionType, SelectValue } from '../types';
 import useKeyListener from '@/hooks/useKeyListener';
 
-interface OptionProps {
+export interface OptionProps {
   readonly option: OptionType<SelectValue>;
   readonly onSelect: Handler<SelectValue>;
   readonly onUnselect: Handler<SelectValue>;
@@ -43,7 +43,7 @@ const Option: React.FC<OptionProps> = (props) => {
       key={option.value}
       onClick={!option.disabled ? onClick : undefined}
       onMouseEnter={onMouseEnter}
-      className={classNames({ active: isCurrent && !option.disabled })}
+      className={classNames({ active: isCurrent && !option.disabled, })}
       ref={ref}
     >
       <Text variant='h4_1' component='span' textColor='inherit'>

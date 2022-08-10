@@ -5,8 +5,8 @@ import GiftCard from './GiftCard';
 import { StyledList } from './styles';
 
 const GiftsList: React.FC<ClassNameProps> = (props) => {
-  const { className } = props;
-  const { data: gifts = [] } = useGetGiftsQuery(undefined);
+  const { className, } = props;
+  const { data: gifts = [], } = useGetGiftsQuery(undefined);
 
   return (
     <StyledList className={className}>

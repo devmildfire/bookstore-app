@@ -3,7 +3,7 @@ import { ClassNameProps } from '@/types/className';
 import Container from '../Container';
 
 const PreviewContent: React.FC<ClassNameProps> = (props) => {
-  const { children, className } = props;
+  const { children, className, } = props;
 
   return (
     <main>

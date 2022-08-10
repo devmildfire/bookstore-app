@@ -9,23 +9,24 @@ import {
   StyledPlayer,
   StyledShadowElement,
   StyledTextBlock,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Book } from '@/models/books';
+import Scroll from '@/components/Common/Scroll';
 
 type BookPreviewCardProps = Pick<
-    Book,
-    | 'id'
-    | 'title'
-    | 'publishDate'
-    | 'genre'
-    | 'ageRestriction'
-    | 'description'
-    | 'trailerSrc'
-    | 'authors'
-    | 'image'
-  >
+  Book,
+  | 'id'
+  | 'title'
+  | 'publishDate'
+  | 'genre'
+  | 'ageRestriction'
+  | 'description'
+  | 'trailerSrc'
+  | 'authors'
+  | 'image'
+>;
 
 const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
   const {
@@ -59,13 +60,16 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
           <Text variant='h4_1' component='p'>
             {`${dayjs(publishDate).get('year')} | ${genre} | ${ageRestriction}`}
           </Text>
-          <StyledDescription>
-            {description.map((p) => (
-              <Text variant='h4_1' component='p' key={p}>
-                {p}
-              </Text>
-            ))}
-          </StyledDescription>
+          <Scroll>
+            <StyledDescription>
+              {description.map((p) => (
+                <Text variant='h4_1' component='p' key={p}>
+                  {p}
+                </Text>
+              ))}
+            </StyledDescription>
+          </Scroll>
+
           <StyledButton href={`/books/${id}`}>Познать</StyledButton>
         </StyledTextBlock>
       </StyledForwardPlan>

@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef, useState
 } from 'react';
 import { VoidFunction } from '@/types/common';
 
@@ -17,18 +17,18 @@ export interface UsePaginationResult<T> {
 
 const getDefaultValueIndex = <T>(items: T[], defaultValue?: T): number => {
   const potentialDefaultIndex = items.findIndex(
-    (item) => item === defaultValue,
+    (item) => item === defaultValue
   );
   return potentialDefaultIndex > -1 ? potentialDefaultIndex : 0;
 };
 
 const usePagination = <T>(
   items: T[],
-  options: UsePaginationOptions<T> = {},
+  options: UsePaginationOptions<T> = {}
 ): UsePaginationResult<T> => {
-  const { defaultValue, loop } = options;
+  const { defaultValue, loop, } = options;
   const currentIndexRef = useRef<number>(
-    getDefaultValueIndex(items, defaultValue),
+    getDefaultValueIndex(items, defaultValue)
   );
   const maxIndexRef = useRef<number>(items.length - 1);
   const [current, setCurrent] = useState<T>(items[currentIndexRef.current]);
@@ -67,7 +67,7 @@ const usePagination = <T>(
       currentIndexRef.current = index;
       setCurrent(items[index]);
     },
-    [items],
+    [items]
   );
 
   return {

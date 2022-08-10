@@ -1,45 +1,53 @@
 import * as React from 'react';
 import { Modifier, usePopper } from 'react-popper';
+import { Placement } from '@popperjs/core';
+import { ClassNameProps } from '@/types/className';
 import Portal from '../Portal';
 
-export interface PopperProps {
+export interface PopperProps extends ClassNameProps {
   readonly target: HTMLElement | null;
-  readonly isOpen: boolean;
   readonly padding?: number;
+  readonly placement?: Placement;
 }
 
 /** TODO: сделать анимацию */
 const Popper: React.FC<PopperProps> = (props) => {
   const {
-    isOpen, target, children, padding = 0,
+    target,
+    children,
+    className,
+    placement = 'bottom',
+    padding = 0,
   } = props;
 
-  const popperRef = React.useRef(null);
+  const [popperRef, setPopperRef] = React.useState<HTMLElement | null>(null);
 
   const offset = React.useMemo<Modifier<string>>(
     () => ({
       name: 'offset',
       options: {
-        offset: ({ reference, popper }: any) => [
+        offset: ({ reference, popper, }: any) => [
           (popper.width - reference.width) / 2 - padding,
-          0,
+          0
         ],
       },
     }),
-    [padding],
+    [padding]
   );
 
-  const { styles, attributes } = usePopper(target, popperRef.current, {
+  const { styles, attributes, } = usePopper(target, popperRef, {
     modifiers: [offset],
+    placement,
   });
-
-  if (!isOpen) {
-    return null;
-  }
 
   return (
     <Portal>
-      <div ref={popperRef} style={styles.popper} {...attributes.popper}>
+      <div
+        className={className}
+        ref={setPopperRef}
+        style={styles.popper}
+        {...attributes.popper}
+      >
         {children}
       </div>
     </Portal>

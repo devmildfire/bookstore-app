@@ -6,7 +6,7 @@ import {
   StyledFeaturesList,
   StyledImage,
   StyledPriceWrapper,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import Text, { TextProps } from '@/components/Common/Text';
 import Price from '@/components/Common/Price';

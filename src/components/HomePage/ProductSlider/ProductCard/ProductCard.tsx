@@ -5,7 +5,7 @@ import {
   StyledBookName,
   StyledButton,
   StyledImage,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import getAuthorNames from '@/utils/getAuthorNames';
 

@@ -12,7 +12,7 @@ const StyledWrapper = styled.div`
   width: 100%;
   position: relative;
   background-color: var(--main-black);
-  color: var(--main-white);
+  color: var(--main-white-100);
 `;
 
 const Content = styled.div`

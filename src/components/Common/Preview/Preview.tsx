@@ -19,7 +19,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
   const [rootRef, setRootRef] = React.useState<HTMLElement | null>(null);
 
-  useScrollTo(rootRef, { condition: open, timeout: COLLAPSE_DURATION });
+  useScrollTo(rootRef, { condition: open, timeout: COLLAPSE_DURATION, });
 
   return (
     <Collapse

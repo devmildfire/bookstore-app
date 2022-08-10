@@ -4,10 +4,11 @@ import { QueryDefinition } from '@reduxjs/toolkit/dist/query';
 import { ClassNameProps } from '@/types/className';
 import { StyledIntersectingElement, StyledProductsList } from './styles';
 import useInfinityQuery, {
-  UseInfinityQueryOptions,
+  UseInfinityQueryOptions
 } from '@/hooks/useInfinityQuery';
 import { Pagination } from '@/types/api';
 import separateOnRow from '@/utils/separateOnRow';
+import LoadingIndicator from '../Common/LoadingIndicator';
 
 interface ItemRenderProps<T> {
   readonly rows: T[][];
@@ -24,7 +25,7 @@ interface InfinityListProps<T, QP extends Pagination>
 }
 
 const InfinityList = <T, QP extends Pagination>(
-  props: InfinityListProps<T, QP>,
+  props: InfinityListProps<T, QP>
 ): React.ReactElement => {
   const {
     children,
@@ -35,7 +36,12 @@ const InfinityList = <T, QP extends Pagination>(
     rootMargin,
     otherParams,
   } = props;
-  const { data = [], fetchNextPage } = useInfinityQuery({
+  const {
+    data = [],
+    fetchNextPage,
+    isFetching,
+    isLoading,
+  } = useInfinityQuery({
     useQuery,
     startPage,
     otherParams,
@@ -43,8 +49,9 @@ const InfinityList = <T, QP extends Pagination>(
   const ref = React.useRef<HTMLDivElement | null>(null);
   const rows: T[][] = React.useMemo(
     () => separateOnRow(data, inRow),
-    [data, inRow],
+    [data, inRow]
   );
+  const showLoadingIndicator = isLoading || isFetching;
 
   React.useEffect(() => {
     if (ref.current) {
@@ -56,7 +63,7 @@ const InfinityList = <T, QP extends Pagination>(
         },
         {
           rootMargin,
-        },
+        }
       );
       observer.observe(ref.current);
 
@@ -67,7 +74,8 @@ const InfinityList = <T, QP extends Pagination>(
   }, [ref.current, rootMargin]);
   return (
     <StyledProductsList className={className}>
-      {children({ rows })}
+      {children({ rows, })}
+      {showLoadingIndicator && <LoadingIndicator />}
       <StyledIntersectingElement position='bottom' ref={ref} />
     </StyledProductsList>
   );

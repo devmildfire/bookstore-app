@@ -14,7 +14,7 @@ interface SetPreviewProps {
 }
 
 const SetPreview: React.FC<SetPreviewProps> = (props) => {
-  const { sets } = props;
+  const { sets, } = props;
 
   const setId = Number(useGetParam(GET_PARAMS.openProduct));
 

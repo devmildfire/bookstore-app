@@ -53,7 +53,7 @@ const CartIconStyled = styled(CartIcon)`
   width: 14px;
   height: 16px;
 
-  stroke: var(--main-white);
+  stroke: var(--main-white-100);
 
   cursor: pointer;
 

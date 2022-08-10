@@ -35,7 +35,7 @@ const StyledCard = styled.img`
 `;
 
 const PartnerCard = (props: Partner): React.ReactElement => {
-  const { name, photo } = props;
+  const { name, photo, } = props;
 
   return <StyledCard src={photo} alt={name} />;
 };

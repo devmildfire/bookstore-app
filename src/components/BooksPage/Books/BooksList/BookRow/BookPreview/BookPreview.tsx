@@ -13,7 +13,7 @@ interface BookPreviewProps {
 }
 
 const BookPreview: React.FC<BookPreviewProps> = (props) => {
-  const { books } = props;
+  const { books, } = props;
 
   const bookId = Number(useGetParam(GET_PARAMS.openProduct));
 

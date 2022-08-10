@@ -5,7 +5,7 @@ import {
   StyledImageWrapper,
   StyledInfo,
   StyledWrapper,
-  StyledActions,
+  StyledActions
 } from './styles';
 import IconButton from '@/components/Common/IconButton';
 import Text from '@/components/Common/Text';
@@ -16,7 +16,7 @@ import Image from '@/components/Common/Image';
 type GiftCardProps = Gift
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
-  const { price, title, image } = props;
+  const { price, title, image, } = props;
   return (
     <StyledWrapper>
       <StyledImageWrapper>

@@ -14,10 +14,10 @@ const GiftsPage: NextPage = () => (
 );
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(({ dispatch }) => async () => {
+  wrapper.getServerSideProps(({ dispatch, }) => async () => {
     const requests = [
       dispatch(getPopularBooks.initiate(undefined)),
-      dispatch(getGifts.initiate(undefined)),
+      dispatch(getGifts.initiate(undefined))
     ];
 
     await Promise.all(requests);

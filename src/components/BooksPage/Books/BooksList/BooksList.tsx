@@ -21,7 +21,7 @@ const BooksList: React.FC = () => {
         productType,
       }}
     >
-      {({ rows }) =>
+      {({ rows, }) =>
         rows.map((row, i) => (
           <BookRow books={row as Book[]} key={row.length + i} />
         ))}

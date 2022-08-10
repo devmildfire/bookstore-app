@@ -17,14 +17,14 @@ import {
   FooterSocials,
   FooterTitle,
   Icon,
-  StyleWrapper,
+  StyleWrapper
 } from './styles';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>
     <FooterContent>
       <FooterContacts>
-        {contacts.map(({ content, hightLightContent, href }) => (
+        {contacts.map(({ content, hightLightContent, href, }) => (
           <FooterContact component='p' key={href}>
             <a href={href}>
               {content}

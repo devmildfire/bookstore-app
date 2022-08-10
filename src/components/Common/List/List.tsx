@@ -9,7 +9,7 @@ interface ListProps extends ClassNameProps {
 }
 
 const List: React.FC<ListProps> = (props) => {
-  const { children, tag, className } = props;
+  const { children, tag, className, } = props;
   return (
     <StyledList className={className} as={tag}>
       {children}

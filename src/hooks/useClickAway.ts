@@ -1,8 +1,8 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect } from 'react';
 import { VoidFunction } from '@/types/common';
 
 export interface UseClickAwayOptions {
-  readonly elementRef: RefObject<HTMLElement | null>;
+  readonly elementRef: HTMLElement | null;
   readonly onClickAway: VoidFunction;
   readonly condition?: boolean;
 }
@@ -11,10 +11,10 @@ const useClickAway = (options: UseClickAwayOptions): void => {
   const { elementRef, onClickAway, condition = true } = options;
 
   useEffect(() => {
-    if (!elementRef.current || !condition) {
+    if (!elementRef || !condition) {
       return;
     }
-    const element = elementRef.current;
+    const element = elementRef;
 
     const handler = (evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
@@ -28,7 +28,7 @@ const useClickAway = (options: UseClickAwayOptions): void => {
     return () => {
       document.removeEventListener('click', handler);
     };
-  }, [elementRef.current, onClickAway, condition]);
+  }, [elementRef, onClickAway, condition]);
 };
 
 export default useClickAway;

@@ -10,7 +10,7 @@ interface SetsRowProps {
 }
 
 const SetsRow: React.FC<SetsRowProps> = (props) => {
-  const { sets } = props;
+  const { sets, } = props;
 
   return (
     <StyledWrapper>

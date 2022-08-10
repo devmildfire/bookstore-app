@@ -4,7 +4,7 @@ import { useGetAuthorFilterQuery } from '@/models/books';
 import Select, {
   OnChangeValue,
   Option,
-  SelectValue,
+  SelectValue
 } from '@/components/Common/Select';
 import useStateSyncQuery, { GetValueByQuery } from '@/hooks/useStateSyncQuery';
 import { GET_PARAMS } from '@/consts/query';
@@ -20,11 +20,11 @@ const getValueByQuery: GetValueByQuery<
 };
 
 const Author: React.FC<AuthorProps> = (props) => {
-  const { data } = useGetAuthorFilterQuery(undefined);
+  const { data, } = useGetAuthorFilterQuery(undefined);
   const options = React.useMemo<Option<SelectValue>[]>(
     () =>
-      data?.map((author) => ({ label: author.name, value: author.id })) || [],
-    [data],
+      data?.map((author) => ({ label: author.name, value: author.id, })) || [],
+    [data]
   );
   const [value, setValue] = useStateSyncQuery({
     queryName: GET_PARAMS.author,

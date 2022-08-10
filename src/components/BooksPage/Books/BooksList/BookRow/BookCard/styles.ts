@@ -7,7 +7,7 @@ export const StyledWrapper = styled(Link)`
 
   font-size: 16px;
   line-height: 20px;
-  color: var(--main-white);
+  color: var(--main-white-100);
 
   background-color: var(--main-black);
 

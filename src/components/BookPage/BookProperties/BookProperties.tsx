@@ -13,7 +13,7 @@ import {
   StyledTerm,
   StyledDescription,
   StyledReadersList,
-  StyledReadersItem,
+  StyledReadersItem
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Reader, Worker } from '@/models/books';
@@ -76,11 +76,11 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
             <StyledDescription>
               {/* Вынести в отдельный компонент */}
               <StyledReadersList>
-                {readers.map(({ markets, name }) => (
+                {readers.map(({ markets, name, }) => (
                   <StyledReadersItem>
                     {name}
                     : &nbsp;
-                    {markets.map(({ href, name: marketName }) => (
+                    {markets.map(({ href, name: marketName, }) => (
                       <Text component='span' key={href}>
                         <a href={href}>{marketName}</a>
                       </Text>
@@ -96,7 +96,7 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
         <Text component='p'>
           Над изданием работали:
           {workers
-            .map(({ place, fullName }) => `${place} ${fullName}`)
+            .map(({ place, fullName, }) => `${place} ${fullName}`)
             .join(', ')}
         </Text>
       </footer>

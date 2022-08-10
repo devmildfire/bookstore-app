@@ -14,8 +14,8 @@ const BooksPage: NextPage = () => (
 );
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  ({ dispatch }) =>
-    async ({ query }) => {
+  ({ dispatch, }) =>
+    async ({ query, }) => {
       const publishYear = getParam(query, GET_PARAMS.publishYear);
       const productType = getParam<BookType>(query, GET_PARAMS.productType);
       const requests: Promise<unknown>[] = [
@@ -26,7 +26,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
             productType,
           })
         ),
-        dispatch(getPopularBooks.initiate(undefined)),
+        dispatch(getPopularBooks.initiate(undefined))
       ];
       await Promise.all(requests);
 

@@ -12,7 +12,7 @@ export const StyledLike = styled(Like)<StyledLikeProps>`
   height: 22px;
 
   stroke: var(
-    ${(props) => (props.isActive ? '--main-red-100' : '--main-white')}
+    ${(props) => (props.isActive ? '--main-red-100' : '--main-white-100')}
   );
 
   fill: ${(props) => (props.isActive ? 'var(--main-red-100)' : 'transparent')};
@@ -22,7 +22,7 @@ export const StyledLike = styled(Like)<StyledLikeProps>`
   :hover,
   :focus-visible {
     stroke: var(
-      ${(props) => (props.isActive ? '--main-white' : '--main-red-100')}
+      ${(props) => (props.isActive ? '--main-white-100' : '--main-red-100')}
     );
   }
 `;

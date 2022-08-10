@@ -1,7 +1,7 @@
 import styled, {
   css,
   FlattenInterpolation,
-  ThemedStyledProps,
+  ThemedStyledProps
 } from 'styled-components';
 import { Property } from 'csstype';
 import breakPoints from '@/utils/breakPoints';
@@ -15,7 +15,7 @@ const fontFamilies: Record<string, string> = {
 const colors: Record<Color, string> = {
   inherit: 'inherit',
   red: 'var(--main-red-100)',
-  white: 'var(--main-white)',
+  white: 'var(--main-white-100)',
 };
 
 const h1Style = css<StyledTextProps>`

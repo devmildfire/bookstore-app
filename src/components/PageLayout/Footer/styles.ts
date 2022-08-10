@@ -8,7 +8,7 @@ export const StyleWrapper = styled.footer`
   flex-direction: column;
   width: 100%;
   border-top: 1px solid red;
-  color: var(--main-white);
+  color: var(--main-white-100);
 `;
 
 export const FooterContent = styled.div`
@@ -88,7 +88,7 @@ export const FooterSocials = styled.ul`
 `;
 
 export const Icon = styled.svg`
-  fill: var(--main-white);
+  fill: var(--main-white-100);
 
   transition: fill 0.3s ease-in-out;
 

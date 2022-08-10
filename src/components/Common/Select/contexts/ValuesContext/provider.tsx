@@ -6,13 +6,13 @@ import {
   OnChangeValue,
   Option,
   SelectValue,
-  Value,
+  Value
 } from '../../types';
 import {
   ValuesOptions,
   valuesContext,
   valuesHandlersContext,
-  ValuesHandlersOptions,
+  ValuesHandlersOptions
 } from './context';
 
 export interface ValuesProviderProps<
@@ -34,7 +34,7 @@ const defaultValue: Option<SelectValue> = {
 const ValuesContextProvider = <T extends SelectValue, IsMulti extends boolean>(
   props: React.PropsWithChildren<ValuesProviderProps<T, IsMulti>>
 ): React.ReactElement => {
-  const { children, onChange, isMulti, options, value } = props;
+  const { children, onChange, isMulti, options, value, } = props;
 
   const initialValue: Option<SelectValue>[] = value
     ? Array.isArray(value)
@@ -65,7 +65,7 @@ const ValuesContextProvider = <T extends SelectValue, IsMulti extends boolean>(
     selectedValue: value ? initialValue : selectedValue,
     isMulti,
     values: options.length ? options : [defaultValue],
-    hasValue: !!value,
+    hasValue: Array.isArray(value) ? !!value.length : !!value,
   };
 
   const provideHandlers: ValuesHandlersOptions = {

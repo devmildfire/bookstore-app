@@ -5,7 +5,7 @@ import { StyledLike, StyledLikeProps } from './styles';
 interface LikeProps extends ClassNameProps, Partial<StyledLikeProps> {}
 
 const Like: React.FC<LikeProps> = (props) => {
-  const { className, isActive = false } = props;
+  const { className, isActive = false, } = props;
   return <StyledLike className={className} isActive={isActive} />;
 };
 

@@ -11,6 +11,7 @@ interface IconButtonProps
   readonly onClick?: VoidFunction;
   readonly href?: string;
   readonly scroll?: boolean;
+  readonly shallow?: boolean;
 }
 
 const IconButton = React.forwardRef<
@@ -23,19 +24,20 @@ const IconButton = React.forwardRef<
     onClick,
     className,
     scroll,
+    shallow,
     size = 'medium',
     ...rest
   } = props;
   if (href) {
     return (
-      <Link href={href} scroll={scroll} passHref>
+      <Link href={href} scroll={scroll} shallow={shallow} passHref>
         <StyledButton
           className={className}
           as='a'
           href='fakeHref'
           size={size}
           ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-          {...rest as any}
+          {...(rest as any)}
         >
           {children}
         </StyledButton>

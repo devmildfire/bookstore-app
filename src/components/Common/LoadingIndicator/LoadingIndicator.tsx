@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
+import { StyledLoading, StyledWrapper } from './styles';
 
-interface LoadingIndicatorProps extends ClassNameProps {
-  readonly isLoading: boolean;
-}
+type LoadingIndicatorProps = ClassNameProps
 
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = (props) => {
-  console.log(props);
-  return null;
+  return (
+    <StyledWrapper {...props}>
+      <StyledLoading />
+    </StyledWrapper>
+  );
 };
 
 export default React.memo(LoadingIndicator);

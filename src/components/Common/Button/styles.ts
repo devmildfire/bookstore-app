@@ -19,8 +19,8 @@ const styles: Record<Variant, FlattenSimpleInterpolation> = {
 };
 
 export const StyledButton = styled.button<StyledButtonProps>`
-  --button-border-color: var(--main-white);
-  --button-text-color: var(--main-white);
+  --button-border-color: var(--main-white-100);
+  --button-text-color: var(--main-white-100);
   --button-bg-color: transparent;
 
   display: inline-flex;
@@ -43,12 +43,12 @@ export const StyledButton = styled.button<StyledButtonProps>`
 
   &:focus-visible {
     --button-text-color: var(--main-black);
-    --button-border-color: var(--main-white);
-    --button-bg-color: var(--main-white);
+    --button-border-color: var(--main-white-100);
+    --button-bg-color: var(--main-white-100);
   }
 
   &:hover {
-    --button-text-color: var(--main-white);
+    --button-text-color: var(--main-white-100);
     --button-border-color: var(--main-red-100);
     --button-bg-color: var(--main-red-100);
   }

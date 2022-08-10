@@ -8,7 +8,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import '@/styles/globals.css';
 
-const MyApp = ({ Component, pageProps }: AppProps): React.ReactElement => (
+const MyApp = ({ Component, pageProps, }: AppProps): React.ReactElement => (
   <DeviceInfoProvider>
     <PageLayout>
       <Component {...pageProps} />

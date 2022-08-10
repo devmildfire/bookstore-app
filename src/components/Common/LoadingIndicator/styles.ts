@@ -7,3 +7,28 @@ export const StyledWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+export const StyledLoading = styled.div`
+  width: 90px;
+  height: 90px;
+
+  border: 7px dotted var(--main-white-100);
+  border-bottom-color: var(--main-white-10);
+  border-right-color: var(--main-white-50);
+  border-left-color: var(--main-white-50);
+  border-radius: 50%;
+
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  @keyframes spin {
+    from {
+      transform: rotate(15deg);
+    }
+    to {
+      transform: rotate(375deg);
+    }
+  }
+`;

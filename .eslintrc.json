@@ -35,7 +35,7 @@
     "comma-dangle": [
       "warn",
       {
-        "arrays": "always",
+        "arrays": "never",
         "objects": "always",
         "imports": "never",
         "exports": "never",

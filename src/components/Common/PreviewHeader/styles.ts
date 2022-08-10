@@ -29,7 +29,7 @@ export const StyledCrossIcon = styled(CrossIcon)`
   width: 100%;
   height: 100%;
 
-  fill: var(--main-white);
+  fill: var(--main-white-100);
 
   &:focus-visible,
   &:hover {

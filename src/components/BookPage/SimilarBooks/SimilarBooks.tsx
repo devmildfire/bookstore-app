@@ -4,13 +4,13 @@ import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import {
-  Banner, BookItem, BooksList, Title,
+  Banner, BookItem, BooksList, Title
 } from './styles';
 import { useGetBooksQuery } from '@/models/books';
 
 const SimilarBooks = (): React.ReactElement => {
-  const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
-  const { data: books = [] } = useGetBooksQuery({ count: 5 });
+  const { isTabletVertical, isMobile, } = useContext(DeviceInfoContext);
+  const { data: books = [], } = useGetBooksQuery({ count: 5, });
   const isSlider = isTabletVertical || isMobile;
 
   return (

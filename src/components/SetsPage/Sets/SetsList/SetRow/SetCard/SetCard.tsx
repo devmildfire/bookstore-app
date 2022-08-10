@@ -4,7 +4,7 @@ import {
   StyledActions,
   StyledDescription,
   StyledInfo,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import Text from '@/components/Common/Text';
 import Price from '@/components/Common/Price';

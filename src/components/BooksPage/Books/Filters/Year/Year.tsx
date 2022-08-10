@@ -3,7 +3,7 @@ import { ClassNameProps } from '@/types/className';
 import Select, {
   OnChangeValue,
   Option,
-  SelectValue,
+  SelectValue
 } from '@/components/Common/Select';
 import { GET_PARAMS } from '@/consts/query';
 import useStateSyncQuery, { GetValueByQuery } from '@/hooks/useStateSyncQuery';
@@ -20,10 +20,10 @@ const getValueByQuery: GetValueByQuery<
 };
 
 const Year: React.FC<YearProps> = (props) => {
-  const { data } = useGetYearFilterQuery(undefined);
+  const { data, } = useGetYearFilterQuery(undefined);
   const options = React.useMemo<Option<SelectValue>[]>(
-    () => data?.map((year) => ({ label: year, value: year })) || [],
-    [data],
+    () => data?.map((year) => ({ label: year, value: year, })) || [],
+    [data]
   );
   const [value, setValue] = useStateSyncQuery({
     queryName: GET_PARAMS.publishYear,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  AnimatePresence, motion, Transition, Variants,
+  AnimatePresence, motion, Transition, Variants
 } from 'framer-motion';
 import { COLLAPSE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
@@ -30,12 +30,12 @@ const Collapse: React.FC<CollapseProps> = (props) => {
     exitTimeout = 0,
     duration = COLLAPSE_DURATION,
   } = props;
-  const isMount = useMountDelay({ open, enterTimeout, exitTimeout });
+  const isMount = useMountDelay({ open, enterTimeout, exitTimeout, });
   const transition = React.useMemo<Transition>(
     () => ({
       duration: duration / 1000,
     }),
-    [duration],
+    [duration]
   );
 
   if (!isMount) {

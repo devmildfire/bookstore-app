@@ -6,7 +6,7 @@ import { StyledSlider } from './styles';
 import { useGetPopularBooksQuery } from '@/models/books';
 
 const ProductSlider = () => {
-  const { data: books = [] } = useGetPopularBooksQuery(undefined);
+  const { data: books = [], } = useGetPopularBooksQuery(undefined);
   return (
     <Container>
       <StyledSlider>

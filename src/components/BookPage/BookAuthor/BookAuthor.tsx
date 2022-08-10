@@ -15,7 +15,7 @@ import {
   Quotes,
   RedQuote,
   StyleWrapper,
-  Title,
+  Title
 } from './styles';
 
 interface BookAuthorProps {
@@ -24,7 +24,7 @@ interface BookAuthorProps {
 }
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
-  const { authors } = props;
+  const { authors, } = props;
   return (
     <StyleWrapper>
       <Title>Об авторе</Title>
@@ -35,8 +35,8 @@ const BookAuthor = (props: BookAuthorProps): ReactElement => {
         />
         <AuthorDescr>
           <AuthorProps>
-            {authors.map(({ name }) => (
-              <span>{`${{ name }} `}</span>
+            {authors.map(({ name, }) => (
+              <span>{`${{ name, }} `}</span>
             ))}
             <span>| Аскер | 24.03.1984</span>
           </AuthorProps>

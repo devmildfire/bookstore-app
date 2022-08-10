@@ -25,11 +25,11 @@ const navigationItems: NavItem[] = [
   {
     label: 'ЧУДЕСА ПОДПИСКИ',
     path: '/subscription',
-  },
+  }
 ];
 
 const Navigation: React.FC<ClassNameProps> = (props) => {
-  const { className } = props;
+  const { className, } = props;
   return (
     <Container className={className}>
       <StyledList>

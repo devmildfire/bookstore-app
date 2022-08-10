@@ -51,8 +51,8 @@ export const Slider: FC<SliderProps> = (props) => {
       withoutTouch,
       withoutSwipe,
       withoutLoop,
-      withoutAutoplay,
-    ],
+      withoutAutoplay
+    ]
   );
   return (
     <StyledWrapper>

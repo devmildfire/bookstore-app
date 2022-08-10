@@ -5,7 +5,7 @@ import {
   StyledWrapper,
   StyledImage,
   StyledInfo,
-  StyledActions,
+  StyledActions
 } from './styles';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
@@ -34,7 +34,7 @@ const BookCard: React.FC<BookCardProps> = (props) => {
   });
   /* TODO вынести определение открытой книги на уровень листа или строки */
   const openBook = Number(useGetParam(GET_PARAMS.openProduct));
-  const classes = classNames({ active: openBook === id });
+  const classes = classNames({ active: openBook === id, });
 
   return (
     <StyledWrapper className={classes} href={path} scroll={false} shallow>

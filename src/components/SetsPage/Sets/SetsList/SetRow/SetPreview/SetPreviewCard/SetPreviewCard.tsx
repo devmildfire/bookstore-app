@@ -6,7 +6,7 @@ import { StyledList, StyledWrapper } from './styles';
 type SetPreviewCardProps = BoxSet
 
 const SetPreviewCard: React.FC<SetPreviewCardProps> = (props) => {
-  const { books } = props;
+  const { books, } = props;
   return (
     <StyledWrapper>
       <StyledList>

@@ -14,11 +14,11 @@ const SubscriptionPage: NextPage = () => (
 );
 
 export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch }) =>
+  ({ dispatch, }) =>
     async () => {
       const requests:Promise<unknown>[] = [
         dispatch(getPopularBooks.initiate(undefined)),
-        dispatch(getSubscriptions.initiate(undefined)),
+        dispatch(getSubscriptions.initiate(undefined))
       ];
 
       await Promise.all(requests);
@@ -26,7 +26,7 @@ export const getStaticProps = wrapper.getStaticProps(
         props: {},
         revalidate: 5000,
       };
-    },
+    }
 );
 
 export default SubscriptionPage;

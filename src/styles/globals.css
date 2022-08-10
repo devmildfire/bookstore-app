@@ -13,7 +13,17 @@
   --main-red-20: rgba(147, 0, 0, 0.2);
   --main-red-10: rgba(147, 0, 0, 0.1);
 
-  --main-white: #dcdcdc;
+  --main-white-100: rgba(220, 220, 220, 1);
+  --main-white-90: rgba(220, 220, 220, 0.9);
+  --main-white-80: rgba(220, 220, 220, 0.8);
+  --main-white-70: rgba(220, 220, 220, 0.7);
+  --main-white-60: rgba(220, 220, 220, 0.6);
+  --main-white-50: rgba(220, 220, 220, 0.5);
+  --main-white-40: rgba(220, 220, 220, 0.4);
+  --main-white-30: rgba(220, 220, 220, 0.3);
+  --main-white-20: rgba(220, 220, 220, 0.2);
+  --main-white-10: rgba(220, 220, 220, 0.1);
+
   --main-black: #121212;
   --key: #000000;
   --grey: #c4c4c4;

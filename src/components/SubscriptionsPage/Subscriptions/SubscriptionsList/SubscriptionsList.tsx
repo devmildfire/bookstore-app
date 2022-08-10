@@ -4,7 +4,7 @@ import { StyledList } from './styles';
 import SubscriptionCard from './SubscriptionCard';
 
 const SubscriptionsList: React.FC = () => {
-  const { data: subscriptions = [] } = useGetSubscriptionsQuery(undefined);
+  const { data: subscriptions = [], } = useGetSubscriptionsQuery(undefined);
   return (
     <StyledList>
       {subscriptions.map((subscription) => (

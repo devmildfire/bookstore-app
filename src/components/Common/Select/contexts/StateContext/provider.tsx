@@ -1,11 +1,30 @@
 import * as React from 'react';
-import Context, { StateContextOptions } from './context';
+import {
+  StateContextOptions,
+  StateHandlersContextOptions,
+  stateContext,
+  stateHandlersContext
+} from './context';
 
-type StateProviderProps = StateContextOptions
+interface StateProviderProps
+  extends StateContextOptions,
+    StateHandlersContextOptions {}
 
 const StateProvider: React.FC<StateProviderProps> = (props) => {
-  const { children, ...value } = props;
-  return <Context.Provider value={value}>{children}</Context.Provider>;
+  const { children, isOpen, isLoading, root, onClose, onOpen, } = props;
+  return (
+    <stateContext.Provider
+      value={{
+        isOpen,
+        isLoading,
+        root,
+      }}
+    >
+      <stateHandlersContext.Provider value={{ onClose, onOpen, }}>
+        {children}
+      </stateHandlersContext.Provider>
+    </stateContext.Provider>
+  );
 };
 
 export default StateProvider;

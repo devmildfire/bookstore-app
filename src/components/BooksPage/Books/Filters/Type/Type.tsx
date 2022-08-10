@@ -4,7 +4,7 @@ import { useGetTypeFilterQuery } from '@/models/books';
 import Select, {
   OnChangeValue,
   Option,
-  SelectValue,
+  SelectValue
 } from '@/components/Common/Select';
 import useStateSyncQuery, { GetValueByQuery } from '@/hooks/useStateSyncQuery';
 import { GET_PARAMS } from '@/consts/query';
@@ -20,10 +20,10 @@ const getValueByQuery: GetValueByQuery<
 };
 
 const Type: React.FC<TypeProps> = (props) => {
-  const { data } = useGetTypeFilterQuery(undefined);
+  const { data, } = useGetTypeFilterQuery(undefined);
   const options = React.useMemo<Option<SelectValue>[]>(
-    () => data?.map((year) => ({ label: year, value: year })) || [],
-    [data],
+    () => data?.map((year) => ({ label: year, value: year, })) || [],
+    [data]
   );
   const [value, setValue] = useStateSyncQuery({
     queryName: GET_PARAMS.productType,

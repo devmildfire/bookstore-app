@@ -5,7 +5,7 @@ import ProductSlider from './ProductSlider';
 import {
   StyledContentWrapper,
   StyledNavigation,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 
 interface HonePageProps {
@@ -13,7 +13,7 @@ interface HonePageProps {
 }
 
 const HomePage: React.FC<HonePageProps> = (props) => {
-  const { children, title } = props;
+  const { children, title, } = props;
   return (
     <StyledWrapper>
       <ProductSlider />

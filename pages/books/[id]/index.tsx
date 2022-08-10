@@ -17,7 +17,7 @@ interface BookPageProps {
 }
 
 const BookPage = (props: BookPageProps): React.ReactElement => {
-  const { book } = props;
+  const { book, } = props;
 
   return (
     <main>
@@ -36,10 +36,10 @@ const BookPage = (props: BookPageProps): React.ReactElement => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
-  ({ dispatch }) =>
-    async ({ query }) => {
-      const { id } = query;
-      const { data: book } = await dispatch(getBook.initiate(id as string));
+  ({ dispatch, }) =>
+    async ({ query, }) => {
+      const { id, } = query;
+      const { data: book, } = await dispatch(getBook.initiate(id as string));
 
       if (!book) {
         return {
@@ -52,7 +52,7 @@ export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
           book,
         },
       };
-    },
+    }
 );
 
 const StyleWrapper = styled(Container)`

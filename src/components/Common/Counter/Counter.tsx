@@ -10,7 +10,7 @@ export interface CounterProps extends ClassNameProps {
   readonly decrement: () => void;
 }
 
-const Counter = ({ increment, decrement, value }: CounterProps) => (
+const Counter = ({ increment, decrement, value, }: CounterProps) => (
   <StyledWrapper>
     <Button onClick={decrement}>-</Button>
     <Text className='dropDownValue'>{value}</Text>

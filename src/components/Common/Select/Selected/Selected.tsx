@@ -4,13 +4,13 @@ import { Handler, Option, SelectValue } from '../types';
 import { StyledCross, StyledWrapper } from './styles';
 import IconButton from '@/components/Common/IconButton';
 
-interface SelectedProps {
+export interface SelectedProps {
   readonly value: Option<SelectValue>;
   readonly onDelete: Handler<SelectValue>;
 }
 
 const Selected: React.FC<SelectedProps> = (props) => {
-  const { value, onDelete } = props;
+  const { value, onDelete, } = props;
 
   const onClick = React.useCallback(() => onDelete(value), [value, onDelete]);
 

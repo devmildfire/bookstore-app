@@ -6,7 +6,7 @@ import {
   StyledInfo,
   StyledThesis,
   StyledTitle,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';

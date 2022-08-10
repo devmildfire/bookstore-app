@@ -47,6 +47,5 @@ export default function handler(
 
     return isValid;
   });
-
   res.status(200).json(books);
 }

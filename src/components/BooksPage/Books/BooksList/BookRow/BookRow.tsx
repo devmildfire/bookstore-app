@@ -10,7 +10,7 @@ interface BookRowProps {
 }
 
 const BookRow: React.FC<BookRowProps> = (props) => {
-  const { books } = props;
+  const { books, } = props;
   return (
     <StyledRowWrapper>
       <Container>

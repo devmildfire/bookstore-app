@@ -6,7 +6,7 @@ import {
   StyledMainText,
   StyledRD,
   StyledSecondaryText,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 
 const RD = (): React.ReactElement => (

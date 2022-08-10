@@ -7,7 +7,7 @@ type NavLinkProps = LinkProps
 
 const NavLink: FC<NavLinkProps> = (props) => {
   const { href, ...linkProps } = props;
-  const { asPath } = useRouter();
+  const { asPath, } = useRouter();
   const isActive = asPath.includes(href);
 
   return <StyledNavLink href={href} isActive={isActive} {...linkProps} />;
