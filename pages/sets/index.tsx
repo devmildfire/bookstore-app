@@ -1,16 +1,16 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
 import type { NextPage } from 'next';
-import HomePage from '@/components/HomePage';
+import HomeLayout from '@/layouts/HomeLayout';
 import { getBoxSets } from '@/models/boxSets';
 import { wrapper } from '@/models';
 import Sets from '@/components/SetsPage/Sets';
 import { getPopularBooks } from '@/models/books';
 
 const SetsPage: NextPage = () => (
-  <HomePage title='БОКС-СЕТЫ'>
+  <HomeLayout title='БОКС-СЕТЫ'>
     <Sets />
-  </HomePage>
+  </HomeLayout>
 );
 
 export const getStaticProps = wrapper.getStaticProps(
@@ -24,7 +24,7 @@ export const getStaticProps = wrapper.getStaticProps(
       await Promise.all(requests);
       return {
         props: {},
-        revalidate: 5000,
+        revalidate: 1,
       };
     }
 );

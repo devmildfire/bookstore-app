@@ -1,7 +1,7 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
 import type { NextPage } from 'next';
-import HomePage from '@/components/HomePage';
+import HomePage from '@/layouts/HomeLayout';
 import { wrapper } from '@/models';
 import { getPopularBooks } from '@/models/books';
 import { getSubscriptions } from '@/models/subscriptions';
@@ -24,7 +24,7 @@ export const getStaticProps = wrapper.getStaticProps(
       await Promise.all(requests);
       return {
         props: {},
-        revalidate: 5000,
+        revalidate: 1,
       };
     }
 );

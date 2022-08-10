@@ -1,6 +1,6 @@
 import React from 'react';
 import type { NextPage } from 'next';
-import HomePage from '@/components/HomePage';
+import HomeLayout from '@/layouts/HomeLayout';
 import Books from '@/components/BooksPage/Books';
 import { wrapper } from '@/models';
 import { BookType, getBooks, getPopularBooks } from '@/models/books';
@@ -8,9 +8,9 @@ import { GET_PARAMS } from '@/consts/query';
 import getParam from '@/utils/getParam';
 
 const BooksPage: NextPage = () => (
-  <HomePage title='Издания'>
+  <HomeLayout title='Издания'>
     <Books />
-  </HomePage>
+  </HomeLayout>
 );
 
 export const getServerSideProps = wrapper.getServerSideProps(

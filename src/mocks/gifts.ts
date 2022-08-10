@@ -13,7 +13,7 @@ const gifts: Gift[] = [
   },
   {
     id: 3,
-    price: 5000,
+    price: 1,
     title: 'ТРАНСЦЕНДЕНТ',
   },
 ];

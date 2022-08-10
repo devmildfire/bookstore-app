@@ -1,16 +1,16 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
-import HomePage from '@/components/HomePage';
+import HomeLayout from '@/layouts/HomeLayout';
 import { wrapper } from '@/models';
 import { getGifts } from '@/models/gifts';
 import Gifts from '@/components/GiftsPage/Gifts';
 import { getPopularBooks } from '@/models/books';
 
 const GiftsPage: NextPage = () => (
-  <HomePage title='Карты даров'>
+  <HomeLayout title='Карты даров'>
     <Gifts />
-  </HomePage>
+  </HomeLayout>
 );
 
 export const getServerSideProps: GetServerSideProps =

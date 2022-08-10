@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Navigation from './Navigation';
+import Navigation from '@/components/Navigation';
 
 export const StyledWrapper = styled.main`
   display: grid;
