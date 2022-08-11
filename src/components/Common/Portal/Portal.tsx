@@ -5,7 +5,7 @@ const Portal: React.FC = (props) => {
   const { children, } = props;
   const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     const wrapper = document.createElement('div');
     document.body.append(wrapper);
     setContainer(wrapper);

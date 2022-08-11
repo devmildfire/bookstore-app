@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import setQueryParams from '@/utils/setQueryParams';
 import useEvent from '@/hooks/useEvent';
 
@@ -32,7 +32,7 @@ const useStateSyncQuery = <T, R = T>(
   const { [queryName]: value = '' } = query;
   const [state, setState] = useState<R>(() => getValueByQuery(values, (value as string).split(',')));
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     /* Синхронное установка текущего состояния, если был SSG */
     if (isReady) {
       const currentValue = getValueByQuery(

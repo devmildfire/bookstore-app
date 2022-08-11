@@ -71,7 +71,7 @@ body {
   min-height: 100%;
 }
 
-.popup_open {
+.scroll-lock {
   overflow: hidden;
 }
 

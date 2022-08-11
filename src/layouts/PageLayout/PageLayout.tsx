@@ -6,7 +6,6 @@ import { StyledContent, StyledWrapper } from './styles';
 import Popups from '@/components/Popups';
 
 export interface PageLayoutProps {
-  readonly children: React.ReactElement;
   readonly headTitle?: string;
 }
 

@@ -7,5 +7,5 @@ export const StyledWrapper = styled.div`
 `;
 
 export const StyledRow = styled(Row)`
-  gap: 30px;
+  justify-content: space-between;
 `;

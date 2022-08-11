@@ -5,7 +5,7 @@ import Portal from '../Portal';
 import { VoidFunction } from '@/types/common';
 
 interface OverlayProps extends ClassNameProps {
-  readonly onClose: VoidFunction;
+  readonly onClose?: VoidFunction;
 }
 
 const Overlay: React.FC<OverlayProps> = (props) => {

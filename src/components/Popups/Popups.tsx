@@ -3,6 +3,7 @@ import { POPUPS } from '@/consts/popups';
 import { BasePopupProps } from '@/types/popups';
 import usePopups from './hooks/usePopups';
 import AddBasketBookPopup from './AddBasketBookPopup';
+import useScrollLock from '@/hooks/useScrollLock';
 
 const popupsMap: Record<string, React.ComponentType<BasePopupProps>> = {
   [POPUPS.addBasketBook]: AddBasketBookPopup,
@@ -12,14 +13,7 @@ const Popups: React.FC = () => {
   const { mountedPopups, popups, } = usePopups();
 
   const popupsCount = mountedPopups.length;
-  React.useEffect(() => {
-    if (popupsCount) {
-      document.body.classList.add('popup_open');
-    }
-    return () => {
-      document.body.classList.remove('popup_open');
-    };
-  }, [popupsCount]);
+  useScrollLock(!!popupsCount);
 
   return (
     <React.Fragment key='unique'>
