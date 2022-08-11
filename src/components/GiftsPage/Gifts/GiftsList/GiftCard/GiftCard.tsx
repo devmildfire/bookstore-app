@@ -5,32 +5,45 @@ import {
   StyledInfo,
   StyledWrapper,
   StyledActions,
+  StyledIconButton,
 } from './styles';
-import IconButton from '@/components/Common/IconButton';
-import Text from '@/components/Common/Text';
+import Text, { TextProps } from '@/components/Common/Text';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import Image from '@/components/Common/Image';
 import { ClassNameProps } from '@/types/className';
+import Price from '@/components/Common/Price';
 
-interface GiftCardProps extends Pick<Gift, 'title' | 'image'>, ClassNameProps {}
+interface GiftCardProps
+  extends Pick<Gift, 'title' | 'image' | 'price' | 'newPrice'>,
+    ClassNameProps {}
+
+const modifierProps: TextProps<'span'> = {
+  variant: 'h3_2',
+};
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
-  const { title, image, className } = props;
+  const { title, image, className, price, newPrice } = props;
   return (
     <StyledWrapper className={className}>
+      <Text variant='h3_2'>{title}</Text>
       <StyledImageWrapper className='lighted'>
         <Image src={image} title={title} />
       </StyledImageWrapper>
       <StyledInfo>
-        <Text>{title}</Text>
+        <Price
+          price={price}
+          newPrice={newPrice}
+          oldPriceTextProps={modifierProps}
+          priceTextProps={modifierProps}
+        />
         <StyledActions>
-          <IconButton>
+          <StyledIconButton>
             <Cart />
-          </IconButton>
-          <IconButton>
+          </StyledIconButton>
+          <StyledIconButton>
             <Like />
-          </IconButton>
+          </StyledIconButton>
         </StyledActions>
       </StyledInfo>
     </StyledWrapper>
