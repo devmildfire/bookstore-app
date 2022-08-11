@@ -12,11 +12,14 @@ export interface SelectedProps {
 const Selected: React.FC<SelectedProps> = (props) => {
   const { value, onDelete, } = props;
 
-  const onClick = React.useCallback(() => onDelete(value), [value, onDelete]);
+  const onClick = React.useCallback(() => {
+    console.log('delete');
+    onDelete(value);
+  }, [value, onDelete]);
 
   return (
     <StyledWrapper>
-      <Text variant='h4_1' component='span'>
+      <Text variant='h4_2' component='span'>
         {value.label}
       </Text>
       <IconButton size='small' onClick={onClick}>

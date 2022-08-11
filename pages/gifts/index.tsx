@@ -1,6 +1,6 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import HomeLayout from '@/layouts/HomeLayout';
 import { wrapper } from '@/models';
 import { getGifts } from '@/models/gifts';
@@ -13,17 +13,20 @@ const GiftsPage: NextPage = () => (
   </HomeLayout>
 );
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(({ dispatch, }) => async () => {
-    const requests = [
-      dispatch(getPopularBooks.initiate(undefined)),
-      dispatch(getGifts.initiate(undefined))
-    ];
+export const getStaticProps = wrapper.getStaticProps(
+  ({ dispatch, }) =>
+    async () => {
+      const requests = [
+        dispatch(getPopularBooks.initiate(undefined)),
+        dispatch(getGifts.initiate(undefined))
+      ];
 
-    await Promise.all(requests);
-    return {
-      props: {},
-    };
-  });
+      await Promise.all(requests);
+      return {
+        props: {},
+        revalidate: 1,
+      };
+    }
+);
 
 export default GiftsPage;

@@ -68,7 +68,7 @@ const HeaderTab = ({
         <StyledLink href='fakeHref'>{title}</StyledLink>
       </Link>
     ) : (
-      <Popper isOpen padding={20} target={null}>
+      <Popper padding={20} target={null}>
         <PopperContainer>
           {submenu?.map(({ subtitle, link: submenuLink, items, }) => (
             <SubmenuItem key={subtitle}>

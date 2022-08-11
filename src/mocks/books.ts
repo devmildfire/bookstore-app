@@ -73,7 +73,7 @@ const publishDate = [
   '2017.01.01',
 ];
 
-const types: BookType[] = ['audio', 'digital', 'write'];
+const types: BookType[] = ['audio', 'digital', 'write', 'book2'];
 
 const book: Book = {
   id: 2,

@@ -32,7 +32,6 @@ const Filter: React.FC<FilterProps> = (props) => {
   const [value, setValue] = useStateSyncQuery({
     queryName,
     values: options,
-    shallow: false,
     getValueByQuery,
     getValueToQuery,
   });

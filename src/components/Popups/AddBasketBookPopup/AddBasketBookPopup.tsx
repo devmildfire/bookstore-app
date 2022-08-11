@@ -9,25 +9,35 @@ import LoadingIndicator from '@/components/Common/LoadingIndicator';
 import getAuthorNames from '@/utils/getAuthorNames';
 import useClosePopup from '@/hooks/useClosePopup';
 import { POPUPS } from '@/consts/popups';
+import PopupHeader from '@/components/Common/PopupHeader';
+import PopupContent from '@/components/Common/PopupContent';
+import BookInfo from './BookInfo';
 
 interface AddBasketBookPopupProps extends ClassNameProps, BasePopupProps {}
 
 const AddBasketBookPopup: React.FC<AddBasketBookPopupProps> = (props) => {
   const bookId = Number(useGetParam(GET_PARAMS.bookId));
-  const { data: book, isLoading, } = useGetBookQuery(bookId);
+  const { data: book, isLoading, isFetching, } = useGetBookQuery(bookId);
   const onClose = useClosePopup(POPUPS.addBasketBook);
   const hasBook = book && bookId;
   if (!hasBook) {
     return null;
   }
+  const { title, authors, } = book;
+  const subtitle = getAuthorNames(authors);
+  const showLoading = isLoading || isFetching;
   return (
-    <MainPopup
-      {...props}
-      onClose={onClose}
-      title={book.title}
-      subtitle={getAuthorNames(book.authors)}
-    >
-      {isLoading ? <LoadingIndicator /> : null}
+    <MainPopup {...props} onClose={onClose}>
+      {showLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <PopupHeader title={title} subtitle={subtitle} />
+          <PopupContent>
+            <BookInfo {...book} />
+          </PopupContent>
+        </>
+      )}
     </MainPopup>
   );
 };

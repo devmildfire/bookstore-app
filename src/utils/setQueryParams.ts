@@ -41,8 +41,11 @@ const setQueryParams = (
     if (additionValue.length) {
       newValue.push(...additionValue);
     }
-
-    newQuery.set(key, newValue.toString());
+    if (newValue.length) {
+      newQuery.set(key, newValue.toString());
+    } else {
+      newQuery.delete(key);
+    }
   });
 };
 

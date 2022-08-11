@@ -21,7 +21,10 @@ const usePopups = (): UsePopupsResult => {
     );
   }, [rawPopups]);
 
-  const popups = useMemo(() => parseGetParams<PopupKeys>(rawPopups), [rawPopups]);
+  const popups = useMemo(
+    () => parseGetParams<PopupKeys>(rawPopups),
+    [rawPopups]
+  );
 
   return {
     mountedPopups,

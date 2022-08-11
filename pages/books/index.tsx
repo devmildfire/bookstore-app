@@ -3,9 +3,7 @@ import type { NextPage } from 'next';
 import HomeLayout from '@/layouts/HomeLayout';
 import Books from '@/components/BooksPage/Books';
 import { wrapper } from '@/models';
-import { BookType, getBooks, getPopularBooks } from '@/models/books';
-import { GET_PARAMS } from '@/consts/query';
-import getParam from '@/utils/getParam';
+import { getBooks, getPopularBooks } from '@/models/books';
 
 const BooksPage: NextPage = () => (
   <HomeLayout title='Издания'>
@@ -13,17 +11,15 @@ const BooksPage: NextPage = () => (
   </HomeLayout>
 );
 
-export const getServerSideProps = wrapper.getServerSideProps(
+export const getStaticProps = wrapper.getStaticProps(
   ({ dispatch, }) =>
-    async ({ query, }) => {
-      const publishYear = getParam(query, GET_PARAMS.publishYear);
-      const productType = getParam<BookType>(query, GET_PARAMS.productType);
+    async () => {
       const requests: Promise<unknown>[] = [
         dispatch(
           getBooks.initiate({
             page: 1,
-            publishYear,
-            productType,
+            productType: [],
+            publishYear: [],
           })
         ),
         dispatch(getPopularBooks.initiate(undefined))
@@ -32,6 +28,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
       return {
         props: {},
+        revalidate: 1,
       };
     }
 );
