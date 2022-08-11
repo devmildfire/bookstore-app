@@ -13,8 +13,9 @@ const useScrollLock = (
     }
     if (condition) {
       element.classList.add('scroll-lock');
-    } else {
-      element.classList.remove('scroll-lock');
+      return () => {
+        element!.classList.remove('scroll-lock');
+      };
     }
   }, [condition, element]);
 };
