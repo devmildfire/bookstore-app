@@ -8,7 +8,7 @@ export const StyledWrapper = styled.div`
 `;
 
 export const StyledPagination = styled.div`
-  --size: 14px;
+  --size: 6px;
 
   display: flex;
   justify-content: center;
@@ -28,17 +28,15 @@ export const StyledPagination = styled.div`
     transition: transform ease-in 0.15s;
     transform-origin: center;
   }
-
+  .swiper-pagination-bullet-active,
   .swiper-pagination-bullet:hover,
   .swiper-pagination-bullet:focus-visible {
-    transform: scale(1.1);
+    transform: scale(1.9);
   }
 
   .swiper-pagination-bullet-active {
     color: #fff;
     background-color: #930000;
-
-    transform: scale(1.2);
   }
 
   @media ${breakPoints.sm} {

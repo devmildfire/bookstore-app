@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import Digital from '@/assets/icons/digital.svg';
+import Icon from '../Icon';
 
-export const StyledDigital = styled(Digital)`
+export const StyledIcon = styled(Icon)`
   width: 85px;
   heigh: 85px;
-
-  stroke: currentColor;
 `;

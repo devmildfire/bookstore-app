@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledCart } from './styles';
+import CartIcon from '@/assets/icons/shop-cart.svg';
+import { StyledIcon } from './styles';
 
-type CartProps = ClassNameProps
-
-const Cart: React.FC<CartProps> = (props) => {
-  const { className, } = props;
-  return <StyledCart className={className} />;
+const Cart: React.FC<ClassNameProps> = (props) => {
+  return (
+    <StyledIcon {...props}>
+      <CartIcon />
+    </StyledIcon>
+  );
 };
 
 export default React.memo(Cart);

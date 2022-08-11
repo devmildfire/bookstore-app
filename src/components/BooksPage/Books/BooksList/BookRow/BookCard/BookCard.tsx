@@ -5,14 +5,14 @@ import {
   StyledWrapper,
   StyledImage,
   StyledInfo,
-  StyledActions
+  StyledActions,
+  StyledIconButton,
+  StyledLikeIcon
 } from './styles';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
-import IconButton from '@/components/Common/IconButton';
 import Price from '@/components/Common/Price';
 import Cart from '@/components/Common/Icons/Cart';
-import Like from '@/components/Common/Icons/Like';
 import { ClassNameProps } from '@/types/className';
 import Link from '@/components/Common/Link';
 import { POPUPS } from '@/consts/popups';
@@ -27,6 +27,7 @@ const BookCard: React.FC<BookCardProps> = (props) => {
   const { id, image, price, newPrice, title, isOpen, } = props;
   const [liked, setLike] = React.useState(false);
 
+  /* TODO: Вынести ссылку обложки наружу, чтобы можно было использовать на странице книги */
   const path = usePrepareLink({
     query: {
       [GET_PARAMS.openProduct]: String(id),
@@ -52,12 +53,12 @@ const BookCard: React.FC<BookCardProps> = (props) => {
       <StyledInfo>
         <Price price={price} newPrice={newPrice} />
         <StyledActions>
-          <IconButton href={basketPath} scroll={false} shallow>
+          <StyledIconButton href={basketPath} scroll={false} shallow>
             <Cart />
-          </IconButton>
-          <IconButton onClick={() => setLike((prev) => !prev)}>
-            <Like isActive={liked} />
-          </IconButton>
+          </StyledIconButton>
+          <StyledIconButton onClick={() => setLike((prev) => !prev)}>
+            <StyledLikeIcon isActive={liked} />
+          </StyledIconButton>
         </StyledActions>
       </StyledInfo>
     </StyledWrapper>

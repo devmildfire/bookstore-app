@@ -1,10 +1,10 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { ClassNameProps } from '@/types/className';
-import IconButton from '../../IconButton';
-import { StyledArrow, StyledControls, StyledPlaceholder } from './styles';
+import { StyledControls, StyledIconButton, StyledPlaceholder } from './styles';
 import { stateContext, stateHandlersContext, valuesContext } from '../contexts';
 import useKeyListener from '@/hooks/useKeyListener';
+import Arrow from '../../Icons/Arrow';
 
 export interface ControlProps extends ClassNameProps {
   readonly title: string;
@@ -42,9 +42,14 @@ const Control: React.FC<ControlProps> = (props) => {
   return (
     <StyledControls className={className}>
       <StyledPlaceholder onClick={handler}>{title}</StyledPlaceholder>
-      <IconButton onClick={handler} onBlur={onBlur} onFocus={onFocus}>
-        <StyledArrow className={arrowClasses} />
-      </IconButton>
+      <StyledIconButton
+        className={arrowClasses}
+        onClick={handler}
+        onBlur={onBlur}
+        onFocus={onFocus}
+      >
+        <Arrow />
+      </StyledIconButton>
     </StyledControls>
   );
 };

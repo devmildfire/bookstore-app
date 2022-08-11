@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Link from '@/components/Common/Link';
 import Image from '@/components/Common/Image';
+import IconButton from '@/components/Common/IconButton';
 
 export const StyledWrapper = styled(Link)`
   display: grid;
@@ -43,4 +44,13 @@ export const StyledInfo = styled.div`
 export const StyledActions = styled.div`
   display: flex;
   gap: 40px;
+`;
+
+export const StyledIconButton = styled(IconButton)`
+  color: var(--main-white-100);
+
+  :hover,
+  :focus-visible {
+    color: var(--main-red-100);
+  }
 `;

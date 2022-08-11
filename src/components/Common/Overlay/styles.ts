@@ -14,12 +14,16 @@ export const StyledWrapper = styled.div`
   width: 100%;
 `;
 
-export const StyledBackdrop = styled.div`
+interface StyledBackdropProps {
+  readonly isClickable: boolean;
+}
+
+export const StyledBackdrop = styled.div<StyledBackdropProps>`
   position: absolute;
   inset: 0;
 
   background-color: rgba(0, 0, 0, 0.5);
   z-index: var(--low-z-index);
 
-  cursor: pointer;
+  cursor: ${(props) => (props.isClickable ? 'pointer' : 'default')};
 `;

@@ -1,6 +1,13 @@
 import styled from 'styled-components';
 import Link from '@/components/Common/Link';
 import Image from '@/components/Common/Image';
+import List from '@/components/Common/List';
+
+export const StyledText = styled.div`
+  display: grid;
+
+  grid-template-rows: 1fr 1fr;
+`;
 
 export const StyledWrapper = styled(Link)`
   display: grid;
@@ -9,21 +16,33 @@ export const StyledWrapper = styled(Link)`
 
   gap: 29px;
 
-  &:hover *,
-  &:focus-visible * {
+  color: var(--main-white-100);
+
+  &:hover ${StyledText}, &:focus-visible ${StyledText} {
     transition: color 0.25s ease-in-out;
 
-    color: inherit;
+    color: var(--main-red-100);
+  }
+`;
+
+export const StyledIconsList = styled(List)`
+  display: flex;
+  gap: 22px;
+  color: var(--main-white-100);
+
+`;
+
+export const StyledIcon = styled.svg`
+  width: 30px;
+  height: 30px;
+
+  stroke-width: 3px;
+  :hover {
+    color: var(--main-red-100);
   }
 `;
 
 export const StyledImage = styled(Image)`
   width: 120px;
   height: 168px;
-`;
-
-export const StyledText = styled.div`
-  display: grid;
-
-  grid-template-rows: min(50px, max-content) 1fr;
 `;

@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import Image from '@/components/Common/Image';
 import ProductCard from '@/components/Common/ProductCard';
+import IconButton from '@/components/Common/IconButton';
+import Like from '@/components/Common/Icons/Like';
 
 export const StyledWrapper = styled(ProductCard)`
   display: block;
@@ -29,4 +31,21 @@ export const StyledActions = styled.div`
   display: flex;
   align-items: center;
   gap: 40px;
+`;
+
+export const StyledIconButton = styled(IconButton)`
+  color: var(--main-white-100);
+
+  :hover,
+  :focus-visible {
+    color: var(--main-red-100);
+  }
+`;
+
+interface StyledLikeIconProps {
+  readonly isActive: boolean;
+}
+
+export const StyledLikeIcon = styled(Like)<StyledLikeIconProps>`
+  ${(props) => (props.isActive ? 'color : var(--main-red-100);' : '')}
 `;

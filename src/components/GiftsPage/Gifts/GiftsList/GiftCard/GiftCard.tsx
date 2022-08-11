@@ -1,27 +1,26 @@
 import * as React from 'react';
 import { Gift } from '@/models/gifts';
 import {
-  StyledPrice,
   StyledImageWrapper,
   StyledInfo,
   StyledWrapper,
-  StyledActions
+  StyledActions,
 } from './styles';
 import IconButton from '@/components/Common/IconButton';
 import Text from '@/components/Common/Text';
 import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import Image from '@/components/Common/Image';
+import { ClassNameProps } from '@/types/className';
 
-type GiftCardProps = Gift;
+interface GiftCardProps extends Pick<Gift, 'title' | 'image'>, ClassNameProps {}
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
-  const { price, title, image, } = props;
+  const { title, image, className } = props;
   return (
-    <StyledWrapper>
+    <StyledWrapper className={className}>
       <StyledImageWrapper className='lighted'>
         <Image src={image} title={title} />
-        <StyledPrice price={price} />
       </StyledImageWrapper>
       <StyledInfo>
         <Text>{title}</Text>

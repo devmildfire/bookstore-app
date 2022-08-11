@@ -1,16 +1,7 @@
 import styled from 'styled-components';
-import Cross from '@/assets/icons/cross.svg';
+import Icon from '../Icon';
 
-export const StyledCross = styled(Cross)`
-  display: inline-block;
-
+export const StyledIcon = styled(Icon)`
   width: 33px;
   height: 33px;
-
-  fill: var(--main-white-100);
-
-  :hover,
-  :focus-visible {
-    fill: var(--main-red-100);
-  }
 `;

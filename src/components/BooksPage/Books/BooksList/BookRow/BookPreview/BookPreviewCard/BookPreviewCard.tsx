@@ -13,7 +13,6 @@ import {
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Book } from '@/models/books';
-import Scroll from '@/components/Common/Scroll';
 
 type BookPreviewCardProps = Pick<
   Book,
@@ -60,15 +59,13 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
           <Text variant='h4_1' component='p'>
             {`${dayjs(publishDate).get('year')} | ${genre} | ${ageRestriction}`}
           </Text>
-          <Scroll>
-            <StyledDescription>
-              {description.map((p) => (
-                <Text variant='h4_1' component='p' key={p}>
-                  {p}
-                </Text>
-              ))}
-            </StyledDescription>
-          </Scroll>
+          <StyledDescription>
+            {description.map((p) => (
+              <Text variant='h4_1' component='p' key={p}>
+                {p}
+              </Text>
+            ))}
+          </StyledDescription>
 
           <StyledButton href={`/books/${id}`}>Познать</StyledButton>
         </StyledTextBlock>

@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import Book2 from '@/assets/icons/book2.0.svg';
+import Icon from '../Icon';
 
-export const StyledBook2 = styled(Book2)`
+export const StyledIcon = styled(Icon)`
   width: 85px;
   heigh: 85px;
-
-  stroke: currentColor;
 `;

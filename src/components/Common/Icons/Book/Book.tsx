@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledBook } from './styles';
+import BookIcon from '@/assets/icons/book.svg';
+import { StyledIcon } from './styles';
 
 const Book: React.FC<ClassNameProps> = (props) => {
-  return <StyledBook {...props} />;
+  return (
+    <StyledIcon {...props}>
+      <BookIcon />
+    </StyledIcon>
+  );
 };
 
 export default React.memo(Book);

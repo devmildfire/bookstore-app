@@ -23,6 +23,6 @@ export const StyledButton = styled.button<StyledIconButtonProps>`
   border-radius: 50%;
 
   background-color: transparent;
-
+  color: inherit;
   cursor: pointer;
 `;

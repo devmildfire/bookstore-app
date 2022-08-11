@@ -1,24 +1,40 @@
 import * as React from 'react';
 import { Book } from '@/models/books';
-import { StyledImage, StyledText, StyledWrapper } from './styles';
+import {
+  StyledIcon,
+  StyledIconsList,
+  StyledImage,
+  StyledText,
+  StyledWrapper
+} from './styles';
 import getAuthorNames from '@/utils/getAuthorNames';
 import Text from '@/components/Common/Text';
+import { ClassNameProps } from '@/types/className';
+import IconButton from '@/components/Common/IconButton';
+import { bookTypeIconMap } from '@/consts/products';
 
-type SetBookCardProps = Pick<Book, 'id' | 'authors' | 'title' | 'image'>
+interface SetBookCardProps
+  extends Pick<Book, 'id' | 'authors' | 'title' | 'image' | 'types'>,
+    ClassNameProps {}
 
 const SetBookCard: React.FC<SetBookCardProps> = (props) => {
-  const {
-    authors, id, title, image,
-  } = props;
+  const { authors, id, title, image, types, className, } = props;
   const author = getAuthorNames(authors);
   return (
-    <StyledWrapper href={`/books/${id}`}>
+    <StyledWrapper className={className} href={`/books/${id}`}>
       <StyledImage src={image} alt={title} />
       <StyledText>
-        <Text component='p' variant='h3_3'>
+        <Text component='p' variant='h3_3' color='inherit'>
           {title}
         </Text>
-        <Text variant='text'>{author}</Text>
+        <Text variant='text' color='inherit'>{author}</Text>
+        <StyledIconsList>
+          {types.map((type) => (
+            <IconButton key={type}>
+              <StyledIcon as={bookTypeIconMap[type]} />
+            </IconButton>
+          ))}
+        </StyledIconsList>
       </StyledText>
     </StyledWrapper>
   );

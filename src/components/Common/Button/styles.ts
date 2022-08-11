@@ -39,7 +39,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   color: var(--button-text-color);
   text-decoration: none;
 
-  transition: all 0.2s ease-out;
+  transition: all 250ms ease-in;
 
   &:focus-visible {
     --button-text-color: var(--main-black);

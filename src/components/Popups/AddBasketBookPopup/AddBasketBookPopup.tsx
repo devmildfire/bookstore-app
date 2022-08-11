@@ -6,7 +6,6 @@ import { useGetBookQuery } from '@/models/books';
 import useGetParam from '@/hooks/useGetParam';
 import { GET_PARAMS } from '@/consts/query';
 import LoadingIndicator from '@/components/Common/LoadingIndicator';
-import getAuthorNames from '@/utils/getAuthorNames';
 import useClosePopup from '@/hooks/useClosePopup';
 import { POPUPS } from '@/consts/popups';
 import PopupHeader from '@/components/Common/PopupHeader';
@@ -23,8 +22,7 @@ const AddBasketBookPopup: React.FC<AddBasketBookPopupProps> = (props) => {
   if (!hasBook) {
     return null;
   }
-  const { title, authors, } = book;
-  const subtitle = getAuthorNames(authors);
+
   const showLoading = isLoading || isFetching;
   return (
     <MainPopup {...props} onClose={onClose}>
@@ -32,7 +30,7 @@ const AddBasketBookPopup: React.FC<AddBasketBookPopupProps> = (props) => {
         <LoadingIndicator />
       ) : (
         <>
-          <PopupHeader title={title} subtitle={subtitle} />
+          <PopupHeader title='Выберите тип издания' onClose={onClose} />
           <PopupContent>
             <BookInfo {...book} />
           </PopupContent>

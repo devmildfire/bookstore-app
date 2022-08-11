@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { useGetTypeFilterQuery } from '@/models/books';
+import { BookType, useGetTypeFilterQuery } from '@/models/books';
 import { GET_PARAMS } from '@/consts/query';
 import Filter from '../Filter';
-import { Option, SelectValue } from '@/components/Common/Select/types';
+import { Option } from '@/components/Common/Select/types';
+import { bookTypeNameMap } from '@/consts/products';
 
 const Type: React.FC<ClassNameProps> = (props) => {
   const { data, } = useGetTypeFilterQuery(undefined);
-  const options = React.useMemo<Option<SelectValue>[]>(
-    () => data?.map((year) => ({ label: year, value: year, })) || [],
+  const options = React.useMemo<Option<BookType>[]>(
+    () =>
+      data?.map((type) => ({ label: bookTypeNameMap[type], value: type, }))
+      || [],
     [data]
   );
 

@@ -14,10 +14,11 @@ const Overlay: React.FC<OverlayProps> = (props) => {
     <Portal>
       <StyledWrapper role='dialog'>
         <StyledBackdrop
-          role='button'
+          role={onClose && 'button'}
           onClick={onClose}
-          tabIndex={0}
-          title='overlay'
+          tabIndex={onClose && 0}
+          title={onClose && 'overlay'}
+          isClickable={!!onClose}
         />
         <div className={className}>{children}</div>
       </StyledWrapper>
