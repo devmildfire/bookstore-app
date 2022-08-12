@@ -1,10 +1,17 @@
 import styled from 'styled-components';
-import Arrow from '../../Icons/Arrow';
+import IconButton from '../../IconButton';
 import Text from '../../Text';
 
-export const StyledArrow = styled(Arrow)`
+export const StyledIconButton = styled(IconButton)`
+  color: var(--main-white-100);
+
+  :hover,
+  :focus-visible {
+    color: var(--main-red-100);
+  }
+
   &.active {
-    fill: var(--main-red-100);
+    color: var(--main-red-100);
   }
 `;
 
@@ -20,8 +27,8 @@ export const StyledControls = styled.div`
 
   outline: none;
 
-  :hover ${StyledArrow}, :focus-visible ${StyledArrow} {
-    fill: var(--main-red-100);
+  :hover ${StyledIconButton}, :focus-visible ${StyledIconButton} {
+    color: var(--main-red-100);
   }
 `;
 

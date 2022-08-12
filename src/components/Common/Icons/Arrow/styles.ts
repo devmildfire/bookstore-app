@@ -1,16 +1,7 @@
 import styled from 'styled-components';
-import Arrow from '@/assets/icons/arrow.svg';
+import Icon from '../Icon';
 
-export const StyledArrow = styled(Arrow)`
-  display: inline-block;
-
+export const StyledIcon = styled(Icon)`
   width: 11px;
   height: 7px;
-
-  fill: var(--main-white-100);
-
-  :hover,
-  :focus-visible {
-    fill: var(--main-red-100);
-  }
 `;

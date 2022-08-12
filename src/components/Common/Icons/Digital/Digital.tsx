@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledDigital } from './styles';
+import { StyledIcon } from './styles';
+import DigitalIcon from '@/assets/icons/digital.svg';
 
 const Digital: React.FC<ClassNameProps> = (props) => {
-  return <StyledDigital {...props} />;
+  return (
+    <StyledIcon {...props}>
+      <DigitalIcon />
+    </StyledIcon>
+  );
 };
 
 export default React.memo(Digital);

@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import Audio from '@/assets/icons/audio.svg';
+import Icon from '../Icon';
 
-export const StyledAudio = styled(Audio)`
+export const StyledIcon = styled(Icon)`
   width: 85px;
   heigh: 85px;
-
-  stroke: currentColor;
 `;

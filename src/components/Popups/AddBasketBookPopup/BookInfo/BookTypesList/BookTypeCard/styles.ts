@@ -7,12 +7,24 @@ export const StyledTitle = styled(Text).attrs({
   textTransform: 'uppercase',
 })``;
 
-export const StyledIconWrapper = styled.div`
+interface StyledIconWrapperProps {
+  readonly isActive: boolean;
+}
+
+export const StyledIconWrapper = styled.div<StyledIconWrapperProps>`
   padding: 32px;
 
   color: var(--main-white-100);
 
   border: 1px solid var(--main-white-100);
+
+  transition: all 250ms ease-in;
+
+  ${(props) =>
+    (props.isActive
+      ? `border-color: var(--main-red-100);
+  color: var(--main-red-100)`
+      : '')}
 `;
 
 export const StyledBookInfo = styled.div`
@@ -26,10 +38,7 @@ export const StyledWrapper = styled.div`
 
   cursor: pointer;
 
-  &:hover ${StyledIconWrapper}, &:hover ${StyledTitle} {
-    border-color: var(--main-red-100);
-    stroke: var(--main-red-100);
-    fill: var(--main-red-100);
-    color: var(--main-red-100);
+  &:hover ${StyledIconWrapper} {
+    transform: scale(1.1);
   }
 `;

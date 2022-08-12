@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import Price from '@/components/Common/Price';
 import ProductCard from '@/components/Common/ProductCard';
+import IconButton from '@/components/Common/IconButton';
 
 export const StyledWrapper = styled(ProductCard)`
   display: grid;
-  gap: 30px;
+  gap: 22px;
 `;
 
 export const StyledImageWrapper = styled.div`
@@ -40,4 +41,13 @@ export const StyledActions = styled.div`
   display: flex;
   gap: 30px;
   align-items: center;
+`;
+
+export const StyledIconButton = styled(IconButton)`
+  color: var(--main-white-100);
+
+  :hover,
+  :focus-visible {
+    color: var(--main-red-100);
+  }
 `;

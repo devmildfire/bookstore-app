@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { StyledArrow } from './styles';
+import { StyledIcon } from './styles';
+import ArrowIcon from '@/assets/icons/arrow.svg';
 
-type ArrowProps = ClassNameProps
-
-const Arrow: React.FC<ArrowProps> = (props) => {
-  const { className, } = props;
-  return <StyledArrow className={className} />;
+const Arrow: React.FC<ClassNameProps> = (props) => {
+  return (
+    <StyledIcon {...props}>
+      <ArrowIcon />
+    </StyledIcon>
+  );
 };
 
 export default React.memo(Arrow);

@@ -6,6 +6,14 @@ export const StyledRowWrapper = styled.div`
   gap: 30px;
 `;
 
-export const StyledRow = styled(Row)`
-  gap: 168px;
+interface StyledRowProps {
+  readonly inRow: number;
+}
+
+export const StyledRow = styled(Row)<StyledRowProps>`
+  grid-template-columns: repeat(auto-fit, 355px);
+  gap: calc(
+    (var(--width) - 355px * ${(props) => props.inRow}) /
+      ${(props) => props.inRow - 1}
+  );
 `;

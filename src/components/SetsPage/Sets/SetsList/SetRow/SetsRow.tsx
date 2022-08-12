@@ -18,7 +18,7 @@ const SetsRow: React.FC<SetsRowProps> = (props) => {
   return (
     <StyledWrapper>
       <Container>
-        <StyledRow>
+        <StyledRow inRow={sets.length}>
           {sets.map((set) => (
             <SetCard isOpen={openSetId === set.id} {...set} key={set.id} />
           ))}

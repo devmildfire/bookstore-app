@@ -1,11 +1,14 @@
 import * as React from 'react';
-import Text from '@/components/Common/Text';
 import SetsList from './SetsList';
 import { StyledWrapper } from './styles';
+import Container from '@/components/Common/Container';
+import Filters from '@/components/Filters';
 
 const Sets: React.FC = () => (
   <StyledWrapper>
-    <Text>Место для фильтров</Text>
+    <Container>
+      <Filters />
+    </Container>
     <SetsList />
   </StyledWrapper>
 );

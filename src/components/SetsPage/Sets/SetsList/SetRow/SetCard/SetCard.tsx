@@ -4,13 +4,13 @@ import { BoxSet } from '@/models/boxSets';
 import {
   StyledActions,
   StyledDescription,
+  StyledIconButton,
   StyledImage,
   StyledInfo,
   StyledWrapper
 } from './styles';
 import Text from '@/components/Common/Text';
 import Price from '@/components/Common/Price';
-import IconButton from '@/components/Common/IconButton';
 import usePrepareLink from '@/hooks/usePrepareLink';
 import { GET_PARAMS } from '@/consts/query';
 import Cart from '@/components/Common/Icons/Cart';
@@ -46,12 +46,12 @@ const SetCard: React.FC<SetCardProps> = (props) => {
         <StyledInfo>
           <Price price={price} newPrice={newPrice} />
           <StyledActions>
-            <IconButton>
+            <StyledIconButton>
               <Cart />
-            </IconButton>
-            <IconButton>
+            </StyledIconButton>
+            <StyledIconButton>
               <Like />
-            </IconButton>
+            </StyledIconButton>
           </StyledActions>
         </StyledInfo>
       </StyledWrapper>

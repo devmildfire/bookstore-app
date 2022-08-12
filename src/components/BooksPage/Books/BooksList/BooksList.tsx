@@ -8,15 +8,14 @@ import { GET_PARAMS } from '@/consts/query';
 import parseGetParams from '@/utils/parseGetParams';
 
 const BooksList: React.FC = () => {
-  const publishYear = parseGetParams(useGetParam(GET_PARAMS.publishYear));
-  const productType = parseGetParams<BookType>(useGetParam(GET_PARAMS.productType));
-
+  const publishYear = useGetParam(GET_PARAMS.publishYear);
+  const productType = useGetParam(GET_PARAMS.productType);
   const otherParams = React.useMemo(
     () => ({
-      publishYear,
-      productType,
+      publishYear: parseGetParams(publishYear),
+      productType: parseGetParams<BookType>(productType),
     }),
-    [...publishYear, ...productType]
+    [publishYear, productType]
   );
 
   return (

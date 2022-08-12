@@ -7,45 +7,31 @@ import {
   StyledTitle,
   StyledWrapper
 } from './styles';
-import Audio from '@/components/Common/Icons/Audio';
-import Book2 from '@/components/Common/Icons/Book2';
-import Digital from '@/components/Common/Icons/Digital';
-import Book from '@/components/Common/Icons/Book';
 import Price from '@/components/Common/Price';
-import Cart from '@/components/Common/Icons/Cart';
-import IconButton from '@/components/Common/IconButton';
+import useToggle from '@/hooks/useToggle';
+import { bookTypeNameMap, bookTypeIconMap } from '@/consts/products';
 
 interface BookTypeCardProps extends ClassNameProps {
   readonly id: number;
   readonly type: BookType;
   readonly price: number;
+  readonly newPrice?: number | null;
 }
 
-const nameMap: Record<BookType, string> = {
-  audio: 'АУДИОКНИГА',
-  book2: 'КНИГА 2.0',
-  digital: 'ЦИФРОВОЕ ИЗДАНИЕ',
-  write: 'ПЕЧАТНОЕ ИЗДАНИЕ',
-};
-
-const iconMap: Record<BookType, React.ReactElement> = {
-  audio: <Audio />,
-  book2: <Book2 />,
-  digital: <Digital />,
-  write: <Book />,
-};
-
 const BookTypeCard: React.FC<BookTypeCardProps> = (props) => {
-  const { id, price, type, ...rest } = props;
+  const { price, newPrice, type, ...rest } = props;
+
+  const { toggleOff, toggleOn, value, } = useToggle();
+  const onClick = value ? toggleOff : toggleOn;
+  const Icon = bookTypeIconMap[type];
   return (
-    <StyledWrapper {...rest}>
-      <StyledTitle>{nameMap[type]}</StyledTitle>
-      <StyledIconWrapper>{iconMap[type]}</StyledIconWrapper>
+    <StyledWrapper {...(rest as any)}>
+      <StyledTitle>{bookTypeNameMap[type]}</StyledTitle>
+      <StyledIconWrapper onClick={onClick} isActive={value}>
+        <Icon />
+      </StyledIconWrapper>
       <StyledBookInfo>
-        <Price price={price} />
-        <IconButton onClick={() => console.log(id)}>
-          <Cart />
-        </IconButton>
+        <Price price={price} newPrice={newPrice} />
       </StyledBookInfo>
     </StyledWrapper>
   );

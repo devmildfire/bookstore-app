@@ -12,12 +12,12 @@ interface BookRowProps {
 }
 
 const BookRow: React.FC<BookRowProps> = (props) => {
-  const { books, } = props;
+  const { books } = props;
   const openBookId = Number(useGetParam(GET_PARAMS.openProduct));
   return (
     <StyledRowWrapper>
       <Container>
-        <StyledRow>
+        <StyledRow inRow={books.length}>
           {books.map((book) => (
             <BookCard isOpen={openBookId === book.id} {...book} key={book.id} />
           ))}

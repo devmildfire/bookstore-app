@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BoxSet } from '@/models/boxSets';
-import BookCard from './SetBookCard';
+import SetBookCard from './SetBookCard';
 import { StyledList, StyledWrapper } from './styles';
 
 type SetPreviewCardProps = BoxSet
@@ -11,7 +11,7 @@ const SetPreviewCard: React.FC<SetPreviewCardProps> = (props) => {
     <StyledWrapper>
       <StyledList>
         {books.map((book) => (
-          <BookCard {...book} key={book.id} />
+          <SetBookCard {...book} key={book.id} />
         ))}
       </StyledList>
     </StyledWrapper>

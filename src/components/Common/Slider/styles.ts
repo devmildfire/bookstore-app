@@ -30,7 +30,7 @@ export const StyledPagination = styled.div`
     transition: transform ease-in 0.15s;
     transform-origin: center;
   }
-
+  .swiper-pagination-bullet-active,
   .swiper-pagination-bullet:hover,
   .swiper-pagination-bullet:focus-visible {
     transform: scale(1.9);

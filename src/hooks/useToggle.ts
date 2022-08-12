@@ -15,6 +15,7 @@ const useToggle = (defaultValue = false): UseToggleResult => {
   }, []);
 
   const toggleOff = useCallback(() => {
+    console.log('off');
     setValue(false);
   }, []);
 

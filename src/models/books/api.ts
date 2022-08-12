@@ -36,7 +36,7 @@ export const booksApi = createApi({
     getYearFilter: builder.query<string[], undefined>({
       query: () => '/filter/years',
     }),
-    getTypeFilter: builder.query<string[], undefined>({
+    getTypeFilter: builder.query<BookType[], undefined>({
       query: () => '/filter/type',
     }),
     getSortFilter: builder.query<string[], undefined>({
