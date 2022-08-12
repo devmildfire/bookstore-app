@@ -6,15 +6,13 @@ import PageLayout from '@/layouts/PageLayout';
 import { DeviceInfoProvider } from '@/contexts/DeviceInfoContext';
 import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
-
-import 'swiper/css';
-import 'swiper/css/pagination';
-import '@/styles/globals.css';
 import PageLoading from '@/components/PageLoading';
 
+import '@/styles/globals.css';
+
 const MyApp: NextPage<AppProps> = (props) => {
-  const { Component, pageProps, } = props;
-  const { value, toggleOff, toggleOn, } = useToggle();
+  const { Component, pageProps } = props;
+  const { value, toggleOff, toggleOn } = useToggle();
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);

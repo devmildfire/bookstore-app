@@ -1,5 +1,7 @@
 @import url('./fonts.css');
 @import url('./normalize.css');
+@import url('../../node_modules/swiper/swiper.min.css');
+@import url('../../node_modules/swiper/modules/pagination/pagination.min.css');
 
 :root {
   --main-red-100: rgba(147, 0, 0, 1);
