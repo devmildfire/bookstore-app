@@ -28,14 +28,14 @@ const StyledManifestText = styled(Text)`
 const AboutUs = () => (
   <section>
     <Container>
-      <Text align='center' variant='h2'>
+      <Text align='center' variant='h2_1'>
         О чем мы?
       </Text>
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      <Text variant='p'>
-        <Text component='span' variant='h2' fontFamily='serif'>
+      <Text variant='text'>
+        <Text component='span' variant='h2_1' fontFamily='serif'>
           Н
         </Text>
         езависимое издательство Чтиво — дитя петербургского литандеграунда и
@@ -44,9 +44,9 @@ const AboutUs = () => (
         неформальными произведениями и считаем, что книгоиздание не должно быть
         бизнесом.
       </Text>
-      <StyledManifestText variant='p' component='span'>
+      <StyledManifestText variant='text' component='span'>
         Узнать больше в &nbsp;
-        <WithArrow color='red' variant='p' component='span'>
+        <WithArrow textColor='red' variant='text' component='span'>
           «Манифесте Чтива»
         </WithArrow>
       </StyledManifestText>

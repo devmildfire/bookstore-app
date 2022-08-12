@@ -7,10 +7,10 @@ import { StyledArrowIcon, StyledArrowProps, StyledText } from './styles';
 export interface WithArrowProps
   extends ClassNameProps,
     Partial<StyledArrowProps>,
-    TextProps {}
+    TextProps<'span'> {}
 
 const WithArrow = (
-  props: PropsWithChildren<WithArrowProps>,
+  props: PropsWithChildren<WithArrowProps>
 ): React.ReactElement => {
   const {
     offset = '0.32em',

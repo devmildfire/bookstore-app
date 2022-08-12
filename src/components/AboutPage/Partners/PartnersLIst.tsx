@@ -30,7 +30,7 @@ const StyledList = styled(Slider)`
 `;
 
 const PartnersList = (): React.ReactElement => {
-  const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
+  const { isMobile, isTabletVertical, } = useContext(DeviceInfoContext);
   let count = 3;
   if (isMobile) {
     count = 1.5;

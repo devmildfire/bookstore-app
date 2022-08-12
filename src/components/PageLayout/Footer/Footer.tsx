@@ -17,19 +17,19 @@ import {
   FooterSocials,
   FooterTitle,
   Icon,
-  StyleWrapper,
+  StyleWrapper
 } from './styles';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>
     <FooterContent>
       <FooterContacts>
-        {contacts.map(({ content, hightLightContent, href }) => (
-          <FooterContact component='p'>
+        {contacts.map(({ content, hightLightContent, href, }) => (
+          <FooterContact component='p' key={href}>
             <a href={href}>
               {content}
               &nbsp;
-              <FooterContact component='span' color='red'>
+              <FooterContact component='span' textColor='red'>
                 {hightLightContent}
               </FooterContact>
             </a>
@@ -37,11 +37,11 @@ const Footer = (): React.ReactElement => (
         ))}
       </FooterContacts>
       <FooterInfo>
-        <FooterTitle variant='h2' fontFamily='sans'>
+        <FooterTitle variant='h2_1' fontFamily='sans'>
           <FooterTitle
             component='span'
-            variant='h2'
-            color='red'
+            variant='h2_1'
+            textColor='red'
             fontFamily='sans'
           >
             Чти
@@ -50,7 +50,7 @@ const Footer = (): React.ReactElement => (
         </FooterTitle>
         <FooterSocials>
           {socials.map((social) => (
-            <li>
+            <li key={social.href}>
               <a href={social.href}>
                 <Icon as={social.icon as any} />
               </a>
@@ -65,11 +65,13 @@ const Footer = (): React.ReactElement => (
       >
         <FooterLogo />
         <FooterLogoText>
-          <Text variant='body1'>Made by</Text>
-          <Text component='span' variant='subtitle1'>
+          <Text component='span' variant='h4_1'>
+            Made by
+          </Text>
+          <Text component='span' variant='h4_1'>
             Russkiy
           </Text>
-          <Text component='span' variant='subtitle1'>
+          <Text component='span' variant='h4_1'>
             Dinozavr
           </Text>
         </FooterLogoText>
@@ -77,11 +79,11 @@ const Footer = (): React.ReactElement => (
     </FooterContent>
     <FooterCopyright>
       <CopyrightContainer>
-        <Text variant='body2'>
+        <Text variant='h4_3' component='p'>
           © 2017-
           {getCurrentYear()}
           &nbsp;
-          <Text variant='body2' color='red'>
+          <Text component='span' variant='h4_3' textColor='red'>
             Чти
           </Text>
           во. Санкт-Петербург. Все права защищены.

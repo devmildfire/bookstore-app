@@ -1,21 +1,21 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
-import booksData from '@/mocks/books';
 import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import {
-  Banner, BookItem, BooksList, Title,
+  Banner, BookItem, BooksList, Title
 } from './styles';
+import { useGetBooksQuery } from '@/models/books';
 
 const SimilarBooks = (): React.ReactElement => {
-  const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
-  const books = useMemo(() => booksData.slice(0, 5), [booksData]);
+  const { isTabletVertical, isMobile, } = useContext(DeviceInfoContext);
+  const { data: books = [], } = useGetBooksQuery({ count: 5, });
   const isSlider = isTabletVertical || isMobile;
 
   return (
     <section>
-      <Title variant='h2' align='center'>
+      <Title variant='h2_1' align='center'>
         Познайте также
       </Title>
       <BooksList>
@@ -30,7 +30,7 @@ const SimilarBooks = (): React.ReactElement => {
               <Slide key={book.id}>
                 <Link href={`/books/${book.id}`} passHref>
                   <a href='fakePath'>
-                    <Banner src={book.link} alt={book.title} />
+                    <Banner src={book.image} alt={book.title} />
                   </a>
                 </Link>
               </Slide>
@@ -41,7 +41,7 @@ const SimilarBooks = (): React.ReactElement => {
             <BookItem>
               <Link href={`/books/${book.id}`} passHref>
                 <a href='fakePath'>
-                  <Banner src={book.link} alt={book.title} />
+                  <Banner src={book.image} alt={book.title} />
                 </a>
               </Link>
             </BookItem>

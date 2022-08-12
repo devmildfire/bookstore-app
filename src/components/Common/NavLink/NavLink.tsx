@@ -1,0 +1,16 @@
+import { useRouter } from 'next/dist/client/router';
+import React, { FC } from 'react';
+import { LinkProps } from '../Link';
+import StyledNavLink from './styles';
+
+type NavLinkProps = LinkProps
+
+const NavLink: FC<NavLinkProps> = (props) => {
+  const { href, ...linkProps } = props;
+  const { asPath, } = useRouter();
+  const isActive = asPath.includes(href);
+
+  return <StyledNavLink href={href} isActive={isActive} {...linkProps} />;
+};
+
+export default NavLink;

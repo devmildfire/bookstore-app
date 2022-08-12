@@ -1,12 +1,14 @@
-import React, { PropsWithChildren } from 'react';
+import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import StyledContainer from './styles';
 
-const Container = (
-  props: PropsWithChildren<ClassNameProps>,
-): React.ReactElement => {
-  const { children, className } = props;
-  return <StyledContainer className={className}>{children}</StyledContainer>;
-};
+interface ContainerProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    ClassNameProps {}
+
+const Container = React.forwardRef<
+  HTMLDivElement,
+  React.PropsWithChildren<ContainerProps>
+>((props, ref) => <StyledContainer {...props} ref={ref} />);
 
 export default Container;

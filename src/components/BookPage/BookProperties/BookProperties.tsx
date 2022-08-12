@@ -13,10 +13,10 @@ import {
   StyledTerm,
   StyledDescription,
   StyledReadersList,
-  StyledReadersItem,
+  StyledReadersItem
 } from './styles';
 import Text from '@/components/Common/Text';
-import { Reader, Worker } from '@/types/book';
+import { Reader, Worker } from '@/models/books';
 
 interface BookPropertiesProps {
   readonly price: number;
@@ -34,12 +34,12 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
   return (
     <StyledWrapper>
       <StyledHeader>
-        <StyledHeaderText component='h3'>ЦИФРОВОЕ ИЗДАНИЕ</StyledHeaderText>
-        <StyledHeaderText component='p'>
+        <StyledHeaderText variant='h3_1'>ЦИФРОВОЕ ИЗДАНИЕ</StyledHeaderText>
+        <StyledHeaderText variant='h3_1' component='p'>
           {price}
           &#8381;
         </StyledHeaderText>
-        <StyledDate variant='subtitle1' component='p'>
+        <StyledDate variant='text'>
           Дата релиза:
           <time dateTime={new Date(publishDate).toDateString()}>
             {dayjs(publishDate).format('DD.MM.YYYY')}
@@ -48,12 +48,8 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
       </StyledHeader>
       <StyledBody>
         <StyledButtons>
-          <Button className='propsBtn' rounded styleVariant='outlined'>
-            Добавить в корзину
-          </Button>
-          <Button className='propsBtn' rounded styleVariant='outlined'>
-            Демо-версия
-          </Button>
+          <Button>Добавить в корзину</Button>
+          <Button>Демо-версия</Button>
         </StyledButtons>
         {/* Вынести в отдельный компонент */}
         <StyledProperties>
@@ -80,11 +76,11 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
             <StyledDescription>
               {/* Вынести в отдельный компонент */}
               <StyledReadersList>
-                {readers.map(({ markets, name }) => (
+                {readers.map(({ markets, name, }) => (
                   <StyledReadersItem>
                     {name}
                     : &nbsp;
-                    {markets.map(({ href, name: marketName }) => (
+                    {markets.map(({ href, name: marketName, }) => (
                       <Text component='span' key={href}>
                         <a href={href}>{marketName}</a>
                       </Text>
@@ -100,7 +96,7 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
         <Text component='p'>
           Над изданием работали:
           {workers
-            .map(({ place, fullName }) => `${place} ${fullName}`)
+            .map(({ place, fullName, }) => `${place} ${fullName}`)
             .join(', ')}
         </Text>
       </footer>

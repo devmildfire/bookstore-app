@@ -6,50 +6,58 @@ import {
   StyledInfo,
   StyledThesis,
   StyledTitle,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 import Text from '@/components/Common/Text';
+import { Author } from '@/types/author';
 
 interface BookDescriptionProps {
   readonly title: string;
-  readonly author: string | null;
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
-  readonly link: string;
+  readonly image?: string;
   readonly description: string[];
-  readonly authors: string[] | null;
+  readonly authors: Author[];
 }
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
     title,
-    author,
     publishDate,
     genre,
     ageRestriction,
-    link,
+    image,
     description,
     authors,
   } = props;
 
+  const year = new Date(publishDate).getFullYear();
+
   return (
     <StyledWrapper>
-      <StyledImage src={link} alt={title} />
+      <StyledImage src={image} alt={title} />
       <div>
-        <StyledTitle variant='h2'>{title}</StyledTitle>
-        <StyledAuthor variant='p' component='h3' fontWeight={700}>
-          {author || authors}
+        <StyledTitle variant='h2_1'>{title}</StyledTitle>
+        <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
+          {authors.map((author) => author.name)}
         </StyledAuthor>
-        <StyledInfo fontWeight={700}>
-          {`${publishDate} | ${genre} | ${ageRestriction}`}
+        <StyledInfo variant='h4_1' component='p' fontWeight={700}>
+          {`${year} | ${genre} | ${ageRestriction}`}
         </StyledInfo>
-        <StyledThesis variant='p' color='red' fontWeight={500}>
+        <StyledThesis variant='h3_3' component='p' textColor='red' fontWeight={500}>
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
         </StyledThesis>
         <StyledDescription>
           {description.map((paragraph: string) => (
-            <Text variant='p'>{paragraph}</Text>
+            <Text
+              variant='h3_3'
+              component='p'
+              fontWeight={400}
+              textTransform='none'
+            >
+              {paragraph}
+            </Text>
           ))}
         </StyledDescription>
       </div>

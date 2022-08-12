@@ -1,103 +1,55 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import breakPoints from '@/utils/breakPoints';
 import { Variant } from './types';
 
 export interface StyledButtonProps {
-  readonly rounded: boolean;
   readonly variant: Variant;
 }
 
-const squareStyle = css`
-  min-width: 70px;
-  min-height: 70px;
-
-  @media ${breakPoints.sm} {
-    min-width: 45px;
-    min-height: 45px;
-  }
-`;
-
 const standardStyle = css`
-  min-width: 250px;
-  min-height: 70px;
-
-  @media ${breakPoints.sm} {
-    min-height: 50px;
-  }
+  min-width: 270px;
 `;
 
 const wideStyle = css`
-  min-width: 320px;
-  min-height: 70px;
-
-  @media ${breakPoints.sm} {
-    min-width: 250px;
-    min-height: 50px;
-  }
-`;
-
-const narrowStyle = css`
-  min-width: 150px;
-  min-height: 50px;
-
-  @media ${breakPoints.sm} {
-    min-width: 120px;
-    min-height: 48px;
-  }
+  min-width: 340px;
 `;
 
 const styles: Record<Variant, FlattenSimpleInterpolation> = {
-  square: squareStyle,
   standard: standardStyle,
   wide: wideStyle,
-  narrow: narrowStyle,
 };
 
-export const StyledButton = styled.button`
+export const StyledButton = styled.button<StyledButtonProps>`
+  --button-border-color: var(--main-white-100);
+  --button-text-color: var(--main-white-100);
+  --button-bg-color: transparent;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  ${(props: StyledButtonProps) => styles[props.variant]}
+  min-height: 60px;
+  ${(props) => styles[props.variant]}
   width: max-content;
 
-  background-color: var(--black);
+  background-color: var(--button-bg-color);
 
-  border: 1px solid var(--borderColor);
-  border-radius: ${(props: StyledButtonProps) => (props.rounded ? '4' : '0')}px;
+  border: 1px solid var(--button-border-color);
+  border-radius: 4px;
 
+  color: var(--button-text-color);
   text-decoration: none;
 
-  transition: all 0.2s ease-out;
-
-  color: var(--white);
-
-  &:hover,
-  &:active {
-    background-color: var(--hoverBG);
-    color: var(--hoverColor);
-    fill: var(--hoverColor);
-    border-color: var(--hoverBorderColor);
-  }
+  transition: all 250ms ease-in;
 
   &:focus-visible {
-    background-color: var(--white);
-    border: 1px solid var(--black);
-    color: var(--black);
-    fill: var(--black);
+    --button-text-color: var(--main-black);
+    --button-border-color: var(--main-white-100);
+    --button-bg-color: var(--main-white-100);
   }
 
-  &.outlined {
-    --borderColor: var(--white);
-    --hoverBG: var(--black);
-    --hoverColor: var(--red);
-    --hoverBorderColor: rgb(220 220 220 / 50%);
-  }
-
-  &.filled {
-    --borderColor: transparent;
-    --hoverBG: var(--red);
-    --hoverColor: var(--white);
-    --hoverBorderColor: transparent;
+  &:hover {
+    --button-text-color: var(--main-white-100);
+    --button-border-color: var(--main-red-100);
+    --button-bg-color: var(--main-red-100);
   }
 `;

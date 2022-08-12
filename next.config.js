@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const options = {
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -8,4 +8,19 @@ module.exports = {
 
     return config;
   },
+  reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/books',
+        permanent: true,
+      },
+    ];
+  },
+  devIndicators: {
+    buildActivity: false,
+  },
 };
+
+module.exports = options;

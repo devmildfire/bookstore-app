@@ -1,0 +1,115 @@
+import { BoxSet } from '@/models/boxSets';
+import books from './books';
+
+export const set: BoxSet = {
+  id: 1,
+  title: 'Соединённые Штаты Литературы',
+  price: 1100,
+  newPrice: null,
+  image: 'images/sets/usa.svg',
+  books: books.slice(0, 6),
+  description: 'Произведения американских авторов',
+};
+
+const sets: BoxSet[] = [
+  {
+    id: 1,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 2,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 3,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 4,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 5,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 6,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 7,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 8,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 9,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+  {
+    id: 10,
+    title: 'Соединённые Штаты Литературы',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Произведения американских авторов',
+  },
+  {
+    id: 11,
+    title: 'Весь Керуак',
+    price: 1100,
+    newPrice: 1200,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Джека Керуака',
+  },
+  {
+    id: 12,
+    title: 'Весь Старообрядцев',
+    price: 1100,
+    newPrice: null,
+    books: books.slice(0, 6),
+    description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+  },
+];
+
+export const generateSet = (id: number): BoxSet => ({ ...set, id });
+
+export default sets;

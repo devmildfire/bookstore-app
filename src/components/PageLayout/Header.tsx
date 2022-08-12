@@ -15,10 +15,10 @@ const StyledWrapper = styled.header`
   width: 100%;
   position: sticky;
   top: 0;
-  height: 80px;
+  height: var(--header-height);
   padding: 0 60px;
   background-color: ${colors.blackBase};
-  z-index: 1;
+  z-index: var(--up-z-index);
 
   @media (max-width: 1440px) {
     padding: 0 40px;
@@ -45,15 +45,20 @@ const SearchIconStyled = styled(SearchIcon)`
   cursor: pointer;
 
   :hover {
-    fill: ${colors.redBase};
+    fill: var(--main-red-100);
   }
 `;
 
 const CartIconStyled = styled(CartIcon)`
+  width: 14px;
+  height: 16px;
+
+  stroke: var(--main-white-100);
+
   cursor: pointer;
 
   :hover {
-    stroke: ${colors.redBase};
+    stroke: var(--main-red-100);
   }
 `;
 
@@ -61,7 +66,7 @@ const SignOutIconStyled = styled(SignOutIcon)`
   cursor: pointer;
 
   :hover {
-    fill: ${colors.redBase};
+    fill: var(--main-red-100);
   }
 `;
 

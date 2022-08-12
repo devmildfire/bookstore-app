@@ -56,20 +56,20 @@ const MemberCard = (props: Member): React.ReactElement => {
   return (
     <StyledCard>
       <StyledPhoto src={photo} alt={member} />
-      <Text variant='span' align='center'>
+      <Text variant='text' align='center'>
         {member}
       </Text>
-      <Text variant='span' align='center'>
+      <Text variant='h4_1' component='p' align='center'>
         {position}
       </Text>
-      <Text variant='span' align='center'>
+      <Text variant='h4_1' component='p' align='center'>
         {city}
       </Text>
       <Text
-        variant='span'
-        component='span'
+        variant='h4_1'
+        component='p'
         className='top'
-        color='red'
+        textColor='red'
         align='center'
       >
         {phrase}

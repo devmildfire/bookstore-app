@@ -1,65 +1,65 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,700&family=Roboto&display=swap');*/
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-ExtraBold.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 900;
-}
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-Bold.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 700;
-}
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-SemiBold.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 600;
-}
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-Medium.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 500;
-}
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-Regular.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 400;
-}
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../../public/fonts/Montserrat-Light.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 300;
-}
-@font-face {
-  font-family: 'Cheque';
-  src: url('../../public/fonts/Chequeblack.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 900;
-}
-@font-face {
-  font-family: 'Cheque';
-  src: url('../../public/fonts/Chequeregular.ttf') format('truetype');
-  font-style: normal;
-  font-weight: 400;
-}
+@import url('./fonts.css');
+@import url('./normalize.css');
 
-html {
-  box-sizing: border-box;
-  --red: #930000;
-  --white: #dcdcdc;
-  --black: #121212;
+:root {
+  --main-red-100: rgba(147, 0, 0, 1);
+  --main-red-90: rgba(147, 0, 0, 0.9);
+  --main-red-80: rgba(147, 0, 0, 0.8);
+  --main-red-70: rgba(147, 0, 0, 0.7);
+  --main-red-60: rgba(147, 0, 0, 0.6);
+  --main-red-50: rgba(147, 0, 0, 0.5);
+  --main-red-40: rgba(147, 0, 0, 0.4);
+  --main-red-30: rgba(147, 0, 0, 0.3);
+  --main-red-20: rgba(147, 0, 0, 0.2);
+  --main-red-10: rgba(147, 0, 0, 0.1);
+
+  --main-white-100: rgba(220, 220, 220, 1);
+  --main-white-90: rgba(220, 220, 220, 0.9);
+  --main-white-80: rgba(220, 220, 220, 0.8);
+  --main-white-70: rgba(220, 220, 220, 0.7);
+  --main-white-60: rgba(220, 220, 220, 0.6);
+  --main-white-50: rgba(220, 220, 220, 0.5);
+  --main-white-40: rgba(220, 220, 220, 0.4);
+  --main-white-30: rgba(220, 220, 220, 0.3);
+  --main-white-20: rgba(220, 220, 220, 0.2);
+  --main-white-10: rgba(220, 220, 220, 0.1);
+
+  --main-black: #121212;
+  --key: #000000;
   --grey: #c4c4c4;
+
+  --low-z-index: -1;
+  --up-z-index: 1;
+  --upper-z-index: 2;
+
+  --width: 1440px;
+  --max-width: 1920px;
+  --main-margin: calc((100vw - var(--width)) / 2);
+  --header-height: 80px;
 }
 
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+@media screen and (max-width: 1440px) {
+  :root {
+    --width: 1024px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    --width: 830px;
+  }
+}
+
+@media screen and (max-width: 830px) {
+  :root {
+    --width: 580px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  :root {
+    --width: 300px;
+  }
 }
 
 html,
@@ -71,55 +71,22 @@ body {
   min-height: 100%;
 }
 
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ol,
-ul,
-dl,
-dt,
-dd {
-  margin: 0;
-  padding: 0;
+.scroll-lock {
+  overflow: hidden;
 }
 
-ol,
-ul {
-  list-style: none;
-}
+.visibility-hidden {
+  position: absolute;
+  z-index: var(--low-z-index);
 
-input,
-textarea,
-button,
-select {
-  border: 0;
-  outline: none;
-  font: inherit;
-  -webkit-font-smoothing: inherit;
-  -webkit-appearance: none;
-}
+  display: inline-block;
 
-img,
-embed,
-iframe,
-object,
-audio,
-video {
-  max-width: 100%;
-  height: auto;
-}
+  width: 1px;
+  height: 1px;
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  margin: -1px;
 
-.swiper,
-.swiper-wrapper {
-  z-index: 0;
+  clip: rect(0, 0, 0, 0);
+
+  overflow: hidden;
 }

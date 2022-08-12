@@ -6,31 +6,31 @@ import {
   StyledMainText,
   StyledRD,
   StyledSecondaryText,
-  StyledWrapper,
+  StyledWrapper
 } from './styles';
 
 const RD = (): React.ReactElement => (
   <StyledWrapper>
-    <Text variant='h2' align='center'>
+    <Text variant='h2_1' align='center'>
       Литжурнал Русского Динозавра
     </Text>
     <StyledContent>
       <StyledRD />
-      <StyledMainText variant='p'>
-        <Text variant='h2' component='span'>
+      <StyledMainText variant='text'>
+        <Text variant='h2_1' component='span'>
           М
         </Text>
         ы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
         литературном журнале арт-конгрегации &nbsp;
-        <Text variant='p' component='span' color='red'>
+        <Text variant='text' component='span' textColor='red'>
           Русский Динозавр
         </Text>
         &nbsp;— нашего творческого объединения мастеров арт-контента.
       </StyledMainText>
-      <StyledSecondaryText variant='p'>
+      <StyledSecondaryText variant='text'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
       </StyledSecondaryText>
-      <WithArrow color='red' variant='p' component='span'>
+      <WithArrow textColor='red' variant='text' component='span'>
         Журнал Русского Динозавра
       </WithArrow>
     </StyledContent>

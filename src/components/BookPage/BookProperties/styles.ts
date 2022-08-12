@@ -7,7 +7,7 @@ export const StyledWrapper = styled.section`
   gap: 48px;
 
   padding: 44px 79px 40px 132px;
-  border: 1px solid var(--red);
+  border: 1px solid var(--main-red-100);
 
   @media ${breakPoints.xl} {
     gap: 35px;
@@ -133,7 +133,7 @@ export const StyledItem = styled.div`
 
 export const StyledReadersList = styled.ul`
   display: flex;
-  gap: 
+  gap:
 
   @media ${breakPoints.xl} {
     flex-wrap: wrap;

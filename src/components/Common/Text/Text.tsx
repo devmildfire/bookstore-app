@@ -1,27 +1,29 @@
-import React, { PropsWithChildren } from 'react';
+/* eslint-disable no-undef */
+import * as React from 'react';
+
 import { ClassNameProps } from '@/types/className';
 import StyledText, { StyledTextProps, tagMap } from './styles';
-import { Component } from './types';
 
-export interface TextProps extends Partial<StyledTextProps>, ClassNameProps {
-  readonly component?: Component;
+export interface TextProps<E extends keyof HTMLElementTagNameMap>
+  extends Partial<StyledTextProps>,
+    ClassNameProps,
+    React.HTMLAttributes<HTMLElementTagNameMap[E]> {
+  readonly component?: E;
 }
 
-export const Text = (
-  props: PropsWithChildren<TextProps>,
+export const Text = <E extends keyof HTMLElementTagNameMap>(
+  props: TextProps<E>
 ): React.ReactElement => {
   const {
     children,
-    className,
     component,
-    variant = 'body1',
+    variant = 'text',
     align = 'inherit',
-    color = 'white',
-    ...params
+    textColor = 'white',
+    ...rest
   } = props;
 
   const as = component || tagMap[variant];
-
   /**
    * Почему то выдает тип, в котором не as
    * Но он там должен быть, по этому пока что any
@@ -31,9 +33,8 @@ export const Text = (
       as={as as any}
       align={align}
       variant={variant}
-      className={className}
-      color={color}
-      {...params}
+      textColor={textColor}
+      {...rest}
     >
       {children}
     </StyledText>

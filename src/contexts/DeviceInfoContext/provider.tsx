@@ -1,19 +1,12 @@
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import * as React from 'react';
 import calculateDeviceInfo from '@/utils/calculateDeviceInfo';
 import DeviceInfoContext from './context';
 
-const DeviceInfoProvider = (
-  props: PropsWithChildren<{}>,
-): React.ReactElement => {
-  const [deviceInfo, setDeviceInfo] = useState(calculateDeviceInfo(0));
+const DeviceInfoProvider: React.FC<React.PropsWithChildren<{}>> = (props) => {
+  const [deviceInfo, setDeviceInfo] = React.useState(calculateDeviceInfo(0));
   const { children } = props;
 
-  const onResize = useCallback(() => {
+  const onResize = React.useCallback(() => {
     const newDeviceInfo = calculateDeviceInfo(window.innerWidth);
 
     if (deviceInfo.device !== newDeviceInfo.device) {
@@ -21,7 +14,7 @@ const DeviceInfoProvider = (
     }
   }, [deviceInfo]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     window.addEventListener('resize', onResize);
 
     return () => {
@@ -29,7 +22,7 @@ const DeviceInfoProvider = (
     };
   }, [onResize]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     onResize();
   }, []);
 

@@ -5,7 +5,7 @@ import SubscribeForm from './SubscribeForm';
 
 const BeWithUs = (): React.ReactElement => (
   <StyledWrapper>
-    <Text variant='h2' align='center'>
+    <Text variant='h2_1' align='center'>
       Будьте с нами
     </Text>
     <SubscribeForm />
