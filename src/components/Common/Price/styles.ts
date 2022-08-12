@@ -18,7 +18,6 @@ export const StyledOldPrice = styled.del`
 
     position: absolute;
     inset: 0;
-    z-index: var(--up-z-index);
 
     background-image: linear-gradient(
       -18deg,
