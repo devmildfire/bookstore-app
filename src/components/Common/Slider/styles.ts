@@ -8,22 +8,24 @@ export const StyledWrapper = styled.div`
 `;
 
 export const StyledPagination = styled.div`
-  --size: 14px;
+  --size: 6px;
 
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
 
-  height: calc(var(--size) * 1.2);
+  height: calc(var(--size) * 1.9);
 
   .swiper-pagination-bullet {
     display: inline-block;
 
     width: var(--size);
     height: var(--size);
+
     opacity: 1;
-    background: #dcdcdc;
+
+    background-color: var(--main-white-100);
 
     transition: transform ease-in 0.15s;
     transform-origin: center;
@@ -31,18 +33,18 @@ export const StyledPagination = styled.div`
 
   .swiper-pagination-bullet:hover,
   .swiper-pagination-bullet:focus-visible {
-    transform: scale(1.1);
+    transform: scale(1.9);
   }
 
   .swiper-pagination-bullet-active {
     color: #fff;
     background-color: #930000;
 
-    transform: scale(1.2);
+    transform: scale(1.9);
   }
 
   @media ${breakPoints.sm} {
-    --size: 10px;
+    --size: 6px;
   }
 `;
 
