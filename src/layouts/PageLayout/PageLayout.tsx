@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Head from 'next/head';
-import Header from '@/components/PageLayout/Header';
+// import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import { StyledContent, StyledWrapper } from './styles';
 import Popups from '@/components/Popups';
@@ -20,7 +20,7 @@ const PageLayout: React.FC<PageLayoutProps> = (props) => {
         <title>{headTitle}</title>
       </Head>
       <StyledWrapper>
-        <Header />
+        {/* <Header /> */}
         <StyledContent>{children}</StyledContent>
         <Footer />
         <Popups />

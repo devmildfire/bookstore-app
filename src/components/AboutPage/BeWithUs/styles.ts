@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const StyledWrapper = styled.section`
   display: grid;
-  gap: 50px;
+  gap: 64px;
 `;
 
 export default StyledWrapper;

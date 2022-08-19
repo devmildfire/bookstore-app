@@ -1,14 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import Text from '@/components/Common/Text';
 import Members from './Members';
+import Text from '@/components/Common/Text';
 
 const StyledWrapper = styled.div`
   display: grid;
-  gap: 70px;
-
-  padding-top: 125px;
 
   @media ${breakPoints.xl} {
     padding-top: 105px;
@@ -27,11 +24,18 @@ const StyledWrapper = styled.div`
   }
 `;
 
+const StyledTitle = styled(Text)`
+  position: relative;
+  margin: 0;
+  padding-bottom: 96px;
+  z-index: 2;
+`;
+
 const We = (): React.ReactElement => (
   <StyledWrapper>
-    <Text variant='h2_1' align='center'>
+    <StyledTitle variant='h2_1' align='center'>
       Мы
-    </Text>
+    </StyledTitle>
     <Members />
   </StyledWrapper>
 );

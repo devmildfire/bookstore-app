@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import image1 from '@/assets/images/books1.png';
@@ -28,8 +28,8 @@ const StyledBooks = styled(Container)`
   position: absolute;
   inset: 0;
 
+  margin: 0;
   max-width: 1920px;
-
   background-image: url(${image1.src}), url(${image2.src});
   background-repeat: no-repeat;
   background-position: calc(0px - var(--bookOffset)), var(--bookTwoPosition);
@@ -45,7 +45,7 @@ const StyledPhrase = styled.div`
   display: flex;
   flex-wrap: wrap;
 
-  padding-top: 130px;
+  padding-top: 23px;
   margin-left: auto;
 
   width: 664px;
@@ -73,19 +73,33 @@ const StyledPhrase = styled.div`
   }
 `;
 
-const Books = () => (
+const StyledText = styled(Text)`
+  padding-top: 23px;
+`;
+
+const Books = (): ReactElement => (
   <StyledWrapper>
     <Container>
       <StyledPhrase>
-        <Text component='p' variant='h3_3' fontWeight={400} textTransform='none'>
+        <StyledText
+          component='p'
+          variant='h3_3'
+          fontWeight={400}
+          textTransform='none'
+        >
           О том, чтобы превращать
-        </Text>
-        <Text component='span' variant='h2_2'>
+        </StyledText>
+        <StyledText component='span' variant='h2_2'>
           Деньги в книги,
-        </Text>
-        <Text component='p' variant='h3_3' fontWeight={400} textTransform='none'>
+        </StyledText>
+        <StyledText
+          component='p'
+          variant='h3_3'
+          fontWeight={400}
+          textTransform='none'
+        >
           а не наоборот
-        </Text>
+        </StyledText>
       </StyledPhrase>
     </Container>
     <StyledBooks />

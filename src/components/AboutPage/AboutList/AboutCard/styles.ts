@@ -3,15 +3,15 @@ import breakPoints from '@/utils/breakPoints';
 
 const StyledCard = styled.div`
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  width: 400px;
+  gap: 20px;
+  /* padding: 50px 47px; */
 
-  width: 460px;
-  height: 700px;
-
-  padding: 50px 47px;
-
-  background-color: rgba(196, 196, 196, 0.1);
-  background-image: url(${(props: { image?: string }) => props.image || ''});
+  /* background-color: rgba(196, 196, 196, 0.1); */
+  /* background-image: url(${(props: { image?: string }) => props.image || ''});
+  background-position: center;
+  background-size: cover; */
 
   @media ${breakPoints.xl} {
     width: 340px;

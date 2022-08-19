@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import WithArrow from '@/components/Common/WithArrow';
+import Text from '@/components/Common/Text';
 
-const StyledDonateText = styled(WithArrow)`
+const StyledDonateText = styled(Text)`
   max-width: max-content;
-
+  /* TODO избавиться от фиксированной высоты блока */
+  height: 740px;
   margin: 0 auto;
 `;
 

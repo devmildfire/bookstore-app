@@ -6,8 +6,8 @@ import MemberCard from './MemberCard';
 import members from '@/mocks/members';
 
 const Members = (): React.ReactElement => {
-  const { isTabletVertical, isMobile, } = useContext(DeviceInfoContext);
-  let count = 3;
+  const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
+  let count = 4;
   if (isMobile) {
     count = 1;
   } else if (isTabletVertical) {

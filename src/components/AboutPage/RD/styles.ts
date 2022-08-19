@@ -6,19 +6,23 @@ import RDImage from '@/assets/images/dino.png';
 export const StyledWrapper = styled.section`
   display: grid;
   gap: 50px;
+  max-width: 1440px;
+  width: 100%;
 `;
 
 export const StyledContent = styled.div`
-  --RDOffset: 0px;
+  --RDOffset: 40px;
 
   position: relative;
   z-index: 0;
 
   display: grid;
   grid-template-rows: repeat(2, min-content) 1fr;
-  gap: 67px;
+  gap: 40px;
 
-  height: 825px;
+  height: 529px;
+  max-width: 1440px;
+  width: 100%;
 
   > :last-child {
     align-self: end;
@@ -65,7 +69,7 @@ export const StyledRD = styled.div`
   background-image: url(${RDImage.src});
   background-repeat: no-repeat;
   background-position: calc(100% + 130px) calc(50% + var(--RDOffset));
-  background-size: 80%;
+  background-size: 60%;
 
   @media ${breakPoints.sm} {
     background: none;

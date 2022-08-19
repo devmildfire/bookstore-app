@@ -5,7 +5,9 @@ import Slide from '@/components/Common/Slide';
 export const StyledList = styled.section`
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 105px;
+  max-width: 1440px;
+  width: 100%;
 
   @media ${breakPoints.xl} {
     gap: 10px;

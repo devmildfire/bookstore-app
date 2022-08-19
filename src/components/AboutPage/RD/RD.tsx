@@ -1,13 +1,22 @@
 import React from 'react';
+import styled from 'styled-components';
 import Text from '@/components/Common/Text';
-import WithArrow from '@/components/Common/WithArrow';
+import Button from '@/components/Common/Button';
 import {
   StyledContent,
   StyledMainText,
   StyledRD,
   StyledSecondaryText,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
+
+const StyledButton = styled(Button)`
+  min-width: 480px;
+  &:last-child {
+    width: 480;
+    align-self: flex-start;
+  }
+`;
 
 const RD = (): React.ReactElement => (
   <StyledWrapper>
@@ -17,22 +26,14 @@ const RD = (): React.ReactElement => (
     <StyledContent>
       <StyledRD />
       <StyledMainText variant='text'>
-        <Text variant='h2_1' component='span'>
-          М
-        </Text>
-        ы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
-        литературном журнале арт-конгрегации &nbsp;
-        <Text variant='text' component='span' textColor='red'>
-          Русский Динозавр
-        </Text>
-        &nbsp;— нашего творческого объединения мастеров арт-контента.
+        Мы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
+        литературном журнале арт-конгрегации Русский Динозавр — нашего
+        творческого объединения мастеров арт-контента.
       </StyledMainText>
       <StyledSecondaryText variant='text'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
       </StyledSecondaryText>
-      <WithArrow textColor='red' variant='text' component='span'>
-        Журнал Русского Динозавра
-      </WithArrow>
+      <StyledButton>Журнал Русского Динозавра</StyledButton>
     </StyledContent>
   </StyledWrapper>
 );

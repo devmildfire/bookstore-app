@@ -8,10 +8,13 @@ const StyledCard = styled.img`
   justify-content: center;
   align-items: center;
 
-  width: 320px;
-  height: 130px;
-
-  object-fit: cover;
+  width: 302px;
+  height: 302px;
+  background-color: rgba(18, 18, 18, 0.5);
+  backdrop-filter: blur(8px);
+  object-fit: contain;
+  padding: 50px 20px;
+  border-radius: 4px;
 
   @media ${breakPoints.xl} {
     width: 300px;
@@ -35,7 +38,7 @@ const StyledCard = styled.img`
 `;
 
 const PartnerCard = (props: Partner): React.ReactElement => {
-  const { name, photo, } = props;
+  const { name, photo } = props;
 
   return <StyledCard src={photo} alt={name} />;
 };

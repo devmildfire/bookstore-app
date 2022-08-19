@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import React, { FormEvent, useCallback, useState } from 'react';
 import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
@@ -14,12 +15,21 @@ const SubscribeForm = (): React.ReactElement => {
 
   return (
     <StyledForm onSubmit={onSubmit}>
-      <Input {...field} placeholder='E-mail' />
+      <StyledInput {...field} placeholder='E-mail' />
       <StyledButton disabled={sended}>
         {sended ? 'Вы подписаны!' : 'Подписаться'}
       </StyledButton>
     </StyledForm>
   );
 };
+
+const StyledInput = styled(Input)`
+  background-color: var(--main-white-20);
+  border: none;
+  color: var(--main-white-100);
+  padding: 20px;
+  max-width: 640px;
+  width: 100%;
+`;
 
 export default SubscribeForm;

@@ -11,20 +11,16 @@ import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-import stars from '@/assets/images/stars.webp';
+import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
 
 const About: NextPage = () => (
   <StyledWrapper>
     <Container>
       <Video src='fakePath' />
     </Container>
-    <Container>
-      <AboutList />
-    </Container>
     <AboutUs />
-    <Container>
-      <RD />
-    </Container>
+    <AboutList />
+    <RD />
     <StyledStarsBlock>
       <Container>
         <We />
@@ -46,18 +42,16 @@ export default About;
 
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
-  --lastMarginBottom: 250px;
+  --lastMarginBottom: 600px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding-top: 40px;
+  gap: 170px;
 
-  & > :not(:last-child) {
-    margin-bottom: var(--marginBottom);
-  }
-
-  & > :last-child {
+  /* & > :last-child {
     padding-bottom: var(--lastMarginBottom);
-  }
+  } */
 
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
@@ -81,12 +75,30 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledStarsBlock = styled.section`
-  background-image: url(${stars.src});
+  display: flex;
+  flex-direction: column;
+  gap: 130px;
+  background-image: url(${rorshah.src});
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  position: relative;
+  padding-bottom: 120px;
 
-  & > :not(:last-child) {
-    margin-bottom: var(--marginBottom);
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5)
+      linear-gradient(
+        to bottom,
+        #121212 0%,
+        rgba(0, 0, 0, 0) 50%,
+        hsl(0, 0%, 0%) 120%
+      );
   }
 `;

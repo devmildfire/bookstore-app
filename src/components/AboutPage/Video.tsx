@@ -14,6 +14,7 @@ export interface VideoProps {
 
 const StyledVideo = styled.video`
   width: 100%;
+  max-width: 1440px;
   height: 794px;
   background-color: var(--grey);
 
@@ -35,11 +36,11 @@ const StyledVideo = styled.video`
 `;
 
 const Video = (props: VideoProps): React.ReactElement => {
-  const { src, sources, } = props;
+  const { src, sources } = props;
 
   return (
     <StyledVideo src={src}>
-      {sources?.map(({ srcset, type, }) => (
+      {sources?.map(({ srcset, type }) => (
         <source srcSet={srcset} type={type} />
       ))}
     </StyledVideo>
