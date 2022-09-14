@@ -7,6 +7,7 @@ import contacts from '@/mocks/contacts';
 import {
   CopyrightContainer,
   FooterContact,
+  FooterContactLink,
   FooterContacts,
   FooterContent,
   FooterCopyright,
@@ -24,23 +25,21 @@ const Footer = (): React.ReactElement => (
   <StyleWrapper>
     <FooterContent>
       <FooterContacts>
-        {contacts.map(({ content, hightLightContent, href, }) => (
-          <FooterContact component='p' key={href}>
-            <a href={href}>
-              {content}
+        {contacts.map((contact) => (
+          <FooterContact key={contact.href}>
+            <FooterContactLink href={contact.href}>
+              <Icon as={contact.icon as any} />
               &nbsp;
-              <FooterContact component='span' textColor='red'>
-                {hightLightContent}
-              </FooterContact>
-            </a>
+              {contact.hightLightContent}
+            </FooterContactLink>
           </FooterContact>
         ))}
       </FooterContacts>
       <FooterInfo>
-        <FooterTitle variant='h2_1' fontFamily='sans'>
+        <FooterTitle fontFamily='sans'>
           <FooterTitle
             component='span'
-            variant='h2_1'
+            // variant='h4_1'
             textColor='red'
             fontFamily='sans'
           >
@@ -79,14 +78,18 @@ const Footer = (): React.ReactElement => (
     </FooterContent>
     <FooterCopyright>
       <CopyrightContainer>
-        <Text variant='h4_3' component='p'>
-          © 2017-
-          {getCurrentYear()}
-          &nbsp;
-          <Text component='span' variant='h4_3' textColor='red'>
-            Чти
-          </Text>
-          во. Санкт-Петербург. Все права защищены.
+        <Text
+          variant='h4_3'
+          component='p'
+          style={{ display: 'flex', justifyContent: 'space-between', }}
+        >
+          <span>
+            © 2017-
+            {getCurrentYear()}
+            &nbsp;
+            Чтиво. Санкт-Петербург. Все права защищены.
+          </span>
+          <span> #хбдщдбдщ</span>
         </Text>
       </CopyrightContainer>
     </FooterCopyright>

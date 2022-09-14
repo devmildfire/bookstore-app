@@ -56,8 +56,28 @@ export const FooterContacts = styled.div`
   }
 `;
 
-export const FooterContact = styled(Text)`
+export const FooterContact = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   font-weight: 600;
+`;
+
+export const FooterContactLink = styled.a`
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+  align-items: center;
+
+
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #DCDCDC;
+
 `;
 
 export const FooterInfo = styled.div`
@@ -75,6 +95,12 @@ export const FooterInfo = styled.div`
 export const FooterTitle = styled(Text)`
   margin-bottom: 15px;
 
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 61px;
+
   @media ${breakPoints.sm} {
     font-size: 40px;
     line-height: 49px;
@@ -84,16 +110,17 @@ export const FooterTitle = styled(Text)`
 export const FooterSocials = styled.ul`
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 `;
 
 export const Icon = styled.svg`
-  fill: var(--main-white-100);
+  stroke: var(--main-white-100);
+  stroke-width: 0.5;
 
-  transition: fill 0.3s ease-in-out;
+  transition: stroke 0.3s ease-in-out;
 
   :hover {
-    fill: var(--main-red-100);
+    stroke: var(--main-red-100);
   }
 `;
 
