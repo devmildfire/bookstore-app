@@ -18,6 +18,7 @@ import {
   FooterSocials,
   FooterTitle,
   Icon,
+  ContactIcon,
   StyleWrapper
 } from './styles';
 
@@ -28,7 +29,7 @@ const Footer = (): React.ReactElement => (
         {contacts.map((contact) => (
           <FooterContact key={contact.href}>
             <FooterContactLink href={contact.href}>
-              <Icon as={contact.icon as any} />
+              <ContactIcon as={contact.icon as any} />
               &nbsp;
               {contact.hightLightContent}
             </FooterContactLink>

@@ -7,7 +7,6 @@ export const StyleWrapper = styled.footer`
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-top: 1px solid red;
   color: var(--main-white-100);
 `;
 
@@ -122,6 +121,10 @@ export const Icon = styled.svg`
   :hover {
     stroke: var(--main-red-100);
   }
+`;
+
+export const ContactIcon = styled.svg`
+  stroke: var(--main-white-100);
 `;
 
 export const FooterLogoLink = styled.a`
