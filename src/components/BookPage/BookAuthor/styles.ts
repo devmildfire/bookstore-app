@@ -11,7 +11,7 @@ export const StyleWrapper = styled.section`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 30px;
+  margin-bottom: 85px;
   text-align: center;
   font-family: Cheque;
   font-weight: 900;
@@ -38,6 +38,7 @@ export const AuthorInfo = styled.div`
   position: relative;
   margin-bottom: 40px;
   display: flex;
+  gap: 64px;
 
   @media ${breakPoints.lg} {
     margin-bottom: 20px;
@@ -53,9 +54,11 @@ export const AuthorInfo = styled.div`
   }
 `;
 
-export const AuthorFoto = styled.img`
-  margin-right: 40px;
-
+export const AuthorPhoto = styled.img`
+  height: 534px;
+  width: 534px;
+  display: block;
+  object-fit: cover;
   @media ${breakPoints.xl} {
     width: 416px;
     height: 294px;
@@ -73,12 +76,19 @@ export const AuthorFoto = styled.img`
 `;
 
 export const AuthorDescr = styled.div`
-  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 20px;
   line-height: 29px;
 `;
 
 export const AuthorProps = styled.div`
-  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 30px;
+  letter-spacing: 0.03em;
   font-weight: 700;
 
   @media ${breakPoints.xl} {
@@ -108,7 +118,7 @@ export const AuthorSpeech = styled.p`
   position: relative;
   max-width: 661px;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
 
   @media ${breakPoints.xl} {
     max-width: 558px;
@@ -166,8 +176,6 @@ export const RedQuote = styled.span`
 `;
 
 export const AuthorAbout = styled.p`
-  margin-bottom: 54px;
-  font-size: 24px;
   line-height: 29px;
 
   @media ${breakPoints.xl} {
@@ -186,7 +194,7 @@ export const AuthorAbout = styled.p`
 
 export const AuthorContacts = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: left;
   font-size: 18px;
   line-height: 22px;
 

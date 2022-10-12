@@ -1,15 +1,18 @@
 import React from 'react';
 import {
+  DescriptionLayout,
   StyledAuthor,
   StyledDescription,
   StyledImage,
   StyledInfo,
   StyledThesis,
   StyledTitle,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
+import Slide from '@/components/Common/Slide';
+import Slider from '@/components/Common/Slider';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -20,6 +23,7 @@ interface BookDescriptionProps {
   readonly description: string[];
   readonly authors: Author[];
 }
+/* grid-template-rows: repeat(auto-fill, min-content); */
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
@@ -33,11 +37,17 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   } = props;
 
   const year = new Date(publishDate).getFullYear();
-
+  const images = [image, image, image, image];
   return (
     <StyledWrapper>
-      <StyledImage src={image} alt={title} />
-      <div>
+      <Slider withoutAutoplay>
+        {images.map((img) => (
+          <Slide>
+            <StyledImage src={img} alt={title} />
+          </Slide>
+        ))}
+      </Slider>
+      <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {authors.map((author) => author.name)}
@@ -45,13 +55,18 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
           {`${year} | ${genre} | ${ageRestriction}`}
         </StyledInfo>
-        <StyledThesis variant='h3_3' component='p' textColor='red' fontWeight={500}>
+        <StyledThesis
+          variant='h3_3'
+          component='p'
+          textColor='red'
+          fontWeight={500}
+        >
           ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
         </StyledThesis>
         <StyledDescription>
           {description.map((paragraph: string) => (
             <Text
-              variant='h3_3'
+              variant='text'
               component='p'
               fontWeight={400}
               textTransform='none'
@@ -60,7 +75,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
             </Text>
           ))}
         </StyledDescription>
-      </div>
+      </DescriptionLayout>
     </StyledWrapper>
   );
 };

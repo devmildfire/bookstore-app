@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  StyleWrapper, Title, TrailerContainer, TrailerVideo
-} from './styles';
+import { StyleWrapper, Title, TrailerContainer, TrailerVideo } from './styles';
 
 interface BookTrailerProps {
   readonly title: string;
@@ -9,7 +7,7 @@ interface BookTrailerProps {
 }
 
 const BookTrailer = (props: BookTrailerProps): React.ReactElement => {
-  const { src, title, } = props;
+  const { src, title } = props;
   return (
     <StyleWrapper>
       <Title>Буктрейлер</Title>

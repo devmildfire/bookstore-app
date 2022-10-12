@@ -14,7 +14,7 @@ export const StyleWrapper = styled.section`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 30px;
+  margin-bottom: 85px;
   text-align: center;
   font-family: Cheque;
   font-weight: 900;

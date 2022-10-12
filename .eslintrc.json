@@ -34,13 +34,14 @@
     "object-curly-newline": "off",
     "comma-dangle": [
       "warn",
-      {
-        "arrays": "never",
-        "objects": "always",
-        "imports": "never",
-        "exports": "never",
-        "functions": "never"
-      }
+      "only-multiline"
+      // {
+      //   "arrays": "never",
+      //   "objects": "always",
+      //   "imports": "never",
+      //   "exports": "never",
+      //   "functions": "never"
+      // }
     ],
 
     /* REACT */

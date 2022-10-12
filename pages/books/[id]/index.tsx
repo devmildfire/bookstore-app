@@ -2,7 +2,6 @@
 import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
-import breakPoints from '@/utils/breakPoints';
 import { Book, getBook } from '@/models/books';
 import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
@@ -17,8 +16,7 @@ interface BookPageProps {
 }
 
 const BookPage = (props: BookPageProps): React.ReactElement => {
-  const { book, } = props;
-
+  const { book } = props;
   return (
     <main>
       <Head>
@@ -36,10 +34,10 @@ const BookPage = (props: BookPageProps): React.ReactElement => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
-  ({ dispatch, }) =>
-    async ({ query, }) => {
-      const { id, } = query;
-      const { data: book, } = await dispatch(getBook.initiate(id as string));
+  ({ dispatch }) =>
+    async ({ query }) => {
+      const { id } = query;
+      const { data: book } = await dispatch(getBook.initiate(id as string));
 
       if (!book) {
         return {
@@ -58,21 +56,6 @@ export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
 const StyleWrapper = styled(Container)`
   display: grid;
   gap: 170px;
-  padding: 30px 0 100px;
-  @media ${breakPoints.xl} {
-    gap: 150px;
-    padding-bottom: 70px;
-  }
-  @media ${breakPoints.lg} {
-    gap: 100px;
-  }
-  @media ${breakPoints.md} {
-    gap: 80px;
-    padding-bottom: 50px;
-  }
-  @media ${breakPoints} {
-    gap: 70px;
-  }
 `;
 
 export default BookPage;
