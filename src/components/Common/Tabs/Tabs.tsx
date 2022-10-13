@@ -263,6 +263,7 @@ export default function Tabs(
 
   const handleTabClick = useCallback(onTabClick, [setActive, setPage]);
   const ActiveTabContent = editions[active];
+
   return (
     <StyledTabs>
       <Labels>
