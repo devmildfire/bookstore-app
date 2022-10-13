@@ -229,7 +229,7 @@ function TabContent({
   children,
 }: PropsWithChildren<TabContentProps>) {
   return (
-    <AnimatePresence initial={false} mode='wait' custom={direction}>
+    <AnimatePresence initial={false} custom={direction}>
       <StyledTabContent>
         <TabContainer
           custom={direction}
