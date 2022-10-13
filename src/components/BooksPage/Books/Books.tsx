@@ -4,6 +4,7 @@ import { StyledWrapper } from './styles';
 import Container from '@/components/Common/Container';
 import Filters from '../../Filters';
 
+console.log(process.env.NEXT_PUBLIC_VERCEL_URL);
 const Books: React.FC = () => (
   <StyledWrapper>
     <Container>

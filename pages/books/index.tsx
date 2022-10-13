@@ -12,7 +12,7 @@ const BooksPage: NextPage = () => (
 );
 
 export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch, }) =>
+  ({ dispatch }) =>
     async () => {
       const requests: Promise<unknown>[] = [
         dispatch(
@@ -22,7 +22,7 @@ export const getStaticProps = wrapper.getStaticProps(
             publishYear: [],
           })
         ),
-        dispatch(getPopularBooks.initiate(undefined))
+        dispatch(getPopularBooks.initiate(undefined)),
       ];
       await Promise.all(requests);
 
