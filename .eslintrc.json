@@ -32,16 +32,7 @@
     "no-unused-vars": "off",
     "arrow-body-style": "off",
     "object-curly-newline": "off",
-    "comma-dangle": [
-      "warn",
-      {
-        "arrays": "never",
-        "objects": "always",
-        "imports": "never",
-        "exports": "never",
-        "functions": "never"
-      }
-    ],
+    "comma-dangle": ["warn", "only-multiline"],
 
     /* REACT */
     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],

@@ -1,53 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import Logo from '@/assets/images/logo.svg';
-// import SearchIcon from '@/assets/icons/search.svg';
-import CartIcon from '@/assets/icons/cart.svg';
-// import SignOutIcon from '@/assets/icons/sign-out.svg';
-import ProfileIcon from '@/assets/icons/profile.svg';
-import BurgerIcon from '@/assets/icons/burger.svg';
-import CrossIcon from '@/assets/icons/close.svg';
 import { Input } from './components/Input';
 import colors from '@/utils/colors';
-// import { menu } from '@/utils/menuItems';
-import { menu } from '../../utils/menuItems';
+import { menu, SubmenuItem } from '../../utils/menuItems';
+import {
+  StyledWrapper,
+  IconsContainerStyled,
+  LogoLinkContainer,
+  LogoStyled,
+  CartIconStyled,
+  CrossIconStyled,
+  ProfileIconStyled,
+  Redlink,
+  BurgerIconStyled,
+} from './HeaderStyles';
+// import { List } from 'reselect/es/types';
 
-const StyledWrapper = styled.header`
-  width: 100%;
-  position: sticky;
-  box-sizing: border-box;
-  top: 0;
-  height: var(--header-height);
-  padding: 0 60px;
-  background-color: ${colors.blackBase};
-  z-index: var(--up-z-index);
+interface HeaderContentProps {
+  className?: string;
+}
 
-  @media (max-width: 1920px) {
-    --header-height: calc(70px + (100vw - 1440px) * 0.02083);
-    --header-padding: calc(50px + (100vw - 1440px) * 0.02083);
-    padding: 0 var(--header-padding);
-  }
-
-  @media (max-width: 1440px) {
-    --header-height: calc(60px + (100vw - 1024px) * 0.02403);
-    --header-padding: calc(40px + (100vw - 1024px) * 0.02403);
-    padding: 0 var(--header-padding);
-  }
-
-  @media (max-width: 1024px) {
-    --header-height: calc(36px + (100vw - 320px) * 0.03409);
-    --header-padding: calc(16px + (100vw - 320px) * 0.03409);
-    padding: 0 var(--header-padding);
-  }
-
-  @media (max-width: 320px) {
-    --header-height: 36px;
-    padding: 0 16px;
-  }
-`;
-
-function HeaderContent({ className }) {
+function HeaderContent({ className }: HeaderContentProps) {
   const { render, mobileMenuOpen } = useMenuToggleIcon();
   return (
     <div className={className}>
@@ -100,7 +74,11 @@ const HeaderContentStyled = styled(HeaderContent)`
   }
 `;
 
-function HeaderMenu({ className }) {
+interface HeaderMenuProps {
+  className?: string;
+}
+
+function HeaderMenu({ className }: HeaderMenuProps) {
   return (
     <div className={className}>
       {menu.map((item) => {
@@ -110,7 +88,11 @@ function HeaderMenu({ className }) {
   );
 }
 
-const HeaderMenuStyled = styled(HeaderMenu)`
+interface HeaderMenuStyledProps {
+  mobileMenuOpen?: boolean;
+}
+
+const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
   background-color: ${colors.blackBase};
 
   display: flex;
@@ -147,188 +129,21 @@ const HeaderMenuStyled = styled(HeaderMenu)`
   }
 `;
 
-const IconsContainerStyled = styled.div`
-  display: flex;
-  height: 100%;
-  justify-content: space-around;
-  align-items: center;
+interface NavItemProps {
+  className?: string;
+  text?: string;
+  submenu?: SubmenuItem[];
+}
 
-  flex-grow: 0.5;
-  max-width: 100px;
-
-  @media screen and (max-width: 680px) {
-    justify-content: space-between;
-  }
-`;
-
-const LogoLinkContainer = styled.div`
-  flex-grow: 0;
-`;
-
-const LogoStyled = styled(Logo)`
-  cursor: pointer;
-  height: 32px;
-  width: 145px;
-
-  @media (max-width: 1920px) {
-    --logo-width: calc(109px + (100vw - 1440px) * 0.075);
-    width: var(--logo-width);
-    --logo-height: calc(var(--logo-width) * 0.2037);
-    height: var(--logo-height);
-  }
-
-  @media (max-width: 1440px) {
-    --logo-width: calc(84px + (100vw - 1024px) * 0.06009);
-    width: var(--logo-width);
-    --logo-height: calc(var(--logo-width) * 0.2037);
-    height: var(--logo-height);
-  }
-
-  @media (max-width: 1024px) {
-    --logo-width: calc(54px + (100vw - 320px) * 0.04261);
-    width: var(--logo-width);
-    --logo-height: calc(var(--logo-width) * 0.2037);
-    height: var(--logo-height);
-  }
-
-  @media (max-width: 320px) {
-    --logo-width: 54px;
-    width: var(--logo-width);
-    --logo-height: calc(var(--logo-width) * 0.2037);
-    height: var(--logo-height);
-  }
-`;
-
-const CartIconStyled = styled(CartIcon)`
-  width: 32px;
-  height: 32px;
-  opacity: 0.8;
-  stroke-width: 1px;
-
-  stroke: var(--main-white-100);
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media (max-width: 1920px) {
-    --cart-width: calc(23px + (100vw - 1440px) * 0.01875);
-    width: var(--cart-width);
-    height: var(--cart-width);
-  }
-
-  @media (max-width: 1440px) {
-    --cart-width: calc(18px + (100vw - 1024px) * 0.01202);
-    width: var(--cart-width);
-    height: var(--cart-width);
-  }
-
-  @media (max-width: 1024px) {
-    --cart-width: calc(14px + (100vw - 320px) * 0.00568);
-    width: var(--cart-width);
-    height: var(--cart-width);
-  }
-
-  @media (max-width: 320px) {
-    --cart-width: 14px;
-    width: var(--cart-width);
-    height: var(--cart-width);
-  }
-`;
-
-const CrossIconStyled = styled(CrossIcon)`
-  width: 12px;
-  height: 12px;
-
-  stroke: var(--main-white-100);
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media (min-width: 681px) {
-    display: none;
-  } ;
-`;
-
-const ProfileIconStyled = styled(ProfileIcon)`
-  width: 26px;
-  height: 28px;
-
-  stroke: var(--main-white-100);
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media (max-width: 1920px) {
-    --profile-width: calc(21px + (100vw - 1440px) * 0.01041);
-    width: var(--profile-width);
-    height: calc(var(--profile-width) + 2);
-  }
-
-  @media (max-width: 1440px) {
-    --profile-width: calc(17px + (100vw - 1024px) * 0.00961);
-    width: var(--profile-width);
-    height: calc(var(--profile-width) + 1);
-  }
-
-  @media (max-width: 1024px) {
-    --profile-width: calc(12px + (100vw - 320px) * 0.0071);
-    width: var(--profile-width);
-    height: calc(var(--profile-width) + 1);
-  }
-
-  @media (max-width: 320px) {
-    --profile-width: 12px;
-    width: 12px;
-    height: 13px;
-  }
-`;
-
-const BurgerIconStyled = styled(BurgerIcon)`
-  width: 20px;
-  height: 12px;
-
-  stroke: var(--main-white-100);
-  stroke-width: 1px;
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media screen and (min-width: 680px) {
-    display: none;
-  }
-`;
-
-const Redlink = styled.a`
-  color: ${(props) => (props.isOpen ? colors.redBase : colors.whiteBase70)};
-  text-decoration: none;
-
-  :hover {
-    color: var(--main-red-100);
-  }
-`;
-
-function NavItem({ className, text, submenu }) {
+function NavItem({ className, text, submenu }: NavItemProps) {
   const [open, setOpen] = useState(false);
 
-  function clickOut(ref) {
+  function clickOut(ref: React.RefObject<HTMLElement>) {
     //  test if clicks have the same target, not the "outside"
     useEffect(() => {
-      function handleClickOutside(event) {
-        if (ref.current && !ref.current.contains(event.target)) {
+      function handleClickOutside(event: React.MouseEvent<HTMLElement>) {
+        if (ref.current && !ref.current.contains(event.target as Node)) {
           setOpen(false);
-          // console.log(event);
         }
       }
 
@@ -346,7 +161,11 @@ function NavItem({ className, text, submenu }) {
 
   return (
     <div className={className} ref={btnRef}>
-      <Redlink isOpen={open && submenu} href='#' onClick={() => setOpen(!open)}>
+      <Redlink
+        isOpen={!!submenu && open}
+        href='#'
+        onClick={() => setOpen(!open)}
+      >
         {!submenu && text}
         {submenu && !open && `\u25B6 ${text}`}
         {submenu && open && `\u25BC ${text}`}
