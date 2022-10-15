@@ -6,34 +6,34 @@ import Glass from '../../../assets/icons/search.svg';
 import colors from '@/utils/colors';
 
 const StyledGlass = styled(Glass)`
-    position: absolute;
-    flex: none;
-    left: 6%;
-    --glass-height: 17px;
+  position: absolute;
+  flex: none;
+  left: 6%;
+  --glass-height: 17px;
+  height: var(--glass-height);
+  top: calc(50% - var(--glass-height) / 2);
+  width: 17px;
+
+  @media (max-width: 1440px) {
+    --glass-height: calc(14px + (100vw - 1024px) * 0.007211);
+    top: calc(50% - calc(var(--glass-height) / 2));
+    width: calc(14px + (100vw - 1024px) * 0.007211);
     height: var(--glass-height);
-    top: calc(50% - var(--glass-height)/2);
-    width: 17px;
-    
-      @media (max-width: 1440px){
-        --glass-height: calc(14px + (100vw - 1024px)*0.007211);
-        top: calc(50% - calc(var(--glass-height)/2));
-        width: calc(14px + (100vw - 1024px)*0.007211);
-        height: var(--glass-height);
-      };
-    
-      @media (max-width: 1024px){
-        --glass-height: calc(7px + (100vw - 320px)*0.0099);
-        top: calc(50% - calc(var(--glass-height)/2));
-        width: calc(7px + (100vw - 320px)*0.0099);
-        height: var(--glass-height);
-      };
-    
-      @media (max-width: 320px){
-        --glass-height: 7px;
-        width: 7px;
-        height: var(--glass-height);
-        top: calc(50% - calc(var(--glass-height)/2));
-      };    
+  }
+
+  @media (max-width: 1024px) {
+    --glass-height: calc(7px + (100vw - 320px) * 0.0099);
+    top: calc(50% - calc(var(--glass-height) / 2));
+    width: calc(7px + (100vw - 320px) * 0.0099);
+    height: var(--glass-height);
+  }
+
+  @media (max-width: 320px) {
+    --glass-height: 7px;
+    width: 7px;
+    height: var(--glass-height);
+    top: calc(50% - calc(var(--glass-height) / 2));
+  } ;
 `;
 
 // function Suggestions({ className, }) {
@@ -71,7 +71,11 @@ const StyledGlass = styled(Glass)`
 //   padding: 20px;
 // `;
 
-function RedInput({ className, }) {
+interface RedInputProps {
+  className?: string;
+}
+
+function RedInput({ className }: RedInputProps) {
   // const [input, setInput] = useState("");
   // const [suggestions, setSuggestions] = useState([])
   // const [matchedResults, setMatchResults] = useState([])
@@ -85,7 +89,6 @@ function RedInput({ className, }) {
 }
 
 const StyledInput = styled(RedInput)`
-
   input {
     position: relative;
     background-color: ${colors.blackBase};
@@ -103,44 +106,41 @@ const StyledInput = styled(RedInput)`
 
     padding-left: 17%;
 
-    @media (max-width: 1920px){
-      --inputWidth: calc(256px + (100vw - 1440px)*0.2062);
+    @media (max-width: 1920px) {
+      --inputWidth: calc(256px + (100vw - 1440px) * 0.2062);
       width: var(--inputWidth);
-    };
+    }
 
-    @media (max-width: 1440px){
-      --inputWidth: calc(186px + (100vw - 1024px)*0.1682);
-      --inputHeight: calc(23px + (100vw - 1024px)*0.01682);
+    @media (max-width: 1440px) {
+      --inputWidth: calc(186px + (100vw - 1024px) * 0.1682);
+      --inputHeight: calc(23px + (100vw - 1024px) * 0.01682);
       width: var(--inputWidth);
       height: var(--inputHeight);
-    };
+    }
 
-    @media (max-width: 1024px){
-      --inputHeight: calc(14px + (100vw - 320px)*0.01278);
-      --inputWidth: calc(99px + (100vw - 320px)*0.1235);
+    @media (max-width: 1024px) {
+      --inputHeight: calc(14px + (100vw - 320px) * 0.01278);
+      --inputWidth: calc(99px + (100vw - 320px) * 0.1235);
       width: var(--inputWidth);
       height: var(--inputHeight);
 
       font-size: 12px;
-    };
+    }
 
-    @media (max-width: 320px){
+    @media (max-width: 320px) {
       width: 99px;
       height: 14px;
       border-radius: 2px;
       font-size: 10px;
-    };
+    }
   }
-
-  
-
 `;
 
 const StyledDiv = styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
 `;
 
 const Input: React.FC = () => {
