@@ -1,5 +1,4 @@
 @import url('./fonts.css');
-@import url('./normalize.css');
 @import url('../../node_modules/swiper/swiper.min.css');
 @import url('../../node_modules/swiper/modules/pagination/pagination.min.css');
 
@@ -27,6 +26,7 @@
   --main-white-10: rgba(220, 220, 220, 0.1);
 
   --main-black: #121212;
+  --main-black-80: #121212E0;
   --key: #000000;
   --grey: #c4c4c4;
 
@@ -35,6 +35,7 @@
   --upper-z-index: 2;
 
   --width: 1440px;
+  --searchBarWidth: 335px;
   --max-width: 1920px;
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
@@ -43,12 +44,14 @@
 @media screen and (max-width: 1440px) {
   :root {
     --width: 1024px;
+    --searchBarWidth: 256px;
   }
 }
 
 @media screen and (max-width: 1024px) {
   :root {
     --width: 830px;
+    --searchBarWidth: 186px;
   }
 }
 
@@ -64,6 +67,12 @@
   }
 }
 
+@media screen and (max-width: 320px) {
+  :root {
+    --searchBarWidth: 99px;
+  }
+}
+
 html,
 body {
   font-family: 'Montserrat', sans-serif;
@@ -71,6 +80,8 @@ body {
   color: #102327;
   width: 100%;
   min-height: 100%;
+  
+  margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
 }
 
 .scroll-lock {

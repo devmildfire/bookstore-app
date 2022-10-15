@@ -1,6 +1,7 @@
 const colors = {
   black: '#18191b',
   blackBase: '#121212',
+  blackBase_80: '#121212E0',
 
   gray5: '#e0e0e0',
   grey: '#DCDCDC',
@@ -19,6 +20,7 @@ const colors = {
 
   white: '#ffffff',
   whiteBase: '#dcdcdc',
+  whiteBase70: '#dcdcdcd3',
 };
 
 export default colors;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import styled from 'styled-components';
 import Head from 'next/head';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
