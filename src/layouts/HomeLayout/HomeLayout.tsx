@@ -1,18 +1,31 @@
 import * as React from 'react';
+import Container from '@/components/Common/Container';
+import Text from '@/components/Common/Text';
 import ProductSlider from '@/components/ProductSlider';
 import {
   StyledContentWrapper,
   // StyledNavigation,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
 
-const HomeLayout: React.FC = (props) => {
-  const { children, } = props;
+interface HomeLayoutProps {
+  readonly title: string;
+}
+
+const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
+  const { children, title } = props;
   return (
     <StyledWrapper>
-      {/* <StyledNavigation /> */}
       <ProductSlider />
-      <StyledContentWrapper>{children}</StyledContentWrapper>
+      {/* <StyledNavigation /> */}
+      <StyledContentWrapper>
+        <Container>
+          <Text variant='h2_1' align='center'>
+            {title}
+          </Text>
+        </Container>
+        {children}
+      </StyledContentWrapper>
     </StyledWrapper>
   );
 };
