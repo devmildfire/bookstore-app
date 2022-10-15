@@ -141,8 +141,9 @@ function NavItem({ className, text, submenu }: NavItemProps) {
   function clickOut(ref: React.RefObject<HTMLElement>) {
     //  test if clicks have the same target, not the "outside"
     useEffect(() => {
-      function handleClickOutside(event: React.MouseEvent<HTMLElement>) {
-        if (ref.current && !ref.current.contains(event.target as Node)) {
+      // function handleClickOutside(event: React.MouseEvent<HTMLElement>) {
+      function handleClickOutside(this: Document, ev: MouseEvent) {
+        if (ref.current && !ref.current.contains(ev.target as Node)) {
           setOpen(false);
         }
       }
