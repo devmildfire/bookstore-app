@@ -26,13 +26,14 @@
   --main-white-10: rgba(220, 220, 220, 0.1);
 
   --main-black: #121212;
-  --main-black-80: #121212E0;
+  --main-black-80: #121212e0;
   --key: #000000;
   --grey: #c4c4c4;
 
   --low-z-index: -1;
   --up-z-index: 1;
   --upper-z-index: 2;
+  --top-z-index: 99999;
 
   --width: 1440px;
   --searchBarWidth: 335px;
@@ -80,7 +81,7 @@ body {
   color: #102327;
   width: 100%;
   min-height: 100%;
-  
+
   margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
 }
 

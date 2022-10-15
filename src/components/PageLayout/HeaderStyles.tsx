@@ -14,7 +14,7 @@ const StyledWrapper = styled.header`
   height: var(--header-height);
   padding: 0 60px;
   background-color: ${colors.blackBase};
-  z-index: var(--up-z-index);
+  z-index: var(--top-z-index);
 
   @media (max-width: 1920px) {
     --header-height: calc(70px + (100vw - 1440px) * 0.02083);
