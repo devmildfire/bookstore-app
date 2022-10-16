@@ -141,6 +141,7 @@ const StyledDiv = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+  margin-left: auto;
 `;
 
 const Input: React.FC = () => {

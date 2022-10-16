@@ -12,45 +12,78 @@ const StyledWrapper = styled.header`
   box-sizing: border-box;
   top: 0;
   height: var(--header-height);
-  padding: 0 60px;
+  --header-padding-left: 64px;
+  --header-padding-right: 113px;
+  padding-left: var(--header-padding-left);
+  padding-right: var(--header-padding-right);
+  padding-top: 0px;
+  padding-bottom: 0px;
+  /* padding: 0 0 var(--header-padding-left) var(--header-padding-right); */
   background-color: ${colors.blackBase};
   z-index: var(--top-z-index);
 
   @media (max-width: 1920px) {
     --header-height: calc(70px + (100vw - 1440px) * 0.02083);
-    --header-padding: calc(50px + (100vw - 1440px) * 0.02083);
-    padding: 0 var(--header-padding);
+
+    /* --header-padding: calc(56px + (100vw - 1440px) * 0.11875); */
+
+    --header-padding-left: calc(50px + (100vw - 1440px) * 0.02916);
+    --header-padding-right: calc(56px + (100vw - 1440px) * 0.11875);
+
+    /* padding: 0 var(--header-padding); */
   }
 
   @media (max-width: 1440px) {
     --header-height: calc(60px + (100vw - 1024px) * 0.02403);
-    --header-padding: calc(40px + (100vw - 1024px) * 0.02403);
-    padding: 0 var(--header-padding);
+
+    --header-padding-left: calc(40px + (100vw - 1024px) * 0.02403);
+    --header-padding-right: calc(20px + (100vw - 1024px) * 0.08653);
+    /* --header-padding: calc(40px + (100vw - 1024px) * 0.02403);
+    padding: 0 var(--header-padding); */
   }
 
   @media (max-width: 1024px) {
     --header-height: calc(36px + (100vw - 320px) * 0.03409);
-    --header-padding: calc(16px + (100vw - 320px) * 0.03409);
-    padding: 0 var(--header-padding);
+
+    --header-padding-left: calc(18px + (100vw - 320px) * 0.03125);
+    --header-padding-right: calc(16px + (100vw - 320px) * 0.00568);
+    /* --header-padding: calc(16px + (100vw - 320px) * 0.03409);
+    padding: 0 var(--header-padding); */
   }
 
   @media (max-width: 320px) {
+    --header-padding-left: 18px;
+    --header-padding-right: 16px;
     --header-height: 36px;
-    padding: 0 16px;
+    /* padding: 0 16px; */
   }
 `;
 
 const IconsContainerStyled = styled.div`
   display: flex;
   height: 100%;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 
   flex-grow: 0.5;
   max-width: 100px;
+  --container-paddig-left: 52px;
+  padding-left: var(--container-paddig-left);
 
-  @media screen and (max-width: 680px) {
-    justify-content: space-between;
+  @media (max-width: 1920px) {
+    --container-paddig-left: calc(50px + (100vw - 1440px) * 0.00416);
+  }
+
+  @media (max-width: 1440px) {
+    --container-paddig-left: calc(23px + (100vw - 1024px) * 0.0649);
+  }
+
+  @media (max-width: 1024px) {
+    --container-paddig-left: calc(27px - (100vw - 320px) * 0.00568);
+  }
+
+  @media (max-width: 320px) {
+    --container-paddig-left: 27px;
   }
 `;
 
