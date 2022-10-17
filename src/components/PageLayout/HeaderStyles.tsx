@@ -250,7 +250,7 @@ const BurgerIconStyled = styled(BurgerIcon)`
     stroke: var(--main-red-100);
   }
 
-  @media screen and (min-width: 680px) {
+  @media screen and (min-width: 708px) {
     display: none;
   }
 `;

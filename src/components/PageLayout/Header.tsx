@@ -67,7 +67,7 @@ const HeaderContentStyled = styled(HeaderContent)`
     line-height: 140%;
   }
 
-  @media (max-width: 680px) {
+  @media (max-width: 707px) {
     font-size: 12px;
     letter-spacing: 0.05em;
     line-height: 140%;
@@ -101,11 +101,11 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
   align-items: center;
   flex-grow: 1;
 
-  @media screen and (min-width: 681px) {
+  @media screen and (min-width: 708px) {
     height: 100%;
   }
 
-  @media screen and (max-width: 680px) {
+  @media screen and (max-width: 707px) {
     display: ${(props) => (props.mobileMenuOpen ? 'flex' : 'none')};
     box-sizing: border-box;
     position: absolute;
@@ -244,7 +244,7 @@ const NavItemStyled = styled(NavItem)`
       gap: 8px;
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 707px) {
       position: relative;
       text-align: end;
       left: 0px;
@@ -268,7 +268,7 @@ const NavItemStyled = styled(NavItem)`
     }
     text-decoration: none;
 
-    @media (max-width: 680px) {
+    @media (max-width: 707px) {
       text-align: end;
       align-self: end;
     }
