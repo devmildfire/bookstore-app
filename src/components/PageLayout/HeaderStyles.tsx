@@ -65,25 +65,31 @@ const IconsContainerStyled = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  flex-grow: 0.5;
+  flex-grow: 0;
   max-width: 100px;
   --container-paddig-left: 52px;
+  --container-gap: 50px;
   padding-left: var(--container-paddig-left);
+  gap: var(--container-gap);
 
   @media (max-width: 1920px) {
     --container-paddig-left: calc(50px + (100vw - 1440px) * 0.00416);
+    --container-gap: calc(30px + (100vw - 1440px) * 0.04166);
   }
 
   @media (max-width: 1440px) {
     --container-paddig-left: calc(23px + (100vw - 1024px) * 0.0649);
+    --container-gap: calc(22px + (100vw - 1024px) * 0.01923);
   }
 
   @media (max-width: 1024px) {
     --container-paddig-left: calc(27px - (100vw - 320px) * 0.00568);
+    --container-gap: calc(20px + (100vw - 320px) * 0.00284);
   }
 
   @media (max-width: 320px) {
     --container-paddig-left: 27px;
+    --container-gap: 20px;
   }
 `;
 
