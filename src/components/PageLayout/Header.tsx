@@ -112,7 +112,7 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
     position: absolute;
     flex-direction: column;
 
-    --mobile-width: 229px;
+    --mobile-width: 240px;
 
     width: var(--mobile-width);
     top: 100%;
@@ -250,6 +250,7 @@ const NavItemStyled = styled(NavItem)`
     }
 
     @media (max-width: 747px) {
+      width: 210px;
       position: relative;
       text-align: end;
       left: 0px;

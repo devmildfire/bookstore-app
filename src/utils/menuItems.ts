@@ -31,14 +31,14 @@ const forReaders: SubmenuItem[] = [
       },
     ],
   },
-  {
-    subtitle: 'Журнал Русского Динозавра',
-    link: '/dino-magazine',
-  },
-  {
-    subtitle: 'Мейнстрим',
-    link: '/mainstream',
-  },
+  // {
+  //   subtitle: 'Журнал Русского Динозавра',
+  //   link: '/dino-magazine',
+  // },
+  // {
+  //   subtitle: 'Мейнстрим',
+  //   link: '/mainstream',
+  // },
 ];
 
 // const forReaders: SubmenuItem[] = [
