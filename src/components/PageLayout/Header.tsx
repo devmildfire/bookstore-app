@@ -55,6 +55,7 @@ const HeaderContentStyled = styled(HeaderContent)`
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
+  letter-spacing: 0.05em;
 
   @media (max-width: 1440px) {
     font-size: 14px;
@@ -67,7 +68,7 @@ const HeaderContentStyled = styled(HeaderContent)`
     line-height: 140%;
   }
 
-  @media (max-width: 707px) {
+  @media (max-width: 747px) {
     font-size: 12px;
     letter-spacing: 0.05em;
     line-height: 140%;
@@ -96,16 +97,16 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
   background-color: ${colors.blackBase};
 
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
 
   align-items: center;
   flex-grow: 1;
 
-  @media screen and (min-width: 708px) {
+  @media screen and (min-width: 748px) {
     height: 100%;
   }
 
-  @media screen and (max-width: 707px) {
+  @media screen and (max-width: 747px) {
     display: ${(props) => (props.mobileMenuOpen ? 'flex' : 'none')};
     box-sizing: border-box;
     position: absolute;
@@ -120,7 +121,11 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
     );
     align-items: end;
 
-    padding: 4.5px 17.5px;
+    /* padding: 4.5px 17.5px; */
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 17.5px;
+    padding-right: 17.5px;
     gap: 8px;
   }
 
@@ -244,7 +249,7 @@ const NavItemStyled = styled(NavItem)`
       gap: 8px;
     }
 
-    @media (max-width: 707px) {
+    @media (max-width: 747px) {
       position: relative;
       text-align: end;
       left: 0px;
@@ -268,7 +273,7 @@ const NavItemStyled = styled(NavItem)`
     }
     text-decoration: none;
 
-    @media (max-width: 707px) {
+    @media (max-width: 747px) {
       text-align: end;
       align-self: end;
     }

@@ -250,36 +250,10 @@ const BurgerIconStyled = styled(BurgerIcon)`
     stroke: var(--main-red-100);
   }
 
-  @media screen and (min-width: 708px) {
+  @media screen and (min-width: 749px) {
     display: none;
   }
 `;
-
-// const HeaderContentStyled = styled(HeaderContent)`
-//   position: relative;
-//   display: flex;
-//   height: 100%;
-//   justify-content: space-between;
-//   align-items: center;
-//   font-size: 16px;
-
-//   @media (max-width: 1440px) {
-//     font-size: 14px;
-//     line-height: 17px;
-//   }
-
-//   @media (max-width: 1024px) {
-//     font-size: 10px;
-//     letter-spacing: 0.05em;
-//     line-height: 140%;
-//   }
-
-//   @media (max-width: 680px) {
-//     font-size: 12px;
-//     letter-spacing: 0.05em;
-//     line-height: 140%;
-//   }
-// `;
 
 export {
   StyledWrapper,
