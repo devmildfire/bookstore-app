@@ -1,45 +1,59 @@
 export type SubmenuItem = {
-  subtitle: string,
-  link?: string,
-  items?:
-    {
-      title: string,
-      link: string,
-    }[]
-}
+  subtitle: string;
+  link?: string;
+  items?: {
+    title: string;
+    link: string;
+  }[];
+};
 
 export type MenuItem = {
-  title: string,
-  link?: string,
-  submenu?: SubmenuItem[]
-}
+  title: string;
+  link?: string;
+  submenu?: SubmenuItem[];
+};
+
+// const forReadersOld: SubmenuItem[] = [
+//   {
+//     subtitle: 'Книжная лавка',
+//     items: [
+//       {
+//         title: 'Издания',
+//         link: '/books',
+//       },
+//       {
+//         title: 'Карты даров',
+//         link: '/gift-cards',
+//       },
+//       {
+//         title: 'Чудеса подписки',
+//         link: '/subscription',
+//       },
+//     ],
+//   },
+//   {
+//     subtitle: 'Журнал Русского Динозавра',
+//     link: '/dino-magazine',
+//   },
+//   {
+//     subtitle: 'Мейнстрим',
+//     link: '/mainstream',
+//   }
+// ];
 
 const forReaders: SubmenuItem[] = [
   {
-    subtitle: 'Книжная лавка',
-    items: [
-      {
-        title: 'Издания',
-        link: '/books',
-      },
-      {
-        title: 'Карты даров',
-        link: '/gift-cards',
-      },
-      {
-        title: 'Чудеса подписки',
-        link: '/subscription',
-      }
-    ],
+    subtitle: 'Издания',
+    link: '/books',
   },
   {
-    subtitle: 'Журнал Русского Динозавра',
-    link: '/dino-magazine',
+    subtitle: 'Карты даров',
+    link: '/gift-cards',
   },
   {
-    subtitle: 'Мейнстрим',
-    link: '/mainstream',
-  }
+    subtitle: 'Чудеса подписки',
+    link: '/subscription',
+  },
 ];
 
 const forAuthors: SubmenuItem[] = [
@@ -48,13 +62,13 @@ const forAuthors: SubmenuItem[] = [
     link: '/suggest-manuscript',
   },
   {
-    subtitle: 'Отправить рассказ\nдля журнала',
+    subtitle: 'Отправить рассказ для\nжурнала',
     link: '/suggest-story-to-rd',
   },
   {
     subtitle: 'Мастерская Абзац',
     link: '/abzac-workshop',
-  }
+  },
 ];
 
 const menu: MenuItem[] = [
@@ -81,7 +95,7 @@ const menu: MenuItem[] = [
   {
     title: 'Контакты',
     link: '/contacts',
-  }
+  },
 ];
 
 const subMenu: MenuItem[] = [
@@ -100,7 +114,7 @@ const subMenu: MenuItem[] = [
   {
     title: 'ЧУДЕСА ПОДПИСКИ',
     link: '/subscription',
-  }
+  },
 ];
 
 export { menu, subMenu };

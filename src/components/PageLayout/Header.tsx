@@ -69,7 +69,7 @@ const HeaderContentStyled = styled(HeaderContent)`
   }
 
   @media (max-width: 747px) {
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 0.05em;
     line-height: 140%;
   }
@@ -112,7 +112,7 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
     position: absolute;
     flex-direction: column;
 
-    --mobile-width: 209px;
+    --mobile-width: 229px;
 
     width: var(--mobile-width);
     top: 100%;
@@ -255,7 +255,7 @@ const NavItemStyled = styled(NavItem)`
       left: 0px;
       padding: 4px 20px;
       align-items: flex-end;
-      font-size: 10px;
+      font-size: 14px;
     }
 
     a {
