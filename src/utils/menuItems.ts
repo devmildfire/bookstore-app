@@ -13,48 +13,48 @@ export type MenuItem = {
   submenu?: SubmenuItem[];
 };
 
-// const forReadersOld: SubmenuItem[] = [
-//   {
-//     subtitle: 'Книжная лавка',
-//     items: [
-//       {
-//         title: 'Издания',
-//         link: '/books',
-//       },
-//       {
-//         title: 'Карты даров',
-//         link: '/gift-cards',
-//       },
-//       {
-//         title: 'Чудеса подписки',
-//         link: '/subscription',
-//       },
-//     ],
-//   },
-//   {
-//     subtitle: 'Журнал Русского Динозавра',
-//     link: '/dino-magazine',
-//   },
-//   {
-//     subtitle: 'Мейнстрим',
-//     link: '/mainstream',
-//   }
-// ];
-
 const forReaders: SubmenuItem[] = [
   {
-    subtitle: 'Издания',
-    link: '/books',
+    subtitle: 'Книжная лавка',
+    items: [
+      {
+        title: 'Издания',
+        link: '/books',
+      },
+      {
+        title: 'Карты даров',
+        link: '/gift-cards',
+      },
+      {
+        title: 'Чудеса подписки',
+        link: '/subscription',
+      },
+    ],
   },
   {
-    subtitle: 'Карты даров',
-    link: '/gift-cards',
+    subtitle: 'Журнал Русского Динозавра',
+    link: '/dino-magazine',
   },
   {
-    subtitle: 'Чудеса подписки',
-    link: '/subscription',
+    subtitle: 'Мейнстрим',
+    link: '/mainstream',
   },
 ];
+
+// const forReaders: SubmenuItem[] = [
+//   {
+//     subtitle: 'Издания',
+//     link: '/books',
+//   },
+//   {
+//     subtitle: 'Карты даров',
+//     link: '/gift-cards',
+//   },
+//   {
+//     subtitle: 'Чудеса подписки',
+//     link: '/subscription',
+//   },
+// ];
 
 const forAuthors: SubmenuItem[] = [
   {
