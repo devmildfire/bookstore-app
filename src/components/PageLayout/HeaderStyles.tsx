@@ -182,7 +182,7 @@ const CrossIconStyled = styled(CrossIcon)`
     stroke: var(--main-red-100);
   }
 
-  @media (min-width: 681px) {
+  @media (min-width: 751px) {
     display: none;
   } ;
 `;
