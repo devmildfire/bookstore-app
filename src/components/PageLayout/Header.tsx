@@ -126,7 +126,7 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
     padding-bottom: 20px;
     padding-left: 17.5px;
     padding-right: 17.5px;
-    gap: 8px;
+    gap: 16px;
   }
 
   @media screen and (max-width: 320px) {
