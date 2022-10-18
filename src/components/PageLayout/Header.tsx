@@ -255,7 +255,7 @@ const NavItemStyled = styled(NavItem)`
       left: 0px;
       padding: 4px 20px;
       align-items: flex-end;
-      font-size: 14px;
+      font-size: 10px;
     }
 
     a {
