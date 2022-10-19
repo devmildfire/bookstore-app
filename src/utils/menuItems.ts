@@ -62,7 +62,7 @@ const forAuthors: SubmenuItem[] = [
     link: '/suggest-manuscript',
   },
   {
-    subtitle: 'Отправить рассказ для\nжурнала',
+    subtitle: 'Отправить рассказ для\u00A0журнала',
     link: '/suggest-story-to-rd',
   },
   {

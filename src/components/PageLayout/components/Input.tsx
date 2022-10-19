@@ -90,7 +90,7 @@ function RedInput({ className }: RedInputProps) {
 
 const StyledInput = styled(RedInput)`
   input {
-    position: relative;
+    /* position: relative; */
     background-color: ${colors.blackBase};
 
     box-sizing: border-box;

@@ -216,12 +216,14 @@ const NavItemStyled = styled(NavItem)`
     top: 100%;
     left: -24px;
 
-    width: 198px;
+    width: 205px;
     gap: 12px;
     padding: 24px 24px;
+    font-size: 14px;
+    letter-spacing: 0.01em;
 
     @media (max-width: 1920px) {
-      --div-width: calc(179px + (100vw - 1440px) * 0.03958);
+      --div-width: calc(179px + (100vw - 1440px) * 0.05158);
       width: var(--div-width);
       --div-padding-v: calc(20px + (100vw - 1440px) * 0.00833);
       --div-padding-h: calc(20px + (100vw - 1440px) * 0.00833);
@@ -229,6 +231,7 @@ const NavItemStyled = styled(NavItem)`
       left: calc(-1 * var(--div-padding-h));
       --div-gap: calc(10px + (100vw - 1440px) * 0.00416);
       gap: var(--div-gap);
+      font-size: 12px;
     }
 
     @media (max-width: 1440px) {
@@ -239,6 +242,7 @@ const NavItemStyled = styled(NavItem)`
       left: -20px;
       --div-gap: calc(8px + (100vw - 1024px) * 0.0048);
       gap: var(--div-gap);
+      font-size: 10px;
     }
 
     @media (max-width: 1024px) {
@@ -247,6 +251,7 @@ const NavItemStyled = styled(NavItem)`
       padding: var(--div-padding-v) 20px;
       left: -20px;
       gap: 8px;
+      font-size: 10px;
     }
 
     @media (max-width: 747px) {
