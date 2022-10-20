@@ -135,7 +135,7 @@ const books: Book[] = [
     newPrice: 350,
     image: '/images/bookTitleDeleted.jpg',
     banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
-    trailerSrc: 'https://youtu.be/RbE7vmnkWvU',
+    trailerSrc: 'https://www.youtube.com/embed/RbE7vmnkWvU',
     description: [
       'Стася работает бардонавткой, кем-то вроде почтальона между   нашим миром и Бардо — так учёные назвали случайно открытое измерение, куда на некоторое время после смерти попадает сознание умерших людей.',
       'Стася хорошо себя чувствует среди мёртвых, а вот в мире живых у неё полно проблем: письма и слежка бывшего парня, постоянные разговоры отца о её никчёмности…',

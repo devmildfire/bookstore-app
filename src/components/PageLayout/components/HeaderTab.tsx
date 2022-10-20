@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Popper from '@/components/Common/Popper';
+// import Popper from '@/components/Common/Popper';
 import { MenuItem } from '@/utils/menuItems';
 
 import colors from '@/utils/colors';
@@ -27,71 +27,72 @@ const StyledLink = styled.a`
   }
 `;
 
-const SubmenuTitle = styled.span`
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: normal;
-  color: ${colors.grey};
-  margin-bottom: 8px;
+// const SubmenuTitle = styled.span`
+//   font-size: 16px;
+//   line-height: 20px;
+//   font-weight: normal;
+//   color: ${colors.grey};
+//   margin-bottom: 8px;
 
-  opacity: 0.7;
-  cursor: default;
-`;
+//   opacity: 0.7;
+//   cursor: default;
+// `;
 
-const SubmenuLink = styled(StyledLink)`
-  font-size: 14px;
-  line-height: 17px;
-  opacity: 0.5;
-  margin-top: 4px;
-`;
+// const SubmenuLink = styled(StyledLink)`
+//   font-size: 14px;
+//   line-height: 17px;
+//   opacity: 0.5;
+//   margin-top: 4px;
+// `;
 
-const SubmenuItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 10px 0;
-`;
+// const SubmenuItem = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   margin: 10px 0;
+// `;
 
-const PopperContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: ${colors.blackBase};
-  padding: 20px;
-`;
+// const PopperContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   background-color: ${colors.blackBase};
+//   padding: 20px;
+// `;
 
 /* TODO: исправить таб с учетом нового popper'а */
 const HeaderTab = ({
-  item: { title, link, submenu, },
+  item: { title, link },
 }: HeaderTabProps): React.ReactElement => (
   <Fragment key={title}>
-    {link ? (
+    {link && (
       <Link href={link} passHref>
         <StyledLink href='fakeHref'>{title}</StyledLink>
       </Link>
-    ) : (
-      <Popper padding={20} target={null}>
-        <PopperContainer>
-          {submenu?.map(({ subtitle, link: submenuLink, items, }) => (
-            <SubmenuItem key={subtitle}>
-              {submenuLink ? (
-                <Link href={submenuLink} passHref key={subtitle}>
-                  <StyledLink href='fakeHref'>{subtitle}</StyledLink>
-                </Link>
-              ) : (
-                <>
-                  <SubmenuTitle>{subtitle}</SubmenuTitle>
-                  {items?.map(({ title: submenuTitle, link: subLink, }) => (
-                    <Link href={subLink} passHref key={submenuTitle}>
-                      <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
-                    </Link>
-                  ))}
-                </>
-              )}
-            </SubmenuItem>
-          ))}
-        </PopperContainer>
-      </Popper>
     )}
   </Fragment>
+  // ) : (
+  //   <Popper padding={20} target={null}>
+  //     <PopperContainer>
+  //       {submenu?.map(({ subtitle, link: submenuLink, items, }) => (
+  //         <SubmenuItem key={subtitle}>
+  //           {submenuLink ? (
+  //             <Link href={submenuLink} passHref key={subtitle}>
+  //               <StyledLink href='fakeHref'>{subtitle}</StyledLink>
+  //             </Link>
+  //           ) : (
+  //             <>
+  //               <SubmenuTitle>{subtitle}</SubmenuTitle>
+  //               {items?.map(({ title: submenuTitle, link: subLink, }) => (
+  //                 <Link href={subLink} passHref key={submenuTitle}>
+  //                   <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
+  //                 </Link>
+  //               ))}
+  //             </>
+  //           )}
+  //         </SubmenuItem>
+  //       ))}
+  //     </PopperContainer>
+  //   </Popper>
+  // )}
 );
 
 export default HeaderTab;

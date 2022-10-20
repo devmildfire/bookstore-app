@@ -31,20 +31,30 @@ export const StyledImage = styled.img`
   }
 
   @media ${breakPoints.md} {
-    width: 260px;
-    height: 365px;
+    width: 100vw;
+    max-width: 425px;
+    height: auto;
+    padding: 10px 20px 0;
   }
 `;
 
 export const DescriptionLayout = styled.div`
   display: grid;
-  gap: 25px;
+  gap: 16px;
   grid-template-rows: repeat(6, min-content);
+  padding: 0 20px;
+  @media screen and (max-width: 576px) {
+    max-width: 425px;
+  }
 `;
 
 export const StyledTitle = styled(Text)`
   line-height: 1;
   color: ${colors.gray5};
+
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
+  }
   /* 
   @media ${breakPoints.xl} {
     margin-bottom: 10px;
@@ -60,8 +70,10 @@ export const StyledTitle = styled(Text)`
 `;
 
 export const StyledAuthor = styled(Text)`
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
+  }
   /* margin-bottom: 10px;
-
   @media ${breakPoints.sm} {
     margin-bottom: 5px;
   } */
@@ -70,6 +82,9 @@ export const StyledAuthor = styled(Text)`
 export const StyledInfo = styled(Text)`
   /* margin-bottom: 129px; */
   font-size: 14px;
+  @media screen and (max-width: 576px) {
+    font-size: 10px;
+  }
   /* 
   @media ${breakPoints.xl} {
     margin-bottom: 45px;
@@ -99,6 +114,10 @@ export const StyledThesis = styled(Text)`
   @media ${breakPoints.lg} {
     margin-bottom: 17px;
   } */
+
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
+  }
 `;
 
 export const StyledDescription = styled.div`

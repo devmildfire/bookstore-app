@@ -21,6 +21,9 @@ export interface Book extends Product {
   readonly workers: Worker[];
   readonly formats: string[];
   readonly readers: Reader[];
+
+  // readonly awards: string[];
+  // readonly ISBN: string;
 }
 
 export interface Worker {

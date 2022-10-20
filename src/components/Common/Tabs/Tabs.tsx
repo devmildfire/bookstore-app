@@ -40,21 +40,15 @@ const StyledTab = styled.li`
   z-index: 3;
   display: flex;
   align-items: center;
-  transition: 0.3s;
+  transition: 0.2s;
   flex-grow: 1;
-`;
-const Pill = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
-  background-color: transparent;
-  border-radius: 14px 14px 0 0;
-  background-color: var(--main-white-100);
-  /* border-radius: 4px; */
-  &::after {
+  &:after {
+    opacity: 1;
+  }
+  &:before {
+    opacity: 1;
+  }
+  &.active::after {
     content: '';
     width: 18px;
     height: 18px;
@@ -68,9 +62,9 @@ const Pill = styled(motion.div)`
     left: 100%;
     bottom: 0;
     opacity: 1;
-    transition: 0.3s;
+    transition: 0.2s;
   }
-  &::before {
+  &.active::before {
     content: '';
     width: 18px;
     height: 18px;
@@ -84,17 +78,69 @@ const Pill = styled(motion.div)`
     right: 100%;
     bottom: 0;
     opacity: 1;
-    transition: 0.3s;
+    transition: 0.2s;
   }
-  &.first:before {
+  &:first-of-type:before {
     content: '';
     opacity: 0;
   }
-  &.last:after {
+  &:last-of-type:after {
     content: '';
     opacity: 0;
   }
 `;
+// const Pill = styled(motion.div)`
+//   position: absolute;
+//   top: 0;
+//   right: 0;
+//   left: 0;
+//   bottom: 0;
+//   z-index: -1;
+//   background-color: transparent;
+//   border-radius: 14px 14px 0 0;
+//   background-color: var(--main-white-100);
+//   /* border-radius: 4px; */
+//   &::after {
+//     content: '';
+//     width: 18px;
+//     height: 18px;
+//     background: radial-gradient(
+//       at right 10%,
+//       rgba(255, 255, 255, 0) 70%,
+//       var(--main-white-100) 75%,
+//       var(--main-white-100) 100%
+//     );
+//     position: absolute;
+//     left: 100%;
+//     bottom: 0;
+//     opacity: 1;
+//     transition: 0.3s;
+//   }
+//   &::before {
+//     content: '';
+//     width: 18px;
+//     height: 18px;
+//     background: radial-gradient(
+//       at left 10%,
+//       rgba(255, 255, 255, 0) 70%,
+//       var(--main-white-100) 75%,
+//       var(--main-white-100) 100%
+//     );
+//     position: absolute;
+//     right: 100%;
+//     bottom: 0;
+//     opacity: 1;
+//     transition: 0.3s;
+//   }
+//   &.first:before {
+//     content: '';
+//     opacity: 0;
+//   }
+//   &.last:after {
+//     content: '';
+//     opacity: 0;
+//   }
+// `;
 
 const Trigger = styled.button<TriggerProps>`
   background-color: transparent;
@@ -105,16 +151,24 @@ const Trigger = styled.button<TriggerProps>`
   cursor: pointer;
   border-radius: 14px 14px 0 0;
   border: thin solid var(--main-white-100);
-  transition: 0.3s;
+  transition: 0.2s;
   &:hover {
     background-color: var(--main-white-10);
   }
   &.active {
     color: var(--main-black);
+    background-color: var(--main-white-100);
   }
 `;
 
-const StyledTabs = styled.div``;
+const StyledTabs = styled.div`
+  min-width: 320px;
+  @media screen and (max-width: 576px) {
+    width: 100vw;
+    max-width: 425px;
+    padding: 0 20px;
+  }
+`;
 // const Title = styled.h3`
 //   padding-bottom: 25px;
 //   font-size: 42px;
@@ -134,6 +188,9 @@ const StyledTabContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media screen and (max-width: 576px) {
+    padding: 12px;
+  }
 `;
 const TabContainer = styled(motion.div)`
   display: flex;
@@ -144,24 +201,44 @@ const StyledBook2Icon = styled(Book2)`
   height: 48px;
   width: 48px;
   stroke-width: 2px;
+
+  @media screen and (max-width: 576px) {
+    height: 24px;
+    width: 24px;
+  }
 `;
 
 const StyledDigitalIcon = styled(Digital)`
   height: 48px;
   width: 48px;
   stroke-width: 2px;
+
+  @media screen and (max-width: 576px) {
+    height: 24px;
+    width: 24px;
+  }
 `;
 
 const StyledBookIcon = styled(BookIcon)`
   height: 48px;
   width: 48px;
   stroke-width: 2px;
+
+  @media screen and (max-width: 576px) {
+    height: 24px;
+    width: 24px;
+  }
 `;
 
 const StyledAudioIcon = styled(Audio)`
   height: 48px;
   width: 48px;
   stroke-width: 2px;
+
+  @media screen and (max-width: 576px) {
+    height: 24px;
+    width: 24px;
+  }
 `;
 
 interface Icons {
@@ -181,10 +258,11 @@ function Tab(props: TabProps) {
     0: 'first',
     [length - 1]: 'last',
   };
+  console.log(pillStyles);
   const Icon = icons[item];
   return (
-    <StyledTab>
-      {item === active ? (
+    <StyledTab className={active === item ? 'active' : ''}>
+      {/* {item === active ? (
         <Pill
           className={pillStyles[index]}
           transition={{
@@ -193,7 +271,7 @@ function Tab(props: TabProps) {
           }}
           layoutId='pill'
         />
-      ) : null}
+      ) : null} */}
 
       <Trigger
         className={active === item ? 'active' : ''}

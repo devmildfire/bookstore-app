@@ -13,6 +13,7 @@ import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
+import useScreenSize from '@/hooks/useScreenSize';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -26,6 +27,7 @@ interface BookDescriptionProps {
 /* grid-template-rows: repeat(auto-fill, min-content); */
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
+  const [width] = useScreenSize();
   const {
     title,
     publishDate,
@@ -38,9 +40,12 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
 
   const year = new Date(publishDate).getFullYear();
   const images = [image, image, image, image];
+
+  console.log(width);
+
   return (
     <StyledWrapper>
-      <Slider withoutAutoplay>
+      <Slider withoutAutoplay withoutPagination={width <= 576}>
         {images.map((img) => (
           <Slide>
             <StyledImage src={img} alt={title} />

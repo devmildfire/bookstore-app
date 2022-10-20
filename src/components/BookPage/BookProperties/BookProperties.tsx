@@ -31,11 +31,17 @@ const TabTitle = styled.h3`
   font-size: 40px;
   font-weight: 700;
   text-transform: uppercase;
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
+  }
 `;
 
 const Price = styled.p`
   font-size: 40px;
   font-weight: 700;
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
+  }
 `;
 
 const TitleConteiner = styled.div`
@@ -46,29 +52,55 @@ const TitleConteiner = styled.div`
   padding-bottom: 35px;
 `;
 
-const ReleaseDate = styled.p`
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
+const TabButton = styled(Button)`
+  @media screen and (max-width: 576px) {
+    min-height: 32px;
+    font-size: 10px;
+    max-width: 223px;
+  }
+`;
+
+// const ReleaseDate = styled.p`
+//   font-weight: 700;
+//   font-size: 20px;
+//   line-height: 24px;
+// `;
+const Text = styled.p`
+  display: inline-flex;
+  justify-content: space-between;
+  /* font-size: 16px; */
 `;
 
 const Descrption = styled.div`
   display: flex;
   flex-direction: row;
   gap: 44px;
+  @media screen and (max-width: 576px) {
+    font-size: 10px;
+    flex-direction: column;
+  }
 `;
+
+const DescriptionKey = styled(Text)`
+  color: rgb(255, 255, 255, 0.7);
+`;
+const DescriptionValue = styled.span`
+  min-width: 150px;
+  color: rgb(255, 255, 255, 1);
+  @media screen and (max-width: 576px) {
+    max-width: 150px;
+  }
+`;
+
 const Paragraphs = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
-const Text = styled.p`
-  font-size: 16px;
-`;
+
 const List = styled.ul`
   display: flex;
   flex-direction: row;
-  padding-bottom: 24px;
   gap: 18px;
 `;
 const ListItem = styled.li``;
@@ -77,10 +109,10 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-`;
-
-const MadeBy = styled.p`
-  padding-top: 48px;
+  @media screen and (max-width: 576px) {
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const DigitalEdition = ({ releaseDate }: EditionProps) => {
@@ -92,29 +124,36 @@ const DigitalEdition = ({ releaseDate }: EditionProps) => {
       </TitleConteiner>
       <Descrption>
         <Buttons>
-          <Button>Добавить в корзину</Button>
-          <Button>Демо-версия</Button>
+          <TabButton>Добавить в корзину</TabButton>
+          <TabButton>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
-          <ReleaseDate>
+          <DescriptionKey>
             Дата релиза: &nbsp;
-            <span>{releaseDate}</span>
-          </ReleaseDate>
-          <Text>Рекомендуемые читалки:</Text>
+            <DescriptionValue>{releaseDate}</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>Рекомендуемые читалки:</DescriptionKey>
           <List>
             <ListItem>FBReader: Android | iPhone</ListItem>
             <ListItem>KyBooks: iPhone</ListItem>
             <ListItem>eBoox: Android | iPhone</ListItem>
           </List>
-          <Text>Форматы: Fb2, Epub</Text>
-          <Text>Количество символов: 355000</Text>
+          <DescriptionKey>
+            Форматы: <DescriptionValue>Fb2, Epub</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Количество символов: <DescriptionValue>355000</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Над изданием работали:
+            <DescriptionValue>
+              редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
+              Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
+              Евгений Борщевский
+            </DescriptionValue>
+          </DescriptionKey>
         </Paragraphs>
       </Descrption>
-      <MadeBy>
-        Над изданием работали: редактор Наталья Кислова, веб-мастер Серафим
-        Лоза, дизайнер Екатерина Яковлева, верстальщик Леон Меликьянц,
-        иллюстратор Евгений Борщевский
-      </MadeBy>
     </TabContent>
   );
 };
@@ -125,30 +164,40 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
         <TabTitle>Книга 2.0</TabTitle>
         <Price>300₽</Price>
       </TitleConteiner>
-      <ReleaseDate>
-        Дата релиза: &nbsp;
-        <span>{releaseDate}</span>
-      </ReleaseDate>
       <Descrption>
         <Buttons>
-          <Button>Добавить в корзину</Button>
-          <Button>Демо-версия</Button>
+          <TabButton>Добавить в корзину</TabButton>
+          <TabButton>Демо-версия</TabButton>
+          <Text>Отправка по России включена в стоимость.</Text>
         </Buttons>
         <Paragraphs>
-          <Text>Отправка по России включена в стоимость.</Text>
-          <Text>Рекомендуемые читалки:</Text>
+          <DescriptionKey>
+            Дата релиза:
+            <DescriptionValue>{releaseDate}</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>Рекомендуемые читалки:</DescriptionKey>
           <List>
             <ListItem>FBReader: Android | iPhone</ListItem>
             <ListItem>KyBooks: iPhone</ListItem>
             <ListItem>eBoox: Android | iPhone</ListItem>
           </List>
-          <Text>Формат — 50x70 мм.</Text>
-          <Text>Двухстороняя шелкография белым.</Text>
-          <Text>Дизайнерская бумага Sirio Black Black 0,7 мм.</Text>
-          <Text>Индивидуальная упаковка с цветной запечаткой.</Text>
+          <DescriptionKey>
+            Формат:
+            <DescriptionValue>50x70 мм.</DescriptionValue>
+            <DescriptionValue>Двухстороняя шелкография белым.</DescriptionValue>
+            <DescriptionValue>
+              Дизайнерская бумага Sirio Black Black 0,7 мм.
+            </DescriptionValue>
+            <DescriptionValue>
+              Индивидуальная упаковка с цветной запечаткой.
+            </DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Над изданием работали:
+            <DescriptionValue>asd, asd, asd,</DescriptionValue>
+          </DescriptionKey>
         </Paragraphs>
       </Descrption>
-      <MadeBy>Над изданием работали: asd, asd, asd,</MadeBy>
     </TabContent>
   );
 };
@@ -163,16 +212,23 @@ const AudioEdition = (props: EditionProps) => {
       </TitleConteiner>
       <Descrption>
         <Buttons>
-          <Button>Добавить в корзину</Button>
-          <Button>Демо-версия</Button>
+          <TabButton>Добавить в корзину</TabButton>
+          <TabButton>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
-          <Text>
-            Текст читает Ниёле Мейлуте, использована композиция ‘Times Arrow’
-            Anamorphic Orchestra.
-          </Text>
-          <Text>Вес файлов — 305 Мб</Text>
-          <Text>Длительность — 5ч 32м</Text>
+          <DescriptionKey>
+            Текст читает:{' '}
+            <DescriptionValue>
+              Ниёле Мейлуте, использована композиция ‘Times Arrow’ Anamorphic
+              Orchestra.
+            </DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Вес файлов: <DescriptionValue>305 Мб</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Длительность: <DescriptionValue>5ч 32м</DescriptionValue>
+          </DescriptionKey>
         </Paragraphs>
       </Descrption>
     </TabContent>
@@ -186,30 +242,49 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
         <TabTitle>Печатное издание</TabTitle>
         <Price>300₽</Price>
       </TitleConteiner>
-      <ReleaseDate>
-        Дата релиза: &nbsp;
-        <span>{releaseDate}</span>
-      </ReleaseDate>
+
       <Descrption>
         <Buttons>
-          <Button>Добавить в корзину</Button>
-        </Buttons>
-        <Paragraphs>
+          <TabButton>Добавить в корзину</TabButton>
           <Text>Цифровое издание в подарок.</Text>
           <Text>Условия доставки обсуждаются индивидуально.</Text>
-          <Text>Формат — 145x215 мм.</Text>
-          <Text>Объём — 144стр.</Text>
-          <Text>Бумага — офсетная 80 гр/кв.м.</Text>
-          <Text>Обложка — мелованная 300 гр/кв.м, матовое ламинирование.</Text>
-          <Text>Переплет — КБС, термопак поэкземплярно.</Text>
-          <Text>Чёрно-белые иллюстрации.</Text>
+        </Buttons>
+        <Paragraphs>
+          <DescriptionKey>
+            Дата релиза: <DescriptionValue>{releaseDate}</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Формат: <DescriptionValue>145x215 мм.</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Объём: <DescriptionValue>144стр.</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Бумага: <DescriptionValue>офсетная 80 гр/кв.м.</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Обложка:
+            <DescriptionValue>
+              мелованная 300 гр/кв.м, матовое ламинирование
+            </DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Переплет:
+            <DescriptionValue>КБС, термопак поэкземплярно</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Иллюстрации: <DescriptionValue>Чёрно-белые</DescriptionValue>
+          </DescriptionKey>
+          <DescriptionKey>
+            Над изданием работали:
+            <DescriptionValue>
+              редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
+              Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
+              Евгений Борщевский
+            </DescriptionValue>
+          </DescriptionKey>
         </Paragraphs>
       </Descrption>
-      <MadeBy>
-        Над изданием работали: редактор Наталья Кислова, веб-мастер Серафим
-        Лоза, дизайнер Екатерина Яковлева, верстальщик Леон Меликьянц,
-        иллюстратор Евгений Борщевский
-      </MadeBy>
     </TabContent>
   );
 };

@@ -5,6 +5,7 @@ import Text from '@/components/Common/Text';
 export const StyledWrapper = styled.section`
   display: grid;
   gap: 48px;
+  justify-content: center;
 
   /* padding: 44px 79px 40px 132px; */
   /* border: 1px solid var(--main-red-100); */

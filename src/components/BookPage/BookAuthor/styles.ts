@@ -4,9 +4,13 @@ import colors from '@/utils/colors';
 
 export const StyleWrapper = styled.section`
   margin-bottom: 105px;
-
+  padding: 0 var(--main-margin);
   @media ${breakPoints.sm} {
     margin-bottom: 70px;
+  }
+  @media screen and (max-width: 576px) {
+    margin-bottom: 70px;
+    padding: 0 20px;
   }
 `;
 
@@ -39,14 +43,14 @@ export const AuthorInfo = styled.div`
   margin-bottom: 40px;
   display: flex;
   gap: 64px;
+  flex-direction: column;
+  align-items: center;
 
   @media ${breakPoints.lg} {
     margin-bottom: 20px;
   }
 
   @media ${breakPoints.md} {
-    flex-direction: column;
-    align-items: center;
   }
 
   @media ${breakPoints.sm} {
@@ -55,13 +59,14 @@ export const AuthorInfo = styled.div`
 `;
 
 export const AuthorPhoto = styled.img`
-  height: 534px;
-  width: 534px;
+  height: 320px;
+  width: 320px;
   display: block;
   object-fit: cover;
+  border-radius: 50%;
   @media ${breakPoints.xl} {
-    width: 416px;
-    height: 294px;
+    /* width: 416px; */
+    /* height: 416px; */
   }
 
   @media ${breakPoints.md} {
@@ -71,22 +76,26 @@ export const AuthorPhoto = styled.img`
 
   @media ${breakPoints.sm} {
     width: 288px;
-    height: 200px;
+    height: 288px;
   }
 `;
 
 export const AuthorDescr = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 24px;
   font-size: 20px;
   line-height: 29px;
+  @media screen and (max-width: 576px) {
+    font-size: 14px;
+  }
 `;
 
 export const AuthorProps = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
   font-size: 30px;
   letter-spacing: 0.03em;
   font-weight: 700;
@@ -99,35 +108,27 @@ export const AuthorProps = styled.div`
     margin-bottom: 19px;
     font-size: 18px;
     line-height: 22px;
+    gap: 12px;
   }
 
   @media ${breakPoints.sm} {
     margin-bottom: 15px;
     font-size: 16px;
     line-height: 20px;
-    font-weight: 400;
-
-    & span {
-      display: block;
-      margin-top: 5px;
-    }
   }
 `;
 
 export const AuthorSpeech = styled.p`
   position: relative;
-  max-width: 661px;
   font-style: italic;
   font-weight: 300;
 
   @media ${breakPoints.xl} {
-    max-width: 558px;
     font-size: 20px;
     line-height: 24px;
   }
 
   @media ${breakPoints.lg} {
-    max-width: 406px;
     font-size: 16px;
     line-height: 19.5px;
   }
@@ -189,6 +190,10 @@ export const AuthorAbout = styled.p`
 
   @media ${breakPoints.sm} {
     margin-bottom: 22px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 14px;
   }
 `;
 
