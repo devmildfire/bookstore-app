@@ -68,7 +68,8 @@ const HeaderContentStyled = styled(HeaderContent)`
     line-height: 140%;
   }
 
-  @media (max-width: 747px) {
+  /* величина отсечки -3 пикселя */
+  @media (max-width: 817px) {
     font-size: 14px;
     letter-spacing: 0.05em;
     line-height: 140%;
@@ -102,11 +103,13 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
   align-items: center;
   flex-grow: 1;
 
-  @media screen and (min-width: 748px) {
+  /* величина отсечки -2 пикселя */
+  @media screen and (min-width: 818px) {
     height: 100%;
   }
 
-  @media screen and (max-width: 747px) {
+  /* величина отсечки -2 пикселя */
+  @media screen and (max-width: 818px) {
     display: ${(props) => (props.mobileMenuOpen ? 'flex' : 'none')};
     box-sizing: border-box;
     position: absolute;
@@ -172,9 +175,10 @@ function NavItem({ className, text, submenu }: NavItemProps) {
         href='#'
         onClick={() => setOpen(!open)}
       >
-        {!submenu && text}
+        {text}
+        {/* {!submenu && text}
         {submenu && !open && `\u25B6 ${text}`}
-        {submenu && open && `\u25BC ${text}`}
+        {submenu && open && `\u25BC ${text}`} */}
       </Redlink>
 
       {submenu && open && (
@@ -254,7 +258,8 @@ const NavItemStyled = styled(NavItem)`
       font-size: 10px;
     }
 
-    @media (max-width: 747px) {
+    /* величина отсечки -3 пикселя */
+    @media (max-width: 817px) {
       width: 210px;
       position: relative;
       text-align: end;
@@ -279,7 +284,8 @@ const NavItemStyled = styled(NavItem)`
     }
     text-decoration: none;
 
-    @media (max-width: 747px) {
+    /* величина отсечки -3 пикселя */
+    @media (max-width: 817px) {
       text-align: end;
       align-self: end;
     }

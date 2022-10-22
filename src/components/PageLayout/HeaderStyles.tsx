@@ -182,7 +182,8 @@ const CrossIconStyled = styled(CrossIcon)`
     stroke: var(--main-red-100);
   }
 
-  @media (min-width: 751px) {
+  /* величина отсечки +1 пиксел */
+  @media (min-width: 821px) {
     display: none;
   } ;
 `;
@@ -250,7 +251,8 @@ const BurgerIconStyled = styled(BurgerIcon)`
     stroke: var(--main-red-100);
   }
 
-  @media screen and (min-width: 749px) {
+  /* величина отсечки -1 пикселя */
+  @media screen and (min-width: 819px) {
     display: none;
   }
 `;
