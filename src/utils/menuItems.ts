@@ -32,7 +32,7 @@ const forReaders: SubmenuItem[] = [
     ],
   },
   {
-    subtitle: 'Литжурнал',
+    subtitle: 'Литжурнал РД',
     link: '/dino-magazine',
   },
   // {
@@ -66,7 +66,7 @@ const forAuthors: SubmenuItem[] = [
     link: '/suggest-manuscript',
   },
   {
-    subtitle: 'Отправить рассказ для\u00A0литжурнала РД',
+    subtitle: 'Отправить материал для\u00A0литжурнала РД',
     link: '/suggest-story-to-rd',
   },
   {

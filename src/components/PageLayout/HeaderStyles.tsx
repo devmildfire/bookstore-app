@@ -5,6 +5,7 @@ import CartIcon from '@/assets/icons/cart.svg';
 import CrossIcon from '@/assets/icons/close.svg';
 import ProfileIcon from '@/assets/icons/profile.svg';
 import BurgerIcon from '@/assets/icons/burger.svg';
+import breakPoints from '@/utils/breakPoints';
 
 const StyledWrapper = styled.header`
   width: 100%;
@@ -183,7 +184,8 @@ const CrossIconStyled = styled(CrossIcon)`
   }
 
   /* величина отсечки +1 пиксел */
-  @media (min-width: 821px) {
+  /* @media (min-width: 821px) { */
+  @media ${breakPoints.comp1} {
     display: none;
   } ;
 `;
@@ -252,7 +254,8 @@ const BurgerIconStyled = styled(BurgerIcon)`
   }
 
   /* величина отсечки -1 пикселя */
-  @media screen and (min-width: 819px) {
+  /* @media screen and (min-width: 819px) { */
+  @media ${breakPoints.com1} {
     display: none;
   }
 `;

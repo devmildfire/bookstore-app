@@ -15,6 +15,7 @@ import {
   Redlink,
   BurgerIconStyled,
 } from './HeaderStyles';
+import breakPoints from '@/utils/breakPoints';
 // import { List } from 'reselect/es/types';
 
 interface HeaderContentProps {
@@ -69,7 +70,8 @@ const HeaderContentStyled = styled(HeaderContent)`
   }
 
   /* величина отсечки -3 пикселя */
-  @media (max-width: 817px) {
+  /* @media (max-width: 817px) { */
+  @media ${breakPoints.co3} {
     font-size: 14px;
     letter-spacing: 0.05em;
     line-height: 140%;
@@ -104,12 +106,14 @@ const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
   flex-grow: 1;
 
   /* величина отсечки -2 пикселя */
-  @media screen and (min-width: 818px) {
+  /* @media screen and (min-width: 818px) { */
+  @media ${breakPoints.com2} {
     height: 100%;
   }
 
   /* величина отсечки -2 пикселя */
-  @media screen and (max-width: 818px) {
+  /* @media screen and (max-width: 818px) { */
+  @media ${breakPoints.co2} {
     display: ${(props) => (props.mobileMenuOpen ? 'flex' : 'none')};
     box-sizing: border-box;
     position: absolute;
@@ -259,7 +263,8 @@ const NavItemStyled = styled(NavItem)`
     }
 
     /* величина отсечки -3 пикселя */
-    @media (max-width: 817px) {
+    /* @media (max-width: 817px) { */
+    @media ${breakPoints.co3} {
       width: 210px;
       position: relative;
       text-align: end;
@@ -285,7 +290,8 @@ const NavItemStyled = styled(NavItem)`
     text-decoration: none;
 
     /* величина отсечки -3 пикселя */
-    @media (max-width: 817px) {
+    /* @media (max-width: 817px) { */
+    @media ${breakPoints.co3} {
       text-align: end;
       align-self: end;
     }
