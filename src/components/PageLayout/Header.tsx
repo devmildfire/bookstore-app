@@ -156,7 +156,11 @@ function NavItem({ className, text, submenu }: NavItemProps) {
       // function handleClickOutside(event: React.MouseEvent<HTMLElement>) {
       function handleClickOutside(this: Document, ev: MouseEvent) {
         if (ref.current && !ref.current.contains(ev.target as Node)) {
-          setOpen(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 120);
+
+          // setOpen(false);
         }
       }
 
