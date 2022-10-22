@@ -31,6 +31,10 @@ const forReaders: SubmenuItem[] = [
       },
     ],
   },
+  {
+    subtitle: 'Журнал Русского Динозавра',
+    link: '/dino-magazine',
+  },
   // {
   //   subtitle: 'Журнал Русского Динозавра',
   //   link: '/dino-magazine',
