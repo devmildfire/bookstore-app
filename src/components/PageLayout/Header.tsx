@@ -158,7 +158,7 @@ function NavItem({ className, text, submenu }: NavItemProps) {
         if (ref.current && !ref.current.contains(ev.target as Node)) {
           setTimeout(() => {
             setOpen(false);
-          }, 120);
+          }, 250);
 
           // setOpen(false);
         }
