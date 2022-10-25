@@ -1,24 +1,32 @@
 import React from 'react';
 import Link from 'next/link';
+import styled from 'styled-components';
 // import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import { Banner, Title } from './styles';
 import { useGetBooksQuery } from '@/models/books';
+import useScreenSize from '@/hooks/useScreenSize';
+
+const StyledTitle = styled(Title)`
+  padding-bottom: 24px;
+`;
 
 const SimilarBooks = (): React.ReactElement => {
   // const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
+  const [width] = useScreenSize();
   const { data: books = [] } = useGetBooksQuery({ count: 5 });
   // const isSlider = isTabletVertical || isMobile;
+
   return (
     <section>
-      <Title variant='h2_1' align='center'>
+      <StyledTitle variant='h2_1' align='center'>
         Познайте также
-      </Title>
+      </StyledTitle>
       <Slider
         className='mySwiper'
-        slidesPerView={3}
-        spaceBetween={165}
+        slidesPerView={width < 576 ? 3 : 3}
+        // spaceBetween={165}
         withoutPagination
       >
         {books.map((book) => (

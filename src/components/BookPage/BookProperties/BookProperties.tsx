@@ -6,6 +6,7 @@ import Button from '@/components/Common/Button';
 import { StyledWrapper } from './styles';
 import { BookType, Reader, Worker } from '@/models/books';
 import Tabs from '@/components/Common/Tabs';
+import breakPoints from '@/utils/breakPoints';
 
 interface BookPropertiesProps {
   readonly price: number;
@@ -31,6 +32,11 @@ const TabTitle = styled.h3`
   font-size: 40px;
   font-weight: 700;
   text-transform: uppercase;
+
+  @media ${breakPoints.lg} {
+    font-size: 22px;
+  }
+
   @media screen and (max-width: 576px) {
     font-size: 16px;
   }
@@ -39,6 +45,9 @@ const TabTitle = styled.h3`
 const Price = styled.p`
   font-size: 40px;
   font-weight: 700;
+  @media ${breakPoints.lg} {
+    font-size: 22px;
+  }
   @media screen and (max-width: 576px) {
     font-size: 16px;
   }
@@ -49,14 +58,21 @@ const TitleConteiner = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: 35px;
+  padding-bottom: 22px;
 `;
 
 const TabButton = styled(Button)`
+  margin-bottom: 8px;
+  @media ${breakPoints.lg} {
+    min-height: 42px;
+    font-size: 10px;
+    min-width: 162px;
+  }
   @media screen and (max-width: 576px) {
     min-height: 32px;
     font-size: 10px;
-    max-width: 223px;
+    min-width: 223px;
+    margin-bottom: 12px;
   }
 `;
 
@@ -67,32 +83,58 @@ const TabButton = styled(Button)`
 // `;
 const Text = styled.p`
   display: inline-flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   /* font-size: 16px; */
+`;
+const ButtonsText = styled(Text)`
+  font-size: 12px;
 `;
 
 const Descrption = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 44px;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  @media ${breakPoints.lg} {
+    font-size: 12px;
+  }
   @media screen and (max-width: 576px) {
+    flex-direction: row;
     font-size: 10px;
     flex-direction: column;
   }
 `;
 
+const DesctiptionItem = styled.li`
+  list-style: none;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  @media screen and (max-width: 576px) {
+    gap: 0px;
+  }
+`;
 const DescriptionKey = styled(Text)`
   color: rgb(255, 255, 255, 0.7);
+  min-width: 82px;
+  max-width: 112px;
+  width: 100%;
+  @media screen and (min-width: 1024px) {
+    min-width: 166px;
+    max-width: 250px;
+  }
 `;
 const DescriptionValue = styled.span`
-  min-width: 150px;
+  display: inline-flex;
+  width: 100%;
+  max-width: 450px;
   color: rgb(255, 255, 255, 1);
+  text-align: start;
   @media screen and (max-width: 576px) {
     max-width: 150px;
   }
 `;
 
-const Paragraphs = styled.div`
+const Paragraphs = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -100,18 +142,26 @@ const Paragraphs = styled.div`
 
 const List = styled.ul`
   display: flex;
-  flex-direction: row;
-  gap: 18px;
+  flex-direction: column;
+  gap: 8px;
 `;
 const ListItem = styled.li``;
 
 const Buttons = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 4px;
+  max-width: 223px;
+  @media ${breakPoints.lg} {
+    max-width: 160px;
+  }
   @media screen and (max-width: 576px) {
+    gap: 0px;
+    max-width: 223px;
+    padding-bottom: 12px;
     justify-content: center;
     align-items: center;
+    align-self: center;
   }
 `;
 
@@ -128,30 +178,26 @@ const DigitalEdition = ({ releaseDate }: EditionProps) => {
           <TabButton>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
-          <DescriptionKey>
-            Дата релиза: &nbsp;
+          <DesctiptionItem>
+            <DescriptionKey>Дата релиза:</DescriptionKey>
             <DescriptionValue>{releaseDate}</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>Рекомендуемые читалки:</DescriptionKey>
-          <List>
-            <ListItem>FBReader: Android | iPhone</ListItem>
-            <ListItem>KyBooks: iPhone</ListItem>
-            <ListItem>eBoox: Android | iPhone</ListItem>
-          </List>
-          <DescriptionKey>
-            Форматы: <DescriptionValue>Fb2, Epub</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Количество символов: <DescriptionValue>355000</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Над изданием работали:
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Форматы:</DescriptionKey>
+            <DescriptionValue>Fb2, Epub</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Количество символов:</DescriptionKey>
+            <DescriptionValue>355000</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
               редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
               Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
               Евгений Борщевский
             </DescriptionValue>
-          </DescriptionKey>
+          </DesctiptionItem>
         </Paragraphs>
       </Descrption>
     </TabContent>
@@ -168,34 +214,32 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
         <Buttons>
           <TabButton>Добавить в корзину</TabButton>
           <TabButton>Демо-версия</TabButton>
-          <Text>Отправка по России включена в стоимость.</Text>
+          <ButtonsText>Отправка по России включена в стоимость.</ButtonsText>
         </Buttons>
         <Paragraphs>
-          <DescriptionKey>
-            Дата релиза:
+          <DesctiptionItem>
+            <DescriptionKey>Дата релиза:</DescriptionKey>
             <DescriptionValue>{releaseDate}</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>Рекомендуемые читалки:</DescriptionKey>
-          <List>
-            <ListItem>FBReader: Android | iPhone</ListItem>
-            <ListItem>KyBooks: iPhone</ListItem>
-            <ListItem>eBoox: Android | iPhone</ListItem>
-          </List>
-          <DescriptionKey>
-            Формат:
-            <DescriptionValue>50x70 мм.</DescriptionValue>
-            <DescriptionValue>Двухстороняя шелкография белым.</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Формат:</DescriptionKey>
             <DescriptionValue>
-              Дизайнерская бумага Sirio Black Black 0,7 мм.
+              <List>
+                <ListItem>50x70 мм.</ListItem>
+                <ListItem>Двухстороняя шелкография белым.</ListItem>
+                <ListItem>
+                  Дизайнерская бумага Sirio Black Black 0,7 мм.
+                </ListItem>
+                <ListItem>
+                  Индивидуальная упаковка с цветной запечаткой.
+                </ListItem>
+              </List>
             </DescriptionValue>
-            <DescriptionValue>
-              Индивидуальная упаковка с цветной запечаткой.
-            </DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Над изданием работали:
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>asd, asd, asd,</DescriptionValue>
-          </DescriptionKey>
+          </DesctiptionItem>
         </Paragraphs>
       </Descrption>
     </TabContent>
@@ -216,19 +260,21 @@ const AudioEdition = (props: EditionProps) => {
           <TabButton>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
-          <DescriptionKey>
-            Текст читает:{' '}
+          <DesctiptionItem>
+            <DescriptionKey>Текст читает:</DescriptionKey>
             <DescriptionValue>
               Ниёле Мейлуте, использована композиция ‘Times Arrow’ Anamorphic
               Orchestra.
             </DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Вес файлов: <DescriptionValue>305 Мб</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Длительность: <DescriptionValue>5ч 32м</DescriptionValue>
-          </DescriptionKey>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Вес файлов:</DescriptionKey>
+            <DescriptionValue>305 Мб</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Длительность:</DescriptionKey>
+            <DescriptionValue>5ч 32м</DescriptionValue>
+          </DesctiptionItem>
         </Paragraphs>
       </Descrption>
     </TabContent>
@@ -246,43 +292,48 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
       <Descrption>
         <Buttons>
           <TabButton>Добавить в корзину</TabButton>
-          <Text>Цифровое издание в подарок.</Text>
-          <Text>Условия доставки обсуждаются индивидуально.</Text>
+          <ButtonsText>Цифровое издание в подарок.</ButtonsText>
+          <ButtonsText>Условия доставки обсуждаются индивидуально.</ButtonsText>
         </Buttons>
         <Paragraphs>
-          <DescriptionKey>
-            Дата релиза: <DescriptionValue>{releaseDate}</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Формат: <DescriptionValue>145x215 мм.</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Объём: <DescriptionValue>144стр.</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Бумага: <DescriptionValue>офсетная 80 гр/кв.м.</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Обложка:
+          <DesctiptionItem>
+            <DescriptionKey>Дата релиза:</DescriptionKey>
+            <DescriptionValue>{releaseDate}</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Формат:</DescriptionKey>
+            <DescriptionValue>145x215 мм.</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Объём:</DescriptionKey>
+            <DescriptionValue>144стр.</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Бумага:</DescriptionKey>
+            <DescriptionValue>офсетная 80 гр/кв.м.</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Обложка:</DescriptionKey>
             <DescriptionValue>
               мелованная 300 гр/кв.м, матовое ламинирование
             </DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Переплет:
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Переплет:</DescriptionKey>
             <DescriptionValue>КБС, термопак поэкземплярно</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Иллюстрации: <DescriptionValue>Чёрно-белые</DescriptionValue>
-          </DescriptionKey>
-          <DescriptionKey>
-            Над изданием работали:
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Иллюстрации:</DescriptionKey>
+            <DescriptionValue>Чёрно-белые</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
               редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
               Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
               Евгений Борщевский
             </DescriptionValue>
-          </DescriptionKey>
+          </DesctiptionItem>
         </Paragraphs>
       </Descrption>
     </TabContent>

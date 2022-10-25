@@ -4,27 +4,19 @@ import Text from '@/components/Common/Text';
 
 export const StyledWrapper = styled.section`
   display: grid;
-  gap: 48px;
-  justify-content: center;
-
+  width: 100%;
   /* padding: 44px 79px 40px 132px; */
   /* border: 1px solid var(--main-red-100); */
 
   @media ${breakPoints.xl} {
-    gap: 35px;
-
     /* padding: 44px 24px 40px 60px; */
   }
 
   @media ${breakPoints.lg} {
-    gap: 27px;
-
     /* padding: 33px 19px 40px 30px; */
   }
 
   @media ${breakPoints.sm} {
-    gap: 20px;
-
     /* padding: 18px 19px 13px; */
   }
 `;

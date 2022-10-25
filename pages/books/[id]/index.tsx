@@ -12,6 +12,7 @@ import BookTrailer from '@/components/BookPage/BookTrailer';
 import BookAuthor from '@/components/BookPage/BookAuthor';
 import SimilarBooks from '@/components/BookPage/SimilarBooks';
 import books from '@/mocks/books';
+import breakPoints from '@/utils/breakPoints';
 
 // interface BookPageProps {
 //   readonly book: Book;
@@ -40,11 +41,11 @@ const BookPage = (): React.ReactElement => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-  console.log(book);
+
   if (!book) return <p>Не удалось загрузить страницу книги</p>;
   // const { book } = props;
   return (
-    <main>
+    <>
       {isLoading ? (
         <div>Loading...</div>
       ) : (
@@ -61,7 +62,7 @@ const BookPage = (): React.ReactElement => {
           </StyleWrapper>
         </>
       )}
-    </main>
+    </>
   );
 };
 
@@ -88,9 +89,27 @@ const BookPage = (): React.ReactElement => {
 const StyleWrapper = styled.div`
   position: relative;
   display: grid;
+  justify-content: center;
+  justify-self: center;
+  max-width: 1440px;
   gap: 170px;
+  @media ${breakPoints.lg} {
+    gap: 48px;
+  }
   @media screen and (max-width: 576px) {
     gap: 48px;
+  }
+
+  @media screen and (min-width: 576px) {
+    padding: 0 20px;
+  }
+
+  @media screen and (min-width: 1024px) {
+    padding: 0 90px;
+  }
+
+  @media screen and (min-width: 1440px) {
+    padding: 0 180px;
   }
 `;
 

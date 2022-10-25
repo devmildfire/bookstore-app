@@ -3,19 +3,15 @@ import breakPoints from '@/utils/breakPoints';
 import colors from '@/utils/colors';
 
 export const StyleWrapper = styled.section`
-  margin-bottom: 105px;
-  padding: 0 var(--main-margin);
   @media ${breakPoints.sm} {
-    margin-bottom: 70px;
   }
   @media screen and (max-width: 576px) {
-    margin-bottom: 70px;
     padding: 0 20px;
   }
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 85px;
+  padding-bottom: 85px;
   text-align: center;
   font-family: Cheque;
   font-weight: 900;
@@ -23,7 +19,7 @@ export const Title = styled.h2`
   line-height: 68px;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 26px;
+    padding-bottom: 26px;
   }
 
   @media ${breakPoints.lg} {
@@ -32,7 +28,7 @@ export const Title = styled.h2`
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 30px;
+    padding-bottom: 24px;
     font-size: 24px;
     line-height: 28px;
   }
@@ -55,6 +51,7 @@ export const AuthorInfo = styled.div`
 
   @media ${breakPoints.sm} {
     margin-bottom: 10px;
+    gap: 24px;
   }
 `;
 
@@ -71,7 +68,6 @@ export const AuthorPhoto = styled.img`
 
   @media ${breakPoints.md} {
     margin-right: 0;
-    margin-bottom: 20px;
   }
 
   @media ${breakPoints.sm} {
@@ -101,18 +97,15 @@ export const AuthorProps = styled.div`
   font-weight: 700;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 25px;
   }
 
   @media ${breakPoints.lg} {
-    margin-bottom: 19px;
     font-size: 18px;
     line-height: 22px;
     gap: 12px;
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 15px;
     font-size: 16px;
     line-height: 20px;
   }
@@ -180,7 +173,6 @@ export const AuthorAbout = styled.p`
   line-height: 29px;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 33px;
   }
 
   @media ${breakPoints.lg} {
@@ -189,7 +181,6 @@ export const AuthorAbout = styled.p`
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 22px;
   }
 
   @media screen and (max-width: 576px) {
@@ -202,6 +193,7 @@ export const AuthorContacts = styled.div`
   justify-content: left;
   font-size: 18px;
   line-height: 22px;
+  align-self: flex-start;
 
   span {
     margin-right: 25px;

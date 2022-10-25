@@ -11,9 +11,9 @@ import {
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
-import Slide from '@/components/Common/Slide';
-import Slider from '@/components/Common/Slider';
-import useScreenSize from '@/hooks/useScreenSize';
+// import Slide from '@/components/Common/Slide';
+// import Slider from '@/components/Common/Slider';
+// import useScreenSize from '@/hooks/useScreenSize';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -27,7 +27,7 @@ interface BookDescriptionProps {
 /* grid-template-rows: repeat(auto-fill, min-content); */
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
-  const [width] = useScreenSize();
+  // const [width] = useScreenSize();
   const {
     title,
     publishDate,
@@ -39,19 +39,18 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   } = props;
 
   const year = new Date(publishDate).getFullYear();
-  const images = [image, image, image, image];
-
-  console.log(width);
+  // const images = [image, image, image, image];
 
   return (
     <StyledWrapper>
-      <Slider withoutAutoplay withoutPagination={width <= 576}>
+      <StyledImage src={image} alt={title} />
+      {/* <Slider withoutAutoplay withoutPagination={width <= 576}>
         {images.map((img) => (
           <Slide>
             <StyledImage src={img} alt={title} />
           </Slide>
         ))}
-      </Slider>
+      </Slider> */}
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>

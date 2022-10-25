@@ -5,9 +5,8 @@ import Text from '@/components/Common/Text';
 
 export const StyledWrapper = styled.section`
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: max-content 1fr;
   gap: 50px;
-
   @media ${breakPoints.sm} {
     justify-items: center;
     grid-template-columns: 1fr;
@@ -32,9 +31,12 @@ export const StyledImage = styled.img`
 
   @media ${breakPoints.md} {
     width: 100vw;
-    max-width: 425px;
+    max-width: 256px;
     height: auto;
-    padding: 10px 20px 0;
+  }
+
+  @media ${breakPoints.sm} {
+    max-width: 512px;
   }
 `;
 
@@ -43,9 +45,6 @@ export const DescriptionLayout = styled.div`
   gap: 16px;
   grid-template-rows: repeat(6, min-content);
   padding: 0 20px;
-  @media screen and (max-width: 576px) {
-    max-width: 425px;
-  }
 `;
 
 export const StyledTitle = styled(Text)`
@@ -106,6 +105,7 @@ export const StyledThesis = styled(Text)`
   font-size: 28px;
   line-height: 1.4;
   letter-spacing: 0;
+  max-width: 760px;
   /* 
   @media ${breakPoints.xl} {
     margin-bottom: 23px;

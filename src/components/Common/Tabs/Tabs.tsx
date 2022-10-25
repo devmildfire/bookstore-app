@@ -11,6 +11,7 @@ import Digital from '../Icons/Digital';
 import BookIcon from '../Icons/Book';
 import Audio from '../Icons/Audio';
 import { editionTypes } from '@/components/BookPage/BookProperties/BookProperties';
+import breakPoints from '@/utils/breakPoints';
 
 interface TabProps {
   active: string;
@@ -88,6 +89,14 @@ const StyledTab = styled.li`
     content: '';
     opacity: 0;
   }
+  @media screen and (max-width: 576px) {
+    &.active::after {
+      background: none;
+    }
+    &.active::before {
+      background: none;
+    }
+  }
 `;
 // const Pill = styled(motion.div)`
 //   position: absolute;
@@ -143,6 +152,8 @@ const StyledTab = styled.li`
 // `;
 
 const Trigger = styled.button<TriggerProps>`
+  display: flex;
+  justify-content: center;
   background-color: transparent;
   color: var(--main-white-100);
   width: 100%;
@@ -159,14 +170,19 @@ const Trigger = styled.button<TriggerProps>`
     color: var(--main-black);
     background-color: var(--main-white-100);
   }
+  @media screen and (max-width: 576px) {
+    border: none;
+    border-radius: 14px;
+  }
 `;
 
 const StyledTabs = styled.div`
-  min-width: 320px;
+  /* min-width: 320px; */
   @media screen and (max-width: 576px) {
     width: 100vw;
-    max-width: 425px;
     padding: 0 20px;
+    /* max-width: 425px; */
+    /* padding: 0 20px; */
   }
 `;
 // const Title = styled.h3`
@@ -176,9 +192,14 @@ const StyledTabs = styled.div`
 const Labels = styled.ul`
   display: flex;
   flex-direction: row;
-  border-radius: 4px;
+
   /* background-color: #141414; */
   /* padding: 8px 8px 0px; */
+  @media screen and (max-width: 576px) {
+    background-color: #0e0e0e;
+    padding: 4px;
+    border-radius: 18px;
+  }
 `;
 
 const StyledTabContent = styled.div`
@@ -188,8 +209,13 @@ const StyledTabContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media ${breakPoints.lg} {
+    padding: 24px;
+  }
+
   @media screen and (max-width: 576px) {
     padding: 12px;
+    border: none;
   }
 `;
 const TabContainer = styled(motion.div)`
@@ -205,6 +231,7 @@ const StyledBook2Icon = styled(Book2)`
   @media screen and (max-width: 576px) {
     height: 24px;
     width: 24px;
+    /* padding: 1px; */
   }
 `;
 
@@ -216,6 +243,7 @@ const StyledDigitalIcon = styled(Digital)`
   @media screen and (max-width: 576px) {
     height: 24px;
     width: 24px;
+    /* padding: 1px; */
   }
 `;
 
@@ -227,6 +255,7 @@ const StyledBookIcon = styled(BookIcon)`
   @media screen and (max-width: 576px) {
     height: 24px;
     width: 24px;
+    /* padding: 1px; */
   }
 `;
 
@@ -238,6 +267,7 @@ const StyledAudioIcon = styled(Audio)`
   @media screen and (max-width: 576px) {
     height: 24px;
     width: 24px;
+    /* padding: 1px; */
   }
 `;
 

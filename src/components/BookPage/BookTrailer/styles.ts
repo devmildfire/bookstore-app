@@ -9,7 +9,7 @@ export const StyleWrapper = styled.section`
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 70px;
+    display: none;
   }
 `;
 
