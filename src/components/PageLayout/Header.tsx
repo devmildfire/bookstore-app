@@ -1,90 +1,322 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-
-import Logo from '@/assets/images/logo.svg';
-import SearchIcon from '@/assets/icons/search.svg';
-import CartIcon from '@/assets/icons/shop-cart.svg';
-import SignOutIcon from '@/assets/icons/sign-out.svg';
-import HeaderTab from './components/HeaderTab';
-
+import { Input } from './components/Input';
 import colors from '@/utils/colors';
-import menu from '@/utils/menuItems';
+import { menu, SubmenuItem } from '../../utils/menuItems';
+import {
+  StyledWrapper,
+  IconsContainerStyled,
+  LogoLinkContainer,
+  LogoStyled,
+  CartIconStyled,
+  CrossIconStyled,
+  ProfileIconStyled,
+  Redlink,
+  BurgerIconStyled,
+} from './HeaderStyles';
+import breakPoints from '@/utils/breakPoints';
+// import { List } from 'reselect/es/types';
 
-const StyledWrapper = styled.header`
-  width: 100%;
-  position: sticky;
-  top: 0;
-  height: var(--header-height);
-  padding: 0 60px;
-  background-color: ${colors.blackBase};
-  z-index: var(--up-z-index);
+interface HeaderContentProps {
+  className?: string;
+}
 
-  @media (max-width: 1440px) {
-    padding: 0 40px;
-  }
+function HeaderContent({ className }: HeaderContentProps) {
+  const { render, mobileMenuOpen } = useMenuToggleIcon();
+  return (
+    <div className={className}>
+      <LogoLinkContainer>
+        <Link href='/' passHref>
+          <a href='fakePath'>
+            <LogoStyled />
+          </a>
+        </Link>
+      </LogoLinkContainer>
 
-  @media (max-width: 1024px) {
-    padding: 0;
-  }
-`;
+      <HeaderMenuStyled {...{ mobileMenuOpen }} />
 
-const HeaderContent = styled.div`
+      <Input />
+
+      <IconsContainerStyled>
+        <CartIconStyled />
+        <ProfileIconStyled />
+
+        {/* функция выводит иконку для мобильного меню */}
+        {render}
+      </IconsContainerStyled>
+    </div>
+  );
+}
+
+const HeaderContentStyled = styled(HeaderContent)`
+  position: relative;
   display: flex;
   height: 100%;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid grey;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+
+  @media (max-width: 1440px) {
+    font-size: 14px;
+    line-height: 17px;
+  }
 
   @media (max-width: 1024px) {
-    padding: 0 20px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    line-height: 140%;
+  }
+
+  /* величина отсечки -3 пикселя */
+  /* @media (max-width: 817px) { */
+  @media ${breakPoints.co3} {
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    line-height: 140%;
   }
 `;
 
-const SearchIconStyled = styled(SearchIcon)`
-  cursor: pointer;
+interface HeaderMenuProps {
+  className?: string;
+}
 
-  :hover {
-    fill: var(--main-red-100);
+function HeaderMenu({ className }: HeaderMenuProps) {
+  return (
+    <div className={className}>
+      {menu.map((item) => {
+        return <NavItemStyled text={item.title} submenu={item.submenu} />;
+      })}
+    </div>
+  );
+}
+
+interface HeaderMenuStyledProps {
+  mobileMenuOpen?: boolean;
+}
+
+const HeaderMenuStyled = styled(HeaderMenu)<HeaderMenuStyledProps>`
+  background-color: ${colors.blackBase};
+
+  display: flex;
+  justify-content: space-evenly;
+
+  align-items: center;
+  flex-grow: 1;
+
+  /* величина отсечки -2 пикселя */
+  /* @media screen and (min-width: 818px) { */
+  @media ${breakPoints.com2} {
+    height: 100%;
+  }
+
+  /* величина отсечки -2 пикселя */
+  /* @media screen and (max-width: 818px) { */
+  @media ${breakPoints.co2} {
+    display: ${(props) => (props.mobileMenuOpen ? 'flex' : 'none')};
+    box-sizing: border-box;
+    position: absolute;
+    flex-direction: column;
+
+    --mobile-width: 240px;
+
+    width: var(--mobile-width);
+    top: 100%;
+    left: calc(
+      100vw - var(--mobile-width) - 1 * (16px + (100vw - 320px) * 0.03409)
+    );
+    align-items: end;
+
+    /* padding: 4.5px 17.5px; */
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 17.5px;
+    padding-right: 17.5px;
+    gap: 16px;
+  }
+
+  @media screen and (max-width: 320px) {
+    left: calc(100vw - 16px - var(--mobile-width));
   }
 `;
 
-const CartIconStyled = styled(CartIcon)`
-  width: 14px;
-  height: 16px;
+interface NavItemProps {
+  className?: string;
+  text?: string;
+  submenu?: SubmenuItem[];
+}
 
-  stroke: var(--main-white-100);
+function NavItem({ className, text, submenu }: NavItemProps) {
+  const [open, setOpen] = useState(false);
 
-  cursor: pointer;
+  function clickOut(ref: React.RefObject<HTMLElement>) {
+    //  test if clicks have the same target, not the "outside"
+    useEffect(() => {
+      // function handleClickOutside(event: React.MouseEvent<HTMLElement>) {
+      function handleClickOutside(this: Document, ev: MouseEvent) {
+        if (ref.current && !ref.current.contains(ev.target as Node)) {
+          setTimeout(() => {
+            setOpen(false);
+          }, 250);
 
-  :hover {
-    stroke: var(--main-red-100);
+          // setOpen(false);
+        }
+      }
+
+      // add event listener for clicks on the window
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        // remove event listener
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
+  }
+
+  const btnRef = useRef(null);
+  clickOut(btnRef);
+
+  return (
+    <div className={className} ref={btnRef}>
+      <Redlink
+        isOpen={!!submenu && open}
+        href='#'
+        onClick={() => setOpen(!open)}
+      >
+        {text}
+        {/* {!submenu && text}
+        {submenu && !open && `\u25B6 ${text}`}
+        {submenu && open && `\u25BC ${text}`} */}
+      </Redlink>
+
+      {submenu && open && (
+        <div className='nav-div'>
+          {submenu.map((item) => {
+            return (
+              <a
+                href={item.link || '#'}
+                className='icon-button'
+                onClick={() => setOpen(!open)}
+              >
+                {item.subtitle}
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const NavItemStyled = styled(NavItem)`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  div,
+  .nav-div {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+
+    position: absolute;
+    overflow: hidden;
+    background: ${colors.blackBase};
+
+    top: 100%;
+    left: -24px;
+
+    width: 205px;
+    gap: 12px;
+    padding: 24px 24px;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+
+    @media (max-width: 1920px) {
+      --div-width: calc(179px + (100vw - 1440px) * 0.05158);
+      width: var(--div-width);
+      --div-padding-v: calc(20px + (100vw - 1440px) * 0.00833);
+      --div-padding-h: calc(20px + (100vw - 1440px) * 0.00833);
+      padding: var(--div-padding-v) var(--div-padding-h);
+      left: calc(-1 * var(--div-padding-h));
+      --div-gap: calc(10px + (100vw - 1440px) * 0.00416);
+      gap: var(--div-gap);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1440px) {
+      --div-width: calc(147px + (100vw - 1024px) * 0.07692);
+      width: var(--div-width);
+      --div-padding-v: calc(13px + (100vw - 1024px) * 0.01682);
+      padding: var(--div-padding-v) 20px;
+      left: -20px;
+      --div-gap: calc(8px + (100vw - 1024px) * 0.0048);
+      gap: var(--div-gap);
+      font-size: 10px;
+    }
+
+    @media (max-width: 1024px) {
+      width: 147px;
+      --div-padding-v: calc(8px + (100vw - 320px) * 0.0071);
+      padding: var(--div-padding-v) 20px;
+      left: -20px;
+      gap: 8px;
+      font-size: 10px;
+    }
+
+    /* величина отсечки -3 пикселя */
+    /* @media (max-width: 817px) { */
+    @media ${breakPoints.co3} {
+      width: 210px;
+      position: relative;
+      text-align: end;
+      left: 0px;
+      padding: 4px 20px;
+      align-items: flex-end;
+      font-size: 10px;
+    }
+
+    a {
+      :hover {
+        color: var(--main-red-100);
+      }
+      text-decoration: none;
+      color: ${colors.whiteBase70};
+    }
+  }
+
+  a {
+    :hover {
+      color: var(--main-red-100);
+    }
+    text-decoration: none;
+
+    /* величина отсечки -3 пикселя */
+    /* @media (max-width: 817px) { */
+    @media ${breakPoints.co3} {
+      text-align: end;
+      align-self: end;
+    }
   }
 `;
 
-const SignOutIconStyled = styled(SignOutIcon)`
-  cursor: pointer;
-
-  :hover {
-    fill: var(--main-red-100);
-  }
-`;
+function useMenuToggleIcon() {
+  const [mobileMenuOpen, setMobileMenuOpem] = useState(false);
+  return {
+    mobileMenuOpen,
+    render: mobileMenuOpen ? (
+      <CrossIconStyled onClick={() => setMobileMenuOpem(!mobileMenuOpen)} />
+    ) : (
+      <BurgerIconStyled onClick={() => setMobileMenuOpem(!mobileMenuOpen)} />
+    ),
+  };
+}
 
 const Header = (): React.ReactElement => (
   <StyledWrapper>
-    <HeaderContent>
-      <Link href='/' passHref>
-        <a href='fakePath'>
-          <Logo />
-        </a>
-      </Link>
-      <SearchIconStyled />
-      {menu.map((item) => (
-        <HeaderTab item={item} key={item.title} />
-      ))}
-      <CartIconStyled />
-      <SignOutIconStyled fill={colors.grey} />
-    </HeaderContent>
+    <HeaderContentStyled />
   </StyledWrapper>
 );
 
