@@ -93,6 +93,7 @@ const StyleWrapper = styled.div`
   justify-self: center;
   max-width: 1440px;
   gap: 170px;
+  box-sizing: content-box;
   @media ${breakPoints.lg} {
     gap: 48px;
   }

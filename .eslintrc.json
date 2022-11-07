@@ -33,7 +33,7 @@
     "arrow-body-style": "off",
     "object-curly-newline": "off",
     "comma-dangle": ["warn", "only-multiline"],
-
+    "operator-linebreak": ["warn", "after"],
     /* REACT */
     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
     "react/jsx-props-no-spreading": "off",

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
   display: grid;
@@ -8,6 +9,10 @@ export const StyledWrapper = styled.div`
   position: relative;
   background-color: var(--main-black);
   color: var(--main-white-100);
+
+  @media ${breakPoints.sm} {
+    gap: 0px;
+  }
 `;
 
 export const StyledContent = styled.div`

@@ -86,7 +86,6 @@ export const StyledBody = styled.main`
 
   @media ${breakPoints.sm} {
     flex-direction: column;
-
     gap: 12px;
   }
 `;

@@ -1,6 +1,6 @@
 export type SubmenuItem = {
   subtitle: string;
-  link?: string;
+  link: string;
   items?: {
     title: string;
     link: string;
@@ -16,33 +16,16 @@ export type MenuItem = {
 const forReaders: SubmenuItem[] = [
   {
     subtitle: 'Книжная лавка',
-    items: [
-      {
-        title: 'Издания',
-        link: '/books',
-      },
-      {
-        title: 'Карты даров',
-        link: '/gift-cards',
-      },
-      {
-        title: 'Чудеса подписки',
-        link: '/subscription',
-      },
-    ],
+    link: '/',
   },
   {
     subtitle: 'Литжурнал РД',
     link: '/dino-magazine',
   },
-  // {
-  //   subtitle: 'Журнал Русского Динозавра',
-  //   link: '/dino-magazine',
-  // },
-  // {
-  //   subtitle: 'Мейнстрим',
-  //   link: '/mainstream',
-  // },
+  {
+    subtitle: 'Мейнстрим',
+    link: '/mainstream',
+  },
 ];
 
 // const forReaders: SubmenuItem[] = [
@@ -66,7 +49,7 @@ const forAuthors: SubmenuItem[] = [
     link: '/suggest-manuscript',
   },
   {
-    subtitle: 'Отправить материал для\u00A0литжурнала РД',
+    subtitle: 'Отправить рассказ для журнала',
     link: '/suggest-story-to-rd',
   },
   {
