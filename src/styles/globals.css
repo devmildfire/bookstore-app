@@ -43,6 +43,11 @@
   --header-height: 80px;
 }
 
+/* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
+::-webkit-scrollbar {
+  display: none;
+}
+
 @media screen and (max-width: 1440px) {
   :root {
     --width: 1024px;
