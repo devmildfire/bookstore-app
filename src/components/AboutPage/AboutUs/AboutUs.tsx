@@ -6,6 +6,7 @@ import Text from '@/components/Common/Text';
 import Books from './Books';
 import Button from '@/components/Common/Button';
 
+// const StyledDescriptionContainer = styled.div`
 const StyledDescriptionContainer = styled(Container)`
   display: flex;
   flex-direction: row;
@@ -20,13 +21,19 @@ const StyledDescriptionContainer = styled(Container)`
     --containerMarginBottom: 40px;
   }
 
+  @media ${breakPoints.md} {
+    width: var(--width);
+    flex-direction: column;
+  }
+
   @media ${breakPoints.sm} {
     --containerMarginBottom: 15px;
   }
 `;
 
 const StyledButton = styled(Button)`
-  width: 480px;
+  /* width: 480px; */
+  width: calc(min(480px, var(--width)));
 `;
 
 const StyledDescription = styled(Text)`
@@ -34,8 +41,25 @@ const StyledDescription = styled(Text)`
 `;
 
 const StyledSection = styled('section')`
-  margin-top: 150px;
+  margin-top: 0px;
+  /* margin-top: 160px; */
   width: 100%;
+
+  /* @media ${breakPoints.xl} {
+
+  }
+
+  @media ${breakPoints.lg} {
+
+  }
+
+  @media ${breakPoints.md} {
+
+  }
+
+  @media ${breakPoints.sm} {
+
+  } */
 `;
 
 const AboutUs = () => (

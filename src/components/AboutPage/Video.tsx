@@ -13,10 +13,11 @@ export interface VideoProps {
 }
 
 const StyledVideo = styled.video`
-  width: 100%;
-  max-width: 1440px;
-  height: 794px;
+  width: var(--width);
   background-color: var(--grey);
+  max-width: 1440px;
+  /* width: 100%; */
+  /* height: 794px;
 
   @media ${breakPoints.xl} {
     height: 585px;
@@ -32,14 +33,14 @@ const StyledVideo = styled.video`
 
   @media ${breakPoints.sm} {
     height: 162px;
-  }
+  } */
 `;
 
 const Video = (props: VideoProps): React.ReactElement => {
   const { src, sources } = props;
 
   return (
-    <StyledVideo src={src}>
+    <StyledVideo src={src} controls>
       {sources?.map(({ srcset, type }) => (
         <source srcSet={srcset} type={type} />
       ))}

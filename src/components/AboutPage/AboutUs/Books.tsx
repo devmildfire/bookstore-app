@@ -8,7 +8,7 @@ import Container from '@/components/Common/Container';
 
 const StyledWrapper = styled.div`
   --booksMarginTop: 0px;
-  --maxBooksWidth: calc(1920px / 2);
+  --maxBooksWidth: calc(3000px / 2);
   --minBookWidth: 271px;
   --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
   --booksHeight: calc(var(--booksWidth) * 0.795);
@@ -29,7 +29,7 @@ const StyledBooks = styled(Container)`
   inset: 0;
 
   margin: 0;
-  max-width: 1920px;
+  max-width: 3000px;
   background-image: url(${image1.src}), url(${image2.src});
   background-repeat: no-repeat;
   background-position: calc(0px - var(--bookOffset)), var(--bookTwoPosition);
@@ -46,35 +46,53 @@ const StyledPhrase = styled.div`
   flex-wrap: wrap;
 
   padding-top: 23px;
+  padding-right: 5px;
+  padding-left: 5px;
   margin-left: auto;
 
-  width: 664px;
+  width: 1024px;
 
   > * {
     flex-basis: 100%;
   }
 
   > *:not(:first-child) {
+    text-align: center;
+  }
+  > *:last-child {
     text-align: end;
   }
 
   @media ${breakPoints.xl} {
-    padding-top: 100px;
+    padding-top: 30px;
+    width: 800px;
   }
 
   @media ${breakPoints.lg} {
-    width: 400px;
+    width: 520px;
 
     padding-top: 30px;
   }
 
   @media ${breakPoints.sm} {
-    width: 100%;
+    width: 95%;
   }
 `;
 
 const StyledText = styled(Text)`
-  padding-top: 23px;
+  padding-top: 55px;
+
+  @media ${breakPoints.xl} {
+    padding-top: 35px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-top: 20px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-top: 10px;
+  }
 `;
 
 const Books = (): ReactElement => (
@@ -83,20 +101,20 @@ const Books = (): ReactElement => (
       <StyledPhrase>
         <StyledText
           component='p'
-          variant='h3_3'
-          fontWeight={400}
-          textTransform='none'
+          variant='h3_31'
+          // fontWeight={400}
+          // textTransform='none'
         >
           О том, чтобы превращать
         </StyledText>
-        <StyledText component='span' variant='h2_2'>
+        <StyledText component='span' variant='h3_32'>
           Деньги в книги,
         </StyledText>
         <StyledText
           component='p'
-          variant='h3_3'
-          fontWeight={400}
-          textTransform='none'
+          variant='h3_32'
+          // fontWeight={400}
+          // textTransform='none'
         >
           а не наоборот
         </StyledText>

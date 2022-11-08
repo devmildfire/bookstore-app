@@ -6,6 +6,8 @@ export type Variant =
   | 'h3_1'
   | 'h3_2'
   | 'h3_3'
+  | 'h3_31'
+  | 'h3_32'
   | 'h3_4'
   | 'text'
   | 'h4_1'

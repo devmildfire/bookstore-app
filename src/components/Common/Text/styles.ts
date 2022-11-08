@@ -1,7 +1,7 @@
 import styled, {
   css,
   FlattenInterpolation,
-  ThemedStyledProps
+  ThemedStyledProps,
 } from 'styled-components';
 import { Property } from 'csstype';
 import breakPoints from '@/utils/breakPoints';
@@ -89,6 +89,60 @@ const h33Style = css<StyledTextProps>`
   }
 `;
 
+const h33StyleAbout = css<StyledTextProps>`
+  font-size: 24px;
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 24px;
+    text-transform: none;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 22px;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 20px;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 18px;
+    /* text-transform: 'none'; */
+  }
+`;
+
+const h33StyleM2B = css<StyledTextProps>`
+  font-size: 30px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 24px;
+    text-transform: none;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 22px;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 20px;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 18px;
+    /* text-transform: 'none'; */
+  }
+`;
+
 const h34Style = css<StyledTextProps>`
   ${h33Style}
   font-weight: ${(props) => props.fontWeight || 400};
@@ -155,6 +209,8 @@ const styles: Record<
   h3_1: h31Style,
   h3_2: h32Style,
   h3_3: h33Style,
+  h3_31: h33StyleAbout,
+  h3_32: h33StyleM2B,
   h3_4: h34Style,
   text: textStyle,
   h4_1: h41Style,
@@ -169,6 +225,8 @@ export const tagMap: Record<Variant, string> = {
   h3_1: 'h3',
   h3_2: 'h3',
   h3_3: 'h3',
+  h3_31: 'h3',
+  h3_32: 'h3',
   h3_4: 'h3',
   text: 'p',
   h4_1: 'h4',
@@ -186,7 +244,7 @@ export interface StyledTextProps {
 }
 
 const StyledText = styled.span`
-${(props: StyledTextProps) => styles[props.variant]}
+  ${(props: StyledTextProps) => styles[props.variant]}
   color: ${(props: StyledTextProps) => colors[props.textColor]};
   line-height: 1.2em;
   letter-spacing: 0.03em;
