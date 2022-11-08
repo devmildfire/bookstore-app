@@ -312,7 +312,7 @@ const MenuOverlay = styled.div`
   position: absolute;
   top: var(--header-height);
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - var(--header-height));
   background-color: black;
   opacity: 0;
