@@ -23,6 +23,7 @@ interface BookDescriptionProps {
   readonly image?: string;
   readonly description: string[];
   readonly authors: Author[];
+  readonly thesis?: string;
 }
 /* grid-template-rows: repeat(auto-fill, min-content); */
 
@@ -36,21 +37,14 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     image,
     description,
     authors,
+    thesis,
   } = props;
 
   const year = new Date(publishDate).getFullYear();
   // const images = [image, image, image, image];
-
   return (
     <StyledWrapper>
       <StyledImage src={image} alt={title} />
-      {/* <Slider withoutAutoplay withoutPagination={width <= 576}>
-        {images.map((img) => (
-          <Slide>
-            <StyledImage src={img} alt={title} />
-          </Slide>
-        ))}
-      </Slider> */}
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
@@ -65,7 +59,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
           textColor='red'
           fontWeight={500}
         >
-          ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
+          {thesis}
         </StyledThesis>
         <StyledDescription>
           {description.map((paragraph: string) => (

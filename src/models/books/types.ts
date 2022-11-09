@@ -14,7 +14,8 @@ export interface Book extends Product {
 
   readonly banner: string;
   readonly trailerSrc: string;
-
+  // TODO: убрать опциональность для тезиса, должен быть у всех книг.
+  readonly thesis?: string;
   readonly description: string[];
 
   readonly symbolCount: number;

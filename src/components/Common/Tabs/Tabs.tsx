@@ -18,7 +18,6 @@ interface TabProps {
   handleTabClick: (tab: string, index: number) => void;
   item: string;
   index: number;
-  length: number;
 }
 
 interface TriggerProps {
@@ -283,12 +282,7 @@ const icons: Icons = {
 };
 
 function Tab(props: TabProps) {
-  const { active, handleTabClick, item, index, length } = props;
-  const pillStyles = {
-    0: 'first',
-    [length - 1]: 'last',
-  };
-  console.log(pillStyles);
+  const { active, handleTabClick, item, index } = props;
   const Icon = icons[item];
   return (
     <StyledTab className={active === item ? 'active' : ''}>
@@ -382,7 +376,6 @@ export default function Tabs(
             handleTabClick={handleTabClick}
             index={idx}
             item={item}
-            length={types.length}
           />
         ))}
       </Labels>

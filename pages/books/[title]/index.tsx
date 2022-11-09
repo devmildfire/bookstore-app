@@ -18,15 +18,18 @@ import breakPoints from '@/utils/breakPoints';
 //   readonly book: Book;
 // }
 
-async function getBook(id: string | string[] | undefined): Promise<Book> {
-  return books[Number(id)];
+async function getBook(
+  title: string | string[] | undefined
+): Promise<Book | null> {
+  const book = books.find((b) => b.transliteratedTitle.toLowerCase() === title);
+  if (!book) return null;
+  return book;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query;
+  const { title } = context.query;
   const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(['book', id], () => getBook(id));
+  await queryClient.prefetchQuery(['book', title], () => getBook(title));
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
@@ -36,11 +39,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const BookPage = (): React.ReactElement => {
   const router = useRouter();
-  const { id } = router.query;
-  const { data: book, isLoading } = useQuery(['book', id], () => getBook(id), {
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-  });
+  const { title } = router.query;
+  const { data: book, isLoading } = useQuery(
+    ['book', title],
+    () => getBook(title),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   if (!book) return <p>Не удалось загрузить страницу книги</p>;
   // const { book } = props;
