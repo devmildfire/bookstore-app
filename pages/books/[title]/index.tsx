@@ -21,7 +21,9 @@ import breakPoints from '@/utils/breakPoints';
 async function getBook(
   title: string | string[] | undefined
 ): Promise<Book | null> {
-  const book = books.find((b) => b.transliteratedTitle.toLowerCase() === title);
+  const book = books.find(
+    (b) => b.transliteratedTitle?.toLowerCase() === title
+  );
   if (!book) return null;
   return book;
 }
