@@ -84,8 +84,8 @@ const CartIconStyled = styled(CartIcon)`
 `;
 
 const CrossIconStyled = styled(CrossIcon)`
-  width: 18px;
-  height: 18px;
+  width: 13px;
+  height: 13px;
 
   stroke: var(--main-white-100);
 

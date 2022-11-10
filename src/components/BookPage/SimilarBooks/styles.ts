@@ -30,7 +30,7 @@ export const BookItem = styled.li`
 export const Banner = styled.img`
   display: block;
   width: 100%;
-  padding: 0 4px;
+  padding: 0 14px;
   /* height: 533px; */
   /* 
   @media ${breakPoints.xl} {

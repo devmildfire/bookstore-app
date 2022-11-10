@@ -123,7 +123,7 @@ const DescriptionKey = styled(Text)`
     max-width: 250px;
   }
 `;
-const DescriptionValue = styled.span`
+const DescriptionValue = styled.p`
   display: inline-flex;
   width: 100%;
   max-width: 450px;
@@ -262,9 +262,12 @@ const AudioEdition = (props: EditionProps) => {
         <Paragraphs>
           <DesctiptionItem>
             <DescriptionKey>Текст читает:</DescriptionKey>
+            <DescriptionValue>Ниёле Мейлуте</DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey>Использована композиция:</DescriptionKey>
             <DescriptionValue>
-              Ниёле Мейлуте, использована композиция ‘Times Arrow’ Anamorphic
-              Orchestra.
+              ‘Times Arrow’ Anamorphic Orchestra
             </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>

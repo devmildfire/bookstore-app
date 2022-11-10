@@ -18,7 +18,6 @@ export const StyledImage = styled.img`
   padding-top: 10px;
   width: 500px;
   height: 750px;
-  object-fit: cover;
 
   @media ${breakPoints.xl} {
     width: 485px;
@@ -31,7 +30,7 @@ export const StyledImage = styled.img`
   }
 
   @media ${breakPoints.md} {
-    width: 100vw;
+    width: 100%;
     max-width: 256px;
     height: auto;
   }

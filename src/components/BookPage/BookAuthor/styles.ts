@@ -39,8 +39,13 @@ export const AuthorInfo = styled.div`
   margin-bottom: 40px;
   display: flex;
   gap: 64px;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
+
+  @media ${breakPoints.xl} {
+    align-items: center;
+    flex-direction: column;
+  }
 
   @media ${breakPoints.lg} {
     margin-bottom: 20px;
@@ -79,11 +84,13 @@ export const AuthorPhoto = styled.img`
 export const AuthorDescr = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 24px;
   font-size: 20px;
   line-height: 29px;
-  @media screen and (max-width: 576px) {
+  @media ${breakPoints.xl} {
+    align-items: center;
+  }
+  @media ${breakPoints.md} {
     font-size: 14px;
   }
 `;
@@ -97,6 +104,7 @@ export const AuthorProps = styled.div`
   font-weight: 700;
 
   @media ${breakPoints.xl} {
+    align-items: center;
   }
 
   @media ${breakPoints.lg} {

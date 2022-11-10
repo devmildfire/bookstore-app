@@ -2,10 +2,7 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const StyleWrapper = styled.section`
-  margin-bottom: 130px;
-
   @media ${breakPoints.lg} {
-    margin-bottom: 100px;
   }
 
   @media ${breakPoints.sm} {
@@ -14,7 +11,7 @@ export const StyleWrapper = styled.section`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 85px;
+  padding-bottom: 85px;
   text-align: center;
   font-family: Cheque;
   font-weight: 900;
@@ -22,11 +19,11 @@ export const Title = styled.h2`
   line-height: 68px;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 26px;
+    padding-bottom: 26px;
   }
 
   @media ${breakPoints.lg} {
-    margin-bottom: 30px;
+    padding-bottom: 30px;
     font-size: 40px;
     line-height: 48px;
   }

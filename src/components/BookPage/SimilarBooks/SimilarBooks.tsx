@@ -9,7 +9,7 @@ import { useGetBooksQuery } from '@/models/books';
 import useScreenSize from '@/hooks/useScreenSize';
 
 const StyledTitle = styled(Title)`
-  padding-bottom: 24px;
+  padding-bottom: 85px;
 `;
 
 const SimilarBooks = (): React.ReactElement => {

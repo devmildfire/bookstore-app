@@ -73,26 +73,6 @@ const BookPage = (): React.ReactElement => {
   );
 };
 
-// export const getServerSideProps = wrapper.getServerSideProps<BookPageProps>(
-//   ({ dispatch }) =>
-//     async ({ query }) => {
-//       const { id } = query;
-//       const { data: book } = await dispatch(getBook.initiate(id as string));
-
-//       if (!book) {
-//         return {
-//           notFound: true,
-//         };
-//       }
-
-//       return {
-//         props: {
-//           book,
-//         },
-//       };
-//     }
-// );
-
 const StyleWrapper = styled.div`
   position: relative;
   display: grid;
