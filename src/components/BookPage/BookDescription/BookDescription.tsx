@@ -41,6 +41,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   } = props;
 
   const year = new Date(publishDate).getFullYear();
+  console.log(publishDate, year);
   // const images = [image, image, image, image];
   return (
     <StyledWrapper>
