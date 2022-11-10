@@ -81,7 +81,7 @@ const StyledDropdown = styled.div`
   &.active {
     opacity: 1;
     visibility: visible;
-    padding: 20px 0 5px;
+    padding: 20px 0 10px;
     min-height: fit-content;
   }
 `;
@@ -91,6 +91,7 @@ const StyledMatches = styled.ul`
   max-height: 160px;
   overflow: hidden;
   overflow-y: auto;
+  padding: 0 10px;
   width: 99%;
   /* width */
   ::-webkit-scrollbar {
@@ -118,6 +119,7 @@ const StyledMatches = styled.ul`
 const StyledMatch = styled.li`
   padding: 12px;
   cursor: pointer;
+  border-radius: 6px;
   &:hover {
     background-color: #232323;
   }
