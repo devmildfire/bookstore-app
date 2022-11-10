@@ -14,6 +14,7 @@ export const FooterContent = styled.div`
   padding: 30px 20px 40px;
   display: flex;
   justify-content: space-between;
+  align-items: end;
   margin: 0 auto;
   width: 100%;
   max-width: 1394px;
@@ -68,15 +69,13 @@ export const FooterContactLink = styled.a`
   flex-direction: row;
   align-items: center;
 
-
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
 
-  color: #DCDCDC;
-
+  color: #dcdcdc;
 `;
 
 export const FooterInfo = styled.div`
