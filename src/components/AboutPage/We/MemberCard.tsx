@@ -36,11 +36,13 @@ const StyledPhoto = styled.img`
   margin-bottom: 25px;
 
   @media ${breakPoints.xl} {
-    --size: 280px;
+    /* --size: 280px; */
+    --size: 220px;
   }
 
   @media ${breakPoints.lg} {
-    --size: 250px;
+    /* --size: 250px; */
+    --size: 180px;
   }
 
   @media ${breakPoints.sm} {
@@ -49,9 +51,7 @@ const StyledPhoto = styled.img`
 `;
 
 const MemberCard = (props: Member): React.ReactElement => {
-  const {
-    city, member, photo, phrase, position,
-  } = props;
+  const { city, member, photo, phrase, position } = props;
 
   return (
     <StyledCard>

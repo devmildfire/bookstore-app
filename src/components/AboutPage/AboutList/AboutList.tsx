@@ -6,10 +6,15 @@ import AboutCard from './AboutCard';
 import { StyledList, StyledSlide } from './styles';
 import Slider from '@/components/Common/Slider';
 import Text from '@/components/Common/Text';
-import Container from '@/components/Common/Container';
+// import Container from '@/components/Common/Container';
 
 const StyledTitle = styled(Text)`
   padding-bottom: 82px;
+`;
+
+const RelativeDiv = styled.div`
+  position: relative;
+  margin: 0;
 `;
 
 const AboutList = (): React.ReactElement => {
@@ -33,7 +38,7 @@ const AboutList = (): React.ReactElement => {
       ))}
     </Slider>
   ) : (
-    <Container>
+    <RelativeDiv>
       <StyledTitle variant='h2_1' align='center'>
         ТИПЫ ИЗДАНИЙ
       </StyledTitle>
@@ -42,7 +47,7 @@ const AboutList = (): React.ReactElement => {
           <AboutCard {...about} key={about.content} />
         ))}
       </StyledList>
-    </Container>
+    </RelativeDiv>
   );
 };
 

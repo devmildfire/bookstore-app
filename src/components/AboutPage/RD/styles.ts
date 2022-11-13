@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
+import PaddedText from '@/components/Common/PaddedText';
 import RDImage from '@/assets/images/dino.png';
 
 export const StyledWrapper = styled.section`
@@ -38,7 +39,10 @@ export const StyledContent = styled.div`
 
     padding-top: 0;
 
-    --RDOffset: 118px;
+    /* --RDOffset: 118px; */
+    --RDOffset: 0px;
+    padding-left: 80px;
+    padding-right: 80px;
   }
 
   @media ${breakPoints.lg} {
@@ -46,11 +50,15 @@ export const StyledContent = styled.div`
     height: 521px;
 
     --RDOffset: 0px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   @media ${breakPoints.md} {
     gap: 18px;
     height: 420px;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
   @media ${breakPoints.sm} {
@@ -98,7 +106,37 @@ export const StyledMainText = styled(Text)`
   }
 `;
 
-export const StyledSecondaryText = styled(StyledMainText)`
+export const StyledMainPaddedText = styled(PaddedText)`
+  --width: 720px;
+
+  width: var(--width);
+
+  @media ${breakPoints.xl} {
+    --width: 640px;
+  }
+
+  @media ${breakPoints.lg} {
+    --width: 450px;
+  }
+
+  @media ${breakPoints.md} {
+    --width: 350px;
+  }
+
+  @media ${breakPoints.sm} {
+    --width: 100%;
+  }
+`;
+
+export const StyledSecondaryPaddedText = styled(StyledMainText)`
+  width: calc(var(--width) - 10%);
+
+  @media ${breakPoints.sm} {
+    width: 100%;
+  }
+`;
+
+export const StyledSecondaryText = styled(StyledMainPaddedText)`
   width: calc(var(--width) - 10%);
 
   @media ${breakPoints.sm} {

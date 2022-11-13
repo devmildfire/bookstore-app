@@ -10,7 +10,7 @@ const StyledCover = styled('img')`
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
-  margin-bottom: 32px;
+  /* margin-bottom: 32px; */
   filter: saturate(0%);
   transition: 0.6s ease-in-out;
   &:hover {

@@ -19,6 +19,46 @@ const partners: Partner[] = [
     name: 'Порядок Слов',
     photo: poryadokSlov.src,
   },
+  {
+    id: 3,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 4,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 5,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 6,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 7,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 8,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 9,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
+  {
+    id: 10,
+    name: 'Порядок Слов',
+    photo: poryadokSlov.src,
+  },
 ];
 
 export default partners;
