@@ -2,6 +2,8 @@ import { Partner } from '@/types/partner';
 import readCafePhoto from '../../public/images/partners/read-cafe.webp';
 import logo451 from '../../public/images/partners/451.png';
 import poryadokSlov from '../../public/images/partners/poryadok-slov.png';
+import ahuli from '../../public/images/partners/ahuli_2.png';
+import discourse from '../../public/images/partners/discourse.png';
 
 const partners: Partner[] = [
   {
@@ -21,43 +23,13 @@ const partners: Partner[] = [
   },
   {
     id: 3,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
+    name: 'Ахули',
+    photo: ahuli.src,
   },
   {
     id: 4,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 5,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 6,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 7,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 8,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 9,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
-  },
-  {
-    id: 10,
-    name: 'Порядок Слов',
-    photo: poryadokSlov.src,
+    name: 'Дискурс',
+    photo: discourse.src,
   },
 ];
 

@@ -20,19 +20,23 @@ const StyledCard = styled.img`
   backdrop-filter: blur(8px);
 
   margin-bottom: 25px;
+  padding: 40px 40px;
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
     --size: 220px;
+    padding: 30px;
   }
 
   @media ${breakPoints.lg} {
     /* --size: 250px; */
     --size: 180px;
+    padding: 20px;
   }
 
   @media ${breakPoints.sm} {
     --size: 150px;
+    padding: 10px;
   }
 `;
 
