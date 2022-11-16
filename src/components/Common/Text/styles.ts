@@ -35,6 +35,14 @@ const h21Style = css<StyledTextProps>`
   text-transform: ${(props) => props.textTransform || 'uppercase'};
   font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
+  @media ${breakPoints.xl} {
+    font-size: 50px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+  }
+
   @media ${breakPoints.sm} {
     font-size: 24px;
   }
@@ -101,7 +109,7 @@ const h33StyleAbout = css<StyledTextProps>`
   }
 
   @media ${breakPoints.lg} {
-    font-size: 22px;
+    font-size: 24px;
     /* text-transform: 'none'; */
   }
 
@@ -111,34 +119,34 @@ const h33StyleAbout = css<StyledTextProps>`
   }
 
   @media ${breakPoints.sm} {
-    font-size: 18px;
+    font-size: 16px;
     /* text-transform: 'none'; */
   }
 `;
 
 const h33StyleM2B = css<StyledTextProps>`
-  font-size: 30px;
+  font-size: 50px;
   font-weight: ${(props) => props.fontWeight || 700};
   text-transform: ${(props) => props.textTransform || 'uppercase'};
-  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+  font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
   @media ${breakPoints.xl} {
-    font-size: 24px;
+    font-size: 40px;
     text-transform: none;
   }
 
   @media ${breakPoints.lg} {
-    font-size: 22px;
+    font-size: 30px;
     /* text-transform: 'none'; */
   }
 
   @media ${breakPoints.md} {
-    font-size: 20px;
+    font-size: 24px;
     /* text-transform: 'none'; */
   }
 
   @media ${breakPoints.sm} {
-    font-size: 18px;
+    font-size: 20px;
     /* text-transform: 'none'; */
   }
 `;

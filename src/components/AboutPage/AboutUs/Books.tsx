@@ -9,7 +9,8 @@ import Container from '@/components/Common/Container';
 const StyledWrapper = styled.div`
   --booksMarginTop: 0px;
   --maxBooksWidth: calc(3000px / 2);
-  --minBookWidth: 271px;
+  /* --minBookWidth: 271px; */
+  --minBookWidth: 100px;
   --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
   --booksHeight: calc(var(--booksWidth) * 0.795);
 
@@ -17,7 +18,19 @@ const StyledWrapper = styled.div`
   height: calc(var(--booksHeight) + var(--booksMarginTop));
 
   @media ${breakPoints.xl} {
-    --booksMarginTop: 60px;
+    --booksMarginTop: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    --booksMarginTop: 70px;
+  }
+
+  @media ${breakPoints.md} {
+    --booksMarginTop: 70px;
+  }
+
+  @media ${breakPoints.sm} {
+    --booksMarginTop: 90px;
   }
 `;
 
@@ -37,7 +50,8 @@ const StyledBooks = styled(Container)`
   margin-top: var(--booksMarginTop);
 
   @media ${breakPoints.sm} {
-    --bookOffset: 31px;
+    /* --bookOffset: 31px; */
+    --bookOffset: 0px;
   }
 `;
 
@@ -46,11 +60,11 @@ const StyledPhrase = styled.div`
   flex-wrap: wrap;
 
   padding-top: 23px;
-  padding-right: 5px;
-  padding-left: 5px;
+  padding-right: 0px;
+  padding-left: 0px;
   margin-left: auto;
 
-  width: 1024px;
+  width: 800px;
 
   > * {
     flex-basis: 100%;
@@ -64,34 +78,36 @@ const StyledPhrase = styled.div`
   }
 
   @media ${breakPoints.xl} {
-    padding-top: 30px;
-    width: 800px;
+    padding-top: 10px;
+    width: 527px;
   }
 
   @media ${breakPoints.lg} {
-    width: 520px;
+    width: 401px;
 
-    padding-top: 30px;
+    padding-top: 10px;
   }
 
   @media ${breakPoints.sm} {
-    width: 95%;
+    width: 284px;
+    padding-top: 5px;
+    padding-right: 17px;
   }
 `;
 
 const StyledText = styled(Text)`
-  padding-top: 55px;
+  padding-top: 35px;
 
   @media ${breakPoints.xl} {
-    padding-top: 35px;
+    padding-top: 30px;
   }
 
   @media ${breakPoints.lg} {
-    padding-top: 20px;
+    padding-top: 25px;
   }
 
   @media ${breakPoints.sm} {
-    padding-top: 10px;
+    padding-top: 15px;
   }
 `;
 
@@ -112,7 +128,7 @@ const Books = (): ReactElement => (
         </StyledText>
         <StyledText
           component='p'
-          variant='h3_32'
+          variant='h3_31'
           // fontWeight={400}
           // textTransform='none'
         >

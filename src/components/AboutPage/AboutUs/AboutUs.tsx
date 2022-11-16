@@ -13,17 +13,23 @@ const StyledDescriptionContainer = styled(Container)`
   justify-content: space-between;
   align-items: flex-end;
   max-width: 1440px;
-  padding-top: 120px;
+  padding-top: 31px;
   gap: var(--containerMarginBottom);
   --containerMarginBottom: 45px;
 
   @media ${breakPoints.xl} {
     --containerMarginBottom: 40px;
+    padding-top: 17px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-top: 17px;
   }
 
   @media ${breakPoints.md} {
     width: var(--width);
     flex-direction: column;
+    padding-top: 18px;
   }
 
   @media ${breakPoints.sm} {

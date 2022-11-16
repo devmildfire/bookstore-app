@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 import PaddedText from '@/components/Common/PaddedText';
-import RDImage from '@/assets/images/dino.png';
+import RDImage from '@/assets/images/dino_figma.png';
 
 export const StyledWrapper = styled.section`
   display: grid;
@@ -77,7 +77,7 @@ export const StyledRD = styled.div`
   background-image: url(${RDImage.src});
   background-repeat: no-repeat;
   background-position: calc(100% + 130px) calc(50% + var(--RDOffset));
-  background-size: 60%;
+  background-size: 40%;
 
   @media ${breakPoints.sm} {
     background: none;
