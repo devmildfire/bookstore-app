@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import {
   DescriptionLayout,
   StyledAuthor,
@@ -11,9 +12,6 @@ import {
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
-// import Slide from '@/components/Common/Slide';
-// import Slider from '@/components/Common/Slider';
-// import useScreenSize from '@/hooks/useScreenSize';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -26,9 +24,27 @@ interface BookDescriptionProps {
   readonly thesis?: string;
 }
 /* grid-template-rows: repeat(auto-fill, min-content); */
+const ImagePopup = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  visibility: visible;
+  opacity: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: #000000d6;
+`;
+
+const FullscreenCover = styled.img`
+  width: auto;
+  height: 100%;
+`;
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
-  // const [width] = useScreenSize();
   const {
     title,
     publishDate,
@@ -39,13 +55,44 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     authors,
     thesis,
   } = props;
-
+  const [isImageOpen, setIsImageOpen] = useState(false);
   const year = new Date(publishDate).getFullYear();
-  console.log(publishDate, year);
-  // const images = [image, image, image, image];
+  useEffect(() => {
+    // const handleClickOutside = (e) => {
+    //   if (isImageOpen && popupRef.current === e.target) {
+    //     setIsImageOpen(false);
+    //   }
+    //   console.log(isImageOpen);
+    // };
+    // // if (isImageOpen) {
+    // //   document.body.style.overflow = 'hidden';
+    // // } else {
+    // //   document.body.style.overflow = 'unset';
+    // // }
+    // document.addEventListener('click', handleClickOutside);
+    // return document.addEventListener('click', handleClickOutside);
+  }, [isImageOpen]);
+
   return (
     <StyledWrapper>
-      <StyledImage src={image} alt={title} />
+      {isImageOpen ? (
+        <ImagePopup
+          onClick={() => {
+            document.body.style.overflow = 'unset';
+            setIsImageOpen(false);
+          }}
+        >
+          <FullscreenCover src={image} alt={title} />
+        </ImagePopup>
+      ) : null}
+      <StyledImage
+        onClick={() => {
+          document.body.style.overflow = 'hidden';
+          setIsImageOpen(true);
+        }}
+        src={image}
+        alt={title}
+      />
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>

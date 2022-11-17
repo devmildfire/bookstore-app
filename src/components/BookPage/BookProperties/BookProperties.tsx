@@ -88,6 +88,10 @@ const Text = styled.p`
 `;
 const ButtonsText = styled(Text)`
   font-size: 12px;
+
+  @media ${breakPoints.lg} {
+    font-size: 10px;
+  }
 `;
 
 const Descrption = styled.div`
@@ -158,9 +162,9 @@ const Buttons = styled.div`
   @media screen and (max-width: 576px) {
     gap: 0px;
     max-width: 223px;
-    padding-bottom: 12px;
+    padding-bottom: 22px;
     justify-content: center;
-    align-items: center;
+    align-items: right;
     align-self: center;
   }
 `;

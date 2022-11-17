@@ -97,58 +97,6 @@ const StyledTab = styled.li`
     }
   }
 `;
-// const Pill = styled(motion.div)`
-//   position: absolute;
-//   top: 0;
-//   right: 0;
-//   left: 0;
-//   bottom: 0;
-//   z-index: -1;
-//   background-color: transparent;
-//   border-radius: 14px 14px 0 0;
-//   background-color: var(--main-white-100);
-//   /* border-radius: 4px; */
-//   &::after {
-//     content: '';
-//     width: 18px;
-//     height: 18px;
-//     background: radial-gradient(
-//       at right 10%,
-//       rgba(255, 255, 255, 0) 70%,
-//       var(--main-white-100) 75%,
-//       var(--main-white-100) 100%
-//     );
-//     position: absolute;
-//     left: 100%;
-//     bottom: 0;
-//     opacity: 1;
-//     transition: 0.3s;
-//   }
-//   &::before {
-//     content: '';
-//     width: 18px;
-//     height: 18px;
-//     background: radial-gradient(
-//       at left 10%,
-//       rgba(255, 255, 255, 0) 70%,
-//       var(--main-white-100) 75%,
-//       var(--main-white-100) 100%
-//     );
-//     position: absolute;
-//     right: 100%;
-//     bottom: 0;
-//     opacity: 1;
-//     transition: 0.3s;
-//   }
-//   &.first:before {
-//     content: '';
-//     opacity: 0;
-//   }
-//   &.last:after {
-//     content: '';
-//     opacity: 0;
-//   }
-// `;
 
 const Trigger = styled.button<TriggerProps>`
   display: flex;
@@ -286,17 +234,6 @@ function Tab(props: TabProps) {
   const Icon = icons[item];
   return (
     <StyledTab className={active === item ? 'active' : ''}>
-      {/* {item === active ? (
-        <Pill
-          className={pillStyles[index]}
-          transition={{
-            duration: 0.2,
-            ease: 'easeInOut',
-          }}
-          layoutId='pill'
-        />
-      ) : null} */}
-
       <Trigger
         className={active === item ? 'active' : ''}
         onClick={() => handleTabClick(item, index)}

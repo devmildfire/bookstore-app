@@ -25,7 +25,7 @@ const SimilarBooks = (): React.ReactElement => {
       </StyledTitle>
       <Slider
         className='mySwiper'
-        slidesPerView={width < 576 ? 3 : 3}
+        slidesPerView={width < 576 ? 1 : 3}
         // spaceBetween={165}
         withoutPagination
       >

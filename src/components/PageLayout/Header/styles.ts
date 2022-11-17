@@ -242,6 +242,9 @@ const NavListItem = styled.li`
       opacity: 1;
     }
   }
+  @media ${breakPoints.md} {
+    font-weight: 500;
+  }
 `;
 
 const NavLink = styled.a`
@@ -253,7 +256,7 @@ const NavLink = styled.a`
 const Submenu = styled.ul<SubmenuProps>`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   background-color: var(--main-black);
   position: absolute;
   top: 28px;
@@ -269,9 +272,8 @@ const Submenu = styled.ul<SubmenuProps>`
     opacity: 1;
     position: relative;
     top: 0;
-    right: 0;
+    left: 0;
     padding: 0;
-    padding-bottom: 10px;
   }
 `;
 
@@ -279,6 +281,7 @@ const SubmenuListItem = styled.li`
   cursor: pointer;
   text-align: start;
   font-size: 12px;
+  font-weight: 400;
   color: var(--main-white);
   @media ${breakPoints.md} {
     text-align: end;

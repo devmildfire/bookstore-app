@@ -66,6 +66,7 @@ export const AuthorPhoto = styled.img`
   display: block;
   object-fit: cover;
   border-radius: 50%;
+  filter: saturate(0%);
   @media ${breakPoints.xl} {
     /* width: 416px; */
     /* height: 416px; */

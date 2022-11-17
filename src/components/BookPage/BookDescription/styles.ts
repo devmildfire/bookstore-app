@@ -123,10 +123,8 @@ export const StyledThesis = styled(Text)`
 export const StyledDescription = styled.div`
   display: grid;
   gap: 20px;
-  max-width: 700px;
 
   @media ${breakPoints.xl} {
-    max-width: 500px;
     gap: 10px;
   }
 `;
