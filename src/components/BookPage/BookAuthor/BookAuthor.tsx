@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { Author } from '@/types/author';
 import {
   AuthorAbout,
-  AuthorContacts,
+  // AuthorContacts,
   AuthorDescr,
   AuthorPhoto,
   AuthorInfo,
@@ -33,9 +33,9 @@ const BookAuthor = (props: BookAuthorProps): ReactElement => {
           </AuthorProps>
           <AuthorSpeech>{author.phrase}</AuthorSpeech>
           <AuthorAbout>{author.biography}</AuthorAbout>
-          <AuthorContacts>
+          {/* <AuthorContacts>
             <span>Контакты:</span>
-          </AuthorContacts>
+          </AuthorContacts> */}
         </AuthorDescr>
       </AuthorInfo>
     </StyleWrapper>
