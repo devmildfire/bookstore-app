@@ -158,5 +158,6 @@ export const FullscreenCover = styled.img`
   }
   @media ${breakPoints.md} {
     height: auto;
+    width: 85%;
   }
 `;
