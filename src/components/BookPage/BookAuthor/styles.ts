@@ -67,6 +67,10 @@ export const AuthorPhoto = styled.img`
   object-fit: cover;
   border-radius: 50%;
   filter: saturate(0%);
+  transition: 1s;
+  &:hover {
+    filter: saturate(100%);
+  }
   @media ${breakPoints.xl} {
     /* width: 416px; */
     /* height: 416px; */

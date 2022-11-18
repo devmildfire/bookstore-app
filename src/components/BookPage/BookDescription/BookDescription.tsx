@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import {
   DescriptionLayout,
   FullscreenCover,
@@ -11,8 +12,10 @@ import {
   StyledTitle,
   StyledWrapper,
 } from './styles';
+import CloseIcon from '@/assets/icons/close.svg';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
+import breakPoints from '@/utils/breakPoints';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -25,6 +28,31 @@ interface BookDescriptionProps {
   readonly thesis?: string;
 }
 /* grid-template-rows: repeat(auto-fill, min-content); */
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+  @media ${breakPoints.md} {
+    top: 12px;
+    right: 12px;
+  }
+`;
+
+const StyledCloseIcon = styled(CloseIcon)`
+  width: 36px;
+  height: 36px;
+  @media ${breakPoints.md} {
+    width: 24px;
+    height: 24px;
+  }
+`;
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
@@ -41,26 +69,43 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const year = new Date(publishDate).getFullYear();
 
+  const handleClosePopup = () => {
+    document.body.style.overflow = 'unset';
+    setIsImageOpen(false);
+  };
+
+  const handleOpenPopup = () => {
+    document.body.style.overflow = 'hidden';
+    setIsImageOpen(true);
+  };
+
+  useEffect(() => {
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        handleClosePopup();
+      }
+    }
+    document.addEventListener('keydown', (e) => handleEsc(e));
+    return document.removeEventListener('keydown', (e) => handleEsc(e));
+  }, []);
+
   return (
     <StyledWrapper>
-      {isImageOpen ? (
-        <CoverPopup
-          onClick={() => {
-            document.body.style.overflow = 'unset';
-            setIsImageOpen(false);
-          }}
-        >
-          <FullscreenCover src={image} alt={title} />
-        </CoverPopup>
-      ) : null}
-      <StyledImage
-        onClick={() => {
-          document.body.style.overflow = 'hidden';
-          setIsImageOpen(true);
-        }}
-        src={image}
-        alt={title}
-      />
+      <CoverPopup
+        onClick={handleClosePopup}
+        className={isImageOpen ? 'active' : ''}
+      >
+        <CloseButton onClick={handleClosePopup}>
+          <StyledCloseIcon />
+        </CloseButton>
+        <FullscreenCover
+          className={isImageOpen ? 'active' : ''}
+          src={image}
+          alt={title}
+        />
+      </CoverPopup>
+
+      <StyledImage onClick={handleOpenPopup} src={image} alt={title} />
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>

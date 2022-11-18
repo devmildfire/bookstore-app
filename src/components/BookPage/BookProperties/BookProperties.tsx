@@ -197,9 +197,9 @@ const DigitalEdition = ({ releaseDate }: EditionProps) => {
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
-              редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
-              Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
-              Евгений Борщевский
+              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
+              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
+              иллюстратор Евгений&nbsp;Борщевский
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
@@ -242,7 +242,11 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>asd, asd, asd,</DescriptionValue>
+            <DescriptionValue>
+              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
+              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
+              иллюстратор Евгений&nbsp;Борщевский
+            </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
@@ -313,7 +317,7 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Объём:</DescriptionKey>
-            <DescriptionValue>144стр.</DescriptionValue>
+            <DescriptionValue>144 стр.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Бумага:</DescriptionKey>
@@ -336,9 +340,9 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
-              редактор Наталья Кислова, веб-мастер Серафим Лоза, дизайнер
-              Екатерина Яковлева, верстальщик Леон Меликьянц, иллюстратор
-              Евгений Борщевский
+              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
+              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
+              иллюстратор Евгений&nbsp;Борщевский
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>

@@ -18,6 +18,7 @@ export const StyledImage = styled.img`
   padding-top: 10px;
   width: 500px;
   height: 750px;
+  cursor: pointer;
 
   @media ${breakPoints.xl} {
     width: 485px;
@@ -132,17 +133,30 @@ export const CoverPopup = styled.div`
   justify-content: center;
   align-items: center;
   position: fixed;
-  visibility: visible;
-  opacity: 1;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 99999;
   background-color: #000000d6;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
 `;
 
 export const FullscreenCover = styled.img`
   width: auto;
-  height: auto;
+  height: 100%;
+  transform: translateY(100%);
+  transition: 0.3s;
+  &.active {
+    transform: translateY(0%);
+  }
+  @media ${breakPoints.md} {
+    height: auto;
+  }
 `;

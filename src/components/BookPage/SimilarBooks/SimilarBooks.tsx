@@ -31,7 +31,7 @@ const SimilarBooks = (): React.ReactElement => {
       >
         {books.map((book) => (
           <Slide key={book.id}>
-            <Link href={`/books/${book.id}`} passHref>
+            <Link href={`/books/${book.transliteratedTitle}`} passHref>
               <a href='fakePath'>
                 <Banner src={book.image} alt={book.title} />
               </a>
