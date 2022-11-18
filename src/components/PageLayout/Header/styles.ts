@@ -12,6 +12,7 @@ interface HeaderList {
 
 interface MenuButtonProps {
   mobile?: boolean;
+  isVisible?: boolean;
 }
 
 interface SubmenuProps {
@@ -311,7 +312,7 @@ const MenuButton = styled.button<MenuButtonProps>`
   align-items: center;
   justify-content: center;
   @media ${breakPoints.md} {
-    display: flex;
+    display: ${(props) => (!props.isVisible ? 'flex' : 'none')};
   }
 `;
 

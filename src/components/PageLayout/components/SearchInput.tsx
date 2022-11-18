@@ -54,6 +54,9 @@ const StyledInput = styled.input`
     height: 24px;
     padding-left: 22px;
     font-size: 14px;
+    &.active {
+      width: 50vw;
+    }
   }
 `;
 
@@ -83,6 +86,18 @@ const StyledDropdown = styled.div`
     visibility: visible;
     padding: 20px 0 10px;
     min-height: fit-content;
+  }
+
+  @media ${breakPoints.xl} {
+    top: 46px;
+  }
+
+  @media ${breakPoints.lg} {
+    top: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    top: 36px;
   }
 `;
 
@@ -123,6 +138,9 @@ const StyledMatch = styled.li`
   &:hover {
     background-color: #232323;
   }
+  @media ${breakPoints.sm} {
+    padding: 12px 0;
+  }
 `;
 
 const StyledMatchInfoContainer = styled.div`
@@ -141,6 +159,16 @@ const StyledBookCover = styled.img`
 const StyledMatchLink = styled.a`
   display: flex;
   gap: 16px;
+  @media ${breakPoints.sm} {
+    gap: 8px;
+  }
+`;
+
+const StyledMatchText = styled.p`
+  font-size: 14px;
+  @media ${breakPoints.sm} {
+    font-size: 10px;
+  }
 `;
 
 type OuterClickCallback = (e: MouseEvent) => void;
@@ -171,13 +199,13 @@ function useOuterClick(callback: OuterClickCallback) {
   return innerRef;
 }
 
-const SearchInput: React.FC = () => {
+const SearchInput: React.FC = ({ isInputActive, setIsInputActive }) => {
   const [matches, setMatches] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  // const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const dropdownRef: any = useOuterClick(() => {
-    if (isDropdownVisible) {
-      setIsDropdownVisible(false);
+    if (isInputActive) {
+      setIsInputActive(false);
     }
   });
 
@@ -199,12 +227,13 @@ const SearchInput: React.FC = () => {
       <StyledInput
         value={searchQuery}
         onChange={handleSearch}
-        onClick={() => setIsDropdownVisible(!isDropdownVisible)}
+        onClick={() => setIsInputActive(true)}
+        className={isInputActive ? 'active' : null}
       />
       <StyledGlass />
       <StyledDropdown
         ref={dropdownRef}
-        className={`${isDropdownVisible && matches.length > 0 && 'active'}`}
+        className={`${isInputActive && matches.length > 0 && 'active'}`}
       >
         <StyledMatches>
           {matches.map((book) => (
@@ -212,8 +241,10 @@ const SearchInput: React.FC = () => {
               <StyledMatchLink href={`/books/${book.transliteratedTitle}`}>
                 <StyledBookCover src={book.image} alt={book.title} />
                 <StyledMatchInfoContainer>
-                  <p>{book.title}</p>
-                  <p>{book.authors.map((author) => author.name).join(', ')}</p>
+                  <StyledMatchText>{book.title}</StyledMatchText>
+                  <StyledMatchText>
+                    {book.authors.map((author) => author.name).join(', ')}
+                  </StyledMatchText>
                 </StyledMatchInfoContainer>
               </StyledMatchLink>
             </StyledMatch>

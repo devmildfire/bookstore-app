@@ -72,6 +72,7 @@ function useOuterClick(callback: OuterClickCallback) {
 
 function Header(): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
+  const [isInputActive, setIsInputActive] = useState(false);
   // не знаю как хорошо типизировать реф, пока что оставлю any
   const menuRef: any = useOuterClick(() => {
     if (isOpen) {
@@ -87,12 +88,15 @@ function Header(): ReactElement {
           <ListItem title={title} link={link} submenu={submenu} />
         ))}
       </NavList>
-      <SearchInput />
+      <SearchInput
+        isInputActive={isInputActive}
+        setIsInputActive={setIsInputActive}
+      />
       <IconContainer>
-        <MenuButton>
+        <MenuButton isVisible={isInputActive}>
           <CartIconStyled />
         </MenuButton>
-        <MenuButton>
+        <MenuButton isVisible={isInputActive}>
           <ProfileIconStyled />
         </MenuButton>
         <MenuButton mobile onClick={() => setIsOpen(!isOpen)}>
