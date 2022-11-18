@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Glass from '../../../assets/icons/search.svg';
 import colors from '@/utils/colors';
@@ -199,7 +199,13 @@ function useOuterClick(callback: OuterClickCallback) {
   return innerRef;
 }
 
-const SearchInput: React.FC = ({ isInputActive, setIsInputActive }) => {
+function SearchInput({
+  isInputActive,
+  setIsInputActive,
+}: {
+  isInputActive?: boolean;
+  setIsInputActive: (a: boolean) => void;
+}): ReactElement {
   const [matches, setMatches] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   // const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -228,7 +234,7 @@ const SearchInput: React.FC = ({ isInputActive, setIsInputActive }) => {
         value={searchQuery}
         onChange={handleSearch}
         onClick={() => setIsInputActive(true)}
-        className={isInputActive ? 'active' : null}
+        className={isInputActive ? 'active' : ''}
       />
       <StyledGlass />
       <StyledDropdown
@@ -253,6 +259,6 @@ const SearchInput: React.FC = ({ isInputActive, setIsInputActive }) => {
       </StyledDropdown>
     </StyledDiv>
   );
-};
+}
 
 export { SearchInput };
