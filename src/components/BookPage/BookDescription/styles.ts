@@ -31,12 +31,10 @@ export const StyledImage = styled.img`
 
   @media ${breakPoints.md} {
     width: 100%;
-    max-width: 256px;
-    height: auto;
   }
 
   @media ${breakPoints.sm} {
-    max-width: 512px;
+    height: 100%;
   }
 `;
 
@@ -127,4 +125,24 @@ export const StyledDescription = styled.div`
   @media ${breakPoints.xl} {
     gap: 10px;
   }
+`;
+
+export const CoverPopup = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  visibility: visible;
+  opacity: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: #000000d6;
+`;
+
+export const FullscreenCover = styled.img`
+  width: auto;
+  height: auto;
 `;

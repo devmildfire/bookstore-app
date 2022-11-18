@@ -216,7 +216,7 @@ const NavList = styled.ul<HeaderList>`
     min-width: 260px;
     visibility: hidden;
     opacity: 0;
-    padding: 10px 20px 60px;
+    padding: 10px 20px 40px;
     position: absolute;
     top: var(--header-height);
     right: 0;
@@ -248,9 +248,6 @@ const NavListItem = styled.li`
       visibility: visible;
       opacity: 1;
     }
-  }
-  @media ${breakPoints.md} {
-    font-weight: 500;
   }
 `;
 

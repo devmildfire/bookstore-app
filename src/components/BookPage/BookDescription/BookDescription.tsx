@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
 import {
   DescriptionLayout,
+  FullscreenCover,
+  CoverPopup,
   StyledAuthor,
   StyledDescription,
   StyledImage,
@@ -24,25 +25,6 @@ interface BookDescriptionProps {
   readonly thesis?: string;
 }
 /* grid-template-rows: repeat(auto-fill, min-content); */
-const ImagePopup = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  visibility: visible;
-  opacity: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 99999;
-  background-color: #000000d6;
-`;
-
-const FullscreenCover = styled.img`
-  width: auto;
-  height: 100%;
-`;
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
@@ -55,35 +37,21 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     authors,
     thesis,
   } = props;
+
   const [isImageOpen, setIsImageOpen] = useState(false);
   const year = new Date(publishDate).getFullYear();
-  useEffect(() => {
-    // const handleClickOutside = (e) => {
-    //   if (isImageOpen && popupRef.current === e.target) {
-    //     setIsImageOpen(false);
-    //   }
-    //   console.log(isImageOpen);
-    // };
-    // // if (isImageOpen) {
-    // //   document.body.style.overflow = 'hidden';
-    // // } else {
-    // //   document.body.style.overflow = 'unset';
-    // // }
-    // document.addEventListener('click', handleClickOutside);
-    // return document.addEventListener('click', handleClickOutside);
-  }, [isImageOpen]);
 
   return (
     <StyledWrapper>
       {isImageOpen ? (
-        <ImagePopup
+        <CoverPopup
           onClick={() => {
             document.body.style.overflow = 'unset';
             setIsImageOpen(false);
           }}
         >
           <FullscreenCover src={image} alt={title} />
-        </ImagePopup>
+        </CoverPopup>
       ) : null}
       <StyledImage
         onClick={() => {
