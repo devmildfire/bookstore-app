@@ -90,12 +90,16 @@ const StyleWrapper = styled.div`
     gap: 48px;
   }
 
-  @media screen and (min-width: 576px) {
+  @media ${breakPoints.xl} {
+    padding: 0 90px;
+  }
+
+  @media ${breakPoints.lg} {
     padding: 0 20px;
   }
 
-  @media screen and (min-width: 1024px) {
-    padding: 0 90px;
+  @media ${breakPoints.sm} {
+    padding: 0 0px;
   }
 
   @media screen and (min-width: 1440px) {

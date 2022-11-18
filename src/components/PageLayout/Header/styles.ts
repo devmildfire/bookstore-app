@@ -172,23 +172,30 @@ const HeaderContainer = styled.header`
   flex-direction: row;
   justify-content: space-between;
   gap: 24px;
-  padding: 0 68px;
   align-items: center;
   height: var(--header-height);
   z-index: 99999;
+  padding: 0 180px;
   background-color: var(--main-black);
-  max-width: 1920px;
+  max-width: 1800px;
   width: 100%;
   place-self: center;
+
   @media ${breakPoints.xl} {
+    max-width: auto;
+    box-sizing: border-box;
     --header-height: 70px;
+    padding: 0 90px;
   }
+
   @media ${breakPoints.lg} {
     --header-height: 60px;
+    padding: 0 20px;
   }
+
   @media ${breakPoints.md} {
     --header-height: 58px;
-    padding: 0 20px;
+
     gap: 0px;
   }
 `;
