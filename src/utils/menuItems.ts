@@ -16,15 +16,15 @@ export type MenuItem = {
 const forReaders: SubmenuItem[] = [
   {
     subtitle: 'Книжная лавка',
-    link: '/',
+    link: '/not-found',
   },
   {
     subtitle: 'Литжурнал РД',
-    link: '/dino-magazine',
+    link: '/not-found',
   },
   {
     subtitle: 'Мейнстрим',
-    link: '/mainstream',
+    link: '/not-found',
   },
 ];
 
@@ -46,22 +46,22 @@ const forReaders: SubmenuItem[] = [
 const forAuthors: SubmenuItem[] = [
   {
     subtitle: 'Отправить рукопись',
-    link: '/suggest-manuscript',
+    link: '/not-found',
   },
   {
     subtitle: 'Отправить рассказ для журнала',
-    link: '/suggest-story-to-rd',
+    link: '/not-found',
   },
   {
     subtitle: 'Мастерская Абзац',
-    link: '/abzac-workshop',
+    link: '/not-found',
   },
 ];
 
 const menu: MenuItem[] = [
   {
     title: 'О Чтиве',
-    link: '/about',
+    link: '/not-found',
   },
   {
     title: 'Чтецам',
@@ -73,7 +73,7 @@ const menu: MenuItem[] = [
   },
   {
     title: 'Инвесторам и донаторам',
-    link: '/for-investors',
+    link: '/not-found',
   },
   // {
   //   title: 'Партнёрам',
@@ -81,26 +81,26 @@ const menu: MenuItem[] = [
   // },
   {
     title: 'Контакты',
-    link: '/contacts',
+    link: '/not-found',
   },
 ];
 
 const subMenu: MenuItem[] = [
   {
     title: 'ИЗДАНИЯ',
-    link: '/books',
+    link: '/not-found',
   },
   {
     title: 'БОКС-СЕТЫ',
-    link: '/box-sets',
+    link: '/not-found',
   },
   {
     title: 'КАРТЫ ДАРОВ',
-    link: '/gift-cards',
+    link: '/not-found',
   },
   {
     title: 'ЧУДЕСА ПОДПИСКИ',
-    link: '/subscription',
+    link: '/not-found',
   },
 ];
 

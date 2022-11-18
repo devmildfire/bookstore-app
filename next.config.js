@@ -17,6 +17,11 @@ const options = {
         permanent: true,
       },
       {
+        source: '/books',
+        destination: '/books/deleted',
+        permanent: false,
+      },
+      {
         source: '/all-books.html',
         destination: '/books',
         permanent: true,
