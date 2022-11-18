@@ -5,22 +5,16 @@ import Members from './Members';
 import Text from '@/components/Common/Text';
 
 const StyledWrapper = styled.div`
-  display: grid;
-
   @media ${breakPoints.xl} {
     padding-top: 105px;
   }
 
   @media ${breakPoints.lg} {
     padding-top: 60px;
-
-    gap: 60px;
   }
 
   @media ${breakPoints.sm} {
     padding-top: 0;
-
-    gap: 30px;
   }
 `;
 

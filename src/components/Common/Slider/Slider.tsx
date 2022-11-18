@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Autoplay, FreeMode, Pagination } from 'swiper';
 import { SwiperProps } from 'swiper/react';
 import { ClassNameProps } from '@/types/className';
-import { StyledPagination, StyledSlider, StyledWrapper } from './styles';
+import { StyledSlider, StyledWrapper } from './styles';
 
 export interface SliderProps extends ClassNameProps {
   readonly enabled?: boolean;
@@ -33,9 +33,7 @@ export const Slider: FC<SliderProps> = (props) => {
   const swiperParams = useMemo<SwiperProps>(
     () => ({
       pagination: !withoutPagination && {
-        el: '.pagination',
         clickable: true,
-        renderBullet: (_, className) => `<span class="${className}"></span>`,
       },
       autoplay: !withoutAutoplay && {
         delay: 2500,
@@ -51,14 +49,13 @@ export const Slider: FC<SliderProps> = (props) => {
       withoutTouch,
       withoutSwipe,
       withoutLoop,
-      withoutAutoplay
+      withoutAutoplay,
     ]
   );
   return (
     <StyledWrapper>
       <StyledSlider {...params} {...swiperParams} />
       {additionComponents}
-      {!withoutPagination && <StyledPagination className='pagination' />}
     </StyledWrapper>
   );
 };

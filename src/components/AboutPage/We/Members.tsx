@@ -14,10 +14,7 @@ const Members = (): React.ReactElement => {
     count = 2;
   }
   return (
-    <Slider
-      withoutPagination={isTabletVertical || isMobile}
-      slidesPerView={count}
-    >
+    <Slider slidesPerView={count}>
       {members.map((member) => (
         <Slide key={member.id}>
           <MemberCard {...member} />

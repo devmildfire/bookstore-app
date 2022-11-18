@@ -8,7 +8,7 @@ const StyledCard = styled.div`
   display: grid;
   justify-items: center;
   gap: 5px;
-
+  max-height: 420px;
   width: 340px;
 
   .top {
