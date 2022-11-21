@@ -78,7 +78,7 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    gap: 20px;
+    gap: 60px;
   }
 `;
 

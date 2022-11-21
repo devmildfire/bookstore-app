@@ -21,7 +21,7 @@ export const StyledContent = styled.div`
   grid-template-rows: repeat(2, min-content) 1fr;
   gap: 40px;
 
-  height: 529px;
+  height: 560px;
   max-width: 1440px;
   /* width: 100%; */
   width: var(--width);
@@ -37,7 +37,7 @@ export const StyledContent = styled.div`
 
   @media ${breakPoints.xl} {
     gap: 20px;
-    height: calc(618px + var(--RDOffset));
+    height: calc(440px + var(--RDOffset));
 
     padding-top: 0;
 
@@ -49,7 +49,7 @@ export const StyledContent = styled.div`
 
   @media ${breakPoints.lg} {
     gap: 30px;
-    height: 521px;
+    height: 345px;
 
     --RDOffset: 0px;
     padding-left: 0px;
@@ -58,7 +58,8 @@ export const StyledContent = styled.div`
 
   @media ${breakPoints.md} {
     gap: 18px;
-    height: 420px;
+    /* height: 420px; */
+    height: 195px;
     padding-left: 0px;
     padding-right: 0px;
   }
@@ -66,8 +67,9 @@ export const StyledContent = styled.div`
   @media ${breakPoints.sm} {
     grid-template-rows: repeat(3, min-content);
     gap: 35px;
+    height: 290px;
 
-    height: min-content;
+    /* height: min-content; */
     padding-left: 17px;
     padding-right: 17px;
   }

@@ -38,7 +38,7 @@ const StyledText = styled(Text)`
   }
 
   @media ${breakPoints.sm} {
-    font-size: 20px;
+    font-size: 18px;
     padding-bottom: 12px;
     height: auto;
   }

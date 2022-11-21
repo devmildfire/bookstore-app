@@ -23,6 +23,18 @@ const StyledTitle = styled(Text)`
   margin: 0;
   padding-bottom: 96px;
   z-index: 2;
+
+  @media ${breakPoints.xl} {
+    padding-bottom: 96px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 70px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-bottom: 30px;
+  }
 `;
 
 const We = (): React.ReactElement => (
