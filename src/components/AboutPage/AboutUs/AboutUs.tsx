@@ -33,6 +33,8 @@ const StyledDescriptionContainer = styled(Container)`
   }
 
   @media ${breakPoints.sm} {
+    --width: 294px;
+    margin: auto;
     --containerMarginBottom: 15px;
   }
 `;
@@ -88,7 +90,7 @@ const AboutUs = () => (
           книгоиздание не должно быть бизнесом.
         </p>
       </StyledDescription>
-      <StyledButton>Манифест Чтива</StyledButton>
+      <StyledButton variant='small'>Манифест Чтива</StyledButton>
     </StyledDescriptionContainer>
   </StyledSection>
 );

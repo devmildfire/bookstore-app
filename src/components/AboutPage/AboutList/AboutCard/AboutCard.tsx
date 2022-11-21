@@ -4,22 +4,44 @@ import Text from '@/components/Common/Text';
 import StyledCard from './styles';
 import { AboutInto } from '@/types/aboutInfo';
 import { ClassNameProps } from '@/types/className';
+import breakPoints from '@/utils/breakPoints';
 
 const StyledCover = styled('img')`
   display: flex;
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
-  /* margin-bottom: 32px; */
+  margin-bottom: 32px;
   filter: saturate(0%);
   transition: 0.6s ease-in-out;
   &:hover {
     filter: saturate(100%);
   }
+
+  @media ${breakPoints.sm} {
+    display: block;
+    margin-bottom: 0px;
+    width: 130px;
+  }
 `;
 
 const StyledText = styled(Text)`
-  font-size: 21px;
+  font-size: 24px;
+  height: 70px;
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.md} {
+    height: 80px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+    padding-bottom: 12px;
+    height: auto;
+  }
 `;
 
 export interface AboutCardProps extends AboutInto, ClassNameProps {}
@@ -29,12 +51,14 @@ const AboutCard = (props: AboutCardProps): React.ReactElement => {
   return (
     <StyledCard className={className}>
       <StyledCover src={image} />
-      <StyledText variant='h3_3' align='left'>
-        {title}
-      </StyledText>
-      <Text variant='text' align='left'>
-        {content}
-      </Text>
+      <div>
+        <StyledText variant='h3_3' align='left'>
+          {title}
+        </StyledText>
+        <Text variant='text' align='left'>
+          {content}
+        </Text>
+      </div>
     </StyledCard>
   );
 };

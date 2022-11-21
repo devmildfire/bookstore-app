@@ -170,10 +170,42 @@ const textStyle = css<StyledTextProps>`
   }
 `;
 
+const textStyleItalic = css<StyledTextProps>`
+  font-style: italic;
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+  font-size: 16px;
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 12px;
+  }
+`;
+
 const paddedTextStyle = css<StyledTextProps>`
   ${textStyle}
+  padding: 0 40px;
+
+  @media ${breakPoints.xl} {
+    padding: 0 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding: 0 25px;
+  }
+
+  @media ${breakPoints.md} {
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
   @media ${breakPoints.sm} {
     padding: 0 20px;
+    font-size: 10px;
   }
 `;
 
@@ -214,6 +246,32 @@ const h43Style = css<StyledTextProps>`
   }
 `;
 
+const h44Style = css<StyledTextProps>`
+  ${h41Style}
+  font-size: 16px;
+
+  @media ${breakPoints.lg} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 12px;
+  }
+`;
+
+const h4Name = css<StyledTextProps>`
+  ${h41Style}
+  font-size: 20px;
+
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 16px;
+  }
+`;
+
 const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
@@ -228,10 +286,13 @@ const styles: Record<
   h3_32: h33StyleM2B,
   h3_4: h34Style,
   text: textStyle,
+  text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
   h4_1: h41Style,
   h4_2: h42Style,
   h4_3: h43Style,
+  h4_4: h44Style,
+  h4_n: h4Name,
 };
 
 export const tagMap: Record<Variant, string> = {
@@ -245,10 +306,13 @@ export const tagMap: Record<Variant, string> = {
   h3_32: 'h3',
   h3_4: 'h3',
   text: 'p',
+  text_italic: 'p',
   paddedText: 'p',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',
+  h4_4: 'h4',
+  h4_n: 'h4',
 };
 
 export interface StyledTextProps {
@@ -258,6 +322,7 @@ export interface StyledTextProps {
   readonly textTransform?: Property.TextTransform;
   readonly fontFamily?: FontFamily;
   readonly fontWeight?: Property.FontWeight;
+  readonly fontStyle?: Property.FontStyle;
 }
 
 const StyledText = styled.span`

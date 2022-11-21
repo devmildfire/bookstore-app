@@ -6,6 +6,7 @@ import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
+import WindowWiderThan from './ScreenSize';
 
 // const StyledList = styled(Slider)`
 //   display: flex;
@@ -31,12 +32,16 @@ import partners from '@/mocks/partners';
 
 const PartnersList = (): React.ReactElement => {
   const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
-  let count = 4;
-  if (isMobile) {
-    count = 1;
-  } else if (isTabletVertical) {
-    count = 2;
-  }
+  // let count = 4;
+  // if (isMobile) {
+  //   count = 3;
+  // } else if (isTabletVertical) {
+  //   count = 3;
+  // }
+
+  const isWide = WindowWiderThan(1440);
+  const count = isWide ? 4 : 3;
+
   return (
     // <StyledList
     //   withoutPagination

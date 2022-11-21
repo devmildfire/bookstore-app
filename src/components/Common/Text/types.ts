@@ -10,8 +10,11 @@ export type Variant =
   | 'h3_32'
   | 'h3_4'
   | 'text'
+  | 'text_italic'
   | 'paddedText'
   | 'h4_1'
   | 'h4_2'
-  | 'h4_3';
+  | 'h4_3'
+  | 'h4_4'
+  | 'h4_n';
 export type Color = 'red' | 'white' | 'inherit';

@@ -19,24 +19,29 @@ const StyledCard = styled.img`
   background-color: rgba(18, 18, 18, 0.5);
   backdrop-filter: blur(8px);
 
-  margin-bottom: 25px;
+  margin-bottom: 60px;
   padding: 40px 40px;
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
-    --size: 220px;
-    padding: 30px;
+    --size: 302px;
+    padding: 40px;
   }
 
   @media ${breakPoints.lg} {
     /* --size: 250px; */
-    --size: 180px;
+    --size: 245px;
+    padding: 25px;
+  }
+
+  @media ${breakPoints.md} {
+    --size: 155;
     padding: 20px;
   }
 
   @media ${breakPoints.sm} {
-    --size: 150px;
-    padding: 10px;
+    --size: 83px;
+    padding: 15px;
   }
 `;
 

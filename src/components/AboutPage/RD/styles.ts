@@ -23,7 +23,9 @@ export const StyledContent = styled.div`
 
   height: 529px;
   max-width: 1440px;
-  width: 100%;
+  /* width: 100%; */
+  width: var(--width);
+  justify-self: center;
 
   > :last-child {
     align-self: end;
@@ -41,8 +43,8 @@ export const StyledContent = styled.div`
 
     /* --RDOffset: 118px; */
     --RDOffset: 0px;
-    padding-left: 80px;
-    padding-right: 80px;
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   @media ${breakPoints.lg} {
@@ -50,22 +52,24 @@ export const StyledContent = styled.div`
     height: 521px;
 
     --RDOffset: 0px;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   @media ${breakPoints.md} {
     gap: 18px;
     height: 420px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   @media ${breakPoints.sm} {
     grid-template-rows: repeat(3, min-content);
-    gap: 15px;
+    gap: 35px;
 
     height: min-content;
+    padding-left: 17px;
+    padding-right: 17px;
   }
 `;
 
@@ -79,13 +83,29 @@ export const StyledRD = styled.div`
   background-position: calc(100% + 130px) calc(50% + var(--RDOffset));
   background-size: 40%;
 
+  @media ${breakPoints.xl} {
+    background-size: calc(411px + 100vw * 0.08263);
+    background-position: calc(100% + 90px) calc(0% + var(--RDOffset));
+  }
+
+  @media ${breakPoints.lg} {
+    background-size: calc(174px + 100vw * 0.23144);
+    background-position: calc(100% + 30px) calc(0% + var(--RDOffset));
+  }
+
+  @media ${breakPoints.md} {
+    background-size: calc(174px + 100vw * 0.1);
+    background-position: calc(100% + 30px) calc(20% + var(--RDOffset));
+  }
+
   @media ${breakPoints.sm} {
-    background: none;
+    background-size: 174px;
+    background-position: calc(100% + 30px) calc(70% + var(--RDOffset));
   }
 `;
 
 export const StyledMainText = styled(Text)`
-  --width: 720px;
+  --width: 764px;
 
   width: var(--width);
 
@@ -136,10 +156,26 @@ export const StyledSecondaryPaddedText = styled(StyledMainText)`
   }
 `;
 
-export const StyledSecondaryText = styled(StyledMainPaddedText)`
-  width: calc(var(--width) - 10%);
+export const StyledSecondaryText = styled(Text)`
+  /* width: calc(var(--width) - 10%); */
+
+  --width: 578px;
+
+  width: var(--width);
+
+  @media ${breakPoints.xl} {
+    --width: 640px;
+  }
+
+  @media ${breakPoints.lg} {
+    --width: 450px;
+  }
+
+  @media ${breakPoints.md} {
+    width: calc(var(--width) - 10%);
+  }
 
   @media ${breakPoints.sm} {
-    width: 100%;
+    width: 55%;
   }
 `;

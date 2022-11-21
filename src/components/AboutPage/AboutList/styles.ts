@@ -23,6 +23,10 @@ export const StyledList = styled.section`
 
   @media ${breakPoints.sm} {
     gap: 0px;
+    flex-direction: column;
+    align-items: flex-start;
+    --width: 285px;
+    width: var(--width);
   }
 `;
 

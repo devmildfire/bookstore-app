@@ -4,17 +4,17 @@ import Text from '@/components/Common/Text';
 import Button from '@/components/Common/Button';
 import {
   StyledContent,
-  // StyledMainText,
-  StyledMainPaddedText,
+  StyledMainText,
+  // StyledMainPaddedText,
   StyledRD,
-  // StyledSecondaryText,
-  StyledSecondaryPaddedText,
+  StyledSecondaryText,
+  // StyledSecondaryPaddedText,
   StyledWrapper,
 } from './styles';
 import breakPoints from '@/utils/breakPoints';
 
 const StyledButton = styled(Button)`
-  min-width: 280px;
+  min-width: 245px;
   &:last-child {
     width: 480;
     align-self: flex-start;
@@ -33,15 +33,15 @@ const RD = (): React.ReactElement => (
     </Text>
     <StyledContent>
       <StyledRD />
-      <StyledMainPaddedText variant='paddedText'>
+      <StyledMainText variant='text'>
         Мы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
         литературном журнале арт-конгрегации Русский Динозавр — нашего
         творческого объединения мастеров арт-контента.
-      </StyledMainPaddedText>
-      <StyledSecondaryPaddedText variant='paddedText'>
+      </StyledMainText>
+      <StyledSecondaryText variant='text'>
         Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
-      </StyledSecondaryPaddedText>
-      <StyledButton>Журнал Русского Динозавра</StyledButton>
+      </StyledSecondaryText>
+      <StyledButton>Литжурнал Русского Динозавра</StyledButton>
     </StyledContent>
   </StyledWrapper>
 );
