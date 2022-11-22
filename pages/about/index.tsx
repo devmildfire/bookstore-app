@@ -6,6 +6,7 @@ import AboutUs from '@/components/AboutPage/AboutUs';
 import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
+import ContainerWide from '@/components/Common/ContainerWide';
 import We from '@/components/AboutPage/We';
 import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
@@ -16,18 +17,18 @@ import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
 const About: NextPage = () => (
   <StyledWrapper>
     <Container>
-      <Video src='/videos/chtivo.mp4' />
+      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
     </Container>
     <AboutUs />
     <AboutList />
     <RD />
     <StyledStarsBlock>
-      <Container>
+      <ContainerWide>
         <We />
-      </Container>
-      <Container>
+      </ContainerWide>
+      <ContainerWide>
         <Partners />
-      </Container>
+      </ContainerWide>
       <Container>
         <Donate />
       </Container>

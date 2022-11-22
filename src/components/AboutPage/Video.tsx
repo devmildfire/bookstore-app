@@ -10,6 +10,8 @@ export interface Source {
 export interface VideoProps {
   readonly src: string;
   readonly sources?: Source[];
+  // readonly metadata: string;
+  readonly poster: string;
 }
 
 const StyledVideo = styled.video`
@@ -37,10 +39,10 @@ const StyledVideo = styled.video`
 `;
 
 const Video = (props: VideoProps): React.ReactElement => {
-  const { src, sources } = props;
+  const { src, poster, sources } = props;
 
   return (
-    <StyledVideo src={src} controls>
+    <StyledVideo poster={poster} src={src} controls>
       {sources?.map(({ srcset, type }) => (
         <source srcSet={srcset} type={type} />
       ))}

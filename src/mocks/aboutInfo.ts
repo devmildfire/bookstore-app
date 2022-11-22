@@ -2,7 +2,7 @@
 import { AboutInto } from '@/types/aboutInfo';
 import printed from '@/assets/images/printed-cover.jpg';
 import bookV2 from '@/assets/images/book2.0-cover.jpg';
-import digitaAndAudio from '@/assets/images/digital-and-audio-cover.jpg';
+import digitaAndAudio from '@/assets/images/digital-and-audio-cover.png';
 
 const aboutInfo: AboutInto[] = [
   {
