@@ -70,12 +70,12 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const year = new Date(publishDate).getFullYear();
 
   const handleClosePopup = () => {
-    document.body.style.overflow = 'unset';
+    // document.body.style.overflow = 'unset';
     setIsImageOpen(false);
   };
 
   const handleOpenPopup = () => {
-    document.body.style.overflow = 'hidden';
+    // document.body.style.overflow = 'hidden';
     setIsImageOpen(true);
   };
 
