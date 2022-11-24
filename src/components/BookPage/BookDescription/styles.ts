@@ -35,7 +35,7 @@ export const StyledImage = styled.img`
   }
 
   @media ${breakPoints.sm} {
-    height: 100%;
+    height: auto;
   }
 `;
 
