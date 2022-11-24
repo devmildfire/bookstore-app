@@ -151,10 +151,10 @@ export const CoverPopup = styled.div`
 export const FullscreenCover = styled.img`
   width: auto;
   height: 100%;
-  transform: translateY(100%);
+  opacity: 0;
   transition: 0.3s;
   &.active {
-    transform: translateY(0%);
+    opacity: 1;
   }
   @media ${breakPoints.md} {
     height: auto;

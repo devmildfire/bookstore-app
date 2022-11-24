@@ -4,12 +4,11 @@ import breakPoints from '@/utils/breakPoints';
 export const StyledWrapper = styled.div`
   display: grid;
   gap: 100px;
-
   width: 100%;
   position: relative;
   background-color: var(--main-black);
   color: var(--main-white-100);
-
+  scrollbar-gutter: stable;
   @media ${breakPoints.sm} {
     gap: 0px;
   }
