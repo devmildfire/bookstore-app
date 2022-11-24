@@ -7,9 +7,18 @@ import Slider from '@/components/Common/Slider';
 import { Banner, Title } from './styles';
 import { useGetBooksQuery } from '@/models/books';
 import useScreenSize from '@/hooks/useScreenSize';
+import breakPoints from '@/utils/breakPoints';
 
 const StyledTitle = styled(Title)`
   padding-bottom: 85px;
+
+  @media ${breakPoints.lg} {
+    font-size: 42px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
+  }
 `;
 
 const SimilarBooks = (): React.ReactElement => {
@@ -26,7 +35,6 @@ const SimilarBooks = (): React.ReactElement => {
       <Slider
         className='mySwiper'
         slidesPerView={width < 576 ? 1 : 3}
-        // spaceBetween={165}
         withoutPagination
       >
         {books.map((book) => (
