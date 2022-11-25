@@ -328,7 +328,7 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
           <DesctiptionItem>
             <DescriptionKey>Обложка:</DescriptionKey>
             <DescriptionValue>
-              мелованная 300 гр/кв.м, матовое ламинирование
+              мелованная 300 гр/кв.м. матовое ламинирование
             </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
