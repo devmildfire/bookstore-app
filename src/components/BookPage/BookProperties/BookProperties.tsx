@@ -188,18 +188,20 @@ const DigitalEdition = ({ releaseDate }: EditionProps) => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Форматы:</DescriptionKey>
-            <DescriptionValue>Fb2, Epub</DescriptionValue>
+            <DescriptionValue>Fb2, Epub.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Количество символов:</DescriptionKey>
-            <DescriptionValue>355000</DescriptionValue>
+            <DescriptionValue>
+              {new Intl.NumberFormat('ru-RU').format(355000)}
+            </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
               редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
               дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
+              иллюстратор Евгений&nbsp;Борщевский.
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
@@ -230,12 +232,12 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
             <DescriptionValue>
               <List>
                 <ListItem>50x70 мм.</ListItem>
-                <ListItem>Двухстороняя шелкография белым.</ListItem>
+                <ListItem>двухстороняя шелкография белым</ListItem>
                 <ListItem>
-                  Дизайнерская бумага Sirio Black Black 0,7 мм.
+                  дизайнерская бумага Sirio Black Black 0,7 мм.
                 </ListItem>
                 <ListItem>
-                  Индивидуальная упаковка с цветной запечаткой.
+                  индивидуальная упаковка с цветной запечаткой
                 </ListItem>
               </List>
             </DescriptionValue>
@@ -245,7 +247,7 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
             <DescriptionValue>
               редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
               дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
+              иллюстратор Евгений&nbsp;Борщевский.
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
@@ -270,21 +272,21 @@ const AudioEdition = (props: EditionProps) => {
         <Paragraphs>
           <DesctiptionItem>
             <DescriptionKey>Текст читает:</DescriptionKey>
-            <DescriptionValue>Ниёле Мейлуте</DescriptionValue>
+            <DescriptionValue>Ниёле Мейлуте.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Использована композиция:</DescriptionKey>
             <DescriptionValue>
-              ‘Times Arrow’ Anamorphic Orchestra
+              ‘Times Arrow’ Anamorphic Orchestra.
             </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Вес файлов:</DescriptionKey>
-            <DescriptionValue>305 Мб</DescriptionValue>
+            <DescriptionValue>305 Мб.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Длительность:</DescriptionKey>
-            <DescriptionValue>5ч 32м</DescriptionValue>
+            <DescriptionValue>5ч. 32м.</DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
@@ -326,23 +328,23 @@ const PrintEdition = ({ releaseDate }: EditionProps) => {
           <DesctiptionItem>
             <DescriptionKey>Обложка:</DescriptionKey>
             <DescriptionValue>
-              мелованная 300 гр/кв.м, матовое ламинирование
+              мелованная 300 гр/кв.м, матовое ламинирование.
             </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Переплет:</DescriptionKey>
-            <DescriptionValue>КБС, термопак поэкземплярно</DescriptionValue>
+            <DescriptionValue>КБС, термопак поэкземплярно.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Иллюстрации:</DescriptionKey>
-            <DescriptionValue>Чёрно-белые</DescriptionValue>
+            <DescriptionValue>чёрно-белые.</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
               редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
               дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
+              иллюстратор Евгений&nbsp;Борщевский.
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>

@@ -107,7 +107,7 @@ const books: Book[] = [
     title: 'Аристотель в Казахстане',
     transliteratedTitle: 'aristotel-v-kazahstane',
     authors: [authors[2]],
-    publishDate: '2021-06-24',
+    publishDate: '2021-6-24',
     genre: 'роман',
     ageRestriction: '18+',
     price: 300,

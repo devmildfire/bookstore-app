@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
+import dayjs from 'dayjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled, { StyledComponent } from 'styled-components';
 import Book2 from '../Icons/Book2';
@@ -300,6 +301,9 @@ export default function Tabs(
     setPage([index, index - page]);
   }
 
+  // const [year, month, day] = publishDate.split('-').map((item) => Number(item));
+  // const date = new Date(year, month, day).toLocaleDateString('ru-RU');
+  const formatedDate = dayjs(publishDate).format('DD.MM.YYYY');
   const handleTabClick = useCallback(onTabClick, [setActive, setPage]);
   const ActiveTabContent = editions[active];
 
@@ -317,7 +321,7 @@ export default function Tabs(
         ))}
       </Labels>
       <TabContent direction={direction}>
-        <ActiveTabContent releaseDate={publishDate} price={price} />
+        <ActiveTabContent releaseDate={formatedDate} price={price} />
       </TabContent>
     </StyledTabs>
   );
