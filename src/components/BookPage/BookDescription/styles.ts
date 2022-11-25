@@ -36,7 +36,7 @@ export const StyledImage = styled.img`
   }
 
   @media ${breakPoints.md} {
-    width: 100%;
+    width: auto;
   }
 
   @media ${breakPoints.sm} {
