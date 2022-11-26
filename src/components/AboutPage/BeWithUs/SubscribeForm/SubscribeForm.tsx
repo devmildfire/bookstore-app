@@ -12,23 +12,15 @@ const SubscribeForm = (): React.ReactElement => {
   // схема для валидации ввода положительного целого числа
   const emailSchema = z.string().email();
 
-  // извлекаем тип положительного целого числа из схемы
-  // type Email = z.infer<typeof emailSchema>;
-
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();
-    // const data = new FormData(evt.target);
 
-    const inputStuff = (evt.target as HTMLInputElement).value;
-    // console.log(inputStuff);
-
-    // const inputValidationObject = emailSchema.safeParse(inputStuff);
-    // console.log(inputValidationObject.success);
-    // console.log(inputValidationObject.data);
-
-    // const dataValue = inputValidationObject.data?.value;
+    const form = evt.target as HTMLFormElement;
+    const input = form[0] as HTMLInputElement;
+    const inputStuff = input.value;
 
     const result = emailSchema.safeParse(inputStuff);
+    // console.log('safeParse result = ', result);
     if (!result.success) {
       // handle error then return
       setSended(-1);
@@ -38,14 +30,12 @@ const SubscribeForm = (): React.ReactElement => {
       setSended(1);
       // result.data;
     }
-
-    // setSended(inputValidationObject.data);
   }, []);
 
   return (
     <StyledForm onSubmit={onSubmit}>
       <StyledInput {...field} placeholder='E-mail' />
-      <StyledButton disabled={!!sended}>
+      <StyledButton disabled={sended > 0}>
         {sended === -1
           ? 'Русский Динозавр может писать только на валидные адреса электронной почты'
           : ''}

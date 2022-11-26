@@ -12,20 +12,15 @@ const DonateForm = (): React.ReactElement => {
   // схема для валидации ввода положительного целого числа
   const numberSchema = z.number().positive().int();
 
-  // извлекаем тип положительного целого числа из схемы
-  // type PosInt = z.infer<typeof numberSchema>;
-
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();
 
-    const inputStuff = +(evt.target as HTMLInputElement).value;
-    // console.log(inputStuff);
-
-    // const inputValidationObject = numberSchema.safeParse(inputStuff);
-    // console.log(inputValidationObject.success);
-    // console.log(inputValidationObject.data);
+    const form = evt.target as HTMLFormElement;
+    const input = form[0] as HTMLInputElement;
+    const inputStuff = +input.value;
 
     const result = numberSchema.safeParse(inputStuff);
+    // console.log('safeParse result = ', result);
     if (!result.success) {
       // handle error then return
       setDonated(-1);
@@ -35,8 +30,6 @@ const DonateForm = (): React.ReactElement => {
       setDonated(1);
       // result.data;
     }
-
-    // setDonated(inputValidationObject.data);
   }, []);
 
   return (
@@ -46,8 +39,7 @@ const DonateForm = (): React.ReactElement => {
         {...field}
         placeholder={'3000 \u20BD'}
       />
-      <StyledButton disabled={!!donated}>
-        {/* {donated ? 'Вы задонатили Чтиву!' : 'Задонатить'} */}
+      <StyledButton disabled={donated > 0}>
         {donated === -1
           ? 'в щель для задоначивания пролезают только положительные целые числа'
           : ''}
