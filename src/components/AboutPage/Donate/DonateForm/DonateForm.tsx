@@ -21,11 +21,22 @@ const DonateForm = (): React.ReactElement => {
     const inputStuff = +(evt.target as HTMLInputElement).value;
     // console.log(inputStuff);
 
-    const inputValidationObject = numberSchema.safeParse(inputStuff);
+    // const inputValidationObject = numberSchema.safeParse(inputStuff);
     // console.log(inputValidationObject.success);
     // console.log(inputValidationObject.data);
 
-    setDonated(inputValidationObject.data);
+    const result = numberSchema.safeParse(inputStuff);
+    if (!result.success) {
+      // handle error then return
+      setDonated(-1);
+      // result.error;
+    } else {
+      // do something
+      setDonated(1);
+      // result.data;
+    }
+
+    // setDonated(inputValidationObject.data);
   }, []);
 
   return (
@@ -37,11 +48,11 @@ const DonateForm = (): React.ReactElement => {
       />
       <StyledButton disabled={!!donated}>
         {/* {donated ? 'Вы задонатили Чтиву!' : 'Задонатить'} */}
-        {donated === undefined
+        {donated === -1
           ? 'в щель для задоначивания пролезают только положительные целые числа'
           : ''}
         {donated === 0 ? 'Задонатить' : ''}
-        {donated > 0 ? 'Вы задонатили Чтиву!' : ''}
+        {donated === 1 ? 'Вы задонатили Чтиву!' : ''}
       </StyledButton>
     </StyledForm>
   );

@@ -6,7 +6,7 @@ import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 
 const SubscribeForm = (): React.ReactElement => {
-  const [sended, setSended] = useState('');
+  const [sended, setSended] = useState(0);
   const { ...field } = useField();
 
   // схема для валидации ввода положительного целого числа
@@ -22,22 +22,35 @@ const SubscribeForm = (): React.ReactElement => {
     const inputStuff = (evt.target as HTMLInputElement).value;
     // console.log(inputStuff);
 
-    const inputValidationObject = emailSchema.safeParse(inputStuff);
+    // const inputValidationObject = emailSchema.safeParse(inputStuff);
     // console.log(inputValidationObject.success);
     // console.log(inputValidationObject.data);
 
-    setSended(inputValidationObject.data);
+    // const dataValue = inputValidationObject.data?.value;
+
+    const result = emailSchema.safeParse(inputStuff);
+    if (!result.success) {
+      // handle error then return
+      setSended(-1);
+      // result.error;
+    } else {
+      // do something
+      setSended(1);
+      // result.data;
+    }
+
+    // setSended(inputValidationObject.data);
   }, []);
 
   return (
     <StyledForm onSubmit={onSubmit}>
       <StyledInput {...field} placeholder='E-mail' />
       <StyledButton disabled={!!sended}>
-        {sended === undefined
+        {sended === -1
           ? 'Русский Динозавр может писать только на валидные адреса электронной почты'
           : ''}
-        {sended === '' ? 'Подписаться' : ''}
-        {!sended ? '' : 'Вы подписаны!'}
+        {sended === 0 ? 'Подписаться' : ''}
+        {sended === 1 ? '' : 'Вы подписаны!'}
       </StyledButton>
     </StyledForm>
   );
