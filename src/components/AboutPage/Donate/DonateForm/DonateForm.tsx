@@ -18,7 +18,7 @@ const DonateForm = (): React.ReactElement => {
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();
 
-    const inputStuff = +evt.target[0].value;
+    const inputStuff = +(evt.target as HTMLInputElement).value;
     // console.log(inputStuff);
 
     const inputValidationObject = numberSchema.safeParse(inputStuff);

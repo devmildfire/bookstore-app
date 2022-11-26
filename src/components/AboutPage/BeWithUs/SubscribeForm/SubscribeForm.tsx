@@ -17,8 +17,9 @@ const SubscribeForm = (): React.ReactElement => {
 
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();
+    // const data = new FormData(evt.target);
 
-    const inputStuff = evt.target[0].value;
+    const inputStuff = (evt.target as HTMLInputElement).value;
     // console.log(inputStuff);
 
     const inputValidationObject = emailSchema.safeParse(inputStuff);
