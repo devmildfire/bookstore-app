@@ -15,6 +15,16 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledButton = styled(Button)`
+  max-width: 900px;
+
+  @media ${breakPoints.xl} {
+    max-width: 720px;
+  }
+
+  @media ${breakPoints.lg} {
+    max-width: 570px;
+  }
+
   @media ${breakPoints.md} {
     width: 100%;
   }

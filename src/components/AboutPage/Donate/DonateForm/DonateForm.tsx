@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import styled from 'styled-components';
 import React, { FormEvent, useCallback, useState } from 'react';
 import useField from '@/hooks/useField';
@@ -5,19 +6,42 @@ import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 
 const DonateForm = (): React.ReactElement => {
-  const [donated, setDonated] = useState(false);
+  const [donated, setDonated] = useState(0);
   const { ...field } = useField();
+
+  // схема для валидации ввода положительного целого числа
+  const numberSchema = z.number().positive().int();
+
+  // извлекаем тип положительного целого числа из схемы
+  // type PosInt = z.infer<typeof numberSchema>;
 
   const onSubmit = useCallback((evt: FormEvent) => {
     evt.preventDefault();
-    setDonated(true);
+
+    const inputStuff = +evt.target[0].value;
+    // console.log(inputStuff);
+
+    const inputValidationObject = numberSchema.safeParse(inputStuff);
+    // console.log(inputValidationObject.success);
+    // console.log(inputValidationObject.data);
+
+    setDonated(inputValidationObject.data);
   }, []);
 
   return (
     <StyledForm onSubmit={onSubmit}>
-      <StyledInput {...field} placeholder={'3000 \u20BD'} />
-      <StyledButton disabled={donated}>
-        {donated ? 'Вы задонатили Чтиву!' : 'Задонатить'}
+      <StyledInput
+        name='donationAmount'
+        {...field}
+        placeholder={'3000 \u20BD'}
+      />
+      <StyledButton disabled={!!donated}>
+        {/* {donated ? 'Вы задонатили Чтиву!' : 'Задонатить'} */}
+        {donated === undefined
+          ? 'в щель для задоначивания пролезают только положительные целые числа'
+          : ''}
+        {donated === 0 ? 'Задонатить' : ''}
+        {donated > 0 ? 'Вы задонатили Чтиву!' : ''}
       </StyledButton>
     </StyledForm>
   );
