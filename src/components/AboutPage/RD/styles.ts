@@ -6,9 +6,25 @@ import RDImage from '@/assets/images/dino_figma.png';
 
 export const StyledWrapper = styled.section`
   display: grid;
-  gap: 50px;
+  gap: 0px;
   max-width: 1440px;
   width: 100%;
+
+  @media ${breakPoints.xl} {
+    gap: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 50px;
+  }
+
+  @media ${breakPoints.md} {
+    gap: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    gap: 25px;
+  }
 `;
 
 export const StyledContent = styled.div`

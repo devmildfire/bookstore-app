@@ -79,7 +79,7 @@ const MemberCard = (props: Member): React.ReactElement => {
         variant='text_italic'
         component='p'
         className='top'
-        textColor='red'
+        textColor='white'
         align='center'
         // fontStyle='italic'
       >

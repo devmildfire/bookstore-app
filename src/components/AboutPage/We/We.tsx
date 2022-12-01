@@ -21,7 +21,7 @@ const StyledWrapper = styled.div`
 const StyledTitle = styled(Text)`
   position: relative;
   margin: 0;
-  padding-bottom: 96px;
+  padding-bottom: 83px;
   z-index: 2;
 
   @media ${breakPoints.xl} {
@@ -29,7 +29,7 @@ const StyledTitle = styled(Text)`
   }
 
   @media ${breakPoints.lg} {
-    padding-bottom: 70px;
+    padding-bottom: 60px;
   }
 
   @media ${breakPoints.sm} {
