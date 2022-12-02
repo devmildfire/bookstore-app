@@ -1,10 +1,27 @@
 import React, { useContext } from 'react';
+import styled from 'styled-components';
+import breakPoints from '@/utils/breakPoints';
 import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import MemberCard from './MemberCard';
 import members from '@/mocks/members';
-// import styled from 'styled-components';
+
+// стилизованный слайдер с параметрами элементов пагинации
+const StyledSlider = styled(Slider)`
+  --swiper-pagination-bullet-horizontal-gap: 35px;
+  --size: 6px;
+
+  @media ${breakPoints.lg} {
+    --swiper-pagination-bullet-horizontal-gap: 30px;
+    --size: 4px;
+  }
+
+  @media ${breakPoints.sm} {
+    --swiper-pagination-bullet-horizontal-gap: 20px;
+    --size: 2px;
+  }
+`;
 
 const Members = (): React.ReactElement => {
   const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
@@ -15,13 +32,13 @@ const Members = (): React.ReactElement => {
     count = 2;
   }
   return (
-    <Slider slidesPerView={count}>
+    <StyledSlider slidesPerView={count}>
       {members.map((member) => (
         <Slide key={member.id}>
           <MemberCard {...member} />
         </Slide>
       ))}
-    </Slider>
+    </StyledSlider>
   );
 };
 

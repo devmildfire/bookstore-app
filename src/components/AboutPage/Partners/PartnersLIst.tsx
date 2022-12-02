@@ -1,34 +1,28 @@
 import React, { useContext } from 'react';
-// import styled from 'styled-components';
+import styled from 'styled-components';
 import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
-// import breakPoints from '@/utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
 import WindowWiderThan from './ScreenSize';
 
-// const StyledList = styled(Slider)`
-//   display: flex;
-//   justify-content: space-between;
-//   gap: 70px;
+// стилизованный слайдер с параметрами элементов пагинации
+const StyledSlider = styled(Slider)`
+  --swiper-pagination-bullet-horizontal-gap: 35px;
+  --size: 6px;
 
-//   @media ${breakPoints.xl} {
-//     gap: 50px;
-//   }
+  @media ${breakPoints.lg} {
+    --swiper-pagination-bullet-horizontal-gap: 30px;
+    --size: 4px;
+  }
 
-//   @media ${breakPoints.lg} {
-//     gap: 30px;
-//   }
-
-//   @media ${breakPoints.md} {
-//     gap: 20px;
-//   }
-
-//   @media ${breakPoints.sm} {
-//     gap: 10px;
-//   }
-// `;
+  @media ${breakPoints.sm} {
+    --swiper-pagination-bullet-horizontal-gap: 20px;
+    --size: 2px;
+  }
+`;
 
 const PartnersList = (): React.ReactElement => {
   const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
@@ -57,7 +51,7 @@ const PartnersList = (): React.ReactElement => {
     //     </Slide>
     //   ))}
     // </StyledList>
-    <Slider
+    <StyledSlider
       withoutPagination={isTabletVertical || isMobile}
       slidesPerView={count}
     >
@@ -66,7 +60,7 @@ const PartnersList = (): React.ReactElement => {
           <PartnerCard {...partner} />
         </Slide>
       ))}
-    </Slider>
+    </StyledSlider>
   );
 };
 

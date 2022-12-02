@@ -17,6 +17,7 @@ export interface SliderProps extends ClassNameProps {
   readonly initialSlide?: number;
   readonly withoutAutoplay?: boolean;
   readonly centeredSlides?: boolean;
+  className?: string;
 }
 
 export const Slider: FC<SliderProps> = (props) => {
