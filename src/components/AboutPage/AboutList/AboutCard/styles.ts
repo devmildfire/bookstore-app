@@ -14,38 +14,28 @@ const StyledCard = styled.div`
   background-size: cover; */
 
   @media ${breakPoints.xl} {
-    width: 330px;
+    width: 312px;
     gap: 0px;
-    /* Параметр высоты у карточек убран, так как это flex элемент и высоту свою он подберёт сам. А если высоту выставить вручную, то произойдёт переполнение элемента на некоторых разрешениях экрана и следующий элемент страницы будет наползать на элемент с карточками */
-    /* height: 500px;  */
-
-    padding: 33px 40px;
+    padding: 33px 0px;
   }
 
   @media ${breakPoints.lg} {
-    width: 270px;
+    width: 253px;
     gap: 0px;
-    /* height: 400px; */
-
-    padding: 18px 18px;
+    padding: 18px 0px;
   }
 
   @media ${breakPoints.md} {
-    width: 190px;
+    width: 170px;
     gap: 0px;
-    /* height: 320px; */
-    /* height: 400px; */
-    padding: 18px 16px;
+    padding: 18px 0px;
   }
 
   @media ${breakPoints.sm} {
     flex-direction: row;
     gap: 13px;
     width: 285px;
-    /* height: 180px; */
-
     padding: 15px 0px;
-
     border-radius: 4px;
   }
 

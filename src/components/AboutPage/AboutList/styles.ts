@@ -27,6 +27,7 @@ export const StyledList = styled.section`
     align-items: flex-start;
     --width: 285px;
     width: var(--width);
+    margin: auto;
   }
 `;
 
