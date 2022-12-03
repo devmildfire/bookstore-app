@@ -19,6 +19,7 @@ export interface SliderProps extends ClassNameProps {
   readonly centeredSlides?: boolean;
   readonly speed?: number;
   readonly duration?: number;
+  readonly reverseDirection?: boolean;
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export const Slider: FC<SliderProps> = (props) => {
     withoutAutoplay,
     speed,
     duration,
+    reverseDirection,
     ...params
   } = props;
 
@@ -44,6 +46,7 @@ export const Slider: FC<SliderProps> = (props) => {
       autoplay: !withoutAutoplay && {
         delay: duration,
         disableOnInteraction: false,
+        reverseDirection,
       },
       loop: !withoutLoop,
       modules: [Autoplay, Pagination, FreeMode],

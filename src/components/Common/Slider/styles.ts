@@ -5,6 +5,9 @@ import breakPoints from '@/utils/breakPoints';
 export const StyledWrapper = styled.div`
   display: grid;
   gap: 50px;
+  .swiper-wrapper {
+    transition-timing-function: linear;
+  }
 `;
 
 export const StyledPagination = styled.div`

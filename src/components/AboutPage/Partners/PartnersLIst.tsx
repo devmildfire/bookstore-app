@@ -55,7 +55,8 @@ const PartnersList = (): React.ReactElement => {
       withoutPagination={isTabletVertical || isMobile}
       slidesPerView={count}
       speed={5000}
-      duration={5000}
+      duration={0}
+      reverseDirection
     >
       {partners.map((partner) => (
         <Slide key={partner.id}>
