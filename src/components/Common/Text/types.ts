@@ -12,6 +12,7 @@ export type Variant =
   | 'text'
   | 'text_italic'
   | 'paddedText'
+  | 'buttonText'
   | 'h4_1'
   | 'h4_2'
   | 'h4_3'

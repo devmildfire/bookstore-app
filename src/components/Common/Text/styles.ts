@@ -157,7 +157,8 @@ const h34Style = css<StyledTextProps>`
 `;
 
 const textStyle = css<StyledTextProps>`
-  font-size: 20px;
+  /* font-size: 20px; */
+  font-size: 18px;
   font-weight: ${(props) => props.fontWeight || 400};
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
@@ -205,6 +206,31 @@ const paddedTextStyle = css<StyledTextProps>`
 
   @media ${breakPoints.sm} {
     padding: 0 20px;
+    font-size: 10px;
+  }
+`;
+
+const buttonTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  padding: 0 40px;
+  font-size: 16px;
+
+  @media ${breakPoints.xl} {
+    /* padding: 0 30px; */
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 14px;
+    /* padding: 0 25px; */
+  }
+
+  @media ${breakPoints.md} {
+    /* padding: 0 20px; */
+    font-size: 12px;
+  }
+
+  @media ${breakPoints.sm} {
+    /* padding: 0 20px; */
     font-size: 10px;
   }
 `;
@@ -288,6 +314,7 @@ const styles: Record<
   text: textStyle,
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
+  buttonText: buttonTextStyle,
   h4_1: h41Style,
   h4_2: h42Style,
   h4_3: h43Style,
@@ -308,6 +335,7 @@ export const tagMap: Record<Variant, string> = {
   text: 'p',
   text_italic: 'p',
   paddedText: 'p',
+  buttonText: 'p',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',
