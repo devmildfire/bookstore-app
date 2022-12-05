@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
+// import { useContext } from 'react';
 import styled from 'styled-components';
-import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
+// import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import breakPoints from '@/utils/breakPoints';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
@@ -25,7 +26,8 @@ const StyledSlider = styled(Slider)`
 `;
 
 const PartnersList = (): React.ReactElement => {
-  const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
+  // const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
+
   // let count = 4;
   // if (isMobile) {
   //   count = 3;
@@ -52,7 +54,8 @@ const PartnersList = (): React.ReactElement => {
     //   ))}
     // </StyledList>
     <StyledSlider
-      withoutPagination={isTabletVertical || isMobile}
+      // withoutPagination={isTabletVertical || isMobile}
+      withoutPagination
       slidesPerView={count}
       speed={5000}
       duration={0}

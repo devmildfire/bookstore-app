@@ -32,7 +32,12 @@ const Members = (): React.ReactElement => {
     count = 2;
   }
   return (
-    <StyledSlider speed={5000} duration={0} slidesPerView={count}>
+    <StyledSlider
+      speed={5000}
+      duration={0}
+      slidesPerView={count}
+      withoutPagination
+    >
       {members.map((member) => (
         <Slide key={member.id}>
           <MemberCard {...member} />
