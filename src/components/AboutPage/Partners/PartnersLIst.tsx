@@ -7,7 +7,7 @@ import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
-import WindowWiderThan from './ScreenSize';
+// import WindowWiderThan from './ScreenSize';
 
 // стилизованный слайдер с параметрами элементов пагинации
 const StyledSlider = styled(Slider)`
@@ -35,8 +35,8 @@ const PartnersList = (): React.ReactElement => {
   //   count = 3;
   // }
 
-  const isWide = WindowWiderThan(1440);
-  const count = isWide ? 4 : 3;
+  // const isWide = WindowWiderThan(1440);
+  // const count = isWide ? 4 : 3;
 
   return (
     // <StyledList
@@ -56,7 +56,8 @@ const PartnersList = (): React.ReactElement => {
     <StyledSlider
       // withoutPagination={isTabletVertical || isMobile}
       withoutPagination
-      slidesPerView={count}
+      // slidesPerView={count}
+      slidesPerView='auto'
       speed={5000}
       duration={0}
       reverseDirection

@@ -2,87 +2,102 @@ import React from 'react';
 import styled from 'styled-components';
 import { Partner } from '@/types/partner';
 import breakPoints from '@/utils/breakPoints';
+import Text from '@/components/Common/Text';
 
-const StyledCard = styled.img`
-  --size: 300px;
+const StyledLogo = styled.img`
+  --size: 200px;
+  /* width: var(--size); */
+  height: auto;
+  /* height: 150px; */
   width: var(--size);
-  height: var(--size);
 
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 
-  border-radius: 5%;
+  margin: auto;
 
   /* object-fit: cover; */
   object-fit: contain;
-  background-color: rgba(18, 18, 18, 0.5);
-  backdrop-filter: blur(8px);
-
-  margin-bottom: 60px;
-  padding: 40px 40px;
+  /* background-color: rgba(18, 18, 18, 0.5);
+  backdrop-filter: blur(8px); */
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
-    --size: 302px;
-    padding: 40px;
+    --size: 150px;
   }
 
   @media ${breakPoints.lg} {
     /* --size: 250px; */
-    --size: 245px;
-    padding: 25px;
+    --size: 125px;
   }
 
   @media ${breakPoints.md} {
-    --size: 155;
-    padding: 20px;
+    --size: 100;
   }
 
   @media ${breakPoints.sm} {
-    --size: 83px;
-    padding: 15px;
+    --size: 45px;
   }
 `;
 
-// const StyledCard = styled.img`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
+const StyledCard = styled.div`
+  background-color: rgba(18, 18, 18, 0.5);
+  backdrop-filter: blur(8px);
 
-//   width: 302px;
-//   height: 302px;
-//   background-color: rgba(18, 18, 18, 0.5);
-//   backdrop-filter: blur(8px);
-//   object-fit: contain;
-//   padding: 50px 20px;
-//   border-radius: 4px;
+  border-radius: 5%;
+  /* margin-bottom: 60px; */
+  /* padding: 30px 30px; */
+  display: grid;
+  justify-content: center;
+  align-content: center;
 
-//   @media ${breakPoints.xl} {
-//     width: 300px;
-//     height: 120px;
-//   }
+  /* justify-items: center;
+  align-items: center; */
+  /* display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center; */
+  gap: 5px;
+  height: 300px;
+  width: 300px;
+  margin-left: 70px;
+  margin-right: 70px;
+  /* margin-bottom: 50px; */
 
-//   @media ${breakPoints.lg} {
-//     width: 250px;
-//     height: 100px;
-//   }
+  .top {
+    margin-top: 5px;
+  }
 
-//   @media ${breakPoints.md} {
-//     width: 200px;
-//     height: 80px;
-//   }
+  @media ${breakPoints.lg} {
+    width: 245px;
+    height: 245px;
+    margin-left: 46px;
+    margin-right: 46px;
+  }
 
-//   @media ${breakPoints.sm} {
-//     width: 156px;
-//     height: 65px;
-//   }
-// `;
+  @media ${breakPoints.sm} {
+    /* width: 100%; */
+    width: 83px;
+    height: 83px;
+    /* padding: 5px 5px; */
+    margin-left: 15px;
+    margin-right: 15px;
+    /* margin-bottom: 30px; */
+  }
+`;
 
 const PartnerCard = (props: Partner): React.ReactElement => {
-  const { name, photo } = props;
+  const { name, photo, displayName } = props;
 
-  return <StyledCard src={photo} alt={name} />;
+  return (
+    <StyledCard>
+      <StyledLogo src={photo} alt={name} />
+      <Text variant='h4_p' component='p' align='center'>
+        {displayName}
+      </Text>
+    </StyledCard>
+  );
 };
 
 export default PartnerCard;

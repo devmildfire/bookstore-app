@@ -285,6 +285,21 @@ const h44Style = css<StyledTextProps>`
   }
 `;
 
+const partnerDisplayNameStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  @media ${breakPoints.lg} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 8px;
+  }
+`;
+
 const h4Name = css<StyledTextProps>`
   ${h41Style}
   font-size: 20px;
@@ -319,6 +334,7 @@ const styles: Record<
   h4_2: h42Style,
   h4_3: h43Style,
   h4_4: h44Style,
+  h4_p: partnerDisplayNameStyle,
   h4_n: h4Name,
 };
 
@@ -340,6 +356,7 @@ export const tagMap: Record<Variant, string> = {
   h4_2: 'h4',
   h4_3: 'h4',
   h4_4: 'h4',
+  h4_p: 'h4',
   h4_n: 'h4',
 };
 

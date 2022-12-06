@@ -13,8 +13,8 @@ const StyledCard = styled.div`
   gap: 5px;
   max-height: 520px;
   width: 340px;
-  margin-left: 30px;
-  margin-right: 30px;
+  /* margin-left: 30px;
+  margin-right: 30px; */
   margin-bottom: 50px;
 
   .top {
@@ -22,14 +22,16 @@ const StyledCard = styled.div`
   }
 
   @media ${breakPoints.lg} {
-    width: 250px;
-    margin-left: 20px;
-    margin-right: 20px;
+    width: 280px;
+    /* margin-left: 20px;
+    margin-right: 20px; */
   }
 
   @media ${breakPoints.sm} {
-    width: 100%;
+    /* width: 100%; */
     margin-bottom: 30px;
+    width: 200px;
+    padding: 0 10px;
   }
 `;
 
@@ -46,16 +48,16 @@ const StyledPhoto = styled.img`
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
-    --size: 200px;
+    /* --size: 200px; */
   }
 
   @media ${breakPoints.lg} {
     /* --size: 250px; */
-    --size: 170px;
+    --size: 240px;
   }
 
   @media ${breakPoints.sm} {
-    --size: 150px;
+    --size: 167px;
   }
 `;
 
