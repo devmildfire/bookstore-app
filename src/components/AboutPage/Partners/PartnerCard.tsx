@@ -61,8 +61,8 @@ const StyledCard = styled.div`
   gap: 5px;
   height: 300px;
   width: 300px;
-  margin-left: 70px;
-  margin-right: 70px;
+  margin-left: 35px;
+  margin-right: 35px;
   /* margin-bottom: 50px; */
 
   .top {
@@ -72,8 +72,8 @@ const StyledCard = styled.div`
   @media ${breakPoints.lg} {
     width: 245px;
     height: 245px;
-    margin-left: 46px;
-    margin-right: 46px;
+    margin-left: 23px;
+    margin-right: 23px;
   }
 
   @media ${breakPoints.sm} {
@@ -81,8 +81,8 @@ const StyledCard = styled.div`
     width: 83px;
     height: 83px;
     /* padding: 5px 5px; */
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 7px;
+    margin-right: 7px;
     /* margin-bottom: 30px; */
   }
 `;
