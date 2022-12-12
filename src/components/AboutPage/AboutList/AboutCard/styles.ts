@@ -5,7 +5,7 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   width: 400px;
-  gap: 8px;
+  gap: 35px;
   /* padding: 50px 47px; */
 
   /* background-color: rgba(196, 196, 196, 0.1); */
@@ -15,27 +15,35 @@ const StyledCard = styled.div`
 
   @media ${breakPoints.xl} {
     width: 312px;
-    gap: 0px;
-    padding: 33px 0px;
+    gap: 35px;
+    /* padding: 33px 0px; */
   }
 
   @media ${breakPoints.lg} {
     width: 253px;
-    gap: 0px;
-    padding: 18px 0px;
+    gap: 30px;
+    /* padding: 18px 0px; */
   }
 
   @media ${breakPoints.md} {
-    width: 170px;
-    gap: 0px;
-    padding: 18px 0px;
+    width: 220px;
+    gap: 20px;
+    /* padding: 18px 0px; */
+  }
+
+  @media ${breakPoints.smd} {
+    /* flex-direction: row; */
+    gap: 20px;
+    width: 200px;
+    /* padding: 12.5px 0px; */
+    border-radius: 4px;
   }
 
   @media ${breakPoints.sm} {
     flex-direction: row;
-    gap: 13px;
+    gap: 15px;
     width: 285px;
-    padding: 15px 0px;
+    padding: 12.5px 0px;
     border-radius: 4px;
   }
 

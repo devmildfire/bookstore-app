@@ -5,7 +5,7 @@ import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 
 const StyledLogo = styled.img`
-  --size: 200px;
+  --size: 150px;
   /* width: var(--size); */
   height: auto;
   /* height: 150px; */
@@ -36,8 +36,12 @@ const StyledLogo = styled.img`
     --size: 100;
   }
 
+  @media ${breakPoints.smd} {
+    --size: 70px;
+  }
+
   @media ${breakPoints.sm} {
-    --size: 45px;
+    --size: 70px;
   }
 `;
 
@@ -59,10 +63,9 @@ const StyledCard = styled.div`
   justify-items: center;
   align-items: center; */
   gap: 5px;
-  height: 300px;
-  width: 300px;
-  margin-left: 35px;
-  margin-right: 35px;
+  height: 250px;
+  width: 250px;
+  margin: 0 42.5px;
   /* margin-bottom: 50px; */
 
   .top {
@@ -70,19 +73,26 @@ const StyledCard = styled.div`
   }
 
   @media ${breakPoints.lg} {
-    width: 245px;
-    height: 245px;
-    margin-left: 23px;
-    margin-right: 23px;
+    width: 200px;
+    height: 200px;
+    margin: 0 35px;
+  }
+
+  @media ${breakPoints.smd} {
+    /* width: 100%; */
+    width: 150px;
+    height: 150px;
+    /* padding: 5px 5px; */
+    margin: 0 25px;
+    /* margin-bottom: 30px; */
   }
 
   @media ${breakPoints.sm} {
     /* width: 100%; */
-    width: 83px;
-    height: 83px;
+    width: 150px;
+    height: 150px;
     /* padding: 5px 5px; */
-    margin-left: 7px;
-    margin-right: 7px;
+    margin: 0 30px;
     /* margin-bottom: 30px; */
   }
 `;

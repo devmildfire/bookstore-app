@@ -7,14 +7,22 @@ import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 
 const StyledTitle = styled(Text)`
-  padding-bottom: 82px;
+  padding-bottom: 60px;
 
   @media ${breakPoints.xl} {
+    padding-bottom: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
     padding-bottom: 30px;
   }
 
   @media ${breakPoints.sm} {
-    padding-bottom: 20px;
+    padding-bottom: 10px;
   }
 `;
 

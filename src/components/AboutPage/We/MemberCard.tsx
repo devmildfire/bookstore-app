@@ -12,7 +12,8 @@ const StyledCard = styled.div`
   align-items: center;
   gap: 5px;
   max-height: 520px;
-  width: 340px;
+  width: 250px;
+  margin: 0 42.5px;
   /* margin-left: 30px;
   margin-right: 30px; */
   margin-bottom: 50px;
@@ -22,21 +23,31 @@ const StyledCard = styled.div`
   }
 
   @media ${breakPoints.lg} {
-    width: 280px;
+    width: 200px;
+    margin: 0 35px;
     /* margin-left: 20px;
     margin-right: 20px; */
   }
 
+  @media ${breakPoints.smd} {
+    /* width: 100%; */
+    /* margin-bottom: 30px; */
+    width: 150px;
+    margin: 0 25px;
+    /* padding: 0 10px; */
+  }
+
   @media ${breakPoints.sm} {
     /* width: 100%; */
-    margin-bottom: 30px;
-    width: 200px;
-    padding: 0 10px;
+    /* margin-bottom: 30px; */
+    width: 150px;
+    margin: 0 30px;
+    /* padding: 0 10px; */
   }
 `;
 
 const StyledPhoto = styled.img`
-  --size: 300px;
+  --size: 250px;
   width: var(--size);
   height: var(--size);
 
@@ -53,11 +64,15 @@ const StyledPhoto = styled.img`
 
   @media ${breakPoints.lg} {
     /* --size: 250px; */
-    --size: 240px;
+    --size: 200px;
+  }
+
+  @media ${breakPoints.smd} {
+    --size: 150px;
   }
 
   @media ${breakPoints.sm} {
-    --size: 167px;
+    --size: 150px;
   }
 `;
 
@@ -81,7 +96,7 @@ const MemberCard = (props: Member): React.ReactElement => {
         variant='text_italic'
         component='p'
         className='top'
-        textColor='white'
+        textColor='white80'
         align='center'
         // fontStyle='italic'
       >

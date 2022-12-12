@@ -16,6 +16,7 @@ const colors: Record<Color, string> = {
   inherit: 'inherit',
   red: 'var(--main-red-100)',
   white: 'var(--main-white-100)',
+  white80: 'var(--main-white-80)',
 };
 
 const h1Style = css<StyledTextProps>`
@@ -36,11 +37,17 @@ const h21Style = css<StyledTextProps>`
   font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
   @media ${breakPoints.xl} {
-    font-size: 50px;
+    font-size: 60px;
+    width: var(--width);
+    margin: 0 auto;
   }
 
   @media ${breakPoints.lg} {
     font-size: 40px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 30px;
   }
 
   @media ${breakPoints.sm} {
@@ -109,17 +116,26 @@ const h33StyleAbout = css<StyledTextProps>`
   }
 
   @media ${breakPoints.lg} {
-    font-size: 24px;
+    font-size: 18px;
+    text-transform: uppercase;
     /* text-transform: 'none'; */
   }
 
   @media ${breakPoints.md} {
-    font-size: 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 14px;
+    text-transform: uppercase;
     /* text-transform: 'none'; */
   }
 
   @media ${breakPoints.sm} {
-    font-size: 16px;
+    font-size: 12px;
+    text-transform: uppercase;
     /* text-transform: 'none'; */
   }
 `;
@@ -145,8 +161,13 @@ const h33StyleM2B = css<StyledTextProps>`
     /* text-transform: 'none'; */
   }
 
-  @media ${breakPoints.sm} {
+  @media ${breakPoints.smd} {
     font-size: 20px;
+    /* text-transform: 'none'; */
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 18px;
     /* text-transform: 'none'; */
   }
 `;
@@ -166,8 +187,33 @@ const textStyle = css<StyledTextProps>`
   @media ${breakPoints.lg} {
     font-size: 16px;
   }
+
+  @media ${breakPoints.smd} {
+    font-size: 14px;
+  }
+
   @media ${breakPoints.sm} {
     font-size: 14px;
+  }
+`;
+
+const aboutTextStyle = css<StyledTextProps>`
+  /* font-size: 20px; */
+  font-size: 18px;
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 12px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 12px;
   }
 `;
 
@@ -178,8 +224,16 @@ const textStyleItalic = css<StyledTextProps>`
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
   font-size: 16px;
 
+  @media ${breakPoints.lg} {
+    font-size: 14px;
+  }
+
   @media ${breakPoints.md} {
     font-size: 14px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 12px;
   }
 
   @media ${breakPoints.sm} {
@@ -220,13 +274,18 @@ const buttonTextStyle = css<StyledTextProps>`
   }
 
   @media ${breakPoints.lg} {
-    font-size: 14px;
+    font-size: 12px;
     /* padding: 0 25px; */
   }
 
   @media ${breakPoints.md} {
     /* padding: 0 20px; */
     font-size: 12px;
+  }
+
+  @media ${breakPoints.smd} {
+    /* padding: 0 20px; */
+    font-size: 10px;
   }
 
   @media ${breakPoints.sm} {
@@ -280,6 +339,10 @@ const h44Style = css<StyledTextProps>`
     font-size: 14px;
   }
 
+  @media ${breakPoints.smd} {
+    font-size: 12px;
+  }
+
   @media ${breakPoints.sm} {
     font-size: 12px;
   }
@@ -302,14 +365,18 @@ const partnerDisplayNameStyle = css<StyledTextProps>`
 
 const h4Name = css<StyledTextProps>`
   ${h41Style}
-  font-size: 20px;
+  font-size: 18px;
 
   @media ${breakPoints.lg} {
     font-size: 16px;
   }
 
+  @media ${breakPoints.smd} {
+    font-size: 14px;
+  }
+
   @media ${breakPoints.sm} {
-    font-size: 16px;
+    font-size: 14px;
   }
 `;
 
@@ -327,6 +394,7 @@ const styles: Record<
   h3_32: h33StyleM2B,
   h3_4: h34Style,
   text: textStyle,
+  aboutText: aboutTextStyle,
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
   buttonText: buttonTextStyle,
@@ -349,6 +417,7 @@ export const tagMap: Record<Variant, string> = {
   h3_32: 'h3',
   h3_4: 'h3',
   text: 'p',
+  aboutText: 'p',
   text_italic: 'p',
   paddedText: 'p',
   buttonText: 'p',

@@ -10,6 +10,7 @@ export type Variant =
   | 'h3_32'
   | 'h3_4'
   | 'text'
+  | 'aboutText'
   | 'text_italic'
   | 'paddedText'
   | 'buttonText'
@@ -19,4 +20,4 @@ export type Variant =
   | 'h4_4'
   | 'h4_p'
   | 'h4_n';
-export type Color = 'red' | 'white' | 'inherit';
+export type Color = 'red' | 'white' | 'white80' | 'inherit';

@@ -9,13 +9,15 @@ import Button from '@/components/Common/Button';
 // const StyledDescriptionContainer = styled.div`
 const StyledDescriptionContainer = styled(Container)`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   max-width: 1440px;
   padding-top: 31px;
-  gap: var(--containerMarginBottom);
+  /* gap: var(--containerMarginBottom); */
+  gap: var(--containerGap);
   --containerMarginBottom: 45px;
+  --containerGap: 26px;
 
   @media ${breakPoints.xl} {
     --containerMarginBottom: 40px;
@@ -24,28 +26,116 @@ const StyledDescriptionContainer = styled(Container)`
 
   @media ${breakPoints.lg} {
     padding-top: 17px;
+    flex-direction: column;
+    --containerGap: 26px;
   }
 
   @media ${breakPoints.md} {
     width: var(--width);
-    flex-direction: column;
+    /* flex-direction: column; */
     padding-top: 18px;
   }
 
+  @media ${breakPoints.smd} {
+    width: var(--width);
+    flex-direction: column;
+    padding-top: 18px;
+    --containerGap: 26px;
+  }
+
   @media ${breakPoints.sm} {
-    --width: 294px;
+    --width: 285px;
+    flex-direction: column;
     margin: auto;
     --containerMarginBottom: 15px;
+    --containerGap: 26px;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: var(--width);
+    justify-content: space-between;
+
+    @media ${breakPoints.sm} {
+      flex-direction: column;
+      gap: 26px;
+    }
   }
 `;
 
 const StyledButton = styled(Button)`
   /* width: 480px; */
   width: calc(min(480px, var(--width)));
+  max-height: 62px;
+  min-height: 62px;
+  margin-top: auto;
+  min-width: 480px;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+    max-height: 45px;
+    min-height: 45px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    max-height: 32px;
+    min-height: 32px;
+    margin-top: auto;
+    min-width: 286px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
 `;
 
 const StyledDescription = styled(Text)`
-  max-width: 780px;
+  max-width: 750px;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    /* max-width: 400px; */
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const StyledDescriptionTop = styled(Text)`
+  max-width: 750px;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+    max-width: 550px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    max-width: 450px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
 `;
 
 const StyledSection = styled('section')`
@@ -79,18 +169,22 @@ const AboutUs = () => (
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      <StyledDescription variant='text'>
+      <StyledDescriptionTop variant='aboutText'>
         <p>
           Независимое издательство Чтиво — дитя петербургского литандеграунда и
           сети интернет, увидевшее свет в 2017 году.
         </p>
-        <p>
-          Мы отбираем вещи для издания вне зависимости от известности автора,
-          работаем с несерийными и неформальными произведениями и считаем, что
-          книгоиздание не должно быть бизнесом.
-        </p>
-      </StyledDescription>
-      <StyledButton variant='small'>Манифест Чтива</StyledButton>
+      </StyledDescriptionTop>
+      <div>
+        <StyledDescription variant='aboutText'>
+          <p>
+            Мы отбираем вещи для издания вне зависимости от известности автора,
+            работаем с несерийными и неформальными произведениями и считаем, что
+            книгоиздание не должно быть бизнесом.
+          </p>
+        </StyledDescription>
+        <StyledButton variant='small'>Манифест Чтива</StyledButton>
+      </div>
     </StyledDescriptionContainer>
   </StyledSection>
 );

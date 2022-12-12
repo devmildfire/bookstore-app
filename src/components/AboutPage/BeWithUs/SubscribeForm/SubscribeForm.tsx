@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import React, { FormEvent, useCallback, useState } from 'react';
 import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
@@ -33,25 +33,81 @@ const SubscribeForm = (): React.ReactElement => {
   }, []);
 
   return (
-    <StyledForm onSubmit={onSubmit}>
-      <StyledInput {...field} placeholder='E-mail' />
-      <StyledButton disabled={sended > 0}>
-        {sended === -1
-          ? 'Русский Динозавр может писать только на валидные адреса электронной почты'
-          : ''}
-        {sended === 0 ? 'Подписаться' : ''}
-        {sended === 1 ? 'Вы подписаны!' : ''}
-      </StyledButton>
-    </StyledForm>
+    <div>
+      <StyledForm onSubmit={onSubmit}>
+        <StyledInput {...field} placeholder='E-mail' />
+        <StyledButton>Подписаться</StyledButton>
+        {/* {sended === -1 && (
+          <StyledOutput>Вы не подписаны !</StyledOutput>
+        )} */}
+        {/* {sended === 0 && <StyledOutput>Вы подписаны !</StyledOutput>} */}
+        {/* {sended === 1 && <StyledOutput hidden> - </StyledOutput>} */}
+        {sended === -1 && <StyledOutput>Вы не подписаны !</StyledOutput>}
+        {sended === 1 && <StyledOutput>Вы подписаны !</StyledOutput>}
+      </StyledForm>
+
+      {/* {sended === 0 ? 'Подписаться' : ''}
+      {sended === 1 ? 'Вы подписаны!' : ''} */}
+    </div>
   );
 };
+
+const slideDown = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0%);
+    opacity: 1;  
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 0;
+  }
+`;
+
+interface StyledOutputProps {
+  passed?: number;
+}
+
+const StyledOutput = styled.div<StyledOutputProps>`
+  /* display: ${(props) => (props.hidden ? 'none' : 'block')}; */
+  /* position: absolute; */
+  animation: ${slideDown} 3s linear;
+  opacity: ${(props) => (props.passed === 1 ? '0' : '1')};
+  top: 0px;
+  background-color: var(--main-white-20);
+  color: var(--main-black);
+  border: none;
+  padding: 20px;
+  max-width: 300px;
+  margin: 0 auto;
+  /* max-width: var(--width); */
+  width: 100%;
+  opacity: 0;
+  /* transform: translateY(100px); */
+  /* transition: all 3s ease; */
+`;
+
+// const ErrorOutput = styled.div`
+//   background-color: var(--main-red-20);
+//   color: var(--main-white-100);
+//   border: none;
+//   padding: 20px;
+//   max-width: 300px;
+//   margin: 0 auto;
+//   /* max-width: var(--width); */
+//   width: 100%;
+// `;
 
 const StyledInput = styled(Input)`
   background-color: var(--main-white-20);
   border: none;
   color: var(--main-white-100);
   padding: 20px;
-  max-width: 640px;
+  max-width: 310px;
+  margin: 0 auto;
   width: 100%;
 `;
 

@@ -3,14 +3,15 @@ import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
   display: grid;
-  gap: 100px;
+  /* gap: 100px; */
+  gap: var(--top-div-gap);
 
   width: 100%;
   position: relative;
   background-color: var(--main-black);
   color: var(--main-white-100);
 
-  @media ${breakPoints.xl} {
+  /* @media ${breakPoints.xl} {
     gap: 70px;
   }
 
@@ -24,7 +25,7 @@ export const StyledWrapper = styled.div`
 
   @media ${breakPoints.sm} {
     gap: 30px;
-  }
+  } */
 `;
 
 export const StyledContent = styled.div`

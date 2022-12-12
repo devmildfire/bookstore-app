@@ -11,11 +11,29 @@ const StyledCover = styled('img')`
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
-  margin-bottom: 32px;
+  /* margin-bottom: 32px; */
   filter: saturate(0%);
   transition: 0.6s ease-in-out;
   &:hover {
     filter: saturate(100%);
+  }
+
+  @media ${breakPoints.lg} {
+    display: block;
+    margin-bottom: 0px;
+    width: 253px;
+  }
+
+  @media ${breakPoints.md} {
+    display: block;
+    margin-bottom: 0px;
+    width: 220px;
+  }
+
+  @media ${breakPoints.smd} {
+    display: block;
+    margin-bottom: 0px;
+    width: 200px;
   }
 
   @media ${breakPoints.sm} {
@@ -31,14 +49,21 @@ const StyledText = styled(Text)`
 
   @media ${breakPoints.lg} {
     font-size: 20px;
+    height: 67px;
   }
 
   @media ${breakPoints.md} {
-    height: 80px;
+    height: 60px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 16px;
+    /* padding-bottom: 12px; */
+    height: 44px;
   }
 
   @media ${breakPoints.sm} {
-    font-size: 18px;
+    font-size: 16px;
     padding-bottom: 12px;
     height: auto;
   }

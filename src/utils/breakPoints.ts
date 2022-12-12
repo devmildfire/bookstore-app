@@ -2,6 +2,7 @@ const cutoff = 820;
 
 const breakPoints = {
   sm: 'screen  and (max-width: 576px)',
+  smd: 'screen  and (max-width: 744px)',
   md: 'screen  and (max-width: 830px)',
   lg: 'screen  and (max-width: 1024px)',
   xl: 'screen  and (max-width: 1440px)',

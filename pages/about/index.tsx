@@ -16,9 +16,9 @@ import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
 
 const About: NextPage = () => (
   <StyledWrapper>
-    <Container>
+    <VideoContainer>
       <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
-    </Container>
+    </VideoContainer>
     <AboutUs />
     <AboutList />
     <RD />
@@ -41,14 +41,20 @@ const About: NextPage = () => (
 
 export default About;
 
+const VideoContainer = styled(Container)`
+  height: calc(var(--width) * 9 / 16 - var(--top-div-gap));
+  width: var(--width);
+  margin: 0 auto;
+`;
+
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
   --lastMarginBottom: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 30px;
-  gap: 160px;
+  padding-top: 0px;
+  gap: 150px;
 
   /* & > :last-child {
     padding-bottom: var(--lastMarginBottom);
@@ -57,7 +63,7 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
     padding-top: 0px;
-    gap: 140px;
+    gap: 150px;
   }
 
   @media ${breakPoints.lg} {
@@ -71,7 +77,15 @@ const StyledWrapper = styled.main`
     --marginBottom: 85px;
     --lastMarginBottom: 175px;
     padding-top: 0px;
-    gap: 60px;
+    gap: 70px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-top: 20px;
+    --marginBottom: 70px;
+    --lastMarginBottom: 150px;
+    padding-top: 0px;
+    gap: 70px;
   }
 
   @media ${breakPoints.sm} {
@@ -79,7 +93,7 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    gap: 60px;
+    gap: 70px;
   }
 `;
 

@@ -7,7 +7,7 @@ import breakPoints from '@/utils/breakPoints';
 import Container from '@/components/Common/Container';
 
 const StyledWrapper = styled.div`
-  --booksMarginTop: 0px;
+  --booksMarginTop: -40px;
   --maxBooksWidth: calc(3000px / 2);
   /* --minBookWidth: 271px; */
   --minBookWidth: 100px;
@@ -18,19 +18,23 @@ const StyledWrapper = styled.div`
   height: calc(var(--booksHeight) + var(--booksMarginTop));
 
   @media ${breakPoints.xl} {
-    --booksMarginTop: 30px;
+    --booksMarginTop: 0px;
   }
 
   @media ${breakPoints.lg} {
-    --booksMarginTop: 70px;
+    --booksMarginTop: 0px;
   }
 
   @media ${breakPoints.md} {
-    --booksMarginTop: 70px;
+    --booksMarginTop: 35px;
+  }
+
+  @media ${breakPoints.smd} {
+    --booksMarginTop: -5px;
   }
 
   @media ${breakPoints.sm} {
-    --booksMarginTop: 90px;
+    --booksMarginTop: 40px;
   }
 `;
 
@@ -59,10 +63,11 @@ const StyledPhrase = styled.div`
   display: flex;
   flex-wrap: wrap;
 
-  padding-top: 23px;
+  padding-top: 0px;
   padding-right: 0px;
   padding-left: 0px;
   margin-left: auto;
+  margin-right: 125px;
 
   width: 800px;
 
@@ -80,23 +85,40 @@ const StyledPhrase = styled.div`
   @media ${breakPoints.xl} {
     padding-top: 10px;
     width: 527px;
+    margin-right: 85px;
   }
 
   @media ${breakPoints.lg} {
     width: 401px;
+    padding-right: 0px;
+    margin-right: 85px;
+    padding-top: 0px;
+  }
 
-    padding-top: 10px;
+  @media ${breakPoints.md} {
+    width: 355px;
+    padding-top: 0px;
+    padding-right: 0px;
+    margin-right: 85px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 305px;
+    padding-top: 0px;
+    padding-right: 0px;
+    margin-right: 65px;
   }
 
   @media ${breakPoints.sm} {
-    width: 284px;
-    padding-top: 5px;
-    padding-right: 17px;
+    width: 286px;
+    padding-top: 0px;
+    padding-right: 0px;
+    margin-right: 8px;
   }
 `;
 
 const StyledText = styled(Text)`
-  padding-top: 35px;
+  padding-top: 30px;
 
   @media ${breakPoints.xl} {
     padding-top: 30px;
@@ -106,8 +128,12 @@ const StyledText = styled(Text)`
     padding-top: 25px;
   }
 
+  @media ${breakPoints.smd} {
+    padding-top: 11px;
+  }
+
   @media ${breakPoints.sm} {
-    padding-top: 15px;
+    padding-top: 8px;
   }
 `;
 

@@ -35,9 +35,9 @@ export const StyledContent = styled.div`
 
   display: grid;
   grid-template-rows: repeat(2, min-content) 1fr;
-  gap: 40px;
+  gap: 15px;
 
-  height: 560px;
+  height: 390px;
   max-width: 1440px;
   /* width: 100%; */
   width: var(--width);
@@ -52,7 +52,7 @@ export const StyledContent = styled.div`
   padding-top: 78px;
 
   @media ${breakPoints.xl} {
-    gap: 20px;
+    gap: 15px;
     height: calc(440px + var(--RDOffset));
 
     padding-top: 0;
@@ -67,7 +67,7 @@ export const StyledContent = styled.div`
     gap: 30px;
     height: 345px;
 
-    --RDOffset: 0px;
+    --RDOffset: -20px;
     padding-left: 0px;
     padding-right: 0px;
   }
@@ -82,7 +82,7 @@ export const StyledContent = styled.div`
 
   @media ${breakPoints.sm} {
     grid-template-rows: repeat(3, min-content);
-    gap: 35px;
+    gap: 15px;
     height: 290px;
 
     /* height: min-content; */
@@ -98,8 +98,8 @@ export const StyledRD = styled.div`
 
   background-image: url(${RDImage.src});
   background-repeat: no-repeat;
-  background-position: calc(100% + 130px) calc(50% + var(--RDOffset));
-  background-size: 40%;
+  background-position: calc(100% - 30px) calc(0% + var(--RDOffset));
+  background-size: 30%;
 
   @media ${breakPoints.xl} {
     background-size: calc(411px + 100vw * 0.08263);
@@ -124,6 +124,7 @@ export const StyledRD = styled.div`
 
 export const StyledMainText = styled(Text)`
   --width: 764px;
+  font-size: 20px;
 
   width: var(--width);
 
@@ -132,11 +133,16 @@ export const StyledMainText = styled(Text)`
   }
 
   @media ${breakPoints.lg} {
-    --width: 450px;
+    --width: 500px;
+    font-size: 16px;
   }
 
   @media ${breakPoints.md} {
-    --width: 350px;
+    --width: 385px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 14px;
   }
 
   @media ${breakPoints.sm} {
@@ -178,6 +184,7 @@ export const StyledSecondaryText = styled(Text)`
   /* width: calc(var(--width) - 10%); */
 
   --width: 578px;
+  font-size: 20px;
 
   width: var(--width);
 
@@ -186,11 +193,16 @@ export const StyledSecondaryText = styled(Text)`
   }
 
   @media ${breakPoints.lg} {
-    --width: 450px;
+    --width: 400px;
+    font-size: 16px;
   }
 
   @media ${breakPoints.md} {
-    width: calc(var(--width) - 10%);
+    --width: 350px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 14px;
   }
 
   @media ${breakPoints.sm} {

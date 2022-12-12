@@ -15,6 +15,8 @@ export interface VideoProps {
 }
 
 const StyledVideo = styled.video`
+  position: absolute;
+  top: calc(-1 * var(--top-div-gap));
   width: var(--width); /* global --width = 1440px */
   max-width: 1412px;
   background-color: var(--grey);
@@ -22,15 +24,19 @@ const StyledVideo = styled.video`
   /* height: 794px; */
 
   @media ${breakPoints.xl} {
-    width: calc(var(--width) - 9px); /* global --width = 1024px */
+    width: calc(var(--width) - 0px); /* global --width = 1024px */
   }
 
   @media ${breakPoints.lg} {
-    width: calc(var(--width) - 7px); /* global --width = 830px */
+    width: calc(var(--width) - 0px); /* global --width = 830px */
   }
 
   @media ${breakPoints.md} {
     width: calc(var(--width) - 0px); /* global --width = 500px */
+  }
+
+  @media ${breakPoints.smd} {
+    width: calc(var(--width) + 0px); /* global --width = 500px */
   }
 
   @media ${breakPoints.sm} {

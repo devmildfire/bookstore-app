@@ -6,7 +6,7 @@ import Text from '@/components/Common/Text';
 
 const StyledWrapper = styled.div`
   @media ${breakPoints.xl} {
-    padding-top: 105px;
+    /* padding-top: 105px; */
   }
 
   @media ${breakPoints.lg} {
@@ -20,8 +20,8 @@ const StyledWrapper = styled.div`
 
 const StyledTitle = styled(Text)`
   position: relative;
-  margin: 0;
-  padding-bottom: 83px;
+  margin: 0 auto;
+  padding-bottom: 72px;
   z-index: 2;
 
   @media ${breakPoints.xl} {
