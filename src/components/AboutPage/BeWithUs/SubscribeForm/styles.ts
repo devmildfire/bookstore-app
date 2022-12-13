@@ -9,9 +9,16 @@ export const StyledForm = styled.form`
   row-gap: 15px;
   margin: 0 auto;
 
-  @media ${breakPoints.md} {
+  /* @media ${breakPoints.md} {
     grid-template-columns: 1fr;
     gap: 15px;
+    row-gap: 4px;
+  } */
+
+  @media ${breakPoints.sm} {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    row-gap: 4px;
   }
 `;
 
@@ -30,8 +37,9 @@ export const StyledButton = styled(Button)`
   }
 
   @media ${breakPoints.sm} {
-    width: 200px;
+    width: 150px;
     max-width: var(--width);
+    min-width: 150px;
     margin: 0 auto;
   }
 `;
