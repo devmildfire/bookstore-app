@@ -4,16 +4,33 @@ import Button from '@/components/Common/Button';
 
 export const StyledForm = styled.form`
   display: grid;
-  grid-template-columns: minmax(220px, 630px) min-content;
-  column-gap: 42px;
-  row-gap: 15px;
+  /* grid-template-columns: minmax(220px, 630px) min-content; */
+  grid-template-columns: auto min-content;
+  column-gap: 20px;
+  row-gap: 10px;
   margin: 0 auto;
+  max-width: 879px;
 
-  /* @media ${breakPoints.md} {
-    grid-template-columns: 1fr;
-    gap: 15px;
-    row-gap: 4px;
-  } */
+  @media ${breakPoints.lg} {
+    grid-template-columns: auto min-content;
+    column-gap: 12px;
+    row-gap: 5px;
+    max-width: 612px;
+  }
+
+  @media ${breakPoints.md} {
+    grid-template-columns: auto min-content;
+    column-gap: 12px;
+    row-gap: 5px;
+    max-width: 400px;
+  }
+
+  @media ${breakPoints.smd} {
+    grid-template-columns: auto fit-content();
+    column-gap: 12px;
+    row-gap: 5px;
+    max-width: 400px;
+  }
 
   @media ${breakPoints.sm} {
     grid-template-columns: 1fr;
@@ -24,15 +41,26 @@ export const StyledForm = styled.form`
 
 export const StyledButton = styled(Button)`
   margin: 0 auto;
-  @media ${breakPoints.md} {
-    width: 100%;
 
+  @media ${breakPoints.lg} {
+    /* width: 100%; */
     /* max-width: var(--width); */
+    max-width: 185px;
+    min-width: 185px;
+
+    height: 45px;
+    min-height: 45px;
+    margin: 0 auto;
   }
 
   @media ${breakPoints.smd} {
-    width: 310px;
-    max-width: var(--width);
+    /* width: 100%; */
+    /* max-width: var(--width); */
+    max-width: 150px;
+    min-width: 150px;
+
+    height: 32px;
+    min-height: 32px;
     margin: 0 auto;
   }
 
@@ -40,6 +68,8 @@ export const StyledButton = styled(Button)`
     width: 150px;
     max-width: var(--width);
     min-width: 150px;
+    height: 32px;
+    min-height: 32px;
     margin: 0 auto;
   }
 `;

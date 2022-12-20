@@ -2,77 +2,85 @@ import { z } from 'zod';
 // import goat from '@/../../public/images/hand_goat.png';
 import styled, { keyframes } from 'styled-components';
 // import React, { FormEvent, useCallback, useState } from 'react';
-import React, { FormEvent, useState } from 'react';
-import useField from '@/hooks/useField';
+import React, { useState } from 'react';
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  SubmitErrorHandler,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+// import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
 
+const FormSchema = z.object({
+  email: z.string().email(),
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
+
 const SubscribeForm = (): React.ReactElement => {
-  const [sended, setSended] = useState(0);
-  const { ...field } = useField();
+  const {
+    // register,
+    // watch,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+  });
 
-  // схема для валидации ввода положительного целого числа
-  const emailSchema = z.string().email();
+  const [wipe, setWipe] = useState(false);
 
-  // const onSubmit = useCallback((evt: FormEvent) => {
-  //   evt.preventDefault();
+  // const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
+  const onSubmit: SubmitHandler<FormSchemaType> = () => {
+    // console.log(data);
+    setWipe(false);
+  };
 
-  //   const form = evt.target as HTMLFormElement;
-  //   const input = form[0] as HTMLInputElement;
-  //   const inputStuff = input.value;
-
-  //   const result = emailSchema.safeParse(inputStuff);
-  //   // console.log('safeParse result = ', result);
-  //   if (!result.success) {
-  //     // handle error then return
-  //     setSended(-1);
-  //     // result.error;
-  //   } else {
-  //     // do something
-  //     setSended(1);
-  //     // result.data;
-  //   }
-  // }, []);
-
-  const onSubmit = (evt: FormEvent) => {
-    evt.preventDefault();
-
-    const form = evt.target as HTMLFormElement;
-    const input = form[0] as HTMLInputElement;
-    const inputStuff = input.value;
-
-    const result = emailSchema.safeParse(inputStuff);
-    // console.log('safeParse result = ', result);
-    if (!result.success) {
-      // handle error then return
-      setSended(-1);
-      // result.error;
-    } else {
-      // do something
-      setSended(1);
-      // result.data;
-    }
+  const onError: SubmitErrorHandler<FormSchemaType> = () => {
+    // console.log(errors);
+    setWipe(false);
   };
 
   return (
     <div>
-      <StyledForm onSubmit={onSubmit}>
-        <StyledInput {...field} placeholder='E-mail' />
-        <StyledButton onClick={() => setSended(0)}>Подписаться</StyledButton>
+      <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
+        <Controller
+          control={control}
+          name='email'
+          render={({ field: { onChange, onBlur, value } }) => (
+            <StyledInput
+              placeholder='E-mail'
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+        />
+
+        <StyledButton
+          type='submit'
+          onClick={() => {
+            setWipe(true);
+          }}
+        >
+          Подписаться
+        </StyledButton>
+
         <div />
-        {/* {sended === -1 && (
-          <StyledOutput>Вы не подписаны !</StyledOutput>
-        )} */}
-        {/* {sended === 0 && <StyledOutput>Вы подписаны !</StyledOutput>} */}
-        {/* {sended === 1 && <StyledOutput hidden> - </StyledOutput>} */}
 
-        {/* {sended === 0 ? 'Подписаться' : ''}
-      {sended === 1 ? 'Вы подписаны!' : ''} */}
-
-        {sended === 1 && <StyledOutput>Вы подписаны !</StyledOutput>}
+        {!wipe && isSubmitSuccessful && !errors.email && (
+          <StyledOutput>
+            Вы
+            <br />
+            подписаны !
+          </StyledOutput>
+        )}
       </StyledForm>
-      {sended === -1 && (
+      {!wipe && errors.email && (
         <ErrorOutput>
           Русский Динозар может писать только на валидные адреса электронной
           почты
@@ -116,16 +124,26 @@ const StyledOutput = styled.div<StyledOutputProps>`
   margin-left: auto;
   /* max-width: var(--width); */
   width: 100%;
+  text-transform: uppercase;
   /* opacity: 1; */
   /* transform: translateY(100px); */
   /* transition: all 3s ease; */
+
+  @media ${breakPoints.smd} {
+    width: 150px;
+    height: 51px;
+    max-width: var(--width);
+    padding: 6px;
+    margin: 0 auto;
+    font-size: 8px;
+  }
 
   @media ${breakPoints.sm} {
     width: 150px;
     max-width: var(--width);
     padding: 6px;
     margin: 0 auto;
-    font-size: 14px;
+    font-size: 8px;
   }
 `;
 
@@ -137,17 +155,47 @@ const ErrorOutput = styled.div`
   /* max-width: 300px; */
   margin: 0 auto;
   /* max-width: var(--width); */
-  width: 100%;
+  width: 879px;
+  font-size: 16px;
   text-align: center;
   animation: ${slideDown} 3s linear;
   max-width: var(--width);
   border-radius: 2px;
+  text-align: center;
+
+  @media ${breakPoints.xl} {
+    width: 879px;
+    height: 42px;
+    line-height: 42px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.lg} {
+    width: 612px;
+    height: 42px;
+    line-height: 42px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 400px;
+    height: 32px;
+    margin: 0 auto;
+    font-size: 8px;
+    padding: 0 6px;
+    line-height: 32px;
+  }
 
   @media ${breakPoints.sm} {
     width: 285px;
     margin: 0 auto;
     font-size: 8px;
-    padding: 6px 0;
+    padding: 0 6px;
+    line-height: 16px;
   }
 `;
 
@@ -160,12 +208,31 @@ const StyledInput = styled(Input)`
   margin: 0 auto;
   width: 100%;
 
-  @media ${breakPoints.sm} {
-    width: 150px;
-    max-width: var(--width);
-    padding: 6px;
+  @media ${breakPoints.lg} {
+    width: 100%;
+    height: 45px;
+    max-width: 415px;
+    padding: 0px 6px;
     margin: 0 auto;
     font-size: 14px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 100%;
+    height: 32px;
+    max-width: 239px;
+    padding: 0px 6px;
+    margin: 0 auto;
+    font-size: 10px;
+  }
+
+  @media ${breakPoints.sm} {
+    width: 150px;
+    height: 32px;
+    max-width: var(--width);
+    padding: 0px 6px;
+    margin: 0 auto;
+    font-size: 10px;
   }
 `;
 
