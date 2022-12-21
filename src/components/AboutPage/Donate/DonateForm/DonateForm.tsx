@@ -1,51 +1,105 @@
 import { z } from 'zod';
-import styled from 'styled-components';
-import React, { FormEvent, useCallback, useState } from 'react';
-import useField from '@/hooks/useField';
+import styled, { keyframes } from 'styled-components';
+import React, { useState } from 'react';
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  SubmitErrorHandler,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+// import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
+import breakPoints from '@/utils/breakPoints';
+
+const FormSchema = z.object({
+  // amount: z.preprocess(
+  //   (a) => parseInt(a as string, 10),
+  //   z.number().positive().int()
+  // ),
+  amount: z.coerce.number(),
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
 
 const DonateForm = (): React.ReactElement => {
-  const [donated, setDonated] = useState(0);
-  const { ...field } = useField();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  const [wipe, setWipe] = useState(false);
+
+  // const [donated, setDonated] = useState(0);
+  // const { ...field } = useField();
+
+  const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
+    // const onSubmit: SubmitHandler<FormSchemaType> = () => {
+    console.log(data);
+    setWipe(false);
+  };
+
+  const onError: SubmitErrorHandler<FormSchemaType> = () => {
+    // console.log(errors);
+    setWipe(false);
+  };
 
   // схема для валидации ввода положительного целого числа
-  const numberSchema = z.number().positive().int();
+  // const numberSchema = z.number().positive().int();
 
-  const onSubmit = useCallback((evt: FormEvent) => {
-    evt.preventDefault();
+  // const onSubmit = useCallback((evt: FormEvent) => {
+  //   evt.preventDefault();
 
-    const form = evt.target as HTMLFormElement;
-    const input = form[0] as HTMLInputElement;
-    const inputStuff = +input.value;
+  //   const form = evt.target as HTMLFormElement;
+  //   const input = form[0] as HTMLInputElement;
+  //   const inputStuff = +input.value;
 
-    const result = numberSchema.safeParse(inputStuff);
-    // console.log('safeParse result = ', result);
-    if (!result.success) {
-      // handle error then return
-      setDonated(-1);
-      // result.error;
-    } else {
-      // do something
-      setDonated(1);
-      // result.data;
-    }
-  }, []);
+  //   const result = numberSchema.safeParse(inputStuff);
+  //   // console.log('safeParse result = ', result);
+  //   if (!result.success) {
+  //     // handle error then return
+  //     setDonated(-1);
+  //     // result.error;
+  //   } else {
+  //     // do something
+  //     setDonated(1);
+  //     // result.data;
+  //   }
+  // }, []);
 
   return (
-    <StyledForm onSubmit={onSubmit}>
-      <StyledInput
-        name='donationAmount'
-        {...field}
-        placeholder={'3000 \u20BD'}
+    <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
+      <Controller
+        control={control}
+        name='amount'
+        render={({ field: { onChange, onBlur, value } }) => (
+          <StyledInput
+            placeholder={'3000 \u20BD'}
+            onChange={onChange}
+            onBlur={onBlur}
+            value={value}
+            // type='number'
+          />
+        )}
       />
-      <StyledButton disabled={donated > 0}>
-        {donated === -1
-          ? 'в щель для задоначивания пролезают только положительные целые числа'
-          : ''}
-        {donated === 0 ? 'Задонатить' : ''}
-        {donated === 1 ? 'Вы задонатили Чтиву!' : ''}
+
+      <StyledButton
+        type='submit'
+        onClick={() => {
+          setWipe(true);
+        }}
+      >
+        Задонатить
       </StyledButton>
+      {!wipe && errors.amount && (
+        <ErrorOutput>
+          в щель для задоначивания пролезают только положительные целые числа
+        </ErrorOutput>
+      )}
     </StyledForm>
   );
 };
@@ -57,6 +111,93 @@ const StyledInput = styled(Input)`
   padding: 20px;
   max-width: 640px;
   width: 100%;
+
+  @media ${breakPoints.lg} {
+    width: 185px;
+    height: 45px;
+    padding: 0 10px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 150px;
+    height: 32px;
+    font-size: 12px;
+    margin: 0 auto;
+  }
+
+  @media ${breakPoints.sm} {
+    width: 150px;
+    height: 32px;
+    font-size: 10px;
+    margin: 0 auto;
+  }
+`;
+
+const slideDown = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0%);
+    opacity: 1;  
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+`;
+
+const ErrorOutput = styled.div`
+  background-color: var(--main-red-20);
+  color: var(--main-white-100);
+  border: none;
+  padding: 20px 0;
+  /* max-width: 300px; */
+  margin: 0 auto;
+  /* max-width: var(--width); */
+  width: 550px;
+  font-size: 16px;
+  text-align: center;
+  animation: ${slideDown} 0.2s linear;
+  max-width: var(--width);
+  border-radius: 2px;
+  text-align: center;
+
+  @media ${breakPoints.xl} {
+    width: 550px;
+    height: 42px;
+    line-height: 42px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.lg} {
+    width: 383px;
+    height: 42px;
+    line-height: 21px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 312px;
+    height: 32px;
+    margin: 0 auto;
+    font-size: 8px;
+    padding: 0 6px;
+    line-height: 16px;
+  }
+
+  @media ${breakPoints.sm} {
+    width: 285px;
+    margin: 0 auto;
+    font-size: 8px;
+    padding: 0 6px;
+    line-height: 16px;
+  }
 `;
 
 export default DonateForm;

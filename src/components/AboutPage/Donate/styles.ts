@@ -22,7 +22,7 @@ const StyledWrapper = styled.section`
   }
 
   @media ${breakPoints.lg} {
-    gap: 50px;
+    gap: 40px;
   }
 
   @media ${breakPoints.md} {

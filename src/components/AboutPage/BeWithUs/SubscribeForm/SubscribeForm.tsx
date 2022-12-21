@@ -112,7 +112,7 @@ interface StyledOutputProps {
 const StyledOutput = styled.div<StyledOutputProps>`
   /* display: ${(props) => (props.hidden ? 'none' : 'block')}; */
   /* position: absolute; */
-  animation: ${slideDown} 3s linear;
+  animation: ${slideDown} 0.2s linear;
   /* opacity: ${(props) => (props.passed === 1 ? '0' : '1')}; */
   top: 0px;
   background-color: var(--main-white-20);
@@ -158,7 +158,7 @@ const ErrorOutput = styled.div`
   width: 879px;
   font-size: 16px;
   text-align: center;
-  animation: ${slideDown} 3s linear;
+  animation: ${slideDown} 0.2s linear;
   max-width: var(--width);
   border-radius: 2px;
   text-align: center;
