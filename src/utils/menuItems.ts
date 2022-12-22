@@ -1,18 +1,17 @@
 export type SubmenuItem = {
-  subtitle: string,
-  link?: string,
-  items?:
-    {
-      title: string,
-      link: string,
-    }[]
-}
+  subtitle: string;
+  link?: string;
+  items?: {
+    title: string;
+    link: string;
+  }[];
+};
 
 export type MenuItem = {
-  title: string,
-  link?: string,
-  submenu?: SubmenuItem[]
-}
+  title: string;
+  link?: string;
+  submenu?: SubmenuItem[];
+};
 
 const forReaders: SubmenuItem[] = [
   {
@@ -33,26 +32,53 @@ const forReaders: SubmenuItem[] = [
     ],
   },
   {
-    subtitle: 'Журнал Русского Динозавра',
+    subtitle: 'Литжурнал РД',
     link: '/dino-magazine',
   },
+  // {
+  //   subtitle: 'Журнал Русского Динозавра',
+  //   link: '/dino-magazine',
+  // },
+  // {
+  //   subtitle: 'Мейнстрим',
+  //   link: '/mainstream',
+  // },
 ];
+
+// const forReaders: SubmenuItem[] = [
+//   {
+//     subtitle: 'Издания',
+//     link: '/books',
+//   },
+//   {
+//     subtitle: 'Карты даров',
+//     link: '/gift-cards',
+//   },
+//   {
+//     subtitle: 'Чудеса подписки',
+//     link: '/subscription',
+//   },
+// ];
 
 const forAuthors: SubmenuItem[] = [
   {
-    subtitle: 'Предложить рукопись Чтиву',
+    subtitle: 'Отправить рукопись',
     link: '/suggest-manuscript',
   },
   {
-    subtitle: 'Предложить рассказ\nв журнал Русского Динозавра',
+    subtitle: 'Отправить материал для\u00A0литжурнала РД',
     link: '/suggest-story-to-rd',
+  },
+  {
+    subtitle: 'Мастерская Абзац',
+    link: '/abzac-workshop',
   },
 ];
 
 const menu: MenuItem[] = [
   {
-    title: 'Главная',
-    link: '/',
+    title: 'О Чтиве',
+    link: '/about',
   },
   {
     title: 'Чтецам',
@@ -63,17 +89,36 @@ const menu: MenuItem[] = [
     submenu: forAuthors,
   },
   {
-    title: 'Партнёрам',
-    link: '/for-partners',
+    title: 'Инвесторам и донаторам',
+    link: '/for-investors',
   },
-  {
-    title: 'О Чтиве',
-    link: '/about',
-  },
+  // {
+  //   title: 'Партнёрам',
+  //   link: '/for-partners',
+  // },
   {
     title: 'Контакты',
     link: '/contacts',
   },
 ];
 
-export default menu;
+const subMenu: MenuItem[] = [
+  {
+    title: 'ИЗДАНИЯ',
+    link: '/books',
+  },
+  {
+    title: 'БОКС-СЕТЫ',
+    link: '/box-sets',
+  },
+  {
+    title: 'КАРТЫ ДАРОВ',
+    link: '/gift-cards',
+  },
+  {
+    title: 'ЧУДЕСА ПОДПИСКИ',
+    link: '/subscription',
+  },
+];
+
+export { menu, subMenu };

@@ -4,7 +4,7 @@ import Text from '@/components/Common/Text';
 import ProductSlider from '@/components/ProductSlider';
 import {
   StyledContentWrapper,
-  StyledNavigation,
+  // StyledNavigation,
   StyledWrapper,
 } from './styles';
 
@@ -17,7 +17,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
   return (
     <StyledWrapper>
       <ProductSlider />
-      <StyledNavigation />
+      {/* <StyledNavigation /> */}
       <StyledContentWrapper>
         <Container>
           <Text variant='h2_1' align='center'>
