@@ -76,7 +76,7 @@ const SubscribeForm = (): React.ReactElement => {
           <StyledOutput>
             Вы
             <br />
-            подписаны !
+            подписались !
           </StyledOutput>
         )}
       </StyledForm>
@@ -115,25 +115,42 @@ const StyledOutput = styled.div<StyledOutputProps>`
   animation: ${slideDown} 0.2s linear;
   /* opacity: ${(props) => (props.passed === 1 ? '0' : '1')}; */
   top: 0px;
-  background-color: var(--main-white-20);
+  background-color: var(--main-white-60);
   color: var(--main-black);
   border: none;
   border-radius: 4px;
-  padding: 20px;
-  max-width: 300px;
-  margin-left: auto;
+  padding: 60px 20px 20px 20px;
+  max-width: 270px;
+  margin: auto;
   /* max-width: var(--width); */
   width: 100%;
+  height: 120px;
   text-transform: uppercase;
+  text-align: left;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) calc(100% - 2px);
+  background-image: url(/_next/static/image/src/assets/images/hand_goat.0b67706057240d1382ab4b32bc378060.png);
   /* opacity: 1; */
   /* transform: translateY(100px); */
   /* transition: all 3s ease; */
 
+  @media ${breakPoints.lg} {
+    background-size: 35%;
+    background-position: calc(100% - 15px) calc(100% - 0px);
+    padding: 45px 10px 10px 10px;
+    height: 83px;
+    font-size: 12px;
+    width: 185px;
+  }
+
   @media ${breakPoints.smd} {
+    background-size: 28%;
+    background-position: calc(100% - 17px) calc(100% - 0px);
+    padding: 25px 10px 10px 10px;
+
     width: 150px;
     height: 51px;
     max-width: var(--width);
-    padding: 6px;
     margin: 0 auto;
     font-size: 8px;
   }
@@ -141,7 +158,6 @@ const StyledOutput = styled.div<StyledOutputProps>`
   @media ${breakPoints.sm} {
     width: 150px;
     max-width: var(--width);
-    padding: 6px;
     margin: 0 auto;
     font-size: 8px;
   }
