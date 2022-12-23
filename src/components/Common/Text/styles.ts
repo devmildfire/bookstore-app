@@ -350,6 +350,11 @@ const h44Style = css<StyledTextProps>`
 
 const partnerDisplayNameStyle = css<StyledTextProps>`
   ${h41Style}
+
+  position: absolute;
+  bottom: 30px;
+  justify-self: center;
+
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;

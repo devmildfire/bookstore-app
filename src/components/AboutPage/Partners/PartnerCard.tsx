@@ -9,7 +9,10 @@ const StyledLogo = styled.img`
   /* width: var(--size); */
   height: auto;
   /* height: 150px; */
-  width: var(--size);
+  /* width: var(--size); */
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: contain;
 
   /* display: flex;
   justify-content: center;

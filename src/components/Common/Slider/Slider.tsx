@@ -50,7 +50,8 @@ export const Slider: FC<SliderProps> = (props) => {
       },
       loop: !withoutLoop,
       modules: [Autoplay, Pagination, FreeMode],
-      allowTouchMove: !withoutTouch,
+      // allowTouchMove: !withoutTouch,
+      allowTouchMove: withoutTouch,
       preventInteractionOnTransition: withoutSwipe,
     }),
     [

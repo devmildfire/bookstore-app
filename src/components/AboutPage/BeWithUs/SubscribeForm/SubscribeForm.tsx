@@ -1,5 +1,4 @@
 import { z } from 'zod';
-// import goat from '@/../../public/images/hand_goat.png';
 import styled, { keyframes } from 'styled-components';
 // import React, { FormEvent, useCallback, useState } from 'react';
 import React, { useState } from 'react';
@@ -10,6 +9,7 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import goat from '@/../../src/assets/images/hand_goat.png';
 // import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
@@ -129,7 +129,7 @@ const StyledOutput = styled.div<StyledOutputProps>`
   text-align: left;
   background-repeat: no-repeat;
   background-position: calc(100% - 15px) calc(100% - 2px);
-  background-image: url(/_next/static/image/src/assets/images/hand_goat.0b67706057240d1382ab4b32bc378060.png);
+  background-image: url(${goat.src});
   /* opacity: 1; */
   /* transform: translateY(100px); */
   /* transition: all 3s ease; */
