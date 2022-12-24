@@ -17,10 +17,8 @@ const StyledLink = styled.a`
   font-weight: normal;
   color: ${colors.grey};
   white-space: pre-wrap;
-
   opacity: 0.7;
   cursor: pointer;
-
   :hover {
     color: ${colors.redBase};
     opacity: 1;
@@ -33,25 +31,19 @@ const SubStyledLink = styled.a`
   font-weight: normal;
   color: ${colors.grey};
   white-space: pre-wrap;
-
   letter-spacing: 0.05em;
-
   opacity: 0.7;
   cursor: pointer;
-
   :hover {
     color: ${colors.redBase};
     opacity: 1;
   }
-
   @media (max-width: 1024px) {
     font-size: 10px;
   }
-
   @media (max-width: 830px) {
     font-size: 10px;
   }
-
   @media (max-width: 576px) {
     font-size: 8px;
   }
@@ -63,7 +55,6 @@ const SubmenuTitle = styled.span`
   font-weight: normal;
   color: ${colors.grey};
   margin-bottom: 8px;
-
   opacity: 0.7;
   cursor: default;
 `;
@@ -90,7 +81,7 @@ const PopperContainer = styled.div`
 
 /* TODO: исправить таб с учетом нового popper'а */
 const HeaderTab = ({
-  item: { title, link, submenu, },
+  item: { title, link, submenu },
 }: HeaderTabProps): React.ReactElement => (
   <Fragment key={title}>
     {link ? (
@@ -98,8 +89,7 @@ const HeaderTab = ({
         <StyledLink href='fakeHref'>{title}</StyledLink>
       </Link>
     ) : (
-
-      submenu?.map(({ subtitle, link: submenuLink, items, }) => (
+      submenu?.map(({ subtitle, link: submenuLink, items }) => (
         <SubmenuItem key={subtitle}>
           {submenuLink ? (
             <Link href={submenuLink} passHref key={subtitle}>
@@ -108,7 +98,7 @@ const HeaderTab = ({
           ) : (
             <>
               <SubmenuTitle>{subtitle}</SubmenuTitle>
-              {items?.map(({ title: submenuTitle, link: subLink, }) => (
+              {items?.map(({ title: submenuTitle, link: subLink }) => (
                 <Link href={subLink} passHref key={submenuTitle}>
                   <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
                 </Link>
@@ -117,13 +107,12 @@ const HeaderTab = ({
           )}
         </SubmenuItem>
       ))
-
     )}
   </Fragment>
 );
 
 const SubHeaderTab = ({
-  item: { title, link, submenu, },
+  item: { title, link, submenu },
 }: HeaderTabProps): React.ReactElement => (
   <Fragment key={title}>
     {link ? (
@@ -133,7 +122,7 @@ const SubHeaderTab = ({
     ) : (
       <Popper padding={20} target={null}>
         <PopperContainer>
-          {submenu?.map(({ subtitle, link: submenuLink, items, }) => (
+          {submenu?.map(({ subtitle, link: submenuLink, items }) => (
             <SubmenuItem key={subtitle}>
               {submenuLink ? (
                 <Link href={submenuLink} passHref key={subtitle}>
@@ -142,7 +131,7 @@ const SubHeaderTab = ({
               ) : (
                 <>
                   <SubmenuTitle>{subtitle}</SubmenuTitle>
-                  {items?.map(({ title: submenuTitle, link: subLink, }) => (
+                  {items?.map(({ title: submenuTitle, link: subLink }) => (
                     <Link href={subLink} passHref key={submenuTitle}>
                       <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
                     </Link>

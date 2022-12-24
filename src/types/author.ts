@@ -1,7 +1,9 @@
 export interface Author {
   readonly id: number;
   readonly name: string;
-  readonly photo: string | null;
+  readonly dateOfBirth: string;
+  readonly city: string;
+  readonly photo: string | undefined;
   readonly phrase: string;
   readonly biography: string;
   readonly contacts: AuthorContact[];

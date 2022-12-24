@@ -14,13 +14,17 @@ export interface Book extends Product {
 
   readonly banner: string;
   readonly trailerSrc: string;
-
+  // TODO: убрать опциональность для тезиса, должен быть у всех книг.
+  readonly thesis?: string;
   readonly description: string[];
 
   readonly symbolCount: number;
   readonly workers: Worker[];
   readonly formats: string[];
   readonly readers: Reader[];
+
+  // readonly awards: string[];
+  // readonly ISBN: string;
 }
 
 export interface Worker {

@@ -3,15 +3,15 @@ import breakPoints from '@/utils/breakPoints';
 import colors from '@/utils/colors';
 
 export const StyleWrapper = styled.section`
-  margin-bottom: 105px;
-
   @media ${breakPoints.sm} {
-    margin-bottom: 70px;
+  }
+  @media screen and (max-width: 576px) {
+    padding: 0 20px;
   }
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 30px;
+  padding-bottom: 85px;
   text-align: center;
   font-family: Cheque;
   font-weight: 900;
@@ -19,7 +19,7 @@ export const Title = styled.h2`
   line-height: 68px;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 26px;
+    padding-bottom: 26px;
   }
 
   @media ${breakPoints.lg} {
@@ -28,7 +28,7 @@ export const Title = styled.h2`
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 30px;
+    padding-bottom: 24px;
     font-size: 24px;
     line-height: 28px;
   }
@@ -38,86 +38,103 @@ export const AuthorInfo = styled.div`
   position: relative;
   margin-bottom: 40px;
   display: flex;
+  gap: 64px;
+  flex-direction: row;
+  align-items: flex-start;
+
+  @media ${breakPoints.xl} {
+    align-items: center;
+    flex-direction: column;
+  }
 
   @media ${breakPoints.lg} {
     margin-bottom: 20px;
   }
 
   @media ${breakPoints.md} {
-    flex-direction: column;
-    align-items: center;
   }
 
   @media ${breakPoints.sm} {
     margin-bottom: 10px;
+    gap: 24px;
   }
 `;
 
-export const AuthorFoto = styled.img`
-  margin-right: 40px;
-
+export const AuthorPhoto = styled.img`
+  height: 320px;
+  width: 320px;
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: saturate(0%);
+  transition: 1s;
+  &:hover {
+    filter: saturate(100%);
+  }
   @media ${breakPoints.xl} {
-    width: 416px;
-    height: 294px;
+    /* width: 416px; */
+    /* height: 416px; */
   }
 
   @media ${breakPoints.md} {
     margin-right: 0;
-    margin-bottom: 20px;
   }
 
   @media ${breakPoints.sm} {
     width: 288px;
-    height: 200px;
+    height: 288px;
   }
 `;
 
 export const AuthorDescr = styled.div`
-  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 20px;
   line-height: 29px;
+  @media ${breakPoints.xl} {
+    align-items: center;
+  }
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
 `;
 
 export const AuthorProps = styled.div`
-  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 30px;
+  letter-spacing: 0.03em;
   font-weight: 700;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 25px;
+    align-items: center;
   }
 
   @media ${breakPoints.lg} {
-    margin-bottom: 19px;
     font-size: 18px;
     line-height: 22px;
+    gap: 12px;
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 15px;
     font-size: 16px;
     line-height: 20px;
-    font-weight: 400;
-
-    & span {
-      display: block;
-      margin-top: 5px;
-    }
   }
 `;
 
 export const AuthorSpeech = styled.p`
   position: relative;
-  max-width: 661px;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
 
   @media ${breakPoints.xl} {
-    max-width: 558px;
     font-size: 20px;
     line-height: 24px;
   }
 
   @media ${breakPoints.lg} {
-    max-width: 406px;
     font-size: 16px;
     line-height: 19.5px;
   }
@@ -166,12 +183,9 @@ export const RedQuote = styled.span`
 `;
 
 export const AuthorAbout = styled.p`
-  margin-bottom: 54px;
-  font-size: 24px;
   line-height: 29px;
 
   @media ${breakPoints.xl} {
-    margin-bottom: 33px;
   }
 
   @media ${breakPoints.lg} {
@@ -180,15 +194,19 @@ export const AuthorAbout = styled.p`
   }
 
   @media ${breakPoints.sm} {
-    margin-bottom: 22px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 14px;
   }
 `;
 
 export const AuthorContacts = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: left;
   font-size: 18px;
   line-height: 22px;
+  align-self: flex-start;
 
   span {
     margin-right: 25px;

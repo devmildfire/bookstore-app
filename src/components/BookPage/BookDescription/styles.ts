@@ -5,19 +5,24 @@ import Text from '@/components/Common/Text';
 
 export const StyledWrapper = styled.section`
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: max-content 1fr;
   gap: 50px;
+
+  @media ${breakPoints.lg} {
+    gap: 20px;
+  }
 
   @media ${breakPoints.sm} {
     justify-items: center;
     grid-template-columns: 1fr;
-    gap: 20px;
   }
 `;
 
 export const StyledImage = styled.img`
-  width: 510px;
-  height: 810px;
+  padding-top: 10px;
+  width: 500px;
+  height: 750px;
+  cursor: pointer;
 
   @media ${breakPoints.xl} {
     width: 485px;
@@ -27,78 +32,114 @@ export const StyledImage = styled.img`
   @media ${breakPoints.lg} {
     width: 312px;
     height: 480px;
+    padding-top: 8px;
   }
 
   @media ${breakPoints.md} {
-    width: 260px;
-    height: 365px;
+    width: auto;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-top: 0;
+    height: auto;
   }
 `;
 
+export const DescriptionLayout = styled.div`
+  display: grid;
+  gap: 16px;
+  grid-template-rows: repeat(6, min-content);
+
+  @media ${breakPoints.sm} {
+    padding: 0 20px;
+  } ;
+`;
+
 export const StyledTitle = styled(Text)`
-  margin-bottom: 45px;
-  line-height: 0.65em;
+  line-height: 1;
   color: ${colors.gray5};
 
-  @media ${breakPoints.xl} {
-    margin-bottom: 57px;
-  }
-
   @media ${breakPoints.lg} {
-    margin-bottom: 45px;
+    font-size: 42px;
   }
 
-  @media ${breakPoints.md} {
-    margin-bottom: 15px;
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
   }
 `;
 
 export const StyledAuthor = styled(Text)`
-  margin-bottom: 10px;
+  @media ${breakPoints.lg} {
+    font-size: 24px;
+  }
 
-  @media ${breakPoints.sm} {
-    margin-bottom: 5px;
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
   }
 `;
 
 export const StyledInfo = styled(Text)`
-  margin-bottom: 129px;
   font-size: 14px;
-
-  @media ${breakPoints.xl} {
-    margin-bottom: 45px;
-  }
-
-  @media ${breakPoints.md} {
-    margin-bottom: 25px;
-  }
-
-  @media ${breakPoints.sm} {
-    text-align: center;
-    margin-bottom: 30px;
+  @media screen and (max-width: 576px) {
+    font-size: 10px;
   }
 `;
 
 export const StyledThesis = styled(Text)`
-  margin-bottom: 95px;
   font-style: italic;
-
-  @media ${breakPoints.xl} {
-    margin-bottom: 23px;
-  }
+  font-size: 28px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  max-width: 760px;
 
   @media ${breakPoints.lg} {
-    margin-bottom: 17px;
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
   }
 `;
 
 export const StyledDescription = styled.div`
   display: grid;
   gap: 20px;
-  max-width: 700px;
 
   @media ${breakPoints.xl} {
-    max-width: 500px;
     gap: 10px;
+  }
+`;
+
+export const CoverPopup = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: #000000d6;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+`;
+
+export const FullscreenCover = styled.img`
+  width: auto;
+  height: 100%;
+  opacity: 0;
+  transition: 0.3s;
+  &.active {
+    opacity: 1;
+  }
+  @media ${breakPoints.md} {
+    height: auto;
+    width: 85%;
   }
 `;
