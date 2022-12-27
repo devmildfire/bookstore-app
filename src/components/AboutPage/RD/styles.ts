@@ -240,8 +240,6 @@ export const StyledSecondaryPaddedText = styled(StyledMainText)`
 `;
 
 export const StyledSecondaryText = styled(Text)`
-  /* width: calc(var(--width) - 10%); */
-
   --width: 578px;
   font-size: 20px;
 
