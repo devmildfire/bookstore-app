@@ -37,6 +37,8 @@ export const StyledWrapper = styled.section`
 
   @media ${breakPoints.sm} {
     /* gap: 25px; */
+    aspect-ratio: auto;
+    background-size: 100% 50%, cover;
   }
 `;
 
