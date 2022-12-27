@@ -35,7 +35,7 @@ const Members = (): React.ReactElement => {
   // }
   return (
     <StyledSlider
-      speed={5000}
+      speed={10000}
       duration={0}
       // slidesPerView={3}
       slidesPerView='auto'

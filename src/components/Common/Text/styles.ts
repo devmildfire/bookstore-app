@@ -54,6 +54,36 @@ const h21Style = css<StyledTextProps>`
     font-size: 24px;
   }
 `;
+
+const h21LJStyle = css<StyledTextProps>`
+  ${h21Style}
+  max-width: 480px;
+  /* align-self: left; */
+  /* height: 294px; */
+  /* margin-left: 250px; */
+  font-size: 70px;
+  line-height: 1.4em !important;
+
+  @media ${breakPoints.xl} {
+    font-size: 60px;
+    width: var(--width);
+    margin: 0 0 auto 0;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+    line-height: 1.2em !important;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 24px;
+  }
+`;
+
 const h22Style = css<StyledTextProps>`
   ${h21Style}
   font-size: 50px;
@@ -391,6 +421,7 @@ const styles: Record<
 > = {
   h1: h1Style,
   h2_1: h21Style,
+  h2_1_LJ: h21LJStyle,
   h2_2: h22Style,
   h3_1: h31Style,
   h3_2: h32Style,
@@ -414,6 +445,7 @@ const styles: Record<
 export const tagMap: Record<Variant, string> = {
   h1: 'h1',
   h2_1: 'h2',
+  h2_1_LJ: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
   h3_2: 'h3',

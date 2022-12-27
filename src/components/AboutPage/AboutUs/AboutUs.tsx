@@ -121,6 +121,7 @@ const StyledDescriptionTop = styled(Text)`
   max-width: 750px;
 
   @media ${breakPoints.xl} {
+    max-width: 550px;
   }
 
   @media ${breakPoints.lg} {
@@ -164,7 +165,7 @@ const AboutUs = () => (
   <StyledSection>
     <Container>
       <Text align='center' variant='h2_1'>
-        О чем мы?
+        О чём мы?
       </Text>
     </Container>
     <Books />

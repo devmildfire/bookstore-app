@@ -58,7 +58,7 @@ const PartnersList = (): React.ReactElement => {
       withoutPagination
       // slidesPerView={count}
       slidesPerView='auto'
-      speed={5000}
+      speed={10000}
       duration={0}
       reverseDirection
     >

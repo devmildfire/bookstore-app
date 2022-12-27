@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
 const Partners = (): React.ReactElement => (
   <StyledContainer>
     <Text variant='h2_1' align='center'>
-      Наши партнеры
+      Наши партнёры
     </Text>
     <PartnersList />
   </StyledContainer>

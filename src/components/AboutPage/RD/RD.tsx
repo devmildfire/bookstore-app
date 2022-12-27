@@ -4,9 +4,10 @@ import Text from '@/components/Common/Text';
 import Button from '@/components/Common/Button';
 import {
   StyledContent,
+  StyledContentHeading,
   StyledMainText,
   // StyledMainPaddedText,
-  StyledRD,
+  // StyledRD,
   StyledSecondaryText,
   // StyledSecondaryPaddedText,
   StyledWrapper,
@@ -54,11 +55,13 @@ const StyledButton = styled(Button)`
 
 const RD = (): React.ReactElement => (
   <StyledWrapper>
-    <Text variant='h2_1' align='center'>
-      Литжурнал Русского Динозавра
-    </Text>
+    <StyledContentHeading>
+      <Text variant='h2_1_LJ' align='left'>
+        Литжурнал Русского Динозавра
+      </Text>
+    </StyledContentHeading>
     <StyledContent>
-      <StyledRD />
+      {/* <StyledRD /> */}
       <StyledMainText variant='text'>
         Мы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
         литературном журнале арт-конгрегации Русский Динозавр — нашего

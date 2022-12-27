@@ -3,32 +3,47 @@ import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 import PaddedText from '@/components/Common/PaddedText';
 import RDImage from '@/assets/images/dino_figma.png';
+import litMagazineBack from '@/assets/images/litMagazineBack.png';
+import gradient from '@/assets/images/gradient.png';
 
 export const StyledWrapper = styled.section`
-  display: grid;
+  /* display: grid; */
+  display: flex;
+  flex-direction: column;
   gap: 0px;
-  max-width: 1440px;
+  /* max-width: 1440px; */
   width: 100%;
+  aspect-ratio: 48/27; // соотношение сторон 1920 к 1080
+  /* 1919/562 */
+  /* background-image: url(${litMagazineBack.src}), url(${gradient.src}); */
+  background-image: url(${gradient.src}), url(${litMagazineBack.src});
+  /* background-image: url(${gradient.src}); */
+  /* background-size: cover contain; */
+  background-size: 100% 50%, 100%;
+  background-position: bottom, top;
+  background-repeat: no-repeat, no-repeat;
 
   @media ${breakPoints.xl} {
-    gap: 60px;
+    /* gap: 60px; */
   }
 
   @media ${breakPoints.lg} {
-    gap: 50px;
+    /* gap: 50px; */
   }
 
   @media ${breakPoints.md} {
-    gap: 30px;
+    /* gap: 30px; */
   }
 
   @media ${breakPoints.sm} {
-    gap: 25px;
+    /* gap: 25px; */
   }
 `;
 
 export const StyledContent = styled.div`
-  --RDOffset: 40px;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
 
   position: relative;
   z-index: 0;
@@ -49,30 +64,26 @@ export const StyledContent = styled.div`
     width: max-content;
   }
 
-  padding-top: 78px;
-
   @media ${breakPoints.xl} {
     gap: 15px;
     height: calc(440px + var(--RDOffset));
+    margin-top: 40px;
 
     padding-top: 0;
-
-    /* --RDOffset: 118px; */
-    --RDOffset: 0px;
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.lg} {
+    margin-top: 30px;
     gap: 30px;
     height: 345px;
-
-    --RDOffset: -20px;
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.md} {
+    margin-top: 25px;
     gap: 18px;
     /* height: 420px; */
     height: 195px;
@@ -81,10 +92,56 @@ export const StyledContent = styled.div`
   }
 
   @media ${breakPoints.sm} {
+    margin-top: 15px;
     grid-template-rows: repeat(3, min-content);
     gap: 15px;
     height: 290px;
 
+    /* height: min-content; */
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+`;
+
+export const StyledContentHeading = styled.div`
+  position: relative;
+  z-index: 0;
+
+  display: grid;
+  /* grid-template-rows: repeat(2, min-content) 1fr; */
+  gap: 0px;
+
+  height: min-content;
+  margin-top: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1440px;
+  /* width: 100%; */
+  width: var(--width);
+  justify-self: center;
+
+  /* padding-top: 78px; */
+
+  @media ${breakPoints.xl} {
+    margin-top: 100px;
+    padding-top: 0;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  @media ${breakPoints.lg} {
+    margin-top: 50px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  @media ${breakPoints.md} {
+    margin-top: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  @media ${breakPoints.sm} {
     /* height: min-content; */
     padding-left: 17px;
     padding-right: 17px;
@@ -138,7 +195,7 @@ export const StyledMainText = styled(Text)`
   }
 
   @media ${breakPoints.md} {
-    --width: 385px;
+    --width: 500px;
   }
 
   @media ${breakPoints.smd} {
