@@ -381,6 +381,8 @@ const h44Style = css<StyledTextProps>`
 const partnerDisplayNameStyle = css<StyledTextProps>`
   ${h41Style}
 
+  margin: 0 auto;
+
   position: absolute;
   bottom: 30px;
   justify-self: center;
