@@ -47,6 +47,10 @@ const StyledCard = styled.div`
 `;
 
 const StyledPhoto = styled.img`
+  pointer-events: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
   --size: 250px;
   width: var(--size);
   height: var(--size);

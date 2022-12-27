@@ -5,6 +5,10 @@ import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 
 const StyledLogo = styled.img`
+  pointer-events: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
   --size: 150px;
   /* width: var(--size); */
   height: auto;
