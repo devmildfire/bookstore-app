@@ -54,7 +54,7 @@ const StyledButton = styled(Button)`
 `;
 
 const string1 = 'Мы редактируем, иллюстрируем и публикуем лучшие ';
-const string2 = 'рассказы современников в литературном журнале арт-конгрегации';
+const s2 = 'рассказы современников в литературном журнале арт-конгрегации ';
 const string3 = '— нашего творческого объединения мастеров арт-контента.';
 
 const RD = (): React.ReactElement => (
@@ -68,7 +68,7 @@ const RD = (): React.ReactElement => (
       {/* <StyledRD /> */}
       <StyledMainText variant='text'>
         {string1}
-        {string2}
+        {s2}
         <a href='https://russiandino.ru/'>Русский Динозавр</a>
         {string3}
       </StyledMainText>
