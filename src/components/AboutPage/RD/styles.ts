@@ -20,19 +20,20 @@ export const StyledWrapper = styled.section`
   /* background-image: url(${gradient.src}); */
   /* background-size: cover contain; */
   background-size: 100% 50%, 100%;
-  background-position: bottom, top;
+  background-position: bottom, left top;
   background-repeat: no-repeat, no-repeat;
+  padding-top: 150px;
 
   @media ${breakPoints.xl} {
-    /* gap: 60px; */
+    padding-top: 100px;
   }
 
   @media ${breakPoints.lg} {
-    /* gap: 50px; */
+    padding-top: 50px;
   }
 
   @media ${breakPoints.md} {
-    /* gap: 30px; */
+    padding-top: 10px;
   }
 
   @media ${breakPoints.sm} {
@@ -114,7 +115,7 @@ export const StyledContentHeading = styled.div`
   gap: 0px;
 
   height: min-content;
-  margin-top: 150px;
+  /* margin-top: 150px; */
   margin-left: auto;
   margin-right: auto;
   max-width: 1440px;
@@ -125,20 +126,20 @@ export const StyledContentHeading = styled.div`
   /* padding-top: 78px; */
 
   @media ${breakPoints.xl} {
-    margin-top: 100px;
+    /* margin-top: 100px; */
     padding-top: 0;
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.lg} {
-    margin-top: 50px;
+    /* margin-top: 50px; */
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.md} {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     padding-left: 0px;
     padding-right: 0px;
   }

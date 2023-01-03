@@ -225,6 +225,10 @@ const textStyle = css<StyledTextProps>`
   @media ${breakPoints.sm} {
     font-size: 14px;
   }
+
+  a: hover {
+    color: red;
+  }
 `;
 
 const aboutTextStyle = css<StyledTextProps>`

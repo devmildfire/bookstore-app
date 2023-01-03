@@ -53,6 +53,10 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const string1 = 'Мы редактируем, иллюстрируем и публикуем лучшие ';
+const string2 = 'рассказы современников в литературном журнале арт-конгрегации';
+const string3 = '— нашего творческого объединения мастеров арт-контента.';
+
 const RD = (): React.ReactElement => (
   <StyledWrapper>
     <StyledContentHeading>
@@ -63,13 +67,17 @@ const RD = (): React.ReactElement => (
     <StyledContent>
       {/* <StyledRD /> */}
       <StyledMainText variant='text'>
-        Мы редактируем, иллюстрируем и публикуем лучшие рассказы современников в
-        литературном журнале арт-конгрегации Русский Динозавр — нашего
-        творческого объединения мастеров арт-контента.
+        {string1}
+        {string2}
+        <a href='https://russiandino.ru/'>Русский Динозавр</a>
+        {string3}
       </StyledMainText>
       <StyledSecondaryText variant='text'>
-        Лучшие рассказы года попадают в&nbsp;ежегодник «Могучий Русский
-        Динозавр».
+        Лучшие рассказы года попадают в&nbsp;ежегодник «
+        <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
+          Могучий Русский Динозавр
+        </a>
+        ».
       </StyledSecondaryText>
       <StyledButton>Литжурнал Русского Динозавра</StyledButton>
     </StyledContent>
