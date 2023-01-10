@@ -226,8 +226,11 @@ const textStyle = css<StyledTextProps>`
     font-size: 14px;
   }
 
-  a: hover {
+  a {
     color: red;
+    :hover {
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -385,11 +388,13 @@ const h44Style = css<StyledTextProps>`
 const partnerDisplayNameStyle = css<StyledTextProps>`
   ${h41Style}
 
+  left: 0;
+  right: 0;
   margin: 0 auto;
 
   position: absolute;
   bottom: 30px;
-  justify-self: center;
+  /* justify-self: center; */
 
   font-size: 16px;
   font-weight: 700;

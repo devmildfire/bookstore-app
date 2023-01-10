@@ -26,33 +26,7 @@ const StyledSlider = styled(Slider)`
 `;
 
 const PartnersList = (): React.ReactElement => {
-  // const { isMobile, isTabletVertical } = useContext(DeviceInfoContext);
-
-  // let count = 4;
-  // if (isMobile) {
-  //   count = 3;
-  // } else if (isTabletVertical) {
-  //   count = 3;
-  // }
-
-  // const isWide = WindowWiderThan(1440);
-  // const count = isWide ? 4 : 3;
-
   return (
-    // <StyledList
-    //   withoutPagination
-    //   withoutSwipe
-    //   withoutTouch
-    //   slidesPerView={count}
-    //   spaceBetween={20}
-    //   centeredSlides
-    // >
-    //   {partners.map((partner) => (
-    //     <Slide key={partner.id}>
-    //       <PartnerCard {...partner} />
-    //     </Slide>
-    //   ))}
-    // </StyledList>
     <StyledSlider
       // withoutPagination={isTabletVertical || isMobile}
       withoutPagination
