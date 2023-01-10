@@ -227,7 +227,7 @@ const textStyle = css<StyledTextProps>`
   }
 
   a {
-    color: red;
+    color: var(--main-red-90);
     :hover {
       text-decoration: underline;
     }
