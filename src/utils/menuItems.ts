@@ -1,6 +1,6 @@
 export type SubmenuItem = {
   subtitle: string;
-  link?: string;
+  link: string;
   items?: {
     title: string;
     link: string;
@@ -16,33 +16,16 @@ export type MenuItem = {
 const forReaders: SubmenuItem[] = [
   {
     subtitle: 'Книжная лавка',
-    items: [
-      {
-        title: 'Издания',
-        link: '/books',
-      },
-      {
-        title: 'Карты даров',
-        link: '/gift-cards',
-      },
-      {
-        title: 'Чудеса подписки',
-        link: '/subscription',
-      },
-    ],
+    link: '/not-found',
   },
   {
     subtitle: 'Литжурнал РД',
-    link: '/dino-magazine',
+    link: '/not-found',
   },
-  // {
-  //   subtitle: 'Журнал Русского Динозавра',
-  //   link: '/dino-magazine',
-  // },
-  // {
-  //   subtitle: 'Мейнстрим',
-  //   link: '/mainstream',
-  // },
+  {
+    subtitle: 'Мейнстрим',
+    link: '/not-found',
+  },
 ];
 
 // const forReaders: SubmenuItem[] = [
@@ -63,22 +46,22 @@ const forReaders: SubmenuItem[] = [
 const forAuthors: SubmenuItem[] = [
   {
     subtitle: 'Отправить рукопись',
-    link: '/suggest-manuscript',
+    link: '/not-found',
   },
   {
-    subtitle: 'Отправить материал для\u00A0литжурнала РД',
-    link: '/suggest-story-to-rd',
+    subtitle: 'Отправить рассказ для журнала',
+    link: '/not-found',
   },
   {
     subtitle: 'Мастерская Абзац',
-    link: '/abzac-workshop',
+    link: '/not-found',
   },
 ];
 
 const menu: MenuItem[] = [
   {
     title: 'О Чтиве',
-    link: '/about',
+    link: '/not-found',
   },
   {
     title: 'Чтецам',
@@ -90,7 +73,7 @@ const menu: MenuItem[] = [
   },
   {
     title: 'Инвесторам и донаторам',
-    link: '/for-investors',
+    link: '/not-found',
   },
   // {
   //   title: 'Партнёрам',
@@ -98,26 +81,26 @@ const menu: MenuItem[] = [
   // },
   {
     title: 'Контакты',
-    link: '/contacts',
+    link: '/not-found',
   },
 ];
 
 const subMenu: MenuItem[] = [
   {
     title: 'ИЗДАНИЯ',
-    link: '/books',
+    link: '/not-found',
   },
   {
     title: 'БОКС-СЕТЫ',
-    link: '/box-sets',
+    link: '/not-found',
   },
   {
     title: 'КАРТЫ ДАРОВ',
-    link: '/gift-cards',
+    link: '/not-found',
   },
   {
     title: 'ЧУДЕСА ПОДПИСКИ',
-    link: '/subscription',
+    link: '/not-found',
   },
 ];
 

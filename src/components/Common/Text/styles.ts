@@ -490,7 +490,7 @@ export interface StyledTextProps {
 const StyledText = styled.span`
   ${(props: StyledTextProps) => styles[props.variant]}
   color: ${(props: StyledTextProps) => colors[props.textColor]};
-  line-height: 1.2em;
+  line-height: 1.4;
   letter-spacing: 0.03em;
   text-align: ${(props) => props.align};
 `;

@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import {
+  DescriptionLayout,
+  FullscreenCover,
+  CoverPopup,
   StyledAuthor,
   StyledDescription,
   StyledImage,
   StyledInfo,
   StyledThesis,
   StyledTitle,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
+import CloseIcon from '@/assets/icons/close.svg';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
+import breakPoints from '@/utils/breakPoints';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -19,7 +25,34 @@ interface BookDescriptionProps {
   readonly image?: string;
   readonly description: string[];
   readonly authors: Author[];
+  readonly thesis?: string;
 }
+/* grid-template-rows: repeat(auto-fill, min-content); */
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+  @media ${breakPoints.md} {
+    top: 12px;
+    right: 12px;
+  }
+`;
+
+const StyledCloseIcon = styled(CloseIcon)`
+  width: 36px;
+  height: 36px;
+  @media ${breakPoints.md} {
+    width: 24px;
+    height: 24px;
+  }
+`;
 
 const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   const {
@@ -30,14 +63,50 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     image,
     description,
     authors,
+    thesis,
   } = props;
 
+  const [isImageOpen, setIsImageOpen] = useState(false);
   const year = new Date(publishDate).getFullYear();
+
+  const handleClosePopup = () => {
+    // document.body.style.overflow = 'unset';
+    setIsImageOpen(false);
+  };
+
+  const handleOpenPopup = () => {
+    // document.body.style.overflow = 'hidden';
+    setIsImageOpen(true);
+  };
+
+  useEffect(() => {
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        handleClosePopup();
+      }
+    }
+    document.addEventListener('keydown', (e) => handleEsc(e));
+    return document.removeEventListener('keydown', (e) => handleEsc(e));
+  }, []);
 
   return (
     <StyledWrapper>
-      <StyledImage src={image} alt={title} />
-      <div>
+      <CoverPopup
+        onClick={handleClosePopup}
+        className={isImageOpen ? 'active' : ''}
+      >
+        <CloseButton onClick={handleClosePopup}>
+          <StyledCloseIcon />
+        </CloseButton>
+        <FullscreenCover
+          className={isImageOpen ? 'active' : ''}
+          src={image}
+          alt={title}
+        />
+      </CoverPopup>
+
+      <StyledImage onClick={handleOpenPopup} src={image} alt={title} />
+      <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {authors.map((author) => author.name)}
@@ -45,13 +114,18 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
           {`${year} | ${genre} | ${ageRestriction}`}
         </StyledInfo>
-        <StyledThesis variant='h3_3' component='p' textColor='red' fontWeight={500}>
-          ЕСЛИ ВЫ НЕ УСПЕЛИ ПОПРОЩАТЬСЯ С БАБУЛЕЙ, МЫ ПЕРЕДАДИМ ВАШЕ СООБЩЕНИЕ
+        <StyledThesis
+          variant='h3_3'
+          component='p'
+          textColor='red'
+          fontWeight={500}
+        >
+          {thesis}
         </StyledThesis>
         <StyledDescription>
           {description.map((paragraph: string) => (
             <Text
-              variant='h3_3'
+              variant='text'
               component='p'
               fontWeight={400}
               textTransform='none'
@@ -60,7 +134,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
             </Text>
           ))}
         </StyledDescription>
-      </div>
+      </DescriptionLayout>
     </StyledWrapper>
   );
 };

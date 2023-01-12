@@ -3,7 +3,7 @@ import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 
 export const Title = styled(Text)`
-  margin-bottom: 50px;
+  /* margin-bottom: 116px; */
 `;
 
 export const BooksList = styled.ul`
@@ -28,9 +28,11 @@ export const BookItem = styled.li`
 `;
 
 export const Banner = styled.img`
+  display: block;
   width: 100%;
-  height: 387px;
-
+  padding: 0 14px;
+  /* height: 533px; */
+  /* 
   @media ${breakPoints.xl} {
     height: 288.5px;
   }
@@ -47,5 +49,5 @@ export const Banner = styled.img`
   @media screen and (max-width: 700px) {
     width: auto;
     height: auto;
-  }
+  } */
 `;

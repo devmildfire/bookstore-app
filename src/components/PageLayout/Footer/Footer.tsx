@@ -19,7 +19,7 @@ import {
   FooterTitle,
   Icon,
   ContactIcon,
-  StyleWrapper
+  StyleWrapper,
 } from './styles';
 
 const Footer = (): React.ReactElement => (
@@ -82,13 +82,12 @@ const Footer = (): React.ReactElement => (
         <Text
           variant='h4_3'
           component='p'
-          style={{ display: 'flex', justifyContent: 'space-between', }}
+          style={{ display: 'flex', justifyContent: 'space-between' }}
         >
           <span>
             © 2017-
             {getCurrentYear()}
-            &nbsp;
-            Чтиво. Санкт-Петербург. Все права защищены.
+            &nbsp; Чтиво. Санкт-Петербург. Все права защищены.
           </span>
           <span> #хбдщдбдщ</span>
         </Text>

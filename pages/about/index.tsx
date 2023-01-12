@@ -12,7 +12,8 @@ import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
+// import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
+import rorshah from '@/assets/images/rorshah_new.png';
 
 const About: NextPage = () => (
   <StyledWrapper>
@@ -51,11 +52,12 @@ const VideoContainer = styled(Container)`
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
   --lastMarginBottom: 600px;
+  --rowGap: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 0px;
-  gap: 150px;
+  gap: var(--rowGap);
 
   /* & > :last-child {
     padding-bottom: var(--lastMarginBottom);
@@ -64,21 +66,21 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
     padding-top: 0px;
-    gap: 150px;
+    --rowGap: 150px;
   }
 
   @media ${breakPoints.lg} {
     --marginBottom: 100px;
     --lastMarginBottom: 200px;
     padding-top: 0px;
-    gap: 100px;
+    --rowGap: 100px;
   }
 
   @media ${breakPoints.md} {
     --marginBottom: 85px;
     --lastMarginBottom: 175px;
     padding-top: 0px;
-    gap: 70px;
+    --rowGap: 70px;
   }
 
   @media ${breakPoints.smd} {
@@ -86,7 +88,7 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    gap: 70px;
+    --rowGap: 70px;
   }
 
   @media ${breakPoints.sm} {
@@ -94,7 +96,7 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    gap: 70px;
+    --rowGap: 70px;
   }
 `;
 
@@ -102,27 +104,32 @@ const StyledStarsBlock = styled.section`
   display: flex;
   flex-direction: column;
   gap: 130px;
-  background-image: url(${rorshah.src});
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background: url(${rorshah.src}),
+    linear-gradient(to bottom, var(--main-white-40) 0%, var(--main-black) 90%);
+  /* background-image: url(${rorshah.src}); */
+  /* background: url(${rorshah.src}); */
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: top, center;
   position: relative;
+  /* aspect-ratio: 1920/2307; */
   padding-bottom: 120px;
 
   &::before {
     content: '';
     display: block;
     position: absolute;
-    top: 0;
+    top: calc(-1 * var(--rowGap));
     left: 0;
-    bottom: 0;
+    bottom: 100%;
     right: 0;
-    background: rgba(0, 0, 0, 0.5)
+    /* background: rgba(0, 0, 0, 0.5)
       linear-gradient(
         to bottom,
         #121212 0%,
         rgba(0, 0, 0, 0) 50%,
         hsl(0, 0%, 0%) 120%
-      );
+      ); */
+    background: black;
   }
 `;

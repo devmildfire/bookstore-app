@@ -1,53 +1,52 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
+import styled from 'styled-components';
+// import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
 import Slide from '@/components/Common/Slide';
 import Slider from '@/components/Common/Slider';
-import {
-  Banner, BookItem, BooksList, Title
-} from './styles';
+import { Banner, Title } from './styles';
 import { useGetBooksQuery } from '@/models/books';
+import useScreenSize from '@/hooks/useScreenSize';
+import breakPoints from '@/utils/breakPoints';
+
+const StyledTitle = styled(Title)`
+  padding-bottom: 85px;
+
+  @media ${breakPoints.lg} {
+    font-size: 42px;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
+  }
+`;
 
 const SimilarBooks = (): React.ReactElement => {
-  const { isTabletVertical, isMobile, } = useContext(DeviceInfoContext);
-  const { data: books = [], } = useGetBooksQuery({ count: 5, });
-  const isSlider = isTabletVertical || isMobile;
+  // const { isTabletVertical, isMobile } = useContext(DeviceInfoContext);
+  const [width] = useScreenSize();
+  const { data: books = [] } = useGetBooksQuery({ count: 5 });
+  // const isSlider = isTabletVertical || isMobile;
 
   return (
     <section>
-      <Title variant='h2_1' align='center'>
+      <StyledTitle variant='h2_1' align='center'>
         Познайте также
-      </Title>
-      <BooksList>
-        {isSlider ? (
-          <Slider
-            className='mySwiper'
-            slidesPerView={3}
-            spaceBetween={20}
-            withoutPagination
-          >
-            {books.map((book) => (
-              <Slide key={book.id}>
-                <Link href={`/books/${book.id}`} passHref>
-                  <a href='fakePath'>
-                    <Banner src={book.image} alt={book.title} />
-                  </a>
-                </Link>
-              </Slide>
-            ))}
-          </Slider>
-        ) : (
-          books.map((book) => (
-            <BookItem>
-              <Link href={`/books/${book.id}`} passHref>
-                <a href='fakePath'>
-                  <Banner src={book.image} alt={book.title} />
-                </a>
-              </Link>
-            </BookItem>
-          ))
-        )}
-      </BooksList>
+      </StyledTitle>
+      <Slider
+        className='mySwiper'
+        slidesPerView={width < 576 ? 1 : 3}
+        withoutPagination
+      >
+        {books.map((book) => (
+          <Slide key={book.id}>
+            <Link href={`/books/${book.transliteratedTitle}`} passHref>
+              <a href='fakePath'>
+                <Banner src={book.image} alt={book.title} />
+              </a>
+            </Link>
+          </Slide>
+        ))}
+      </Slider>
     </section>
   );
 };

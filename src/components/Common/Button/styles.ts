@@ -11,7 +11,7 @@ const smallStyle = css`
 `;
 
 const standardStyle = css`
-  min-width: 270px;
+  min-width: 223px;
 `;
 
 const wideStyle = css`
@@ -28,7 +28,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   --button-border-color: var(--main-white-100);
   --button-text-color: var(--main-white-100);
   --button-bg-color: transparent;
-
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -11,16 +11,16 @@ interface ISocialItem {
 
 const socials: ISocialItem[] = [
   {
-    icon: IconInsta,
-    href: 'http://instagram.com',
-  },
-  {
     icon: IconTelegram,
     href: 'http://t.me.com',
   },
   {
     icon: IconVk,
     href: 'http://vk.com',
+  },
+  {
+    icon: IconInsta,
+    href: 'http://instagram.com',
   },
   {
     icon: IconFb,
