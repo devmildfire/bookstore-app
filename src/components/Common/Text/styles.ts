@@ -80,6 +80,7 @@ const h21LJStyle = css<StyledTextProps>`
   }
 
   @media ${breakPoints.sm} {
+    width: calc(var(--width) - 10%);
     font-size: 24px;
   }
 `;

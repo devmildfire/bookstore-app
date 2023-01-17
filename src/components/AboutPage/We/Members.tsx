@@ -13,6 +13,9 @@ import members from '@/mocks/members';
 const StyledSlider = styled(Slider)`
   --swiper-pagination-bullet-horizontal-gap: 35px;
   --size: 6px;
+  .swiper-wrapper {
+    transition-timing-function: linear;
+  }
 
   @media ${breakPoints.lg} {
     --swiper-pagination-bullet-horizontal-gap: 30px;

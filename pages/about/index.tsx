@@ -46,7 +46,6 @@ const VideoContainer = styled(Container)`
   /* height: calc(var(--width) * 9 / 16 - var(--top-div-gap)); */
   height: calc(var(--width) * 9 / 16);
   width: var(--width);
-  margin: 0 auto;
 `;
 
 const StyledWrapper = styled.main`
@@ -59,8 +58,8 @@ const StyledWrapper = styled.main`
   padding-top: 0px;
   gap: var(--rowGap);
 
-  /* & > :last-child {
-    padding-bottom: var(--lastMarginBottom);
+  /* * {
+    outline: 1px solid green !important;
   } */
 
   @media ${breakPoints.xl} {
@@ -106,14 +105,12 @@ const StyledStarsBlock = styled.section`
   gap: 130px;
   background: url(${rorshah.src}),
     linear-gradient(to bottom, var(--main-white-40) 0%, var(--main-black) 90%);
-  /* background-image: url(${rorshah.src}); */
-  /* background: url(${rorshah.src}); */
   background-repeat: no-repeat, no-repeat;
-  background-size: cover, cover;
+  background-size: contain, cover;
   background-position: top, center;
   position: relative;
-  /* aspect-ratio: 1920/2307; */
   padding-bottom: 120px;
+  aspect-ratio: 1920/2500;
 
   &::before {
     content: '';
@@ -123,13 +120,27 @@ const StyledStarsBlock = styled.section`
     left: 0;
     bottom: 100%;
     right: 0;
-    /* background: rgba(0, 0, 0, 0.5)
-      linear-gradient(
-        to bottom,
-        #121212 0%,
-        rgba(0, 0, 0, 0) 50%,
-        hsl(0, 0%, 0%) 120%
-      ); */
+
     background: black;
+  }
+
+  @media ${breakPoints.xl} {
+    aspect-ratio: 1920/3000;
+  }
+
+  @media ${breakPoints.lg} {
+    aspect-ratio: 1920/3500;
+  }
+
+  @media ${breakPoints.md} {
+    aspect-ratio: 1920/4000;
+  }
+
+  @media ${breakPoints.smd} {
+    aspect-ratio: 1920/4200;
+  }
+
+  @media ${breakPoints.sm} {
+    aspect-ratio: 1920/7000;
   }
 `;

@@ -5,13 +5,10 @@ import breakPoints from '@/utils/breakPoints';
 export const StyledWrapper = styled.div`
   display: grid;
   gap: 50px;
-<<<<<<< HEAD
   .swiper-wrapper {
-    transition-timing-function: linear;
-=======
-  @media ${breakPoints.sm} {
-    padding: 0 16px;
->>>>>>> 3ca3e0efd689a8ecc41c0f66e3cce2bdfc1dad14
+    @media ${breakPoints.sm} {
+      padding: 0 16px;
+    }
   }
 `;
 
