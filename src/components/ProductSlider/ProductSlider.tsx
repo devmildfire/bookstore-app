@@ -6,10 +6,10 @@ import { StyledSlider } from './styles';
 import { useGetPopularBooksQuery } from '@/models/books';
 
 const ProductSlider = () => {
-  const { data: books = [], } = useGetPopularBooksQuery(undefined);
+  const { data: books = [] } = useGetPopularBooksQuery(undefined);
   return (
     <Container>
-      <StyledSlider>
+      <StyledSlider speed={5000} duration={5000}>
         {books.map((book) => (
           <Slide key={book.id}>
             <ProductCard {...book} />
