@@ -43,8 +43,8 @@ const About: NextPage = () => (
 export default About;
 
 const VideoContainer = styled(Container)`
-  /* height: calc(var(--width) * 9 / 16 - var(--top-div-gap)); */
-  height: calc(var(--width) * 9 / 16);
+  height: calc(var(--width) * 9 / 16 - var(--top-div-gap));
+  /* height: calc(var(--width) * 9 / 16); */
   width: var(--width);
 `;
 
