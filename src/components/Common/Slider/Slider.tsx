@@ -17,6 +17,10 @@ export interface SliderProps extends ClassNameProps {
   readonly initialSlide?: number;
   readonly withoutAutoplay?: boolean;
   readonly centeredSlides?: boolean;
+  readonly speed?: number;
+  readonly duration?: number;
+  readonly reverseDirection?: boolean;
+  className?: string;
 }
 
 export const Slider: FC<SliderProps> = (props) => {
@@ -27,6 +31,9 @@ export const Slider: FC<SliderProps> = (props) => {
     withoutLoop,
     additionComponents,
     withoutAutoplay,
+    speed,
+    duration,
+    reverseDirection,
     ...params
   } = props;
 
@@ -37,9 +44,11 @@ export const Slider: FC<SliderProps> = (props) => {
         clickable: true,
         renderBullet: (_, className) => `<span class="${className}"></span>`,
       },
+      speed: speed || 2500,
       autoplay: !withoutAutoplay && {
-        delay: 2500,
+        delay: duration || 2500,
         disableOnInteraction: false,
+        reverseDirection: reverseDirection || false,
       },
       loop: !withoutLoop,
       modules: [Autoplay, Pagination, FreeMode],
