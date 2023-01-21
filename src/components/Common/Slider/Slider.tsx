@@ -31,9 +31,9 @@ export const Slider: FC<SliderProps> = (props) => {
     withoutLoop,
     additionComponents,
     withoutAutoplay,
-    speed,
-    duration,
-    reverseDirection,
+    speed = 2500,
+    duration = 2500,
+    reverseDirection = false,
     ...params
   } = props;
 
