@@ -31,9 +31,9 @@ export const Slider: FC<SliderProps> = (props) => {
     withoutLoop,
     additionComponents,
     withoutAutoplay,
-    speed,
-    duration,
-    reverseDirection,
+    speed = 2500,
+    duration = 2500,
+    reverseDirection = false,
     ...params
   } = props;
 
@@ -44,11 +44,11 @@ export const Slider: FC<SliderProps> = (props) => {
         clickable: true,
         renderBullet: (_, className) => `<span class="${className}"></span>`,
       },
-      speed: speed || 2500,
+      speed,
       autoplay: !withoutAutoplay && {
-        delay: duration || 2500,
+        delay: duration,
         disableOnInteraction: false,
-        reverseDirection: reverseDirection || false,
+        reverseDirection,
       },
       loop: !withoutLoop,
       modules: [Autoplay, Pagination, FreeMode],
