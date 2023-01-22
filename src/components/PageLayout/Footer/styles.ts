@@ -112,27 +112,11 @@ export const FooterSocials = styled.ul`
 `;
 
 export const Icon = styled.svg`
-  stroke: var(--main-white-100);
-  /* stroke-width: 0.5; */
-
-  /* transition: stroke 1s ease-in-out; */
-  /* transition: fill 0.3s ease-in-out; */
+  color: var(--main-white-100);
   transition: all 0.3s ease-in-out;
 
-  .footer-insta_svg__smal_c,
-  .footer-telegram_svg__fillClass {
-    transition: all 0.3s ease-in-out;
-    fill: var(--main-white-100);
-  }
-
   :hover {
-    /* transition: fill 1s ease-in-out; */
-    stroke: var(--main-red-100);
-    .footer-insta_svg__smal_c,
-    .footer-telegram_svg__fillClass {
-      transition: all 0.3s ease-in-out;
-      fill: var(--main-red-100);
-    }
+    color: var(--main-red-100);
   }
 `;
 
