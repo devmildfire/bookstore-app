@@ -125,22 +125,22 @@ const StyledStarsBlock = styled.section`
   }
 
   @media ${breakPoints.xl} {
-    aspect-ratio: 1920/3000;
-  }
-
-  @media ${breakPoints.lg} {
     aspect-ratio: 1920/3500;
   }
 
-  @media ${breakPoints.md} {
-    aspect-ratio: 1920/4000;
+  @media ${breakPoints.lg} {
+    aspect-ratio: 1920/3600;
   }
 
-  @media ${breakPoints.smd} {
+  @media ${breakPoints.md} {
     aspect-ratio: 1920/4200;
   }
 
+  @media ${breakPoints.smd} {
+    aspect-ratio: 1920/4400;
+  }
+
   @media ${breakPoints.sm} {
-    aspect-ratio: 1920/7000;
+    aspect-ratio: 1920/8000;
   }
 `;

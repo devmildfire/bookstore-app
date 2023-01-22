@@ -20,7 +20,7 @@ const contacts: IContactItem[] = [
     content: 'E-mail',
     hightLightContent: 'info@chtivo.spb.ru',
     href: 'mailto:info@chtivo.spb.ru',
-  }
+  },
 ];
 
 export default contacts;

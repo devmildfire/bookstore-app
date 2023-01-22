@@ -69,13 +69,13 @@ const RD = (): React.ReactElement => (
       <StyledMainText variant='text'>
         {string1}
         {s2}
-        <a href='https://russiandino.ru/'>Русский Динозавр</a>
+        <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
         {string3}
       </StyledMainText>
       <StyledSecondaryText variant='text'>
         Лучшие рассказы года попадают в&nbsp;ежегодник «
         <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
-          Могучий Русский Динозавр
+          Могучий&nbsp;Русский&nbsp;Динозавр
         </a>
         ».
       </StyledSecondaryText>
