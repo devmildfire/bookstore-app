@@ -4,7 +4,6 @@ import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
   display: grid;
-  gap: 50px;
   @media ${breakPoints.sm} {
     padding: 0 16px;
   }
