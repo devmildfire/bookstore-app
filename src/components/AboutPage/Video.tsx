@@ -15,8 +15,8 @@ export interface VideoProps {
 }
 
 const StyledVideo = styled.video`
-  position: absolute;
-  top: calc(-1 * var(--top-div-gap));
+  /* position: absolute;
+  top: calc(-1 * var(--top-div-gap)); */
   width: var(--width); /* global --width = 1440px */
   max-width: 1440px;
   background-color: var(--grey);
