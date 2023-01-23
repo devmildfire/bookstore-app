@@ -164,21 +164,26 @@ const BurgerIconStyled = styled(BurgerIcon)`
   }
 `;
 
-const HeaderContainer = styled.header`
-  --header-height: 80px;
+const HeaderWrapper = styled.header`
   position: sticky;
   top: 0;
   left: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--main-black);
+  z-index: 99999;
+`;
+
+const HeaderContainer = styled.div`
+  --header-height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 24px;
   align-items: center;
   height: var(--header-height);
-  z-index: 99999;
-  padding: 0 180px;
-  background-color: var(--main-black);
-  max-width: 1800px;
+  max-width: 1440px;
   width: 100%;
   place-self: center;
 
@@ -196,7 +201,6 @@ const HeaderContainer = styled.header`
 
   @media ${breakPoints.md} {
     --header-height: 58px;
-
     gap: 0px;
   }
 `;
@@ -339,6 +343,7 @@ export {
   CrossIconStyled,
   ProfileIconStyled,
   BurgerIconStyled,
+  HeaderWrapper,
   HeaderContainer,
   NavList,
   NavListItem,
