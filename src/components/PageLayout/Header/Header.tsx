@@ -16,6 +16,7 @@ import {
   NavListItem,
   Submenu,
   SubmenuListItem,
+  HeaderWrapper,
 } from './styles';
 
 type OuterClickCallback = (e: MouseEvent) => void;
@@ -80,30 +81,32 @@ function Header(): ReactElement {
     }
   });
   return (
-    <HeaderContainer>
-      <LogoStyled />
-      <MenuOverlay className={isOpen ? 'active' : ''} />
-      <NavList ref={menuRef} className={isOpen ? 'active' : ''}>
-        {menu.map(({ title, link, submenu }) => (
-          <ListItem title={title} link={link} submenu={submenu} />
-        ))}
-      </NavList>
-      <SearchInput
-        isInputActive={isInputActive}
-        setIsInputActive={setIsInputActive}
-      />
-      <IconContainer>
-        <MenuButton isVisible={isInputActive}>
-          <CartIconStyled />
-        </MenuButton>
-        <MenuButton isVisible={isInputActive}>
-          <ProfileIconStyled />
-        </MenuButton>
-        <MenuButton mobile onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <CrossIconStyled /> : <BurgerIconStyled />}
-        </MenuButton>
-      </IconContainer>
-    </HeaderContainer>
+    <HeaderWrapper>
+      <HeaderContainer>
+        <LogoStyled />
+        <MenuOverlay className={isOpen ? 'active' : ''} />
+        <NavList ref={menuRef} className={isOpen ? 'active' : ''}>
+          {menu.map(({ title, link, submenu }) => (
+            <ListItem title={title} link={link} submenu={submenu} />
+          ))}
+        </NavList>
+        <SearchInput
+          isInputActive={isInputActive}
+          setIsInputActive={setIsInputActive}
+        />
+        <IconContainer>
+          <MenuButton isVisible={isInputActive}>
+            <CartIconStyled />
+          </MenuButton>
+          <MenuButton isVisible={isInputActive}>
+            <ProfileIconStyled />
+          </MenuButton>
+          <MenuButton mobile onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <CrossIconStyled /> : <BurgerIconStyled />}
+          </MenuButton>
+        </IconContainer>
+      </HeaderContainer>
+    </HeaderWrapper>
   );
 }
 
