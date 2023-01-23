@@ -112,13 +112,11 @@ export const FooterSocials = styled.ul`
 `;
 
 export const Icon = styled.svg`
-  stroke: var(--main-white-100);
-  stroke-width: 0.5;
-
-  transition: stroke 0.3s ease-in-out;
+  color: var(--main-white-100);
+  transition: all 0.3s ease-in-out;
 
   :hover {
-    stroke: var(--main-red-100);
+    color: var(--main-red-100);
   }
 `;
 
