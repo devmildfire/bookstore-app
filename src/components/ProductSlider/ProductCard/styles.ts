@@ -15,13 +15,11 @@ export const StyledWrapper = styled.div`
 export const StyledImage = styled.img`
   grid-row: 1/-1;
 
-  width: 332px;
-  height: 493px;
+  width: 433px;
+  height: 633px;
 
   object-fit: cover;
-
-  filter: drop-shadow(-10px -10px 40px rgba(0, 0, 0, 0.8))
-    drop-shadow(10px 10px 40px rgba(0, 0, 0, 0.8));
+  box-shadow: -20px 30px 30px rgba(0, 0, 0, 0.5);
 `;
 
 export const StyledAuthor = styled(Text)`

@@ -14,12 +14,12 @@ interface BookPreviewProps {
 }
 
 const BookPreview: React.FC<BookPreviewProps> = (props) => {
-  const { books, openBookId, } = props;
+  const { books, openBookId } = props;
 
   const open = books.some((book) => book.id === openBookId);
 
   const exitHref = usePrepareLink({
-    deleteQuery: { [GET_PARAMS.openProduct]: true, },
+    deleteQuery: { [GET_PARAMS.openProduct]: true },
   });
 
   return (

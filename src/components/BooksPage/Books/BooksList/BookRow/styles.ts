@@ -11,9 +11,6 @@ interface StyledRowProps {
 }
 
 export const StyledRow = styled(Row)<StyledRowProps>`
+  justify-content: space-between;
   grid-template-columns: repeat(auto-fit, 355px);
-  gap: calc(
-    (var(--width) - 355px * ${(props) => props.inRow}) /
-      ${(props) => props.inRow - 1}
-  );
 `;
