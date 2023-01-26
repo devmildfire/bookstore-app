@@ -15,7 +15,7 @@ const members: Member[] = [
   {
     id: 0,
     member: 'Алёна Купчинская',
-    position: 'редактор',
+    position: 'ведущий редактор',
     city: 'г. Москва',
     photo: alenaPhoto.src,
     phrase:
@@ -24,7 +24,7 @@ const members: Member[] = [
   {
     id: 1,
     member: 'Андрей Янкус',
-    position: 'продюсер',
+    position: 'главный редактор',
     city: 'г. Санкт-Петербург',
     photo: yankusPhoto.src,
     phrase:
@@ -86,7 +86,7 @@ const members: Member[] = [
   },
   {
     id: 8,
-    member: 'Гильманова Диана',
+    member: 'Диана Гильманова',
     position: 'продюсер изданий',
     city: 'г. Екатеринбург',
     photo: gilmanovaPhoto.src,
