@@ -12,23 +12,23 @@ interface ISocialItem {
 const socials: ISocialItem[] = [
   {
     icon: IconTelegram,
-    href: 'http://t.me.com',
+    href: 'https://t.me/ichtivo',
   },
   {
     icon: IconVk,
-    href: 'http://vk.com',
+    href: 'https://vk.com/ichtivo',
   },
   {
     icon: IconInsta,
-    href: 'http://instagram.com',
+    href: 'https://www.instagram.com/ichtivo/',
   },
   {
     icon: IconFb,
-    href: 'http://facebook.com',
+    href: 'https://www.facebook.com/ichtivo',
   },
   {
     icon: IconTwitter,
-    href: 'http://twitter.com',
+    href: 'https://twitter.com/ichtivo',
   },
 ];
 
