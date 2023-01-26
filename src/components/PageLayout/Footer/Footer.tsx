@@ -38,12 +38,7 @@ const Footer = (): React.ReactElement => (
       </FooterContacts>
       <FooterInfo>
         <FooterTitle fontFamily='sans'>
-          <FooterTitle
-            component='span'
-            // variant='h4_1'
-            textColor='red'
-            fontFamily='sans'
-          >
+          <FooterTitle component='span' textColor='red' fontFamily='sans'>
             Чти
           </FooterTitle>
           во
