@@ -99,7 +99,7 @@ const StyledCard = styled.div`
     width: 150px;
     height: 150px;
     /* padding: 5px 5px; */
-    margin: 0 30px;
+    margin: 0 10px;
     /* margin-bottom: 30px; */
   }
 `;

@@ -141,6 +141,7 @@ const StyledStarsBlock = styled.section`
   }
 
   @media ${breakPoints.sm} {
-    aspect-ratio: 1920/8000;
+    gap: 70px;
+    aspect-ratio: 1920/7000;
   }
 `;
