@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Container from '@/components/Common/Container';
 import Text from '@/components/Common/Text';
-import ProductSlider from '@/components/ProductSlider';
+// import ProductSlider from '@/components/ProductSlider';
 import {
   StyledContentWrapper,
   // StyledNavigation,
@@ -16,7 +16,7 @@ const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
   const { children, title } = props;
   return (
     <StyledWrapper>
-      <ProductSlider />
+      {/* <ProductSlider /> */}
       {/* <StyledNavigation /> */}
       <StyledContentWrapper>
         <Container>

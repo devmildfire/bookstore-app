@@ -33,8 +33,6 @@ const IconButton = React.forwardRef<
       <Link href={href} scroll={scroll} shallow={shallow} passHref>
         <StyledButton
           className={className}
-          as='a'
-          href='fakeHref'
           size={size}
           ref={ref as React.ForwardedRef<HTMLAnchorElement>}
           {...(rest as any)}

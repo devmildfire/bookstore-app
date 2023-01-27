@@ -19,8 +19,7 @@ export const StyledInfo = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  padding: 18px 35px;
+  padding: 18px 0;
 `;
 
 export const StyledImageLink = styled(Link)`

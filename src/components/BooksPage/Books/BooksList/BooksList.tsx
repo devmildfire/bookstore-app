@@ -25,10 +25,11 @@ const BooksList: React.FC = () => {
       rootMargin='300px'
       otherParams={otherParams}
     >
-      {({ rows, }) =>
-        rows.map((row, i) => (
-          <BookRow books={row as Book[]} key={row.length + i} />
-        ))}
+      {({ rows }) => {
+        return rows.map((row, i) => {
+          return <BookRow books={row as Book[]} key={row.length + i} />;
+        });
+      }}
     </StyledProductsList>
   );
 };
