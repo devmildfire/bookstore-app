@@ -4,7 +4,8 @@ import Text from '@/components/Common/Text';
 import PaddedText from '@/components/Common/PaddedText';
 import RDImage from '@/assets/images/dino_figma.png';
 import litMagazineBack from '@/assets/images/litMagazineBack.png';
-import gradient from '@/assets/images/gradient.png';
+import gradientBottom from '@/assets/images/gradient.png';
+import gradientTop from '@/assets/images/gradient_top_grey.png';
 
 export const StyledWrapper = styled.section`
   /* display: grid; */
@@ -15,13 +16,25 @@ export const StyledWrapper = styled.section`
   width: 100%;
   aspect-ratio: 48/27; // соотношение сторон 1920 к 1080
   /* 1919/562 */
-  /* background-image: url(${litMagazineBack.src}), url(${gradient.src}); */
-  background-image: url(${gradient.src}), url(${litMagazineBack.src});
-  /* background-image: url(${gradient.src}); */
+  /* background-image: url(${litMagazineBack.src}), url(${gradientBottom.src}); */
+  background-image: linear-gradient(
+      180deg,
+      #121212 34.18%,
+      rgba(18, 18, 18, 0.83) 54.72%,
+      rgba(18, 18, 18, 0.345207) 77.1%,
+      rgba(18, 18, 18, 0) 93.04%
+    ),
+    url(${gradientBottom.src}), url(${litMagazineBack.src});
+
+  /* background-image: url(${gradientTop.src}), url(${gradientBottom.src}),
+    url(${litMagazineBack.src}); */
+
+  /* background-image: url(${gradientBottom.src}); */
   /* background-size: cover contain; */
-  background-size: 100% 50%, 100%;
-  background-position: bottom, left top;
-  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 20%, 100% 50%, 100%;
+  background-position: top, bottom, left center;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-attachment: local, local, fixed;
   padding-top: 150px;
 
   @media ${breakPoints.xl} {
@@ -39,7 +52,7 @@ export const StyledWrapper = styled.section`
   @media ${breakPoints.sm} {
     /* gap: 25px; */
     aspect-ratio: auto;
-    background-size: 100% 50%, cover;
+    background-size: 100% 20%, 100% 50%, auto 35%;
   }
 `;
 
