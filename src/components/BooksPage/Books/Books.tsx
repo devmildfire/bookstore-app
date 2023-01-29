@@ -3,13 +3,13 @@ import BooksList from './BooksList';
 import { StyledWrapper } from './styles';
 import Container from '@/components/Common/Container';
 // import Filters from '../../Filters';
-import MultiSelect from '@/components/Common/MultiSelect';
+import Multiselect from '@/components/Common/Multiselect';
 
 const Books: React.FC = () => (
   <StyledWrapper>
     <Container>
       {/* <Filters /> */}
-      <MultiSelect />
+      <Multiselect />
     </Container>
 
     <BooksList />

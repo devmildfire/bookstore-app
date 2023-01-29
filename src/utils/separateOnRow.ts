@@ -1,6 +1,6 @@
 const separateOnRow = <T>(array: T[], count: number): T[][] => {
   const newArray: T[][] = [[]];
-  let length: number = 0;
+  let length = 0;
   let lastIndex: number = newArray.length - 1;
   array.forEach((item) => {
     if (length === count) {
