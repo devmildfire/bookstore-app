@@ -14,6 +14,14 @@ const StyledSlider = styled(Slider)`
     transition-timing-function: linear;
   }
 
+  img {
+    pointer-events: none;
+  }
+
+  div:hover > img {
+    filter: grayscale(0%);
+  }
+
   @media ${breakPoints.lg} {
     --swiper-pagination-bullet-horizontal-gap: 30px;
     --size: 4px;

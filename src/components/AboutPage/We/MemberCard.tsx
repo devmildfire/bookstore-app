@@ -6,6 +6,12 @@ import Text from '@/components/Common/Text';
 
 const StyledCard = styled.div`
   /* display: grid; */
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
   display: flex;
   flex-direction: column;
   justify-items: flex-start;
@@ -47,9 +53,10 @@ const StyledCard = styled.div`
 `;
 
 const StyledPhoto = styled.img`
-  pointer-events: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+
   user-select: none;
   --size: 250px;
   width: var(--size);
@@ -60,6 +67,13 @@ const StyledPhoto = styled.img`
   object-fit: cover;
 
   margin-bottom: 25px;
+  transition: all 0.5s ease;
+
+  /* :hover {
+    -webkit-filter: grayscale(0%);
+    -moz-filter: grayscale(0%);
+    filter: grayscale(0%);
+  } */
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
