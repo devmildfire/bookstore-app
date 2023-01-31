@@ -110,7 +110,7 @@ const StyledStarsBlock = styled.section`
   background-position: top, center;
   position: relative;
   padding-bottom: 120px;
-  aspect-ratio: 1920/2500;
+  /* aspect-ratio: 1920/2500; */
 
   &::before {
     content: '';
@@ -124,7 +124,7 @@ const StyledStarsBlock = styled.section`
     background: black;
   }
 
-  @media ${breakPoints.xl} {
+  /* @media ${breakPoints.xl} {
     aspect-ratio: 1920/3500;
   }
 
@@ -143,5 +143,5 @@ const StyledStarsBlock = styled.section`
   @media ${breakPoints.sm} {
     gap: 70px;
     aspect-ratio: 1920/7000;
-  }
+  } */
 `;

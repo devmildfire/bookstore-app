@@ -17,24 +17,32 @@ export const StyledWrapper = styled.section`
   aspect-ratio: 48/27; // соотношение сторон 1920 к 1080
   /* 1919/562 */
   /* background-image: url(${litMagazineBack.src}), url(${gradientBottom.src}); */
-  background-image: linear-gradient(
+  /* background-image: linear-gradient(
       180deg,
       #121212 34.18%,
       rgba(18, 18, 18, 0.83) 54.72%,
       rgba(18, 18, 18, 0.345207) 77.1%,
       rgba(18, 18, 18, 0) 93.04%
     ),
-    url(${gradientBottom.src}), url(${litMagazineBack.src});
+    url(${gradientBottom.src}), url(${litMagazineBack.src}); */
+
+  background-image: url(${litMagazineBack.src});
 
   /* background-image: url(${gradientTop.src}), url(${gradientBottom.src}),
     url(${litMagazineBack.src}); */
 
   /* background-image: url(${gradientBottom.src}); */
   /* background-size: cover contain; */
-  background-size: 100% 20%, 100% 50%, 100%;
+  /* background-size: 100% 20%, 100% 50%, 100%;
   background-position: top, bottom, left center;
   background-repeat: no-repeat, no-repeat, repeat;
-  background-attachment: local, local, fixed;
+  background-attachment: local, local, fixed; */
+
+  background-size: 100%;
+  background-position: left center;
+  background-repeat: repeat;
+  background-attachment: fixed;
+
   padding-top: 150px;
 
   @media ${breakPoints.xl} {
