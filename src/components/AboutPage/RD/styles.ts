@@ -14,7 +14,8 @@ export const StyledWrapper = styled.section`
   gap: 0px;
   /* max-width: 1440px; */
   width: 100%;
-  aspect-ratio: 48/27; // соотношение сторон 1920 к 1080
+  /* aspect-ratio: 48/27;  */
+  // соотношение сторон 1920 к 1080
   /* 1919/562 */
   /* background-image: url(${litMagazineBack.src}), url(${gradientBottom.src}); */
   /* background-image: linear-gradient(

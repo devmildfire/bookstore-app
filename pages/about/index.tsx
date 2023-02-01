@@ -110,7 +110,7 @@ const StyledStarsBlock = styled.section`
   background-position: top, center;
   position: relative;
   padding-bottom: 120px;
-  /* aspect-ratio: 1920/2500; */
+  aspect-ratio: 1920/2500;
 
   &::before {
     content: '';
@@ -124,24 +124,24 @@ const StyledStarsBlock = styled.section`
     background: black;
   }
 
-  /* @media ${breakPoints.xl} {
-    aspect-ratio: 1920/3500;
+  @media ${breakPoints.xl} {
+    aspect-ratio: auto;
+    /* gap: 120px; */
   }
 
   @media ${breakPoints.lg} {
-    aspect-ratio: 1920/3600;
+    gap: 100px;
   }
 
   @media ${breakPoints.md} {
-    aspect-ratio: 1920/4200;
+    gap: 80px;
   }
 
   @media ${breakPoints.smd} {
-    aspect-ratio: 1920/4400;
+    gap: 80px;
   }
 
   @media ${breakPoints.sm} {
-    gap: 70px;
-    aspect-ratio: 1920/7000;
-  } */
+    gap: 60px;
+  }
 `;
