@@ -8,12 +8,35 @@ import gradientBottom from '@/assets/images/gradient.png';
 import gradientTop from '@/assets/images/gradient_top_grey.png';
 
 export const StyledWrapper = styled.section`
+  outline: 1px solid green;
   /* display: grid; */
   display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   gap: 0px;
   /* max-width: 1440px; */
   width: 100%;
+  /* overflow: hidden; */
+
+  h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 15vw;
+    width: fit-content;
+  }
+
+  > img {
+    /* position: absolute; */
+    display: block;
+    object-fit: cover;
+    /* width: 100vw; */
+    /* height: 300%; */
+  }
+
   /* aspect-ratio: 48/27;  */
   // соотношение сторон 1920 к 1080
   /* 1919/562 */
@@ -27,7 +50,7 @@ export const StyledWrapper = styled.section`
     ),
     url(${gradientBottom.src}), url(${litMagazineBack.src}); */
 
-  background-image: url(${litMagazineBack.src});
+  /* background-image: url(${litMagazineBack.src}); */
 
   /* background-image: url(${gradientTop.src}), url(${gradientBottom.src}),
     url(${litMagazineBack.src}); */
@@ -39,29 +62,29 @@ export const StyledWrapper = styled.section`
   background-repeat: no-repeat, no-repeat, repeat;
   background-attachment: local, local, fixed; */
 
-  background-size: 100%;
+  /* background-size: 100%;
   background-position: left center;
   background-repeat: repeat;
-  background-attachment: fixed;
+  background-attachment: fixed; */
 
-  padding-top: 150px;
+  /* padding-top: 150px; */
 
   @media ${breakPoints.xl} {
-    padding-top: 100px;
+    /* padding-top: 100px; */
   }
 
   @media ${breakPoints.lg} {
-    padding-top: 50px;
+    /* padding-top: 50px; */
   }
 
   @media ${breakPoints.md} {
-    padding-top: 10px;
+    /* padding-top: 10px; */
   }
 
   @media ${breakPoints.sm} {
     /* gap: 25px; */
     aspect-ratio: auto;
-    background-size: 100% 20%, 100% 50%, auto 35%;
+    /* background-size: 100% 20%, 100% 50%, auto 35%; */
   }
 `;
 
