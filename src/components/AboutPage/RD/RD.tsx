@@ -16,16 +16,7 @@ import {
 } from './styles';
 // import breakPoints from '@/utils/breakPoints';
 import litMagazineBack from '@/assets/images/litMagazineBack.png';
-
-function useParallax() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['end start', 'start end'],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ['0', '100%']);
-  return [y, ref];
-}
+// import { string } from 'prop-types';
 
 // const StyledButton = styled(Button)`
 //   /* min-width: 245px; */
@@ -71,7 +62,12 @@ function useParallax() {
 // const string3 = ' — нашего творческого объединения мастеров арт-контента.';
 
 const RD = (): React.ReactElement => {
-  const [y, ref] = useParallax();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['end start', 'start end'],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ['-100%', '100%']);
 
   return (
     <StyledWrapper ref={ref}>
