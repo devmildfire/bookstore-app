@@ -1,5 +1,11 @@
 import React, { useRef } from 'react';
-import { useScroll, motion, useTransform } from 'framer-motion';
+import {
+  useScroll,
+  motion,
+  useTransform,
+  // useViewportScroll,
+  // useMotionValueEvent,
+} from 'framer-motion';
 // import { useRef } from 'react';
 // import styled from 'styled-components';
 // import Text from '@/components/Common/Text';
@@ -67,7 +73,12 @@ const RD = (): React.ReactElement => {
     target: ref,
     offset: ['end start', 'start end'],
   });
-  const y = useTransform(scrollYProgress, [0, 1], ['-100%', '100%']);
+  // const [hookedYPostion, setHookedYPosition] = React.useState(0);
+  // React.useEffect(() => {
+  //   scrollYProgress.onChange((v) => setHookedYPosition(v));
+  // }, [scrollYProgress, setHookedYPosition]);
+
+  const y = useTransform(scrollYProgress, [1, 0], ['-70%', '0%']);
 
   return (
     <StyledWrapper ref={ref}>
@@ -77,7 +88,12 @@ const RD = (): React.ReactElement => {
         alt=''
         style={{ y }}
       />
-      <h1>Литжурнал</h1>
+      {/* <h1 style={{ top: `calc(${hookedYPostion}*-1.5*100% + 360px)` }}>
+        {' '}
+        {hookedYPostion}{' '}
+      </h1> */}
+
+      <h1> Литжурнал </h1>
 
       {/* <StyledContentHeading>
         <Text variant='h2_1_LJ' align='left'>

@@ -10,7 +10,8 @@ import gradientTop from '@/assets/images/gradient_top_grey.png';
 export const StyledWrapper = styled.section`
   outline: 1px solid green;
   /* display: grid; */
-  display: flex;
+  /* display: flex; */
+
   position: relative;
   justify-content: center;
   align-items: center;
@@ -18,23 +19,28 @@ export const StyledWrapper = styled.section`
   gap: 0px;
   /* max-width: 1440px; */
   width: 100%;
-  /* overflow: hidden; */
+  aspect-ratio: 1920/1080;
+  /* height: 500px; */
+  overflow: hidden;
 
   h1 {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 15vw;
-    width: fit-content;
+    font-size: 10vw;
+    /* width: fit-content; */
+    z-index: 1000;
   }
 
   > img {
     /* position: absolute; */
-    display: block;
+    /* display: block; */
     object-fit: cover;
     /* width: 100vw; */
-    /* height: 300%; */
+    height: 1700px;
+    /* width: 50%; */
+    /* z-index: 400; */
   }
 
   /* aspect-ratio: 48/27;  */
@@ -70,21 +76,27 @@ export const StyledWrapper = styled.section`
   /* padding-top: 150px; */
 
   @media ${breakPoints.xl} {
-    /* padding-top: 100px; */
+    > img {
+      height: 1250px;
+    }
   }
 
   @media ${breakPoints.lg} {
-    /* padding-top: 50px; */
+    > img {
+      height: 1050px;
+    }
   }
 
   @media ${breakPoints.md} {
-    /* padding-top: 10px; */
+    > img {
+      height: 825px;
+    }
   }
 
   @media ${breakPoints.sm} {
-    /* gap: 25px; */
-    aspect-ratio: auto;
-    /* background-size: 100% 20%, 100% 50%, auto 35%; */
+    > img {
+      height: 700px;
+    }
   }
 `;
 
