@@ -40,7 +40,7 @@ export const StyledWrapper = styled.section`
     /* width: 100vw; */
     height: 1700px;
     /* width: 50%; */
-    /* z-index: 400; */
+    z-index: 10;
   }
 
   /* aspect-ratio: 48/27;  */
@@ -101,65 +101,71 @@ export const StyledWrapper = styled.section`
 `;
 
 export const StyledContent = styled.div`
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
+  --box-height: calc(684 / 1080 * 100%);
+  --box-width: calc(684 / 1080 * 100%);
+  position: absolute;
+  /* margin: auto auto; */
+  /* aspect-ratio: 1080/684; */
+  height: var(--box-height);
+  width: var(--box-width);
+  top: calc(50% - var(--box-height) / 2);
+  left: calc(50% - var(--box-width) / 2);
 
-  position: relative;
-  z-index: 0;
+  background: linear-gradient(
+    113.04deg,
+    rgba(18, 18, 18, 0.6) 0%,
+    rgba(0, 0, 0, 0.6) 98.54%
+  );
+
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  border-radius: 4px;
+
+  z-index: 50;
 
   display: grid;
-  grid-template-rows: repeat(2, min-content) 1fr;
-  gap: 15px;
-
-  height: 390px;
-  max-width: 1440px;
-  /* width: 100%; */
-  width: var(--width);
-  justify-self: center;
-
-  > :last-child {
-    align-self: end;
-
-    width: max-content;
-  }
+  align-items: center;
+  justify-content: center;
 
   @media ${breakPoints.xl} {
-    gap: 15px;
+    --box-height: calc(90%);
+    --box-width: calc(80%);
+    /* gap: 15px;
     height: calc(440px + var(--RDOffset));
     margin-top: 40px;
 
     padding-top: 0;
     padding-left: 0px;
-    padding-right: 0px;
+    padding-right: 0px; */
   }
 
   @media ${breakPoints.lg} {
-    margin-top: 30px;
+    /* margin-top: 30px;
     gap: 30px;
     height: 345px;
     padding-left: 0px;
-    padding-right: 0px;
+    padding-right: 0px; */
   }
 
   @media ${breakPoints.md} {
-    margin-top: 25px;
-    gap: 18px;
+    /* margin-top: 25px;
+    gap: 18px; */
     /* height: 420px; */
-    height: 195px;
+    /* height: 195px;
     padding-left: 0px;
-    padding-right: 0px;
+    padding-right: 0px; */
   }
 
   @media ${breakPoints.sm} {
-    margin-top: 15px;
+    /* margin-top: 15px;
     grid-template-rows: repeat(3, min-content);
     gap: 15px;
-    height: 290px;
+    height: 290px; */
 
     /* height: min-content; */
-    padding-left: 17px;
-    padding-right: 17px;
+    /* padding-left: 17px;
+    padding-right: 17px; */
   }
 `;
 
@@ -177,7 +183,7 @@ export const StyledContentHeading = styled.div`
   margin-right: auto;
   max-width: 1440px;
   /* width: 100%; */
-  width: var(--width);
+  /* width: var(--width); */
   justify-self: center;
 
   /* padding-top: 78px; */
@@ -240,6 +246,7 @@ export const StyledRD = styled.div`
 `;
 
 export const StyledMainText = styled(Text)`
+  margin: 0 auto;
   --width: 764px;
   font-size: 20px;
 
@@ -298,6 +305,7 @@ export const StyledSecondaryPaddedText = styled(StyledMainText)`
 `;
 
 export const StyledSecondaryText = styled(Text)`
+  margin: 0 auto;
   --width: 578px;
   font-size: 20px;
 

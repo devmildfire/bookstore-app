@@ -57,12 +57,12 @@ const h21Style = css<StyledTextProps>`
 
 const h21LJStyle = css<StyledTextProps>`
   ${h21Style}
-  max-width: 480px;
+  max-width: 900px;
   /* align-self: left; */
   /* height: 294px; */
   /* margin-left: 250px; */
   font-size: 70px;
-  line-height: 1.4em !important;
+  line-height: 1.2em !important;
 
   @media ${breakPoints.xl} {
     font-size: 60px;
