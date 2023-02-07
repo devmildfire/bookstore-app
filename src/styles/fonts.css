@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Montserrat';
   src: url('../../public/fonts/Montserrat-ExtraBold.ttf') format('truetype');
-  font-style: normal;
+  font-style: bold;
   font-weight: 900;
 }
 @font-face {

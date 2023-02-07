@@ -14,10 +14,11 @@ const years = ['2023', '2022', '2021'];
 
 interface MultiselectProps {
   withInput?: boolean;
+  title: string;
 }
 
 export default function Multiselect(props: MultiselectProps): ReactElement {
-  const { withInput } = props;
+  const { withInput, title } = props;
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<string[]>(years);
   const [selected, setSelected] = useState<string[]>([]);
@@ -40,8 +41,8 @@ export default function Multiselect(props: MultiselectProps): ReactElement {
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <PopoverTrigger>
-        <p>Год издания</p>
+      <PopoverTrigger className={open ? 'open' : ''}>
+        <p>{title}</p>
         <span>&#9660;</span>
       </PopoverTrigger>
       <Popover.Portal>
@@ -49,7 +50,7 @@ export default function Multiselect(props: MultiselectProps): ReactElement {
           <Command loop label='Command Menu'>
             {withInput && <Command.Input autoFocus />}
             <Command.List>
-              {/* скорее всего лучше использовать Comman компоненты,
+              {/* скорее всего лучше использовать Command компоненты,
               чтобы облегчить handleRemove обработчик */}
               <SelectedList>
                 {selected.map((item, id) => (
@@ -77,7 +78,7 @@ export default function Multiselect(props: MultiselectProps): ReactElement {
             </Command.List>
           </Command>
           <ButtonsContainer>
-            <Button>Применить</Button>
+            {/* <Button>Применить</Button> */}
             <Button secondary>Сбросить</Button>
           </ButtonsContainer>
         </PopoverContent>

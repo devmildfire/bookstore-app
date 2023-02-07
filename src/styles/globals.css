@@ -15,7 +15,7 @@
   --main-red-20: rgba(147, 0, 0, 0.2);
   --main-red-10: rgba(147, 0, 0, 0.1);
 
-  --red-hover: #ca0000;
+  --red-hover: 0 0 15px 5px var(--main-red-60);
 
   --main-white-100: rgba(220, 220, 220, 1);
   --main-white-90: rgba(220, 220, 220, 0.9);
@@ -43,6 +43,12 @@
   --max-width: 1920px;
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
+
+  --font-xl: 24px;
+  --font-l: 20px;
+  --font-m: 16;
+  --font-s: 12px;
+  /* --heading-xl */
 }
 
 @media screen and (max-width: 1440px) {
@@ -79,13 +85,15 @@
 
 html,
 body {
+  /* display: flex;
+  justify-content: center; */
   font-family: 'Montserrat', sans-serif;
   font-style: normal;
-  color: #102327;
+  color: var(--main-white-100);
   width: 100%;
   min-height: 100%;
   scrollbar-gutter: stable;
-  background-color: #020202;
+  background-color: var(--main-black);
   margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
 }
 

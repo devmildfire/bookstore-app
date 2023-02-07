@@ -1,17 +1,31 @@
-import * as React from 'react';
-import Author from './Author';
-import { StyledFilterWrapper } from './styles';
-import Type from './Type';
-import Year from './Year';
+import React from 'react';
+import styled from 'styled-components';
+import Multiselect from '../Common/Multiselect';
 
-const Filters: React.FC = () => {
+const FiltersContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2rem 0;
+`;
+
+const FiltersGroup = styled.div`
+  display: flex;
+`;
+
+// const SortGroup = styled.div``;
+
+export default function Filters() {
   return (
-    <StyledFilterWrapper>
-      <Year />
-      <Type />
-      <Author />
-    </StyledFilterWrapper>
+    <FiltersContainer>
+      <FiltersGroup>
+        <Multiselect title='Тип издания' />
+        <Multiselect title='Год издания' />
+        <Multiselect title='Автор' withInput />
+      </FiltersGroup>
+      <div>
+        <Multiselect title='Сортировать' />
+      </div>
+    </FiltersContainer>
   );
-};
-
-export default React.memo(Filters);
+}

@@ -4,8 +4,7 @@ import * as Popover from '@radix-ui/react-popover';
 export const PopoverTrigger = styled(Popover.Trigger)`
   display: flex;
   position: relative;
-  z-index: 2;
-  background-color: var(--main-black);
+  background-color: transparent;
   align-items: center;
   gap: 1rem;
   color: var(--main-white-100);
@@ -14,8 +13,11 @@ export const PopoverTrigger = styled(Popover.Trigger)`
   font-size: 1rem;
   transition: 0.2s ease;
   cursor: pointer;
+  &.open {
+    z-index: 2;
+  }
   &:hover {
-    color: var(--red-hover);
+    color: var(--main-red-100);
   }
 
   & p {
@@ -48,7 +50,7 @@ export const PopoverContent = styled(Popover.Content)`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  z-index: 1;
+  /* z-index: 1; */
   color: var(--main-white-100);
   width: fit-content;
   padding: 64px 16px 16px;
@@ -65,8 +67,16 @@ export const PopoverContent = styled(Popover.Content)`
     font-variant-numeric: tabular-nums;
   }
   [cmdk-item][aria-selected='true'] {
-    color: var(--red-hover);
+    color: var(--main-red-100);
     /* border-color: var(--red-hover); */
+  }
+  [cmdk-input] {
+    background-color: transparent;
+    border: thin solid var(--main-red-100);
+    padding: 0.5rem;
+    color: var(--main-white-100);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
   }
   [cmdk-separator] {
     height: 1rem;

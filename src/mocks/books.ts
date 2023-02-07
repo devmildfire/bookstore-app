@@ -86,7 +86,7 @@ const book: Book = {
   price: 300,
   thesis: 'Если вы не успели попрощатся с бабулей, мы передадим Ваше сообщение',
   newPrice: 350,
-  image: '/images/chtivo-covers-opt/deleted.webp',
+  cover: '/images/chtivo-covers-opt/deleted.webp',
   banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
   trailerSrc: 'https://www.youtube.com/embed/RbE7vmnkWvU',
   description: [
@@ -112,7 +112,7 @@ const books: Book[] = [
     ageRestriction: '18+',
     price: 300,
     newPrice: null,
-    image: '/images/chtivo-covers-opt/aristotel-v-kazahstane.webp',
+    cover: '/images/chtivo-covers-opt/aristotel-v-kazahstane.webp',
     banner:
       'https://via.placeholder.com/500x780?text=Аристотель+в+Казахстане+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/VR5WN4deUcU',
@@ -137,8 +137,8 @@ const books: Book[] = [
     genre: 'роман',
     ageRestriction: '18+',
     price: 300,
-    newPrice: 350,
-    image: '/images/chtivo-covers-opt/deleted.webp',
+    newPrice: 250,
+    cover: '/images/chtivo-covers-opt/deleted.webp',
     banner: 'https://via.placeholder.com/500x780?text=DELETED+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/RbE7vmnkWvU',
     thesis:
@@ -165,7 +165,7 @@ const books: Book[] = [
     ageRestriction: '18+',
     price: 300,
     newPrice: null,
-    image: '/images/chtivo-covers-opt/craft.webp',
+    cover: '/images/chtivo-covers-opt/craft.webp',
     banner: 'https://via.placeholder.com/500x780?text=КРАФТ+хбдщдбдщ',
     trailerSrc: 'https://www.youtube.com/embed/6Wg-G_1bvi4',
     thesis: 'Любовь, смерть и каштаны',

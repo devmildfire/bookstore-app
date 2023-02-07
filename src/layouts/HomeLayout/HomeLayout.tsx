@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Container from '@/components/Common/Container';
+// import Container from '@/components/Common/Container';
 import Text from '@/components/Common/Text';
 // import ProductSlider from '@/components/ProductSlider';
 import {
-  StyledContentWrapper,
+  // StyledContentWrapper,
   // StyledNavigation,
   StyledWrapper,
 } from './styles';
@@ -18,14 +18,12 @@ const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
     <StyledWrapper>
       {/* <ProductSlider /> */}
       {/* <StyledNavigation /> */}
-      <StyledContentWrapper>
-        <Container>
-          <Text variant='h2_1' align='center'>
-            {title}
-          </Text>
-        </Container>
-        {children}
-      </StyledContentWrapper>
+      {/* <StyledContentWrapper> */}
+      <Text variant='h2_1' align='center'>
+        {title}
+      </Text>
+      {children}
+      {/* </StyledContentWrapper> */}
     </StyledWrapper>
   );
 };
