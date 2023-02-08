@@ -8,7 +8,9 @@ import gradientBottom from '@/assets/images/gradient.png';
 import gradientTop from '@/assets/images/gradient_top_grey.png';
 
 export const StyledWrapper = styled.section`
-  outline: 1px solid green;
+  * {
+    outline: 1px solid green;
+  }
   /* display: grid; */
   /* display: flex; */
 
@@ -82,6 +84,7 @@ export const StyledWrapper = styled.section`
   }
 
   @media ${breakPoints.lg} {
+    aspect-ratio: 1024/681;
     > img {
       height: 1050px;
     }
@@ -106,9 +109,9 @@ export const StyledContent = styled.div`
   position: absolute;
   /* margin: auto auto; */
   /* aspect-ratio: 1080/684; */
-  height: var(--box-height);
+  min-height: var(--box-height);
   width: var(--box-width);
-  top: calc(50% - var(--box-height) / 2);
+  top: calc(55% - var(--box-height) / 2);
   left: calc(50% - var(--box-width) / 2);
 
   background: linear-gradient(
@@ -129,8 +132,8 @@ export const StyledContent = styled.div`
   justify-content: center;
 
   @media ${breakPoints.xl} {
-    --box-height: calc(90%);
-    --box-width: calc(80%);
+    --box-height: calc(684 / 1080 * 100%);
+    --box-width: calc(684 / 1080 * 100%);
     /* gap: 15px;
     height: calc(440px + var(--RDOffset));
     margin-top: 40px;
@@ -141,6 +144,8 @@ export const StyledContent = styled.div`
   }
 
   @media ${breakPoints.lg} {
+    --box-height: calc(428 / 681 * 100%);
+    --box-width: calc(665 / 1024 * 100%);
     /* margin-top: 30px;
     gap: 30px;
     height: 345px;

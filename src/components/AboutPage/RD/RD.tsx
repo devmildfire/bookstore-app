@@ -29,7 +29,7 @@ import litMagIcon from '@/assets/icons/litmagIcon.svg';
 const StyledButton = styled(Button)`
   /* min-width: 245px; */
   /* margin-top: 25px; */
-  margin: 5% auto;
+  margin: 2% auto;
 
   max-height: 62px;
   min-height: 62px;
@@ -42,12 +42,14 @@ const StyledButton = styled(Button)`
       align-self: center;
     }
   } */
+  @media ${breakPoints.xl} {
+    align-self: center;
+  }
 
   @media ${breakPoints.lg} {
     align-self: center;
-    margin-right: auto;
-    margin-top: 0px;
-    min-width: 287px;
+    margin: 0.5% auto 2% auto;
+    min-width: 300px;
     max-height: 45px;
     min-height: 45px;
   }
@@ -80,25 +82,62 @@ const RDIcon = styled.svg`
   --logo-height: 70px; */
 
   @media ${breakPoints.xl} {
-    height: 80px;
-  }
-
-  @media ${breakPoints.lg} {
     height: 70px;
   }
 
+  @media ${breakPoints.lg} {
+    height: 45px;
+  }
+
   @media ${breakPoints.md} {
-    height: 65px;
+    height: 35px;
   }
 
   @media ${breakPoints.sm} {
-    height: 50px;
+    height: 25px;
   }
 `;
 
-// const RDLogo = () => {
-//   return <img src={litMagIcon} alt='SVG logo' />;
-// };
+const GradientUpper = styled.div`
+  position: absolute;
+  top: 0%;
+  height: calc(436 / 1080 * 100%);
+  width: 100%;
+  z-index: 50;
+
+  background: linear-gradient(
+    180deg,
+    #121212 34.18%,
+    rgba(18, 18, 18, 0.83) 54.72%,
+    rgba(18, 18, 18, 0.345207) 77.1%,
+    rgba(18, 18, 18, 0) 93.04%
+  );
+`;
+
+const GradientLower = styled.div`
+  position: absolute;
+  bottom: calc(0% - 71 / 1080 * 100%);
+  height: calc(436 / 1080 * 100%);
+  width: 100%;
+  z-index: 50;
+
+  background: linear-gradient(
+    180deg,
+    #000000 23.39%,
+    rgba(0, 0, 0, 0.72) 57.8%,
+    rgba(0, 0, 0, 0) 91.74%
+  );
+  transform: matrix(1, 0, 0, -1, 0, 0);
+`;
+
+const Gradients = () => {
+  return (
+    <>
+      <GradientUpper />
+      <GradientLower />
+    </>
+  );
+};
 
 const RD = (): React.ReactElement => {
   const ref = useRef(null);
@@ -115,6 +154,8 @@ const RD = (): React.ReactElement => {
 
   return (
     <StyledWrapper ref={ref}>
+      <Gradients />
+
       <motion.img
         className='image'
         src={litMagazineBack.src}
@@ -124,6 +165,7 @@ const RD = (): React.ReactElement => {
 
       <StyledContent>
         <RDIcon as={litMagIcon as any} />
+
         <Text variant='h2_1_LJ' align='center'>
           Литжурнал
           <br />
@@ -136,6 +178,7 @@ const RD = (): React.ReactElement => {
           <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
           {string3}
         </StyledMainText>
+
         <StyledSecondaryText variant='text' align='center'>
           Лучшие рассказы года попадают в&nbsp;ежегодник «
           <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
@@ -143,6 +186,7 @@ const RD = (): React.ReactElement => {
           </a>
           ».
         </StyledSecondaryText>
+
         <StyledButton>Литжурнал Русского Динозавра</StyledButton>
       </StyledContent>
     </StyledWrapper>

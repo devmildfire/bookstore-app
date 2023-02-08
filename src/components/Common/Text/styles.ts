@@ -65,14 +65,16 @@ const h21LJStyle = css<StyledTextProps>`
   line-height: 1.2em !important;
 
   @media ${breakPoints.xl} {
-    font-size: 60px;
-    width: var(--width);
-    margin: 0 0 auto 0;
+    font-size: 50px;
+    max-width: 700px;
+    /* width: var(--width); */
+    /* margin: 0 0 auto 0; */
   }
 
   @media ${breakPoints.lg} {
     font-size: 40px;
-    line-height: 1.2em !important;
+    max-width: 500px;
+    /* line-height: 1.2em !important; */
   }
 
   @media ${breakPoints.smd} {
