@@ -52,11 +52,11 @@ export const PopoverContent = styled(Popover.Content)`
   gap: 1rem;
   /* z-index: 1; */
   color: var(--main-white-100);
-  width: fit-content;
+  width: 100%;
   padding: 64px 16px 16px;
   border-radius: 4px;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-  min-width: 128px;
+  min-width: 160px;
   max-width: 350px;
   [cmdk-item] {
     font-size: 1rem;

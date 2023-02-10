@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable jsx-a11y/no-redundant-roles */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-// import "./grid-styles.css";
 import React, {
   useEffect,
   useMemo,
@@ -11,14 +10,21 @@ import React, {
 } from 'react';
 import ProductCard from '../ProductCard';
 import {
-  // CardConta iner,
-  // Cover,
   GridContainer,
   Preview,
   RowContainer,
   RowItem,
+  CloseButton,
+  // Image,
+  Title,
+  Author,
+  Slogan,
+  Description,
+  Box,
+  DescriptionBox,
+  Button,
 } from './styles';
-// import { ProductCardProps } from '../ProductCard/ProductCard';
+import CloseIcon from '@/assets/icons/cross.svg';
 import { Book } from '@/models/books';
 
 const useScreenSize = () => {
@@ -57,36 +63,10 @@ const useScrollTo = (element: HTMLElement | null, ready: boolean) => {
   }, [element, ready]);
 };
 
-// interface CardProps {
-//   url: string;
-//   onClick: () => void;
-//   onEnterKey: (event: ReactKeyEvent) => void;
-// }
-
-// function Card({ url, onClick, onEnterKey }: CardProps) {
-//   return (
-//     <CardContainer
-//       role='listitem'
-//       tabIndex={0}
-//       onClick={onClick}
-//       onKeyDown={onEnterKey}
-//       className='card'
-//     >
-//       <Cover className='cover' src={url} alt='' />
-//     </CardContainer>
-//   );
-// }
-
 interface RowProps {
   row: Book[];
   data: Book[];
 }
-
-// const onKey = (pressed: string, key: string, callback: (x: number) => void) => {
-//   if (pressed === key) {
-//     callback(callback.arguments);
-//   }
-// };
 
 function Row({ row, data }: RowProps) {
   const [preview, setPreview] = useState<Book>();
@@ -143,23 +123,31 @@ function Row({ row, data }: RowProps) {
       <div ref={previewRef}>
         {isOpen && preview && (
           <Preview
+            url={preview.cover}
             className={isOpen ? 'visible' : 'hidden'}
             width={document.body.clientWidth}
           >
-            <div>
-              <div>
-                <h2>{preview.title}</h2>
-                <p>{preview.authors.map((author) => author.name).join(', ')}</p>
-                <p>{preview.thesis}</p>
-              </div>
-              <div>
-                <p>{preview.description}</p>
-              </div>
-              <button type='button'>Познать</button>
-            </div>
-            <button onClick={close} type='button'>
-              close
-            </button>
+            <Box gap={32}>
+              <Box gap={12}>
+                <Title>{preview.title}</Title>
+                <Author>
+                  {preview.authors.map((author) => author.name).join(', ')}
+                </Author>
+                <Slogan>{preview.thesis}</Slogan>
+              </Box>
+              <DescriptionBox>
+                <Description>{preview.description}</Description>
+              </DescriptionBox>
+              <Button type='button'>Познать</Button>
+            </Box>
+            {/* <Image
+              url={preview.cover}
+              // src={preview.cover}
+              // alt={preview.title}
+            /> */}
+            <CloseButton onClick={close} type='button'>
+              <CloseIcon />
+            </CloseButton>
           </Preview>
         )}
       </div>
