@@ -35,7 +35,7 @@ export const StyledForm = styled.form`
   @media ${breakPoints.sm} {
     grid-template-columns: 1fr;
     gap: 4px;
-    row-gap: 4px;
+    row-gap: 16px;
   }
 `;
 

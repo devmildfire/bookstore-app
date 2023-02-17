@@ -30,7 +30,7 @@ export const StyledForm = styled.form`
 
   @media ${breakPoints.sm} {
     grid-template-columns: auto;
-    gap: 5px 12px;
+    gap: 16px 12px;
     width: 285px;
   }
 `;
