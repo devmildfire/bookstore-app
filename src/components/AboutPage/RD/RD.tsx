@@ -27,13 +27,18 @@ import litMagIcon from '@/assets/icons/litmagIcon.svg';
 // import { string } from 'prop-types';
 
 const StyledButton = styled(Button)`
+  p {
+    padding: 0;
+  }
   /* min-width: 245px; */
   /* margin-top: 25px; */
+  max-width: var(--box-width);
+  width: calc(0.45 * var(--box-width));
   margin: 2% auto;
 
   max-height: 62px;
   min-height: 62px;
-  min-width: 472px;
+  /* min-width: 472px; */
 
   /* &:last-child {
     width: 480;
@@ -42,30 +47,44 @@ const StyledButton = styled(Button)`
       align-self: center;
     }
   } */
-  @media ${breakPoints.xl} {
+  @media ${breakPoints.xxl} {
     align-self: center;
+    width: calc(0.6 * var(--box-width));
+    max-height: 45px;
+    min-height: 45px;
   }
 
   @media ${breakPoints.lg} {
     align-self: center;
     margin: 0.5% auto 2% auto;
-    min-width: 300px;
-    max-height: 45px;
-    min-height: 45px;
+    /* min-width: 300px; */
+    max-height: 32px;
+    min-height: 32px;
+    width: calc(0.45 * var(--box-width));
+  }
+
+  @media ${breakPoints.md} {
+    align-self: center;
+    margin-right: auto;
+    /* min-width: 287px; */
+    max-height: 32px;
+    min-height: 32px;
+    width: calc(0.6 * var(--box-width));
   }
 
   @media ${breakPoints.smd} {
     align-self: center;
     margin-right: auto;
-    min-width: 287px;
+    /* min-width: 287px; */
     max-height: 32px;
     min-height: 32px;
+    width: calc(0.7 * var(--box-width));
   }
 
   @media ${breakPoints.sm} {
     margin: 0 auto;
     align-self: center;
-    min-width: 100%;
+    padding: 0;
   }
 `;
 
@@ -76,21 +95,22 @@ const string3 = ' — нашего творческого объединения
 const RDIcon = styled.svg`
   stroke: var(--main-white-100);
   margin: 0 auto;
-  height: 97px;
+  height: 85px;
+  width: auto;
   /* transform-origin: center center; */
   /* 
   --logo-height: 70px; */
 
-  @media ${breakPoints.xl} {
-    height: 70px;
+  @media ${breakPoints.xxl} {
+    height: calc(4.464285vw - 0.71428px);
   }
 
   @media ${breakPoints.lg} {
-    height: 45px;
+    height: calc(2.142857vw + 23.05714px);
   }
 
-  @media ${breakPoints.md} {
-    height: 35px;
+  @media ${breakPoints.smd} {
+    height: calc(3.301886vw + 14.43396px);
   }
 
   @media ${breakPoints.sm} {
@@ -150,7 +170,7 @@ const RD = (): React.ReactElement => {
   //   scrollYProgress.onChange((v) => setHookedYPosition(v));
   // }, [scrollYProgress, setHookedYPosition]);
 
-  const y = useTransform(scrollYProgress, [1, 0], ['-70%', '0%']);
+  const y = useTransform(scrollYProgress, [1, 0], ['-40%', '40%']);
 
   return (
     <StyledWrapper ref={ref}>
@@ -175,19 +195,23 @@ const RD = (): React.ReactElement => {
         <StyledMainText variant='text' align='center'>
           {string1}
           {s2}
-          <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
+          {/* <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a> */}
+          <a href='https://russiandino.ru/'>Русский Динозавр</a>
           {string3}
         </StyledMainText>
 
         <StyledSecondaryText variant='text' align='center'>
           Лучшие рассказы года попадают в&nbsp;ежегодник «
           <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
-            Могучий&nbsp;Русский&nbsp;Динозавр
+            Могучий Русский Динозавр
+            {/* Могучий&nbsp;Русский&nbsp;Динозавр */}
           </a>
           ».
         </StyledSecondaryText>
 
-        <StyledButton>Литжурнал Русского Динозавра</StyledButton>
+        <StyledButton variant='lJbuttonText'>
+          Литжурнал Русского Динозавра
+        </StyledButton>
       </StyledContent>
     </StyledWrapper>
   );

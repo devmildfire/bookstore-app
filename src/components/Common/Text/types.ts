@@ -15,6 +15,7 @@ export type Variant =
   | 'text_italic'
   | 'paddedText'
   | 'buttonText'
+  | 'lJbuttonText'
   | 'h4_1'
   | 'h4_2'
   | 'h4_3'

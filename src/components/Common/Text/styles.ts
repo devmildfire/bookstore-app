@@ -55,26 +55,19 @@ const h21Style = css<StyledTextProps>`
   }
 `;
 
+// Это специальный стиль для заголовка блока литжурнала на странице О Чтиве
 const h21LJStyle = css<StyledTextProps>`
   ${h21Style}
-  max-width: 900px;
-  /* align-self: left; */
-  /* height: 294px; */
-  /* margin-left: 250px; */
+  max-width: calc(0.9*var(--box-width));
   font-size: 70px;
   line-height: 1.2em !important;
 
-  @media ${breakPoints.xl} {
+  @media ${breakPoints.xxl} {
     font-size: 50px;
-    max-width: 700px;
-    /* width: var(--width); */
-    /* margin: 0 0 auto 0; */
   }
 
   @media ${breakPoints.lg} {
     font-size: 40px;
-    max-width: 500px;
-    /* line-height: 1.2em !important; */
   }
 
   @media ${breakPoints.smd} {
@@ -82,7 +75,6 @@ const h21LJStyle = css<StyledTextProps>`
   }
 
   @media ${breakPoints.sm} {
-    width: calc(var(--width) - 10%);
     font-size: 24px;
   }
 `;
@@ -331,6 +323,38 @@ const buttonTextStyle = css<StyledTextProps>`
   @media ${breakPoints.sm} {
     /* padding: 0 20px; */
     font-size: 10px;
+    padding: 0;
+  }
+`;
+
+const lJbuttonTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  padding: 0;
+  font-size: 16px;
+
+  @media ${breakPoints.xxl} {
+    font-size: 12px;
+    /* padding: 0 30px; */
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 10px;
+    /* padding: 0 25px; */
+  }
+
+  @media ${breakPoints.md} {
+    /* padding: 0 20px; */
+    /* font-size: 12px; */
+  }
+
+  @media ${breakPoints.smd} {
+    /* padding: 0 20px; */
+    /* font-size: 10px; */
+  }
+
+  @media ${breakPoints.sm} {
+    /* padding: 0 20px; */
+    /* font-size: 10px; */
   }
 `;
 
@@ -448,6 +472,7 @@ const styles: Record<
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
   buttonText: buttonTextStyle,
+  lJbuttonText: lJbuttonTextStyle,
   h4_1: h41Style,
   h4_2: h42Style,
   h4_3: h43Style,
@@ -472,6 +497,7 @@ export const tagMap: Record<Variant, string> = {
   text_italic: 'p',
   paddedText: 'p',
   buttonText: 'p',
+  lJbuttonText: 'p',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',
