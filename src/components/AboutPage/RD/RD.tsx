@@ -209,9 +209,7 @@ const RD = (): React.ReactElement => {
           ».
         </StyledSecondaryText>
 
-        <StyledButton variant='lJbuttonText'>
-          Литжурнал Русского Динозавра
-        </StyledButton>
+        <StyledButton>Литжурнал Русского Динозавра</StyledButton>
       </StyledContent>
     </StyledWrapper>
   );
