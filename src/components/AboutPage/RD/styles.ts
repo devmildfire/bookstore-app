@@ -8,10 +8,10 @@ import gradientBottom from '@/assets/images/gradient.png';
 import gradientTop from '@/assets/images/gradient_top_grey.png';
 
 export const StyledWrapper = styled.section`
-  * {
+  /* * {
     outline: 1px solid green;
-  }
-  outline: 1px solid green;
+  } */
+  /* outline: 1px solid green; */
   /* display: grid; */
   /* display: flex; */
 
