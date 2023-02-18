@@ -128,6 +128,7 @@ export const StyledContent = styled.div`
   width: var(--box-width);
   top: calc(55% - var(--box-height) / 2);
   left: calc(50% - var(--box-width) / 2);
+  padding: 40px 0;
 
   background: linear-gradient(
     113.04deg,
@@ -166,6 +167,7 @@ export const StyledContent = styled.div`
   @media ${breakPoints.lg} {
     --box-width: calc(46.42857vw + 157.5714px);
     --box-height: calc(29.28571429vw + 137.1142857px);
+    padding: 20px 0;
     /* margin-top: 30px;
     gap: 30px;
     height: 345px;

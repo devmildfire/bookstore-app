@@ -167,9 +167,9 @@ const RD = (): React.ReactElement => {
     offset: ['end start', 'start end'],
   });
   const scrollYProgressSpring = useSpring(scrollYProgress, {
-    stiffness: 500,
-    damping: 300,
-    restDelta: 0.001,
+    stiffness: 400,
+    damping: 50,
+    // restDelta: 0.001,
   });
   // const [hookedYPostion, setHookedYPosition] = React.useState(0);
   // React.useEffect(() => {
