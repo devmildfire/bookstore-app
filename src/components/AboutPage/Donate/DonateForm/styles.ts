@@ -37,7 +37,7 @@ export const StyledForm = styled.form`
 
 export const StyledButton = styled(Button)`
   max-width: 900px;
-  margin-left: auto;
+  /* margin-left: auto; */
 
   @media ${breakPoints.xl} {
     max-width: 720px;

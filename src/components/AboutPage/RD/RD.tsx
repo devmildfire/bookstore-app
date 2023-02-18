@@ -4,6 +4,7 @@ import {
   useScroll,
   motion,
   useTransform,
+  useSpring,
   // useViewportScroll,
   // useMotionValueEvent,
 } from 'framer-motion';
@@ -165,12 +166,18 @@ const RD = (): React.ReactElement => {
     target: ref,
     offset: ['end start', 'start end'],
   });
+  const scrollYProgressSpring = useSpring(scrollYProgress, {
+    stiffness: 500,
+    damping: 300,
+    restDelta: 0.001,
+  });
   // const [hookedYPostion, setHookedYPosition] = React.useState(0);
   // React.useEffect(() => {
   //   scrollYProgress.onChange((v) => setHookedYPosition(v));
   // }, [scrollYProgress, setHookedYPosition]);
 
-  const y = useTransform(scrollYProgress, [1, 0], ['-40%', '40%']);
+  // const y = useTransform(scrollYProgress, [1, 0], ['-40%', '40%']);
+  const y = useTransform(scrollYProgressSpring, [1, 0], ['-40%', '40%']);
 
   return (
     <StyledWrapper ref={ref}>

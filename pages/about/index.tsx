@@ -43,9 +43,9 @@ const About: NextPage = () => (
 export default About;
 
 const VideoContainer = styled(Container)`
-  /* height: calc(var(--width) * 9 / 16 - var(--top-div-gap)); */
-  height: calc(var(--width) * 9 / 16);
   width: var(--width);
+  display: grid;
+  justify-items: center;
 `;
 
 const StyledWrapper = styled.main`
@@ -100,6 +100,9 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledStarsBlock = styled.section`
+  * {
+    outline: 1px solid green;
+  }
   display: flex;
   flex-direction: column;
   gap: 130px;

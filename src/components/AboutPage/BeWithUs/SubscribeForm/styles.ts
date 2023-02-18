@@ -4,9 +4,8 @@ import Button from '@/components/Common/Button';
 
 export const StyledForm = styled.form`
   display: grid;
-  /* grid-template-columns: minmax(220px, 630px) min-content; */
   grid-template-columns: auto min-content;
-  column-gap: 20px;
+  column-gap: 24px;
   row-gap: 10px;
   margin: 0 auto;
   max-width: 879px;
@@ -40,7 +39,7 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledButton = styled(Button)`
-  margin: 0 auto;
+  /* margin: 0 auto; */
 
   @media ${breakPoints.lg} {
     /* width: 100%; */
@@ -50,7 +49,7 @@ export const StyledButton = styled(Button)`
 
     height: 45px;
     min-height: 45px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
   }
 
   @media ${breakPoints.smd} {

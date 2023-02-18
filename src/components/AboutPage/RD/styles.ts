@@ -102,7 +102,8 @@ export const StyledWrapper = styled.section`
   }
 
   @media ${breakPoints.smd} {
-    height: calc(20.28vw + 451.0943px);
+    /* height: calc(20.28vw + 451.0943px); */
+    height: calc(-4.669vw + 949.43px);
     > img {
       /* height: 825px; */
     }
@@ -179,14 +180,19 @@ export const StyledContent = styled.div`
     /* height: 195px;
     padding-left: 0px;
     padding-right: 0px; */
+    gap: 10px 0;
   }
 
   @media ${breakPoints.smd} {
     --box-width: calc(62.26415vw + 39.75px);
     --box-height: calc(-5.188679245vw + 393.6037736px);
+    padding: 10px 12px;
+    gap: 10px 0;
   }
 
   @media ${breakPoints.sm} {
+    gap: 10px 0;
+
     /* margin-top: 15px;
     grid-template-rows: repeat(3, min-content);
     gap: 15px;
@@ -280,7 +286,7 @@ export const StyledMainText = styled(Text)`
   max-width: calc(0.7 * var(--box-width));
   font-size: 18px;
 
-  width: var(--width);
+  /* width: var(--width); */
 
   @media ${breakPoints.xxl} {
     font-size: 16px;
@@ -298,14 +304,19 @@ export const StyledMainText = styled(Text)`
   }
 
   @media ${breakPoints.smd} {
-    max-width: calc(0.97 * var(--box-width));
+    /* max-width: calc(0.97 * var(--box-width)); */
+    max-width: calc(0.9 * var(--box-width));
     font-size: 14px;
   }
 
   @media ${breakPoints.sm} {
-    max-width: calc(0.95 * var(--box-width));
+    /* max-width: calc(0.95 * var(--box-width)); */
+    /* max-width: unset; */
+    /* max-width: 212px; */
     font-size: 12px;
+    line-height: 142%;
     text-align: left;
+    letter-spacing: 0em;
   }
 `;
 
@@ -366,13 +377,14 @@ export const StyledSecondaryText = styled(Text)`
     max-width: calc(0.9 * var(--box-width));
     font-size: 14px;
     text-align: left;
-    margin: 0 auto 0 calc(0.005 * var(--box-width));
+    /* margin: 0 auto 0 calc(0.005 * var(--box-width)); */
   }
 
   @media ${breakPoints.sm} {
-    max-width: calc(0.63 * var(--box-width));
+    /* max-width: 300px; */
     font-size: 12px;
+    line-height: 142%;
     text-align: left;
-    margin: 0 auto 0 calc(0.09 * var(--box-width));
+    letter-spacing: 0em;
   }
 `;
