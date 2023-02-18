@@ -371,12 +371,13 @@ export const StyledSecondaryText = styled(Text)`
 
   @media ${breakPoints.md} {
     /* --width: 500px; */
+    text-align: center;
   }
 
   @media ${breakPoints.smd} {
     max-width: calc(0.9 * var(--box-width));
     font-size: 14px;
-    text-align: left;
+
     /* margin: 0 auto 0 calc(0.005 * var(--box-width)); */
   }
 
