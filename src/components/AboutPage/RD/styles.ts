@@ -136,8 +136,8 @@ export const StyledContent = styled.div`
     rgba(0, 0, 0, 0.6) 98.54%
   );
 
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  /* -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); */
 
   border-radius: 4px;
 
