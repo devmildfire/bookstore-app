@@ -40,6 +40,7 @@ export const StyledWrapper = styled.section`
     object-fit: cover;
     height: 100%;
     z-index: 10;
+    will-change: scroll-position;
   }
 
   /* aspect-ratio: 48/27;  */
