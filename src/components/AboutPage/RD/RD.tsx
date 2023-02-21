@@ -167,7 +167,7 @@ const RD = (): React.ReactElement => {
     offset: ['end start', 'start end'],
   });
   const scrollYProgressSpring = useSpring(scrollYProgress, {
-    stiffness: 300,
+    stiffness: 350,
     damping: 100,
     // restDelta: 0.001,
   });
