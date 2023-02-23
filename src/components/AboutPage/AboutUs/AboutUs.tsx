@@ -117,27 +117,27 @@ const StyledDescription = styled(Text)`
   }
 `;
 
-const StyledDescriptionTop = styled(Text)`
-  max-width: 750px;
+// const StyledDescriptionTop = styled(Text)`
+//   max-width: 750px;
 
-  @media ${breakPoints.xl} {
-    max-width: 550px;
-  }
+//   @media ${breakPoints.xl} {
+//     max-width: 550px;
+//   }
 
-  @media ${breakPoints.lg} {
-    max-width: 550px;
-  }
+//   @media ${breakPoints.lg} {
+//     max-width: 550px;
+//   }
 
-  @media ${breakPoints.md} {
-  }
+//   @media ${breakPoints.md} {
+//   }
 
-  @media ${breakPoints.smd} {
-    max-width: 450px;
-  }
+//   @media ${breakPoints.smd} {
+//     max-width: 450px;
+//   }
 
-  @media ${breakPoints.sm} {
-  }
-`;
+//   @media ${breakPoints.sm} {
+//   }
+// `;
 
 const StyledSection = styled('section')`
   margin-top: 0px;
@@ -170,14 +170,19 @@ const AboutUs = () => (
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      <StyledDescriptionTop variant='aboutText'>
+      {/* <StyledDescriptionTop variant='aboutText'>
         <p>
           Независимое издательство Чтиво — дитя петербургского литандеграунда и
           сети интернет, увидевшее свет в 2017 году.
         </p>
-      </StyledDescriptionTop>
+      </StyledDescriptionTop> */}
       <div>
         <StyledDescription variant='aboutText'>
+          <p>
+            Независимое издательство Чтиво — дитя петербургского литандеграунда
+            и сети интернет, увидевшее свет в 2017 году.
+          </p>
+          <br />
           <p>
             Мы отбираем произведения для издания вне зависимости от известности
             автора, работаем с несерийными и неформальными текстами и считаем,
