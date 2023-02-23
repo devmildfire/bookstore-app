@@ -40,7 +40,7 @@ export const StyledWrapper = styled.section`
     object-fit: cover;
     height: 100%;
     z-index: 10;
-    will-change: scroll-position;
+    will-change: transform;
   }
 
   /* aspect-ratio: 48/27;  */
@@ -137,8 +137,8 @@ export const StyledContent = styled.div`
     rgba(0, 0, 0, 0.6) 98.54%
   );
 
-  /* -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px); */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 
   border-radius: 4px;
 

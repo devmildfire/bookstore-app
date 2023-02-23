@@ -100,9 +100,9 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledStarsBlock = styled.section`
-  * {
+  /* * {
     outline: 1px solid green;
-  }
+  } */
   display: flex;
   flex-direction: column;
   gap: 130px;

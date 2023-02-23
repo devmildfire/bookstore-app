@@ -203,14 +203,14 @@ const RD = (): React.ReactElement => {
           {string1}
           {s2}
           {/* <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a> */}
-          <a href='https://russiandino.ru/'>Русский Динозавр</a>
+          <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
           {string3}
         </StyledMainText>
 
         <StyledSecondaryText variant='text' align='center'>
           Лучшие рассказы года попадают в&nbsp;ежегодник «
           <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
-            Могучий Русский Динозавр
+            Могучий&nbsp;Русский&nbsp;Динозавр
             {/* Могучий&nbsp;Русский&nbsp;Динозавр */}
           </a>
           ».
