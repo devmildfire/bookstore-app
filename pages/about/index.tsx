@@ -127,6 +127,11 @@ const StyledStarsBlock = styled.section`
     background: black;
   }
 
+  @media ${breakPoints.xxl} {
+    aspect-ratio: 1920/2800;
+    /* gap: 120px; */
+  }
+
   @media ${breakPoints.xl} {
     aspect-ratio: auto;
     /* gap: 120px; */
