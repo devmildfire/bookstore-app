@@ -14,6 +14,8 @@ export const MarqueeWrapper = styled.div<ContainerProps>`
   align-items: flex-start;
   gap: var(--gap);
   height: auto;
+
+  overflow: hidden;
 `;
 
 interface ContentProps {

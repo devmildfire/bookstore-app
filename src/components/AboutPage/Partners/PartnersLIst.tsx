@@ -1,50 +1,41 @@
 import React from 'react';
 // import { useContext } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 // import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
-import breakPoints from '@/utils/breakPoints';
-import Slide from '@/components/Common/Slide';
-import Slider from '@/components/Common/Slider';
+// import breakPoints from '@/utils/breakPoints';
+// import Slide from '@/components/Common/Slide';
+// import Slider from '@/components/Common/Slider';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
+import Marquee from '@/components/Common/Marquee';
 // import WindowWiderThan from './ScreenSize';
 
 // стилизованный слайдер с параметрами элементов пагинации
-const StyledSlider = styled(Slider)`
-  --swiper-pagination-bullet-horizontal-gap: 35px;
-  --size: 6px;
-  .swiper-wrapper {
-    transition-timing-function: linear;
-  }
+// const StyledSlider = styled(Slider)`
+//   --swiper-pagination-bullet-horizontal-gap: 35px;
+//   --size: 6px;
+//   .swiper-wrapper {
+//     transition-timing-function: linear;
+//   }
 
-  @media ${breakPoints.lg} {
-    --swiper-pagination-bullet-horizontal-gap: 30px;
-    --size: 4px;
-  }
+//   @media ${breakPoints.lg} {
+//     --swiper-pagination-bullet-horizontal-gap: 30px;
+//     --size: 4px;
+//   }
 
-  @media ${breakPoints.sm} {
-    --swiper-pagination-bullet-horizontal-gap: 20px;
-    --size: 2px;
-  }
-`;
+//   @media ${breakPoints.sm} {
+//     --swiper-pagination-bullet-horizontal-gap: 20px;
+//     --size: 2px;
+//   }
+// `;
 
 const PartnersList = (): React.ReactElement => {
   return (
-    <StyledSlider
-      // withoutPagination={isTabletVertical || isMobile}
-      withoutPagination
-      // slidesPerView={count}
-      slidesPerView='auto'
-      speed={10000}
-      duration={0}
-      reverseDirection
-    >
+    <Marquee speed={150} gap={0} direction='reverse' delay={0}>
       {partners.map((partner) => (
-        <Slide key={partner.id}>
-          <PartnerCard {...partner} />
-        </Slide>
+        <PartnerCard {...partner} />
       ))}
-    </StyledSlider>
+    </Marquee>
   );
 };
 

@@ -28,6 +28,16 @@ const StyledCard = styled.div`
     margin-top: 5px;
   }
 
+  img {
+    pointer-events: none;
+  }
+
+  :hover > img {
+    -webkit-filter: grayscale(0%);
+    -moz-filter: grayscale(0%);
+    filter: grayscale(0%);
+  }
+
   @media ${breakPoints.lg} {
     width: 200px;
     margin: 0 35px;
@@ -68,12 +78,6 @@ const StyledPhoto = styled.img`
 
   margin-bottom: 25px;
   transition: all 0.5s ease;
-
-  /* :hover {
-    -webkit-filter: grayscale(0%);
-    -moz-filter: grayscale(0%);
-    filter: grayscale(0%);
-  } */
 
   @media ${breakPoints.xl} {
     /* --size: 280px; */
