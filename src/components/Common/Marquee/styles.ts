@@ -18,7 +18,7 @@ export const MarqueeWrapper = styled.div<ContainerProps>`
 
 interface ContentProps {
   direction: string;
-  speed: number;
+  time: number;
   delay: number;
 }
 
@@ -30,7 +30,7 @@ export const MarqueeContent = styled.ul<ContentProps>`
   gap: var(--gap);
   list-style: none;
 
-  animation: scroll ${(props) => props.speed}s linear infinite;
+  animation: scroll ${(props) => props.time}s linear infinite;
   animation-direction: ${(props) => props.direction};
   animation-delay: -${(props) => props.delay}s;
 
