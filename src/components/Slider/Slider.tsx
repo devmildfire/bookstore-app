@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, wrap } from 'framer-motion';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -122,6 +122,15 @@ function Pagination({ index }: { index: number }) {
   );
 }
 
+const ifPageHasFocus = <T extends unknown>(
+  callback: (arg: T) => void,
+  arg: T
+) => {
+  if (document?.hasFocus()) {
+    callback(arg);
+  }
+};
+
 export default function Slider() {
   const [[page, direction], setPage] = useState([0, 0]);
   const bookIndex = wrap(0, books.length, page);
@@ -130,15 +139,15 @@ export default function Slider() {
     setPage([page + newDirection, newDirection]);
   };
 
-  const handlePaginate = () => {
-    if (document.hasFocus()) {
-      paginate(1);
-    }
-  };
+  const handlePaginate = useCallback(() => {
+    ifPageHasFocus<number>(paginate, 1);
+  }, [page]);
 
-  useLayoutEffect(() => {
-    console.log(document.hasFocus());
-    setTimeout(handlePaginate, 1000);
+  useEffect(() => {
+    const autoSlide = setInterval(handlePaginate, 5000);
+    return () => {
+      clearInterval(autoSlide);
+    };
   }, [page]);
 
   return (
