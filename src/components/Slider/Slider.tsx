@@ -20,12 +20,10 @@ const variants = {
     };
   },
   center: {
-    zIndex: 1,
     x: 0,
   },
   exit: (direction: number) => {
     return {
-      zIndex: 0,
       x: direction < 0 ? window.innerWidth : -window.innerWidth,
     };
   },

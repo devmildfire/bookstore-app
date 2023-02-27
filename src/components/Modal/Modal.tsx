@@ -11,20 +11,21 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { DialogOverlay, DialogContent } from './styles';
 import Text from '../Common/Text';
 import AudioIcon from '@/assets/icons/audio.svg';
-// import BookTwoIcon from '@/assets/icons/book2.svg';
-// import BookIcon from '@/assets/icons/book.svg';
-// import DigitalIcon from '@/assets/icons/digital.svg';
+import BookTwoIcon from '@/assets/icons/book2.svg';
+import BookIcon from '@/assets/icons/book.svg';
+import DigitalIcon from '@/assets/icons/digital.svg';
+import Button from '../Common/Button';
 
-// interface LookupPros {
-//   [key: string]: ReactNode;
-// }
+interface LookupPros {
+  [key: string]: ReactNode;
+}
 
-// const modalIconLookup: LookupPros = {
-//   audio: AudioIcon,
-//   book2: BookTwoIcon,
-//   write: BookIcon,
-//   digital: DigitalIcon,
-// };
+const modalIconLookup: LookupPros = {
+  audio: <AudioIcon />,
+  book2: <BookTwoIcon />,
+  write: <BookIcon />,
+  digital: <DigitalIcon />,
+};
 
 interface BookModalState {
   title: string;
@@ -58,7 +59,15 @@ function makeMap<V = unknown>(obj: Record<string, V>) {
   return new Map<string, V>(Object.entries(obj));
 }
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 768px;
+`;
+
 const ModalTitle = styled(Text)`
   font-size: 24px;
   opacity: 0.5;
@@ -71,36 +80,80 @@ const Price = styled(Text)`
   font-size: 24px;
   font-weight: 700;
 `;
-const Button = styled.button``;
-const TotalPrice = styled(Text)``;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  justify-content: space-between;
+`;
+
+const IconButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 32px 0 64px;
+`;
+
+const IconButton = styled.button`
+  background-color: transparent;
+  width: 150px;
+  height: 150px;
+  padding: 24px;
+  color: var(--main-white-100);
+  border: thin solid var(--main-white-100);
+  border-radius: 4px;
+  transition: 0.15s;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--main-red-100);
+    border-color: var(--main-red-100);
+  }
+`;
+const TotalPrice = styled(Text)`
+  display: flex;
+  gap: 55px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 function BookModal(props: BookModalState) {
   const { title, types, author, price } = props;
   const [sum, setSum] = useState(0);
-
-  function getType(type: string) {
-    if (type === 'audio') {
-      return <AudioIcon />;
-    }
-  }
 
   return (
     <Container>
       <ModalTitle>Выберите тип издания</ModalTitle>
       <Title variant='h2_2'>{title}</Title>
       <Author>{author}</Author>
-      <Price>{`${price}₽`}</Price>
-      {types.map((type: string) => {
-        return (
-          <Button onClick={() => setSum((prev) => prev + price)} type='button'>
-            {getType(type)}
-          </Button>
-        );
-      })}
-      <TotalPrice>
-        Сумма:
-        <Price>{`${sum}₽`}</Price>
-      </TotalPrice>
+
+      <Buttons>
+        {types.map((type: string) => {
+          return (
+            <IconButtonContainer>
+              <IconButton
+                onClick={() => setSum((prev) => prev + price)}
+                type='button'
+              >
+                {modalIconLookup[type]}
+              </IconButton>
+              <Price>{`${price}₽`}</Price>
+            </IconButtonContainer>
+          );
+        })}
+      </Buttons>
+      <Footer>
+        <TotalPrice>
+          Сумма:
+          <Price>{`${sum}₽`}</Price>
+        </TotalPrice>
+        <Button>В корзину</Button>
+      </Footer>
     </Container>
   );
 }
