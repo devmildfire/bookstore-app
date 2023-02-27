@@ -2,17 +2,15 @@ import styled from 'styled-components';
 import Navigation from '@/components/Navigation';
 
 export const StyledWrapper = styled.main`
-  /* display: grid; */
-  /* gap: 140px; */
-  padding: 0 10vw;
+  position: relative;
+
+  /* padding: 0 10vw; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: var(--main-black);
-  /* max-width: 1440px; */
   width: 100%;
-  /* box-sizing: content-box; */
   margin: 0 auto;
 `;
 

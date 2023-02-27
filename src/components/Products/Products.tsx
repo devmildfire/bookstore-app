@@ -20,7 +20,7 @@ import {
   Author,
   Slogan,
   Description,
-  Box,
+  Container,
   DescriptionBox,
   Button,
 } from './styles';
@@ -127,19 +127,19 @@ function Row({ row, data }: RowProps) {
             className={isOpen ? 'visible' : 'hidden'}
             width={document.body.clientWidth}
           >
-            <Box gap={32}>
-              <Box gap={12}>
+            <Container gap={32}>
+              <Container gap={12}>
                 <Title>{preview.title}</Title>
                 <Author>
                   {preview.authors.map((author) => author.name).join(', ')}
                 </Author>
                 <Slogan>{preview.thesis}</Slogan>
-              </Box>
+              </Container>
               <DescriptionBox>
                 <Description>{preview.description}</Description>
               </DescriptionBox>
               <Button type='button'>Познать</Button>
-            </Box>
+            </Container>
             {/* <Image
               url={preview.cover}
               // src={preview.cover}

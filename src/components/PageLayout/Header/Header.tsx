@@ -5,7 +5,7 @@ import {
   LogoStyled,
   CartIconStyled,
   CrossIconStyled,
-  ProfileIconStyled,
+  // ProfileIconStyled,
   BurgerIconStyled,
   HeaderContainer,
   IconContainer,
@@ -18,8 +18,6 @@ import {
   SubmenuListItem,
   HeaderWrapper,
 } from './styles';
-
-type OuterClickCallback = (e: MouseEvent) => void;
 
 interface ListItemProps {
   title: string;
@@ -45,47 +43,38 @@ function ListItem({ title, link, submenu }: ListItemProps) {
   );
 }
 
-function useOuterClick(callback: OuterClickCallback) {
-  const callbackRef = useRef<OuterClickCallback>();
-  const innerRef = useRef<HTMLUListElement>();
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  });
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (
-        innerRef.current &&
-        callbackRef.current &&
-        !innerRef.current.contains(e.target as Node)
-      ) {
-        callbackRef.current(e);
-      }
-    }
-
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-  }, []);
-
-  return innerRef;
-}
-
 function Header(): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isInputActive, setIsInputActive] = useState(false);
-  // не знаю как хорошо типизировать реф, пока что оставлю any
-  const menuRef: any = useOuterClick(() => {
-    if (isOpen) {
+  const overlayRef = useRef(null);
+
+  function handleClick(e: MouseEvent) {
+    if (e.target === overlayRef.current) {
       setIsOpen(false);
     }
-  });
+  }
+
+  function handleEscape(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('click', handleClick);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('click', handleClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
   return (
-    <HeaderWrapper>
+    <HeaderWrapper className='max-width'>
       <HeaderContainer>
         <LogoStyled />
-        <MenuOverlay className={isOpen ? 'active' : ''} />
-        <NavList ref={menuRef} className={isOpen ? 'active' : ''}>
+        <MenuOverlay ref={overlayRef} className={isOpen ? 'active' : ''} />
+        <NavList className={isOpen ? 'active' : ''}>
           {menu.map(({ title, link, submenu }) => (
             <ListItem title={title} link={link} submenu={submenu} />
           ))}
@@ -98,10 +87,10 @@ function Header(): ReactElement {
           <MenuButton isVisible={isInputActive}>
             <CartIconStyled />
           </MenuButton>
-          <MenuButton isVisible={isInputActive}>
+          {/* <MenuButton isVisible={isInputActive}>
             <ProfileIconStyled />
-          </MenuButton>
-          <MenuButton mobile onClick={() => setIsOpen(!isOpen)}>
+          </MenuButton> */}
+          <MenuButton mobile onClick={() => setIsOpen((prev) => !prev)}>
             {isOpen ? <CrossIconStyled /> : <BurgerIconStyled />}
           </MenuButton>
         </IconContainer>

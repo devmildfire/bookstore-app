@@ -53,38 +53,6 @@
   /* --heading-xl */
 }
 
-@media screen and (max-width: 1440px) {
-  :root {
-    --width: 1024px;
-    --searchBarWidth: 256px;
-  }
-}
-
-@media screen and (max-width: 1024px) {
-  :root {
-    --width: 830px;
-    --searchBarWidth: 186px;
-  }
-}
-
-@media screen and (max-width: 830px) {
-  :root {
-    --width: 580px;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  :root {
-    --width: 300px;
-  }
-}
-
-@media screen and (max-width: 320px) {
-  :root {
-    --searchBarWidth: 99px;
-  }
-}
-
 html,
 body {
   /* display: flex;
@@ -117,4 +85,56 @@ body {
   clip: rect(0, 0, 0, 0);
 
   overflow: hidden;
+}
+
+.max-width {
+  padding: 0 10vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.max-width > * {
+  max-width: 1440px;
+}
+
+@media screen and (max-width: 1440px) {
+  :root {
+    --width: 1024px;
+    --searchBarWidth: 256px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  :root {
+    --width: 830px;
+    --searchBarWidth: 186px;
+  }
+
+  .max-width {
+    padding: 0 5vw;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 830px) {
+  :root {
+    --width: 580px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  :root {
+    --width: 300px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  :root {
+    --searchBarWidth: 99px;
+  }
 }

@@ -27,7 +27,7 @@ export default function ProductCard(props: ProductCardProps) {
     handleModalState!({
       title,
       price,
-      newPrice,
+      // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
     });

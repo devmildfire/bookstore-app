@@ -1,36 +1,50 @@
-import React from 'react';
 import type { NextPage } from 'next';
+import React from 'react';
 import HomeLayout from '@/layouts/HomeLayout';
-import Books from '@/components/BooksPage/Books';
-import { wrapper } from '@/models';
-import { getBooks, getPopularBooks } from '@/models/books';
+import Products from '@/components/Products';
+import Filters from '@/components/Filters';
+import books from '@/mocks/books';
+
+const data = Array(12)
+  .fill(0)
+  .map(() => books[1]);
+
+// const getRandomInt = (min: number, max: number): number => {
+//   min = Math.ceil(min);
+//   max = Math.floor(max);
+//   return Math.floor(Math.random() * (max - min) + min);
+// };
 
 const BooksPage: NextPage = () => (
   <HomeLayout title='Издания'>
-    <Books />
+    {/* <Books /> */}
+    <section className='max-width'>
+      <Filters />
+      <Products data={data} />
+    </section>
   </HomeLayout>
 );
 
-export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch }) =>
-    async () => {
-      const requests: Promise<unknown>[] = [
-        dispatch(
-          getBooks.initiate({
-            page: 1,
-            productType: [],
-            publishYear: [],
-          })
-        ),
-        dispatch(getPopularBooks.initiate(undefined)),
-      ];
-      await Promise.all(requests);
+// export const getStaticProps = wrapper.getStaticProps(
+//   ({ dispatch }) =>
+//     async () => {
+//       const requests: Promise<unknown>[] = [
+//         dispatch(
+//           getBooks.initiate({
+//             page: 1,
+//             productType: [],
+//             publishYear: [],
+//           })
+//         ),
+//         dispatch(getPopularBooks.initiate(undefined)),
+//       ];
+//       await Promise.all(requests);
 
-      return {
-        props: {},
-        revalidate: 1,
-      };
-    }
-);
+//       return {
+//         props: {},
+//         revalidate: 1,
+//       };
+//     }
+// );
 
 export default BooksPage;

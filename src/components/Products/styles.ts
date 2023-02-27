@@ -4,14 +4,8 @@ export const GridContainer = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  /* grid-template-columns: repeat(auto-fit, 350px); */
-  /* padding: 0 2rem; */
   gap: 2rem;
   width: 100%;
-  max-width: 1440px;
-  box-sizing: border-box;
-  /* padding: 0 2rem; */
 `;
 
 export const RowItem = styled.li``;
@@ -99,7 +93,7 @@ interface BoxProps {
   gap: number;
 }
 
-export const Box = styled.div<BoxProps>`
+export const Container = styled.div<BoxProps>`
   display: flex;
   flex-direction: column;
   gap: ${(props) => `${props.gap}px`};

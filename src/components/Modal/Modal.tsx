@@ -6,8 +6,25 @@ import React, {
   ReactNode,
   useContext,
 } from 'react';
+import styled from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
 import { DialogOverlay, DialogContent } from './styles';
+import Text from '../Common/Text';
+import AudioIcon from '@/assets/icons/audio.svg';
+// import BookTwoIcon from '@/assets/icons/book2.svg';
+// import BookIcon from '@/assets/icons/book.svg';
+// import DigitalIcon from '@/assets/icons/digital.svg';
+
+// interface LookupPros {
+//   [key: string]: ReactNode;
+// }
+
+// const modalIconLookup: LookupPros = {
+//   audio: AudioIcon,
+//   book2: BookTwoIcon,
+//   write: BookIcon,
+//   digital: DigitalIcon,
+// };
 
 interface BookModalState {
   title: string;
@@ -27,7 +44,6 @@ export const ModalContext = createContext<ModalContextProps>({
   handleModalState: null,
 });
 
-// TODO: выенсти в отдельный файл
 export const useModal = (): ModalContextProps => {
   const currentModalContext = useContext(ModalContext);
 
@@ -42,27 +58,54 @@ function makeMap<V = unknown>(obj: Record<string, V>) {
   return new Map<string, V>(Object.entries(obj));
 }
 
-const modalLookup = makeMap({ book: BookModal });
+const Container = styled.div``;
+const ModalTitle = styled(Text)`
+  font-size: 24px;
+  opacity: 0.5;
+`;
+const Title = styled(Text)``;
+const Author = styled(Text)`
+  font-size: 24px;
+`;
+const Price = styled(Text)`
+  font-size: 24px;
+  font-weight: 700;
+`;
+const Button = styled.button``;
+const TotalPrice = styled(Text)``;
+
 function BookModal(props: BookModalState) {
   const { title, types, author, price } = props;
   const [sum, setSum] = useState(0);
+
+  function getType(type: string) {
+    if (type === 'audio') {
+      return <AudioIcon />;
+    }
+  }
+
   return (
-    <div>
-      <span>Выберите тип издания</span>
-      <h1>{title}</h1>
-      <span>{author}</span>
-      <span>{price}</span>
-      {types.map((type) => {
+    <Container>
+      <ModalTitle>Выберите тип издания</ModalTitle>
+      <Title variant='h2_2'>{title}</Title>
+      <Author>{author}</Author>
+      <Price>{`${price}₽`}</Price>
+      {types.map((type: string) => {
         return (
-          <button onClick={() => setSum((prev) => prev + price)} type='button'>
-            {type}
-          </button>
+          <Button onClick={() => setSum((prev) => prev + price)} type='button'>
+            {getType(type)}
+          </Button>
         );
       })}
-      <span>{`Сумма: ${sum}`}</span>
-    </div>
+      <TotalPrice>
+        Сумма:
+        <Price>{`${sum}₽`}</Price>
+      </TotalPrice>
+    </Container>
   );
 }
+
+const modalLookup = makeMap({ book: BookModal });
 
 function ModalContentFallback() {
   return <div>Не удалось загрузить модальное окно</div>;
