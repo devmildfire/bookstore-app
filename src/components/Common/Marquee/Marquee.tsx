@@ -1,4 +1,9 @@
-import React, { PropsWithChildren } from 'react';
+import React, {
+  PropsWithChildren,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { MarqueeContent, MarqueeWrapper } from './styles';
 
 interface MarqueeProps {
@@ -6,6 +11,20 @@ interface MarqueeProps {
   gap: number;
   direction: string;
   delay: number;
+}
+
+function useMarqueeTiming<T extends HTMLElement>(speed: number) {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      const { current } = ref;
+      setWidth(current.offsetWidth);
+    }
+  }, []);
+
+  return { ref, time: width / speed };
 }
 
 /**
@@ -19,13 +38,14 @@ interface MarqueeProps {
  */
 export default function Marquee(props: PropsWithChildren<MarqueeProps>) {
   const { speed, gap, direction, delay = 0, children } = props;
+  const { ref, time } = useMarqueeTiming<HTMLUListElement>(speed);
   return (
     <MarqueeWrapper gap={gap}>
-      <MarqueeContent speed={speed} direction={direction} delay={delay}>
+      <MarqueeContent ref={ref} time={time} direction={direction} delay={delay}>
         {children}
       </MarqueeContent>
       <MarqueeContent
-        speed={speed}
+        time={time}
         direction={direction}
         delay={delay}
         aria-hidden='true'
