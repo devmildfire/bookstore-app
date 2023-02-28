@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import { StyledWrapper } from './styles';
 import Collapse from '../Collapse';
-import { COLLAPSE_DURATION } from '@/consts/animation';
 import useScrollTo from '@/hooks/useScrollTo';
 
 interface PreviewProps extends ClassNameProps {
@@ -13,13 +12,12 @@ interface PreviewProps extends ClassNameProps {
 }
 
 const Preview: React.FC<PreviewProps> = (props) => {
-  const {
-    open, children, className, duration, exitTimeout, enterTimeout,
-  } = props;
+  const { open, children, className, duration, exitTimeout, enterTimeout } =
+    props;
 
   const [rootRef, setRootRef] = React.useState<HTMLElement | null>(null);
 
-  useScrollTo(rootRef, { condition: open, timeout: COLLAPSE_DURATION, });
+  useScrollTo(rootRef, false);
 
   return (
     <Collapse
