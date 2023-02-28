@@ -161,7 +161,7 @@ const StyledSection = styled('section')`
   } */
 `;
 
-const AboutUs = () => (
+const AboutUs = (): React.ReactElement => (
   <StyledSection>
     <Container>
       <Text align='center' variant='h2_1'>
