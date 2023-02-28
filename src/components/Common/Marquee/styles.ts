@@ -32,6 +32,8 @@ export const MarqueeContent = styled.ul<ContentProps>`
   gap: var(--gap);
   list-style: none;
 
+  will-change: transform;
+
   animation: scroll ${(props) => props.time}s linear infinite;
   animation-direction: ${(props) => props.direction};
   animation-delay: -${(props) => props.delay}s;
