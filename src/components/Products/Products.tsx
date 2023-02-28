@@ -7,6 +7,7 @@ import React, {
   useState,
   useRef,
   KeyboardEvent as ReactKeyEvent,
+  ReactElement,
 } from 'react';
 import ProductCard from '../ProductCard';
 import {
@@ -26,42 +27,9 @@ import {
 } from './styles';
 import CloseIcon from '@/assets/icons/cross.svg';
 import { Book } from '@/models/books';
-
-const useScreenSize = () => {
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
-  const setSize = () => {
-    setWidth(window.innerWidth);
-    setHeight(window.innerHeight);
-  };
-
-  useEffect(() => {
-    setSize();
-    window.addEventListener('resize', setSize);
-    return () => window.removeEventListener('resize', setSize);
-  }, [width, height]);
-
-  return [width, height];
-};
-
-const useScrollTo = (element: HTMLElement | null, ready: boolean) => {
-  useEffect(() => {
-    if (!element || !ready) {
-      return;
-    }
-    /*
-      отправить scrollIntoView в micotask queue,
-      чтобы скролл сработал после добавления элемента(preview) в DOM
-    */
-    setTimeout(() => {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-    }, 0);
-  }, [element, ready]);
-};
+import splitByRows from '@/utils/splitByRows';
+import useScreenSize from '@/hooks/useScreenSize';
+import useScrollTo from '@/hooks/useScrollTo';
 
 interface RowProps {
   row: Book[];
@@ -165,25 +133,11 @@ const getColumns = (width: number) => {
   return 3;
 };
 
-const splitByRows = (array: Book[], columnLength: number) => {
-  let row = 0;
-  const reducer = (grid: Book[][], curr: Book) => {
-    if (grid[row].length === columnLength) {
-      row += 1;
-      grid.push([]);
-    }
-    grid[row].push(curr);
-    return grid;
-  };
-
-  return array.reduce(reducer, [[]]);
-};
-
 interface GridProps {
   data: Book[];
 }
 
-export default function Products({ data }: GridProps) {
+export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
   const Books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
