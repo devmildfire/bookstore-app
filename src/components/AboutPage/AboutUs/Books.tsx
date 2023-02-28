@@ -9,7 +9,6 @@ import Container from '@/components/Common/Container';
 const StyledWrapper = styled.div`
   --booksMarginTop: -40px;
   --maxBooksWidth: calc(3000px / 2);
-  /* --minBookWidth: 271px; */
   --minBookWidth: 100px;
   --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
   --booksHeight: calc(var(--booksWidth) * 0.795);
@@ -17,12 +16,16 @@ const StyledWrapper = styled.div`
   position: relative;
   height: calc(var(--booksHeight) + var(--booksMarginTop));
 
+  @media ${breakPoints.xxl} {
+    --booksMarginTop: 15px;
+  }
+
   @media ${breakPoints.xl} {
-    --booksMarginTop: 0px;
+    --booksMarginTop: 55px;
   }
 
   @media ${breakPoints.lg} {
-    --booksMarginTop: 0px;
+    --booksMarginTop: 25px;
   }
 
   @media ${breakPoints.md} {
@@ -30,7 +33,7 @@ const StyledWrapper = styled.div`
   }
 
   @media ${breakPoints.smd} {
-    --booksMarginTop: -5px;
+    --booksMarginTop: 0px;
   }
 
   @media ${breakPoints.sm} {

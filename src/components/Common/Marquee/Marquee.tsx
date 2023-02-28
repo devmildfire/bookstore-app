@@ -1,30 +1,31 @@
 import React, {
   PropsWithChildren,
+  // ReactElement,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 import { MarqueeContent, MarqueeWrapper } from './styles';
 
-function useWidth<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [width, setWidth] = useState(0);
-
-  useLayoutEffect(() => {
-    if (ref.current) {
-      const { current } = ref.current;
-      setWidth(current.offsetWidth);
-    }
-  }, []);
-
-  return { ref, width };
-}
-
 interface MarqueeProps {
   speed: number;
   gap: number;
   direction: string;
   delay: number;
+}
+
+function useMarqueeTiming<T extends HTMLElement>(speed: number) {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      const { current } = ref;
+      setWidth(current.offsetWidth);
+    }
+  }, []);
+
+  return { ref, time: width / speed };
 }
 
 /**
@@ -36,22 +37,18 @@ interface MarqueeProps {
  * @param {number} delay              задержка анимации в секундах
  * @param {ReactChildren} children    элементы бегущей строки
  */
-export default function Marquee(props: PropsWithChildren<MarqueeProps>) {
-  const { ref, width } = useWidth<HTMLUListElement>();
+export default function Marquee(
+  props: PropsWithChildren<MarqueeProps>
+): React.ReactElement {
   const { speed, gap, direction, delay = 0, children } = props;
+  const { ref, time } = useMarqueeTiming<HTMLUListElement>(speed);
   return (
     <MarqueeWrapper gap={gap}>
-      <MarqueeContent
-        ref={ref}
-        width={width}
-        speed={speed}
-        direction={direction}
-        delay={delay}
-      >
+      <MarqueeContent ref={ref} time={time} direction={direction} delay={delay}>
         {children}
       </MarqueeContent>
       <MarqueeContent
-        speed={speed}
+        time={time}
         direction={direction}
         delay={delay}
         aria-hidden='true'

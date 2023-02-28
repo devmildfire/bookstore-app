@@ -170,12 +170,6 @@ const AboutUs = () => (
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      {/* <StyledDescriptionTop variant='aboutText'>
-        <p>
-          Независимое издательство Чтиво — дитя петербургского литандеграунда и
-          сети интернет, увидевшее свет в 2017 году.
-        </p>
-      </StyledDescriptionTop> */}
       <div>
         <StyledDescription variant='aboutText'>
           <p>
