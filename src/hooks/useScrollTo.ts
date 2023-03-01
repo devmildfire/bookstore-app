@@ -1,27 +1,21 @@
 import { useEffect } from 'react';
 
-interface UseScrollToOptions {
-  readonly condition?: boolean;
-  readonly timeout?: number;
-}
-
-const useScrollTo = (
-  element: HTMLElement | null,
-  options: UseScrollToOptions = {},
-): void => {
-  const { condition = true, timeout } = options;
+const useScrollTo = (element: HTMLElement | null, ready: boolean) => {
   useEffect(() => {
-    if (!element || !condition) {
+    if (!element || !ready) {
       return;
     }
-
+    /*
+      отправить scrollIntoView в micotask queue,
+      чтобы скролл сработал после добавления элемента(preview) в DOM
+    */
     setTimeout(() => {
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
-    }, timeout);
-  }, [element, condition, timeout]);
+    }, 0);
+  }, [element, ready]);
 };
 
 export default useScrollTo;
