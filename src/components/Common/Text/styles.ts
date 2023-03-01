@@ -439,6 +439,7 @@ const partnerDisplayNameStyle = css<StyledTextProps>`
 const h4Name = css<StyledTextProps>`
   ${h41Style}
   font-size: 18px;
+  margin-top: 25px;
 
   @media ${breakPoints.lg} {
     font-size: 16px;

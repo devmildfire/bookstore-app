@@ -1,10 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import Image from 'next/image';
 import { Member } from '@/types/member';
 import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
+import useScreenSize from '@/hooks/useScreenSize';
 
 const StyledCard = styled.div`
+  /* * {
+    outline: 1px solid green;
+  } */
+
   /* display: grid; */
   -webkit-user-drag: none;
   user-select: none;
@@ -20,8 +26,6 @@ const StyledCard = styled.div`
   max-height: 520px;
   width: 250px;
   margin: 0 42.5px;
-  /* margin-left: 30px;
-  margin-right: 30px; */
   margin-bottom: 50px;
 
   .top {
@@ -32,7 +36,7 @@ const StyledCard = styled.div`
     pointer-events: none;
   }
 
-  :hover > img {
+  div:hover > img {
     -webkit-filter: grayscale(0%);
     -moz-filter: grayscale(0%);
     filter: grayscale(0%);
@@ -62,30 +66,65 @@ const StyledCard = styled.div`
   }
 `;
 
-const StyledPhoto = styled.img`
+// const StyledPhoto = styled.img`
+//   filter: grayscale(100%);
+//   -webkit-filter: grayscale(100%);
+//   -moz-filter: grayscale(100%);
+
+//   user-select: none;
+//   --size: 250px;
+//   width: var(--size);
+//   height: var(--size);
+
+//   border-radius: 50%;
+
+//   object-fit: cover;
+
+//   margin-bottom: 25px;
+//   transition: all 0.5s ease;
+
+//   @media ${breakPoints.xl} {
+//     /* --size: 280px; */
+//     /* --size: 200px; */
+//   }
+
+//   @media ${breakPoints.lg} {
+//     /* --size: 250px; */
+//     --size: 200px;
+//   }
+
+//   @media ${breakPoints.smd} {
+//     --size: 150px;
+//   }
+
+//   @media ${breakPoints.sm} {
+//     --size: 150px;
+//   }
+// `;
+
+const StyledImage = styled(Image)`
   filter: grayscale(100%);
   -webkit-filter: grayscale(100%);
   -moz-filter: grayscale(100%);
 
   user-select: none;
-  --size: 250px;
+  /* --size: 250px;
   width: var(--size);
-  height: var(--size);
+  height: var(--size); */
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  margin-bottom: 25px;
+  /* margin-bottom: 25px; */
+  margin: 25px 25px;
+
   transition: all 0.5s ease;
 
-  @media ${breakPoints.xl} {
-    /* --size: 280px; */
-    /* --size: 200px; */
+  /* @media ${breakPoints.xl} {
   }
 
   @media ${breakPoints.lg} {
-    /* --size: 250px; */
     --size: 200px;
   }
 
@@ -95,15 +134,34 @@ const StyledPhoto = styled.img`
 
   @media ${breakPoints.sm} {
     --size: 150px;
-  }
+  } */
 `;
 
 const MemberCard = (props: Member): React.ReactElement => {
   const { city, member, photo, phrase, position } = props;
+  const [width] = useScreenSize();
+
+  const getImageSize = (screenWidth: number) => {
+    if (screenWidth <= 744) {
+      return 150;
+    }
+    if (screenWidth < 1024) {
+      return 200;
+    }
+    return 200;
+  };
+
+  const imageSize = getImageSize(width);
 
   return (
     <StyledCard>
-      <StyledPhoto src={photo} alt={member} />
+      <StyledImage
+        src={photo}
+        alt={member}
+        width={imageSize}
+        height={imageSize}
+      />
+
       <Text variant='h4_n' align='center'>
         {member}
       </Text>
