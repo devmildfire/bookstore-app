@@ -46,16 +46,17 @@ export const SelectedItem = styled.div`
 `;
 
 export const PopoverContent = styled(Popover.Content)`
-  background-color: var(--main-black);
+  background-color: rgba(12, 12, 12, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 8px;
   /* z-index: 1; */
   color: var(--main-white-100);
   width: 100%;
-  padding: 64px 16px 16px;
+  padding: 8px;
   border-radius: 4px;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   min-width: 160px;
   max-width: 350px;
   [cmdk-item] {
@@ -90,7 +91,7 @@ interface ButtonProps {
 export const Button = styled.button<ButtonProps>`
   width: fit-content;
   background-color: ${(props) => {
-    return props.secondary ? 'gray' : 'var(--main-red-50)';
+    return props.secondary ? 'gray' : 'var(--main-red-100)';
   }};
   padding: 8px 16px;
   color: var(--main-white-100);

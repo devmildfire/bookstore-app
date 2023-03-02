@@ -1,3 +1,3 @@
-import Multiselect from './Multiselect';
+import { Dropdown, Multiselect } from './Multiselect';
 
-export default Multiselect;
+export { Multiselect, Dropdown };

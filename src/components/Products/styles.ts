@@ -48,7 +48,6 @@ export const Cover = styled.img`
 
 interface PreviewProps {
   width: number;
-  url: string;
 }
 
 export const Preview = styled.div<PreviewProps>`
@@ -64,19 +63,7 @@ export const Preview = styled.div<PreviewProps>`
   height: auto;
   color: lightgray;
   background-color: #050505;
-  background: linear-gradient(90deg, #050505 55%, rgba(255, 255, 255, 0) 100%),
-    linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(122, 122, 122, 0) 25%,
-      rgba(255, 255, 255, 0) 50%,
-      rgba(130, 130, 130, 0) 75%,
-      rgba(5, 5, 5, 1) 100%
-    ),
-    ${(props) => `url(${props.url})`};
-  background-size: auto;
-  background-repeat: no-repeat;
-  background-position: right;
+
   &.hidden {
     visibility: hidden;
     opacity: 0;
@@ -86,6 +73,22 @@ export const Preview = styled.div<PreviewProps>`
   &.visible {
     visibility: visible;
     opacity: 1;
+  }
+
+  &::before {
+    content: '';
+    background: linear-gradient(90deg, #050505 40%, rgba(255, 255, 255, 0) 100%),
+      linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(122, 122, 122, 0) 25%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(130, 130, 130, 0) 75%,
+        rgba(5, 5, 5, 1) 100%
+      );
+    position: absolute;
+    inset: 0;
+    z-index: -1;
   }
 `;
 

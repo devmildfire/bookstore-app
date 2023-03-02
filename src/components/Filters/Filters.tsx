@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Multiselect from '../Common/Multiselect';
+import { Multiselect, Dropdown } from '../Common/Multiselect';
 
 const FiltersContainer = styled.div`
   display: flex;
@@ -9,23 +9,28 @@ const FiltersContainer = styled.div`
   padding: 2rem 0;
 `;
 
-const FiltersGroup = styled.div`
-  display: flex;
-`;
+// const FiltersGroup = styled.div`
+//   display: flex;
+// `;
 
 // const SortGroup = styled.div``;
 
 export default function Filters() {
   return (
     <FiltersContainer>
-      <FiltersGroup>
+      <Dropdown icon='Фильтры'>
+        <Multiselect title='Тип издания' />
+        <Multiselect title='Тип издания' />
+        <Multiselect withInput title='Тип издания' />
+      </Dropdown>
+      {/* <FiltersGroup>
         <Multiselect title='Тип издания' />
         <Multiselect title='Год издания' />
         <Multiselect title='Автор' withInput />
       </FiltersGroup>
       <div>
         <Multiselect title='Сортировать' />
-      </div>
+      </div> */}
     </FiltersContainer>
   );
 }

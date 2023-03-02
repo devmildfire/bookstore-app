@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable jsx-a11y/no-redundant-roles */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+// eslint-disable-next-line import/extensions
 import React, {
   useEffect,
   useMemo,
@@ -9,6 +10,7 @@ import React, {
   KeyboardEvent as ReactKeyEvent,
   ReactElement,
 } from 'react';
+import styled from 'styled-components';
 import ProductCard from '../ProductCard';
 import {
   GridContainer,
@@ -30,6 +32,17 @@ import { Book } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
+
+const Video = styled.video`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  height: 100%;
+  z-index: -2;
+  object-fit: cover;
+`;
 
 interface RowProps {
   row: Book[];
@@ -91,7 +104,6 @@ function Row({ row, data }: RowProps) {
       <div ref={previewRef}>
         {isOpen && preview && (
           <Preview
-            url={preview.cover}
             className={isOpen ? 'visible' : 'hidden'}
             width={document.body.clientWidth}
           >
@@ -108,6 +120,9 @@ function Row({ row, data }: RowProps) {
               </DescriptionBox>
               <Button type='button'>Познать</Button>
             </Container>
+            <Video autoPlay loop src='video/preview.mp4'>
+              <track kind='captions' />
+            </Video>
             {/* <Image
               url={preview.cover}
               // src={preview.cover}
@@ -123,6 +138,10 @@ function Row({ row, data }: RowProps) {
   );
 }
 
+interface GridProps {
+  data: Book[];
+}
+
 const getColumns = (width: number) => {
   if (width <= 512) {
     return 1;
@@ -133,18 +152,14 @@ const getColumns = (width: number) => {
   return 3;
 };
 
-interface GridProps {
-  data: Book[];
-}
-
 export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
-  const Books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
+  const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
 
   return (
     <GridContainer>
-      {Books.map((arr, idx) => (
+      {books.map((arr, idx) => (
         <Row key={`${arr.toString()}+${idx + 1}`} row={arr} data={data} />
       ))}
     </GridContainer>

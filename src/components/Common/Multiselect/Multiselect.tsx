@@ -1,4 +1,10 @@
-import React, { ReactElement, useState, MouseEvent } from 'react';
+import React, {
+  ReactElement,
+  useState,
+  MouseEvent,
+  PropsWithChildren,
+} from 'react';
+import styled from 'styled-components';
 import { Command } from 'cmdk';
 import * as Popover from '@radix-ui/react-popover';
 import {
@@ -12,14 +18,22 @@ import {
 
 const years = ['2023', '2022', '2021'];
 
-interface MultiselectProps {
+type MultiselectType = {
   withInput?: boolean;
   title: string;
-}
+};
 
-export default function Multiselect(props: MultiselectProps): ReactElement {
+const StyledCommand = styled(Command)`
+  background-color: var(--main-black);
+  padding: 16px;
+  border-radius: 4px;
+  [cmdk-group-heading] {
+    padding-bottom: 16px;
+  }
+`;
+
+export function Multiselect(props: MultiselectType) {
   const { withInput, title } = props;
-  const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<string[]>(years);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -38,47 +52,60 @@ export default function Multiselect(props: MultiselectProps): ReactElement {
       });
     }
   };
+  return (
+    <>
+      <StyledCommand loop label={title}>
+        {withInput && <Command.Input autoFocus />}
+        <Command.List>
+          {selected.length ? <Command.Separator alwaysRender /> : null}
+          <Command.Group heading={title}>
+            {options.map((option) => (
+              <Command.Item key={option} onSelect={handleSelect}>
+                {option}
+              </Command.Item>
+            ))}
+            {withInput ? (
+              <Command.Empty>Нет совпадений.</Command.Empty>
+            ) : (
+              <Command.Empty>Выбраны все варианты.</Command.Empty>
+            )}
+          </Command.Group>
+          {/* скорее всего лучше использовать Command компоненты,
+              чтобы облегчить handleRemove обработчик */}
+          <SelectedList>
+            {selected.map((item, id) => (
+              <SelectedItem key={`${item}-${id + 1}`} onClick={handleRemove}>
+                {item}
+              </SelectedItem>
+            ))}
+          </SelectedList>
+        </Command.List>
+      </StyledCommand>
+    </>
+  );
+}
+
+interface DropdownProps {
+  icon: string;
+}
+
+export function Dropdown(
+  props: PropsWithChildren<DropdownProps>
+): ReactElement {
+  const { icon, children } = props;
+  const [open, setOpen] = useState(false);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={open ? 'open' : ''}>
-        <p>{title}</p>
+        <p>{icon}</p>
         <span>&#9660;</span>
       </PopoverTrigger>
       <Popover.Portal>
-        <PopoverContent sideOffset={-48} align='start'>
-          <Command loop label='Command Menu'>
-            {withInput && <Command.Input autoFocus />}
-            <Command.List>
-              {/* скорее всего лучше использовать Command компоненты,
-              чтобы облегчить handleRemove обработчик */}
-              <SelectedList>
-                {selected.map((item, id) => (
-                  <SelectedItem
-                    key={`${item}-${id + 1}`}
-                    onClick={handleRemove}
-                  >
-                    {item}
-                  </SelectedItem>
-                ))}
-              </SelectedList>
-              {selected.length ? <Command.Separator alwaysRender /> : null}
-              <Command.Group heading=''>
-                {options.map((option) => (
-                  <Command.Item key={option} onSelect={handleSelect}>
-                    {option}
-                  </Command.Item>
-                ))}
-                {withInput ? (
-                  <Command.Empty>Нет совпадений.</Command.Empty>
-                ) : (
-                  <Command.Empty>Выбраны все варианты.</Command.Empty>
-                )}
-              </Command.Group>
-            </Command.List>
-          </Command>
+        <PopoverContent sideOffset={0} align='start'>
+          {children}
           <ButtonsContainer>
-            {/* <Button>Применить</Button> */}
+            <Button>Применить</Button>
             <Button secondary>Сбросить</Button>
           </ButtonsContainer>
         </PopoverContent>
