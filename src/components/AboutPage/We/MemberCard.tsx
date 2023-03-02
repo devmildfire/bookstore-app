@@ -148,7 +148,7 @@ const MemberCard = (props: Member): React.ReactElement => {
     if (screenWidth < 1024) {
       return 200;
     }
-    return 200;
+    return 250;
   };
 
   const imageSize = getImageSize(width);
