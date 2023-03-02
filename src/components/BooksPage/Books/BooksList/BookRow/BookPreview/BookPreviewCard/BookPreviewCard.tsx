@@ -9,7 +9,7 @@ import {
   StyledPlayer,
   StyledShadowElement,
   StyledTextBlock,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
 import Text from '@/components/Common/Text';
 import { Book } from '@/models/books';
@@ -24,7 +24,7 @@ type BookPreviewCardProps = Pick<
   | 'description'
   | 'trailerSrc'
   | 'authors'
-  | 'image'
+  | 'cover'
 >;
 
 const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
@@ -34,7 +34,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
     description,
     genre,
     id,
-    image,
+    cover,
     publishDate,
     title,
     trailerSrc,
@@ -72,7 +72,7 @@ const BookPreviewCard: React.FC<BookPreviewCardProps> = (props) => {
       </StyledForwardPlan>
       <StyledBackground>
         <div />
-        <StyledPlayer src={trailerSrc} fallbackSrc={image} autoPlay>
+        <StyledPlayer src={trailerSrc} fallbackSrc={cover} autoPlay>
           <StyledShadowElement />
         </StyledPlayer>
       </StyledBackground>

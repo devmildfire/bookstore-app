@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Popper from '@/components/Common/Popper';
+// import Popper from '@/components/Common/Popper';
 import { MenuItem } from '@/utils/menuItems';
 
 import colors from '@/utils/colors';
@@ -120,28 +120,26 @@ const SubHeaderTab = ({
         <SubStyledLink href='fakeHref'>{title}</SubStyledLink>
       </Link>
     ) : (
-      <Popper padding={20} target={null}>
-        <PopperContainer>
-          {submenu?.map(({ subtitle, link: submenuLink, items }) => (
-            <SubmenuItem key={subtitle}>
-              {submenuLink ? (
-                <Link href={submenuLink} passHref key={subtitle}>
-                  <SubStyledLink href='fakeHref'>{subtitle}</SubStyledLink>
-                </Link>
-              ) : (
-                <>
-                  <SubmenuTitle>{subtitle}</SubmenuTitle>
-                  {items?.map(({ title: submenuTitle, link: subLink }) => (
-                    <Link href={subLink} passHref key={submenuTitle}>
-                      <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
-                    </Link>
-                  ))}
-                </>
-              )}
-            </SubmenuItem>
-          ))}
-        </PopperContainer>
-      </Popper>
+      <PopperContainer>
+        {submenu?.map(({ subtitle, link: submenuLink, items }) => (
+          <SubmenuItem key={subtitle}>
+            {submenuLink ? (
+              <Link href={submenuLink} passHref key={subtitle}>
+                <SubStyledLink href='fakeHref'>{subtitle}</SubStyledLink>
+              </Link>
+            ) : (
+              <>
+                <SubmenuTitle>{subtitle}</SubmenuTitle>
+                {items?.map(({ title: submenuTitle, link: subLink }) => (
+                  <Link href={subLink} passHref key={submenuTitle}>
+                    <SubmenuLink href='fakeHref'>{submenuTitle}</SubmenuLink>
+                  </Link>
+                ))}
+              </>
+            )}
+          </SubmenuItem>
+        ))}
+      </PopperContainer>
     )}
   </Fragment>
 );

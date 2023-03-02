@@ -7,7 +7,7 @@ import {
   StyledIconButton,
   StyledImage,
   StyledInfo,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
 import Text from '@/components/Common/Text';
 import Price from '@/components/Common/Price';
@@ -17,25 +17,24 @@ import Cart from '@/components/Common/Icons/Cart';
 import Like from '@/components/Common/Icons/Like';
 import ProductCard from '@/components/Common/ProductCard';
 
-interface SetCardProps
-  extends BoxSet {
+interface SetCardProps extends BoxSet {
   readonly isOpen: boolean;
 }
 
 const SetCard: React.FC<SetCardProps> = (props) => {
-  const { description, id, price, title, newPrice, isOpen, image, } = props;
+  const { description, id, price, title, newPrice, isOpen, cover } = props;
   const path = usePrepareLink({
     query: {
       [GET_PARAMS.openProduct]: id.toString(),
     },
     keepOldQuery: true,
   });
-  const classes = classNames('lighted', { active: isOpen, });
+  const classes = classNames('lighted', { active: isOpen });
   return (
     <ProductCard>
       <StyledWrapper className={classes} href={path} scroll={false} shallow>
         <StyledDescription>
-          <StyledImage src={image} alt={title} />
+          <StyledImage src={cover} alt={title} />
           <Text variant='h3_3' fontWeight={700}>
             {title}
           </Text>

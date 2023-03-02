@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import Popper from '../Popper';
 import { StyledWrapper } from './styles';
 
 interface MenuProps extends ClassNameProps {
@@ -13,11 +12,7 @@ const Menu: React.FC<MenuProps> = (props) => {
   if (!rest.target || !isOpen) {
     return null;
   }
-  return (
-    <Popper {...rest}>
-      <StyledWrapper className={className}>{children}</StyledWrapper>
-    </Popper>
-  );
+  return <StyledWrapper className={className}>{children}</StyledWrapper>;
 };
 
 export default Menu;

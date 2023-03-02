@@ -5,5 +5,5 @@ export interface Product extends Item {
   readonly transliteratedTitle?: string;
   readonly cover: string;
   readonly price: number;
-  readonly newPrice?: number;
+  readonly newPrice?: number | null;
 }

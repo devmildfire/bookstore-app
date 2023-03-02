@@ -5,7 +5,6 @@ import { Router } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 // import PageLayout from '@/layouts/PageLayout';
-import { DeviceInfoProvider } from '@/contexts/DeviceInfoContext';
 import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
@@ -33,18 +32,16 @@ const MyApp: NextPage<AppProps> = (props) => {
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <DeviceInfoProvider>
-          <ModalProvider>
-            {/* <PageLayout> */}
-            <Header />
-            <>
-              {value && <PageLoading />}
-              <Component {...pageProps} />
-            </>
-            {/* </PageLayout> */}
-            <Footer />
-          </ModalProvider>
-        </DeviceInfoProvider>
+        <ModalProvider>
+          {/* <PageLayout> */}
+          <Header />
+          <>
+            {value && <PageLoading />}
+            <Component {...pageProps} />
+          </>
+          {/* </PageLayout> */}
+          <Footer />
+        </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );
