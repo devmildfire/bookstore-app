@@ -7,11 +7,6 @@ import Text from '@/components/Common/Text';
 import useScreenSize from '@/hooks/useScreenSize';
 
 const StyledCard = styled.div`
-  /* * {
-    outline: 1px solid green;
-  } */
-
-  /* display: grid; */
   -webkit-user-drag: none;
   user-select: none;
   -moz-user-select: none;
@@ -23,10 +18,8 @@ const StyledCard = styled.div`
   justify-items: flex-start;
   align-items: center;
   gap: 5px;
-  max-height: 520px;
   width: 250px;
   margin: 0 42.5px;
-  margin-bottom: 50px;
 
   .top {
     margin-top: 5px;
@@ -45,24 +38,16 @@ const StyledCard = styled.div`
   @media ${breakPoints.lg} {
     width: 200px;
     margin: 0 35px;
-    /* margin-left: 20px;
-    margin-right: 20px; */
   }
 
   @media ${breakPoints.smd} {
-    /* width: 100%; */
-    /* margin-bottom: 30px; */
     width: 150px;
     margin: 0 25px;
-    /* padding: 0 10px; */
   }
 
   @media ${breakPoints.sm} {
-    /* width: 100%; */
-    /* margin-bottom: 30px; */
     width: 150px;
     margin: 0 30px;
-    /* padding: 0 10px; */
   }
 `;
 
