@@ -24,7 +24,10 @@ export interface EditionProps {
 }
 
 export interface editionTypes {
-  [key: string]: (props: EditionProps) => ReactElement;
+  [key: string]: (props: {
+    releaseDate: string;
+    price: number;
+  }) => ReactElement;
 }
 
 const TabContent = styled.div``;
@@ -169,7 +172,7 @@ const Buttons = styled.div`
   }
 `;
 
-const DigitalEdition = ({ releaseDate }: EditionProps) => {
+const DigitalEdition = ({ releaseDate }: { releaseDate: string }) => {
   return (
     <TabContent>
       <TitleConteiner>
@@ -209,7 +212,7 @@ const DigitalEdition = ({ releaseDate }: EditionProps) => {
     </TabContent>
   );
 };
-const Book2Edition = ({ releaseDate }: EditionProps) => {
+const Book2Edition = ({ releaseDate }: { releaseDate: string }) => {
   return (
     <TabContent>
       <TitleConteiner>
@@ -256,7 +259,7 @@ const Book2Edition = ({ releaseDate }: EditionProps) => {
   );
 };
 
-const AudioEdition = (props: EditionProps) => {
+const AudioEdition = (props: { price: number }) => {
   const { price } = props;
   return (
     <TabContent>
@@ -294,7 +297,7 @@ const AudioEdition = (props: EditionProps) => {
   );
 };
 
-const PrintEdition = ({ releaseDate }: EditionProps) => {
+const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
   return (
     <TabContent>
       <TitleConteiner>
