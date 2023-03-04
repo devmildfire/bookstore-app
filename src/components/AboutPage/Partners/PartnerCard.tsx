@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Partner } from '@/types/partner';
 import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
+import useScreenSize from '@/hooks/useScreenSize';
 // import useScreenSize from '@/hooks/useScreenSize';
 
 // const StyledLogo = styled.img`
@@ -72,10 +73,6 @@ const StyledCard = styled.div`
   width: 250px;
   margin: 0 42.5px;
 
-  .top {
-    margin-top: 5px;
-  }
-
   @media ${breakPoints.lg} {
     width: 200px;
     height: 200px;
@@ -97,26 +94,28 @@ const StyledCard = styled.div`
 
 const PartnerCard = (props: Partner): React.ReactElement => {
   const { name, photo, displayName } = props;
-  // const [width] = useScreenSize();
+  const [width] = useScreenSize();
+  const getImageSize = (screenWidth: number) => {
+    if (screenWidth <= 744) {
+      return 150;
+    }
+    if (screenWidth < 1024) {
+      return 200;
+    }
+    return 250;
+  };
 
-  // const getImageSize = (screenWidth: number) => {
-  //   if (screenWidth <= 744) {
-  //     return 70;
-  //   }
-  //   if (screenWidth < 830) {
-  //     return 100;
-  //   }
-  //   if (screenWidth < 1024) {
-  //     return 125;
-  //   }
-  //   return 150;
-  // };
-
-  // const imageSize = getImageSize(width);
+  const imageSize = getImageSize(width);
 
   return (
     <StyledCard>
-      <StyledLogoImage src={photo} alt={name} layout='fill' />
+      <StyledLogoImage
+        src={photo}
+        alt={name}
+        width={imageSize}
+        height={imageSize}
+        // layout='fill'
+      />
       <Text variant='h4_p' component='p' align='center'>
         {displayName}
       </Text>
