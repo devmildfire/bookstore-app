@@ -114,7 +114,7 @@ const PartnerCard = (props: Partner): React.ReactElement => {
         alt={name}
         width={imageSize}
         height={imageSize}
-        // layout='fill'
+        // layout='fill' этот параметр не работает для сафари
       />
       <Text variant='h4_p' component='p' align='center'>
         {displayName}
