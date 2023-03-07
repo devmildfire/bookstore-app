@@ -88,11 +88,7 @@ export default function MovingPicsGrid(): React.ReactElement {
           >
             {gridRow.map((item) => {
               return (
-                <img
-                  key={item.key}
-                  // src={item.image}
-                  alt={speed.toString()}
-                />
+                <img key={item.key} src={item.image} alt={speed.toString()} />
               );
               // return <img alt={'row number ' + index + 'item ' + item.id} />;
             })}
