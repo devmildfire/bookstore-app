@@ -3,8 +3,9 @@ import React, {
   // ReactElement,
   // useLayoutEffect,
   useRef,
-  useEffect,
+  // useEffect,
   useState,
+  useLayoutEffect,
 } from 'react';
 import Marquee from '../Marquee';
 import { StyledDiv } from './styles';
@@ -68,7 +69,13 @@ export default function MovingPicsGrid(): React.ReactElement {
     }
   };
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setSize();
+  //   window.addEventListener('resize', setSize);
+  //   return () => window.removeEventListener('resize', setSize);
+  // }, [elemHeight, elemWidth]);
+
+  useLayoutEffect(() => {
     setSize();
     window.addEventListener('resize', setSize);
     return () => window.removeEventListener('resize', setSize);
