@@ -118,16 +118,13 @@ export const StyledWrapper = styled.section`
 `;
 
 export const StyledContent = styled.div`
-  /* --box-height: calc(18.52678571vw + 247.2857143px);
-  --box-width: calc(47.43304vw + 147.2857px); */
   --box-height: 603px;
   --box-width: 1058px;
   position: absolute;
-  /* margin: auto auto; */
-  /* aspect-ratio: 1080/684; */
+
   min-height: var(--box-height);
   width: var(--box-width);
-  top: calc(55% - var(--box-height) / 2);
+  top: calc(50% - var(--box-height) / 2);
   left: calc(50% - var(--box-width) / 2);
   padding: 40px 0;
 
@@ -154,15 +151,6 @@ export const StyledContent = styled.div`
   }
 
   @media ${breakPoints.xl} {
-    /* --box-height: calc(684 / 1080 * 100%);
-    --box-width: calc(684 / 1080 * 100%); */
-    /* gap: 15px;
-    height: calc(440px + var(--RDOffset));
-    margin-top: 40px;
-
-    padding-top: 0;
-    padding-left: 0px;
-    padding-right: 0px; */
   }
 
   @media ${breakPoints.lg} {

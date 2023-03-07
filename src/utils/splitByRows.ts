@@ -4,7 +4,10 @@
  * @param columnLength длина вложенных массивов
  * @returns двумерный массив
  */
-const splitByRows = <T extends unknown>(array: T[], columnLength: number) => {
+const splitByRows = <T extends unknown>(
+  array: T[],
+  columnLength: number
+): T[][] => {
   let row = 0;
   const reducer = (grid: T[][], curr: T) => {
     if (grid[row].length === columnLength) {

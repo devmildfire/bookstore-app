@@ -5,45 +5,6 @@ import { Partner } from '@/types/partner';
 import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 import useScreenSize from '@/hooks/useScreenSize';
-// import useScreenSize from '@/hooks/useScreenSize';
-
-// const StyledLogo = styled.img`
-//   pointer-events: none;
-//   -moz-user-select: none;
-//   -webkit-user-select: none;
-//   user-select: none;
-//   --size: 150px;
-
-//   height: auto;
-
-//   width: 100%;
-//   aspect-ratio: 1/1;
-//   object-fit: contain;
-
-//   margin: auto;
-
-//   object-fit: contain;
-
-//   @media ${breakPoints.xl} {
-//     --size: 150px;
-//   }
-
-//   @media ${breakPoints.lg} {
-//     --size: 125px;
-//   }
-
-//   @media ${breakPoints.md} {
-//     --size: 100;
-//   }
-
-//   @media ${breakPoints.smd} {
-//     --size: 70px;
-//   }
-
-//   @media ${breakPoints.sm} {
-//     --size: 70px;
-//   }
-// `;
 
 const StyledLogoImage = styled(Image)`
   pointer-events: none;

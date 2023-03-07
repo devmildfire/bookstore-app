@@ -1,11 +1,10 @@
 import { Article } from '@/types/article';
-// import { authors } from './authors';
 
 export const articles: Article[] = [
   {
     id: 0,
     name: 'Очень красиво',
-    image: '/images/articles/VB_510x286.webp',
+    image: '/images/articles/VB_516x290.webp',
     author: 'Олег Золотарь',
   },
   {
@@ -23,7 +22,7 @@ export const articles: Article[] = [
   {
     id: 3,
     name: 'Убийца дворецкий',
-    image: '/images/articles/Killer_Butler.webp',
+    image: '/images/articles/Killer_Butler_516x290.webp',
     author: 'Эдуард Диа Диникин',
   },
   {
@@ -41,13 +40,13 @@ export const articles: Article[] = [
   {
     id: 6,
     name: 'Человек за стеклом',
-    image: '/images/articles/zaSteklom_512x290.webp',
+    image: '/images/articles/zaSteklom_516x290.webp',
     author: 'Наталься Симон',
   },
   {
     id: 7,
     name: 'Встреча',
-    image: '/images/articles/meeting_512x290.webp',
+    image: '/images/articles/meeting_516x290.webp',
     author: 'Михаил Зощенко',
   },
   {
@@ -127,5 +126,125 @@ export const articles: Article[] = [
     name: 'Обыск',
     image: '/images/articles/search_516x290.webp',
     author: 'Фёдор Сологуб',
+  },
+  {
+    id: 21,
+    name: 'Метель',
+    image: '/images/articles/metel_516x290.webp',
+    author: 'Александр Пушкин',
+  },
+  {
+    id: 22,
+    name: 'Очевидное и невероятное',
+    image: '/images/articles/ochevidnoe.webp',
+    author: 'Вячеслав Немиров',
+  },
+  {
+    id: 23,
+    name: 'Его свет',
+    image: '/images/articles/egosvet.webp',
+    author: 'Артём Северский',
+  },
+  {
+    id: 24,
+    name: 'Обида',
+    image: '/images/articles/obida.webp',
+    author: 'Владимир Набоков',
+  },
+  {
+    id: 25,
+    name: 'Нестраховой случай кота Моисея',
+    image: '/images/articles/nestrahovoi.webp',
+    author: 'Владимир Фиалковский',
+  },
+  {
+    id: 26,
+    name: 'Смерть поэта',
+    image: '/images/articles/smertpoeta.webp',
+    author: 'Илья Налётов',
+  },
+  {
+    id: 27,
+    name: 'Сновидцы',
+    image: '/images/articles/snovidci.webp',
+    author: 'Сергей Иннер',
+  },
+  {
+    id: 28,
+    name: 'Этид',
+    image: '/images/articles/etud.webp',
+    author: 'Владимир Никитин',
+  },
+  {
+    id: 29,
+    name: 'Мраморная крошка',
+    image: '/images/articles/mramorkroshka.webp',
+    author: 'Виктор Некрасов',
+  },
+  {
+    id: 30,
+    name: 'Жизнь продолжается',
+    image: '/images/articles/jiznprodoljaetsa.webp',
+    author: 'Тамерлан Каретин',
+  },
+  {
+    id: 31,
+    name: 'Бессонница',
+    image: '/images/articles/bessonnica.webp',
+    author: 'Артём Северский',
+  },
+  {
+    id: 32,
+    name: 'Философ по вызову',
+    image: '/images/articles/filosofpovyzovu.webp',
+    author: 'Иван Гобзев',
+  },
+  {
+    id: 33,
+    name: 'Ночлег',
+    image: '/images/articles/nochleg.webp',
+    author: 'Иван Бунин',
+  },
+  {
+    id: 34,
+    name: 'Абонент временно недоступен',
+    image: '/images/articles/abonentvrem.webp',
+    author: 'Вячеслав Немиров',
+  },
+  {
+    id: 35,
+    name: 'Бомба, нарисованная мелом',
+    image: '/images/articles/bombanaris.webp',
+    author: 'Дмитрий Маркевич',
+  },
+  {
+    id: 36,
+    name: 'Иваны',
+    image: '/images/articles/ivany.webp',
+    author: 'Исаак Бабель',
+  },
+  {
+    id: 37,
+    name: 'Горгульи',
+    image: '/images/articles/gorguly.webp',
+    author: 'Владимир Никитин',
+  },
+  {
+    id: 38,
+    name: 'Монстр',
+    image: '/images/articles/monstr.webp',
+    author: 'Сергей Иннер',
+  },
+  {
+    id: 39,
+    name: 'Маленький подвиг',
+    image: '/images/articles/malenkiypodvig.webp',
+    author: 'Прохор Торбин',
+  },
+  {
+    id: 40,
+    name: 'Кроличья походка',
+    image: '/images/articles/krolichyapohodka.webp',
+    author: 'Артём Северский',
   },
 ];
