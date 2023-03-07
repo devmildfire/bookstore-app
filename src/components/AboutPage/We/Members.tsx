@@ -9,7 +9,7 @@ import members from '@/mocks/members';
 
 const Members = (): React.ReactElement => {
   return (
-    <Marquee speed={50} gap={0} direction='normal' delay={0}>
+    <Marquee speed={25} gap={0} direction='normal' delay={0}>
       {members.map((member) => (
         <MemberCard {...member} />
       ))}

@@ -62,7 +62,7 @@ export default function MovingPicsGrid(): React.ReactElement {
   const rowLength = Math.floor(keyedArticles.length / rN);
   const gridArray = splitByRows(keyedArticles, rowLength);
 
-  const speed = 50;
+  const speed = 25;
 
   return (
     // <GridWrapper>

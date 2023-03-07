@@ -5,7 +5,7 @@ import Marquee from '@/components/Common/Marquee';
 
 const PartnersList = (): React.ReactElement => {
   return (
-    <Marquee speed={50} gap={0} direction='reverse' delay={0}>
+    <Marquee speed={25} gap={0} direction='reverse' delay={0}>
       {partners.map((partner) => (
         <PartnerCard {...partner} />
       ))}
