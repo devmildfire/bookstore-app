@@ -4,6 +4,7 @@ interface StyledDivProps {
   height: number;
   width: number;
   picHeight: number;
+  speed: number;
 }
 
 export const StyledDiv = styled.div<StyledDivProps>`

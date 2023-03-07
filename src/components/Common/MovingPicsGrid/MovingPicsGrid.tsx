@@ -7,41 +7,19 @@ import React, {
   useState,
   useLayoutEffect,
 } from 'react';
+// import crypto from 'crypto';
+// import { v4 } from 'uuid';
 import Marquee from '../Marquee';
 import { StyledDiv } from './styles';
 import { articles } from '@/mocks/magazine';
 import splitByRows from '@/utils/splitByRows';
 
-// interface MarqueeProps {
-//   speed: number;
-//   gap: number;
-//   direction: string;
-//   delay: number;
-// }
+// import { v4 as uuidv4 } from 'uuid';
 
-// function useMarqueeTiming<T extends HTMLElement>(speed: number) {
-//   const ref = useRef<T>(null);
-//   const [width, setWidth] = useState(0);
+const keyedArticles = articles.map((item) => {
+  return { ...item, key: item.name };
+});
 
-//   useLayoutEffect(() => {
-//     if (ref.current) {
-//       const { current } = ref;
-//       setWidth(current.offsetWidth);
-//     }
-//   }, []);
-
-//   return { ref, time: width / speed };
-// }
-
-/**
- * Компонент бегущей строки.
- *
- * @param {number} speed              скорость прокрутки в секундах
- * @param {number} gap                расстояние между элементами в пикселях
- * @param {string} direction          направление движения: 'reverse' или 'normal'
- * @param {number} delay              задержка анимации в секундах
- * @param {ReactChildren} children    элементы бегущей строки
- */
 export default function MovingPicsGrid(): React.ReactElement {
   // props: PropsWithChildren<MarqueeProps>
   const [elemHeight, setElemHeight] = useState(0);
@@ -50,20 +28,6 @@ export default function MovingPicsGrid(): React.ReactElement {
 
   const setSize = () => {
     if (elemRef.current) {
-      // const parentHeight = elemRef.current.offsetHeight;
-      // const parentWidth = elemRef.current.offsetWidth;
-
-      // const cos30 = Math.cos(Math.PI / 6);
-
-      // const childWidth = parentWidth / (2 * cos30) + parentHeight;
-      // const childHeight = parentWidth / 2 + parentHeight * cos30;
-
-      // setElemWidth(childWidth);
-      // setElemHeight(childHeight);
-
-      // setElemWidth(elemRef.current.offsetWidth);
-      // setElemHeight(elemRef.current.offsetHeight);
-
       setElemWidth(elemRef.current.parentElement?.offsetWidth as number);
       setElemHeight(elemRef.current.parentElement?.offsetHeight as number);
     }
@@ -95,8 +59,10 @@ export default function MovingPicsGrid(): React.ReactElement {
   const rN = Math.round((maxRn + minRn) / 2);
   const picHeight = childHeight / rN;
 
-  const rowLength = Math.floor(articles.length / rN);
-  const gridArray = splitByRows(articles, rowLength);
+  const rowLength = Math.floor(keyedArticles.length / rN);
+  const gridArray = splitByRows(keyedArticles, rowLength);
+
+  const speed = 50;
 
   return (
     // <GridWrapper>
@@ -109,22 +75,29 @@ export default function MovingPicsGrid(): React.ReactElement {
       height={childHeight}
       width={childWidth}
       picHeight={picHeight}
+      speed={speed}
     >
       {gridArray.map((gridRow, index) => {
         return (
           <Marquee
-            key={Math.random() * 37}
-            speed={50}
+            key={Math.random() * 13}
+            speed={speed}
             gap={0}
             direction='normal'
             delay={index * 10}
           >
             {gridRow.map((item) => {
-              return <img key={Math.random() * 13} src={item.image} alt='1' />;
+              return (
+                <img
+                  key={item.key}
+                  // src={item.image}
+                  alt={speed.toString()}
+                />
+              );
               // return <img alt={'row number ' + index + 'item ' + item.id} />;
             })}
 
-            {gridRow.map((item) => {
+            {/* {gridRow.map((item) => {
               return <img key={Math.random() * 17} src={item.image} alt='1' />;
               // return <img alt={'row number ' + index + 'item ' + item.id} />;
             })}
@@ -137,7 +110,7 @@ export default function MovingPicsGrid(): React.ReactElement {
             {gridRow.map((item) => {
               return <img key={Math.random() * 23} src={item.image} alt='1' />;
               // return <img alt={'row number ' + index + 'item ' + item.id} />;
-            })}
+            })} */}
           </Marquee>
         );
       })}
