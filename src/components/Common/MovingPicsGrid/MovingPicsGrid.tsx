@@ -106,7 +106,7 @@ export default function MovingPicsGrid(): React.ReactElement {
       {gridArray.map((gridRow, index) => {
         return (
           <Marquee
-            key={Math.random() * 33}
+            key={Math.random() * 37}
             speed={50}
             gap={0}
             direction='normal'
@@ -114,6 +114,21 @@ export default function MovingPicsGrid(): React.ReactElement {
           >
             {gridRow.map((item) => {
               return <img key={Math.random() * 13} src={item.image} alt='1' />;
+              // return <img alt={'row number ' + index + 'item ' + item.id} />;
+            })}
+
+            {gridRow.map((item) => {
+              return <img key={Math.random() * 17} src={item.image} alt='1' />;
+              // return <img alt={'row number ' + index + 'item ' + item.id} />;
+            })}
+
+            {gridRow.map((item) => {
+              return <img key={Math.random() * 19} src={item.image} alt='1' />;
+              // return <img alt={'row number ' + index + 'item ' + item.id} />;
+            })}
+
+            {gridRow.map((item) => {
+              return <img key={Math.random() * 23} src={item.image} alt='1' />;
               // return <img alt={'row number ' + index + 'item ' + item.id} />;
             })}
           </Marquee>
