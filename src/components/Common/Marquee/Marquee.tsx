@@ -25,7 +25,7 @@ function useMarqueeTiming<T extends HTMLElement>(speed: number) {
     }
   }, []);
 
-  return { ref, time: width / speed };
+  return { ref, time: width / speed, width };
 }
 
 /**
@@ -41,12 +41,13 @@ export default function Marquee(
   props: PropsWithChildren<MarqueeProps>
 ): React.ReactElement {
   const { speed, gap, direction, delay = 0, children } = props;
-  const { ref, time } = useMarqueeTiming<HTMLUListElement>(speed);
+  const { ref, time, width } = useMarqueeTiming<HTMLUListElement>(speed);
   return (
     <MarqueeWrapper gap={gap}>
       <MarqueeContent ref={ref} time={time} direction={direction} delay={delay}>
         {children}
       </MarqueeContent>
+      {width}
       <MarqueeContent
         time={time}
         direction={direction}
