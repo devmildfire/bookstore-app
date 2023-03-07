@@ -7,7 +7,12 @@ import books from '@/mocks/books';
 
 const data = Array(12)
   .fill(0)
-  .map(() => books[1]);
+  .map(() => books[1])
+  .map((book, idx) => ({
+    ...book,
+    title: `${book.title}${idx}`,
+    id: book.id + idx,
+  }));
 
 // const getRandomInt = (min: number, max: number): number => {
 //   min = Math.ceil(min);
