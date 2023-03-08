@@ -30,7 +30,7 @@ export const StyledDiv = styled.div<StyledDivProps>`
 
   img {
     box-sizing: border-box;
-    height: ${(props) => props.picHeight}px;
+    /* height: ${(props) => props.picHeight}px; */
     width: ${(props) => (props.picHeight * 516) / 290}px;
     padding: calc(${(props) => props.picHeight}px * 0.01);
   }
