@@ -17,7 +17,7 @@ const DropdownContent = styled(DropdownMenu.Content)`
   background-color: rgba(30, 30, 30, 0.6);
   padding: 15px 12px 20px;
   border-radius: 8px;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   gap: 8px;
