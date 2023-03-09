@@ -31,6 +31,12 @@ const DropdownTrigger = styled(DropdownMenu.Trigger)`
   padding: 16px;
   min-width: 64px;
   width: 100%;
+  transition: 0.15s;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--main-red-100);
+  }
 `;
 
 const DropdownLabel = styled(DropdownMenu.Label)`
