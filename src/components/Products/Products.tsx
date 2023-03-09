@@ -123,11 +123,6 @@ function Row({ row, data }: RowProps) {
             <Video autoPlay loop src='video/preview.mp4'>
               <track kind='captions' />
             </Video>
-            {/* <Image
-              url={preview.cover}
-              // src={preview.cover}
-              // alt={preview.title}
-            /> */}
             <CloseButton onClick={close} type='button'>
               <CloseIcon />
             </CloseButton>

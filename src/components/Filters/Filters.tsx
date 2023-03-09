@@ -130,8 +130,8 @@ const Triggers = styled.div`
   border-radius: 60px;
   display: flex;
   justify-content: space-evenly;
-  backdrop-filter: blur(4px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
   width: 100%;
   max-width: 755px;
   height: auto;
@@ -147,8 +147,8 @@ const SortList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: #121212;
   border-radius: 4px;
+  background-color: #121212;
   margin: 0;
   list-style: none;
   font-size: clamp(12px, 1vw, 16px);
