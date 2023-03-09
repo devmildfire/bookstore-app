@@ -10,7 +10,6 @@ const data = Array(12)
   .map(() => books[1])
   .map((book, idx) => ({
     ...book,
-    title: `${book.title}${idx}`,
     id: book.id + idx,
   }));
 

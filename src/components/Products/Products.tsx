@@ -75,13 +75,13 @@ function Row({ row, data }: RowProps) {
     }
   };
 
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (isOpen && event.key === 'Escape') {
-        close();
-      }
-    };
+  const closeOnEscape = (event: KeyboardEvent) => {
+    if (isOpen && event.key === 'Escape') {
+      close();
+    }
+  };
 
+  useEffect(() => {
     window.addEventListener('keydown', closeOnEscape);
 
     return () => {

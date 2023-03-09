@@ -77,15 +77,15 @@ export const Preview = styled.div<PreviewProps>`
 
   &::before {
     content: '';
-    background: linear-gradient(90deg, #050505 40%, rgba(255, 255, 255, 0) 100%),
-      linear-gradient(
+    background: linear-gradient(90deg, #050505 40%, rgba(0, 0, 0, 0.1) 80%);
+    /* linear-gradient(
         0deg,
         rgba(0, 0, 0, 1) 0%,
-        rgba(122, 122, 122, 0) 25%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(130, 130, 130, 0) 75%,
+        rgba(122, 122, 122, 0.1) 25%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(130, 130, 130, 0.1) 75%,
         rgba(5, 5, 5, 1) 100%
-      );
+      ); */
     position: absolute;
     inset: 0;
     z-index: -1;
@@ -106,7 +106,7 @@ export const Container = styled.div<BoxProps>`
 export const DescriptionBox = styled.div`
   display: block;
   max-height: 200px;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 export const Title = styled.h2`
