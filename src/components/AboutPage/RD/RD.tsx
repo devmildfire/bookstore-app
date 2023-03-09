@@ -1,13 +1,5 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-// import {
-//   useScroll,
-//   motion,
-//   useTransform,
-//   useSpring,
-//   useViewportScroll,
-//   useMotionValueEvent,
-// } from 'framer-motion';
 // import { useRef } from 'react';
 // import styled from 'styled-components';
 import Text from '@/components/Common/Text';
@@ -121,76 +113,53 @@ const RDIcon = styled.svg`
   }
 `;
 
-// const GradientUpper = styled.div`
-//   position: absolute;
-//   top: 0%;
-//   height: calc(436 / 1080 * 100%);
-//   width: 100%;
-//   z-index: 50;
+const GradientUpper = styled.div`
+  position: absolute;
+  top: 0%;
+  height: calc(436 / 1080 * 100%);
+  width: 100%;
+  z-index: 50;
 
-//   background: linear-gradient(
-//     180deg,
-//     #121212 34.18%,
-//     rgba(18, 18, 18, 0.83) 54.72%,
-//     rgba(18, 18, 18, 0.345207) 77.1%,
-//     rgba(18, 18, 18, 0) 93.04%
-//   );
-// `;
+  background: linear-gradient(
+    180deg,
+    #121212 34.18%,
+    rgba(18, 18, 18, 0.83) 54.72%,
+    rgba(18, 18, 18, 0.345207) 77.1%,
+    rgba(18, 18, 18, 0) 93.04%
+  );
+`;
 
-// const GradientLower = styled.div`
-//   position: absolute;
-//   bottom: calc(0% - 71 / 1080 * 100%);
-//   height: calc(436 / 1080 * 100%);
-//   width: 100%;
-//   z-index: 50;
+const GradientLower = styled.div`
+  position: absolute;
+  bottom: calc(0% - 71 / 1080 * 100%);
+  height: calc(436 / 1080 * 100%);
+  width: 100%;
+  z-index: 50;
 
-//   background: linear-gradient(
-//     180deg,
-//     #000000 23.39%,
-//     rgba(0, 0, 0, 0.72) 57.8%,
-//     rgba(0, 0, 0, 0) 91.74%
-//   );
-//   transform: matrix(1, 0, 0, -1, 0, 0);
-// `;
+  background: linear-gradient(
+    180deg,
+    #000000 23.39%,
+    rgba(0, 0, 0, 0.72) 57.8%,
+    rgba(0, 0, 0, 0) 91.74%
+  );
+  transform: matrix(1, 0, 0, -1, 0, 0);
+`;
 
-// const Gradients = () => {
-//   return (
-//     <>
-//       <GradientUpper />
-//       <GradientLower />
-//     </>
-//   );
-// };
+const Gradients = () => {
+  return (
+    <>
+      <GradientUpper />
+      <GradientLower />
+    </>
+  );
+};
 
 const RD = (): React.ReactElement => {
   const ref = useRef(null);
-  // const { scrollYProgress } = useScroll({
-  //   target: ref,
-  //   offset: ['end start', 'start end'],
-  // });
-  // const scrollYProgressSpring = useSpring(scrollYProgress, {
-  //   stiffness: 350,
-  //   damping: 100,
-  //   // restDelta: 0.001,
-  // });
-  // const [hookedYPostion, setHookedYPosition] = React.useState(0);
-  // React.useEffect(() => {
-  //   scrollYProgress.onChange((v) => setHookedYPosition(v));
-  // }, [scrollYProgress, setHookedYPosition]);
-
-  // const y = useTransform(scrollYProgress, [1, 0], ['-40%', '40%']);
-  // const y = useTransform(scrollYProgressSpring, [1, 0], ['-40%', '40%']);
 
   return (
     <StyledWrapper ref={ref}>
-      {/* <Gradients /> */}
-
-      {/* <motion.img
-        className='image'
-        src={litMagazineBack.src}
-        alt=''
-        style={{ y }}
-      /> */}
+      <Gradients />
 
       <MovingPicsGrid />
 
