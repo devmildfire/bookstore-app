@@ -90,23 +90,37 @@ export default function MovingPicsGrid(): React.ReactElement {
               return (
                 <img key={item.key} src={item.image} alt={speed.toString()} />
               );
-              // return <img alt={'row number ' + index + 'item ' + item.id} />;
-            })}
-
-            {/* {gridRow.map((item) => {
-              return <img key={Math.random() * 17} src={item.image} alt='1' />;
-              // return <img alt={'row number ' + index + 'item ' + item.id} />;
             })}
 
             {gridRow.map((item) => {
-              return <img key={Math.random() * 19} src={item.image} alt='1' />;
-              // return <img alt={'row number ' + index + 'item ' + item.id} />;
+              return (
+                <img
+                  key={`${item.key}second`}
+                  src={item.image}
+                  alt={speed.toString()}
+                />
+              );
             })}
 
             {gridRow.map((item) => {
-              return <img key={Math.random() * 23} src={item.image} alt='1' />;
-              // return <img alt={'row number ' + index + 'item ' + item.id} />;
-            })} */}
+              return (
+                <img
+                  key={`${item.key}third`}
+                  src={item.image}
+                  alt={speed.toString()}
+                />
+              );
+            })}
+
+            {gridRow.map((item) => {
+              return (
+                <img
+                  key={`${item.key}fourth`}
+                  src={item.image}
+                  alt={speed.toString()}
+                />
+              );
+            })}
           </Marquee>
         );
       })}
