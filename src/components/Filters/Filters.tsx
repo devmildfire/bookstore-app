@@ -130,7 +130,7 @@ const Triggers = styled.div`
   border-radius: 60px;
   display: flex;
   justify-content: space-evenly;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(4px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 755px;
