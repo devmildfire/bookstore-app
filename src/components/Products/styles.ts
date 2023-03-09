@@ -77,7 +77,7 @@ export const Preview = styled.div<PreviewProps>`
 
   &::before {
     content: '';
-    background: linear-gradient(90deg, #050505 40%, rgba(0, 0, 0, 0.1) 80%);
+    background: linear-gradient(90deg, #050505 40%, rgba(0, 0, 0, 0.1) 55%);
     /* linear-gradient(
         0deg,
         rgba(0, 0, 0, 1) 0%,
