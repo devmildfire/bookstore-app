@@ -42,15 +42,14 @@ const BannerContainer = styled.div`
   gap: 96px;
   width: 100%;
   justify-content: center;
-
+  @media ${breakPoints.md} {
+    gap: 40px;
+  }
   @media ${breakPoints.sm} {
     flex-direction: column;
     align-items: center;
     gap: 24px;
     padding: 32px 32px 24px;
-  }
-  @media ${breakPoints.md} {
-    gap: 40px;
   }
 `;
 

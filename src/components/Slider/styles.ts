@@ -8,7 +8,7 @@ export const SliderContainer = styled.section`
   position: relative;
   overflow-x: hidden;
   width: 100%;
-  height: clamp(320px, 90dvh, 760px);
+  height: clamp(320px, 90svh, 760px);
   background-color: #050505;
 `;
 
