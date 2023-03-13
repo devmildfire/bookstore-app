@@ -12,6 +12,7 @@ import {
 } from './styles';
 import Text from '../Common/Text';
 import Button from '../Common/Button';
+import breakPoints from '@/utils/breakPoints';
 
 const variants = {
   enter: (direction: number) => {
@@ -36,48 +37,85 @@ const swipePower = (offset: number, velocity: number) => {
 
 const BannerContainer = styled.div`
   display: flex;
-  padding: 60px 0 24px;
+  flex-direction: row;
+  padding: 60px 32px 24px;
   gap: 96px;
-  height: 100%;
   width: 100%;
   justify-content: center;
+
+  @media ${breakPoints.sm} {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 32px 24px;
+  }
+  @media ${breakPoints.md} {
+    gap: 40px;
+  }
 `;
 
 const BannerDescription = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2rem;
+  gap: 32px;
   max-width: 688px;
   width: 100%;
+  @media ${breakPoints.lg} {
+    gap: 16px;
+  }
+  @media ${breakPoints.sm} {
+    gap: 8px;
+    align-items: center;
+  }
 `;
 
 const BannerInfo = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  height: 100%;
+  justify-content: space-around;
+  @media ${breakPoints.sm} {
+    align-items: center;
+    gap: 24px;
+  }
 `;
 
 const BannerCover = styled(Image)`
   pointer-events: none;
-  width: auto;
+  width: clamp(150px, 30vmax, 420px);
   height: auto;
+  object-fit: contain;
 `;
 
 const Title = styled(Text)`
-  font-size: 70px;
+  font-size: clamp(24px, 5vw, 70px);
+  width: 100%;
+  @media ${breakPoints.sm} {
+    text-align: center;
+  }
 `;
 
 const Author = styled(Text)`
-  font-size: 40px;
+  font-size: clamp(12px, 3vw, 40px);
+  @media ${breakPoints.sm} {
+    text-align: center;
+  }
 `;
 
 const Thesis = styled(Text)`
   opacity: 0.6;
-  font-size: 24px;
+  font-size: clamp(10px, 2.5vw, 24px);
   font-style: italic;
   text-transform: uppercase;
+  @media ${breakPoints.sm} {
+    text-align: center;
+  }
+`;
+
+const BannerButton = styled(Button)`
+  @media ${breakPoints.md} {
+    min-height: 48px;
+  }
 `;
 
 function Banner({ index }: { index: number }) {
@@ -85,7 +123,7 @@ function Banner({ index }: { index: number }) {
     <BannerContainer>
       <BannerCover
         height={670}
-        width={457}
+        width={420}
         src={books[index].cover}
         alt={books[index].title}
       />
@@ -97,7 +135,7 @@ function Banner({ index }: { index: number }) {
           </Author>
           <Thesis>{books[index].thesis}</Thesis>
         </BannerDescription>
-        <Button>Познать</Button>
+        <BannerButton>Познать</BannerButton>
       </BannerInfo>
     </BannerContainer>
   );

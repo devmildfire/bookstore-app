@@ -104,7 +104,7 @@ const book: Book = {
 const books: Book[] = [
   {
     id: 1,
-    title: 'Аристотель в Казахстане',
+    title: 'Аристотель в\u00A0Казахстане',
     transliteratedTitle: 'aristotel-v-kazahstane',
     authors: [authors[2]],
     publishDate: '2021-6-24',
