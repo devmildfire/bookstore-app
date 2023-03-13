@@ -8,13 +8,13 @@ export const SliderContainer = styled.section`
   position: relative;
   overflow-x: hidden;
   width: 100%;
-  height: clamp(320px, 90svh, 760px);
+  height: clamp(550px, 90dvh, 760px);
   background-color: #050505;
 `;
 
 export const Slide = styled.div`
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   /* height: calc(760px - var(--pagination-height)); */
   background-color: #050505;
   position: absolute;
