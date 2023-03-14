@@ -1,5 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import styled from 'styled-components';
+import breakPoints from '@/utils/breakPoints';
 
 export const DialogOverlay = styled(Dialog.Overlay)`
   background-color: #0000009d;
@@ -26,6 +27,14 @@ export const DialogContent = styled(Dialog.Content)`
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   :focus {
     outline: none;
+  }
+
+  @media ${breakPoints.lg} {
+    padding: 32px 64px 32px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding: 32px 16px 32px;
   }
 `;
 

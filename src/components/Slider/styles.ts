@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const SliderContainer = styled.section`
-  --pagination-height: 1rem;
+  --pagination-height: 16px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -14,8 +14,6 @@ export const SliderContainer = styled.section`
 
 export const Slide = styled.div`
   width: 100%;
-  /* height: 100%; */
-  /* height: calc(760px - var(--pagination-height)); */
   background-color: #050505;
   position: absolute;
   display: flex;
