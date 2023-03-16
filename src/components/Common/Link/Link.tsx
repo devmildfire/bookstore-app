@@ -1,6 +1,6 @@
 import * as React from 'react';
 import NextLink from 'next/link';
-import { StyledLink } from './styles';
+// import { StyledLink } from './styles';
 import { ClassNameProps } from '@/types/className';
 
 export interface LinkProps extends ClassNameProps {
@@ -13,15 +13,18 @@ const Link = React.forwardRef<
   HTMLAnchorElement,
   React.PropsWithChildren<LinkProps>
 >((props, ref) => {
-  const {
-    children, href, scroll, className, shallow,
-  } = props;
+  const { children, href, scroll, className, shallow } = props;
 
   return (
-    <NextLink href={href} passHref scroll={scroll} shallow={shallow}>
-      <StyledLink href='fakeHref' ref={ref} className={className}>
-        {children}
-      </StyledLink>
+    <NextLink
+      ref={ref}
+      href={href}
+      passHref
+      scroll={scroll}
+      shallow={shallow}
+      className={className}
+    >
+      {children}
     </NextLink>
   );
 });

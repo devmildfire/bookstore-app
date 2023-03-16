@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-  AnimatePresence, motion, Transition, Variants
-} from 'framer-motion';
+import { AnimatePresence, motion, Transition, Variants } from 'framer-motion';
 import { COLLAPSE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
 
@@ -13,12 +11,18 @@ interface CollapseProps {
 }
 const variants: Variants = {
   close: {
-    transform: 'scaleY(0)',
-    transformOrigin: 'top',
+    // transform: 'scaleY(0)',
+    // transformOrigin: 'top',
+    opacity: 0,
+    height: 0,
+    // transitionDuration: '0.2s',
   },
   open: {
-    transform: 'scaleY(1)',
-    transformOrigin: 'top',
+    // transform: 'scaleY(1)',
+    // transformOrigin: 'top',
+    opacity: 1,
+    height: 'auto',
+    // transitionDuration: '0.2s',
   },
 };
 
@@ -30,7 +34,7 @@ const Collapse: React.FC<CollapseProps> = (props) => {
     exitTimeout = 0,
     duration = COLLAPSE_DURATION,
   } = props;
-  const isMount = useMountDelay({ open, enterTimeout, exitTimeout, });
+  const isMount = useMountDelay({ open, enterTimeout, exitTimeout });
   const transition = React.useMemo<Transition>(
     () => ({
       duration: duration / 1000,

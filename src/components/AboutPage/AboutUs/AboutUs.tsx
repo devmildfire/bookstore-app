@@ -102,22 +102,17 @@ const AboutUs = (): React.ReactElement => (
     </Container>
     <Books />
     <StyledDescriptionContainer>
-      <div>
-        <StyledDescription variant='aboutText'>
-          <p>
-            Независимое издательство Чтиво — дитя петербургского литандеграунда
-            и сети интернет, увидевшее свет в 2017 году.
-          </p>
-          <br />
-          <p>
-            Мы отбираем произведения для издания вне зависимости от известности
-            автора, работаем с несерийными и неформальными текстами и считаем,
-            что книгоиздание не должно быть бизнесом, а тем более&nbsp;—
-            монополией.
-          </p>
-        </StyledDescription>
-        <StyledButton variant='small'>Манифест Чтива</StyledButton>
-      </div>
+      <StyledDescription variant='aboutText'>
+        Независимое издательство Чтиво — дитя петербургского литандеграунда и
+        сети интернет, увидевшее свет в 2017 году.
+      </StyledDescription>
+      <br />
+      <StyledDescription variant='aboutText'>
+        Мы отбираем произведения для издания вне зависимости от известности
+        автора, работаем с несерийными и неформальными текстами и считаем, что
+        книгоиздание не должно быть бизнесом, а тем более&nbsp;— монополией.
+      </StyledDescription>
+      <StyledButton variant='small'>Манифест Чтива</StyledButton>
     </StyledDescriptionContainer>
   </StyledSection>
 );

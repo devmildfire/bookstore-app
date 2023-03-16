@@ -6,7 +6,7 @@ export const set: BoxSet = {
   title: 'Соединённые Штаты Литературы',
   price: 1100,
   newPrice: null,
-  image: 'images/sets/usa.svg',
+  cover: 'images/sets/usa.svg',
   books: books.slice(0, 6),
   description: 'Произведения американских авторов',
 };
@@ -19,6 +19,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Произведения американских авторов',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const sets: BoxSet[] = [
     newPrice: 1200,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 3,
@@ -35,6 +37,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 4,
@@ -43,6 +46,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Произведения американских авторов',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 5,
@@ -51,6 +55,7 @@ const sets: BoxSet[] = [
     newPrice: 1200,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 6,
@@ -59,6 +64,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 7,
@@ -67,6 +73,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Произведения американских авторов',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 8,
@@ -75,6 +82,7 @@ const sets: BoxSet[] = [
     newPrice: 1200,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 9,
@@ -83,6 +91,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 10,
@@ -91,6 +100,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Произведения американских авторов',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 11,
@@ -99,6 +109,7 @@ const sets: BoxSet[] = [
     newPrice: 1200,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Джека Керуака',
+    cover: 'images/sets/usa.svg',
   },
   {
     id: 12,
@@ -107,6 +118,7 @@ const sets: BoxSet[] = [
     newPrice: null,
     books: books.slice(0, 6),
     description: 'Все изданные в Чтиве произведения Николая Старообрядцева',
+    cover: 'images/sets/usa.svg',
   },
 ];
 

@@ -2,7 +2,9 @@ import * as React from 'react';
 import calculateDeviceInfo from '@/utils/calculateDeviceInfo';
 import DeviceInfoContext from './context';
 
-const DeviceInfoProvider: React.FC<React.PropsWithChildren<{}>> = (props) => {
+const DeviceInfoProvider: React.FC<
+  React.PropsWithChildren<Record<string, never>>
+> = (props) => {
   const [deviceInfo, setDeviceInfo] = React.useState(calculateDeviceInfo(0));
   const { children } = props;
 

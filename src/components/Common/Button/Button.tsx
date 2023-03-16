@@ -22,8 +22,8 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
 
   if (href) {
     return (
-      <Link href={href} passHref scroll={scroll}>
-        <StyledButton as='a' href='fakeHref' variant={variant} {...params}>
+      <Link href={href} scroll={scroll}>
+        <StyledButton variant={variant} {...params}>
           <Text variant='text' textColor='inherit' key={0}>
             {children}
           </Text>

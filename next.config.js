@@ -36,6 +36,10 @@ const options = {
   devIndicators: {
     buildActivity: false,
   },
+  i18n: {
+    locales: ['ru'],
+    defaultLocale: 'ru',
+  },
 };
 
 module.exports = options;

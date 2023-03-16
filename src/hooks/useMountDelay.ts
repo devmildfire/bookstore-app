@@ -24,8 +24,6 @@ const useMountDelay = (options: UseTransitionOptions): boolean => {
         setTimeout(() => setIsMount(false), exitTimeout);
       };
     }
-
-    return () => {};
   }, [enterTimeout, exitTimeout, open]);
 
   return isMount;

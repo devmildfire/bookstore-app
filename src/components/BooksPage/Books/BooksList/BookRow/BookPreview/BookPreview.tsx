@@ -1,5 +1,5 @@
 import * as React from 'react';
-import BookPreviewCard from './BookPreviewCard';
+// import BookPreviewCard from './BookPreviewCard';
 import { COLLAPSE_DURATION, FADE_DURATION } from '@/consts/animation';
 import { StyledPreviewContent, StyledPreviewHeader } from './styles';
 import { Book } from '@/models/books';
@@ -14,12 +14,12 @@ interface BookPreviewProps {
 }
 
 const BookPreview: React.FC<BookPreviewProps> = (props) => {
-  const { books, openBookId, } = props;
+  const { books, openBookId } = props;
 
   const open = books.some((book) => book.id === openBookId);
 
   const exitHref = usePrepareLink({
-    deleteQuery: { [GET_PARAMS.openProduct]: true, },
+    deleteQuery: { [GET_PARAMS.openProduct]: true },
   });
 
   return (
@@ -37,7 +37,7 @@ const BookPreview: React.FC<BookPreviewProps> = (props) => {
             enterTimeout={FADE_DURATION}
             exitTimeout={FADE_DURATION}
           >
-            <BookPreviewCard {...book} />
+            {/* <BookPreviewCard {...book} /> */}
           </Fade>
         ))}
       </StyledPreviewContent>

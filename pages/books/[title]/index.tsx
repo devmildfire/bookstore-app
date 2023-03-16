@@ -10,7 +10,7 @@ import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
 import BookAuthor from '@/components/BookPage/BookAuthor';
-import SimilarBooks from '@/components/BookPage/SimilarBooks';
+// import SimilarBooks from '@/components/BookPage/SimilarBooks';
 import books from '@/mocks/books';
 import breakPoints from '@/utils/breakPoints';
 
@@ -67,7 +67,7 @@ const BookPage = (): React.ReactElement => {
             <BookProperties {...book} />
             <BookTrailer src={book.trailerSrc} title={book.title} />
             <BookAuthor authors={book.authors} />
-            <SimilarBooks />
+            {/* <SimilarBooks /> */}
           </StyleWrapper>
         </>
       )}

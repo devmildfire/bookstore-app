@@ -10,7 +10,7 @@ const popupsMap: Record<string, React.ComponentType<BasePopupProps>> = {
 };
 
 const Popups: React.FC = () => {
-  const { mountedPopups, popups, } = usePopups();
+  const { mountedPopups, popups } = usePopups();
 
   const popupsCount = mountedPopups.length;
   useScrollLock(!!popupsCount);

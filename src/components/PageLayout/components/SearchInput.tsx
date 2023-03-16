@@ -245,7 +245,7 @@ function SearchInput({
           {matches.map((book) => (
             <StyledMatch>
               <StyledMatchLink href={`/books/${book.transliteratedTitle}`}>
-                <StyledBookCover src={book.image} alt={book.title} />
+                <StyledBookCover src={book.cover} alt={book.title} />
                 <StyledMatchInfoContainer>
                   <StyledMatchText>{book.title}</StyledMatchText>
                   <StyledMatchText>

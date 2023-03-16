@@ -6,13 +6,13 @@ import {
   StyledFeaturesList,
   StyledImage,
   StyledPriceWrapper,
-  StyledWrapper
+  StyledWrapper,
 } from './styles';
 import Text, { TextProps } from '@/components/Common/Text';
 import Price from '@/components/Common/Price';
 import Button from '@/components/Common/Button';
 
-type SubscriptionCardProps = Subscription
+type SubscriptionCardProps = Subscription;
 
 const priceTextProps: TextProps<'span'> = {
   variant: 'h3_1',
@@ -20,12 +20,10 @@ const priceTextProps: TextProps<'span'> = {
 };
 
 const SubscriptionCard: React.FC<SubscriptionCardProps> = (props) => {
-  const {
-    features, price, title, image,
-  } = props;
+  const { features, price, title, cover } = props;
   return (
     <StyledWrapper>
-      <StyledImage src={image} alt={title} />
+      <StyledImage src={cover} alt={title} />
       <StyledDescriptionWrapper>
         <div>
           <Text variant='h3_2' align='center'>

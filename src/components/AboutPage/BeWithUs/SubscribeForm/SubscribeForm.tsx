@@ -1,6 +1,7 @@
-import { z } from 'zod';
+/* eslint-disable import/no-extraneous-dependencies */
 import styled, { keyframes } from 'styled-components';
 import React, { useState } from 'react';
+import { z } from 'zod';
 import {
   useForm,
   Controller,

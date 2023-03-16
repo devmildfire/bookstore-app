@@ -15,6 +15,8 @@
   --main-red-20: rgba(147, 0, 0, 0.2);
   --main-red-10: rgba(147, 0, 0, 0.1);
 
+  --red-hover: 0 0 15px 5px var(--main-red-60);
+
   --main-white-100: rgba(220, 220, 220, 1);
   --main-white-90: rgba(220, 220, 220, 0.9);
   --main-white-80: rgba(220, 220, 220, 0.8);
@@ -41,12 +43,82 @@
   --max-width: 1920px;
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
+
+  --font-heading-xl: 50px;
+
+  --font-xl: 24px;
+  --font-l: 20px;
+  --font-m: 16;
+  --font-s: 12px;
+  /* --heading-xl */
   --top-div-gap: 100px;
 }
 
 /* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
 ::-webkit-scrollbar {
   display: none;
+}
+
+
+
+@media screen and (max-width: 830px) {
+  :root {
+    /* --width: 580px; */
+    --width: 722px;
+    --top-div-gap: 40px;
+  }
+}
+
+
+
+
+
+
+
+html,
+body {
+  /* display: flex;
+  justify-content: center; */
+  font-family: 'Montserrat', sans-serif;
+  font-style: normal;
+  color: var(--main-white-100);
+  width: 100%;
+  min-height: 100%;
+  scrollbar-gutter: stable;
+  background-color: var(--main-black);
+  margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
+}
+
+.scroll-lock {
+  overflow: hidden;
+}
+
+.visibility-hidden {
+  position: absolute;
+  z-index: var(--low-z-index);
+
+  display: inline-block;
+
+  width: 1px;
+  height: 1px;
+
+  margin: -1px;
+
+  clip: rect(0, 0, 0, 0);
+
+  overflow: hidden;
+}
+
+.max-width {
+  padding: 0 10vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.max-width > * {
+  max-width: 1440px;
 }
 
 @media screen and (max-width: 1440px) {
@@ -62,6 +134,14 @@
     --width: 830px;
     --searchBarWidth: 186px;
     --top-div-gap: 50px;
+  }
+
+  .max-width {
+    padding: 0 5vw;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -99,36 +179,4 @@
     --searchBarWidth: 99px;
     --top-div-gap: 30px;
   }
-}
-
-html,
-body {
-  font-family: 'Montserrat', sans-serif;
-  font-style: normal;
-  color: #102327;
-  width: 100%;
-  min-height: 100%;
-  scrollbar-gutter: stable;
-  background-color: #020202;
-  margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
-}
-
-.scroll-lock {
-  overflow: hidden;
-}
-
-.visibility-hidden {
-  position: absolute;
-  z-index: var(--low-z-index);
-
-  display: inline-block;
-
-  width: 1px;
-  height: 1px;
-
-  margin: -1px;
-
-  clip: rect(0, 0, 0, 0);
-
-  overflow: hidden;
 }

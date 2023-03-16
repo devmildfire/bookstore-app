@@ -1,18 +1,21 @@
 /* eslint-disable import/no-cycle */
 import {
-  addListener,
-  AnyAction,
+  // addListener,
+  // AnyAction,
   combineReducers,
   configureStore,
 } from '@reduxjs/toolkit';
-import { createWrapper, HYDRATE } from 'next-redux-wrapper';
-import { Reducer } from 'react';
+import {
+  createWrapper,
+  // , HYDRATE
+} from 'next-redux-wrapper';
+// import { Reducer } from 'react';
 import { booksApi } from './books';
 import { boxSetsApi } from './boxSets';
 import { giftsApi } from './gifts';
 import { subscriptionApi } from './subscriptions';
 
-const apis = [boxSetsApi, booksApi, giftsApi, subscriptionApi];
+// const apis = [boxSetsApi, booksApi, giftsApi, subscriptionApi];
 
 const reducers = combineReducers({
   [booksApi.reducerPath]: booksApi.reducer,
@@ -21,32 +24,21 @@ const reducers = combineReducers({
   [subscriptionApi.reducerPath]: subscriptionApi.reducer,
 });
 
-const reducer: Reducer<Store, AnyAction> = (state, action) => {
-  if (action.type === HYDRATE) {
-    return {
-      ...state,
-      ...action.payload,
-    };
-  }
-  return reducers(state, action);
-};
+// const reducer: Reducer<Store, AnyAction> = (state, action) => {
+//   if (action.type === HYDRATE) {
+//     return {
+//       ...state,
+//       ...action.payload,
+//     };
+//   }
+//   return reducers(state, action);
+// };
 
 const makeStore = () => {
   const store = configureStore({
-    /* @ts-ignore */
-    reducer,
-    devTools: true,
-    /* @ts-ignore */
-    middleware: (getDefaultMiddleware) => {
-      const middleware = getDefaultMiddleware().concat(
-        apis.map((api) => api.middleware),
-      );
-      return middleware;
-    },
+    reducer: () => 'hi',
   });
-  /* @ts-ignore */
-  addListener(store.dispatch);
-
+  // addListener(store.dispatch);
   return store;
 };
 

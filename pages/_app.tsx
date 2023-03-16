@@ -3,12 +3,15 @@ import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { Router } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
-import PageLayout from '@/layouts/PageLayout';
-import { DeviceInfoProvider } from '@/contexts/DeviceInfoContext';
+
+// import PageLayout from '@/layouts/PageLayout';
 import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
 import '@/styles/globals.css';
+import Header from '@/components/PageLayout/Header';
+import Footer from '@/components/PageLayout/Footer';
+import ModalProvider from '@/components/Modal';
 
 const MyApp: NextPage<AppProps> = (props) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -26,16 +29,19 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeComplete', toggleOff);
     };
   }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <DeviceInfoProvider>
-          <PageLayout>
+        <ModalProvider>
+          {/* <PageLayout> */}
+          <Header />
+          <>
             {value && <PageLoading />}
             <Component {...pageProps} />
-          </PageLayout>
-        </DeviceInfoProvider>
+          </>
+          {/* </PageLayout> */}
+          <Footer />
+        </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );

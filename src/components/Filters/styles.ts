@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-export const StyledFilterWrapper = styled.div`
-  display: flex;
-  gap: 24px;
-`;
+const b = styled.div``;
+
+export default b;

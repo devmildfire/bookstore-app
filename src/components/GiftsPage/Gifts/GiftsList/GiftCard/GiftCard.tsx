@@ -15,7 +15,7 @@ import { ClassNameProps } from '@/types/className';
 import Price from '@/components/Common/Price';
 
 interface GiftCardProps
-  extends Pick<Gift, 'title' | 'image' | 'price' | 'newPrice'>,
+  extends Pick<Gift, 'title' | 'cover' | 'price' | 'newPrice'>,
     ClassNameProps {}
 
 const modifierProps: TextProps<'span'> = {
@@ -23,12 +23,12 @@ const modifierProps: TextProps<'span'> = {
 };
 
 const GiftCard: React.FC<GiftCardProps> = (props) => {
-  const { title, image, className, price, newPrice } = props;
+  const { title, cover, className, price, newPrice } = props;
   return (
     <StyledWrapper className={className}>
       <Text variant='h3_2'>{title}</Text>
       <StyledImageWrapper className='lighted'>
-        <Image src={image} title={title} />
+        <Image src={cover} title={title} />
       </StyledImageWrapper>
       <StyledInfo>
         <Price

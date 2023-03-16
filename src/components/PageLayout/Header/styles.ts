@@ -189,14 +189,11 @@ const HeaderContainer = styled.div`
 
   @media ${breakPoints.xl} {
     max-width: auto;
-    box-sizing: border-box;
     --header-height: 70px;
-    padding: 0 90px;
   }
 
   @media ${breakPoints.lg} {
     --header-height: 60px;
-    padding: 0 20px;
   }
 
   @media ${breakPoints.md} {
@@ -216,7 +213,7 @@ const NavList = styled.ul<HeaderList>`
   position: relative;
   width: 55%;
   min-width: 480px;
-  @media ${breakPoints.md} {
+  @media ${breakPoints.lg} {
     width: 50vw;
     min-width: 260px;
     visibility: hidden;
@@ -245,10 +242,10 @@ const NavListItem = styled.li`
   gap: 10px;
   text-align: end;
   font-size: 16px;
-  @media screen and (max-width: 1200px) {
+  @media ${breakPoints.xl} {
     font-size: 14px;
   }
-  @media screen and (min-width: 830px) {
+  @media screen and (min-width: 1024px) {
     &:hover .submenu-dropdown {
       visibility: visible;
       opacity: 1;
@@ -275,7 +272,7 @@ const Submenu = styled.ul<SubmenuProps>`
   visibility: hidden;
   opacity: 0;
   transition: 0.4s;
-  @media ${breakPoints.md} {
+  @media ${breakPoints.lg} {
     display: ${(props) => (props.isOpen ? 'flex' : 'none')};
     visibility: visible;
     opacity: 1;
@@ -292,7 +289,7 @@ const SubmenuListItem = styled.li`
   font-size: 12px;
   font-weight: 400;
   color: var(--main-white);
-  @media ${breakPoints.md} {
+  @media ${breakPoints.lg} {
     text-align: end;
   }
 `;
@@ -301,7 +298,7 @@ const IconContainer = styled.div`
   gap: 24px;
   justify-content: center;
   align-items: center;
-  @media ${breakPoints.md} {
+  @media ${breakPoints.lg} {
     gap: 12px;
   }
 `;
@@ -315,7 +312,7 @@ const MenuButton = styled.button<MenuButtonProps>`
   height: 20px;
   align-items: center;
   justify-content: center;
-  @media ${breakPoints.md} {
+  @media ${breakPoints.lg} {
     display: ${(props) => (!props.isVisible ? 'flex' : 'none')};
   }
 `;

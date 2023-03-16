@@ -45,7 +45,7 @@ export const Slider: FC<SliderProps> = (props) => {
       speed,
       autoplay: !withoutAutoplay && {
         delay: duration,
-        disableOnInteraction: false,
+        disableOnInteraction: true,
         reverseDirection,
       },
       loop: !withoutLoop,

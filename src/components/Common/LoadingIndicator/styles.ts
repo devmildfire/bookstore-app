@@ -22,7 +22,7 @@ export const StyledLoading = styled.div`
   border-radius: 50%;
 
   animation-name: spin;
-  animation-duration: 500ms;
+  animation-duration: 2500ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 

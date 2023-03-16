@@ -8,8 +8,6 @@ export const StyledPreviewHeader = styled(PreviewHeader)`
 
 export const StyledPreviewContent = styled(PreviewContent)`
   height: 600px;
-  width: min(100vw, var(--max-width));
-
   padding-left: 318px;
   margin: 0 auto;
 `;
