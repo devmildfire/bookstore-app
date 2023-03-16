@@ -1,27 +1,42 @@
-import React, {
-  // PropsWithChildren,
-  // ReactElement,
-  // useLayoutEffect,
-  useRef,
-  // useEffect,
-  useState,
-  useLayoutEffect,
-} from 'react';
-// import crypto from 'crypto';
-// import { v4 } from 'uuid';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 import Marquee from '../Marquee';
 import { StyledDiv } from './styles';
 import { articles } from '@/mocks/magazine';
 import splitByRows from '@/utils/splitByRows';
+import getDiaShapeParams from '@/utils/getDiaShapeParams';
 
-// import { v4 as uuidv4 } from 'uuid';
+/**
+ *
+ * @param slantAngle угол поворота параллелограмма относительно горизонтали
+ * против часовой стрелки
+ * @param gammaAngle угол параллелограмма в градусах, прилежащий к ширине
+ * родительского элемента. Вместе с углом betaAngle обуславливают форму
+ * параллелограмма
+ * угол gammaAngle в 120 градусов и betaAngle 30 соответствует параллелограмму с
+ * внутренними углами 120 и 60 градусов. Сумма betaAngle и gammaAngle \ должна
+ * быть меньше 180 градусов.
+ * @returns компонент параллелограмма, описанный вокруг компонента-родителя.
+ * Параллелограмм повёрнут относительно горизонтали на угол slantAngle по
+ * часовой стрелке. Наполнение параллелограмма - компоненты бегущей строки
+ * Marquee с картинками из массива обложек Литжурнала.
+ *
+ */
 
 const keyedArticles = articles.map((item) => {
   return { ...item, key: item.name };
 });
 
-export default function MovingPicsGrid(): React.ReactElement {
-  // props: PropsWithChildren<MarqueeProps>
+interface MovingPicsGridProps {
+  slantAngle: number;
+  gammaAngle: number;
+  speed: number;
+}
+
+export default function MovingPicsGrid({
+  slantAngle,
+  gammaAngle,
+  speed,
+}: MovingPicsGridProps): React.ReactElement {
   const [elemHeight, setElemHeight] = useState(0);
   const [elemWidth, setElemWidth] = useState(0);
   const elemRef = useRef<HTMLDivElement>(null);
@@ -33,47 +48,41 @@ export default function MovingPicsGrid(): React.ReactElement {
     }
   };
 
-  // useEffect(() => {
-  //   setSize();
-  //   window.addEventListener('resize', setSize);
-  //   return () => window.removeEventListener('resize', setSize);
-  // }, [elemHeight, elemWidth]);
-
   useLayoutEffect(() => {
     setSize();
     window.addEventListener('resize', setSize);
     return () => window.removeEventListener('resize', setSize);
   }, [elemHeight, elemWidth]);
 
-  const cos30 = Math.cos(Math.PI / 6);
-
-  const childWidth = Math.floor(elemWidth / (2 * cos30) + elemHeight);
-  const childHeight = Math.floor(elemWidth / 2 + elemHeight * cos30);
+  const [cWidth, cHeight, skewAngle] = getDiaShapeParams(
+    elemWidth,
+    elemHeight,
+    slantAngle,
+    gammaAngle
+  );
 
   const maxPicHeight = 300;
   const minPicHeight = 200;
 
-  const maxRn = childHeight / minPicHeight;
-  const minRn = childHeight / maxPicHeight;
+  const maxRn = cHeight / minPicHeight;
+  const minRn = cHeight / maxPicHeight;
 
   const rN = Math.round((maxRn + minRn) / 2);
-  const picHeight = childHeight / rN;
+  const picHeight = cHeight / rN;
 
   const rowLength = Math.floor(keyedArticles.length / rN);
   const gridArray = splitByRows(keyedArticles, rowLength);
 
-  const speed = 25;
+  // const speed = 25;
 
   return (
-    // <GridWrapper>
-    //   <Gridontent>
-    //     {children}
-    //   </GridContent>
-    // </GridWrapper>
     <StyledDiv
       ref={elemRef}
-      height={childHeight}
-      width={childWidth}
+      skewAngle={skewAngle}
+      slantAngle={slantAngle}
+      gammaAngle={gammaAngle}
+      height={cHeight}
+      width={cWidth}
       picHeight={picHeight}
       speed={speed}
     >

@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
 interface StyledDivProps {
+  skewAngle: number;
+  gammaAngle: number;
+  slantAngle: number;
   height: number;
   width: number;
   picHeight: number;
@@ -8,7 +11,8 @@ interface StyledDivProps {
 }
 
 export const StyledDiv = styled.div<StyledDivProps>`
-  --angle: 30deg;
+  --skewAngle: ${(props) => props.skewAngle}deg;
+  --slantAngle: ${(props) => props.slantAngle}deg;
   outline: 5px solid green;
   position: absolute;
   transform-origin: center;
@@ -20,13 +24,10 @@ export const StyledDiv = styled.div<StyledDivProps>`
 
   z-index: 10;
 
-  transform: translate(
-      ${(props) => (-1 * props.width) / 2}px,
-      ${(props) => (-1 * props.height) / 2}px
-    )
-    rotate(calc(-1 * var(--angle))) skew(var(--angle));
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--slantAngle)))
+    skew(var(--skewAngle));
 
-  overflow: hidden;
+  /* overflow: hidden; */
 
   img {
     box-sizing: border-box;
