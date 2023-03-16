@@ -10,6 +10,7 @@ import React, {
   KeyboardEvent as ReactKeyEvent,
   ReactElement,
 } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import ProductCard from '../ProductCard';
 import {
@@ -53,10 +54,16 @@ function Row({ row, data }: RowProps) {
   const [preview, setPreview] = useState<Book>();
   const [isOpen, setIsOpen] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [width] = useScreenSize();
+  const router = useRouter();
 
   useScrollTo(previewRef.current, isOpen);
 
   const open = (id: number) => {
+    if (width <= 512) {
+      const bookItem = data.find((book) => book.id === id);
+      return router.push(`/books/${bookItem?.transliteratedTitle}`);
+    }
     if (isOpen && id === preview?.id) {
       setIsOpen(false);
     } else {
@@ -102,7 +109,7 @@ function Row({ row, data }: RowProps) {
         ))}
       </RowContainer>
       <div ref={previewRef}>
-        {isOpen && preview && (
+        {isOpen && preview && width > 512 && (
           <Preview
             className={isOpen ? 'visible' : 'hidden'}
             width={document.body.clientWidth}

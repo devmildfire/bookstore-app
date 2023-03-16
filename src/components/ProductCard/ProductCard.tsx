@@ -38,7 +38,7 @@ export default function ProductCard(props: ProductCardProps) {
     <ProductItem>
       <Cover
         tabIndex={0}
-        onClick={onClick}
+        onMouseUp={onClick}
         onKeyDown={onEnterKey}
         width={350}
         height={525}
