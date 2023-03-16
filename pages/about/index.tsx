@@ -6,32 +6,29 @@ import AboutUs from '@/components/AboutPage/AboutUs';
 import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
+import ContainerWide from '@/components/Common/ContainerWide';
 import We from '@/components/AboutPage/We';
 import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-import stars from '@/assets/images/stars.webp';
+import rorshah from '@/assets/images/rorshah_new.png';
 
 const About: NextPage = () => (
   <StyledWrapper>
-    <Container>
-      <Video src='fakePath' />
-    </Container>
-    <Container>
-      <AboutList />
-    </Container>
+    <VideoContainer>
+      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
+    </VideoContainer>
     <AboutUs />
-    <Container>
-      <RD />
-    </Container>
+    <AboutList />
+    <RD />
     <StyledStarsBlock>
-      <Container>
+      <ContainerWide>
         <We />
-      </Container>
-      <Container>
+      </ContainerWide>
+      <ContainerWide>
         <Partners />
-      </Container>
+      </ContainerWide>
       <Container>
         <Donate />
       </Container>
@@ -44,49 +41,105 @@ const About: NextPage = () => (
 
 export default About;
 
+const VideoContainer = styled(Container)`
+  width: var(--width);
+  display: grid;
+  justify-items: center;
+`;
+
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
-  --lastMarginBottom: 250px;
+  --lastMarginBottom: 600px;
+  --rowGap: 150px;
   display: flex;
   flex-direction: column;
-  padding-top: 40px;
-
-  & > :not(:last-child) {
-    margin-bottom: var(--marginBottom);
-  }
-
-  & > :last-child {
-    padding-bottom: var(--lastMarginBottom);
-  }
+  align-items: center;
+  padding-top: 0px;
+  gap: var(--rowGap);
 
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
+    padding-top: 0px;
+    --rowGap: 150px;
   }
 
   @media ${breakPoints.lg} {
     --marginBottom: 100px;
     --lastMarginBottom: 200px;
+    padding-top: 0px;
+    --rowGap: 100px;
   }
 
   @media ${breakPoints.md} {
     --marginBottom: 85px;
     --lastMarginBottom: 175px;
+    padding-top: 0px;
+    --rowGap: 70px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-top: 20px;
+    --marginBottom: 70px;
+    --lastMarginBottom: 150px;
+    padding-top: 0px;
+    --rowGap: 70px;
   }
 
   @media ${breakPoints.sm} {
     padding-top: 20px;
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
+    padding-top: 0px;
+    --rowGap: 70px;
   }
 `;
 
 const StyledStarsBlock = styled.section`
-  background-image: url(${stars.src});
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  display: flex;
+  flex-direction: column;
+  gap: 130px;
+  background: url(${rorshah.src}),
+    linear-gradient(to bottom, var(--main-white-40) 0%, var(--main-black) 90%);
+  background-repeat: no-repeat, no-repeat;
+  background-size: contain, cover;
+  background-position: top, center;
+  position: relative;
+  padding-bottom: 120px;
+  aspect-ratio: 1920/2500;
 
-  & > :not(:last-child) {
-    margin-bottom: var(--marginBottom);
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(-1 * var(--rowGap));
+    left: 0;
+    bottom: 100%;
+    right: 0;
+
+    background: black;
+  }
+
+  @media ${breakPoints.xxl} {
+    aspect-ratio: 1920/2800;
+  }
+
+  @media ${breakPoints.xl} {
+    aspect-ratio: auto;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 100px;
+  }
+
+  @media ${breakPoints.md} {
+    gap: 80px;
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 80px;
+  }
+
+  @media ${breakPoints.sm} {
+    gap: 60px;
   }
 `;

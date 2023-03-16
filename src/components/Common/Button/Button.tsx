@@ -34,7 +34,10 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
 
   return (
     <StyledButton {...params} variant={variant} className={className}>
-      {children}
+      <Text variant='buttonText' textColor='inherit' key={0}>
+        {children}
+      </Text>
+      {/* {children} */}
     </StyledButton>
   );
 };

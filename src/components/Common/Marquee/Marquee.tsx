@@ -36,7 +36,9 @@ function useMarqueeTiming<T extends HTMLElement>(speed: number) {
  * @param {number} delay              задержка анимации в секундах
  * @param {ReactChildren} children    элементы бегущей строки
  */
-export default function Marquee(props: PropsWithChildren<MarqueeProps>) {
+export default function Marquee(
+  props: PropsWithChildren<MarqueeProps>
+): React.ReactElement {
   const { speed, gap, direction, delay = 0, children } = props;
   const { ref, time } = useMarqueeTiming<HTMLUListElement>(speed);
   return (

@@ -1,36 +1,49 @@
-import React, { useContext } from 'react';
-import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
+import React from 'react';
+import styled from 'styled-components';
 import aboutInfo from '@/mocks/aboutInfo';
 import AboutCard from './AboutCard';
-import { StyledList, StyledSlide } from './styles';
-import Slider from '@/components/Common/Slider';
+import { StyledList } from './styles';
+import Text from '@/components/Common/Text';
+import breakPoints from '@/utils/breakPoints';
+
+const StyledTitle = styled(Text)`
+  padding-bottom: 60px;
+
+  @media ${breakPoints.xl} {
+    padding-bottom: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-bottom: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-bottom: 10px;
+  }
+`;
+
+const RelativeDiv = styled.div`
+  position: relative;
+  margin: 0;
+  width: var(--width);
+`;
 
 const AboutList = (): React.ReactElement => {
-  const { isMobile, } = useContext(DeviceInfoContext);
-  const isSlider = isMobile;
-  const initialSlide = Math.ceil(aboutInfo.length / 2);
-
-  return isSlider ? (
-    <Slider
-      spaceBetween={10}
-      slidesPerView={1.6}
-      initialSlide={initialSlide}
-      centeredSlides
-    >
-      {aboutInfo.map((about) => (
-        <StyledSlide key={about.content}>
-          {({ isActive, }) => (
-            <AboutCard className={isActive ? 'active' : ''} {...about} />
-          )}
-        </StyledSlide>
-      ))}
-    </Slider>
-  ) : (
-    <StyledList>
-      {aboutInfo.map((about) => (
-        <AboutCard {...about} key={about.content} />
-      ))}
-    </StyledList>
+  return (
+    <RelativeDiv>
+      <StyledTitle variant='h2_1' align='center'>
+        ТИПЫ ИЗДАНИЙ
+      </StyledTitle>
+      <StyledList>
+        {aboutInfo.map((about) => (
+          <AboutCard {...about} key={about.content} />
+        ))}
+      </StyledList>
+    </RelativeDiv>
   );
 };
 

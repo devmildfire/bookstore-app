@@ -1,10 +1,37 @@
+// import styled from 'styled-components';
+// import Text from '@/components/Common/Text';
+
+// const StyledDonateText = styled(Text)`
+//   max-width: max-content;
+//   /* TODO избавиться от фиксированной высоты блока */
+//   height: 740px;
+//   margin: 0 auto;
+// `;
+
+// export default StyledDonateText;
+
 import styled from 'styled-components';
-import WithArrow from '@/components/Common/WithArrow';
+import breakPoints from '@/utils/breakPoints';
 
-const StyledDonateText = styled(WithArrow)`
-  max-width: max-content;
+const StyledWrapper = styled.section`
+  display: grid;
+  gap: 64px;
 
-  margin: 0 auto;
+  @media ${breakPoints.xl} {
+    gap: 50px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 40px;
+  }
+
+  @media ${breakPoints.md} {
+    gap: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    gap: 30px;
+  }
 `;
 
-export default StyledDonateText;
+export default StyledWrapper;

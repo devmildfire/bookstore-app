@@ -10,36 +10,42 @@ export interface Source {
 export interface VideoProps {
   readonly src: string;
   readonly sources?: Source[];
+  readonly poster: string;
 }
 
 const StyledVideo = styled.video`
-  width: 100%;
-  height: 794px;
+  width: var(--width); /* global --width = 1440px */
+  max-width: calc(0.8 * 1440px);
   background-color: var(--grey);
 
   @media ${breakPoints.xl} {
-    height: 585px;
+    max-width: var(--width);
+    width: calc(var(--width) - 0px); /* global --width = 1024px */
   }
 
   @media ${breakPoints.lg} {
-    height: 464px;
+    width: calc(var(--width) - 0px); /* global --width = 830px */
   }
 
   @media ${breakPoints.md} {
-    height: 320px;
+    width: calc(var(--width) - 0px); /* global --width = 500px */
+  }
+
+  @media ${breakPoints.smd} {
+    width: calc(var(--width) + 0px); /* global --width = 500px */
   }
 
   @media ${breakPoints.sm} {
-    height: 162px;
+    width: calc(var(--width) + 0px); /* global --width = 320px */
   }
 `;
 
 const Video = (props: VideoProps): React.ReactElement => {
-  const { src, sources, } = props;
+  const { src, poster, sources } = props;
 
   return (
-    <StyledVideo src={src}>
-      {sources?.map(({ srcset, type, }) => (
+    <StyledVideo poster={poster} src={src} controls>
+      {sources?.map(({ srcset, type }) => (
         <source srcSet={srcset} type={type} />
       ))}
     </StyledVideo>

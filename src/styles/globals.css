@@ -41,12 +41,19 @@
   --max-width: 1920px;
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
+  --top-div-gap: 100px;
+}
+
+/* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
+::-webkit-scrollbar {
+  display: none;
 }
 
 @media screen and (max-width: 1440px) {
   :root {
     --width: 1024px;
     --searchBarWidth: 256px;
+    --top-div-gap: 70px;
   }
 }
 
@@ -54,24 +61,43 @@
   :root {
     --width: 830px;
     --searchBarWidth: 186px;
+    --top-div-gap: 50px;
   }
 }
 
 @media screen and (max-width: 830px) {
   :root {
-    --width: 580px;
+    /* --width: 580px; */
+    --width: 722px;
+    --top-div-gap: 40px;
+  }
+}
+
+@media screen and (max-width: 744px) {
+  :root {
+    --width: 640px;
+    --top-div-gap: 30px;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  :root {
+    --width: 500px;
+    --top-div-gap: 30px;
   }
 }
 
 @media screen and (max-width: 576px) {
   :root {
-    --width: 300px;
+    --width: 320px;
+    --top-div-gap: 30px;
   }
 }
 
 @media screen and (max-width: 320px) {
   :root {
     --searchBarWidth: 99px;
+    --top-div-gap: 30px;
   }
 }
 
