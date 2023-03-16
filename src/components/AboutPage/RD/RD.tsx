@@ -161,7 +161,7 @@ const RD = (): React.ReactElement => {
     <StyledWrapper ref={ref}>
       {/* <Gradients /> */}
 
-      <MovingPicsGrid slantAngle={30} gammaAngle={120} speed={25} />
+      <MovingPicsGrid slantAngle={10} gammaAngle={120} speed={25} />
 
       <StyledContent>
         <RDIcon as={litMagIcon as any} />

@@ -8,6 +8,8 @@ interface StyledDivProps {
   width: number;
   picHeight: number;
   speed: number;
+  rowsNumber: number;
+  totalPictures: number;
 }
 
 export const StyledDiv = styled.div<StyledDivProps>`

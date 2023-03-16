@@ -17,20 +17,25 @@ const getNRowParams = (
   width: number,
   height: number
 ): number[] => {
+  //  максимальное и минимальное число рядов для заданного диапазона высоты картинок
   const maxRn = height / minPicHeight;
   const minRn = height / maxPicHeight;
 
+  //  общее количество рядов
   const nRows = Math.round((maxRn + minRn) / 2);
+
+  // соотношение сторон у картинок
   const aspect = 516 / 290;
+
+  //  высота и ширина картинки
   const picHeight = height / nRows;
   const picWidth = picHeight * aspect;
 
+  //  количество картинок в ряду
   const nPicsPerRow = Math.ceil(width / picWidth);
 
+  //  общее число картинок в компоненте
   const picsNumber = nRows * nPicsPerRow;
-
-  // const rowLength = Math.floor(keyedArticles.length / nRows);
-  // const gridArray = splitByRows(keyedArticles, rowLength);
 
   return [nRows, picHeight, nPicsPerRow, picsNumber];
 };

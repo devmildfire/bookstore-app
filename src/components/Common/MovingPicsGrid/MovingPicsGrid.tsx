@@ -3,7 +3,8 @@ import Marquee from '../Marquee';
 import { StyledDiv } from './styles';
 import { articles } from '@/mocks/magazine';
 import splitByRows from '@/utils/splitByRows';
-import getDiaShapeParams from '@/utils/getDiaShapeParams';
+import getDiaShapeParams from '@/utils/MovingPicsGridUtils/getDiaShapeParams';
+import getNRowParams from '@/utils/MovingPicsGridUtils/getNRowParams ';
 
 /**
  *
@@ -64,16 +65,17 @@ export default function MovingPicsGrid({
   const maxPicHeight = 300;
   const minPicHeight = 200;
 
-  const maxRn = cHeight / minPicHeight;
-  const minRn = cHeight / maxPicHeight;
+  const [nRows, picHeight, nPicsPerRow, picsNumber] = getNRowParams(
+    maxPicHeight,
+    minPicHeight,
+    cWidth,
+    cHeight
+  );
 
-  const rN = Math.round((maxRn + minRn) / 2);
-  const picHeight = cHeight / rN;
-
-  const rowLength = Math.floor(keyedArticles.length / rN);
-  const gridArray = splitByRows(keyedArticles, rowLength);
-
-  // const speed = 25;
+  const gridArray = splitByRows(
+    keyedArticles.slice(0, picsNumber),
+    nPicsPerRow
+  );
 
   return (
     <StyledDiv
@@ -85,6 +87,10 @@ export default function MovingPicsGrid({
       width={cWidth}
       picHeight={picHeight}
       speed={speed}
+      // количество рядов и общее число картинок в компоненте выводятся
+      // для отладки
+      rowsNumber={nRows}
+      totalPictures={picsNumber}
     >
       {gridArray.map((gridRow, index) => {
         return (
