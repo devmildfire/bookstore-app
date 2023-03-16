@@ -1,57 +1,15 @@
-import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
-import breakPoints from '@/utils/breakPoints';
-import Slide from '@/components/Common/Slide';
-import Slider from '@/components/Common/Slider';
+import React from 'react';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
-
-const StyledList = styled(Slider)`
-  display: flex;
-  justify-content: space-between;
-  gap: 70px;
-
-  @media ${breakPoints.xl} {
-    gap: 50px;
-  }
-
-  @media ${breakPoints.lg} {
-    gap: 30px;
-  }
-
-  @media ${breakPoints.md} {
-    gap: 20px;
-  }
-
-  @media ${breakPoints.sm} {
-    gap: 10px;
-  }
-`;
+import Marquee from '@/components/Common/Marquee';
 
 const PartnersList = (): React.ReactElement => {
-  const { isMobile, isTabletVertical, } = useContext(DeviceInfoContext);
-  let count = 3;
-  if (isMobile) {
-    count = 1.5;
-  } else if (isTabletVertical) {
-    count = 2.5;
-  }
   return (
-    <StyledList
-      withoutPagination
-      withoutSwipe
-      withoutTouch
-      slidesPerView={count}
-      spaceBetween={20}
-      centeredSlides
-    >
+    <Marquee speed={25} gap={0} direction='reverse' delay={0}>
       {partners.map((partner) => (
-        <Slide key={partner.id}>
-          <PartnerCard {...partner} />
-        </Slide>
+        <PartnerCard {...partner} />
       ))}
-    </StyledList>
+    </Marquee>
   );
 };
 

@@ -23,15 +23,17 @@ const books = [
 ];
 
 const ProductSlider = () => {
-  // const { data: books = [], } = useGetPopularBooksQuery(undefined);
+  // const { data: books = [] } = useGetPopularBooksQuery(undefined);
   return (
-    <StyledSlider>
+    // <Container>
+    <StyledSlider speed={5000} duration={5000}>
       {books.map((book) => (
         <Slide key={book.id}>
           <ProductCard {...book} />
         </Slide>
       ))}
     </StyledSlider>
+    // </Container>
   );
 };
 

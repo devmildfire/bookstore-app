@@ -14,6 +14,8 @@ export const MarqueeWrapper = styled.div<ContainerProps>`
   align-items: flex-start;
   gap: var(--gap);
   height: auto;
+
+  overflow: hidden;
 `;
 
 interface ContentProps {
@@ -29,6 +31,8 @@ export const MarqueeContent = styled.ul<ContentProps>`
   min-width: 100%;
   gap: var(--gap);
   list-style: none;
+
+  will-change: transform;
 
   animation: scroll ${(props) => props.time}s linear infinite;
   animation-direction: ${(props) => props.direction};

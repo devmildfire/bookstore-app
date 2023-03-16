@@ -1,29 +1,15 @@
-import React, { useContext } from 'react';
-import { DeviceInfoContext } from '@/contexts/DeviceInfoContext';
-import Slide from '@/components/Common/Slide';
-import Slider from '@/components/Common/Slider';
+import React from 'react';
+import Marquee from '@/components/Common/Marquee';
 import MemberCard from './MemberCard';
 import members from '@/mocks/members';
 
 const Members = (): React.ReactElement => {
-  const { isTabletVertical, isMobile, } = useContext(DeviceInfoContext);
-  let count = 3;
-  if (isMobile) {
-    count = 1;
-  } else if (isTabletVertical) {
-    count = 2;
-  }
   return (
-    <Slider
-      withoutPagination={isTabletVertical || isMobile}
-      slidesPerView={count}
-    >
+    <Marquee speed={25} gap={0} direction='normal' delay={0}>
       {members.map((member) => (
-        <Slide key={member.id}>
-          <MemberCard {...member} />
-        </Slide>
+        <MemberCard {...member} />
       ))}
-    </Slider>
+    </Marquee>
   );
 };
 

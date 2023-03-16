@@ -3,48 +3,53 @@ import breakPoints from '@/utils/breakPoints';
 
 const StyledCard = styled.div`
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  width: 400px;
+  gap: 35px;
+  /* padding: 50px 47px; */
 
-  width: 460px;
-  height: 700px;
-
-  padding: 50px 47px;
-
-  background-color: rgba(196, 196, 196, 0.1);
-  background-image: url(${(props: { image?: string }) => props.image || ''});
+  /* background-color: rgba(196, 196, 196, 0.1); */
+  /* background-image: url(${(props: { image?: string }) => props.image || ''});
+  background-position: center;
+  background-size: cover; */
 
   @media ${breakPoints.xl} {
-    width: 340px;
-    height: 500px;
-
-    padding: 33px 40px;
+    width: 312px;
+    gap: 35px;
+    /* padding: 33px 0px; */
   }
 
   @media ${breakPoints.lg} {
-    width: 270px;
-    height: 400px;
-
-    padding: 26px 32px;
+    width: 253px;
+    gap: 30px;
+    /* padding: 18px 0px; */
   }
 
   @media ${breakPoints.md} {
-    width: 190px;
-    height: 320px;
-    padding: 18px 16px;
+    width: 220px;
+    gap: 20px;
+    /* padding: 18px 0px; */
+  }
+
+  @media ${breakPoints.smd} {
+    /* flex-direction: row; */
+    gap: 20px;
+    width: 200px;
+    /* padding: 12.5px 0px; */
+    border-radius: 4px;
   }
 
   @media ${breakPoints.sm} {
-    width: 160px;
-    height: 180px;
-
-    padding: 15px 10px;
-
+    flex-direction: row;
+    gap: 15px;
+    width: 285px;
+    padding: 12.5px 0px;
     border-radius: 4px;
+  }
 
-    &.active {
-      width: 180px;
-      height: 220px;
-    }
+  &.active {
+    width: 180px;
+    /* height: 220px; */
   }
 `;
 

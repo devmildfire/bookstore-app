@@ -4,8 +4,11 @@ import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
   display: grid;
-  @media ${breakPoints.sm} {
-    padding: 0 16px;
+  gap: 50px;
+  .swiper-wrapper {
+    @media ${breakPoints.sm} {
+      padding: 0 16px;
+    }
   }
 `;
 
@@ -51,6 +54,35 @@ export const StyledPagination = styled.div`
 `;
 
 export const StyledSlider = styled(Swiper)`
-  height: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 32px;
   width: 100%;
+  --size: 6px;
+
+  .swiper-pagination-bullet {
+    display: inline-block;
+
+    width: var(--size);
+    height: var(--size);
+
+    opacity: 1;
+
+    background-color: var(--main-white-100);
+
+    transition: transform ease-in 0.15s;
+    transform-origin: center;
+  }
+  .swiper-pagination-bullet-active,
+  .swiper-pagination-bullet:hover,
+  .swiper-pagination-bullet:focus-visible {
+    transform: scale(1.9);
+  }
+
+  .swiper-pagination-bullet-active {
+    color: #fff;
+    background-color: #930000;
+
+    transform: scale(1.9);
+  }
 `;

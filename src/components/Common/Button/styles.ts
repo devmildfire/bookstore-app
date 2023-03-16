@@ -1,9 +1,14 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import { Variant } from './types';
+import breakPoints from '@/utils/breakPoints';
 
 export interface StyledButtonProps {
   readonly variant: Variant;
 }
+
+const smallStyle = css`
+  min-width: 245px;
+`;
 
 const standardStyle = css`
   min-width: 223px;
@@ -16,6 +21,7 @@ const wideStyle = css`
 const styles: Record<Variant, FlattenSimpleInterpolation> = {
   standard: standardStyle,
   wide: wideStyle,
+  small: smallStyle,
 };
 
 export const StyledButton = styled.button<StyledButtonProps>`
@@ -40,6 +46,10 @@ export const StyledButton = styled.button<StyledButtonProps>`
   text-decoration: none;
 
   transition: all 250ms ease-in;
+
+  @media ${breakPoints.sm} {
+    min-height: 40px;
+  }
 
   &:focus-visible {
     --button-text-color: var(--main-black);

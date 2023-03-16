@@ -1,1 +1,1 @@
-export type Variant = 'standard' | 'wide';
+export type Variant = 'small' | 'standard' | 'wide';
