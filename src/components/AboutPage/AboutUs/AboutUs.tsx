@@ -6,7 +6,6 @@ import Text from '@/components/Common/Text';
 import Books from './Books';
 import Button from '@/components/Common/Button';
 
-// const StyledDescriptionContainer = styled.div`
 const StyledDescriptionContainer = styled(Container)`
   display: flex;
   flex-direction: column;
@@ -14,7 +13,6 @@ const StyledDescriptionContainer = styled(Container)`
   align-items: flex-start;
   max-width: 1440px;
   padding-top: 31px;
-  /* gap: var(--containerMarginBottom); */
   gap: var(--containerGap);
   --containerMarginBottom: 45px;
   --containerGap: 26px;
@@ -32,7 +30,6 @@ const StyledDescriptionContainer = styled(Container)`
 
   @media ${breakPoints.md} {
     width: var(--width);
-    /* flex-direction: column; */
     padding-top: 18px;
   }
 
@@ -66,15 +63,11 @@ const StyledDescriptionContainer = styled(Container)`
 `;
 
 const StyledButton = styled(Button)`
-  /* width: 480px; */
   width: calc(min(480px, var(--width)));
   max-height: 62px;
   min-height: 62px;
   margin-top: auto;
   min-width: 480px;
-
-  @media ${breakPoints.xl} {
-  }
 
   @media ${breakPoints.lg} {
     max-height: 45px;
@@ -83,82 +76,21 @@ const StyledButton = styled(Button)`
     min-width: 300px;
   }
 
-  @media ${breakPoints.md} {
-  }
-
   @media ${breakPoints.smd} {
     max-height: 32px;
     min-height: 32px;
     margin-top: auto;
     min-width: 286px;
   }
-
-  @media ${breakPoints.sm} {
-  }
 `;
 
 const StyledDescription = styled(Text)`
   max-width: 750px;
-
-  @media ${breakPoints.xl} {
-  }
-
-  @media ${breakPoints.lg} {
-  }
-
-  @media ${breakPoints.md} {
-  }
-
-  @media ${breakPoints.smd} {
-    /* max-width: 400px; */
-  }
-
-  @media ${breakPoints.sm} {
-  }
 `;
-
-// const StyledDescriptionTop = styled(Text)`
-//   max-width: 750px;
-
-//   @media ${breakPoints.xl} {
-//     max-width: 550px;
-//   }
-
-//   @media ${breakPoints.lg} {
-//     max-width: 550px;
-//   }
-
-//   @media ${breakPoints.md} {
-//   }
-
-//   @media ${breakPoints.smd} {
-//     max-width: 450px;
-//   }
-
-//   @media ${breakPoints.sm} {
-//   }
-// `;
 
 const StyledSection = styled('section')`
   margin-top: 0px;
-  /* margin-top: 160px; */
   width: 100%;
-
-  /* @media ${breakPoints.xl} {
-
-  }
-
-  @media ${breakPoints.lg} {
-
-  }
-
-  @media ${breakPoints.md} {
-
-  }
-
-  @media ${breakPoints.sm} {
-
-  } */
 `;
 
 const AboutUs = (): React.ReactElement => (

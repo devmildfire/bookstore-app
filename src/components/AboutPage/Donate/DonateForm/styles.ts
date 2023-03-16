@@ -6,7 +6,6 @@ export const StyledForm = styled.form`
   display: grid;
   width: 550px;
   grid-template-columns: minmax(220px, 300px) min-content;
-  /* grid-template-columns: auto min-content; */
   gap: 6px 24px;
   margin: 0 auto;
 
@@ -37,8 +36,6 @@ export const StyledForm = styled.form`
 
 export const StyledButton = styled(Button)`
   max-width: 900px;
-  /* margin-left: auto; */
-
   @media ${breakPoints.xl} {
     max-width: 720px;
   }

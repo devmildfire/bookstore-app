@@ -10,7 +10,6 @@ export interface Source {
 export interface VideoProps {
   readonly src: string;
   readonly sources?: Source[];
-  // readonly metadata: string;
   readonly poster: string;
 }
 

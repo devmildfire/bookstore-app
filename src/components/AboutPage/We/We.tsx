@@ -6,7 +6,6 @@ import Text from '@/components/Common/Text';
 
 const StyledWrapper = styled.div`
   @media ${breakPoints.xl} {
-    /* padding-top: 105px; */
   }
 
   @media ${breakPoints.lg} {

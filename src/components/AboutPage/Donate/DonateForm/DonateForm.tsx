@@ -8,16 +8,11 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
 
 const FormSchema = z.object({
-  // amount: z.preprocess(
-  //   (a) => parseInt(a as string, 10),
-  //   z.number().positive().int()
-  // ),
   amount: z.coerce.number(),
 });
 
@@ -34,42 +29,14 @@ const DonateForm = (): React.ReactElement => {
 
   const [wipe, setWipe] = useState(false);
 
-  // const [donated, setDonated] = useState(0);
-  // const { ...field } = useField();
-
   const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
-    // const onSubmit: SubmitHandler<FormSchemaType> = () => {
     console.log(data);
     setWipe(false);
   };
 
   const onError: SubmitErrorHandler<FormSchemaType> = () => {
-    // console.log(errors);
     setWipe(false);
   };
-
-  // схема для валидации ввода положительного целого числа
-  // const numberSchema = z.number().positive().int();
-
-  // const onSubmit = useCallback((evt: FormEvent) => {
-  //   evt.preventDefault();
-
-  //   const form = evt.target as HTMLFormElement;
-  //   const input = form[0] as HTMLInputElement;
-  //   const inputStuff = +input.value;
-
-  //   const result = numberSchema.safeParse(inputStuff);
-  //   // console.log('safeParse result = ', result);
-  //   if (!result.success) {
-  //     // handle error then return
-  //     setDonated(-1);
-  //     // result.error;
-  //   } else {
-  //     // do something
-  //     setDonated(1);
-  //     // result.data;
-  //   }
-  // }, []);
 
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
@@ -82,7 +49,6 @@ const DonateForm = (): React.ReactElement => {
             onChange={onChange}
             onBlur={onBlur}
             value={value}
-            // type='number'
           />
         )}
       />
@@ -153,9 +119,7 @@ const ErrorOutput = styled.div`
   color: var(--main-white-100);
   border: none;
   padding: 20px 0;
-  /* max-width: 300px; */
   margin: 0 auto;
-  /* max-width: var(--width); */
   width: 550px;
   font-size: 16px;
   text-align: center;

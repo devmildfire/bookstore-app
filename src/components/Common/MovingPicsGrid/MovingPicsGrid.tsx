@@ -24,7 +24,8 @@ import getNRowParams from '@/utils/MovingPicsGridUtils/getNRowParams ';
  */
 
 const keyedArticles = articles.map((item) => {
-  return { ...item, key: item.name };
+  // return { ...item, key: item.name }; в мокапе есть повторяющиеся названия
+  return { ...item, key: Math.random() * 1001 };
 });
 
 interface MovingPicsGridProps {
@@ -104,36 +105,6 @@ export default function MovingPicsGrid({
             {gridRow.map((item) => {
               return (
                 <img key={item.key} src={item.image} alt={speed.toString()} />
-              );
-            })}
-
-            {gridRow.map((item) => {
-              return (
-                <img
-                  key={`${item.key}second`}
-                  src={item.image}
-                  alt={speed.toString()}
-                />
-              );
-            })}
-
-            {gridRow.map((item) => {
-              return (
-                <img
-                  key={`${item.key}third`}
-                  src={item.image}
-                  alt={speed.toString()}
-                />
-              );
-            })}
-
-            {gridRow.map((item) => {
-              return (
-                <img
-                  key={`${item.key}fourth`}
-                  src={item.image}
-                  alt={speed.toString()}
-                />
               );
             })}
           </Marquee>

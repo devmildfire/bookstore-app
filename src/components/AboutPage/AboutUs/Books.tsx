@@ -57,7 +57,6 @@ const StyledBooks = styled(Container)`
   margin-top: var(--booksMarginTop);
 
   @media ${breakPoints.sm} {
-    /* --bookOffset: 31px; */
     --bookOffset: 0px;
   }
 `;
@@ -144,23 +143,13 @@ const Books = (): ReactElement => (
   <StyledWrapper>
     <Container>
       <StyledPhrase>
-        <StyledText
-          component='p'
-          variant='h3_31'
-          // fontWeight={400}
-          // textTransform='none'
-        >
+        <StyledText component='p' variant='h3_31'>
           О том, чтобы превращать
         </StyledText>
         <StyledText component='span' variant='h3_32'>
           Деньги в книги,
         </StyledText>
-        <StyledText
-          component='p'
-          variant='h3_31'
-          // fontWeight={400}
-          // textTransform='none'
-        >
+        <StyledText component='p' variant='h3_31'>
           а не наоборот
         </StyledText>
       </StyledPhrase>

@@ -3,27 +3,12 @@ import breakPoints from '@/utils/breakPoints';
 import Text from '@/components/Common/Text';
 import PaddedText from '@/components/Common/PaddedText';
 import RDImage from '@/assets/images/dino_figma.png';
-import litMagazineBack from '@/assets/images/litMagazineBack.png';
-import gradientBottom from '@/assets/images/gradient.png';
-import gradientTop from '@/assets/images/gradient_top_grey.png';
 
 export const StyledWrapper = styled.section`
-  /* * {
-    outline: 1px solid green;
-  } */
-  /* outline: 1px solid green; */
-  /* display: grid; */
-  /* display: flex; */
-
   position: relative;
-  /* justify-content: center;
-  align-items: center;
-  flex-direction: column; */
   gap: 0px;
-  /* max-width: 1440px; */
   width: 100vw;
   aspect-ratio: 1920/1277;
-  /* height: 500px; */
   overflow: hidden;
 
   h1 {
@@ -32,7 +17,6 @@ export const StyledWrapper = styled.section`
     left: 50%;
     transform: translateX(-50%);
     font-size: 10vw;
-    /* width: fit-content; */
     z-index: 1000;
   }
 
@@ -43,77 +27,26 @@ export const StyledWrapper = styled.section`
     will-change: transform;
   }
 
-  /* aspect-ratio: 48/27;  */
-  // соотношение сторон 1920 к 1080
-  /* 1919/562 */
-  /* background-image: url(${litMagazineBack.src}), url(${gradientBottom.src}); */
-  /* background-image: linear-gradient(
-      180deg,
-      #121212 34.18%,
-      rgba(18, 18, 18, 0.83) 54.72%,
-      rgba(18, 18, 18, 0.345207) 77.1%,
-      rgba(18, 18, 18, 0) 93.04%
-    ),
-    url(${gradientBottom.src}), url(${litMagazineBack.src}); */
-
-  /* background-image: url(${litMagazineBack.src}); */
-
-  /* background-image: url(${gradientTop.src}), url(${gradientBottom.src}),
-    url(${litMagazineBack.src}); */
-
-  /* background-image: url(${gradientBottom.src}); */
-  /* background-size: cover contain; */
-  /* background-size: 100% 20%, 100% 50%, 100%;
-  background-position: top, bottom, left center;
-  background-repeat: no-repeat, no-repeat, repeat;
-  background-attachment: local, local, fixed; */
-
-  /* background-size: 100%;
-  background-position: left center;
-  background-repeat: repeat;
-  background-attachment: fixed; */
-
-  /* padding-top: 150px; */
-
   @media ${breakPoints.xxl} {
     height: calc(61.61vw + 94.9px);
-    > img {
-      /* height: 1250px; */
-    }
   }
 
   @media ${breakPoints.xl} {
     height: calc(61.16vw + 87.71429px);
-    > img {
-      /* height: 1250px; */
-    }
   }
 
   @media ${breakPoints.lg} {
     height: calc(40vw + 304.4px);
-    > img {
-      /* height: 1050px; */
-    }
   }
 
   @media ${breakPoints.md} {
-    > img {
-      /* height: 825px; */
-    }
   }
 
   @media ${breakPoints.smd} {
-    /* height: calc(20.28vw + 451.0943px); */
     height: calc(-4.669vw + 949.43px);
-    > img {
-      /* height: 825px; */
-    }
   }
 
   @media ${breakPoints.sm} {
-    > img {
-      /* height: 825px; */
-    }
   }
 `;
 
@@ -157,20 +90,9 @@ export const StyledContent = styled.div`
     --box-width: calc(46.42857vw + 157.5714px);
     --box-height: calc(29.28571429vw + 137.1142857px);
     padding: 20px 0;
-    /* margin-top: 30px;
-    gap: 30px;
-    height: 345px;
-    padding-left: 0px;
-    padding-right: 0px; */
   }
 
   @media ${breakPoints.md} {
-    /* margin-top: 25px;
-    gap: 18px; */
-    /* height: 420px; */
-    /* height: 195px;
-    padding-left: 0px;
-    padding-right: 0px; */
     gap: 10px 0;
   }
 
@@ -183,15 +105,6 @@ export const StyledContent = styled.div`
 
   @media ${breakPoints.sm} {
     gap: 10px 0;
-
-    /* margin-top: 15px;
-    grid-template-rows: repeat(3, min-content);
-    gap: 15px;
-    height: 290px; */
-
-    /* height: min-content; */
-    /* padding-left: 17px;
-    padding-right: 17px; */
   }
 `;
 
@@ -200,41 +113,32 @@ export const StyledContentHeading = styled.div`
   z-index: 0;
 
   display: grid;
-  /* grid-template-rows: repeat(2, min-content) 1fr; */
   gap: 0px;
 
   height: min-content;
-  /* margin-top: 150px; */
+
   margin-left: auto;
   margin-right: auto;
   max-width: 1440px;
-  /* width: 100%; */
-  /* width: var(--width); */
   justify-self: center;
 
-  /* padding-top: 78px; */
-
   @media ${breakPoints.xl} {
-    /* margin-top: 100px; */
     padding-top: 0;
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.lg} {
-    /* margin-top: 50px; */
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.md} {
-    /* margin-top: 10px; */
     padding-left: 0px;
     padding-right: 0px;
   }
 
   @media ${breakPoints.sm} {
-    /* height: min-content; */
     padding-left: 17px;
     padding-right: 17px;
   }
@@ -273,11 +177,8 @@ export const StyledRD = styled.div`
 
 export const StyledMainText = styled(Text)`
   margin: 0 auto;
-  /* --width: 764px; */
   max-width: calc(0.7 * var(--box-width));
   font-size: 18px;
-
-  /* width: var(--width); */
 
   @media ${breakPoints.xxl} {
     font-size: 16px;
@@ -285,25 +186,19 @@ export const StyledMainText = styled(Text)`
   }
 
   @media ${breakPoints.lg} {
-    /* --width: 500px; */
     max-width: calc(0.66 * var(--box-width));
     font-size: 14px;
   }
 
   @media ${breakPoints.md} {
-    /* --width: 500px; */
   }
 
   @media ${breakPoints.smd} {
-    /* max-width: calc(0.97 * var(--box-width)); */
     max-width: calc(0.9 * var(--box-width));
     font-size: 14px;
   }
 
   @media ${breakPoints.sm} {
-    /* max-width: calc(0.95 * var(--box-width)); */
-    /* max-width: unset; */
-    /* max-width: 212px; */
     font-size: 12px;
     line-height: 142%;
     text-align: left;
@@ -343,7 +238,6 @@ export const StyledSecondaryPaddedText = styled(StyledMainText)`
 
 export const StyledSecondaryText = styled(Text)`
   margin: 0 auto;
-  /* --width: 764px; */
   max-width: calc(0.43 * var(--box-width));
   font-size: 18px;
 
@@ -355,25 +249,20 @@ export const StyledSecondaryText = styled(Text)`
   }
 
   @media ${breakPoints.lg} {
-    /* --width: 500px; */
     max-width: calc(0.7 * var(--box-width));
     font-size: 14px;
   }
 
   @media ${breakPoints.md} {
-    /* --width: 500px; */
     text-align: center;
   }
 
   @media ${breakPoints.smd} {
     max-width: calc(0.9 * var(--box-width));
     font-size: 14px;
-
-    /* margin: 0 auto 0 calc(0.005 * var(--box-width)); */
   }
 
   @media ${breakPoints.sm} {
-    /* max-width: 300px; */
     font-size: 12px;
     line-height: 142%;
     text-align: left;

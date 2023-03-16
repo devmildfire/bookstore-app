@@ -1,46 +1,29 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-// import { useRef } from 'react';
-// import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import Button from '@/components/Common/Button';
 import {
   StyledContent,
-  // StyledContentHeading,
   StyledMainText,
-  // StyledMainPaddedText,
-  // StyledRD,
   StyledSecondaryText,
-  // StyledSecondaryPaddedText,
   StyledWrapper,
 } from './styles';
 import breakPoints from '@/utils/breakPoints';
-// import litMagazineBack from '@/assets/images/litMagazineBack.png';
 import litMagIcon from '@/assets/icons/litmagIcon.svg';
 import MovingPicsGrid from '@/components/Common/MovingPicsGrid';
-// import { string } from 'prop-types';
 
 const StyledButton = styled(Button)`
   p {
     padding: 0;
   }
-  /* min-width: 245px; */
-  /* margin-top: 25px; */
+
   max-width: var(--box-width);
   width: calc(0.45 * var(--box-width));
   margin: 2% auto;
 
   max-height: 62px;
   min-height: 62px;
-  /* min-width: 472px; */
 
-  /* &:last-child {
-    width: 480;
-    align-self: flex-start;
-    @media ${breakPoints.smd} {
-      align-self: center;
-    }
-  } */
   @media ${breakPoints.xxl} {
     align-self: center;
     width: calc(0.6 * var(--box-width));
@@ -51,7 +34,6 @@ const StyledButton = styled(Button)`
   @media ${breakPoints.lg} {
     align-self: center;
     margin: 0.5% auto 2% auto;
-    /* min-width: 300px; */
     max-height: 32px;
     min-height: 32px;
     width: calc(0.45 * var(--box-width));
@@ -60,7 +42,6 @@ const StyledButton = styled(Button)`
   @media ${breakPoints.md} {
     align-self: center;
     margin-right: auto;
-    /* min-width: 287px; */
     max-height: 32px;
     min-height: 32px;
     width: calc(0.6 * var(--box-width));
@@ -69,7 +50,6 @@ const StyledButton = styled(Button)`
   @media ${breakPoints.smd} {
     align-self: center;
     margin-right: auto;
-    /* min-width: 287px; */
     max-height: 32px;
     min-height: 32px;
     width: calc(0.7 * var(--box-width));
@@ -92,9 +72,6 @@ const RDIcon = styled.svg`
   margin: 0 auto;
   height: 85px;
   width: auto;
-  /* transform-origin: center center; */
-  /* 
-  --logo-height: 70px; */
 
   @media ${breakPoints.xxl} {
     height: calc(4.464285vw - 0.71428px);
@@ -175,7 +152,6 @@ const RD = (): React.ReactElement => {
         <StyledMainText variant='text' align='center'>
           {string1}
           {s2}
-          {/* <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a> */}
           <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
           {string3}
         </StyledMainText>
@@ -184,7 +160,6 @@ const RD = (): React.ReactElement => {
           Лучшие рассказы года попадают в&nbsp;ежегодник «
           <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
             Могучий&nbsp;Русский&nbsp;Динозавр
-            {/* Могучий&nbsp;Русский&nbsp;Динозавр */}
           </a>
           ».
         </StyledSecondaryText>

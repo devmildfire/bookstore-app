@@ -12,7 +12,6 @@ import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-// import rorshah from '@/assets/images/rorshah-chtivo-about.webp';
 import rorshah from '@/assets/images/rorshah_new.png';
 
 const About: NextPage = () => (
@@ -58,10 +57,6 @@ const StyledWrapper = styled.main`
   padding-top: 0px;
   gap: var(--rowGap);
 
-  /* * {
-    outline: 1px solid green !important;
-  } */
-
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
     padding-top: 0px;
@@ -100,9 +95,6 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledStarsBlock = styled.section`
-  /* * {
-    outline: 1px solid green;
-  } */
   display: flex;
   flex-direction: column;
   gap: 130px;
@@ -129,12 +121,10 @@ const StyledStarsBlock = styled.section`
 
   @media ${breakPoints.xxl} {
     aspect-ratio: 1920/2800;
-    /* gap: 120px; */
   }
 
   @media ${breakPoints.xl} {
     aspect-ratio: auto;
-    /* gap: 120px; */
   }
 
   @media ${breakPoints.lg} {

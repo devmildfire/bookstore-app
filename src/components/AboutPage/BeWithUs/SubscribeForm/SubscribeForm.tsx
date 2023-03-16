@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import styled, { keyframes } from 'styled-components';
-// import React, { FormEvent, useCallback, useState } from 'react';
 import React, { useState } from 'react';
 import {
   useForm,
@@ -10,7 +9,6 @@ import {
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import goat from '@/../../src/assets/images/hand_goat.png';
-// import useField from '@/hooks/useField';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
@@ -23,8 +21,6 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 
 const SubscribeForm = (): React.ReactElement => {
   const {
-    // register,
-    // watch,
     handleSubmit,
     control,
     formState: { errors, isSubmitSuccessful },
@@ -110,10 +106,7 @@ interface StyledOutputProps {
 }
 
 const StyledOutput = styled.div<StyledOutputProps>`
-  /* display: ${(props) => (props.hidden ? 'none' : 'block')}; */
-  /* position: absolute; */
   animation: ${slideDown} 0.2s linear;
-  /* opacity: ${(props) => (props.passed === 1 ? '0' : '1')}; */
   top: 0px;
   background-color: var(--main-white-60);
   color: var(--main-black);
@@ -122,7 +115,6 @@ const StyledOutput = styled.div<StyledOutputProps>`
   padding: 60px 20px 20px 20px;
   max-width: 270px;
   margin: auto;
-  /* max-width: var(--width); */
   width: 100%;
   height: 120px;
   text-transform: uppercase;
@@ -130,9 +122,6 @@ const StyledOutput = styled.div<StyledOutputProps>`
   background-repeat: no-repeat;
   background-position: calc(100% - 15px) calc(100% - 2px);
   background-image: url(${goat.src});
-  /* opacity: 1; */
-  /* transform: translateY(100px); */
-  /* transition: all 3s ease; */
 
   @media ${breakPoints.lg} {
     background-size: 35%;
@@ -168,9 +157,7 @@ const ErrorOutput = styled.div`
   color: var(--main-white-100);
   border: none;
   padding: 20px 0;
-  /* max-width: 300px; */
   margin: 0 auto;
-  /* max-width: var(--width); */
   width: 879px;
   font-size: 16px;
   text-align: center;
