@@ -29,7 +29,7 @@ const StyledCard = styled.div`
     pointer-events: none;
   }
 
-  div:hover > img {
+  :hover > img {
     -webkit-filter: grayscale(0%);
     -moz-filter: grayscale(0%);
     filter: grayscale(0%);
@@ -51,75 +51,15 @@ const StyledCard = styled.div`
   }
 `;
 
-// const StyledPhoto = styled.img`
-//   filter: grayscale(100%);
-//   -webkit-filter: grayscale(100%);
-//   -moz-filter: grayscale(100%);
-
-//   user-select: none;
-//   --size: 250px;
-//   width: var(--size);
-//   height: var(--size);
-
-//   border-radius: 50%;
-
-//   object-fit: cover;
-
-//   margin-bottom: 25px;
-//   transition: all 0.5s ease;
-
-//   @media ${breakPoints.xl} {
-//     /* --size: 280px; */
-//     /* --size: 200px; */
-//   }
-
-//   @media ${breakPoints.lg} {
-//     /* --size: 250px; */
-//     --size: 200px;
-//   }
-
-//   @media ${breakPoints.smd} {
-//     --size: 150px;
-//   }
-
-//   @media ${breakPoints.sm} {
-//     --size: 150px;
-//   }
-// `;
-
 const StyledImage = styled(Image)`
   filter: grayscale(100%);
   -webkit-filter: grayscale(100%);
   -moz-filter: grayscale(100%);
-
   user-select: none;
-  /* --size: 250px;
-  width: var(--size);
-  height: var(--size); */
-
   border-radius: 50%;
-
   object-fit: cover;
-
-  /* margin-bottom: 25px; */
   margin: 25px 25px;
-
   transition: all 0.5s ease;
-
-  /* @media ${breakPoints.xl} {
-  }
-
-  @media ${breakPoints.lg} {
-    --size: 200px;
-  }
-
-  @media ${breakPoints.smd} {
-    --size: 150px;
-  }
-
-  @media ${breakPoints.sm} {
-    --size: 150px;
-  } */
 `;
 
 const MemberCard = (props: Member): React.ReactElement => {
@@ -153,17 +93,23 @@ const MemberCard = (props: Member): React.ReactElement => {
       <Text variant='h4_4' component='p' align='center'>
         {position}
       </Text>
-      <Text variant='h4_4' component='p' align='center'>
+      <Text
+        variant='h4_4'
+        component='p'
+        align='center'
+        //  проверка на указание города. Если не указан - вопросы красным цветом
+        textColor={city === 'г. ???' ? 'red' : 'white80'}
+      >
         {city}
       </Text>
       <Text
-        // variant='h4_1'
         variant='text_italic'
         component='p'
         className='top'
-        textColor='white80'
+        // textColor='white80'
+        //  проверка на цитату. Если не указана - вопросы красным цветом
+        textColor={phrase === '???' ? 'red' : 'white80'}
         align='center'
-        // fontStyle='italic'
       >
         {phrase}
       </Text>

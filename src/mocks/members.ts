@@ -10,7 +10,7 @@ import ploskonosPhoto from '../../public/images/members/veronika-ploskonos.png';
 import gilmanovaPhoto from '../../public/images/members/gilmanova-diana.png';
 import grebenschikovaPhoto from '../../public/images/members/grebenschikova-ekaterina.png';
 import kapustyakPhoto from '../../public/images/members/aleksei-kapustyak.png';
-import AkeksandraYasharkina from '../../public/images/members/AkeksandraYasharkina.png';
+import AleksandraYasharkina from '../../public/images/members/AleksandraYasharkina.png';
 import AlekseyBochkarev from '../../public/images/members/AlekseyBochkarev.png';
 import LanaDorohova from '../../public/images/members/LanaDorohova.png';
 import SofiaPopova from '../../public/images/members/SofiaPopova.png';
@@ -33,11 +33,7 @@ import DaniilRumancev from '../../public/images/members/DaniilRumancev.png';
 import AnnaDostieva from '../../public/images/members/AnnaDostieva.png';
 import ArtemNovoselov from '../../public/images/members/ArtemNovoselov.png';
 import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
-// import  from '../../public/images/members/.png';
-// import  from '../../public/images/members/.png';
-// import  from '../../public/images/members/.png';
-// import  from '../../public/images/members/.png';
-// import  from '../../public/images/members/.png';
+import LenaSolnceva from '../../public/images/members/LenaSolnceva.png';
 
 const members: Member[] = [
   {
@@ -46,7 +42,7 @@ const members: Member[] = [
     position: 'ведущий редактор',
     city: 'г. Москва',
     photo: alenaPhoto.src,
-    phrase: '«Каждому стоит сначала найти путь к себе, а уже потом к другому»',
+    phrase: '«Литература — это вера в любовь между рацио и эмоцио»',
   },
   {
     id: 1,
@@ -55,7 +51,7 @@ const members: Member[] = [
     city: 'Эльдорадо',
     photo: yankusPhoto.src,
     phrase:
-      '«Переключить на чёрно-белый режим и убивать убивать убивать убивать убивать убивать убивать»',
+      '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход жизни в язык, который учреждает Идеи»',
   },
   {
     id: 2,
@@ -72,8 +68,7 @@ const members: Member[] = [
     position: 'ведущий дизайнер',
     city: 'г. Санкт-Петербург',
     photo: vidyaskinaPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 4,
@@ -81,8 +76,7 @@ const members: Member[] = [
     position: 'иллюстратор',
     city: 'г. ???',
     photo: kurnosovaPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 5,
@@ -90,17 +84,16 @@ const members: Member[] = [
     position: 'иллюстратор',
     city: 'г. Нижний Новгород',
     photo: kovalevskayaPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 6,
     member: 'Анастасия Мальцева',
-    position: 'режиссёр буктрейлеров',
+    position: 'режиссёр',
     city: 'г. Санкт-Петербург',
     photo: malcevaPhoto.src,
     phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+      '«По словам Чарльза Олсена, лучашя поэзия - это своего рода шизофрения»',
   },
   {
     id: 7,
@@ -108,8 +101,7 @@ const members: Member[] = [
     position: 'художник анимации',
     city: 'г. ???',
     photo: ploskonosPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 8,
@@ -117,17 +109,15 @@ const members: Member[] = [
     position: 'продюсер изданий',
     city: 'г. Екатеринбург',
     photo: gilmanovaPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 9,
     member: 'Екатерина Гребенщикова',
     position: 'корректор',
-    city: 'г. ???',
+    city: 'г. Белград',
     photo: grebenschikovaPhoto.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 10,
@@ -135,36 +125,33 @@ const members: Member[] = [
     position: 'верстальщик',
     city: 'г. Анна',
     photo: kapustyakPhoto.src,
-    phrase: '«В этом мире жить невозможно, но больше негде» Джек Керуак',
+    phrase: '???',
   },
 
   {
     id: 13,
     member: 'Александра Яшаркина',
     position: 'ведущий верстальщик',
-    city: 'город',
-    photo: AkeksandraYasharkina.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    city: 'г. ???',
+    photo: AleksandraYasharkina.src,
+    phrase: '«Найди слово, которое любишь, и позволь ему убить себя»',
   },
-
   {
     id: 14,
     member: 'Алексей Бочкарёв',
     position: 'художник анимации',
     city: 'г. Томск',
     photo: AlekseyBochkarev.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
-
   {
     id: 15,
     member: 'Лана Дорохова',
     position: 'ведущая радио Овердрайв',
     city: 'г. Ереван',
     photo: LanaDorohova.src,
-    phrase: '«Вадимчик выпил и опять загрустил».',
+    phrase:
+      '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать.»',
   },
   {
     id: 16,
@@ -173,7 +160,7 @@ const members: Member[] = [
     city: 'город',
     photo: SofiaPopova.src,
     phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+      '«Когда вы читаете, не пытайтесь угадывать, что думает автор. Думайте сами.«',
   },
 
   {
@@ -182,17 +169,16 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
     photo: MatveyDashiev.src,
-    phrase: '«Не роняйте детей!»',
+    phrase: '«Человек с хорошей книгой в руках никогда не может быть одиноким»',
   },
 
   {
     id: 18,
     member: 'Даниил Нечеев',
     position: 'руководитель видеоотдела',
-    city: 'город',
+    city: 'г. Ереван',
     photo: DaniilNecheev.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
@@ -201,8 +187,7 @@ const members: Member[] = [
     position: 'графический Дизайнер',
     city: 'г. Калининград',
     photo: AnastasiyaVinichenko.src,
-    phrase:
-      '«Я думаю, что задача дизайнера-пытаться сломать правила и границы» Джанни Версаче',
+    phrase: '???',
   },
 
   {
@@ -219,28 +204,23 @@ const members: Member[] = [
     position: 'СММ',
     city: 'г. Москва',
     photo: SvetlanaSharonova.src,
-    phrase:
-      '«Вечер показывал язык нам в окно, а мы, как всех учили ещё в детском саду, не обращали на дурака внимания»',
+    phrase: '«Писание – своего рода заклинание духов»',
   },
-
   {
     id: 22,
     member: 'Игорь Козырев',
     position: 'иллюстратор',
     city: 'г. Ростов-на-Дону',
     photo: IgorKozyrev.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
-
   {
     id: 23,
     member: 'Всеволод Дорохов',
     position: 'звукорежиссёр',
     city: 'г. Ереван',
     photo: VsevolodDorohov.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
   {
     id: 24,
@@ -248,27 +228,24 @@ const members: Member[] = [
     position: 'иллюстратор',
     city: 'Кудыкина Гора',
     photo: Gorynych.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '«Ты не Курт Воннегут!» ARS LONGA, VITA BREVIS',
   },
-
   {
     id: 25,
     member: 'Валерия Арсибекова',
     position: 'специалист по развитию',
-    city: 'город',
+    city: 'г. ???',
     photo: ArsibekovaValeria.src,
-    phrase: '«Я не буду менять линолеум, я передумал, ибо мир обречен»',
+    phrase:
+      '«Литература изъята из законов тления. Она одна не признаёт смерти»',
   },
-
   {
     id: 26,
     member: 'Анна Мезенцева',
     position: 'корректор',
     city: 'г. Москва',
     photo: AnnaMezenceva.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
@@ -278,17 +255,16 @@ const members: Member[] = [
     city: 'г. Калуга',
     photo: AnnaVolcova.src,
     phrase:
-      '«Та парусная лодка, которую он заметил, удалялась всё дальше и дальше, словно детская сказка во взрослых воспоминаниях. Он знал, что вскоре она станет точкой этой сказки, а потом — сбывшимся желанием»',
+      '«Я не думаю, что `филология спасёт мир`. Его способна спасти только любовь. Филология же, как её ни трактовать, любви не противоречит, а, скорее, способна её поддержать»',
   },
 
   {
     id: 28,
     member: 'Павел Труфанов',
     position: 'художник анимации',
-    city: 'город',
+    city: 'г. ???',
     photo: PavelTrufanov.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
@@ -297,8 +273,7 @@ const members: Member[] = [
     position: 'кинооператор',
     city: 'г. Санкт-Петербург',
     photo: LubovNevskaya.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
@@ -307,18 +282,16 @@ const members: Member[] = [
     position: 'верстальщик',
     city: 'г. Томск',
     photo: KitillGorbachevskiy.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
     id: 31,
     member: 'Ксения Харина',
     position: 'иллюстратор',
-    city: 'город',
+    city: 'г. ???',
     photo: KseniaHarina.src,
-    phrase:
-      'Циатата 80% насыщенности, допустим, что она помещается в четыре или пять строк, а может шесть.',
+    phrase: '???',
   },
 
   {
@@ -334,7 +307,7 @@ const members: Member[] = [
     id: 33,
     member: 'Анастасия Достиева',
     position: 'специалист по развитию',
-    city: 'город',
+    city: 'г. Санкт-Петербург',
     photo: AnnaDostieva.src,
     phrase:
       '«Как бы тонко и любовно ни анализировали и ни разъясняли рассказ, всегда найдется ум, оставшийся безучастным, и спина, по которой не пробежит холодок»',
@@ -346,7 +319,8 @@ const members: Member[] = [
     position: 'веб-разработчик',
     city: 'г. Пермь',
     photo: ArtemNovoselov.src,
-    phrase: '«Люди кропают идеи, идеи вращают мир»',
+    phrase:
+      '«Хорошая книжка как хорошая гантель - не вдруг и осилишь, но прокачивает серьёзно»',
   },
   {
     id: 35,
@@ -355,6 +329,14 @@ const members: Member[] = [
     city: 'г. Ереван',
     photo: NikilaiJeltuhin.src,
     phrase: '«Прощай, цыганка Сэра»',
+  },
+  {
+    id: 36,
+    member: 'Лена Солнцева',
+    position: 'иллюстратор',
+    city: 'г. Казань',
+    photo: LenaSolnceva.src,
+    phrase: '???',
   },
 ];
 
