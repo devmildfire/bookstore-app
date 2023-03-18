@@ -7,7 +7,7 @@ const Members = (): React.ReactElement => {
   return (
     <Marquee speed={25} gap={0} direction='normal' delay={0}>
       {members.map((member) => (
-        <MemberCard {...member} />
+        <MemberCard {...member} key={member.id} />
       ))}
     </Marquee>
   );

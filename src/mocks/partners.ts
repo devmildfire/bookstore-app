@@ -13,7 +13,7 @@ import liferoad from '../../public/images/partners/liferoad.png';
 import bookspresents from '../../public/images/partners/bookspresents.png';
 import factotum from '../../public/images/partners/factotum.png';
 
-const partners: Partner[] = [
+const partnersNoID: Partner[] = [
   {
     id: 0,
     name: '451',
@@ -86,5 +86,12 @@ const partners: Partner[] = [
     displayName: 'Фактотум',
   },
 ];
+
+//  функция поправляет id каждого объекта партнёра, чтобы они шли по порядку,
+//  даже если какие-то будут удалены или добавлены с неверным id
+const partners: Partner[] = partnersNoID.map((partner, index) => {
+  partner.id = index;
+  return partner;
+});
 
 export default partners;

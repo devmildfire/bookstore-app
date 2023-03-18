@@ -6,7 +6,6 @@ import vidyaskinaPhoto from '../../public/images/members/katerina-vidyaskina.png
 import kurnosovaPhoto from '../../public/images/members/ekaterina-kurnosova.png';
 import kovalevskayaPhoto from '../../public/images/members/ekaterina-kovalevskaya.png';
 import malcevaPhoto from '../../public/images/members/anastasiya-malceva.png';
-import ploskonosPhoto from '../../public/images/members/veronika-ploskonos.png';
 import gilmanovaPhoto from '../../public/images/members/gilmanova-diana.png';
 import grebenschikovaPhoto from '../../public/images/members/grebenschikova-ekaterina.png';
 import kapustyakPhoto from '../../public/images/members/aleksei-kapustyak.png';
@@ -35,7 +34,7 @@ import ArtemNovoselov from '../../public/images/members/ArtemNovoselov.png';
 import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
 import LenaSolnceva from '../../public/images/members/LenaSolnceva.png';
 
-const members: Member[] = [
+const membersNoId: Member[] = [
   {
     id: 0,
     member: 'Алёна Купчинская',
@@ -97,14 +96,6 @@ const members: Member[] = [
   },
   {
     id: 7,
-    member: 'Вероника Плосконос',
-    position: 'художник анимации',
-    city: 'г. ???',
-    photo: ploskonosPhoto.src,
-    phrase: '???',
-  },
-  {
-    id: 8,
     member: 'Диана Гильманова',
     position: 'продюсер изданий',
     city: 'г. Екатеринбург',
@@ -112,7 +103,7 @@ const members: Member[] = [
     phrase: '???',
   },
   {
-    id: 9,
+    id: 8,
     member: 'Екатерина Гребенщикова',
     position: 'корректор',
     city: 'г. Белград',
@@ -120,7 +111,7 @@ const members: Member[] = [
     phrase: '???',
   },
   {
-    id: 10,
+    id: 9,
     member: 'Алексей Капустяк',
     position: 'верстальщик',
     city: 'г. Анна',
@@ -129,7 +120,7 @@ const members: Member[] = [
   },
 
   {
-    id: 13,
+    id: 10,
     member: 'Александра Яшаркина',
     position: 'ведущий верстальщик',
     city: 'г. ???',
@@ -137,7 +128,7 @@ const members: Member[] = [
     phrase: '«Найди слово, которое любишь, и позволь ему убить себя»',
   },
   {
-    id: 14,
+    id: 11,
     member: 'Алексей Бочкарёв',
     position: 'художник анимации',
     city: 'г. Томск',
@@ -145,7 +136,7 @@ const members: Member[] = [
     phrase: '???',
   },
   {
-    id: 15,
+    id: 12,
     member: 'Лана Дорохова',
     position: 'ведущая радио Овердрайв',
     city: 'г. Ереван',
@@ -154,7 +145,7 @@ const members: Member[] = [
       '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать.»',
   },
   {
-    id: 16,
+    id: 13,
     member: 'Софья Попова',
     position: 'редактор',
     city: 'город',
@@ -162,9 +153,8 @@ const members: Member[] = [
     phrase:
       '«Когда вы читаете, не пытайтесь угадывать, что думает автор. Думайте сами.«',
   },
-
   {
-    id: 17,
+    id: 14,
     member: 'Матвей Дашиев',
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
@@ -173,7 +163,7 @@ const members: Member[] = [
   },
 
   {
-    id: 18,
+    id: 15,
     member: 'Даниил Нечеев',
     position: 'руководитель видеоотдела',
     city: 'г. Ереван',
@@ -182,7 +172,7 @@ const members: Member[] = [
   },
 
   {
-    id: 19,
+    id: 16,
     member: 'Анастасия Виниченко',
     position: 'графический Дизайнер',
     city: 'г. Калининград',
@@ -191,7 +181,7 @@ const members: Member[] = [
   },
 
   {
-    id: 20,
+    id: 17,
     member: 'Илья Черкасов',
     position: 'веб-дизайнер',
     city: 'г. Санкт-Петербург',
@@ -199,7 +189,7 @@ const members: Member[] = [
     phrase: '«Самоуничижение – форма гордыни»',
   },
   {
-    id: 21,
+    id: 18,
     member: 'Светлана Шаронова',
     position: 'СММ',
     city: 'г. Москва',
@@ -207,7 +197,7 @@ const members: Member[] = [
     phrase: '«Писание – своего рода заклинание духов»',
   },
   {
-    id: 22,
+    id: 19,
     member: 'Игорь Козырев',
     position: 'иллюстратор',
     city: 'г. Ростов-на-Дону',
@@ -215,7 +205,7 @@ const members: Member[] = [
     phrase: '???',
   },
   {
-    id: 23,
+    id: 20,
     member: 'Всеволод Дорохов',
     position: 'звукорежиссёр',
     city: 'г. Ереван',
@@ -223,7 +213,7 @@ const members: Member[] = [
     phrase: '???',
   },
   {
-    id: 24,
+    id: 21,
     member: 'Горыныч',
     position: 'иллюстратор',
     city: 'Кудыкина Гора',
@@ -231,7 +221,7 @@ const members: Member[] = [
     phrase: '«Ты не Курт Воннегут!» ARS LONGA, VITA BREVIS',
   },
   {
-    id: 25,
+    id: 22,
     member: 'Валерия Арсибекова',
     position: 'специалист по развитию',
     city: 'г. ???',
@@ -240,7 +230,7 @@ const members: Member[] = [
       '«Литература изъята из законов тления. Она одна не признаёт смерти»',
   },
   {
-    id: 26,
+    id: 23,
     member: 'Анна Мезенцева',
     position: 'корректор',
     city: 'г. Москва',
@@ -249,7 +239,7 @@ const members: Member[] = [
   },
 
   {
-    id: 27,
+    id: 24,
     member: 'Анна Волкова',
     position: 'редактор',
     city: 'г. Калуга',
@@ -259,7 +249,7 @@ const members: Member[] = [
   },
 
   {
-    id: 28,
+    id: 25,
     member: 'Павел Труфанов',
     position: 'художник анимации',
     city: 'г. ???',
@@ -268,7 +258,7 @@ const members: Member[] = [
   },
 
   {
-    id: 29,
+    id: 26,
     member: 'Любовь Невская',
     position: 'кинооператор',
     city: 'г. Санкт-Петербург',
@@ -277,7 +267,7 @@ const members: Member[] = [
   },
 
   {
-    id: 30,
+    id: 27,
     member: 'Кирилл Горбачевский',
     position: 'верстальщик',
     city: 'г. Томск',
@@ -286,7 +276,7 @@ const members: Member[] = [
   },
 
   {
-    id: 31,
+    id: 28,
     member: 'Ксения Харина',
     position: 'иллюстратор',
     city: 'г. ???',
@@ -295,7 +285,7 @@ const members: Member[] = [
   },
 
   {
-    id: 32,
+    id: 29,
     member: 'Даниил Румянцев',
     position: 'дизайнер',
     city: 'г. Санкт-Петербург',
@@ -304,7 +294,7 @@ const members: Member[] = [
   },
 
   {
-    id: 33,
+    id: 30,
     member: 'Анастасия Достиева',
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
@@ -312,9 +302,8 @@ const members: Member[] = [
     phrase:
       '«Как бы тонко и любовно ни анализировали и ни разъясняли рассказ, всегда найдется ум, оставшийся безучастным, и спина, по которой не пробежит холодок»',
   },
-
   {
-    id: 34,
+    id: 31,
     member: 'Артём Новосёлов',
     position: 'веб-разработчик',
     city: 'г. Пермь',
@@ -323,7 +312,7 @@ const members: Member[] = [
       '«Хорошая книжка как хорошая гантель - не вдруг и осилишь, но прокачивает серьёзно»',
   },
   {
-    id: 35,
+    id: 32,
     member: 'Николай Желтухин',
     position: 'звукорежиссёр',
     city: 'г. Ереван',
@@ -331,7 +320,7 @@ const members: Member[] = [
     phrase: '«Прощай, цыганка Сэра»',
   },
   {
-    id: 36,
+    id: 504,
     member: 'Лена Солнцева',
     position: 'иллюстратор',
     city: 'г. Казань',
@@ -339,5 +328,12 @@ const members: Member[] = [
     phrase: '???',
   },
 ];
+
+//  функция поправляет id каждого объекта участника, чтобы они шли по порядку,
+//  даже если какие-то будут удалены или добавлены с неверным id
+const members: Member[] = membersNoId.map((member, index) => {
+  member.id = index;
+  return member;
+});
 
 export default members;

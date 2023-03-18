@@ -1,5 +1,6 @@
 export interface Member {
-  readonly id: number;
+  // readonly id: number;
+  id: number;
   readonly member: string;
   readonly position: string;
   readonly photo: string;
