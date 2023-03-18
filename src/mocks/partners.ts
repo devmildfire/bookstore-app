@@ -87,6 +87,4 @@ const partners: Partner[] = [
   },
 ];
 
-// const partnersWID = setUUIDField(partners);
-
 export default partners;
