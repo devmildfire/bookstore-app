@@ -34,9 +34,9 @@ import ArtemNovoselov from '../../public/images/members/ArtemNovoselov.png';
 import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
 import LenaSolnceva from '../../public/images/members/LenaSolnceva.png';
 
-const membersNoId: Member[] = [
+const members: Member[] = [
   {
-    id: 0,
+    // id: 0,
     member: 'Алёна Купчинская',
     position: 'ведущий редактор',
     city: 'г. Москва',
@@ -44,7 +44,7 @@ const membersNoId: Member[] = [
     phrase: '«Литература — это вера в любовь между рацио и эмоцио»',
   },
   {
-    id: 1,
+    // id: 1,
     member: 'Андрей Янкус',
     position: 'шеф-редактор Чтива',
     city: 'Эльдорадо',
@@ -53,7 +53,7 @@ const membersNoId: Member[] = [
       '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход жизни в язык, который учреждает Идеи»',
   },
   {
-    id: 2,
+    // id: 2,
     member: 'Сергей Дедович',
     position: 'шеф-редактор РД',
     city: 'г. Санкт-Петербург',
@@ -62,7 +62,7 @@ const membersNoId: Member[] = [
       '«Книгоиздание не должно быть бизнесом, чтобы писатель был властителем дум, а не удовлетворителем потребительского спроса»',
   },
   {
-    id: 3,
+    // id: 3,
     member: 'Катерина Видяскина',
     position: 'ведущий дизайнер',
     city: 'г. Санкт-Петербург',
@@ -70,7 +70,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 4,
+    // id: 4,
     member: 'Екатерина Курносова',
     position: 'иллюстратор',
     city: 'г. ???',
@@ -78,7 +78,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 5,
+    // id: 5,
     member: 'Екатерина Ковалевская',
     position: 'иллюстратор',
     city: 'г. Нижний Новгород',
@@ -86,7 +86,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 6,
+    // id: 6,
     member: 'Анастасия Мальцева',
     position: 'режиссёр',
     city: 'г. Санкт-Петербург',
@@ -95,7 +95,7 @@ const membersNoId: Member[] = [
       '«По словам Чарльза Олсена, лучашя поэзия - это своего рода шизофрения»',
   },
   {
-    id: 7,
+    // id: 7,
     member: 'Диана Гильманова',
     position: 'продюсер изданий',
     city: 'г. Екатеринбург',
@@ -103,7 +103,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 8,
+    // id: 8,
     member: 'Екатерина Гребенщикова',
     position: 'корректор',
     city: 'г. Белград',
@@ -111,7 +111,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 9,
+    // id: 9,
     member: 'Алексей Капустяк',
     position: 'верстальщик',
     city: 'г. Анна',
@@ -120,7 +120,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 10,
+    // id: 10,
     member: 'Александра Яшаркина',
     position: 'ведущий верстальщик',
     city: 'г. ???',
@@ -128,7 +128,7 @@ const membersNoId: Member[] = [
     phrase: '«Найди слово, которое любишь, и позволь ему убить себя»',
   },
   {
-    id: 11,
+    // id: 11,
     member: 'Алексей Бочкарёв',
     position: 'художник анимации',
     city: 'г. Томск',
@@ -136,7 +136,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 12,
+    // id: 12,
     member: 'Лана Дорохова',
     position: 'ведущая радио Овердрайв',
     city: 'г. Ереван',
@@ -145,7 +145,7 @@ const membersNoId: Member[] = [
       '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать.»',
   },
   {
-    id: 13,
+    // id: 13,
     member: 'Софья Попова',
     position: 'редактор',
     city: 'город',
@@ -154,7 +154,7 @@ const membersNoId: Member[] = [
       '«Когда вы читаете, не пытайтесь угадывать, что думает автор. Думайте сами.«',
   },
   {
-    id: 14,
+    // id: 14,
     member: 'Матвей Дашиев',
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
@@ -163,7 +163,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 15,
+    // id: 15,
     member: 'Даниил Нечеев',
     position: 'руководитель видеоотдела',
     city: 'г. Ереван',
@@ -172,7 +172,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 16,
+    // id: 16,
     member: 'Анастасия Виниченко',
     position: 'графический Дизайнер',
     city: 'г. Калининград',
@@ -181,7 +181,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 17,
+    // id: 17,
     member: 'Илья Черкасов',
     position: 'веб-дизайнер',
     city: 'г. Санкт-Петербург',
@@ -189,7 +189,7 @@ const membersNoId: Member[] = [
     phrase: '«Самоуничижение – форма гордыни»',
   },
   {
-    id: 18,
+    // id: 18,
     member: 'Светлана Шаронова',
     position: 'СММ',
     city: 'г. Москва',
@@ -197,7 +197,7 @@ const membersNoId: Member[] = [
     phrase: '«Писание – своего рода заклинание духов»',
   },
   {
-    id: 19,
+    // id: 19,
     member: 'Игорь Козырев',
     position: 'иллюстратор',
     city: 'г. Ростов-на-Дону',
@@ -205,7 +205,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 20,
+    // id: 20,
     member: 'Всеволод Дорохов',
     position: 'звукорежиссёр',
     city: 'г. Ереван',
@@ -213,7 +213,7 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
   {
-    id: 21,
+    // id: 21,
     member: 'Горыныч',
     position: 'иллюстратор',
     city: 'Кудыкина Гора',
@@ -221,7 +221,7 @@ const membersNoId: Member[] = [
     phrase: '«Ты не Курт Воннегут!» ARS LONGA, VITA BREVIS',
   },
   {
-    id: 22,
+    // id: 22,
     member: 'Валерия Арсибекова',
     position: 'специалист по развитию',
     city: 'г. ???',
@@ -230,7 +230,7 @@ const membersNoId: Member[] = [
       '«Литература изъята из законов тления. Она одна не признаёт смерти»',
   },
   {
-    id: 23,
+    // id: 23,
     member: 'Анна Мезенцева',
     position: 'корректор',
     city: 'г. Москва',
@@ -239,7 +239,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 24,
+    // id: 24,
     member: 'Анна Волкова',
     position: 'редактор',
     city: 'г. Калуга',
@@ -249,7 +249,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 25,
+    // id: 25,
     member: 'Павел Труфанов',
     position: 'художник анимации',
     city: 'г. ???',
@@ -258,7 +258,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 26,
+    // id: 26,
     member: 'Любовь Невская',
     position: 'кинооператор',
     city: 'г. Санкт-Петербург',
@@ -267,7 +267,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 27,
+    // id: 27,
     member: 'Кирилл Горбачевский',
     position: 'верстальщик',
     city: 'г. Томск',
@@ -276,7 +276,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 28,
+    // id: 28,
     member: 'Ксения Харина',
     position: 'иллюстратор',
     city: 'г. ???',
@@ -285,7 +285,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 29,
+    // id: 29,
     member: 'Даниил Румянцев',
     position: 'дизайнер',
     city: 'г. Санкт-Петербург',
@@ -294,7 +294,7 @@ const membersNoId: Member[] = [
   },
 
   {
-    id: 30,
+    // id: 30,
     member: 'Анастасия Достиева',
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
@@ -303,7 +303,7 @@ const membersNoId: Member[] = [
       '«Как бы тонко и любовно ни анализировали и ни разъясняли рассказ, всегда найдется ум, оставшийся безучастным, и спина, по которой не пробежит холодок»',
   },
   {
-    id: 31,
+    // id: 31,
     member: 'Артём Новосёлов',
     position: 'веб-разработчик',
     city: 'г. Пермь',
@@ -312,7 +312,7 @@ const membersNoId: Member[] = [
       '«Хорошая книжка как хорошая гантель - не вдруг и осилишь, но прокачивает серьёзно»',
   },
   {
-    id: 32,
+    // id: 32,
     member: 'Николай Желтухин',
     position: 'звукорежиссёр',
     city: 'г. Ереван',
@@ -320,7 +320,7 @@ const membersNoId: Member[] = [
     phrase: '«Прощай, цыганка Сэра»',
   },
   {
-    id: 504,
+    // id: 504,
     member: 'Лена Солнцева',
     position: 'иллюстратор',
     city: 'г. Казань',
@@ -328,12 +328,5 @@ const membersNoId: Member[] = [
     phrase: '???',
   },
 ];
-
-//  функция поправляет id каждого объекта участника, чтобы они шли по порядку,
-//  даже если какие-то будут удалены или добавлены с неверным id
-const members: Member[] = membersNoId.map((member, index) => {
-  member.id = index;
-  return member;
-});
 
 export default members;

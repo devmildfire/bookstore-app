@@ -7,7 +7,7 @@ const PartnersList = (): React.ReactElement => {
   return (
     <Marquee speed={25} gap={0} direction='reverse' delay={0}>
       {partners.map((partner) => (
-        <PartnerCard {...partner} key={partner.id} />
+        <PartnerCard {...partner} key={partner.name} />
       ))}
     </Marquee>
   );
