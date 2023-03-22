@@ -38,14 +38,6 @@ export const NavHeader = styled(Link)`
 export const LinkDiv = styled.div`
   outline: 1px solid green;
 
-  background: linear-gradient(
-      92.67deg,
-      rgba(147, 0, 0, 0.2) 1.51%,
-      rgba(19, 19, 19, 0.2) 43.58%,
-      rgba(0, 0, 0, 0.2) 100.87%
-    ),
-    rgba(0, 0, 0, 0.3);
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -54,6 +46,22 @@ export const LinkDiv = styled.div`
   min-height: var(--linkDivHeight);
 
   padding: 10px;
+
+  transition: all 250ms ease-in;
+
+  :hover,
+  :focus-visible {
+    /* color: var(--main-red-100); */
+    outline: none;
+
+    background: linear-gradient(
+        92.67deg,
+        rgba(147, 0, 0, 0.2) 1.51%,
+        rgba(19, 19, 19, 0.2) 43.58%,
+        rgba(0, 0, 0, 0.2) 100.87%
+      ),
+      rgba(0, 0, 0, 0.3);
+  }
 
   @media ${breakPoints.xl} {
     --linkDivHeight: 65px;
