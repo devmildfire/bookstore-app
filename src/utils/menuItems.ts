@@ -61,15 +61,17 @@ const forAuthors: SubmenuItem[] = [
 const menu: MenuItem[] = [
   {
     title: 'О Чтиве',
-    link: '/not-found',
+    link: '/about',
   },
   {
     title: 'Чтецам',
     submenu: forReaders,
+    link: '/not-found',
   },
   {
     title: 'Авторам',
     submenu: forAuthors,
+    link: '/not-found',
   },
   {
     title: 'Инвесторам и донаторам',
