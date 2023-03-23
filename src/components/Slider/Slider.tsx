@@ -462,7 +462,7 @@ const StyledSlide = styled(motion.div)<StyledSlideProps>`
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  align-items: start;
+  align-items: flex-start;
   border-radius: 5px;
   position: absolute;
   top: 0;
