@@ -1,7 +1,7 @@
 import { Member } from '@/types/member';
 import alenaPhoto from '../../public/images/members/AlenaKupchinskaya.png';
 import dedovichPhoto from '../../public/images/members/sergey-dedovich.png';
-import yankusPhoto from '../../public/images/members/andrey-yankus.png';
+// import yankusPhoto from '../../public/images/members/andrey-yankus.png';
 import vidyaskinaPhoto from '../../public/images/members/katerina-vidyaskina.png';
 import kurnosovaPhoto from '../../public/images/members/ekaterina-kurnosova.png';
 import kovalevskayaPhoto from '../../public/images/members/ekaterina-kovalevskaya.png';
@@ -31,7 +31,7 @@ import KseniaHarina from '../../public/images/members/KseniaHarina.png';
 import DaniilRumancev from '../../public/images/members/DaniilRumancev.png';
 import AnnaDostieva from '../../public/images/members/AnnaDostieva.png';
 import ArtemNovoselov from '../../public/images/members/ArtemNovoselov.png';
-import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
+// import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
 import LenaSolnceva from '../../public/images/members/LenaSolnceva.png';
 
 const members: Member[] = [
@@ -43,15 +43,15 @@ const members: Member[] = [
     photo: alenaPhoto.src,
     phrase: '«Литература — это вера в любовь между рацио и эмоцио»',
   },
-  {
-    // id: 1,
-    member: 'Андрей Янкус',
-    position: 'шеф-редактор Чтива',
-    city: 'Эльдорадо',
-    photo: yankusPhoto.src,
-    phrase:
-      '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход жизни в язык, который учреждает Идеи»',
-  },
+  // {
+  //   member: 'Андрей Янкус',
+  //   position: 'шеф-редактор Чтива',
+  //   city: 'Эльдорадо',
+  //   photo: yankusPhoto.src,
+  //   phrase:
+  //    '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход
+  //  жизни в язык, который учреждает Идеи»',
+  // },
   {
     // id: 2,
     member: 'Сергей Дедович',
@@ -88,11 +88,11 @@ const members: Member[] = [
   {
     // id: 6,
     member: 'Анастасия Мальцева',
-    position: 'режиссёр',
+    position: 'режиссёр буктрейлеров',
     city: 'г. Санкт-Петербург',
     photo: malcevaPhoto.src,
     phrase:
-      '«По словам Чарльза Олсена, лучашя поэзия - это своего рода шизофрения»',
+      '«По словам Чарльза Олсена, лучашя поэзия — это своего рода шизофрения»',
   },
   {
     // id: 7,
@@ -123,7 +123,7 @@ const members: Member[] = [
     // id: 10,
     member: 'Александра Яшаркина',
     position: 'ведущий верстальщик',
-    city: 'г. ???',
+    city: 'г. Ярославль',
     photo: AleksandraYasharkina.src,
     phrase: '«Найди слово, которое любишь, и позволь ему убить себя»',
   },
@@ -138,11 +138,11 @@ const members: Member[] = [
   {
     // id: 12,
     member: 'Лана Дорохова',
-    position: 'ведущая радио Овердрайв',
+    position: 'специалист отдела развития',
     city: 'г. Ереван',
     photo: LanaDorohova.src,
     phrase:
-      '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать.»',
+      '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать»',
   },
   {
     // id: 13,
@@ -194,7 +194,7 @@ const members: Member[] = [
     position: 'СММ',
     city: 'г. Москва',
     photo: SvetlanaSharonova.src,
-    phrase: '«Писание – своего рода заклинание духов»',
+    phrase: '«Писательство – своего рода заклинание духов»',
   },
   {
     // id: 19,
@@ -245,7 +245,7 @@ const members: Member[] = [
     city: 'г. Калуга',
     photo: AnnaVolcova.src,
     phrase:
-      '«Я не думаю, что `филология спасёт мир`. Его способна спасти только любовь. Филология же, как её ни трактовать, любви не противоречит, а, скорее, способна её поддержать»',
+      "«Я не думаю, что 'филология спасёт мир'. Его способна спасти только любовь. Филология же, как её ни трактовать, любви не противоречит, а, скорее, способна её поддержать»",
   },
 
   {
@@ -260,7 +260,7 @@ const members: Member[] = [
   {
     // id: 26,
     member: 'Любовь Невская',
-    position: 'кинооператор',
+    position: 'оператор-постановщик буктрейлеров',
     city: 'г. Санкт-Петербург',
     photo: LubovNevskaya.src,
     phrase: '???',
@@ -311,14 +311,14 @@ const members: Member[] = [
     phrase:
       '«Хорошая книжка как хорошая гантель - не вдруг и осилишь, но прокачивает серьёзно»',
   },
-  {
-    // id: 32,
-    member: 'Николай Желтухин',
-    position: 'звукорежиссёр',
-    city: 'г. Ереван',
-    photo: NikilaiJeltuhin.src,
-    phrase: '«Прощай, цыганка Сэра»',
-  },
+  // {
+  //   // id: 32,
+  //   member: 'Николай Желтухин',
+  //   position: 'звукорежиссёр',
+  //   city: 'г. Ереван',
+  //   photo: NikilaiJeltuhin.src,
+  //   phrase: '«Прощай, цыганка Сэра»',
+  // },
   {
     // id: 504,
     member: 'Лена Солнцева',
