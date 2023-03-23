@@ -1,11 +1,17 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import {
   AnimatePresence,
   AnimateSharedLayout,
   motion,
   wrap,
 } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { StyledComponent } from 'styled-components';
 import Image from 'next/image';
 import books from '@/mocks/books';
 // import {
@@ -235,9 +241,13 @@ const StyledBannerContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  z-index: 2;
-  @media screen and (max-width: 768px) {
+  max-width: 1440px;
+  justify-content: space-around;
+  width: 100%;
+  gap: 64px;
+  @media screen and (max-width: 512px) {
     flex-direction: column;
+    gap: 0px;
   }
 `;
 
@@ -257,6 +267,8 @@ const StyledInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-width: 720px;
+  width: 100%;
   @media screen and (max-width: 768px) {
     align-items: center;
   }
@@ -266,9 +278,58 @@ const StyledInfo = styled.div`
   }
 `;
 
-const StyledTitle = styled.h1`
-  text-align: left;
+const fontFamilies: Record<string, string> = {
+  sans: "'Montserrat', sans-serif",
+  serif: "'Cheque', serif",
+};
+
+const StyledHeading = styled.h1`
+  font-family: ${fontFamilies.serif};
   margin: 0;
+`;
+
+const StyledText = styled.p`
+  font-family: ${fontFamilies.sans};
+  margin: 0;
+`;
+
+const StyledCaption = styled.span`
+  font-family: ${fontFamilies.sans};
+  margin: 0;
+`;
+
+type HeadingTags = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+type TextTag = 'p';
+type CaptionTag = 'span';
+
+type TextProps = {
+  variant: 'heading' | 'text' | 'caption';
+  tag?: HeadingTags | TextTag | CaptionTag;
+};
+
+const lookupTextComponent: Record<
+  string,
+  StyledComponent<'h1' | 'p' | 'span', never>
+> = {
+  heading: StyledHeading,
+  text: StyledText,
+  caption: StyledCaption,
+};
+
+function Text(props: PropsWithChildren<TextProps>) {
+  const { variant, tag, children, ...rest } = props;
+  const Component = lookupTextComponent[variant];
+
+  return (
+    <Component as={tag} {...rest}>
+      {children}
+    </Component>
+  );
+}
+
+const StyledTitle = styled(Text)`
+  text-align: left;
+  font-size: 96px;
   @media screen and (max-width: 768px) {
     text-align: center;
   }
@@ -278,10 +339,9 @@ const StyledTitle = styled.h1`
   }
 `;
 
-const StyledAuthor = styled.p`
+const StyledAuthor = styled(Text)`
   text-align: left;
-  margin: 0;
-
+  font-size: 48px;
   @media screen and (max-width: 768px) {
     text-align: center;
   }
@@ -296,11 +356,11 @@ const StyledAuthor = styled.p`
   }
 `;
 
-const StyledThesis = styled.p`
+const StyledThesis = styled(Text)`
   text-align: left;
   font-style: italic;
-  margin: 0;
-
+  text-transform: uppercase;
+  opacity: 0.6;
   @media screen and (max-width: 768px) {
     text-align: center;
   }
@@ -341,11 +401,15 @@ function Slide({ currentPage }: { currentPage: number }) {
         alt={books[currentPage].title}
       />
       <StyledInfo>
-        <StyledTitle>{books[currentPage].title}</StyledTitle>
-        <StyledAuthor>
+        <StyledTitle variant='heading' tag='h1'>
+          {books[currentPage].title}
+        </StyledTitle>
+        <StyledAuthor variant='heading' tag='h2'>
           {books[currentPage].authors.map((author) => author.name).join(', ')}
         </StyledAuthor>
-        <StyledThesis>{books[currentPage].thesis}</StyledThesis>
+        <StyledThesis variant='caption'>
+          {books[currentPage].thesis}
+        </StyledThesis>
         <StyledButton type='button'>Познать</StyledButton>
       </StyledInfo>
     </StyledBannerContainer>
@@ -362,15 +426,17 @@ const variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? xOffset : -xOffset,
     opacity: 0,
+    transition: { bounce: 0 },
   }),
   active: {
     x: 0,
     opacity: 1,
-    transition: { delay: 0.2 },
+    transition: { bounce: 0, ease: 'easeInOut', delay: 0.5 },
   },
   exit: (direction: number) => ({
     x: direction > 0 ? -xOffset : xOffset,
     opacity: 0,
+    transition: { bounce: 0 },
   }),
 };
 
@@ -458,6 +524,7 @@ function Slides({
           animate='active'
           exit='exit'
           drag='x'
+          dragMomentum={false}
           onDragEnd={detectPaginationGesture}
           dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
           custom={direction}
