@@ -129,6 +129,40 @@ const h33Style = css<StyledTextProps>`
   }
 `;
 
+const h3Abzac = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: 40px;
+  text-align: left;
+  align-self: flex-start;
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+`;
+
+const nameAbzac = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: 24px;
+  text-align: left;
+  align-self: flex-start;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+`;
+
 const h33StyleAbout = css<StyledTextProps>`
   font-size: 24px;
   font-weight: ${(props) => props.fontWeight || 400};
@@ -293,6 +327,39 @@ const paddedTextStyle = css<StyledTextProps>`
   @media ${breakPoints.sm} {
     padding: 0 20px;
     font-size: 10px;
+  }
+`;
+
+const abzacTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const abzacCardStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 20px;
+
+  @media ${breakPoints.xl} {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 14px;
   }
 `;
 
@@ -474,6 +541,10 @@ const styles: Record<
   paddedText: paddedTextStyle,
   buttonText: buttonTextStyle,
   lJbuttonText: lJbuttonTextStyle,
+  abzacText: abzacTextStyle,
+  abzacCardText: abzacCardStyle,
+  h3_Abzac: h3Abzac,
+  h4_Abzac: nameAbzac,
   h4_1: h41Style,
   h4_2: h42Style,
   h4_3: h43Style,
@@ -499,6 +570,10 @@ export const tagMap: Record<Variant, string> = {
   paddedText: 'p',
   buttonText: 'p',
   lJbuttonText: 'p',
+  abzacText: 'p',
+  abzacCardText: 'p',
+  h3_Abzac: 'h3',
+  h4_Abzac: 'h4',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',

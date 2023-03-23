@@ -7,6 +7,7 @@ import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
 import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
 import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
+import breakPoints from '@/utils/breakPoints';
 
 // const lines = sidebarItems.map((item) => item.link.split('/')[0]);
 const lines = sidebarItems.map(
@@ -110,7 +111,7 @@ const ForAuthors: NextPage = () => {
       <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <StyledSection>
-          <h1>{router.query.section}</h1>
+          {/* <h1>{router.query.section}</h1> */}
           {content}
         </StyledSection>
       </TwoPaneGrid>
@@ -130,6 +131,46 @@ const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  //  добавить разные параметры под разное разрешение
+  gap: 40px;
+  padding: 100px 96px 200px 96px;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+  }
+
+  @media ${breakPoints.sm} {
+  }
 `;
+
+// const StyledAbzac = styled(Abzac)`
+//   //  добавить разные параметры под разное разрешение
+//   gap: 48px;
+//   padding: 100px 96px 200px 96px;
+
+//   @media ${breakPoints.xl} {
+//   }
+
+//   @media ${breakPoints.lg} {
+//   }
+
+//   @media ${breakPoints.md} {
+//   }
+
+//   @media ${breakPoints.smd} {
+//   }
+
+//   @media ${breakPoints.sm} {
+//   }
+// `;
 
 export default ForAuthors;

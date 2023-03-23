@@ -8,7 +8,7 @@ export const GridDiv = styled.div`
   /* grid-template-columns: fit-content 1fr; */
   /* grid-template-columns: 250px 1fr; */
   grid-template-columns: min-content 1fr;
-  column-gap: 20px;
+  /* column-gap: 20px; */
 
   @media ${breakPoints.xl} {
   }
@@ -20,10 +20,10 @@ export const GridDiv = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    grid-template-columns: 1fr;
   }
 
   @media ${breakPoints.sm} {
-    grid-template-columns: 1fr;
-    column-gap: 0px;
+    /* column-gap: 0px; */
   }
 `;

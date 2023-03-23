@@ -4,6 +4,7 @@ import logoPic from '@/assets/images/AbzacLogo.png';
 import { CardDiv, HeroDiv, TeacherPic, TeachersDiv, TextDiv } from './styles';
 // import styled from 'styled-components';
 import { staff, Teacher } from './Staf';
+import Text from '@/components/Common/Text';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -23,7 +24,7 @@ const Abzac = (): React.ReactElement => {
       <HeroDiv>
         {/* //  добавить разные картинки для разных экранов */}
         <img src={logoPic.src} alt='Мастерская Абзац' />
-        {firstPar}
+        <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
       <Staff />
     </>
@@ -32,14 +33,16 @@ const Abzac = (): React.ReactElement => {
 
 const Staff = (): React.ReactElement => {
   return (
-    <>
-      <h2> Преподаватели </h2>
-      <TeachersDiv>
-        {staff.map((item) => (
-          <TeachersCard teacher={item} key={item.name} />
-        ))}
-      </TeachersDiv>
-    </>
+    // <>
+    <TeachersDiv>
+      <Text variant='h3_Abzac' align='start'>
+        Преподаватели
+      </Text>
+      {staff.map((item) => (
+        <TeachersCard teacher={item} key={item.name} />
+      ))}
+    </TeachersDiv>
+    // </>
   );
 };
 
@@ -53,8 +56,8 @@ const TeachersCard = (props: TeachersCardProps): React.ReactElement => {
     <CardDiv>
       <TeacherPic src={teacher.photo} />
       <TextDiv>
-        <h3>{teacher.name}</h3>
-        <p>{teacher.text}</p>
+        <Text variant='h4_Abzac'>{teacher.name}</Text>
+        <Text variant='abzacCardText'>{teacher.text}</Text>
       </TextDiv>
     </CardDiv>
   );
