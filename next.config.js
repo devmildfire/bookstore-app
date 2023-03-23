@@ -13,22 +13,12 @@ const options = {
     return [
       {
         source: '/',
-        destination: '/books',
+        destination: '/about',
         permanent: true,
       },
       {
-        source: '/all-books.html',
-        destination: '/books',
-        permanent: true,
-      },
-      {
-        source: '/book-deleted.html',
-        destination: '/books/deleted',
-        permanent: true,
-      },
-      {
-        source: '/book-craft.html',
-        destination: '/books/craft',
+        source: '/books',
+        destination: '/about',
         permanent: true,
       },
     ];
