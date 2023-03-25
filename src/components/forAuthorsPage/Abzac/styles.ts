@@ -27,19 +27,25 @@ const AbzacDiv = styled.div`
     --padding-bottom: 200px;
   }
 
+  @media screen and (max-width: 1200px) {
+    --padding-top: 80px;
+    --padding-sides: 58px;
+    --padding-bottom: 120px;
+  }
+
   @media ${breakPoints.lg} {
-    --padding-top: 100px;
+    --padding-top: 80px;
     --padding-sides: 52px;
     --padding-bottom: 120px;
   }
 
   @media ${breakPoints.md} {
-  }
-
-  @media ${breakPoints.smd} {
     --padding-top: 39px;
     --padding-sides: 36px;
     --padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
   }
 
   @media ${breakPoints.sm} {
@@ -61,8 +67,13 @@ const CardDiv = styled.div`
     gap: 50px;
   }
 
+  @media screen and (max-width: 1200px) {
+    gap: 30px;
+  }
+
   @media ${breakPoints.lg} {
     gap: 30px;
+    flex-direction: column;
   }
 
   @media ${breakPoints.md} {
@@ -70,7 +81,6 @@ const CardDiv = styled.div`
 
   @media ${breakPoints.smd} {
     gap: 25px;
-    flex-direction: column;
   }
 
   @media ${breakPoints.sm} {
@@ -91,8 +101,14 @@ const TeacherPic = styled.img`
     --size: 280px;
   }
 
+  @media screen and (max-width: 1200px) {
+    --size: 180px;
+    /* align-self: center; */
+  }
+
   @media ${breakPoints.lg} {
     --size: 180px;
+    align-self: center;
   }
 
   @media ${breakPoints.md} {

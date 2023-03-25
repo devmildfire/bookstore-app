@@ -3,26 +3,30 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const NavHeader = styled(Link)`
-  --fontSize: 40px
-  --paddingTop: 100px; 
-  --paddingBottom: 50px; 
+  --fontSize: 40px;
+  --paddingforTop: 100px;
+  --paddingBottom: 50px;
   font-size: var(--fontSize);
-  padding-top: var(--paddingTop);
+  padding-top: var(--paddingforTop);
   padding-bottom: var(--paddingBottom);
+  padding-left: 64px;
 
   @media ${breakPoints.xl} {
     --fontSize: 30px;
-    --paddingTop: 100px; 
-    --paddingBottom: 50px; 
+    --paddingforTop: 100px;
+    --paddingBottom: 50px;
+    padding-left: 50px;
   }
 
   @media ${breakPoints.lg} {
     --fontSize: 30px;
-    --paddingTop: 90px; 
-    --paddingBottom: 24px; 
+    --paddingforTop: 90px;
+    --paddingBottom: 24px;
+    padding-left: 41px;
   }
 
   @media ${breakPoints.md} {
+    padding-left: 20px;
   }
 
   @media ${breakPoints.smd} {
@@ -30,13 +34,14 @@ export const NavHeader = styled(Link)`
 
   @media ${breakPoints.sm} {
     --fontSize: 20px;
-    --paddingTop: 50px; 
-    --paddingBottom: 32px; 
+    --paddingforTop: 50px;
+    --paddingBottom: 32px;
+    padding-left: 12px;
   }
 `;
 
 export const LinkDiv = styled.div`
-  outline: 1px solid green;
+  /* outline: 1px solid green; */
 
   display: flex;
   flex-direction: column;
@@ -45,7 +50,7 @@ export const LinkDiv = styled.div`
   --linkDivHeight: 85px;
   min-height: var(--linkDivHeight);
 
-  padding: 10px;
+  padding-left: 64px;
 
   transition: all 250ms ease-in;
 
@@ -65,13 +70,16 @@ export const LinkDiv = styled.div`
 
   @media ${breakPoints.xl} {
     --linkDivHeight: 65px;
+    padding-left: 50px;
   }
 
   @media ${breakPoints.lg} {
     --linkDivHeight: 60px;
+    padding-left: 41px;
   }
 
   @media ${breakPoints.md} {
+    padding-left: 20px;
   }
 
   @media ${breakPoints.smd} {
@@ -79,18 +87,31 @@ export const LinkDiv = styled.div`
 
   @media ${breakPoints.sm} {
     --linkDivHeight: 44px;
+    padding-left: 12px;
   }
 `;
 
 export const NavDiv = styled.div`
-  outline: 1px solid red;
+  /* outline: 1px solid red; */
 
-  background: linear-gradient(
+  /* background: linear-gradient(
       346.55deg,
       rgba(147, 0, 0, 0.5 * 0.3) 1.08%,
       rgba(0, 0, 0, 0.5 * 0.3) 41.58%
     ),
-    linear-gradient(163.22deg, #ca0000 0%, #131313 31.8%, #000000 55.09%);
+    linear-gradient(163.22deg, #ca0000 0%, #131313 31.8%, #000000 55.09%); */
+
+  background: linear-gradient(
+      346.55deg,
+      rgba(147, 0, 0, 0.1) 1.08%,
+      rgba(0, 0, 0, 0.1) 41.58%
+    ),
+    linear-gradient(
+      163.22deg,
+      rgba(202, 0, 0, 0.1) 0%,
+      rgba(19, 19, 19, 0.1) 31.8%,
+      rgba(0, 0, 0, 0.1) 55.09%
+    );
 
   --navWidth: 450px;
   display: flex;
@@ -110,9 +131,9 @@ export const NavDiv = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    --navWidth: 100%;
   }
 
   @media ${breakPoints.sm} {
-    --navWidth: 100%;
   }
 `;

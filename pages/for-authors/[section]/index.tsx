@@ -102,7 +102,7 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledSection = styled.div`
-  outline: 1px solid white;
+  /* outline: 1px solid white; */
 `;
 
 export default ForAuthors;

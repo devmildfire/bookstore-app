@@ -358,6 +358,10 @@ const abzacCardStyle = css<StyledTextProps>`
     font-size: 16px;
   }
 
+  @media screen and (max-width: 1200px) {
+    font-size: 14px;
+  }
+
   @media ${breakPoints.lg} {
     font-size: 14px;
   }
