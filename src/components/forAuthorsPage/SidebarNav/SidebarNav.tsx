@@ -5,6 +5,7 @@ import setUUIDField from '@/utils/setUUIDField';
 // import styled from 'styled-components';
 import { NavDiv, LinkDiv, NavHeader } from './styles';
 import { sidebarItem } from '@/types/sidebarItem';
+import Text from '@/components/Common/Text';
 
 /**
  *
@@ -28,11 +29,16 @@ const SidebarNav = (props: sidebarNavProps): React.ReactElement => {
 
   return (
     <NavDiv>
-      <NavHeader href='/for-authors/main'>{header}</NavHeader>
+      <NavHeader href='/for-authors/main'>
+        <Text variant='sn_Title'>{header}</Text>
+      </NavHeader>
       {sidebarItemsWID.map((item) => {
         return (
           <LinkDiv key={item.key}>
-            <Link href={item.link}>{item.title}</Link>
+            <Link href={item.link}>
+              {/* {item.title} */}
+              <Text variant='sn_Item'>{item.title}</Text>
+            </Link>
           </LinkDiv>
         );
       })}

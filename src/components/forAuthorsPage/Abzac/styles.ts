@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 const AbzacDiv = styled.div`
-  * {
+  /* * {
     outline: 1px solid red;
-  }
+  } */
 
   picture > img {
     width: 100%;
@@ -152,4 +152,125 @@ const TeachersDiv = styled.div`
   }
 `;
 
-export { HeroDiv, CardDiv, TeacherPic, TextDiv, TeachersDiv, AbzacDiv };
+const CoursesDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+
+  @media ${breakPoints.xl} {
+    gap: 35px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 30px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const CourseCardDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+
+  border-bottom: 1px solid var(--main-white-100);
+  padding-bottom: 24px;
+
+  /* var(--main-white-80) */
+
+  @media ${breakPoints.xl} {
+    gap: 50px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 30px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 7px;
+    padding-bottom: 12px;
+    align-items: flex-end;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const CourseTextDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  gap: 8px;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 8px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 5px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const EnrollDiv = styled.div`
+  display: flex;
+  /* justify-content: space-around; */
+  flex-direction: column;
+  gap: 64px;
+
+  a {
+    color: var(--main-red-100);
+  }
+
+  @media ${breakPoints.xl} {
+    gap: 82px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 8px;
+  }
+
+  @media ${breakPoints.md} {
+    gap: 41px;
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 22px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+export {
+  HeroDiv,
+  CardDiv,
+  TeacherPic,
+  TextDiv,
+  TeachersDiv,
+  AbzacDiv,
+  CoursesDiv,
+  CourseCardDiv,
+  CourseTextDiv,
+  EnrollDiv,
+};

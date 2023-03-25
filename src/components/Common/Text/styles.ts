@@ -135,7 +135,7 @@ const h3Abzac = css<StyledTextProps>`
 
   font-size: 40px;
   text-align: left;
-  align-self: flex-start;
+  /* align-self: flex-start; */
 
   @media ${breakPoints.xl} {
     font-size: 30px;
@@ -152,7 +152,7 @@ const nameAbzac = css<StyledTextProps>`
 
   font-size: 24px;
   text-align: left;
-  align-self: flex-start;
+  /* align-self: flex-start; */
 
   @media ${breakPoints.xl} {
     font-size: 20px;
@@ -521,6 +521,68 @@ const h4Name = css<StyledTextProps>`
   }
 `;
 
+const sideNavItemStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 14px;
+  }
+`;
+
+const sideNavTitleStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-size: 40px;
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+  }
+`;
+
+const courseTitleStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-size: 30px;
+
+  @media ${breakPoints.xl} {
+    font-size: 24px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 16px;
+  }
+`;
+
 const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
@@ -543,6 +605,9 @@ const styles: Record<
   lJbuttonText: lJbuttonTextStyle,
   abzacText: abzacTextStyle,
   abzacCardText: abzacCardStyle,
+  sn_Item: sideNavItemStyle,
+  sn_Title: sideNavTitleStyle,
+  courseBig: courseTitleStyle,
   h3_Abzac: h3Abzac,
   h4_Abzac: nameAbzac,
   h4_1: h41Style,
@@ -572,8 +637,11 @@ export const tagMap: Record<Variant, string> = {
   lJbuttonText: 'p',
   abzacText: 'p',
   abzacCardText: 'p',
+  sn_Item: 'p',
   h3_Abzac: 'h3',
   h4_Abzac: 'h4',
+  sn_Title: 'h3',
+  courseBig: 'h4',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',

@@ -8,6 +8,10 @@ import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
 import {
   AbzacDiv,
   CardDiv,
+  CourseCardDiv,
+  CoursesDiv,
+  CourseTextDiv,
+  EnrollDiv,
   HeroDiv,
   TeacherPic,
   TeachersDiv,
@@ -16,6 +20,7 @@ import {
 // import styled from 'styled-components';
 import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
+import { curriculum } from './Curriculum';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -45,6 +50,8 @@ const Abzac = (): React.ReactElement => {
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
       <Staff />
+      <Curriculum />
+      <Enrollment />
     </AbzacDiv>
   );
 };
@@ -76,6 +83,62 @@ const TeachersCard = (props: TeachersCardProps): React.ReactElement => {
         <Text variant='abzacCardText'>{teacher.text}</Text>
       </TextDiv>
     </CardDiv>
+  );
+};
+
+const Curriculum = (): React.ReactElement => {
+  return (
+    <CoursesDiv>
+      <Text variant='h3_Abzac' align='start'>
+        Направления обучения
+      </Text>
+      {curriculum.map((course) => (
+        <CourseCard
+          title={course.title}
+          about={course.about ? course.about : ''}
+          teacher={course.lector}
+          key={course.title}
+        />
+      ))}
+    </CoursesDiv>
+  );
+};
+
+interface CourseCardProps {
+  teacher: Teacher | undefined;
+  title: string;
+  about?: string | undefined;
+}
+
+const CourseCard = (props: CourseCardProps): React.ReactElement => {
+  const { teacher, title, about } = props;
+  return (
+    <CourseCardDiv>
+      <CourseTextDiv>
+        <Text variant='courseBig'>{title}</Text>
+
+        {about && <Text variant='abzacCardText'>{about}</Text>}
+      </CourseTextDiv>
+
+      <Text variant='courseBig'>{teacher?.name}</Text>
+    </CourseCardDiv>
+  );
+};
+
+const enrollText =
+  'Предварительная запись в онлайн-мастерскую уже открыта — от вас пока требуется только обозначить свой интерес. Вы получите все подробности непосредственно перед запуском курса, и тогда сможете решить, участвовать или нет.';
+
+const Enrollment = (): React.ReactElement => {
+  return (
+    <EnrollDiv>
+      <Text variant='abzacCardText' align='start'>
+        {enrollText}
+      </Text>
+      <Text variant='h4_Abzac' align='start'>
+        {'Чтобы записаться, напишите немного о себе на почту '}
+        <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+      </Text>
+    </EnrollDiv>
   );
 };
 

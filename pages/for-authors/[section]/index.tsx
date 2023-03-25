@@ -82,30 +82,6 @@ const ForAuthors: NextPage = () => {
   const routerString = router.query.section as routeType;
   const content = getComponent(routerString);
 
-  // let content;
-
-  // switch (router.query.section) {
-  //   case 'main': {
-  //     content = lorem;
-  //     break;
-  //   }
-  //   case 'send-novel': {
-  //     content = ipsum;
-  //     break;
-  //   }
-  //   case 'send-manuscript': {
-  //     content = dolor;
-  //     break;
-  //   }
-  //   case 'abzac': {
-  //     content = lorem;
-  //     break;
-  //   }
-  //   default:
-  //     content = '';
-  //     break;
-  // }
-
   return (
     <StyledWrapper>
       <TwoPaneGrid>
@@ -127,13 +103,6 @@ const StyledWrapper = styled.main`
 
 const StyledSection = styled.div`
   outline: 1px solid white;
-  /* background-color: green; */
-  /* display: flex;
-  flex-direction: column;
-  align-items: center; */
-
-  /* gap: 40px; */
-  /* padding: 100px 96px 200px 96px; */
 `;
 
 export default ForAuthors;
