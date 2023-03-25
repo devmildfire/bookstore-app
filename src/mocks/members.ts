@@ -150,8 +150,7 @@ const members: Member[] = [
     position: 'редактор',
     city: 'город',
     photo: SofiaPopova.src,
-    phrase:
-      '«Когда вы читаете, не пытайтесь угадывать, что думает автор. Думайте сами»',
+    phrase: '???',
   },
   {
     // id: 14,
@@ -159,7 +158,7 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
     photo: MatveyDashiev.src,
-    phrase: '«Человек с хорошей книгой в руках никогда не может быть одиноким»',
+    phrase: '???',
   },
 
   {
@@ -174,7 +173,7 @@ const members: Member[] = [
   {
     // id: 16,
     member: 'Анастасия Виниченко',
-    position: 'графический Дизайнер',
+    position: 'графический дизайнер',
     city: 'г. Калининград',
     photo: AnastasiyaVinichenko.src,
     phrase: '???',
@@ -186,7 +185,7 @@ const members: Member[] = [
     position: 'веб-дизайнер',
     city: 'г. Санкт-Петербург',
     photo: IlyaCherkasov.src,
-    phrase: '«Самоуничижение – форма гордыни»',
+    phrase: '???',
   },
   {
     // id: 18,
@@ -194,7 +193,7 @@ const members: Member[] = [
     position: 'СММ',
     city: 'г. Москва',
     photo: SvetlanaSharonova.src,
-    phrase: '«Писательство – своего рода заклинание духов»',
+    phrase: '???',
   },
   {
     // id: 19,
@@ -226,8 +225,7 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. ???',
     photo: ArsibekovaValeria.src,
-    phrase:
-      '«Литература изъята из законов тления. Она одна не признаёт смерти»',
+    phrase: '???',
   },
   {
     // id: 23,
@@ -244,8 +242,7 @@ const members: Member[] = [
     position: 'редактор',
     city: 'г. Калуга',
     photo: AnnaVolcova.src,
-    phrase:
-      "«Я не думаю, что 'филология спасёт мир'. Его способна спасти только любовь. Филология же, как её ни трактовать, любви не противоречит, а, скорее, способна её поддержать»",
+    phrase: '???',
   },
 
   {
@@ -299,8 +296,7 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
     photo: AnnaDostieva.src,
-    phrase:
-      '«Как бы тонко и любовно ни анализировали и ни разъясняли рассказ, всегда найдется ум, оставшийся безучастным, и спина, по которой не пробежит холодок»',
+    phrase: '???',
   },
   {
     // id: 31,
