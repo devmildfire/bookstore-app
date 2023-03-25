@@ -7,7 +7,7 @@ import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
 import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
 import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
-import breakPoints from '@/utils/breakPoints';
+// import breakPoints from '@/utils/breakPoints';
 
 // const lines = sidebarItems.map((item) => item.link.split('/')[0]);
 const lines = sidebarItems.map(
@@ -128,49 +128,12 @@ const StyledWrapper = styled.main`
 const StyledSection = styled.div`
   outline: 1px solid white;
   /* background-color: green; */
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; */
 
-  //  добавить разные параметры под разное разрешение
-  gap: 40px;
-  padding: 100px 96px 200px 96px;
-
-  @media ${breakPoints.xl} {
-  }
-
-  @media ${breakPoints.lg} {
-  }
-
-  @media ${breakPoints.md} {
-  }
-
-  @media ${breakPoints.smd} {
-  }
-
-  @media ${breakPoints.sm} {
-  }
+  /* gap: 40px; */
+  /* padding: 100px 96px 200px 96px; */
 `;
-
-// const StyledAbzac = styled(Abzac)`
-//   //  добавить разные параметры под разное разрешение
-//   gap: 48px;
-//   padding: 100px 96px 200px 96px;
-
-//   @media ${breakPoints.xl} {
-//   }
-
-//   @media ${breakPoints.lg} {
-//   }
-
-//   @media ${breakPoints.md} {
-//   }
-
-//   @media ${breakPoints.smd} {
-//   }
-
-//   @media ${breakPoints.sm} {
-//   }
-// `;
 
 export default ForAuthors;

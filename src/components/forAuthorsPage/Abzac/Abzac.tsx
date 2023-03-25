@@ -1,7 +1,18 @@
 import React from 'react';
 // import setUUIDField from '@/utils/setUUIDField';
-import logoPic from '@/assets/images/AbzacLogo.png';
-import { CardDiv, HeroDiv, TeacherPic, TeachersDiv, TextDiv } from './styles';
+import logoPic1920 from '@/assets/images/AbzacLogo.png';
+import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
+import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
+import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+
+import {
+  AbzacDiv,
+  CardDiv,
+  HeroDiv,
+  TeacherPic,
+  TeachersDiv,
+  TextDiv,
+} from './styles';
 // import styled from 'styled-components';
 import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
@@ -20,20 +31,26 @@ const firstPar =
 
 const Abzac = (): React.ReactElement => {
   return (
-    <>
+    <AbzacDiv>
       <HeroDiv>
-        {/* //  добавить разные картинки для разных экранов */}
-        <img src={logoPic.src} alt='Мастерская Абзац' />
+        {/* //  может стоит выделить этот picture в отдельный common компонент */}
+        <picture>
+          <source srcSet={logoPic1920.src} media='(min-width: 1920px)' />
+          <source srcSet={logoPic1440.src} media='(min-width: 1440px)' />
+          <source srcSet={abzacLogo1024.src} media='(min-width: 1024px)' />
+          <source srcSet={abzacLogo1024.src} media='(min-width: 540px)' />
+          <img src={abzacLogo320.src} alt='Мастерская Абзац' />
+        </picture>
+
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
       <Staff />
-    </>
+    </AbzacDiv>
   );
 };
 
 const Staff = (): React.ReactElement => {
   return (
-    // <>
     <TeachersDiv>
       <Text variant='h3_Abzac' align='start'>
         Преподаватели
@@ -42,7 +59,6 @@ const Staff = (): React.ReactElement => {
         <TeachersCard teacher={item} key={item.name} />
       ))}
     </TeachersDiv>
-    // </>
   );
 };
 
