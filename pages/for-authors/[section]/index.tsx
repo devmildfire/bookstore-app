@@ -8,7 +8,7 @@ import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
 import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
-// import breakPoints from '@/utils/breakPoints';
+import breakPoints from '@/utils/breakPoints';
 
 // const lines = sidebarItems.map((item) => item.link.split('/')[0]);
 const lines = sidebarItems.map(
@@ -77,10 +77,8 @@ const ForAuthors: NextPage = () => {
     <StyledWrapper>
       <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
-        <StyledSection>
-          {/* <h1>{router.query.section}</h1> */}
-          {content}
-        </StyledSection>
+        <UnderSection />
+        <StyledSection>{content}</StyledSection>
       </TwoPaneGrid>
     </StyledWrapper>
   );
@@ -94,6 +92,30 @@ const StyledWrapper = styled.main`
 
 const StyledSection = styled.div`
   /* outline: 1px solid white; */
+`;
+
+const UnderSection = styled.div`
+  /* outline: 1px solid white; */
+  --navWidth: 450px;
+  --navHeigh: 366px;
+  width: var(--navWidth);
+  height: var(--navHeigh);
+
+  @media ${breakPoints.xl} {
+    --navWidth: 338px;
+  }
+
+  @media ${breakPoints.lg} {
+    --navWidth: 314px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    --navHeigh: 272px;
+    --navWidth: 100%;
+  }
 `;
 
 export default ForAuthors;

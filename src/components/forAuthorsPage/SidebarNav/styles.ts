@@ -88,6 +88,8 @@ export const LinkDiv = styled.div`
 `;
 
 export const NavDiv = styled.div`
+  position: fixed;
+  z-index: 1;
   background: linear-gradient(
       346.55deg,
       rgba(147, 0, 0, 0.1) 1.08%,
@@ -98,7 +100,8 @@ export const NavDiv = styled.div`
       rgba(202, 0, 0, 0.1) 0%,
       rgba(19, 19, 19, 0.1) 31.8%,
       rgba(0, 0, 0, 0.1) 55.09%
-    );
+    ),
+    var(--main-black);
 
   --navWidth: 450px;
   display: flex;
