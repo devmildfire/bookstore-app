@@ -97,9 +97,23 @@ const StyledSection = styled.div`
 const UnderSection = styled.div`
   /* outline: 1px solid white; */
   --navWidth: 450px;
-  --navHeigh: 366px;
+  /* --navHeigh: 366px; */
+  --navHeigh: 100%;
   width: var(--navWidth);
   height: var(--navHeigh);
+
+  background: linear-gradient(
+      346.55deg,
+      rgba(147, 0, 0, 0.1) 1.08%,
+      rgba(0, 0, 0, 0.1) 41.58%
+    ),
+    linear-gradient(
+      163.22deg,
+      rgba(202, 0, 0, 0.1) 0%,
+      rgba(19, 19, 19, 0.1) 31.8%,
+      rgba(0, 0, 0, 0.1) 55.09%
+    ),
+    var(--main-black);
 
   @media ${breakPoints.xl} {
     --navWidth: 338px;
@@ -113,6 +127,11 @@ const UnderSection = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    --navHeigh: 366px;
+    --navWidth: 100%;
+  }
+
+  @media ${breakPoints.sm} {
     --navHeigh: 272px;
     --navWidth: 100%;
   }
