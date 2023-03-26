@@ -587,6 +587,84 @@ const courseTitleStyle = css<StyledTextProps>`
   }
 `;
 
+const h31ManuscriptStyle = css<StyledTextProps>`
+  font-size: 60px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 50px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const ManuscriptTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 20px;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const h31BelieveStyle = css<StyledTextProps>`
+  font-size: 30px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 900px) {
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
 const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
@@ -596,6 +674,8 @@ const styles: Record<
   h2_1_LJ: h21LJStyle,
   h2_2: h22Style,
   h3_1: h31Style,
+  h3_1Man: h31ManuscriptStyle,
+  h3_1Bel: h31BelieveStyle,
   h3_2: h32Style,
   h3_3: h33Style,
   h3_31: h33StyleAbout,
@@ -603,6 +683,7 @@ const styles: Record<
   h3_4: h34Style,
   text: textStyle,
   aboutText: aboutTextStyle,
+  manText: ManuscriptTextStyle,
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
   buttonText: buttonTextStyle,
@@ -628,6 +709,8 @@ export const tagMap: Record<Variant, string> = {
   h2_1_LJ: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
+  h3_1Man: 'h3',
+  h3_1Bel: 'h3',
   h3_2: 'h3',
   h3_3: 'h3',
   h3_31: 'h3',
@@ -636,6 +719,7 @@ export const tagMap: Record<Variant, string> = {
   text: 'p',
   aboutText: 'p',
   text_italic: 'p',
+  manText: 'p',
   paddedText: 'p',
   buttonText: 'p',
   lJbuttonText: 'p',

@@ -3,25 +3,22 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const NavHeader = styled(Link)`
-  --fontSize: 40px;
-  --paddingforTop: 100px;
-  --paddingBottom: 50px;
-  font-size: var(--fontSize);
-  padding-top: var(--paddingforTop);
-  padding-bottom: var(--paddingBottom);
+  font-size: 40px;
+  padding-top: 100px;
+  padding-bottom: 50px;
   padding-left: 64px;
 
   @media ${breakPoints.xl} {
-    --fontSize: 30px;
-    --paddingforTop: 100px;
-    --paddingBottom: 50px;
+    font-size: 30px;
+    padding-top: 100px;
+    padding-bottom: 50px;
     padding-left: 50px;
   }
 
   @media ${breakPoints.lg} {
-    --fontSize: 30px;
-    --paddingforTop: 90px;
-    --paddingBottom: 24px;
+    font-size: 30px;
+    padding-top: 90px;
+    padding-bottom: 24px;
     padding-left: 41px;
   }
 
@@ -33,9 +30,9 @@ export const NavHeader = styled(Link)`
   }
 
   @media ${breakPoints.sm} {
-    --fontSize: 20px;
-    --paddingforTop: 50px;
-    --paddingBottom: 32px;
+    font-size: 20px;
+    padding-top: 50px;
+    padding-bottom: 32px;
     padding-left: 12px;
   }
 `;
@@ -56,7 +53,6 @@ export const LinkDiv = styled.div`
 
   :hover,
   :focus-visible {
-    /* color: var(--main-red-100); */
     outline: none;
 
     background: linear-gradient(
@@ -92,15 +88,6 @@ export const LinkDiv = styled.div`
 `;
 
 export const NavDiv = styled.div`
-  /* outline: 1px solid red; */
-
-  /* background: linear-gradient(
-      346.55deg,
-      rgba(147, 0, 0, 0.5 * 0.3) 1.08%,
-      rgba(0, 0, 0, 0.5 * 0.3) 41.58%
-    ),
-    linear-gradient(163.22deg, #ca0000 0%, #131313 31.8%, #000000 55.09%); */
-
   background: linear-gradient(
       346.55deg,
       rgba(147, 0, 0, 0.1) 1.08%,

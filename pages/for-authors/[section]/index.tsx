@@ -7,6 +7,7 @@ import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
 import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
 import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
+import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 // import breakPoints from '@/utils/breakPoints';
 
 // const lines = sidebarItems.map((item) => item.link.split('/')[0]);
@@ -37,36 +38,26 @@ const IpsumP = () => {
   );
 };
 
-const DolorP = () => {
-  return (
-    <p>
-      Dolor sit amet consectetur adipisicing elit. Ea architecto ipsa officia
-      quisquam veniam omnis enim quia, id voluptate, ullam qui quae dolores
-      quaerat doloribus non voluptatem vero magni totam!
-    </p>
-  );
-};
-
-const abzac = <Abzac />;
-const lorem = <LoremP />;
-const ipsum = <IpsumP />;
-const dolor = <DolorP />;
-
-//  стоит как-то увязать с массивом SIdebarItems и его типом
-
-// const lookUp = {
-//   main: lorem,
-//   'send-novel': ipsum,
-//   'send-manuscript': dolor,
-//   abzac: lorem,
+// const DolorP = () => {
+//   return (
+//     <p>
+//       Dolor sit amet consectetur adipisicing elit. Ea architecto ipsa officia
+//       quisquam veniam omnis enim quia, id voluptate, ullam qui quae dolores
+//       quaerat doloribus non voluptatem vero magni totam!
+//     </p>
+//   );
 // };
 
-// sidebarItems[0].link.split('/')[-1];
+const abzac = <Abzac />;
+const sendManuscript = <SendManuscript />;
+const lorem = <LoremP />;
+const ipsum = <IpsumP />;
+// const dolor = <DolorP />;
 
 const lookUp = {
   main: lorem,
   'send-novel': ipsum,
-  'send-manuscript': dolor,
+  'send-manuscript': sendManuscript,
   abzac,
 };
 

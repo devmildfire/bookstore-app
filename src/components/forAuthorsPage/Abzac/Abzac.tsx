@@ -1,10 +1,12 @@
 import React from 'react';
-// import setUUIDField from '@/utils/setUUIDField';
 import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
 import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
-
+import { staff, Teacher } from './Staf';
+import Text from '@/components/Common/Text';
+import { curriculum } from './Curriculum';
+import setUUIDField from '@/utils/setUUIDField';
 import {
   AbzacDiv,
   CardDiv,
@@ -17,10 +19,6 @@ import {
   TeachersDiv,
   TextDiv,
 } from './styles';
-// import styled from 'styled-components';
-import { staff, Teacher } from './Staf';
-import Text from '@/components/Common/Text';
-import { curriculum } from './Curriculum';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -28,8 +26,6 @@ import { curriculum } from './Curriculum';
  * применения с динамическим роутингом
  *
  */
-
-// const staffWID = setUUIDField(staff);
 
 const firstPar =
   'Огромная литературная семья, включающая в себя писателей, читателей, редакторов, корректоров, верстальщиков, издателей, критиков, иллюстраторов и многих других, продолжает существовать несмотря ни на что. Сколько бы ни применяли к ней цензурных кнутов, какими бы ни закармливали пряниками поп-культуры — задушить её пока не удалось никому. А чтобы этого никому не удалось и впредь, мы открываем мастерскую Абзац, призванную объединять любителей литературы и давать им новые знания, навыки, возможности, и, что важнее прочего, — друг друга.';
@@ -86,18 +82,20 @@ const TeachersCard = (props: TeachersCardProps): React.ReactElement => {
   );
 };
 
+const curriculumWID = setUUIDField(curriculum);
+
 const Curriculum = (): React.ReactElement => {
   return (
     <CoursesDiv>
       <Text variant='h3_Abzac' align='start'>
         Направления обучения
       </Text>
-      {curriculum.map((course) => (
+      {curriculumWID.map((course) => (
         <CourseCard
           title={course.title}
           about={course.about ? course.about : ''}
           teacher={course.lector}
-          key={course.title}
+          key={course.key}
         />
       ))}
     </CoursesDiv>
