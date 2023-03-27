@@ -619,13 +619,21 @@ const h31ManuscriptStyle = css<StyledTextProps>`
 
 const ManuscriptTextStyle = css<StyledTextProps>`
   ${textStyle}
-  font-size: 20px;
+  font-size: 24px;
 
   @media ${breakPoints.xl} {
     font-size: 20px;
   }
 
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
   @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
     font-size: 18px;
   }
 
@@ -665,6 +673,64 @@ const h31BelieveStyle = css<StyledTextProps>`
   }
 `;
 
+const h31SendManStyle = css<StyledTextProps>`
+  font-size: 24px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 900px) {
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 10px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const h31ManRecStyle = css<StyledTextProps>`
+  font-size: 24px;
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
 const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
@@ -676,11 +742,13 @@ const styles: Record<
   h3_1: h31Style,
   h3_1Man: h31ManuscriptStyle,
   h3_1Bel: h31BelieveStyle,
+  h3_1SendMan: h31SendManStyle,
   h3_2: h32Style,
   h3_3: h33Style,
   h3_31: h33StyleAbout,
   h3_32: h33StyleM2B,
   h3_4: h34Style,
+  manRec: h31ManRecStyle,
   text: textStyle,
   aboutText: aboutTextStyle,
   manText: ManuscriptTextStyle,
@@ -726,10 +794,12 @@ export const tagMap: Record<Variant, string> = {
   abzacText: 'p',
   abzacCardText: 'p',
   sn_Item: 'p',
+  manRec: 'p',
   h3_Abzac: 'h3',
   h4_Abzac: 'h4',
   sn_Title: 'h3',
   courseBig: 'h4',
+  h3_1SendMan: 'h3',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',

@@ -5,6 +5,8 @@ export type Variant =
   | 'h2_1_LJ'
   | 'h2_2'
   | 'h3_1'
+  | 'h3_1SendMan'
+  | 'manRec'
   | 'h3_1Man'
   | 'h3_1Bel'
   | 'h3_2'

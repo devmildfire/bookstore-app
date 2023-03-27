@@ -39,7 +39,7 @@ const MediaIcons = (): React.ReactElement => {
         return (
           <OneIconDiv key={type.name}>
             <Icon as={type.icon as any} />
-            <p>{type.name}</p>
+            <Text variant='manText'>{type.name}</Text>
           </OneIconDiv>
         );
       })}
@@ -67,12 +67,12 @@ const Requirements = (): React.ReactElement => {
 const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='manText'>Рукописи не рецензируются</Text>
-      <Text variant='h4_Abzac' align='start'>
+      <Text variant='manRec'>Рукописи не рецензируются</Text>
+      <Text variant='h3_1SendMan' align='start'>
         {'отправить рукопись можно на почту '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
-      <Text variant='h4_Abzac' align='start'>
+      <Text variant='h3_1SendMan' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
