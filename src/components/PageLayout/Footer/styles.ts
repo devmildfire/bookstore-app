@@ -11,31 +11,31 @@ export const StyleWrapper = styled.footer`
 `;
 
 export const FooterContent = styled.div`
-  padding: 30px 20px 40px;
+  padding: 30px 0px 40px;
   display: flex;
   justify-content: space-between;
   align-items: end;
   margin: 0 auto;
   width: 100%;
-  max-width: 1394px;
+  /* max-width: 1394px; */
 
   @media ${breakPoints.xl} {
-    max-width: 1024px;
+    /* max-width: 1024px; */
   }
 
   @media ${breakPoints.lg} {
-    max-width: 768px;
+    /* max-width: 768px; */
   }
 
   @media ${breakPoints.md} {
-    max-width: 576px;
+    /* max-width: 576px; */
     flex-wrap: wrap;
     align-items: center;
   }
 
   @media ${breakPoints.sm} {
     flex-direction: column;
-    padding: 10px 0 25px;
+    padding: 10px 0px 25px;
   }
 `;
 
@@ -82,11 +82,13 @@ export const FooterInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  translate: -29.5px;
 
   @media ${breakPoints.md} {
     width: 100%;
     order: -1;
     margin-bottom: 20px;
+    translate: revert;
   }
 `;
 
@@ -142,9 +144,11 @@ export const FooterLogoText = styled.p`
 `;
 
 export const FooterCopyright = styled.div`
+  width: 100vw;
   padding: 15px 0;
   font-feature-settings: 'salt' on, 'liga' off;
   border-top: 1px solid rgba(220, 220, 220, 0.2);
+  max-width: unset;
 
   @media ${breakPoints.sm} {
     padding: 10px 0;
@@ -152,19 +156,12 @@ export const FooterCopyright = styled.div`
 `;
 
 export const CopyrightContainer = styled.div`
-  max-width: 1394px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 20px;
-
-  @media ${breakPoints.xl} {
-    max-width: 1024px;
-  }
+  padding: 0 10vw;
+  box-sizing: content-box;
 
   @media ${breakPoints.lg} {
-    max-width: 768px;
-  }
-
-  @media ${breakPoints.md} {
-    max-width: 576px;
+    padding: 0 5vw;
   }
 `;
