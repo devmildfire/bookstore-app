@@ -14,6 +14,7 @@ import {
 import styled, { StyledComponent } from 'styled-components';
 import Image from 'next/image';
 import books from '@/mocks/books';
+import useScreenSize from '@/hooks/useScreenSize';
 // import {
 //   DotWrapper,
 //   PaginationContainer,
@@ -245,6 +246,7 @@ const StyledBannerContainer = styled.div`
   justify-content: space-around;
   width: 100%;
   gap: 64px;
+  z-index: 1;
   @media screen and (max-width: 512px) {
     flex-direction: column;
     gap: 0px;
@@ -255,8 +257,15 @@ const StyledCover = styled(Image)`
   max-width: 420px;
   width: 100%;
   object-fit: contain;
+  @media screen and (max-width: 1024px) {
+    max-width: 300px;
+  }
   @media screen and (max-width: 768px) {
-    max-width: 350px;
+    max-width: 250px;
+  }
+  @media screen and (max-width: 512px) {
+    /* display: none; */
+    max-width: 200px;
   }
   @media screen and (max-width: 375px) {
     max-width: 150px;
@@ -271,10 +280,6 @@ const StyledInfo = styled.div`
   width: 100%;
   @media screen and (max-width: 768px) {
     align-items: center;
-  }
-
-  @media screen and (max-width: 512px) {
-    gap: 10px;
   }
 `;
 
@@ -330,7 +335,11 @@ function Text(props: PropsWithChildren<TextProps>) {
 const StyledTitle = styled(Text)`
   text-align: left;
   font-size: 96px;
+  @media screen and (max-width: 1024px) {
+    font-size: 48px;
+  }
   @media screen and (max-width: 768px) {
+    font-size: 36px;
     text-align: center;
   }
   @media screen and (max-width: 512px) {
@@ -342,17 +351,17 @@ const StyledTitle = styled(Text)`
 const StyledAuthor = styled(Text)`
   text-align: left;
   font-size: 48px;
+  @media screen and (max-width: 1024px) {
+    font-size: 36px;
+  }
   @media screen and (max-width: 768px) {
+    font-size: 24px;
     text-align: center;
   }
 
   @media screen and (max-width: 512px) {
     font-size: 12px;
     text-transform: uppercase;
-  }
-
-  @media screen and (max-width: 512px) {
-    display: none;
   }
 `;
 
@@ -362,16 +371,13 @@ const StyledThesis = styled(Text)`
   text-transform: uppercase;
   opacity: 0.6;
   @media screen and (max-width: 768px) {
+    font-size: 14px;
     text-align: center;
   }
 
   @media screen and (max-width: 512px) {
     font-size: 10px;
     text-transform: uppercase;
-  }
-
-  @media screen and (max-width: 512px) {
-    display: none;
   }
 `;
 
@@ -416,11 +422,6 @@ function Slide({ currentPage }: { currentPage: number }) {
   );
 }
 
-/**
- * Variants define visual states that a motion component can be in at any given time.
- * These can be dynamic - here the enter and exit variants are functions that return
- * different values based on the current direction.
- */
 const xOffset = 100;
 const variants = {
   enter: (direction: number) => ({
@@ -440,60 +441,42 @@ const variants = {
   }),
 };
 
-const StyledSliderContainer = styled.section`
+const StyledSliderContainer = styled.section<{ height: number }>`
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: end;
-  width: 100vw;
-  height: 90dvh;
+  align-items: flex-end;
+  width: 100%;
+  height: 80vh;
   overflow-x: hidden;
   background-color: #050505;
   @media screen and (max-width: 512px) {
-    height: 85dvh;
+    height: 80vh;
   }
 `;
 
-type StyledSlideProps = {
-  url?: string;
-};
-
-const StyledSlide = styled(motion.div)<StyledSlideProps>`
+const StyledSlide = styled(motion.div)`
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  align-items: flex-start;
+  align-items: center;
   border-radius: 5px;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  /* 
-  &::after {
-    content: '';
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    background-image: url(${(props) => props.url});
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(8px) saturate(50%) brightness(20%);
-  } */
 `;
 
-function Slides({
-  currentPage,
-  setPage,
-  direction,
-}: {
+type SlidesProps = {
   currentPage: number;
   setPage: (a: number, b?: number) => void;
   direction: number;
-}) {
+};
+
+function Slides({ currentPage, setPage, direction }: SlidesProps) {
+  const [, height] = useScreenSize();
+
   const detectPaginationGesture = (
     e: DragEvent,
     { offset }: { offset: { x: number; y: number } }
@@ -514,10 +497,9 @@ function Slides({
   };
 
   return (
-    <StyledSliderContainer>
+    <StyledSliderContainer height={height}>
       <AnimatePresence initial={false} custom={direction}>
         <StyledSlide
-          // url={pages[currentPage].cover}
           key={currentPage}
           variants={variants}
           initial='enter'
@@ -564,7 +546,8 @@ function Pagination({
   );
 }
 
-const StyledDotContainer = styled.div`
+const StyledDotContainer = styled.button`
+  background-color: transparent;
   padding: 20px;
   cursor: pointer;
 `;

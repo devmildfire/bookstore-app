@@ -26,6 +26,8 @@
     "classnames": "^2.3.1",
     "cmdk": "^0.1.21",
     "dayjs": "^1.11.2",
+    "embla-carousel-autoplay": "^7.1.0",
+    "embla-carousel-react": "^7.1.0",
     "framer-motion": "^9.0.1",
     "next": "^13.1.5",
     "next-redux-wrapper": "^7.0.5",
@@ -36,7 +38,6 @@
     "react-redux": "^8.0.2",
     "sharp": "^0.31.3",
     "styled-components": "^5.3.3",
-    "swiper": "^7.3.1",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -51,7 +52,8 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-next": "^13.2.4",
-    "eslint-plugin-import": "^2.24.2",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "npm:eslint-plugin-i@^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.26.0",
     "eslint-plugin-react-hooks": "^4.2.0",
