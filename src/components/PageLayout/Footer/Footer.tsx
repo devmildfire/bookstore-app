@@ -23,7 +23,8 @@ import {
 } from './styles';
 
 const Footer = (): React.ReactElement => (
-  <StyleWrapper>
+  // <StyleWrapper>
+  <StyleWrapper className='max-width'>
     <FooterContent>
       <FooterContacts>
         {contacts.map((contact) => (

@@ -11,7 +11,7 @@ export const StyleWrapper = styled.footer`
 `;
 
 export const FooterContent = styled.div`
-  padding: 30px 20px 40px;
+  padding: 30px 0px 40px;
   display: flex;
   justify-content: space-between;
   align-items: end;
@@ -35,7 +35,7 @@ export const FooterContent = styled.div`
 
   @media ${breakPoints.sm} {
     flex-direction: column;
-    padding: 10px 0 25px;
+    padding: 10px 0px 25px;
   }
 `;
 
