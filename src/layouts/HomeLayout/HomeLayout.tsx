@@ -1,15 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-// import Container from '@/components/Common/Container';
 import Text from '@/components/Common/Text';
-// import Carousel from '@/components/Carousel';
-// import ProductSlider from '@/components/ProductSlider';
-import {
-  // StyledContentWrapper,
-  // StyledNavigation,
-  StyledWrapper,
-} from './styles';
-// import Slider from '@/components/Slider';
+import { StyledWrapper } from './styles';
 
 interface HomeLayoutProps {
   readonly title: string;
@@ -25,20 +17,17 @@ const StyledTitle = styled(Text)`
   padding: 2rem 0;
 `;
 
-const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
+function HomeLayout(props: React.PropsWithChildren<HomeLayoutProps>) {
   const { children, title } = props;
   return (
     <StyledWrapper>
-      {/* <Slider /> */}
       {/* <StyledNavigation /> */}
-      {/* <StyledContentWrapper> */}
       <StyledTitle variant='h2_1' align='center'>
         {title}
       </StyledTitle>
       {children}
-      {/* </StyledContentWrapper> */}
     </StyledWrapper>
   );
-};
+}
 
 export default HomeLayout;

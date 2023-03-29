@@ -1,3 +1,5 @@
+// TODO удалить ненужный компонент
+
 import React, {
   PropsWithChildren,
   ReactElement,
@@ -272,130 +274,6 @@ const StyledCover = styled(Image)`
   }
 `;
 
-const StyledInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 720px;
-  width: 100%;
-  @media screen and (max-width: 768px) {
-    align-items: center;
-  }
-`;
-
-const fontFamilies: Record<string, string> = {
-  sans: "'Montserrat', sans-serif",
-  serif: "'Cheque', serif",
-};
-
-const StyledHeading = styled.h1`
-  font-family: ${fontFamilies.serif};
-  margin: 0;
-`;
-
-const StyledText = styled.p`
-  font-family: ${fontFamilies.sans};
-  margin: 0;
-`;
-
-const StyledCaption = styled.span`
-  font-family: ${fontFamilies.sans};
-  margin: 0;
-`;
-
-type HeadingTags = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-type TextTag = 'p';
-type CaptionTag = 'span';
-
-type TextProps = {
-  variant: 'heading' | 'text' | 'caption';
-  tag?: HeadingTags | TextTag | CaptionTag;
-};
-
-const lookupTextComponent: Record<
-  string,
-  StyledComponent<'h1' | 'p' | 'span', never>
-> = {
-  heading: StyledHeading,
-  text: StyledText,
-  caption: StyledCaption,
-};
-
-function Text(props: PropsWithChildren<TextProps>) {
-  const { variant, tag, children, ...rest } = props;
-  const Component = lookupTextComponent[variant];
-
-  return (
-    <Component as={tag} {...rest}>
-      {children}
-    </Component>
-  );
-}
-
-const StyledTitle = styled(Text)`
-  text-align: left;
-  font-size: 96px;
-  @media screen and (max-width: 1024px) {
-    font-size: 48px;
-  }
-  @media screen and (max-width: 768px) {
-    font-size: 36px;
-    text-align: center;
-  }
-  @media screen and (max-width: 512px) {
-    font-size: 24px;
-    text-transform: uppercase;
-  }
-`;
-
-const StyledAuthor = styled(Text)`
-  text-align: left;
-  font-size: 48px;
-  @media screen and (max-width: 1024px) {
-    font-size: 36px;
-  }
-  @media screen and (max-width: 768px) {
-    font-size: 24px;
-    text-align: center;
-  }
-
-  @media screen and (max-width: 512px) {
-    font-size: 12px;
-    text-transform: uppercase;
-  }
-`;
-
-const StyledThesis = styled(Text)`
-  text-align: left;
-  font-style: italic;
-  text-transform: uppercase;
-  opacity: 0.6;
-  @media screen and (max-width: 768px) {
-    font-size: 14px;
-    text-align: center;
-  }
-
-  @media screen and (max-width: 512px) {
-    font-size: 10px;
-    text-transform: uppercase;
-  }
-`;
-
-const StyledButton = styled.button`
-  background-color: transparent;
-  border: thin solid white;
-  color: white;
-  min-height: 44px;
-  width: 100%;
-  border-radius: 4px;
-  margin-top: 24px;
-  max-width: 256px;
-  @media screen and (max-width: 512px) {
-    max-width: 256px;
-    margin-top: 10px;
-  }
-`;
-
 function Slide({ currentPage }: { currentPage: number }) {
   return (
     <StyledBannerContainer>
@@ -406,7 +284,7 @@ function Slide({ currentPage }: { currentPage: number }) {
         src={books[currentPage].cover}
         alt={books[currentPage].title}
       />
-      <StyledInfo>
+      {/* <StyledInfo>
         <StyledTitle variant='heading' tag='h1'>
           {books[currentPage].title}
         </StyledTitle>
@@ -417,7 +295,7 @@ function Slide({ currentPage }: { currentPage: number }) {
           {books[currentPage].thesis}
         </StyledThesis>
         <StyledButton type='button'>Познать</StyledButton>
-      </StyledInfo>
+      </StyledInfo> */}
     </StyledBannerContainer>
   );
 }

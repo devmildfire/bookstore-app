@@ -140,90 +140,61 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledWrapper = styled.section`
+const Wrapper = styled.section`
+  --slide-spacing: 16px;
+  --slide-size: 100%;
+  --slide-height: auto;
+  padding: 24px;
   background-color: #050505;
-  .embla {
-    --slide-spacing: 16px;
-    --slide-size: 100%;
-    --slide-height: auto;
-    padding: 24px;
-  }
-  .embla__viewport {
-    overflow: hidden;
-  }
-  .embla__container {
-    display: flex;
-    flex-direction: row;
-    height: auto;
-    gap: var(--slide-spacing);
-  }
-  .embla__slide {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    grid-template-columns: auto auto;
-    gap: 48px;
-    flex: 0 0 var(--slide-size);
-    min-width: 0;
-    position: relative;
-    @media screen and (max-width: 512px) {
-      align-items: flex-start;
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(150px, 1fr) auto;
-      gap: 12px;
-    }
-  }
-  .embla__slide__img {
-    display: block;
-    height: var(--slide-height);
-    max-height: 70vh;
-    width: 100%;
-    object-fit: contain;
-  }
+`;
 
-  .embla__dot {
-    -webkit-appearance: none;
-    background-color: transparent;
-    touch-action: manipulation;
-    display: inline-flex;
-    text-decoration: none;
-    cursor: pointer;
-    border: 0;
-    padding: 0;
-    margin: 0;
-  }
-  .embla__dots {
-    z-index: 1;
-    bottom: auto;
-    position: absolute;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .embla__dot {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.75rem;
-    margin-left: 0.75rem;
-  }
-  .embla__dot:after {
-    background: var(--main-white-100);
-    border-radius: 50%;
-    width: 5px;
-    height: 5px;
-    content: '';
-  }
-  .embla__dot--selected:after {
-    background: var(--main-red-100);
-    width: 10px;
-    height: 10px;
+const Viewport = styled.div`
+  overflow: hidden;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  gap: var(--slide-spacing);
+`;
+
+const Slide = styled.div`
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: auto auto;
+  gap: 48px;
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  position: relative;
+  @media screen and (max-width: 512px) {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(150px, 1fr) auto;
+    gap: 12px;
   }
 `;
+
+const Cover = styled.img`
+  display: block;
+  height: var(--slide-height);
+  max-height: 70vh;
+  width: 100%;
+  object-fit: contain;
+`;
+
+const Dots = styled.div`
+  z-index: 1;
+  bottom: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 function Carousel(props: PropType): ReactElement {
   const { slides, options } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
@@ -253,46 +224,42 @@ function Carousel(props: PropType): ReactElement {
   }, [emblaApi, onSelect]);
 
   return (
-    <StyledWrapper>
-      <div className='embla'>
-        <div className='embla__viewport' ref={emblaRef}>
-          <div className='embla__container'>
-            {slides.map((index) => (
-              <div className='embla__slide' key={index}>
-                <img
-                  className='embla__slide__img'
-                  src={books[index].cover}
-                  alt={books[index].title}
-                />
-                <StyledInfo>
-                  <StyledTitle variant='heading' tag='h1'>
-                    {books[index].title}
-                  </StyledTitle>
-                  <StyledAuthor variant='heading' tag='h2'>
-                    {books[index].authors
-                      .map((author) => author.name)
-                      .join(', ')}
-                  </StyledAuthor>
-                  <StyledThesis variant='caption'>
-                    {books[index].thesis}
-                  </StyledThesis>
-                  <StyledButton type='button'>Познать</StyledButton>
-                </StyledInfo>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className='embla__dots'>
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={`key${index + 1}`}
-              selected={index === selectedIndex}
-              onClick={() => scrollTo(index)}
-            />
+    <Wrapper>
+      <Viewport ref={emblaRef}>
+        <Container>
+          {slides.map((index) => (
+            <Slide key={index}>
+              <Cover
+                className='embla__slide__img'
+                src={books[index].cover}
+                alt={books[index].title}
+              />
+              <StyledInfo>
+                <StyledTitle variant='heading' tag='h1'>
+                  {books[index].title}
+                </StyledTitle>
+                <StyledAuthor variant='heading' tag='h2'>
+                  {books[index].authors.map((author) => author.name).join(', ')}
+                </StyledAuthor>
+                <StyledThesis variant='caption'>
+                  {books[index].thesis}
+                </StyledThesis>
+                <StyledButton type='button'>Познать</StyledButton>
+              </StyledInfo>
+            </Slide>
           ))}
-        </div>
-      </div>
-    </StyledWrapper>
+        </Container>
+      </Viewport>
+      <Dots>
+        {scrollSnaps.map((_, index) => (
+          <DotButton
+            key={`key${index + 1}`}
+            selected={index === selectedIndex}
+            onClick={() => scrollTo(index)}
+          />
+        ))}
+      </Dots>
+    </Wrapper>
   );
 }
 
