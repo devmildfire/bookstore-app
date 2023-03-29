@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 // import Container from '@/components/Common/Container';
 import Text from '@/components/Common/Text';
-import Carousel from '@/components/Carousel';
+// import Carousel from '@/components/Carousel';
 // import ProductSlider from '@/components/ProductSlider';
 import {
   // StyledContentWrapper,
@@ -29,7 +29,6 @@ const HomeLayout: React.FC<HomeLayoutProps> = (props) => {
   const { children, title } = props;
   return (
     <StyledWrapper>
-      <Carousel slides={[0, 1, 2]} />
       {/* <Slider /> */}
       {/* <StyledNavigation /> */}
       {/* <StyledContentWrapper> */}
