@@ -157,7 +157,7 @@ const RD = (): React.ReactElement => {
         </StyledMainText>
 
         <StyledSecondaryText variant='text' align='center'>
-          Лучшие рассказы года попадают в&nbsp;ежегодник «
+          Избранные рассказы попадают в&nbsp;ежегодник «
           <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
             Могучий&nbsp;Русский&nbsp;Динозавр
           </a>

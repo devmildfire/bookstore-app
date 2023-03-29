@@ -10,7 +10,7 @@ const StyledDescriptionContainer = styled(Container)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   max-width: 1440px;
   padding-top: 31px;
   gap: var(--containerGap);
@@ -69,6 +69,27 @@ const StyledButton = styled(Button)`
   margin-top: auto;
   min-width: 480px;
 
+  @media screen and (max-width: 1600px) {
+    max-height: 45px;
+    min-height: 45px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
+  @media ${breakPoints.xl} {
+    max-height: 45px;
+    min-height: 45px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
+  @media screen and (max-width: 1100px) {
+    max-height: 45px;
+    min-height: 45px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
   @media ${breakPoints.lg} {
     max-height: 45px;
     min-height: 45px;
@@ -106,7 +127,7 @@ const AboutUs = (): React.ReactElement => (
         Независимое издательство Чтиво — дитя петербургского литандеграунда и
         сети интернет, увидевшее свет в 2017 году.
       </StyledDescription>
-      <br />
+      {/* <br /> */}
       <StyledDescription variant='aboutText'>
         Мы отбираем произведения для издания вне зависимости от известности
         автора, работаем с несерийными и неформальными текстами и считаем, что
