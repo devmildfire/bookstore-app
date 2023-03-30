@@ -162,8 +162,8 @@ const members: Member[] = [
 
   {
     // id: 15,
-    member: 'Даниил Нечеев',
-    position: 'руководитель видеоотдела',
+    member: 'Даниил Нечвеев',
+    position: 'продюсер',
     city: 'г. Ереван',
     photo: DaniilNecheev.src,
     phrase: '???',
