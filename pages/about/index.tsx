@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { NextPage } from 'next';
 import AboutList from '@/components/AboutPage/AboutList';
 import AboutUs from '@/components/AboutPage/AboutUs';
-import RD from '@/components/AboutPage/RD';
+// import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
 // import ContainerWide from '@/components/Common/ContainerWide';
@@ -21,7 +21,7 @@ const About: NextPage = () => (
     </VideoContainer>
     <AboutUs />
     <AboutList />
-    <RD />
+    {/* <RD /> */}
     <StyledStarsBlock>
       {/* <ContainerWide>
         <We />
