@@ -417,10 +417,11 @@ const partnerDisplayNameStyle = css<StyledTextProps>`
 
   left: 0;
   right: 0;
-  margin: 0 auto;
+  margin: auto auto 10%;
 
-  position: absolute;
-  bottom: 30px;
+  // position: absolute;
+  // bottom: 30px;
+  grid-area: 1/2;
   /* justify-self: center; */
 
   font-size: 16px;
