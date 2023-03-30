@@ -46,7 +46,7 @@ const Video = (props: VideoProps): React.ReactElement => {
   return (
     <StyledVideo poster={poster} src={src} controls>
       {sources?.map(({ srcset, type }) => (
-        <source srcSet={srcset} type={type} />
+        <source key={srcset} srcSet={srcset} type={type} />
       ))}
     </StyledVideo>
   );

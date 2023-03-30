@@ -3,6 +3,7 @@ import * as React from 'react';
 import { VoidFunction } from '@/types/common';
 import { StyledIconButtonProps, StyledButton } from './styles';
 import { ClassNameProps } from '@/types/className';
+import { PropsWithChildren, RefObject } from 'react';
 
 interface IconButtonProps
   extends Partial<StyledIconButtonProps>,
@@ -14,10 +15,10 @@ interface IconButtonProps
   readonly shallow?: boolean;
 }
 
-const IconButton = React.forwardRef<
-  HTMLButtonElement | HTMLAnchorElement,
-  React.PropsWithChildren<IconButtonProps>
->((props, ref) => {
+const IconButton = (
+  props: PropsWithChildren<IconButtonProps>,
+  ref: RefObject<HTMLButtonElement | HTMLAnchorElement>
+) => {
   const {
     children,
     href,
@@ -53,6 +54,6 @@ const IconButton = React.forwardRef<
       {children}
     </StyledButton>
   );
-});
+};
 
 export default React.memo(IconButton);

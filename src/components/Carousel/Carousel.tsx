@@ -145,7 +145,7 @@ const Wrapper = styled.section`
   --slide-spacing: 16px;
   --slide-size: 100%;
   --slide-height: auto;
-  padding: 24px;
+  padding: 55px 5vw;
   background-color: #050505;
 `;
 

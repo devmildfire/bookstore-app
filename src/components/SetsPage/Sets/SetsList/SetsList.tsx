@@ -7,7 +7,9 @@ interface SetsListProps {}
 
 const SetsList: React.FC<SetsListProps> = () => (
   <StyledList inRow={3} useQuery={useGetBoxSetsQuery} rootMargin='300px'>
-    {({ rows, }) => rows.map((row) => <SetsRow sets={row as BoxSet[]} />)}
+    {({ rows }) =>
+      rows.map((row, index) => <SetsRow key={index} sets={row as BoxSet[]} />)
+    }
   </StyledList>
 );
 

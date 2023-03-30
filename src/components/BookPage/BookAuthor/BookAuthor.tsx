@@ -27,7 +27,7 @@ const BookAuthor = (props: BookAuthorProps): ReactElement => {
         <AuthorDescr>
           <AuthorProps>
             {authors.map(({ name }) => {
-              return <span>{`${name} `}</span>;
+              return <span key={name}>{`${name} `}</span>;
             })}
             <span>{`${author.city} | ${author.dateOfBirth}`}</span>
           </AuthorProps>
