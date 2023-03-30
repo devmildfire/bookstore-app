@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { NextPage } from 'next';
 import AboutList from '@/components/AboutPage/AboutList';
-// import AboutUs from '@/components/AboutPage/AboutUs';
-// import RD from '@/components/AboutPage/RD';
+import AboutUs from '@/components/AboutPage/AboutUs';
+import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
-// import ContainerWide from '@/components/Common/ContainerWide';
-// import We from '@/components/AboutPage/We';
-// import Partners from '@/components/AboutPage/Partners';
+import ContainerWide from '@/components/Common/ContainerWide';
+import We from '@/components/AboutPage/We';
+import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
@@ -19,16 +19,16 @@ const About: NextPage = () => (
     <VideoContainer>
       <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
     </VideoContainer>
-    {/* <AboutUs /> */}
+    <AboutUs />
     <AboutList />
-    {/* <RD /> */}
+    <RD />
     <StyledStarsBlock>
-      {/* <ContainerWide>
+      <ContainerWide>
         <We />
       </ContainerWide>
       <ContainerWide>
         <Partners />
-      </ContainerWide> */}
+      </ContainerWide>
       <Container>
         <Donate />
       </Container>
