@@ -14,6 +14,7 @@ import { DotButton } from './DotButton';
 type PropType = {
   slides: number[];
   options?: EmblaOptionsType;
+  forwardedRef: null;
 };
 
 const StyledInfo = styled.div`
@@ -196,7 +197,7 @@ const Dots = styled.div`
 `;
 
 function Carousel(props: PropType): ReactElement {
-  const { slides, options } = props;
+  const { slides, options, forwardedRef } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
@@ -224,7 +225,7 @@ function Carousel(props: PropType): ReactElement {
   }, [emblaApi, onSelect]);
 
   return (
-    <Wrapper>
+    <Wrapper ref={forwardedRef}>
       <Viewport ref={emblaRef}>
         <Container>
           {slides.map((index) => (

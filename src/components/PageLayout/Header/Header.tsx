@@ -33,7 +33,7 @@ function ListItem({ title, link, submenu }: ListItemProps) {
       {submenu && (
         <Submenu className='submenu-dropdown' isOpen={isSubmenuOpen}>
           {submenu.map((item) => (
-            <SubmenuListItem>
+            <SubmenuListItem key={item.subtitle}>
               <NavLink href={link}>{item.subtitle}</NavLink>
             </SubmenuListItem>
           ))}
@@ -43,7 +43,13 @@ function ListItem({ title, link, submenu }: ListItemProps) {
   );
 }
 
-function Header(): ReactElement {
+type Color = string;
+
+function Header({
+  backgroundColor = 'var(--main-black)',
+}: {
+  backgroundColor: Color;
+}): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isInputActive, setIsInputActive] = useState(false);
   const overlayRef = useRef(null);
@@ -70,13 +76,13 @@ function Header(): ReactElement {
   }, [isOpen]);
 
   return (
-    <HeaderWrapper className='max-width'>
+    <HeaderWrapper style={{ backgroundColor }} className='max-width'>
       <HeaderContainer>
         <LogoStyled />
         <MenuOverlay ref={overlayRef} className={isOpen ? 'active' : ''} />
         <NavList className={isOpen ? 'active' : ''}>
           {menu.map(({ title, link, submenu }) => (
-            <ListItem title={title} link={link} submenu={submenu} />
+            <ListItem key={title} title={title} link={link} submenu={submenu} />
           ))}
         </NavList>
         <SearchInput
