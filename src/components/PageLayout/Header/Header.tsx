@@ -48,7 +48,7 @@ type Color = string;
 function Header({
   backgroundColor = 'var(--main-black)',
 }: {
-  backgroundColor: Color;
+  backgroundColor?: Color;
 }): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isInputActive, setIsInputActive] = useState(false);

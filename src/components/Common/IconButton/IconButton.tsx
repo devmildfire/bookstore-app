@@ -1,18 +1,15 @@
 import Link from 'next/link';
 import * as React from 'react';
-import { VoidFunction } from '@/types/common';
-import { StyledIconButtonProps, StyledButton } from './styles';
-import { ClassNameProps } from '@/types/className';
+import { StyledButton } from './styles';
 import { PropsWithChildren, RefObject } from 'react';
 
-interface IconButtonProps
-  extends Partial<StyledIconButtonProps>,
-    ClassNameProps,
-    React.ButtonHTMLAttributes<HTMLButtonElement> {
-  readonly onClick?: VoidFunction;
+interface IconButtonProps {
+  readonly onClick: () => {};
   readonly href?: string;
   readonly scroll?: boolean;
   readonly shallow?: boolean;
+  className: string;
+  size?: string;
 }
 
 const IconButton = (
@@ -35,7 +32,7 @@ const IconButton = (
         <StyledButton
           className={className}
           size={size}
-          ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+          ref={ref}
           {...(rest as any)}
         >
           {children}

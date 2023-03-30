@@ -2,6 +2,7 @@ import * as React from 'react';
 import { AnimatePresence, motion, Transition, Variants } from 'framer-motion';
 import { COLLAPSE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
+import { PropsWithChildren } from 'react';
 
 interface CollapseProps {
   readonly open: boolean;
@@ -26,7 +27,7 @@ const variants: Variants = {
   },
 };
 
-const Collapse: React.FC<CollapseProps> = (props) => {
+const Collapse: React.FC<PropsWithChildren<CollapseProps>> = (props) => {
   const {
     open,
     children,

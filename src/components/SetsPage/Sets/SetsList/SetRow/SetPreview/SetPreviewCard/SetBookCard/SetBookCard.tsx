@@ -30,13 +30,7 @@ const SetBookCard: React.FC<SetBookCardProps> = (props) => {
         <Text variant='text' color='inherit'>
           {author}
         </Text>
-        <StyledIconsList>
-          {types.map((type) => (
-            <IconButton key={type}>
-              <StyledIcon as={bookTypeIconMap[type]} />
-            </IconButton>
-          ))}
-        </StyledIconsList>
+        <StyledIconsList />
       </StyledText>
     </StyledWrapper>
   );

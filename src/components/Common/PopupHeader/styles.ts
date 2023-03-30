@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import IconButton from '../IconButton';
 
@@ -9,7 +10,7 @@ export const StyledWrapper = styled.header`
   justify-items: center;
 `;
 
-export const StyledButton = styled(IconButton)`
+export const StyledButton = styled(IconButton)<{ onClick: any }>`
   position: absolute;
   right: 0;
   top: 50%;
