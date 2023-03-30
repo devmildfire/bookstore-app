@@ -58,8 +58,12 @@ const StyledImage = styled(Image)`
   user-select: none;
   border-radius: 50%;
   object-fit: cover;
-  margin: 25px 25px;
+  margin: 25px 25px 21px;
   transition: all 0.5s ease;
+
+  @media ${breakPoints.lg} {
+    margin: 25px 25px 15px;
+  }
 `;
 
 const MemberCard = (props: Member): React.ReactElement => {
