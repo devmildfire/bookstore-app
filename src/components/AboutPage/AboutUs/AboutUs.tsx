@@ -64,28 +64,28 @@ const StyledDescriptionContainer = styled(Container)`
 
 const StyledButton = styled(Button)`
   width: calc(min(480px, var(--width)));
-  max-height: 62px;
-  min-height: 62px;
+  max-height: 60px;
+  min-height: 60px;
   margin-top: auto;
   min-width: 480px;
 
   @media screen and (max-width: 1600px) {
-    max-height: 45px;
-    min-height: 45px;
+    max-height: 60px;
+    min-height: 60px;
     margin-top: auto;
     min-width: 300px;
   }
 
   @media ${breakPoints.xl} {
-    max-height: 45px;
-    min-height: 45px;
+    max-height: 60px;
+    min-height: 60px;
     margin-top: auto;
     min-width: 300px;
   }
 
   @media screen and (max-width: 1100px) {
-    max-height: 45px;
-    min-height: 45px;
+    max-height: 60px;
+    min-height: 60px;
     margin-top: auto;
     min-width: 300px;
   }
