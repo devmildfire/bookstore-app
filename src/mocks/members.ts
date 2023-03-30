@@ -6,7 +6,7 @@ import vidyaskinaPhoto from '../../public/images/members/katerina-vidyaskina.png
 import kurnosovaPhoto from '../../public/images/members/ekaterina-kurnosova.png';
 import kovalevskayaPhoto from '../../public/images/members/ekaterina-kovalevskaya.png';
 import malcevaPhoto from '../../public/images/members/anastasiya-malceva.png';
-import gilmanovaPhoto from '../../public/images/members/gilmanova-diana.png';
+import gilmanovaPhoto from '../../public/images/members/gilmanova-diana-2.jpg';
 import grebenschikovaPhoto from '../../public/images/members/grebenschikova-ekaterina.png';
 import kapustyakPhoto from '../../public/images/members/aleksei-kapustyak.png';
 import AleksandraYasharkina from '../../public/images/members/AleksandraYasharkina.png';
