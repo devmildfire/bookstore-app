@@ -10,7 +10,7 @@ import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
 import '@/styles/globals.css';
 import Header from '@/components/PageLayout/Header';
-import Footer from '@/components/PageLayout/Footer';
+// import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
 
 const MyApp: NextPage<AppProps> = (props) => {
@@ -40,7 +40,7 @@ const MyApp: NextPage<AppProps> = (props) => {
             <Component {...pageProps} />
           </>
           {/* </PageLayout> */}
-          <Footer />
+          {/* <Footer /> */}
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>

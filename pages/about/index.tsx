@@ -7,7 +7,7 @@ import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
 import ContainerWide from '@/components/Common/ContainerWide';
-import We from '@/components/AboutPage/We';
+// import We from '@/components/AboutPage/We';
 import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
@@ -23,9 +23,9 @@ const About: NextPage = () => (
     <AboutList />
     <RD />
     <StyledStarsBlock>
-      <ContainerWide>
+      {/* <ContainerWide>
         <We />
-      </ContainerWide>
+      </ContainerWide> */}
       <ContainerWide>
         <Partners />
       </ContainerWide>
