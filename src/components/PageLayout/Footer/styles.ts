@@ -6,7 +6,8 @@ import Logo from '@/assets/icons/footer-logo.svg';
 export const StyleWrapper = styled.footer`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  /* width: 100%; */
+  width: revert;
   color: var(--main-white-100);
 `;
 
