@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { NextPage } from 'next';
 import AboutList from '@/components/AboutPage/AboutList';
-import AboutUs from '@/components/AboutPage/AboutUs';
+// import AboutUs from '@/components/AboutPage/AboutUs';
 // import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
@@ -19,7 +19,7 @@ const About: NextPage = () => (
     <VideoContainer>
       <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
     </VideoContainer>
-    <AboutUs />
+    {/* <AboutUs /> */}
     <AboutList />
     {/* <RD /> */}
     <StyledStarsBlock>
