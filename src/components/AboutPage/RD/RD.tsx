@@ -21,29 +21,29 @@ const StyledButton = styled(Button)`
   width: calc(0.45 * var(--box-width));
   margin: 2% auto;
 
-  max-height: 62px;
-  min-height: 62px;
+  max-height: 60px;
+  min-height: 60px;
 
   @media ${breakPoints.xxl} {
     align-self: center;
     width: calc(0.6 * var(--box-width));
-    max-height: 45px;
-    min-height: 45px;
+    max-height: 60px;
+    min-height: 60px;
   }
 
   @media ${breakPoints.lg} {
     align-self: center;
     margin: 0.5% auto 2% auto;
-    max-height: 32px;
-    min-height: 32px;
+    max-height: 45px;
+    min-height: 45px;
     width: calc(0.45 * var(--box-width));
   }
 
   @media ${breakPoints.md} {
     align-self: center;
     margin-right: auto;
-    max-height: 32px;
-    min-height: 32px;
+    max-height: 45px;
+    min-height: 45px;
     width: calc(0.6 * var(--box-width));
   }
 
