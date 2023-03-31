@@ -9,10 +9,11 @@ export const StyleWrapper = styled.footer`
   /* width: 100%; */
   width: revert;
   color: var(--main-white-100);
+  padding: 0;
 `;
 
 export const FooterContent = styled.div`
-  padding: 30px 0px 40px;
+  padding: 30px 10vw 40px;
   display: flex;
   justify-content: space-between;
   align-items: end;
