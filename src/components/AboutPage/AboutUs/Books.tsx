@@ -11,7 +11,7 @@ const StyledWrapper = styled.div`
   --maxBooksWidth: calc(3000px / 2);
   --minBookWidth: 100px;
   // --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
-  --booksWidth: max(min(var(--maxBooksWidth), 100% / 2), var(--minBookWidth));
+  --booksWidth: max(min(var(--maxBooksWidth), 100vw / 2), var(--minBookWidth));
   --booksHeight: calc(var(--booksWidth) * 0.795);
 
   position: relative;

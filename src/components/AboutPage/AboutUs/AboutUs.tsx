@@ -112,6 +112,7 @@ const StyledDescription = styled(Text)`
 const StyledSection = styled('section')`
   margin-top: 0px;
   width: 100%;
+  overflow: hidden;
 `;
 
 const AboutUs = (): React.ReactElement => (
