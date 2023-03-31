@@ -6,7 +6,6 @@ import AboutUs from '@/components/AboutPage/AboutUs';
 import RD from '@/components/AboutPage/RD';
 import Video from '@/components/AboutPage/Video';
 import Container from '@/components/Common/Container';
-// import ContainerWide from '@/components/Common/ContainerWide';
 import We from '@/components/AboutPage/We';
 import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
@@ -23,18 +22,10 @@ const About: NextPage = () => (
     <AboutList />
     <RD />
     <StyledStarsBlock>
-      {/* <ContainerWide> */}
       <We />
-      {/* </ContainerWide> */}
-      {/* <ContainerWide> */}
       <Partners />
-      {/* </ContainerWide> */}
-      {/* <Container> */}
       <Donate />
-      {/* </Container> */}
-      {/* <Container> */}
       <BeWithUs />
-      {/* </Container> */}
     </StyledStarsBlock>
   </StyledWrapper>
 );

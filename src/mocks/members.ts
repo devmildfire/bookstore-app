@@ -216,7 +216,7 @@ const members: Member[] = [
     position: 'иллюстратор',
     city: 'Кудыкина Гора',
     photo: Gorynych.src,
-    phrase: '«Ты не Курт Воннегут!» ARS LONGA, VITA BREVIS',
+    phrase: '???',
   },
   {
     // id: 22,
