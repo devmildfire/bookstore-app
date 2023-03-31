@@ -29,12 +29,12 @@ const About: NextPage = () => (
       <ContainerWide>
         <Partners />
       </ContainerWide>
-      <Container>
-        <Donate />
-      </Container>
-      <Container>
-        <BeWithUs />
-      </Container>
+      {/* <Container> */}
+      <Donate />
+      {/* </Container> */}
+      {/* <Container> */}
+      <BeWithUs />
+      {/* </Container> */}
     </StyledStarsBlock>
   </StyledWrapper>
 );
@@ -45,6 +45,7 @@ const VideoContainer = styled(Container)`
   width: var(--width);
   display: grid;
   justify-items: center;
+  margin: 0;
 `;
 
 const StyledWrapper = styled.main`

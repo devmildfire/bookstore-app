@@ -55,9 +55,9 @@
 }
 
 /* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 
 

@@ -14,6 +14,7 @@ const StyledDescriptionContainer = styled(Container)`
   max-width: 1440px;
   padding-top: 31px;
   gap: var(--containerGap);
+  margin: 0;
   --containerMarginBottom: 45px;
   --containerGap: 26px;
 
@@ -117,11 +118,11 @@ const StyledSection = styled('section')`
 
 const AboutUs = (): React.ReactElement => (
   <StyledSection>
-    <Container>
-      <Text align='center' variant='h2_1'>
-        О чём мы?
-      </Text>
-    </Container>
+    {/* <Container> */}
+    <Text align='center' variant='h2_1'>
+      О чём мы?
+    </Text>
+    {/* </Container> */}
     <Books />
     <StyledDescriptionContainer>
       <StyledDescription variant='aboutText'>
