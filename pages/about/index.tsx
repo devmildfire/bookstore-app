@@ -49,10 +49,6 @@ const VideoContainer = styled(Container)`
 `;
 
 const StyledWrapper = styled.main`
-  * {
-    outline: 1px solid green;
-  }
-
   --marginBottom: 170px;
   --lastMarginBottom: 600px;
   --rowGap: 150px;

@@ -14,7 +14,7 @@ const StyledDescriptionContainer = styled(Container)`
   max-width: 1440px;
   padding-top: 31px;
   gap: var(--containerGap);
-  margin: 0;
+  margin: 0 auto;
   --containerMarginBottom: 45px;
   --containerGap: 26px;
 
