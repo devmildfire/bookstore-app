@@ -145,7 +145,8 @@ export const FooterLogoText = styled.p`
 `;
 
 export const FooterCopyright = styled.div`
-  width: 100vw;
+  // width: 100vw;
+  width: 100%;
   padding: 15px 0;
   font-feature-settings: 'salt' on, 'liga' off;
   border-top: 1px solid rgba(220, 220, 220, 0.2);
