@@ -43,7 +43,7 @@ interface ModalContextProps {
 }
 
 export const ModalContext = createContext<ModalContextProps>({
-  handleOpenModal: () => {},
+  handleOpenModal: () => undefined,
   handleModalState: null,
 });
 

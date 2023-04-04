@@ -4,7 +4,7 @@ import { StyledButton } from './styles';
 import { PropsWithChildren, RefObject } from 'react';
 
 interface IconButtonProps {
-  readonly onClick: () => {};
+  readonly onClick: () => void;
   readonly href?: string;
   readonly scroll?: boolean;
   readonly shallow?: boolean;

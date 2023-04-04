@@ -487,7 +487,7 @@ const pages = [
 
 type Callback<T> = (arg: T) => void;
 
-function ifPageHasFocus<T extends unknown>(callback: Callback<T>, arg: T) {
+function ifPageHasFocus<T>(callback: Callback<T>, arg: T) {
   if (document?.hasFocus()) {
     callback(arg);
   }
