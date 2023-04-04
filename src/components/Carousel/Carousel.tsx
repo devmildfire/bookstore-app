@@ -10,6 +10,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import styled, { StyledComponent } from 'styled-components';
 import books from '@/mocks/books';
 import { DotButton } from './DotButton';
+import Link from 'next/link';
 
 type PropType = {
   slides: number[];
@@ -25,6 +26,9 @@ const StyledInfo = styled.div`
   width: 100%;
   @media screen and (max-width: 768px) {
     align-items: center;
+  }
+  @media screen and (max-width: 512px) {
+    display: none;
   }
 `;
 
@@ -80,6 +84,11 @@ function Text(props: PropsWithChildren<TextProps>) {
 const StyledTitle = styled(Text)`
   text-align: left;
   font-size: 96px;
+
+  @media screen and (max-width: 1280px) {
+    font-size: 68px;
+  }
+
   @media screen and (max-width: 1024px) {
     font-size: 48px;
   }
@@ -164,12 +173,12 @@ const Slide = styled.div`
   display: grid;
   justify-content: center;
   align-items: center;
-  grid-template-columns: auto auto;
+  grid-template-columns: minmax(300px, auto) 1fr;
   gap: 48px;
   flex: 0 0 var(--slide-size);
   min-width: 0;
   position: relative;
-  @media screen and (max-width: 512px) {
+  @media screen and (max-width: 768px) {
     align-items: flex-start;
     grid-template-columns: 1fr;
     grid-template-rows: minmax(150px, 1fr) auto;
@@ -230,11 +239,13 @@ function Carousel(props: PropType): ReactElement {
         <Container>
           {slides.map((index) => (
             <Slide key={index}>
-              <Cover
-                className='embla__slide__img'
-                src={books[index].cover}
-                alt={books[index].title}
-              />
+              <Link href={`/books/${books[index].transliteratedTitle}`}>
+                <Cover
+                  className='embla__slide__img'
+                  src={books[index].cover}
+                  alt={books[index].title}
+                />
+              </Link>
               <StyledInfo>
                 <StyledTitle variant='heading' tag='h1'>
                   {books[index].title}
