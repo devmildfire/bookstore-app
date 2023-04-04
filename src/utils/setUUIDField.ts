@@ -29,8 +29,8 @@ function makeid(length: number) {
   return result;
 }
 
-const setUUIDField = <T extends object>(array: T[]): T[] => {
-  return array.map((item: T) => {
+const setUUIDField = (array: any[]): any[] => {
+  return array.map((item: any) => {
     item = { ...item, key: makeid(32) };
     return item;
   });
