@@ -5,11 +5,16 @@ export const SliderContainer = styled.section`
   --pagination-height: 16px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow-x: hidden;
   width: 100%;
-  height: clamp(550px, 90dvh, 760px);
+  height: 90vmin;
   background-color: #050505;
+  @media ${breakPoints.sm} {
+    height: 85svh;
+  }
 `;
 
 export const Slide = styled.div`

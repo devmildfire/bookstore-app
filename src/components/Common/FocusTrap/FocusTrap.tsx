@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import { StyledWrapper } from './styles';
 
 interface FocusTrapProps {
@@ -12,7 +13,7 @@ const tabbableSelectors = [
   'button:not([disabled])',
   'input',
   'select',
-  'textarea'
+  'textarea',
 ];
 
 const getTabbable = (root: HTMLElement) => {
@@ -21,7 +22,10 @@ const getTabbable = (root: HTMLElement) => {
   );
 };
 
-const FocusTrap: React.FC<FocusTrapProps> = ({ open, children, }) => {
+const FocusTrap: React.FC<PropsWithChildren<FocusTrapProps>> = ({
+  open,
+  children,
+}) => {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const startElement = React.useRef<HTMLDivElement | null>(null);
   const endElement = React.useRef<HTMLDivElement | null>(null);
@@ -41,15 +45,15 @@ const FocusTrap: React.FC<FocusTrapProps> = ({ open, children, }) => {
     }
 
     const focusin = (evt: globalThis.FocusEvent) => {
-      const { target, } = evt;
+      const { target } = evt;
       const isStandardFocus = rootRef.current?.contains(target as Node);
       if (isStandardFocus) {
         return;
       }
 
       if (
-        document.activeElement === startElement.current
-        || document.activeElement === endElement.current
+        document.activeElement === startElement.current ||
+        document.activeElement === endElement.current
       ) {
         const tabbable = getTabbable(rootRef.current as HTMLElement);
         const firstTab = tabbable[0];
@@ -80,7 +84,7 @@ const FocusTrap: React.FC<FocusTrapProps> = ({ open, children, }) => {
     }
 
     const tabHandler = (evt: globalThis.KeyboardEvent) => {
-      const { key, shiftKey, target, } = evt;
+      const { key, shiftKey, target } = evt;
       if (key !== 'Tab') {
         return;
       }

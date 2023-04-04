@@ -171,7 +171,7 @@ const HeaderWrapper = styled.header`
   display: flex;
   justify-content: center;
   width: 100%;
-  background-color: var(--main-black);
+  /* background-color: var(--main-black); */
   z-index: 99999;
 `;
 
@@ -207,7 +207,6 @@ const NavList = styled.ul<HeaderList>`
   flex-direction: row;
   gap: 12px;
   justify-content: space-evenly;
-  background-color: var(--main-black);
   visibility: visible;
   opacity: 1;
   position: relative;

@@ -2,6 +2,7 @@ import * as React from 'react';
 import NextLink from 'next/link';
 // import { StyledLink } from './styles';
 import { ClassNameProps } from '@/types/className';
+import { PropsWithChildren, RefObject } from 'react';
 
 export interface LinkProps extends ClassNameProps {
   readonly href: string;
@@ -9,10 +10,10 @@ export interface LinkProps extends ClassNameProps {
   readonly shallow?: boolean;
 }
 
-const Link = React.forwardRef<
-  HTMLAnchorElement,
-  React.PropsWithChildren<LinkProps>
->((props, ref) => {
+function Link(
+  props: PropsWithChildren<LinkProps>,
+  ref: RefObject<HTMLAnchorElement>
+) {
   const { children, href, scroll, className, shallow } = props;
 
   return (
@@ -27,6 +28,6 @@ const Link = React.forwardRef<
       {children}
     </NextLink>
   );
-});
+}
 
 export default Link;

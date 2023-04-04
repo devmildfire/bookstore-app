@@ -5,12 +5,13 @@ import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import { StyledContent, StyledWrapper } from './styles';
 import Popups from '@/components/Popups';
+import { PropsWithChildren } from 'react';
 
 export interface PageLayoutProps {
   readonly headTitle?: string;
 }
 
-const PageLayout: React.FC<PageLayoutProps> = (props) => {
+const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
   const {
     children,
     headTitle = 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',

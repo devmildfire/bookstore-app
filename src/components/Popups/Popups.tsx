@@ -26,6 +26,7 @@ const Popups: React.FC = () => {
 
         return (
           <Component
+            key={i}
             isOpen={popups.includes(popupKey)}
             isFocus={popupsCount - 1 === i}
           />

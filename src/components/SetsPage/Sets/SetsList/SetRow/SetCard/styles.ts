@@ -2,8 +2,16 @@ import styled from 'styled-components';
 import Link from '@/components/Common/Link';
 import Image from '@/components/Common/Image';
 import IconButton from '@/components/Common/IconButton';
+import { PropsWithChildren } from 'react';
 
-export const StyledWrapper = styled(Link)`
+export const StyledWrapper = styled(Link)<
+  PropsWithChildren<{
+    className: string;
+    href: string;
+    scroll: boolean;
+    shallow: boolean;
+  }>
+>`
   display: grid;
 
   grid-template-rows: 1fr min-content;

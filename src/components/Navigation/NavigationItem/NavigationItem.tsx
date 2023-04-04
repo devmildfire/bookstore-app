@@ -8,7 +8,7 @@ interface NavigationItemProps {
 }
 
 const NavigationItem: FC<NavigationItemProps> = (props) => {
-  const { path, label, } = props;
+  const { path, label } = props;
 
   return (
     <li>

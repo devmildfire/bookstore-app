@@ -3,8 +3,6 @@ import Navigation from '@/components/Navigation';
 
 export const StyledWrapper = styled.main`
   position: relative;
-
-  /* padding: 0 10vw; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,9 +23,4 @@ export const StyledNavigation = styled(Navigation)`
   background-color: var(--main-black);
 
   z-index: var(--upper-z-index);
-`;
-
-export const StyledContentWrapper = styled.div`
-  display: grid;
-  gap: 90px;
 `;

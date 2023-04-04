@@ -10,7 +10,7 @@ export interface SelectedProps {
 }
 
 const Selected: React.FC<SelectedProps> = (props) => {
-  const { value, onDelete, } = props;
+  const { value, onDelete } = props;
 
   const onClick = React.useCallback(() => {
     console.log('delete');
@@ -22,9 +22,7 @@ const Selected: React.FC<SelectedProps> = (props) => {
       <Text variant='h4_2' component='span'>
         {value.label}
       </Text>
-      <IconButton size='small' onClick={onClick}>
-        <StyledCross />
-      </IconButton>
+      <IconButton />
     </StyledWrapper>
   );
 };

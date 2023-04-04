@@ -43,8 +43,7 @@ interface ModalContextProps {
 }
 
 export const ModalContext = createContext<ModalContextProps>({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  handleOpenModal: () => {},
+  handleOpenModal: () => undefined,
   handleModalState: null,
 });
 
@@ -206,7 +205,7 @@ function BookModal(props: BookModalState) {
       <Buttons>
         {types.map((type: string) => {
           return (
-            <IconButtonContainer>
+            <IconButtonContainer key={type}>
               <IconButton
                 onClick={() => setSum((prev) => prev + price)}
                 type='button'

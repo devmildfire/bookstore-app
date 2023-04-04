@@ -1,12 +1,13 @@
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 type Size = 'small' | 'medium' | 'large';
 
 export interface StyledIconButtonProps {
-  readonly size: Size;
+  readonly size: string;
 }
 
-const sizeMap: Record<Size, number> = {
+const sizeMap: Record<string, number> = {
   small: 30,
   medium: 40,
   large: 50,

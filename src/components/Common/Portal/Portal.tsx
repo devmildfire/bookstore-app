@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import { createPortal } from 'react-dom';
 
-const Portal: React.FC = (props) => {
-  const { children, } = props;
+const Portal: React.FC<PropsWithChildren> = (props) => {
+  const { children } = props;
   const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
 
   React.useEffect(() => {

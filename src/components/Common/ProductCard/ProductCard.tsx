@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import { StyledWrapper } from './styles';
+import { PropsWithChildren } from 'react';
 
-const ProductCard: React.FC<ClassNameProps> = (props) => {
+const ProductCard: React.FC<PropsWithChildren<ClassNameProps>> = (props) => {
   const { children, ...rest } = props;
   return <StyledWrapper {...rest}>{children}</StyledWrapper>;
 };
