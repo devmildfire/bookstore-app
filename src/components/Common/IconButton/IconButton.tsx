@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import * as React from 'react';
 import { StyledButton } from './styles';
-import { PropsWithChildren, RefObject } from 'react';
+import { PropsWithChildren } from 'react';
 
 interface IconButtonProps {
   readonly onClick: () => void;
@@ -14,7 +14,7 @@ interface IconButtonProps {
 
 const IconButton = (
   props: PropsWithChildren<IconButtonProps>,
-  ref: RefObject<HTMLButtonElement | HTMLAnchorElement>
+  ref: React.Ref<HTMLButtonElement | HTMLAnchorElement>
 ) => {
   const {
     children,
@@ -53,4 +53,4 @@ const IconButton = (
   );
 };
 
-export default React.memo(IconButton);
+export default React.memo(React.forwardRef(IconButton));
