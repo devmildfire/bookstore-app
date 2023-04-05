@@ -1,7 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-// eslint-disable-next-line import/extensions
 import React, {
   useEffect,
   useMemo,
@@ -19,7 +15,6 @@ import {
   RowContainer,
   RowItem,
   CloseButton,
-  // Image,
   Title,
   Author,
   Slogan,
@@ -33,16 +28,64 @@ import { Book } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
+// import Overlay from '@/assets/images/gradient-overlay.png';
+
+const VideoContainer = styled.div`
+  display: flex;
+  position: relative;
+  min-width: 60vw;
+  min-height: 100%;
+  overflow: hidden;
+  background-image: linear-gradient(
+    90deg,
+    rgba(05, 05, 05, 1) 0%,
+    rgba(05, 05, 05, 0) 20%
+  );
+  background-blend-mode: overlay;
+  @media screen and (max-width: 1024px) {
+    min-width: 100vw;
+    min-height: 50vh;
+    background-image: linear-gradient(
+      0deg,
+      rgba(05, 05, 05, 1) 0%,
+      rgba(05, 05, 05, 0) 20%,
+      rgba(05, 05, 05, 0) 80%,
+      rgba(05, 05, 05, 1) 100%
+    );
+  }
+`;
 
 const Video = styled.video`
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 60%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: 100%;
   z-index: -2;
   object-fit: cover;
+`;
+
+const BookDescriptionContainer = styled(Container)`
+  display: grid;
+  grid-template-areas:
+    'info info info'
+    'description description description'
+    'button . .';
+  max-width: 40vw;
+  padding: 5vh 5vw 5vh 10vw;
+  @media screen and (max-width: 1024px) {
+    max-width: 100%;
+    grid-template-columns: 250px 1fr 1fr;
+    grid-template-areas:
+      'info  description description'
+      'button  description description';
+    padding-left: 5vw;
+    column-gap: 5vw;
+  }
+`;
+
+const InfoContainer = styled(Container)`
+  grid-area: info;
 `;
 
 interface RowProps {
@@ -56,11 +99,10 @@ function Row({ row, data }: RowProps) {
   const previewRef = useRef<HTMLDivElement>(null);
   const [width] = useScreenSize();
   const router = useRouter();
-
-  useScrollTo(previewRef.current, isOpen);
+  const REDIRECT_ON_CLICK_DISPLAY_WIDTH = 768;
 
   const open = (id: number) => {
-    if (width <= 512) {
+    if (width <= REDIRECT_ON_CLICK_DISPLAY_WIDTH) {
       const bookItem = data.find((book) => book.id === id);
       return router.push(`/books/${bookItem?.transliteratedTitle}`);
     }
@@ -88,6 +130,8 @@ function Row({ row, data }: RowProps) {
     }
   };
 
+  useScrollTo(previewRef.current, isOpen);
+
   useEffect(() => {
     window.addEventListener('keydown', closeOnEscape);
 
@@ -114,22 +158,28 @@ function Row({ row, data }: RowProps) {
             className={isOpen ? 'visible' : 'hidden'}
             width={document.body.clientWidth}
           >
-            <Container gap={32}>
-              <Container gap={12}>
+            <BookDescriptionContainer gap={32}>
+              <InfoContainer gap={12}>
                 <Title>{preview.title}</Title>
                 <Author>
                   {preview.authors.map((author) => author.name).join(', ')}
                 </Author>
                 <Slogan>{preview.thesis}</Slogan>
-              </Container>
+              </InfoContainer>
               <DescriptionBox>
-                <Description>{preview.description}</Description>
+                <Description>
+                  {preview.description}
+                  {preview.description}
+                  {preview.description}
+                </Description>
               </DescriptionBox>
               <Button type='button'>Познать</Button>
-            </Container>
-            <Video autoPlay loop src='video/preview.mp4'>
-              <track kind='captions' />
-            </Video>
+            </BookDescriptionContainer>
+            <VideoContainer>
+              <Video autoPlay muted loop>
+                <source src='video/preview.mp4' />
+              </Video>
+            </VideoContainer>
             <CloseButton onClick={close} type='button'>
               <CloseIcon />
             </CloseButton>

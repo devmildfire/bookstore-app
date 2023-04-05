@@ -1,3 +1,4 @@
+import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 
 export const GridContainer = styled.ul`
@@ -52,13 +53,10 @@ interface PreviewProps {
 
 export const Preview = styled.div<PreviewProps>`
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(auto, 465px) 1fr;
-  align-items: center;
+  display: flex;
   transform: translateX(-50%);
   bottom: 0;
   left: 50%;
-  padding: 64px 100px;
   width: ${(props) => `${props.width}px`};
   height: auto;
   color: lightgray;
@@ -75,20 +73,8 @@ export const Preview = styled.div<PreviewProps>`
     opacity: 1;
   }
 
-  &::before {
-    content: '';
-    background: linear-gradient(90deg, #050505 40%, rgba(0, 0, 0, 0.1) 55%);
-    /* linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 1) 0%,
-        rgba(122, 122, 122, 0.1) 25%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(130, 130, 130, 0.1) 75%,
-        rgba(5, 5, 5, 1) 100%
-      ); */
-    position: absolute;
-    inset: 0;
-    z-index: -1;
+  @media screen and (max-width: 1024px) {
+    flex-direction: column-reverse;
   }
 `;
 
@@ -101,12 +87,19 @@ export const Container = styled.div<BoxProps>`
   flex-direction: column;
   gap: ${(props) => `${props.gap}px`};
   align-items: flex-start;
+  justify-content: center;
 `;
 
 export const DescriptionBox = styled.div`
   display: block;
   max-height: 200px;
   overflow-y: auto;
+  grid-area: description;
+  mask-image: linear-gradient(black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
+  @media screen and (max-width: 1024px) {
+    max-height: 300px;
+  }
 `;
 
 export const Title = styled.h2`
@@ -127,6 +120,8 @@ export const Slogan = styled.p`
 
 export const Description = styled.p`
   font-size: var(--font-m);
+  padding-top: 8px;
+  line-height: 1.4;
 `;
 
 interface ImageProps {
@@ -140,6 +135,7 @@ export const Button = styled.button`
   padding: 20px 80px;
   color: var(--main-white-100);
   border-radius: 4px;
+  grid-area: button;
 `;
 
 export const Image = styled.div<ImageProps>`
