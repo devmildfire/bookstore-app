@@ -36,7 +36,7 @@ const StyledGlass = styled(Glass)`
 
 const StyledInput = styled.input`
   position: relative;
-  background-color: ${colors.blackBase};
+  background-color: transparent;
   border: thin solid var(--main-red-60);
   border-radius: 5px;
   max-width: 355px;
@@ -243,7 +243,7 @@ function SearchInput({
       >
         <StyledMatches>
           {matches.map((book) => (
-            <StyledMatch>
+            <StyledMatch key={book.id}>
               <StyledMatchLink href={`/books/${book.transliteratedTitle}`}>
                 <StyledBookCover src={book.cover} alt={book.title} />
                 <StyledMatchInfoContainer>

@@ -10,7 +10,7 @@ interface PreviewHeaderProps extends ClassNameProps {
 const PreviewHeader: React.FC<React.PropsWithChildren<PreviewHeaderProps>> = (
   props
 ) => {
-  const { exitHref, className, } = props;
+  const { exitHref, className } = props;
 
   return (
     <StyledHeader>

@@ -1,17 +1,20 @@
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import {
   StateContextOptions,
   StateHandlersContextOptions,
   stateContext,
-  stateHandlersContext
+  stateHandlersContext,
 } from './context';
 
 interface StateProviderProps
   extends StateContextOptions,
     StateHandlersContextOptions {}
 
-const StateProvider: React.FC<StateProviderProps> = (props) => {
-  const { children, isOpen, isLoading, root, onClose, onOpen, } = props;
+const StateProvider: React.FC<PropsWithChildren<StateProviderProps>> = (
+  props
+) => {
+  const { children, isOpen, isLoading, root, onClose, onOpen } = props;
   return (
     <stateContext.Provider
       value={{
@@ -20,7 +23,7 @@ const StateProvider: React.FC<StateProviderProps> = (props) => {
         root,
       }}
     >
-      <stateHandlersContext.Provider value={{ onClose, onOpen, }}>
+      <stateHandlersContext.Provider value={{ onClose, onOpen }}>
         {children}
       </stateHandlersContext.Provider>
     </stateContext.Provider>

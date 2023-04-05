@@ -1,9 +1,8 @@
 import * as React from 'react';
-import {
-  AnimatePresence, motion, Transition, Variants
-} from 'framer-motion';
+import { AnimatePresence, motion, Transition, Variants } from 'framer-motion';
 import { FADE_DURATION } from '@/consts/animation';
 import useMountDelay from '@/hooks/useMountDelay';
+import { PropsWithChildren } from 'react';
 
 export interface FadeProps {
   readonly open: boolean;
@@ -21,7 +20,7 @@ const variants: Variants = {
   },
 };
 
-const Fade: React.FC<FadeProps> = (props) => {
+const Fade: React.FC<PropsWithChildren<FadeProps>> = (props) => {
   const {
     children,
     open,
@@ -29,7 +28,7 @@ const Fade: React.FC<FadeProps> = (props) => {
     exitTimeout = 0,
     duration = FADE_DURATION,
   } = props;
-  const isMount = useMountDelay({ open, enterTimeout, exitTimeout, });
+  const isMount = useMountDelay({ open, enterTimeout, exitTimeout });
   const transition = React.useMemo<Transition>(
     () => ({
       duration: duration / 1000,

@@ -2,10 +2,11 @@ import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import { StyledLoadingIndicator, StyledMenu } from './styles';
 import { stateContext } from '../contexts';
+import { PropsWithChildren } from 'react';
 
-const SelectMenu: React.FC<ClassNameProps> = (props) => {
-  const { className, children, } = props;
-  const { isOpen, root, isLoading, } = React.useContext(stateContext);
+const SelectMenu: React.FC<PropsWithChildren<ClassNameProps>> = (props) => {
+  const { className, children } = props;
+  const { isOpen, root, isLoading } = React.useContext(stateContext);
 
   return (
     <StyledMenu

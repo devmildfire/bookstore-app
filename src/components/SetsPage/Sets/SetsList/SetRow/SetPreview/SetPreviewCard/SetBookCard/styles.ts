@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Link from '@/components/Common/Link';
 import Image from '@/components/Common/Image';
 import List from '@/components/Common/List';
+import { PropsWithChildren } from 'react';
 
 export const StyledText = styled.div`
   display: grid;
@@ -9,7 +10,9 @@ export const StyledText = styled.div`
   grid-template-rows: 1fr 1fr;
 `;
 
-export const StyledWrapper = styled(Link)`
+export const StyledWrapper = styled(Link)<
+  PropsWithChildren<{ className?: string; href: string }>
+>`
   display: grid;
 
   grid-template-columns: max-content 1fr;
@@ -29,7 +32,6 @@ export const StyledIconsList = styled(List)`
   display: flex;
   gap: 22px;
   color: var(--main-white-100);
-
 `;
 
 export const StyledIcon = styled.svg`

@@ -3,13 +3,14 @@ import { ClassNameProps } from '@/types/className';
 import { StyledBackdrop, StyledWrapper } from './styles';
 import Portal from '../Portal';
 import { VoidFunction } from '@/types/common';
+import { PropsWithChildren } from 'react';
 
 interface OverlayProps extends ClassNameProps {
   readonly onClose?: VoidFunction;
 }
 
-const Overlay: React.FC<OverlayProps> = (props) => {
-  const { children, className, onClose, } = props;
+const Overlay: React.FC<PropsWithChildren<OverlayProps>> = (props) => {
+  const { children, className, onClose } = props;
   return (
     <Portal>
       <StyledWrapper role='dialog'>

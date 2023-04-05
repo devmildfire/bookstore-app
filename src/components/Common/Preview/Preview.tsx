@@ -3,6 +3,7 @@ import { ClassNameProps } from '@/types/className';
 import { StyledWrapper } from './styles';
 import Collapse from '../Collapse';
 import useScrollTo from '@/hooks/useScrollTo';
+import { PropsWithChildren } from 'react';
 
 interface PreviewProps extends ClassNameProps {
   readonly open: boolean;
@@ -11,7 +12,7 @@ interface PreviewProps extends ClassNameProps {
   readonly enterTimeout?: number;
 }
 
-const Preview: React.FC<PreviewProps> = (props) => {
+const Preview: React.FC<PropsWithChildren<PreviewProps>> = (props) => {
   const { open, children, className, duration, exitTimeout, enterTimeout } =
     props;
 

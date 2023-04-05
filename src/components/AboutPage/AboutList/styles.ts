@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import Slide from '@/components/Common/Slide';
+// import Slide from '@/components/Common/Slide';
 
 export const StyledList = styled.section`
   display: flex;
@@ -31,8 +31,8 @@ export const StyledList = styled.section`
   }
 `;
 
-export const StyledSlide = styled(Slide)`
-  align-items: center;
-`;
+// export const StyledSlide = styled(Slide)`
+//   align-items: center;
+// `;
 
-StyledSlide.displayName = Slide.displayName;
+// StyledSlide.displayName = Slide.displayName;
