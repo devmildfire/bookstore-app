@@ -9,9 +9,9 @@ interface ContainerProps
 
 function ContainerWide(
   props: PropsWithChildren<ContainerProps>,
-  ref: RefObject<HTMLDivElement>
+  ref: React.Ref<HTMLDivElement>
 ) {
   return <StyledContainerWide {...props} ref={ref} />;
 }
 
-export default ContainerWide;
+export default React.forwardRef(ContainerWide);

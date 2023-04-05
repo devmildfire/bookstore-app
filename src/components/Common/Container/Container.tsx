@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
 import StyledContainer from './styles';
-import { PropsWithChildren, RefObject } from 'react';
+import { PropsWithChildren } from 'react';
 
 interface ContainerProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -9,9 +9,9 @@ interface ContainerProps
 
 function Container(
   props: PropsWithChildren<ContainerProps>,
-  ref: RefObject<HTMLDivElement>
+  ref: React.Ref<HTMLDivElement>
 ) {
   return <StyledContainer {...props} ref={ref} />;
 }
 
-export default Container;
+export default React.forwardRef(Container);

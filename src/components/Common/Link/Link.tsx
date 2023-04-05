@@ -2,7 +2,7 @@ import * as React from 'react';
 import NextLink from 'next/link';
 // import { StyledLink } from './styles';
 import { ClassNameProps } from '@/types/className';
-import { PropsWithChildren, RefObject } from 'react';
+import { PropsWithChildren } from 'react';
 
 export interface LinkProps extends ClassNameProps {
   readonly href: string;
@@ -12,7 +12,7 @@ export interface LinkProps extends ClassNameProps {
 
 function Link(
   props: PropsWithChildren<LinkProps>,
-  ref: RefObject<HTMLAnchorElement>
+  ref: React.Ref<HTMLAnchorElement>
 ) {
   const { children, href, scroll, className, shallow } = props;
 
@@ -30,4 +30,4 @@ function Link(
   );
 }
 
-export default Link;
+export default React.forwardRef(Link);
