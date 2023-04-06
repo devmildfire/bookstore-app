@@ -173,7 +173,7 @@ const Slide = styled.div`
   display: grid;
   justify-content: center;
   align-items: center;
-  grid-template-columns: minmax(300px, auto) 1fr;
+  grid-template-columns: minmax(300px, auto) minmax(50vw, 1fr);
   gap: 48px;
   flex: 0 0 var(--slide-size);
   min-width: 0;

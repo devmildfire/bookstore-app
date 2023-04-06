@@ -13,25 +13,26 @@ import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
 
-type Pixels = number;
+function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
+  const [isIntersecting, setIntersecting] = useState(false);
 
-function useOnScreen(ref: RefObject<HTMLElement>, rootMargin: Pixels = 0) {
-  const [isIntersecting, setIntersecting] = useState<boolean>(false);
   useEffect(() => {
+    if (!ref.current) return;
+    const element = ref.current;
     const observer = new IntersectionObserver(
-      ([entry]) => setIntersecting(entry.isIntersecting),
+      ([entry]) => {
+        setIntersecting(entry.isIntersecting);
+      },
       {
-        rootMargin: `${rootMargin}px`,
+        rootMargin,
       }
     );
-    if (!ref.current) return;
-    const currentRef = ref.current;
-    observer.observe(currentRef);
+    observer.observe(element);
     return () => {
-      observer.unobserve(currentRef);
+      observer.unobserve(element);
     };
-  }, [ref, rootMargin]);
-  // console.log(isIntersecting);
+  }, [isIntersecting, ref.current, ref, rootMargin]);
+
   return isIntersecting;
 }
 
@@ -52,7 +53,9 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeError', toggleOff);
       Router.events.off('routeChangeComplete', toggleOff);
     };
-  }, []);
+  }, [toggleOff, toggleOn, isSliderOnScreen]);
+
+  // console.log(intersectionRef);
 
   return (
     <QueryClientProvider client={queryClient}>

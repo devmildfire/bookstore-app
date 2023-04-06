@@ -24,14 +24,14 @@ export default function ProductCard(props: ProductCardProps) {
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
-    handleModalState!({
+    handleModalState({
       title,
       price,
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
     });
-    handleOpenModal!(true);
+    handleOpenModal(true);
   };
 
   return (

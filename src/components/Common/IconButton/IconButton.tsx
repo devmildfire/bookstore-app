@@ -4,11 +4,11 @@ import { StyledButton } from './styles';
 import { PropsWithChildren } from 'react';
 
 interface IconButtonProps {
-  readonly onClick: () => void;
+  readonly onClick?: () => void;
   readonly href?: string;
   readonly scroll?: boolean;
   readonly shallow?: boolean;
-  className: string;
+  className?: string;
   size?: string;
 }
 
