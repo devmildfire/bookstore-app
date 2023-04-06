@@ -16,21 +16,6 @@ const options = {
         destination: '/books',
         permanent: true,
       },
-      {
-        source: '/all-books.html',
-        destination: '/books',
-        permanent: true,
-      },
-      {
-        source: '/book-deleted.html',
-        destination: '/books/deleted',
-        permanent: true,
-      },
-      {
-        source: '/book-craft.html',
-        destination: '/books/craft',
-        permanent: true,
-      },
     ];
   },
   devIndicators: {

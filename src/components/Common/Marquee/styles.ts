@@ -8,7 +8,8 @@ export const MarqueeWrapper = styled.div<ContainerProps>`
   --gap: ${(props) => props.gap}px;
   position: relative;
   /* возможно появится горизонтальный скролл, нужно тестить в проекте */
-  width: 100vw;
+  // width: 100vw;
+  width: 100%;
   display: flex;
 
   align-items: flex-start;
