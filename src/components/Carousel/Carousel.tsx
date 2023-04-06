@@ -24,9 +24,7 @@ const StyledInfo = styled.div`
   gap: 8px;
   max-width: 720px;
   width: 100%;
-  @media screen and (max-width: 768px) {
-    align-items: center;
-  }
+
   @media screen and (max-width: 512px) {
     display: none;
   }
@@ -94,7 +92,6 @@ const StyledTitle = styled(Text)`
   }
   @media screen and (max-width: 768px) {
     font-size: 36px;
-    text-align: center;
   }
   @media screen and (max-width: 512px) {
     font-size: 24px;
@@ -110,7 +107,6 @@ const StyledAuthor = styled(Text)`
   }
   @media screen and (max-width: 768px) {
     font-size: 24px;
-    text-align: center;
   }
 
   @media screen and (max-width: 512px) {
@@ -126,7 +122,6 @@ const StyledThesis = styled(Text)`
   opacity: 0.6;
   @media screen and (max-width: 768px) {
     font-size: 14px;
-    text-align: center;
   }
 
   @media screen and (max-width: 512px) {
@@ -170,18 +165,14 @@ const Container = styled.div`
 `;
 
 const Slide = styled.div`
-  display: grid;
+  display: flex;
   justify-content: center;
   align-items: center;
-  grid-template-columns: minmax(300px, auto) minmax(50vw, 1fr);
   gap: 48px;
   flex: 0 0 var(--slide-size);
   min-width: 0;
   position: relative;
   @media screen and (max-width: 768px) {
-    align-items: flex-start;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(150px, 1fr) auto;
     gap: 12px;
   }
 `;
