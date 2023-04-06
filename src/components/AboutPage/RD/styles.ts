@@ -7,7 +7,8 @@ import RDImage from '@/assets/images/dino_figma.png';
 export const StyledWrapper = styled.section`
   position: relative;
   gap: 0px;
-  width: 100vw;
+  /* width: 100vw; */
+  width: 100%;
   aspect-ratio: 1920/1277;
   overflow: hidden;
 

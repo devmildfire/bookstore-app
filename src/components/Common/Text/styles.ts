@@ -417,10 +417,11 @@ const partnerDisplayNameStyle = css<StyledTextProps>`
 
   left: 0;
   right: 0;
-  margin: 0 auto;
+  margin: auto auto 10%;
 
-  position: absolute;
-  bottom: 30px;
+  // position: absolute;
+  // bottom: 30px;
+  grid-area: 1/2;
   /* justify-self: center; */
 
   font-size: 16px;
@@ -439,7 +440,6 @@ const partnerDisplayNameStyle = css<StyledTextProps>`
 const h4Name = css<StyledTextProps>`
   ${h41Style}
   font-size: 18px;
-  margin-top: 25px;
 
   @media ${breakPoints.lg} {
     font-size: 16px;

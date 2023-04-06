@@ -53,9 +53,9 @@
 }
 
 /* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 @media screen and (max-width: 830px) {
   :root {

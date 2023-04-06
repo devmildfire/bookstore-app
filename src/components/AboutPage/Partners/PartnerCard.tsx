@@ -17,6 +17,7 @@ const StyledLogoImage = styled(Image)`
   object-fit: contain;
   margin: auto;
   object-fit: contain;
+  grid-area: 1/2;
 `;
 
 const StyledCard = styled.div`
