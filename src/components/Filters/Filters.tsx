@@ -7,6 +7,8 @@ import {
   MixerVerticalIcon,
   Cross1Icon,
   MagnifyingGlassIcon,
+  Cross2Icon,
+  ReloadIcon,
   // CaretSortIcon,
 } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
@@ -83,7 +85,6 @@ const CommandList = styled(Command.List)`
 `;
 
 const FiltersContainer = styled.div`
-  max-height: 256px;
   overflow-y: auto;
   scroll-padding-block: 8px;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -95,9 +96,6 @@ const FiltersContainer = styled.div`
 `;
 
 const CloseIcon = styled(Cross1Icon)`
-  position: absolute;
-  top: 18px;
-  right: 12px;
   cursor: pointer;
 `;
 
@@ -161,23 +159,81 @@ const SortList = styled.ul`
   padding: 12px 12px 18px;
 `;
 
-function Multiselect({ withSearch }: { withSearch?: boolean }) {
+const SelectItem = styled(Command.Item)`
+  cursor: pointer;
+`;
+
+const RemoveButton = styled.button`
+  display: flex;
+  color: var(--main-black);
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: 0.15s;
+  &:hover {
+    opacity: 0.5;
+  }
+`;
+
+const SelectList = styled.ul`
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+function Multiselect({
+  withSearch,
+  data,
+}: {
+  withSearch?: boolean;
+  data: any[];
+}) {
+  const [selected, setSelected] = useState<any[]>([]);
+
+  function handleSelect(item: any) {
+    console.log(item);
+    setSelected((prev) => [...prev, item]);
+  }
+
+  function RemoveItem(item: any) {
+    const newArray = selected.filter((i) => i !== item);
+    setSelected([...newArray]);
+  }
+
   return (
-    <StyledCommand>
-      <CommandList>
-        <CommandSeparator />
-        <Command.Empty>No results found.</Command.Empty>
-        {withSearch && (
-          <SearchContainer>
-            <CommandInput />
-            <SearchIcon />
-          </SearchContainer>
-        )}
-        <Command.Item>a</Command.Item>
-        <Command.Item>b</Command.Item>
-        <Command.Item>c</Command.Item>
-      </CommandList>
-    </StyledCommand>
+    <>
+      <StyledCommand>
+        <CommandList>
+          <CommandSeparator />
+          <Command.Empty>Нет совпадений.</Command.Empty>
+          {withSearch && (
+            <SearchContainer>
+              <CommandInput />
+              <SearchIcon />
+            </SearchContainer>
+          )}
+          <SelectList>
+            {data.map((item, idx) => (
+              <SelectItem key={idx} onSelect={() => handleSelect(item)}>
+                {item}
+              </SelectItem>
+            ))}
+          </SelectList>
+        </CommandList>
+      </StyledCommand>
+      <SelectedList>
+        {selected.map((item, idx) => (
+          <SelectedItem key={idx}>
+            <ItemText>{item}</ItemText>
+            <RemoveButton onClick={() => RemoveItem(item)}>
+              <Cross2Icon />
+            </RemoveButton>
+          </SelectedItem>
+        ))}
+      </SelectedList>
+    </>
   );
 }
 
@@ -186,6 +242,26 @@ interface FilterProps {
   value: string;
   title: string;
 }
+
+const SelectedList = styled.ul`
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+`;
+
+const SelectedItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-items: center;
+  background-color: #500000;
+  padding: 8px 10px 8px 16px;
+  border-radius: 4px;
+`;
+
+const ItemText = styled.p`
+  font-size: 12px;
+`;
 
 function Filter(props: PropsWithChildren<FilterProps>) {
   const { opened, value, title, children } = props;
@@ -207,17 +283,22 @@ function Filters() {
   return (
     <AccordionRoot type='multiple' value={opened} onValueChange={setOpened}>
       <Filter value='author' title='Автор' opened={opened}>
-        <Multiselect withSearch />
+        <Multiselect data={[2020, 2021, 2022, 2023]} withSearch />
       </Filter>
       <Filter value='type' title='Тип издания' opened={opened}>
-        <Multiselect />
+        <Multiselect data={[2020, 2021, 2022, 2023]} />
       </Filter>
       <Filter value='year' title='Год издания' opened={opened}>
-        <Multiselect />
+        <Multiselect data={[2020, 2021, 2022, 2023]} />
       </Filter>
     </AccordionRoot>
   );
 }
+
+const HeaderConainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
 function FilterDropdown({
   title,
@@ -240,8 +321,11 @@ function FilterDropdown({
           sticky='always'
           sideOffset={12}
         >
-          <DropdownLabel>{title}</DropdownLabel>
-          <CloseIcon onClick={() => setVisible(false)} />
+          <HeaderConainer>
+            <ReloadIcon />
+            <DropdownLabel>{title}</DropdownLabel>
+            <CloseIcon onClick={() => setVisible(false)} />
+          </HeaderConainer>
           <FiltersContainer>{children}</FiltersContainer>
         </DropdownContent>
       </DropdownMenu.Portal>
