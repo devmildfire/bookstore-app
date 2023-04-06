@@ -13,12 +13,7 @@ const options = {
     return [
       {
         source: '/',
-        destination: '/about',
-        permanent: true,
-      },
-      {
-        source: '/books',
-        destination: '/about',
+        destination: '/books',
         permanent: true,
       },
     ];
