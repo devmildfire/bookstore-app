@@ -10,7 +10,7 @@ export const StyledWrapper = styled.header`
   justify-items: center;
 `;
 
-export const StyledButton = styled(IconButton)<{ onClick: any }>`
+export const StyledButton = styled(IconButton)`
   position: absolute;
   right: 0;
   top: 50%;
