@@ -10,7 +10,6 @@ import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
 import BookAuthor from '@/components/BookPage/BookAuthor';
-// import SimilarBooks from '@/components/BookPage/SimilarBooks';
 import books from '@/mocks/books';
 import breakPoints from '@/utils/breakPoints';
 

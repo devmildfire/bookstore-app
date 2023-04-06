@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { Router } from 'next/router';
@@ -13,10 +13,35 @@ import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
 
+function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
+  const [isIntersecting, setIntersecting] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const element = ref.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIntersecting(entry.isIntersecting);
+      },
+      {
+        rootMargin,
+      }
+    );
+    observer.observe(element);
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [isIntersecting, ref.current, ref, rootMargin]);
+
+  return isIntersecting;
+}
+
 const MyApp: NextPage<AppProps> = (props) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
   const { value, toggleOff, toggleOn } = useToggle();
+  const intersectionRef = useRef<HTMLElement>(null);
+  const isSliderOnScreen = useOnScreen(intersectionRef);
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -28,16 +53,21 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeError', toggleOff);
       Router.events.off('routeChangeComplete', toggleOff);
     };
-  }, []);
+  }, [toggleOff, toggleOn, isSliderOnScreen]);
+
+  // console.log(intersectionRef);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
           {/* <PageLayout> */}
-          <Header />
+          <Header
+            backgroundColor={isSliderOnScreen ? '#050505' : 'var(--main-black)'}
+          />
           <>
             {value && <PageLoading />}
-            <Component {...pageProps} />
+            <Component {...pageProps} forwardedRef={intersectionRef} />
           </>
           {/* </PageLayout> */}
           <Footer />

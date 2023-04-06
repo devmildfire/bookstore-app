@@ -125,6 +125,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         <StyledDescription>
           {description.map((paragraph: string) => (
             <Text
+              key={paragraph}
               variant='text'
               component='p'
               fontWeight={400}

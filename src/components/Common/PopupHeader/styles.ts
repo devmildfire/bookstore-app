@@ -1,3 +1,4 @@
+import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import IconButton from '../IconButton';
 

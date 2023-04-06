@@ -1,7 +1,5 @@
 @import url('./fonts.css');
 @import url('./normalize.css');
-@import url('../../node_modules/swiper/swiper.min.css');
-@import url('../../node_modules/swiper/modules/pagination/pagination.min.css');
 
 :root {
   --main-red-100: rgba(147, 0, 0, 1);
@@ -59,8 +57,6 @@
   display: none;
 }
 
-
-
 @media screen and (max-width: 830px) {
   :root {
     /* --width: 580px; */
@@ -68,12 +64,6 @@
     --top-div-gap: 40px;
   }
 }
-
-
-
-
-
-
 
 html,
 body {

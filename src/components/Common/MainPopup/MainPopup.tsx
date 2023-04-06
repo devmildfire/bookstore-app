@@ -7,13 +7,14 @@ import FocusTrap from '../FocusTrap';
 import useKeyListener from '@/hooks/useKeyListener';
 import { StyledWrapper } from './styles';
 import { BasePopupProps } from '@/types/popups';
+import { PropsWithChildren } from 'react';
 
 interface MainPopupProps extends ClassNameProps, BasePopupProps {
   readonly onClose: VoidFunction;
 }
 
-const MainPopup: React.FC<MainPopupProps> = (props) => {
-  const { children, className, isOpen, onClose, isFocus = isOpen, } = props;
+const MainPopup: React.FC<PropsWithChildren<MainPopupProps>> = (props) => {
+  const { children, className, isOpen, onClose, isFocus = isOpen } = props;
 
   useKeyListener({
     onKeyDown: onClose,

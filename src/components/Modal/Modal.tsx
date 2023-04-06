@@ -17,6 +17,7 @@ import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
+import { unknown } from 'zod';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -39,13 +40,12 @@ interface BookModalState {
 
 interface ModalContextProps {
   handleOpenModal: Dispatch<SetStateAction<boolean>>;
-  handleModalState: Dispatch<SetStateAction<BookModalState>> | null;
+  handleModalState: Dispatch<SetStateAction<BookModalState>>;
 }
 
 export const ModalContext = createContext<ModalContextProps>({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  handleOpenModal: () => {},
-  handleModalState: null,
+  handleOpenModal: () => undefined,
+  handleModalState: () => undefined,
 });
 
 export const useModal = (): ModalContextProps => {
@@ -206,7 +206,7 @@ function BookModal(props: BookModalState) {
       <Buttons>
         {types.map((type: string) => {
           return (
-            <IconButtonContainer>
+            <IconButtonContainer key={type}>
               <IconButton
                 onClick={() => setSum((prev) => prev + price)}
                 type='button'

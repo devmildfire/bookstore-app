@@ -1,8 +1,16 @@
+import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import IconButton from '../../IconButton';
 import Text from '../../Text';
 
-export const StyledIconButton = styled(IconButton)`
+export const StyledIconButton = styled(IconButton)<
+  PropsWithChildren<{
+    className: string;
+    onClick: () => void;
+    onBlur: () => void;
+    onFocus: () => void;
+  }>
+>`
   color: var(--main-white-100);
 
   :hover,

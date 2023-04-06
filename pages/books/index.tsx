@@ -4,6 +4,7 @@ import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
 import Filters from '@/components/Filters';
 import books from '@/mocks/books';
+import Carousel from '@/components/Carousel';
 
 const data = Array(12)
   .fill(0)
@@ -18,16 +19,20 @@ const data = Array(12)
 //   max = Math.floor(max);
 //   return Math.floor(Math.random() * (max - min) + min);
 // };
-
-const BooksPage: NextPage = () => (
-  <HomeLayout title='Издания'>
-    {/* <Books /> */}
-    <section className='max-width'>
-      <Filters />
-      <Products data={data} />
-    </section>
-  </HomeLayout>
-);
+function BooksPage({ forwardedRef }: { forwardedRef: null }) {
+  return (
+    <>
+      <Carousel forwardedRef={forwardedRef} slides={[0, 1, 2]} />
+      <HomeLayout title='Издания'>
+        {/* <Books /> */}
+        <section className='max-width'>
+          <Filters />
+          <Products data={data} />
+        </section>
+      </HomeLayout>
+    </>
+  );
+}
 
 // export const getStaticProps = wrapper.getStaticProps(
 //   ({ dispatch }) =>

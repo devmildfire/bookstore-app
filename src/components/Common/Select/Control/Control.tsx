@@ -11,10 +11,10 @@ export interface ControlProps extends ClassNameProps {
 }
 
 const Control: React.FC<ControlProps> = (props) => {
-  const { title, className, } = props;
-  const { isOpen, } = React.useContext(stateContext);
-  const { onClose, onOpen, } = React.useContext(stateHandlersContext);
-  const { hasValue, } = React.useContext(valuesContext);
+  const { title, className } = props;
+  const { isOpen } = React.useContext(stateContext);
+  const { onClose, onOpen } = React.useContext(stateHandlersContext);
+  const { hasValue } = React.useContext(valuesContext);
   const [isFocus, setFocus] = React.useState<boolean>(false);
 
   const onFocus = React.useCallback(() => {
@@ -25,7 +25,7 @@ const Control: React.FC<ControlProps> = (props) => {
   }, []);
 
   const isActive = isOpen || isFocus || hasValue;
-  const arrowClasses = classNames({ active: isActive, });
+  const arrowClasses = classNames({ active: isActive });
   const handler = isOpen ? onClose : onOpen;
 
   useKeyListener({

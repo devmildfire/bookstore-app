@@ -3,7 +3,7 @@ import useClickAway from '@/hooks/useClickAway';
 import {
   ValuesContextProvider,
   ValuesProviderProps,
-  StateProvider
+  StateProvider,
 } from '../contexts';
 import { StyledWrapper } from './styles';
 import { SelectValue, Value } from '../types';
@@ -24,8 +24,8 @@ const SelectContainer = <
   T extends SelectValue,
   IsMulti extends boolean = false
 >(
-    props: React.PropsWithChildren<SelectContainerProps<T, IsMulti>>
-  ): React.ReactElement => {
+  props: React.PropsWithChildren<SelectContainerProps<T, IsMulti>>
+): React.ReactElement => {
   const {
     children,
     options,
@@ -36,7 +36,7 @@ const SelectContainer = <
     isMulti = false,
   } = props;
 
-  const { value: isOpen, toggleOff, toggleOn, } = useToggle();
+  const { value: isOpen, toggleOff, toggleOn } = useToggle();
 
   const [rootRef, setRootRef] = React.useState<HTMLDivElement | null>(null);
 
