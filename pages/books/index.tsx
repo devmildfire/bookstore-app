@@ -24,7 +24,6 @@ function BooksPage({ forwardedRef }: { forwardedRef: null }) {
     <>
       <Carousel forwardedRef={forwardedRef} slides={[0, 1, 2]} />
       <HomeLayout title='Издания'>
-        {/* <Books /> */}
         <section className='max-width'>
           <Filters />
           <Products data={data} />

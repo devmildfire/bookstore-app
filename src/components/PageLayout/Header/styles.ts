@@ -254,6 +254,7 @@ const NavListItem = styled.li`
 
 const NavLink = styled.a`
   &:hover {
+    -webkit-text-fill-color: var(--main-red-100);
     color: var(--main-red-100);
   }
 `;

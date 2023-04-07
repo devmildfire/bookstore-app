@@ -11,6 +11,7 @@ import styled, { StyledComponent } from 'styled-components';
 import books from '@/mocks/books';
 import { DotButton } from './DotButton';
 import Link from 'next/link';
+import breakPoints from '@/utils/breakPoints';
 
 type PropType = {
   slides: number[];
@@ -149,12 +150,18 @@ const Wrapper = styled.section`
   --slide-spacing: 16px;
   --slide-size: 100%;
   --slide-height: auto;
-  padding: 55px 5vw;
+  padding: 55px 10vw;
   background-color: #050505;
+
+  @media ${breakPoints.lg} {
+    padding: 55px 5vw;
+  }
 `;
 
 const Viewport = styled.div`
+  max-width: 1440px;
   overflow: hidden;
+  margin: 0 auto;
 `;
 
 const Container = styled.div`
@@ -166,7 +173,7 @@ const Container = styled.div`
 
 const Slide = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 48px;
   flex: 0 0 var(--slide-size);
