@@ -10,10 +10,11 @@ const StyledDescriptionContainer = styled(Container)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   max-width: 1440px;
   padding-top: 31px;
   gap: var(--containerGap);
+  margin: 0 auto;
   --containerMarginBottom: 45px;
   --containerGap: 26px;
 
@@ -64,10 +65,31 @@ const StyledDescriptionContainer = styled(Container)`
 
 const StyledButton = styled(Button)`
   width: calc(min(480px, var(--width)));
-  max-height: 62px;
-  min-height: 62px;
+  max-height: 60px;
+  min-height: 60px;
   margin-top: auto;
   min-width: 480px;
+
+  @media screen and (max-width: 1600px) {
+    max-height: 60px;
+    min-height: 60px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
+  @media ${breakPoints.xl} {
+    max-height: 60px;
+    min-height: 60px;
+    margin-top: auto;
+    min-width: 300px;
+  }
+
+  @media screen and (max-width: 1100px) {
+    max-height: 60px;
+    min-height: 60px;
+    margin-top: auto;
+    min-width: 300px;
+  }
 
   @media ${breakPoints.lg} {
     max-height: 45px;
@@ -91,22 +113,23 @@ const StyledDescription = styled(Text)`
 const StyledSection = styled('section')`
   margin-top: 0px;
   width: 100%;
+  overflow: hidden;
 `;
 
 const AboutUs = (): React.ReactElement => (
   <StyledSection>
-    <Container>
-      <Text align='center' variant='h2_1'>
-        О чём мы?
-      </Text>
-    </Container>
+    {/* <Container> */}
+    <Text align='center' variant='h2_1'>
+      О чём мы?
+    </Text>
+    {/* </Container> */}
     <Books />
     <StyledDescriptionContainer>
       <StyledDescription variant='aboutText'>
         Независимое издательство Чтиво — дитя петербургского литандеграунда и
         сети интернет, увидевшее свет в 2017 году.
       </StyledDescription>
-      <br />
+      {/* <br /> */}
       <StyledDescription variant='aboutText'>
         Мы отбираем произведения для издания вне зависимости от известности
         автора, работаем с несерийными и неформальными текстами и считаем, что

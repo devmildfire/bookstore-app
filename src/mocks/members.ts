@@ -1,12 +1,12 @@
 import { Member } from '@/types/member';
 import alenaPhoto from '../../public/images/members/AlenaKupchinskaya.png';
 import dedovichPhoto from '../../public/images/members/sergey-dedovich.png';
-import yankusPhoto from '../../public/images/members/andrey-yankus.png';
+// import yankusPhoto from '../../public/images/members/andrey-yankus.png';
 import vidyaskinaPhoto from '../../public/images/members/katerina-vidyaskina.png';
 import kurnosovaPhoto from '../../public/images/members/ekaterina-kurnosova.png';
 import kovalevskayaPhoto from '../../public/images/members/ekaterina-kovalevskaya.png';
 import malcevaPhoto from '../../public/images/members/anastasiya-malceva.png';
-import gilmanovaPhoto from '../../public/images/members/gilmanova-diana.png';
+import gilmanovaPhoto from '../../public/images/members/gilmanova-diana-2.jpg';
 import grebenschikovaPhoto from '../../public/images/members/grebenschikova-ekaterina.png';
 import kapustyakPhoto from '../../public/images/members/aleksei-kapustyak.png';
 import AleksandraYasharkina from '../../public/images/members/AleksandraYasharkina.png';
@@ -31,7 +31,7 @@ import KseniaHarina from '../../public/images/members/KseniaHarina.png';
 import DaniilRumancev from '../../public/images/members/DaniilRumancev.png';
 import AnnaDostieva from '../../public/images/members/AnnaDostieva.png';
 import ArtemNovoselov from '../../public/images/members/ArtemNovoselov.png';
-import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
+// import NikilaiJeltuhin from '../../public/images/members/NikilaiJeltuhin.png';
 import LenaSolnceva from '../../public/images/members/LenaSolnceva.png';
 
 const members: Member[] = [
@@ -43,19 +43,19 @@ const members: Member[] = [
     photo: alenaPhoto.src,
     phrase: '«Литература — это вера в любовь между рацио и эмоцио»',
   },
-  {
-    // id: 1,
-    member: 'Андрей Янкус',
-    position: 'шеф-редактор Чтива',
-    city: 'Эльдорадо',
-    photo: yankusPhoto.src,
-    phrase:
-      '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход жизни в язык, который учреждает Идеи»',
-  },
+  // {
+  //   member: 'Андрей Янкус',
+  //   position: 'шеф-редактор Чтива',
+  //   city: 'Эльдорадо',
+  //   photo: yankusPhoto.src,
+  //   phrase:
+  //    '«Писатель как тот, кто видит и слышит, — вот цель литературы: переход
+  //  жизни в язык, который учреждает Идеи»',
+  // },
   {
     // id: 2,
     member: 'Сергей Дедович',
-    position: 'шеф-редактор РД',
+    position: 'шеф-редактор',
     city: 'г. Санкт-Петербург',
     photo: dedovichPhoto.src,
     phrase:
@@ -88,11 +88,10 @@ const members: Member[] = [
   {
     // id: 6,
     member: 'Анастасия Мальцева',
-    position: 'режиссёр',
+    position: 'режиссёр буктрейлеров',
     city: 'г. Санкт-Петербург',
     photo: malcevaPhoto.src,
-    phrase:
-      '«По словам Чарльза Олсена, лучашя поэзия - это своего рода шизофрения»',
+    phrase: '???',
   },
   {
     // id: 7,
@@ -123,9 +122,9 @@ const members: Member[] = [
     // id: 10,
     member: 'Александра Яшаркина',
     position: 'ведущий верстальщик',
-    city: 'г. ???',
+    city: 'г. Ярославль',
     photo: AleksandraYasharkina.src,
-    phrase: '«Найди слово, которое любишь, и позволь ему убить себя»',
+    phrase: '«Найди слово, которое любишь, и позволь ему убить тебя»',
   },
   {
     // id: 11,
@@ -138,11 +137,11 @@ const members: Member[] = [
   {
     // id: 12,
     member: 'Лана Дорохова',
-    position: 'ведущая радио Овердрайв',
+    position: 'специалист отдела развития',
     city: 'г. Ереван',
     photo: LanaDorohova.src,
     phrase:
-      '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой. Не знаю, что ещё сказать.»',
+      '«Мне кажется, Пелевин жёлтого цвета, Толстой светло-коричневый, Достоевский тёмно-зелёный, Бунин как рябина, Набоков светло-голубой»',
   },
   {
     // id: 13,
@@ -150,8 +149,7 @@ const members: Member[] = [
     position: 'редактор',
     city: 'город',
     photo: SofiaPopova.src,
-    phrase:
-      '«Когда вы читаете, не пытайтесь угадывать, что думает автор. Думайте сами.«',
+    phrase: '???',
   },
   {
     // id: 14,
@@ -159,13 +157,13 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
     photo: MatveyDashiev.src,
-    phrase: '«Человек с хорошей книгой в руках никогда не может быть одиноким»',
+    phrase: '???',
   },
 
   {
     // id: 15,
-    member: 'Даниил Нечеев',
-    position: 'руководитель видеоотдела',
+    member: 'Даниил Нечвеев',
+    position: 'продюсер',
     city: 'г. Ереван',
     photo: DaniilNecheev.src,
     phrase: '???',
@@ -174,7 +172,7 @@ const members: Member[] = [
   {
     // id: 16,
     member: 'Анастасия Виниченко',
-    position: 'графический Дизайнер',
+    position: 'графический дизайнер',
     city: 'г. Калининград',
     photo: AnastasiyaVinichenko.src,
     phrase: '???',
@@ -186,7 +184,7 @@ const members: Member[] = [
     position: 'веб-дизайнер',
     city: 'г. Санкт-Петербург',
     photo: IlyaCherkasov.src,
-    phrase: '«Самоуничижение – форма гордыни»',
+    phrase: '???',
   },
   {
     // id: 18,
@@ -194,7 +192,7 @@ const members: Member[] = [
     position: 'СММ',
     city: 'г. Москва',
     photo: SvetlanaSharonova.src,
-    phrase: '«Писание – своего рода заклинание духов»',
+    phrase: '«В наших руках слово: скальпель бренного мира»',
   },
   {
     // id: 19,
@@ -218,16 +216,16 @@ const members: Member[] = [
     position: 'иллюстратор',
     city: 'Кудыкина Гора',
     photo: Gorynych.src,
-    phrase: '«Ты не Курт Воннегут!» ARS LONGA, VITA BREVIS',
+    phrase: '???',
   },
   {
     // id: 22,
     member: 'Валерия Арсибекова',
     position: 'специалист по развитию',
-    city: 'г. ???',
+    city: 'г. Санкт-Петербург',
     photo: ArsibekovaValeria.src,
     phrase:
-      '«Литература изъята из законов тления. Она одна не признаёт смерти»',
+      '«Открыть сердце новой книге это как открыться для новой любви: страшно, рискованно и никогда не знаешь, что ждёт тебя в конце. Но это определённо стоит того»',
   },
   {
     // id: 23,
@@ -244,8 +242,7 @@ const members: Member[] = [
     position: 'редактор',
     city: 'г. Калуга',
     photo: AnnaVolcova.src,
-    phrase:
-      '«Я не думаю, что `филология спасёт мир`. Его способна спасти только любовь. Филология же, как её ни трактовать, любви не противоречит, а, скорее, способна её поддержать»',
+    phrase: '???',
   },
 
   {
@@ -260,7 +257,7 @@ const members: Member[] = [
   {
     // id: 26,
     member: 'Любовь Невская',
-    position: 'кинооператор',
+    position: 'оператор-постановщик буктрейлеров',
     city: 'г. Санкт-Петербург',
     photo: LubovNevskaya.src,
     phrase: '???',
@@ -299,8 +296,7 @@ const members: Member[] = [
     position: 'специалист по развитию',
     city: 'г. Санкт-Петербург',
     photo: AnnaDostieva.src,
-    phrase:
-      '«Как бы тонко и любовно ни анализировали и ни разъясняли рассказ, всегда найдется ум, оставшийся безучастным, и спина, по которой не пробежит холодок»',
+    phrase: '???',
   },
   {
     // id: 31,
@@ -309,16 +305,16 @@ const members: Member[] = [
     city: 'г. Пермь',
     photo: ArtemNovoselov.src,
     phrase:
-      '«Хорошая книжка как хорошая гантель - не вдруг и осилишь, но прокачивает серьёзно»',
+      '«Хорошая книга, как хорошая гантель — не вдруг и осилишь, но прокачивает серьёзно»',
   },
-  {
-    // id: 32,
-    member: 'Николай Желтухин',
-    position: 'звукорежиссёр',
-    city: 'г. Ереван',
-    photo: NikilaiJeltuhin.src,
-    phrase: '«Прощай, цыганка Сэра»',
-  },
+  // {
+  //   // id: 32,
+  //   member: 'Николай Желтухин',
+  //   position: 'звукорежиссёр',
+  //   city: 'г. Ереван',
+  //   photo: NikilaiJeltuhin.src,
+  //   phrase: '«Прощай, цыганка Сэра»',
+  // },
   {
     // id: 504,
     member: 'Лена Солнцева',
