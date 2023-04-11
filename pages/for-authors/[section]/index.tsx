@@ -9,59 +9,34 @@ import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
+import SendNovel from '@/components/forAuthorsPage/SendNovel';
 
 // const lines = sidebarItems.map((item) => item.link.split('/')[0]);
-const lines = sidebarItems.map(
-  (item) => item.link.split('/')[item.link.split('/').length - 1]
-);
+// const lines = sidebarItems.map(
+//   (item) => item.link.split('/')[item.link.split('/').length - 1]
+// );
 
-const LoremP = () => {
-  return (
-    <p>
-      {/* Lorem ipsum, dolor sit amet consectetur adipisicing elit. Explicabo
-      voluptatibus, asperiores culpa non animi amet, necessitatibus repellat
-      accusamus veniam veritatis nesciunt ipsa, ab voluptatem accusantium
-      quaerat enim quo ullam! Illum! */}
-
-      {lines}
-    </p>
-  );
-};
-
-const IpsumP = () => {
-  return (
-    <p>
-      Ipsum, dolor sit amet consectetur adipisicing elit. Ea architecto ipsa
-      officia quisquam veniam omnis enim quia, id voluptate, ullam qui quae
-      dolores quaerat doloribus non voluptatem vero magni totam!
-    </p>
-  );
-};
-
-// const DolorP = () => {
+// const IpsumP = () => {
 //   return (
 //     <p>
-//       Dolor sit amet consectetur adipisicing elit. Ea architecto ipsa officia
-//       quisquam veniam omnis enim quia, id voluptate, ullam qui quae dolores
-//       quaerat doloribus non voluptatem vero magni totam!
+//       Ipsum, dolor sit amet consectetur adipisicing elit. Ea architecto ipsa
+//       officia quisquam veniam omnis enim quia, id voluptate, ullam qui quae
+//       dolores quaerat doloribus non voluptatem vero magni totam!
 //     </p>
 //   );
 // };
 
 const abzac = <Abzac />;
 const sendManuscript = <SendManuscript />;
-const lorem = <LoremP />;
-const ipsum = <IpsumP />;
-// const dolor = <DolorP />;
+const sendNovel = <SendNovel />;
 
 const lookUp = {
-  main: lorem,
-  'send-novel': ipsum,
+  'send-novel': sendNovel,
   'send-manuscript': sendManuscript,
   abzac,
 };
 
-type routeType = 'main' | 'send-novel' | 'send-manuscript' | 'abzac';
+type routeType = 'send-novel' | 'send-manuscript' | 'abzac';
 
 const getComponent = (route: routeType): typeof abzac => {
   return lookUp[route];

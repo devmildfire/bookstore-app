@@ -1,0 +1,40 @@
+import React from 'react';
+import Text from '@/components/Common/Text';
+import {
+  // IconsDiv,
+  NovelDiv,
+  TextDiv,
+  DinoPawsBook,
+  // OneIconDiv,
+  // ReqDiv,
+  // TextReqDiv,
+} from './styles';
+import dinoPaws from '@/assets/images/dinoPaws.svg';
+
+const firstPar =
+  'Мы редактируем, иллюстрируем и публикуем ваши рассказы в литературном журнале арт-конгрегации Русский Динозавр — нашего творческого объединения мастеров арт-контента. Публикации тиражируются в соцсетях и на партнёрских инфоресурсах. Двенадцать избранных рассказов года попадают в ежегодник «Могучий Русский Динозавр».';
+// const secondPar =
+//   'Мы предлагаем роялти 50% от всех чистых доходов с продаж всех изданий авторского текста:';
+
+const SendNovel = (): React.ReactElement => {
+  return (
+    <NovelDiv>
+      <Text variant='h3_1Man' className='title'>
+        Отправить рассказ
+      </Text>
+      {/* <TextDiv > */}
+      <Text className='text' variant='manText'>
+        {firstPar}
+      </Text>
+      <Text className='link' variant='h3_1SendMan' align='start'>
+        {'отправить рассказ можно на почту '}
+        <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+      </Text>
+      {/* <Text variant='manText'>{secondPar}</Text> */}
+      {/* </TextDiv> */}
+      <DinoPawsBook as={dinoPaws as any} className='picture' />
+    </NovelDiv>
+  );
+};
+
+export default SendNovel;

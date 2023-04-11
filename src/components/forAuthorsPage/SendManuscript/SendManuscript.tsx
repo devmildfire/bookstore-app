@@ -39,7 +39,7 @@ const MediaIcons = (): React.ReactElement => {
         return (
           <OneIconDiv key={type.name}>
             <Icon as={type.icon as any} />
-            <Text variant='manText'>{type.name}</Text>
+            <Text variant='manIcon'>{type.name}</Text>
           </OneIconDiv>
         );
       })}
@@ -72,14 +72,14 @@ const Conditions = (): React.ReactElement => {
         {'отправить рукопись можно на почту '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
+      <Text variant='h3_1Bel' align='start'>
+        {'Верим в вас '}
+      </Text>
       <Text variant='h3_1SendMan' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
         <a href=' '>литжурнале Русского Динозавра</a>
-      </Text>
-      <Text variant='h3_1Bel' align='start'>
-        {'Верим в вас '}
       </Text>
     </ReqDiv>
   );

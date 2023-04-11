@@ -16,6 +16,7 @@ export type Variant =
   | 'h3_4'
   | 'text'
   | 'manText'
+  | 'manIcon'
   | 'aboutText'
   | 'text_italic'
   | 'paddedText'

@@ -593,6 +593,10 @@ const h31ManuscriptStyle = css<StyledTextProps>`
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
 
+  @media screen and (max-width: 1600px) {
+    font-size: 50px;
+  }
+
   @media ${breakPoints.xl} {
     font-size: 50px;
   }
@@ -619,7 +623,7 @@ const h31ManuscriptStyle = css<StyledTextProps>`
 
 const ManuscriptTextStyle = css<StyledTextProps>`
   ${textStyle}
-  font-size: 24px;
+  font-size: 20px;
 
   @media ${breakPoints.xl} {
     font-size: 20px;
@@ -639,6 +643,38 @@ const ManuscriptTextStyle = css<StyledTextProps>`
 
   @media ${breakPoints.md} {
     font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const ManuscriptIconStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 16px;
   }
 
   @media ${breakPoints.sm} {
@@ -679,6 +715,10 @@ const h31SendManStyle = css<StyledTextProps>`
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
 
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
   @media ${breakPoints.xl} {
     font-size: 20px;
   }
@@ -692,10 +732,11 @@ const h31SendManStyle = css<StyledTextProps>`
   }
 
   @media screen and (max-width: 900px) {
+    font-size: 14px;
   }
 
   @media ${breakPoints.md} {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   @media ${breakPoints.sm} {
@@ -751,6 +792,7 @@ const styles: Record<
   manRec: h31ManRecStyle,
   text: textStyle,
   aboutText: aboutTextStyle,
+  manIcon: ManuscriptIconStyle,
   manText: ManuscriptTextStyle,
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
@@ -788,6 +830,7 @@ export const tagMap: Record<Variant, string> = {
   aboutText: 'p',
   text_italic: 'p',
   manText: 'p',
+  manIcon: 'p',
   paddedText: 'p',
   buttonText: 'p',
   lJbuttonText: 'p',
