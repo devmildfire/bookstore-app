@@ -11,21 +11,6 @@ import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
 
-// const lines = sidebarItems.map((item) => item.link.split('/')[0]);
-// const lines = sidebarItems.map(
-//   (item) => item.link.split('/')[item.link.split('/').length - 1]
-// );
-
-// const IpsumP = () => {
-//   return (
-//     <p>
-//       Ipsum, dolor sit amet consectetur adipisicing elit. Ea architecto ipsa
-//       officia quisquam veniam omnis enim quia, id voluptate, ullam qui quae
-//       dolores quaerat doloribus non voluptatem vero magni totam!
-//     </p>
-//   );
-// };
-
 const abzac = <Abzac />;
 const sendManuscript = <SendManuscript />;
 const sendNovel = <SendNovel />;
@@ -102,6 +87,9 @@ const UnderSection = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    //  это свойство убирает меню навигации в мобильной версии
+    display: none;
+
     --navHeigh: 366px;
     --navWidth: 100%;
   }

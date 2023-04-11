@@ -121,6 +121,9 @@ export const NavDiv = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    //  это свойство убирает меню навигации в мобильной версии
+    display: none;
+
     --navWidth: 100%;
     background: linear-gradient(
         346.55deg,
