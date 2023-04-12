@@ -529,7 +529,15 @@ const sideNavItemStyle = css<StyledTextProps>`
   ${textStyle}
   font-size: 24px;
 
+  @media screen and (max-width: 1600px) {
+    font-size: 20px;
+  }
+
   @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
     font-size: 20px;
   }
 

@@ -64,9 +64,19 @@ export const LinkDiv = styled.div`
       rgba(0, 0, 0, 0.3);
   }
 
+  @media screen and (max-width: 1600px) {
+    --linkDivHeight: 65px;
+    padding-left: 50px;
+  }
+
   @media ${breakPoints.xl} {
     --linkDivHeight: 65px;
     padding-left: 50px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    --linkDivHeight: 60px;
+    padding-left: 41px;
   }
 
   @media ${breakPoints.lg} {
@@ -109,8 +119,16 @@ export const NavDiv = styled.div`
   width: var(--navWidth);
   gap: 10px;
 
+  @media screen and (max-width: 1600px) {
+    --navWidth: 338px;
+  }
+
   @media ${breakPoints.xl} {
     --navWidth: 338px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    --navWidth: 314px;
   }
 
   @media ${breakPoints.lg} {

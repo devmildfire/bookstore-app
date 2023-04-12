@@ -10,24 +10,18 @@ const NovelDiv = styled.div`
 
   .text {
     padding-top: 88px;
-    padding-bottom: 84px;
+    padding-bottom: 64px;
     grid-area: text;
-    align-self: center;
   }
 
   .picture {
     grid-area: picture;
-    /* align-self: center; */
     justify-self: center;
   }
 
   .link {
     grid-area: link;
     align-self: center;
-  }
-
-  * {
-    outline: 1px solid red;
   }
 
   span,
@@ -41,6 +35,7 @@ const NovelDiv = styled.div`
     'text picture'
     'link picture';
   column-gap: 142px;
+  column-gap: 6vw;
   row-gap: 0px;
 
   --padding-top: 100px;
@@ -57,8 +52,17 @@ const NovelDiv = styled.div`
     --padding-right: 40px;
     --padding-bottom: 100px;
 
-    column-gap: 75px;
-    /* row-gap: 60px; */
+    grid-template-areas:
+      'title picture'
+      'text picture'
+      'link picture';
+
+    column-gap: 50px;
+
+    /* .picture {
+      grid-area: picture;
+      justify-self: center;
+    } */
   }
 
   @media ${breakPoints.xl} {
@@ -67,8 +71,20 @@ const NovelDiv = styled.div`
     --padding-right: 40px;
     --padding-bottom: 100px;
 
-    column-gap: 75px;
+    grid-template-areas:
+      'title title'
+      'text picture'
+      'link picture';
+
+    column-gap: 70px;
     /* row-gap: 60px; */
+
+    .text {
+      padding-top: 95px;
+      padding-bottom: 39px;
+      grid-area: text;
+      /* align-self: center; */
+    }
   }
 
   @media screen and (max-width: 1200px) {
@@ -80,7 +96,7 @@ const NovelDiv = styled.div`
     --padding-top: 90px;
     --padding-left: 14px;
     --padding-right: 20px;
-    --padding-bottom: 80px;
+    --padding-bottom: 100px;
 
     column-gap: 35px;
     /* row-gap: 60px; */
@@ -98,13 +114,28 @@ const NovelDiv = styled.div`
       'link'
       'picture';
 
-    --padding-top: 90px;
-    --padding-left: 14px;
-    --padding-right: 20px;
-    --padding-bottom: 80px;
+    --padding-top: 50px;
+    --padding-left: 31px;
+    --padding-right: 29px;
+    --padding-bottom: 70px;
 
     column-gap: 35px;
     /* row-gap: 60px; */
+
+    .text {
+      padding-top: 30px;
+      padding-bottom: 39px;
+      padding-left: 5vw;
+      padding-right: 5vw;
+      grid-area: text;
+      /* align-self: center; */
+    }
+
+    .title,
+    .link {
+      padding-left: 5vw;
+      padding-right: 5vw;
+    }
   }
 
   @media ${breakPoints.md} {
@@ -114,19 +145,50 @@ const NovelDiv = styled.div`
       'link'
       'picture';
 
-    --padding-top: 90px;
+    --padding-top: 50px;
     --padding-left: 31px;
     --padding-right: 29px;
-    --padding-bottom: 80px;
+    --padding-bottom: 70px;
 
     column-gap: 10px;
     /* row-gap: 30px; */
+
+    .text {
+      padding-top: 30px;
+      padding-bottom: 30px;
+      padding-left: 5vw;
+      padding-right: 5vw;
+      grid-area: text;
+      /* align-self: center; */
+    }
   }
 
   @media ${breakPoints.smd} {
+    .text {
+      padding-top: 30px;
+      padding-bottom: 30px;
+      padding-left: 5vw;
+      padding-right: 5vw;
+      grid-area: text;
+      /* align-self: center; */
+    }
   }
 
   @media ${breakPoints.sm} {
+    .text {
+      padding-top: 30px;
+      padding-bottom: 30px;
+      padding-left: 0vw;
+      padding-right: 0vw;
+      grid-area: text;
+      /* align-self: center; */
+    }
+
+    .title,
+    .link {
+      padding-left: 0vw;
+      padding-right: 0vw;
+    }
   }
 `;
 
@@ -201,48 +263,44 @@ const IconsDiv = styled.div`
 `;
 
 const DinoPawsBook = styled.svg`
-  /* * {
-    outline: none;
-  }
-
-  color: var(--main-white-100);
-  transition: all 0.3s ease-in-out;
-
-  :hover {
-    color: var(--main-red-100);
-  } */
-
   --size: 528px;
 
   /* height: var(--size); */
-  width: var(--size);
+  /* width: var(--size); */
+  width: 27.5vw;
   /* height: auto; */
 
   @media screen and (max-width: 1600px) {
-    --size: 444px;
+    padding-top: 30px;
+    width: 444px;
   }
 
   @media ${breakPoints.xl} {
-    --size: 444px;
+    /* --size: 444px; */
+    padding-top: 90px;
+    width: 30vw;
+    /* width: 100%; */
+    /* padding: 30px 5vw 0px; */
   }
 
   @media screen and (max-width: 1200px) {
-    --size: 297px;
+    padding-top: 90px;
+    width: 297px;
   }
 
   @media ${breakPoints.lg} {
-    --size: 297px;
+    width: 100%;
+    padding: 30px 5vw 0px;
   }
 
   @media ${breakPoints.md} {
-    /* --size: 68px; */
   }
 
   @media ${breakPoints.smd} {
   }
 
   @media ${breakPoints.sm} {
-    --size: 252px;
+    padding: 50px 0vw 0px;
   }
 `;
 

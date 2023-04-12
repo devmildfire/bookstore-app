@@ -75,8 +75,16 @@ const UnderSection = styled.div`
     ),
     var(--main-black);
 
+  @media screen and (max-width: 1600px) {
+    --navWidth: 338px;
+  }
+
   @media ${breakPoints.xl} {
     --navWidth: 338px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    --navWidth: 314px;
   }
 
   @media ${breakPoints.lg} {
