@@ -5,6 +5,8 @@ import React, {
   useRef,
   KeyboardEvent as ReactKeyEvent,
   ReactElement,
+  PropsWithChildren,
+  RefObject,
 } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -97,6 +99,7 @@ function Row({ row, data }: RowProps) {
   const [preview, setPreview] = useState<Book>();
   const [isOpen, setIsOpen] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const [width] = useScreenSize();
   const router = useRouter();
   const REDIRECT_ON_CLICK_DISPLAY_WIDTH = 768;
@@ -175,10 +178,11 @@ function Row({ row, data }: RowProps) {
               </DescriptionBox>
               <Button type='button'>Познать</Button>
             </BookDescriptionContainer>
-            <VideoContainer>
+            <VideoContainer ref={videoContainerRef}>
               <Video autoPlay muted loop>
-                <source src='video/preview.mp4' />
+                <source src='video/composition.mp4' />
               </Video>
+              <Noise containerRef={videoContainerRef} />
             </VideoContainer>
             <CloseButton onClick={close} type='button'>
               <CloseIcon />
@@ -188,6 +192,106 @@ function Row({ row, data }: RowProps) {
       </div>
     </RowItem>
   );
+}
+
+const Canvas = styled.canvas`
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.2;
+`;
+
+function Noise({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
+  useEffect(() => {
+    let canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D;
+
+    let wWidth: number, wHeight: number;
+
+    const noiseData: ImageData[] = [];
+    let frame = 0;
+
+    let loopTimeout: number;
+
+    // Create Noise
+    const createNoise = () => {
+      const idata = ctx.createImageData(wWidth, wHeight);
+      const buffer32 = new Uint32Array(idata.data.buffer);
+      const len = buffer32.length;
+
+      for (let i = 0; i < len; i++) {
+        if (Math.random() < 0.5) {
+          buffer32[i] = 0xff000000;
+        }
+      }
+
+      noiseData.push(idata);
+    };
+
+    // Play Noise
+    const paintNoise = () => {
+      if (frame === 9) {
+        frame = 0;
+      } else {
+        frame++;
+      }
+
+      ctx.putImageData(noiseData[frame], 0, 0);
+    };
+
+    // Loop
+    const loop = () => {
+      paintNoise();
+
+      loopTimeout = window.setTimeout(() => {
+        window.requestAnimationFrame(loop);
+      }, 1000 / 25);
+    };
+
+    // Setup
+    const setup = () => {
+      wWidth = (containerRef.current as HTMLDivElement).offsetWidth;
+      wHeight = (containerRef.current as HTMLDivElement).offsetHeight;
+
+      canvas.width = wWidth;
+      canvas.height = wHeight;
+
+      for (let i = 0; i < 10; i++) {
+        createNoise();
+      }
+
+      loop();
+    };
+
+    // Reset
+    let resizeThrottle: number;
+    const reset = () => {
+      window.addEventListener(
+        'resize',
+        () => {
+          window.clearTimeout(resizeThrottle);
+
+          resizeThrottle = window.setTimeout(() => {
+            window.clearTimeout(loopTimeout);
+            setup();
+          }, 200);
+        },
+        false
+      );
+    };
+
+    // Init
+    const init = (() => {
+      canvas = document.querySelector('.noise') as HTMLCanvasElement;
+      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+      setup();
+    })();
+  }, []);
+  return <Canvas className='noise' />;
 }
 
 interface GridProps {
