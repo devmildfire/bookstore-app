@@ -35,7 +35,7 @@ import useScrollTo from '@/hooks/useScrollTo';
 const VideoContainer = styled.div`
   display: flex;
   position: relative;
-  min-width: 60vw;
+  width: 60vw;
   min-height: 100%;
   overflow: hidden;
   background-image: linear-gradient(
@@ -45,7 +45,7 @@ const VideoContainer = styled.div`
   );
   background-blend-mode: overlay;
   @media screen and (max-width: 1024px) {
-    min-width: 100vw;
+    width: 100%;
     min-height: 50vh;
     background-image: linear-gradient(
       0deg,
