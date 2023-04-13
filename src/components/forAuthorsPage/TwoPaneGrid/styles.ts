@@ -3,13 +3,10 @@ import breakPoints from '@/utils/breakPoints';
 
 export const GridDiv = styled.div`
   display: grid;
-  width: 100vw;
+  width: 100%;
   grid-template-rows: 1fr;
-  /* grid-template-columns: fit-content 1fr; */
-  /* grid-template-columns: 250px 1fr; */
   grid-template-columns: min-content 1fr;
-  /* column-gap: 20px; */
-
+  
   @media ${breakPoints.xl} {
   }
 

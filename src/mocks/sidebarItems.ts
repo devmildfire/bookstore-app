@@ -6,7 +6,7 @@ const sidebarItems: sidebarItem[] = [
     link: '/for-authors/send-manuscript',
   },
   {
-    title: 'Отправить рассказ для литжурнала',
+    title: 'Отправить материал в литжурнал РД',
     link: '/for-authors/send-novel',
   },
   {
