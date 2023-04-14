@@ -7,5 +7,5 @@
 </svg> -->
 
 <svg viewBox="0 0 100 100" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 100 L33 40 L40 70 L100 0" stroke="#DCDCDC" stroke-width="2" stroke-linecap="butt"/>
+<path d="M0 100 L33 40 L40 70 L100 0" stroke="#DCDCDC" stroke-width="1" stroke-linecap="butt"/>
 </svg>
