@@ -1,9 +1,14 @@
-import React, { PropsWithChildren, ReactElement, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  ReactElement,
+  SetStateAction,
+  createContext,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
-  TriangleDownIcon,
   MixerVerticalIcon,
   Cross1Icon,
   MagnifyingGlassIcon,
@@ -13,17 +18,18 @@ import {
 } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
+import { useContext } from 'react';
 
 const DropdownContent = styled(DropdownMenu.Content)`
   position: relative;
   background-color: rgba(30, 30, 30, 0.6);
-  padding: 15px 12px 20px;
+  padding: 35px 50px;
   border-radius: 8px;
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: clamp(256px, 30vw, 512px);
+  width: clamp(256px, 100vw, 755px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
 `;
 
@@ -43,7 +49,7 @@ const DropdownTrigger = styled(DropdownMenu.Trigger)`
 
 const DropdownLabel = styled(DropdownMenu.Label)`
   text-align: center;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   padding-bottom: 7px;
 `;
 
@@ -52,7 +58,7 @@ const AccordionTrigger = styled(Accordion.Trigger)`
   text-align: left;
   margin: 0;
   padding: 6px 12px;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   font-weight: 400;
   display: flex;
   align-items: center;
@@ -72,16 +78,16 @@ const AccordionRoot = styled(Accordion.Root)`
 
 const StyledCommand = styled(Command)`
   background-color: #121212;
-  border-radius: 0 0 4px 4px;
+  border-radius: 4px;
   display: flex;
   width: 100%;
 `;
 
 const CommandList = styled(Command.List)`
   width: 100%;
-  padding: 0px 12px 6px 12px;
+  padding: 6px 12px;
   color: #dcdcdc;
-  font-size: clamp(10px, 1vw, 14px); ;
+  font-size: clamp(12px, 2vw, 16px); ;
 `;
 
 const FiltersContainer = styled.div`
@@ -107,7 +113,7 @@ const CommandInput = styled(Command.Input)`
   background-color: #555;
   border: none;
   border-radius: 4px;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   padding: 4px 8px;
   color: #dcdcdc;
   width: -content;
@@ -139,6 +145,7 @@ const Triggers = styled.div`
   width: 100%;
   max-width: 755px;
   height: auto;
+  max-height: 66px;
   margin: 62px 0;
 `;
 
@@ -155,12 +162,18 @@ const SortList = styled.ul`
   background-color: #121212;
   margin: 0;
   list-style: none;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   padding: 12px 12px 18px;
 `;
 
 const SelectItem = styled(Command.Item)`
   cursor: pointer;
+  transition: 0.15s;
+  font-variant-numeric: tabular-nums;
+  :hover {
+    color: var(--main-red-100);
+    text-decoration: underline;
+  }
 `;
 
 const RemoveButton = styled.button`
@@ -183,39 +196,51 @@ const SelectList = styled.ul`
   gap: 8px;
 `;
 
-function Multiselect({
-  withSearch,
-  data,
-}: {
+const CommandTitle = styled.span`
+  display: inline-flex;
+  padding-bottom: 6px;
+`;
+
+type MultiselectProps = {
   withSearch?: boolean;
-  data: any[];
-}) {
-  const [selected, setSelected] = useState<any[]>([]);
+  title: string;
+};
 
-  function handleSelect(item: any) {
-    console.log(item);
-    setSelected((prev) => [...prev, item]);
-  }
+function Multiselect(props: MultiselectProps) {
+  const { title, withSearch } = props;
+  const initialData = ['2020', '2021', '2022', '2023'];
+  const [selected, setSelected] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[]>(initialData);
 
-  function RemoveItem(item: any) {
-    const newArray = selected.filter((i) => i !== item);
-    setSelected([...newArray]);
-  }
+  const handleSelect = (value: string) => {
+    const newSelected = [...selected, value].sort();
+    const newOptions = options.filter((option) => value !== option).sort();
+    setSelected(newSelected);
+    setOptions(newOptions);
+  };
+
+  const handleRemove = (value: string) => {
+    const newOptions = [...options, value].sort();
+    const newSelected = selected.filter((select) => value !== select).sort();
+    setSelected(newSelected);
+    setOptions(newOptions);
+  };
 
   return (
     <>
-      <StyledCommand>
+      <StyledCommand label={title}>
         <CommandList>
+          <CommandTitle>{title}</CommandTitle>
           <CommandSeparator />
-          <Command.Empty>Нет совпадений.</Command.Empty>
           {withSearch && (
             <SearchContainer>
               <CommandInput />
               <SearchIcon />
             </SearchContainer>
           )}
+          <Command.Empty>Выбраны все фильтры.</Command.Empty>
           <SelectList>
-            {data.map((item, idx) => (
+            {options.map((item, idx) => (
               <SelectItem key={idx} onSelect={() => handleSelect(item)}>
                 {item}
               </SelectItem>
@@ -225,9 +250,9 @@ function Multiselect({
       </StyledCommand>
       <SelectedList>
         {selected.map((item, idx) => (
-          <SelectedItem key={idx}>
+          <SelectedItem onClick={() => handleRemove(item)} key={idx}>
             <ItemText>{item}</ItemText>
-            <RemoveButton onClick={() => RemoveItem(item)}>
+            <RemoveButton>
               <Cross2Icon />
             </RemoveButton>
           </SelectedItem>
@@ -235,12 +260,6 @@ function Multiselect({
       </SelectedList>
     </>
   );
-}
-
-interface FilterProps {
-  opened: string[];
-  value: string;
-  title: string;
 }
 
 const SelectedList = styled.ul`
@@ -257,60 +276,103 @@ const SelectedItem = styled.li`
   background-color: #500000;
   padding: 8px 10px 8px 16px;
   border-radius: 4px;
+  cursor: pointer;
 `;
 
 const ItemText = styled.p`
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
 `;
 
-function Filter(props: PropsWithChildren<FilterProps>) {
-  const { opened, value, title, children } = props;
-  return (
-    <Accordion.Item value={value}>
-      <Accordion.Header>
-        <AccordionTrigger open={opened.includes(value)}>
-          {title}
-          <TriangleDownIcon />
-        </AccordionTrigger>
-      </Accordion.Header>
-      <Accordion.Content>{children}</Accordion.Content>
-    </Accordion.Item>
-  );
-}
-
 function Filters() {
-  const [opened, setOpened] = useState(['']);
   return (
-    <AccordionRoot type='multiple' value={opened} onValueChange={setOpened}>
-      <Filter value='author' title='Автор' opened={opened}>
-        <Multiselect data={[2020, 2021, 2022, 2023]} withSearch />
-      </Filter>
-      <Filter value='type' title='Тип издания' opened={opened}>
-        <Multiselect data={[2020, 2021, 2022, 2023]} />
-      </Filter>
-      <Filter value='year' title='Год издания' opened={opened}>
-        <Multiselect data={[2020, 2021, 2022, 2023]} />
-      </Filter>
-    </AccordionRoot>
+    <>
+      <Multiselect title='Автор' withSearch />
+      <Multiselect title='Тип издания' />
+      <Multiselect title='Год издания' />
+    </>
   );
 }
 
 const HeaderConainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
-function FilterDropdown({
-  title,
-  icon,
-  align,
-  children,
-}: PropsWithChildren<{
+type IconButtonProps = {
+  icon: ReactElement;
+  handleClick: (...args: any) => void;
+};
+
+const StyledIconButton = styled.button`
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  color: var(--main-white-100);
+  transition: 0.15s;
+  position: relative;
+  :hover {
+    opacity: 0.5;
+  }
+  :before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+`;
+
+function IconButton({ icon, handleClick }: IconButtonProps) {
+  return <StyledIconButton onClick={handleClick}>{icon}</StyledIconButton>;
+}
+
+type FilterDropDownProps = PropsWithChildren<{
   title: string;
   icon: ReactElement;
   align: 'start' | 'center' | 'end';
-}>) {
+}>;
+
+type FilterContextProps = {
+  handleRemove: (value: string) => void;
+  handleSelect: (value: string) => void;
+  setOptions: SetStateAction<unknown>; // TODO @sergromm убрать unknown и any, использовать более точные типы.
+  selected: any[];
+  options: any[];
+};
+
+const FilterContext = createContext<FilterContextProps>({
+  handleRemove: () => undefined,
+  handleSelect: () => undefined,
+  setOptions: () => undefined,
+  selected: [],
+  options: [],
+});
+
+export const useFilter = () => {
+  const currentFilterContext = useContext(FilterContext);
+
+  if (!currentFilterContext) {
+    throw new Error('useFilter has to be used within <ModalFilter.Provider>');
+  }
+
+  return currentFilterContext;
+};
+
+function FilterDropdown({ title, icon, align, children }: FilterDropDownProps) {
   const [visible, setVisible] = useState(false);
+
+  const handleResetFilters = () => {
+    // setSelected([]);
+    // setOptions(initialData);
+  };
+
+  function handleReset<T extends () => undefined>(callback: T) {
+    callback();
+  }
   return (
     <DropdownMenu.Root modal={false} open={visible} onOpenChange={setVisible}>
       <DropdownTrigger>{icon}</DropdownTrigger>
@@ -322,10 +384,18 @@ function FilterDropdown({
           sideOffset={12}
         >
           <HeaderConainer>
-            <ReloadIcon />
+            <IconButton
+              icon={<ReloadIcon />}
+              handleClick={handleResetFilters}
+            />
+
             <DropdownLabel>{title}</DropdownLabel>
-            <CloseIcon onClick={() => setVisible(false)} />
+            <IconButton
+              icon={<CloseIcon />}
+              handleClick={() => setVisible(false)}
+            />
           </HeaderConainer>
+
           <FiltersContainer>{children}</FiltersContainer>
         </DropdownContent>
       </DropdownMenu.Portal>
