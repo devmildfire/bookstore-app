@@ -3,49 +3,51 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 const ContentDiv = styled.div`
-  * {
+  /* * {
     outline: 1px solid red;
-  }
+  } */
+
+  grid-area: content;
 
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 60px;
 
-  --padding-top: 100px;
-  --padding-sides: 235px;
-  --padding-bottom: 100px;
+  padding-top: 96px;
+  /* padding-right: 3vw; */
+  padding-bottom: 130px;
 
-  /* padding: var(--padding-top) var(--padding-sides) var(--padding-bottom); */
-
-  @media screen and (max-width: 1900px) {
-    --padding-top: 100px;
-    --padding-sides: 96px;
-    --padding-bottom: 200px;
+  @media screen and (max-width: 1600px) {
+    padding-top: 96px;
+    /* padding-right: 3vw; */
+    padding-bottom: 110px;
+    gap: 50px;
   }
 
   @media ${breakPoints.xl} {
-    --padding-top: 100px;
-    --padding-sides: 96px;
-    --padding-bottom: 200px;
+    padding-top: 96px;
+    /* padding-right: 3vw; */
+    padding-bottom: 110px;
   }
 
   @media screen and (max-width: 1200px) {
-    --padding-top: 90px;
-    --padding-sides: 106px;
-    --padding-bottom: 73px;
+    padding-top: 75px;
+    /* padding-right: 3vw; */
+    padding-bottom: 110px;
   }
 
   @media ${breakPoints.lg} {
-    --padding-top: 90px;
-    --padding-sides: 106px;
-    --padding-bottom: 73px;
+    padding-top: 75px;
+    padding-right: 3vw;
+    padding-bottom: 110px;
   }
 
   @media ${breakPoints.md} {
-    --padding-top: 57px;
-    --padding-sides: 23px;
-    --padding-bottom: 50px;
-    gap: 16px;
+    padding-top: 34px;
+    padding-right: 0vw;
+    padding-bottom: 50px;
+
+    /* gap: 16px; */
   }
 
   @media ${breakPoints.smd} {
@@ -58,7 +60,7 @@ const ContentDiv = styled.div`
 const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 35px;
 
   /* @media ${breakPoints.xl} {
     gap: 50px;
@@ -81,17 +83,23 @@ const TextDiv = styled.div`
 
 const IconsDiv = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
+  gap: 65px;
+
+  @media screen and (max-width: 1600px) {
+    gap: 30px;
+  }
 
   @media ${breakPoints.xl} {
+    gap: 30px;
   }
 
   @media ${breakPoints.lg} {
   }
 
   @media ${breakPoints.md} {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 33px;
   }
 
@@ -105,6 +113,7 @@ const IconsDiv = styled.div`
 const Icon = styled.svg`
   color: var(--main-white-100);
   transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
 
   :hover {
     color: var(--main-red-100);
@@ -118,11 +127,15 @@ const Icon = styled.svg`
   @media ${breakPoints.xl} {
   }
 
+  @media screen and (max-width: 1200px) {
+    --size: 60px;
+  }
+
   @media ${breakPoints.lg} {
+    --size: 60px;
   }
 
   @media ${breakPoints.md} {
-    --size: 68px;
   }
 
   @media ${breakPoints.smd} {
@@ -134,21 +147,28 @@ const Icon = styled.svg`
 
 const OneIconDiv = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  /* justify-content: space-between; */
 
-  gap: 32px;
+  gap: 50px;
+
+  @media screen and (max-width: 1600px) {
+    gap: 33px;
+  }
 
   @media ${breakPoints.xl} {
-    gap: 24px;
+    gap: 33px;
   }
 
   @media ${breakPoints.lg} {
+    gap: 30px;
   }
 
   @media ${breakPoints.md} {
-    flex-direction: row;
-    gap: 33px;
+    flex-direction: column;
+    text-align: center;
+    /* gap: 33px; */
   }
 
   @media ${breakPoints.smd} {

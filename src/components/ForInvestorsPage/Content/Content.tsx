@@ -27,7 +27,7 @@ const AwardIcons = (): React.ReactElement => {
       {awardTypes.map((award) => {
         return (
           <OneIconDiv key={award.name}>
-            <Icon as={award.icon as any} />
+            <Icon as={award.icon} />
             <Text variant='manIcon'>{award.text}</Text>
           </OneIconDiv>
         );

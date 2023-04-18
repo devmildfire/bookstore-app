@@ -4,7 +4,7 @@ import books from '@/assets/icons/book.svg';
 
 export interface Award {
   readonly name: string;
-  readonly icon: SVGElement;
+  readonly icon: SVGImage;
   readonly text: string;
 }
 
