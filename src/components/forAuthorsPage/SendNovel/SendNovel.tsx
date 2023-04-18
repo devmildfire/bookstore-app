@@ -31,7 +31,7 @@ const SendNovel = (): React.ReactElement => {
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
       {/* </TextDiv> */}
-      <DinoPawsBook as={dinoPaws as any} className='picture' />
+      <DinoPawsBook as={dinoPaws} className='picture' />
     </NovelDiv>
   );
 };
