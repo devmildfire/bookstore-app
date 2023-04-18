@@ -4,9 +4,10 @@ import breakPoints from '@/utils/breakPoints';
 export const GridDiv = styled.div`
   display: grid;
   width: 100%;
+  height: 100%;
   grid-template-rows: 1fr;
   grid-template-columns: min-content 1fr;
-  
+
   @media ${breakPoints.xl} {
   }
 

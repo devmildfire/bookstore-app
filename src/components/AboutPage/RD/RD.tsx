@@ -141,7 +141,7 @@ const RD = (): React.ReactElement => {
       <MovingPicsGrid slantAngle={10} gammaAngle={120} speed={25} />
 
       <StyledContent>
-        <RDIcon as={litMagIcon as any} />
+        <RDIcon as={litMagIcon} />
 
         <Text variant='h2_1_LJ' align='center'>
           Литжурнал

@@ -1,4 +1,5 @@
-import React, { useRef, useState, useLayoutEffect } from 'react';
+'use client';
+import React, { useRef, useState, useEffect } from 'react';
 import Marquee from '../Marquee';
 import { StyledDiv } from './styles';
 import { articles } from '@/mocks/magazine';
@@ -50,7 +51,10 @@ export default function MovingPicsGrid({
     }
   };
 
-  useLayoutEffect(() => {
+  // useLayoutEffect(() => {
+  //  Использование useEffect вместо useLayoutEffect так как этот компонент использует SSR и отрисовывается на сервере, а там не сработает useLayoutEffect
+  //  исправлено по указаниям из темы https://reactjs.org/link/uselayouteffect-ssr
+  useEffect(() => {
     setSize();
     window.addEventListener('resize', setSize);
     return () => window.removeEventListener('resize', setSize);

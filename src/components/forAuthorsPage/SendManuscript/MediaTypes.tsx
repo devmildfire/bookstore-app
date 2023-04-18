@@ -4,7 +4,7 @@ import print from '@/assets/icons/book.svg';
 
 export interface Media {
   readonly name: string;
-  readonly icon: SVGElement;
+  readonly icon: SVGImage;
 }
 
 const mediaTypes: Media[] = [

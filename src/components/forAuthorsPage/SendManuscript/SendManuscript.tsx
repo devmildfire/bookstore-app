@@ -36,9 +36,12 @@ const MediaIcons = (): React.ReactElement => {
   return (
     <IconsDiv>
       {mediaTypes.map((type) => {
+        const CurrentIcon = type.icon;
         return (
           <OneIconDiv key={type.name}>
-            <Icon as={type.icon as any} />
+            <Icon>
+              <CurrentIcon />
+            </Icon>
             <Text variant='manIcon'>{type.name}</Text>
           </OneIconDiv>
         );
