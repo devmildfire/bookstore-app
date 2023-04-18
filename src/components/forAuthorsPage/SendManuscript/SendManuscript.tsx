@@ -33,7 +33,6 @@ const SendManuscript = (): React.ReactElement => {
 };
 
 const MediaIcons = (): React.ReactElement => {
-  // const Example = mediaTypes[2].icon;
   return (
     <IconsDiv>
       {mediaTypes.map((type) => {
