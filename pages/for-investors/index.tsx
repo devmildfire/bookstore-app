@@ -11,6 +11,7 @@ const StyledWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 `;
 
 export default ForInvestors;

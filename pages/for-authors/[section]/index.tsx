@@ -1,8 +1,7 @@
 import type { NextPage } from 'next';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-// import breakPoints from '@/utils/breakPoints';
 import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
 import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
 import sidebarItems from '@/mocks/sidebarItems';
@@ -10,47 +9,57 @@ import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
+import notFound from 'pages/not-found';
 
-const abzac = <Abzac />;
-const sendManuscript = <SendManuscript />;
-const sendNovel = <SendNovel />;
+type TRoutes = 'send-novel' | 'send-manuscript' | 'abzac';
+type TQuery = { section: TRoutes };
 
-const lookUp = {
-  'send-novel': sendNovel,
-  'send-manuscript': sendManuscript,
-  abzac,
+type LookUpRoutes = {
+  [key in TRoutes]: ReactElement;
 };
 
-type routeType = 'send-novel' | 'send-manuscript' | 'abzac';
-
-const getComponent = (route: routeType): typeof abzac => {
-  return lookUp[route];
+const lookUp: LookUpRoutes = {
+  'send-novel': <SendNovel />,
+  'send-manuscript': <SendManuscript />,
+  abzac: <Abzac />,
 };
 
 const ForAuthors: NextPage = () => {
   const router = useRouter();
+  const routerQuery = router.query as TQuery;
+  const slug = routerQuery.section ?? 'send-novel';
 
-  const routerString = router.query.section as routeType;
-  const content = getComponent(routerString);
+  let content;
 
-  return (
-    <StyledWrapper>
-      <TwoPaneGrid>
-        <SidebarNav header='Авторам' navItems={sidebarItems} />
-        <UnderSection />
-        <StyledSection>{content}</StyledSection>
-      </TwoPaneGrid>
-    </StyledWrapper>
-  );
+  if (slug in lookUp) {
+    content = lookUp[slug];
+    return (
+      <StyledWrapper>
+        <TwoPaneGrid>
+          <SidebarNav header='Авторам' navItems={sidebarItems} />
+          <UnderSection />
+          <StyledSection>{content}</StyledSection>
+        </TwoPaneGrid>
+      </StyledWrapper>
+    );
+  } else {
+    content = notFound();
+    return <StyledWrapper>{content}</StyledWrapper>;
+  }
 };
 
 const StyledWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 `;
 
 const StyledSection = styled.div`
+  /* display: flex;
+  flex-direction: column;
+  justify-content: space-around; */
+  height: 100%;
   /* outline: 1px solid white; */
 `;
 
