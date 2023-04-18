@@ -46,15 +46,15 @@ const forReaders: SubmenuItem[] = [
 const forAuthors: SubmenuItem[] = [
   {
     subtitle: 'Отправить рукопись',
-    link: '/not-found',
+    link: '/for-authors/send-manuscript',
   },
   {
-    subtitle: 'Отправить рассказ для журнала',
-    link: '/not-found',
+    subtitle: 'Отправить материал в литжурнал РД',
+    link: '/for-authors/send-novel',
   },
   {
     subtitle: 'Мастерская Абзац',
-    link: '/not-found',
+    link: '/for-authors/abzac',
   },
 ];
 
@@ -71,7 +71,7 @@ const menu: MenuItem[] = [
   {
     title: 'Авторам',
     submenu: forAuthors,
-    link: '/not-found',
+    // link: '/for-authors',
   },
   {
     title: 'Инвесторам и донаторам',

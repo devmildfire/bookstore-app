@@ -34,7 +34,7 @@ function ListItem({ title, link, submenu }: ListItemProps) {
         <Submenu className='submenu-dropdown' isOpen={isSubmenuOpen}>
           {submenu.map((item) => (
             <SubmenuListItem key={item.subtitle}>
-              <NavLink href={link}>{item.subtitle}</NavLink>
+              <NavLink href={item.link}>{item.subtitle}</NavLink>
             </SubmenuListItem>
           ))}
         </Submenu>

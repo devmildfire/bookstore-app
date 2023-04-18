@@ -1,6 +1,7 @@
 import React, {
   PropsWithChildren,
-  useLayoutEffect,
+  // useLayoutEffect,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -17,7 +18,10 @@ function useMarqueeTiming<T extends HTMLElement>(speed: number) {
   const ref = useRef<T>(null);
   const [width, setWidth] = useState(0);
 
-  useLayoutEffect(() => {
+  // useLayoutEffect(() => {
+  //  Использование useEffect вместо useLayoutEffect так как этот компонент использует SSR и отрисовывается на сервере, а там не сработает useLayoutEffect
+  //  исправлено по указаниям из темы https://reactjs.org/link/uselayouteffect-ssr
+  useEffect(() => {
     if (ref.current) {
       const { current } = ref;
       setWidth(current.offsetWidth);
