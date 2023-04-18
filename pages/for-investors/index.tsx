@@ -1,7 +1,9 @@
 import type { NextPage } from 'next';
 import React from 'react';
 import styled from 'styled-components';
-import stonks from '@/assets/images/Vector_Stonks.svg';
+// import stonks from '@/assets/images/Vector_Stonks.svg';
+import stonksLow1 from '@/assets/images/Vector_Stonks_Low_1.svg';
+import stonksHigh1 from '@/assets/images/Vector_Stonks_High_1.svg';
 import Text from '@/components/Common/Text';
 import Content from '@/components/ForInvestorsPage/Content';
 import breakPoints from '@/utils/breakPoints';
@@ -14,10 +16,10 @@ const ForInvestors: NextPage = () => {
     <StyledWrapper>
       <ToInvestors variant='h3_1Man'>{title}</ToInvestors>
       <Content />
-      <Stonks1 as={stonks} />
-      <Stonks2 as={stonks} />
-      <Stonks3 as={stonks} />
-      <Stonks4 as={stonks} />
+      <Stonks1 as={stonksLow1} />
+      <Stonks2 as={stonksHigh1} />
+      <Stonks3 as={stonksLow1} />
+      <Stonks4 as={stonksHigh1} />
     </StyledWrapper>
   );
 };
@@ -131,6 +133,7 @@ const Stonks1 = styled.svg`
 const Stonks2 = styled.svg`
   grid-area: stonks2;
   height: 100%;
+  max-height: 1550px;
   width: 30vw;
 
   @media screen and (max-width: 1600px) {
@@ -190,6 +193,7 @@ const Stonks4 = styled.svg`
   left: 3vw;
   grid-area: stonks2;
   height: 100%;
+  max-height: 1550px;
   width: 30vw;
 
   @media screen and (max-width: 1600px) {
