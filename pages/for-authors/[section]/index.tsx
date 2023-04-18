@@ -9,7 +9,8 @@ import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
-import notFound from 'pages/not-found';
+// import notFound from 'pages/not-found';
+import NotFound from 'pages/not-found';
 
 type TRoutes = 'send-novel' | 'send-manuscript' | 'abzac';
 type TQuery = { section: TRoutes };
@@ -29,23 +30,21 @@ const ForAuthors: NextPage = () => {
   const routerQuery = router.query as TQuery;
   const slug = routerQuery.section ?? 'send-novel';
 
-  let content;
+  const content = lookUp[slug];
 
-  if (slug in lookUp) {
-    content = lookUp[slug];
-    return (
-      <StyledWrapper>
-        <TwoPaneGrid>
-          <SidebarNav header='Авторам' navItems={sidebarItems} />
-          <UnderSection />
-          <StyledSection>{content}</StyledSection>
-        </TwoPaneGrid>
-      </StyledWrapper>
-    );
-  } else {
-    content = notFound();
-    return <StyledWrapper>{content}</StyledWrapper>;
+  if (!content) {
+    return <NotFound />;
   }
+
+  return (
+    <StyledWrapper>
+      <TwoPaneGrid>
+        <SidebarNav header='Авторам' navItems={sidebarItems} />
+        <UnderSection />
+        <StyledSection>{content}</StyledSection>
+      </TwoPaneGrid>
+    </StyledWrapper>
+  );
 };
 
 const StyledWrapper = styled.main`
