@@ -129,6 +129,40 @@ const h33Style = css<StyledTextProps>`
   }
 `;
 
+const h3Abzac = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: 40px;
+  text-align: left;
+  /* align-self: flex-start; */
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+`;
+
+const nameAbzac = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: 24px;
+  text-align: left;
+  /* align-self: flex-start; */
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+`;
+
 const h33StyleAbout = css<StyledTextProps>`
   font-size: 24px;
   font-weight: ${(props) => props.fontWeight || 400};
@@ -296,6 +330,43 @@ const paddedTextStyle = css<StyledTextProps>`
   }
 `;
 
+const abzacTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const abzacCardStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 20px;
+
+  @media ${breakPoints.xl} {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 14px;
+  }
+`;
+
 const buttonTextStyle = css<StyledTextProps>`
   ${textStyle}
   padding: 0 40px;
@@ -454,6 +525,261 @@ const h4Name = css<StyledTextProps>`
   }
 `;
 
+const sideNavItemStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 14px;
+  }
+`;
+
+const sideNavTitleStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-size: 40px;
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+  }
+`;
+
+const courseTitleStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-weight: ${(props) => props.fontWeight || 700};
+  font-size: 30px;
+
+  @media ${breakPoints.xl} {
+    font-size: 24px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 16px;
+  }
+`;
+
+const h31ManuscriptStyle = css<StyledTextProps>`
+  font-size: 60px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media screen and (max-width: 1600px) {
+    font-size: 50px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 50px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const ManuscriptTextStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 20px;
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const ManuscriptIconStyle = css<StyledTextProps>`
+  ${textStyle}
+  font-size: 24px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const h31BelieveStyle = css<StyledTextProps>`
+  font-size: 30px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 30px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 900px) {
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const h31SendManStyle = css<StyledTextProps>`
+  font-size: 24px;
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media screen and (max-width: 1200px) {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 16px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 900px) {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const h31ManRecStyle = css<StyledTextProps>`
+  font-size: 24px;
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  @media ${breakPoints.xl} {
+    font-size: 20px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 18px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 900px) {
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
 const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
@@ -463,17 +789,30 @@ const styles: Record<
   h2_1_LJ: h21LJStyle,
   h2_2: h22Style,
   h3_1: h31Style,
+  h3_1Man: h31ManuscriptStyle,
+  h3_1Bel: h31BelieveStyle,
+  h3_1SendMan: h31SendManStyle,
   h3_2: h32Style,
   h3_3: h33Style,
   h3_31: h33StyleAbout,
   h3_32: h33StyleM2B,
   h3_4: h34Style,
+  manRec: h31ManRecStyle,
   text: textStyle,
   aboutText: aboutTextStyle,
+  manIcon: ManuscriptIconStyle,
+  manText: ManuscriptTextStyle,
   text_italic: textStyleItalic,
   paddedText: paddedTextStyle,
   buttonText: buttonTextStyle,
   lJbuttonText: lJbuttonTextStyle,
+  abzacText: abzacTextStyle,
+  abzacCardText: abzacCardStyle,
+  sn_Item: sideNavItemStyle,
+  sn_Title: sideNavTitleStyle,
+  courseBig: courseTitleStyle,
+  h3_Abzac: h3Abzac,
+  h4_Abzac: nameAbzac,
   h4_1: h41Style,
   h4_2: h42Style,
   h4_3: h43Style,
@@ -488,6 +827,8 @@ export const tagMap: Record<Variant, string> = {
   h2_1_LJ: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
+  h3_1Man: 'h3',
+  h3_1Bel: 'h3',
   h3_2: 'h3',
   h3_3: 'h3',
   h3_31: 'h3',
@@ -496,9 +837,20 @@ export const tagMap: Record<Variant, string> = {
   text: 'p',
   aboutText: 'p',
   text_italic: 'p',
+  manText: 'p',
+  manIcon: 'p',
   paddedText: 'p',
   buttonText: 'p',
   lJbuttonText: 'p',
+  abzacText: 'p',
+  abzacCardText: 'p',
+  sn_Item: 'p',
+  manRec: 'p',
+  h3_Abzac: 'h3',
+  h4_Abzac: 'h4',
+  sn_Title: 'h3',
+  courseBig: 'h4',
+  h3_1SendMan: 'h3',
   h4_1: 'h4',
   h4_2: 'h4',
   h4_3: 'h4',

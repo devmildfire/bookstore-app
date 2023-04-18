@@ -47,7 +47,7 @@ const Footer = (): React.ReactElement => (
           {socials.map((social) => (
             <li key={social.href}>
               <a href={social.href}>
-                <Icon as={social.icon as any} />
+                <Icon as={social.icon} />
               </a>
             </li>
           ))}

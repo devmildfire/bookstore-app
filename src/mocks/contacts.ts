@@ -2,7 +2,7 @@ import IconMail from '@/assets/icons/footer-mail.svg';
 import IconPhone from '@/assets/icons/footer-phone.svg';
 
 interface IContactItem {
-  readonly icon: SVGElement;
+  readonly icon: SVGImage;
   readonly content: string;
   readonly hightLightContent: string;
   readonly href: string;
