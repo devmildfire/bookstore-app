@@ -1,13 +1,15 @@
 import React, {
+  Dispatch,
   PropsWithChildren,
   ReactElement,
   SetStateAction,
   createContext,
+  useEffect,
+  useReducer,
   useState,
 } from 'react';
 import styled from 'styled-components';
-import * as Accordion from '@radix-ui/react-accordion';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Popover from '@radix-ui/react-popover';
 import {
   MixerVerticalIcon,
   Cross1Icon,
@@ -20,7 +22,7 @@ import { Command } from 'cmdk';
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
 import { useContext } from 'react';
 
-const DropdownContent = styled(DropdownMenu.Content)`
+const PopoverContent = styled(Popover.Content)`
   position: relative;
   background-color: rgba(30, 30, 30, 0.6);
   padding: 35px 50px;
@@ -28,12 +30,12 @@ const DropdownContent = styled(DropdownMenu.Content)`
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 35px;
   width: clamp(256px, 100vw, 755px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
 `;
 
-const DropdownTrigger = styled(DropdownMenu.Trigger)`
+const PopoverTrigger = styled(Popover.Trigger)`
   background: transparent;
   color: #dcdcdc;
   padding: 16px;
@@ -47,52 +49,30 @@ const DropdownTrigger = styled(DropdownMenu.Trigger)`
   }
 `;
 
-const DropdownLabel = styled(DropdownMenu.Label)`
+const PopoverLabel = styled.span`
   text-align: center;
   font-size: clamp(12px, 2vw, 16px);
   padding-bottom: 7px;
+  opacity: 0.5;
 `;
 
-const AccordionTrigger = styled(Accordion.Trigger)`
-  width: 100%;
-  text-align: left;
-  margin: 0;
-  padding: 6px 12px;
-  font-size: clamp(12px, 2vw, 16px);
-  font-weight: 400;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #121212;
-  color: #dcdcdc;
-  border-radius: ${(props: { open: boolean }) => {
-    return props.open ? '4px 4px 0 0' : '4px';
-  }}; ;
-`;
-
-const AccordionRoot = styled(Accordion.Root)`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const StyledCommand = styled(Command)`
-  background-color: #121212;
-  border-radius: 4px;
-  display: flex;
-  width: 100%;
-`;
+const StyledCommand = styled(Command)``;
 
 const CommandList = styled(Command.List)`
   width: 100%;
-  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #121212;
+  padding: 15px 28px;
   color: #dcdcdc;
   font-size: clamp(12px, 2vw, 16px); ;
 `;
 
 const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   scroll-padding-block: 8px;
+  gap: 9px;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
 
@@ -107,6 +87,7 @@ const CloseIcon = styled(Cross1Icon)`
 
 const SearchContainer = styled.div`
   position: relative;
+  margin-bottom: 10px;
 `;
 
 const CommandInput = styled(Command.Input)`
@@ -132,7 +113,7 @@ const CommandSeparator = styled(Command.Separator)`
   width: 100%;
   height: 1px;
   background-color: #555;
-  margin-bottom: 6px;
+  margin-bottom: 9px;
 `;
 
 const Triggers = styled.div`
@@ -167,10 +148,11 @@ const SortList = styled.ul`
 `;
 
 const SelectItem = styled(Command.Item)`
+  width: fit-content;
   cursor: pointer;
   transition: 0.15s;
   font-variant-numeric: tabular-nums;
-  :hover {
+  &[cmdk-item][data-selected='true'] {
     color: var(--main-red-100);
     text-decoration: underline;
   }
@@ -189,83 +171,164 @@ const RemoveButton = styled.button`
   }
 `;
 
-const SelectList = styled.ul`
-  padding-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+const SelectList = styled(Command.Group)`
+  [cmdk-group-items] {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    padding-top: 8px;
+    gap: 8px;
+    max-height: 130px;
+    overflow-y: auto;
+    /* width */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    [cmdk-group-items] .two-columng {
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #232323;
+      border-radius: 8px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: var(--main-red-100);
+      border-radius: 8px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
 `;
 
 const CommandTitle = styled.span`
   display: inline-flex;
-  padding-bottom: 6px;
+  padding-bottom: 15px;
 `;
+
+type SelectData = string[];
 
 type MultiselectProps = {
   withSearch?: boolean;
+  twoColumn?: boolean;
   title: string;
+  options: SelectData;
+  selected: SelectData;
+  dispatch: Dispatch<MultiselectAction>;
 };
 
+type UseMultiselectType = {
+  selected: SelectData;
+  options: SelectData;
+};
+
+type MultiselectActionTypes = 'selected' | 'removed' | 'reset';
+
+type MultiselectAction = {
+  type: MultiselectActionTypes;
+  item: string;
+};
+
+type MultiselectState = {
+  selected: string[];
+  options: string[];
+};
+
+function multiselectReducer(
+  { selected, options }: MultiselectState,
+  action: MultiselectAction
+) {
+  switch (action.type) {
+    case 'selected': {
+      const newSelected = [...selected, action.item].sort();
+      const newOptions = options
+        .filter((option) => action.item !== option)
+        .sort();
+      return { selected: newSelected, options: newOptions };
+    }
+    case 'removed': {
+      const newOptions = [...options, action.item].sort();
+      const newSelected = selected
+        .filter((select) => action.item !== select)
+        .sort();
+      return { selected: newSelected, options: newOptions };
+    }
+    case 'reset': {
+      const newOptions = [...options, ...selected].sort();
+      return { selected: [], options: newOptions };
+    }
+  }
+}
+
+function useMultiselect(
+  props: UseMultiselectType
+): [string[], string[], Dispatch<MultiselectAction>] {
+  const [{ selected, options }, dispatch] = useReducer(
+    multiselectReducer,
+    props
+  );
+
+  return [selected, options, dispatch];
+}
+
 function Multiselect(props: MultiselectProps) {
-  const { title, withSearch } = props;
-  const initialData = ['2020', '2021', '2022', '2023'];
-  const [selected, setSelected] = useState<string[]>([]);
-  const [options, setOptions] = useState<string[]>(initialData);
-
-  const handleSelect = (value: string) => {
-    const newSelected = [...selected, value].sort();
-    const newOptions = options.filter((option) => value !== option).sort();
-    setSelected(newSelected);
-    setOptions(newOptions);
-  };
-
-  const handleRemove = (value: string) => {
-    const newOptions = [...options, value].sort();
-    const newSelected = selected.filter((select) => value !== select).sort();
-    setSelected(newSelected);
-    setOptions(newOptions);
-  };
+  const { options, selected, dispatch, title, withSearch, twoColumn } = props;
 
   return (
     <>
-      <StyledCommand label={title}>
+      <Command label={title}>
         <CommandList>
           <CommandTitle>{title}</CommandTitle>
           <CommandSeparator />
           {withSearch && (
             <SearchContainer>
               <CommandInput />
-              <SearchIcon />
             </SearchContainer>
           )}
-          <Command.Empty>Выбраны все фильтры.</Command.Empty>
-          <SelectList>
+          <SelectList className={`${twoColumn ? 'two-column' : null}`}>
             {options.map((item, idx) => (
-              <SelectItem key={idx} onSelect={() => handleSelect(item)}>
+              <SelectItem
+                onSelect={() => dispatch({ type: 'selected', item })}
+                key={`${item}_${idx + Math.random()}`}
+              >
                 {item}
               </SelectItem>
             ))}
           </SelectList>
+          <Command.Empty>Выбраны все фильтры.</Command.Empty>
         </CommandList>
-      </StyledCommand>
-      <SelectedList>
-        {selected.map((item, idx) => (
-          <SelectedItem onClick={() => handleRemove(item)} key={idx}>
-            <ItemText>{item}</ItemText>
-            <RemoveButton>
-              <Cross2Icon />
-            </RemoveButton>
-          </SelectedItem>
-        ))}
-      </SelectedList>
+        {selected.length > 0 && (
+          <SelectedList>
+            {selected.map((item, idx) => (
+              <SelectedItem
+                key={`${item}_${idx + Math.random()}`}
+                onClick={() => dispatch({ type: 'removed', item })}
+              >
+                <ItemText>{item}</ItemText>
+                <RemoveButton>
+                  <Cross2Icon />
+                </RemoveButton>
+              </SelectedItem>
+            ))}
+          </SelectedList>
+        )}
+      </Command>
     </>
   );
 }
 
 const SelectedList = styled.ul`
-  margin-top: 8px;
+  margin-bottom: 14px;
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 9px;
 `;
 
 const SelectedItem = styled.li`
@@ -283,16 +346,6 @@ const ItemText = styled.p`
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 `;
-
-function Filters() {
-  return (
-    <>
-      <Multiselect title='Автор' withSearch />
-      <Multiselect title='Тип издания' />
-      <Multiselect title='Год издания' />
-    </>
-  );
-}
 
 const HeaderConainer = styled.div`
   display: flex;
@@ -313,8 +366,13 @@ const StyledIconButton = styled.button`
   color: var(--main-white-100);
   transition: 0.15s;
   position: relative;
+  opacity: 0.5;
+  & > svg {
+    width: 22px;
+    height: 22px;
+  }
   :hover {
-    opacity: 0.5;
+    opacity: 1;
   }
   :before {
     content: '';
@@ -330,10 +388,11 @@ function IconButton({ icon, handleClick }: IconButtonProps) {
   return <StyledIconButton onClick={handleClick}>{icon}</StyledIconButton>;
 }
 
-type FilterDropDownProps = PropsWithChildren<{
+type FilterPopoverProps = PropsWithChildren<{
   title: string;
   icon: ReactElement;
   align: 'start' | 'center' | 'end';
+  reset: () => void;
 }>;
 
 type FilterContextProps = {
@@ -362,34 +421,24 @@ export const useFilter = () => {
   return currentFilterContext;
 };
 
-function FilterDropdown({ title, icon, align, children }: FilterDropDownProps) {
+function FilterPopover(props: FilterPopoverProps) {
+  const { title, icon, align, reset, children } = props;
   const [visible, setVisible] = useState(false);
 
-  const handleResetFilters = () => {
-    // setSelected([]);
-    // setOptions(initialData);
-  };
-
-  function handleReset<T extends () => undefined>(callback: T) {
-    callback();
-  }
   return (
-    <DropdownMenu.Root modal={false} open={visible} onOpenChange={setVisible}>
-      <DropdownTrigger>{icon}</DropdownTrigger>
-      <DropdownMenu.Portal>
-        <DropdownContent
+    <Popover.Root modal={false} open={visible} onOpenChange={setVisible}>
+      <PopoverTrigger>{icon}</PopoverTrigger>
+      <Popover.Portal>
+        <PopoverContent
           align={align}
           avoidCollisions={false}
           sticky='always'
           sideOffset={12}
         >
           <HeaderConainer>
-            <IconButton
-              icon={<ReloadIcon />}
-              handleClick={handleResetFilters}
-            />
+            <IconButton icon={<ReloadIcon />} handleClick={reset} />
 
-            <DropdownLabel>{title}</DropdownLabel>
+            <PopoverLabel>{title}</PopoverLabel>
             <IconButton
               icon={<CloseIcon />}
               handleClick={() => setVisible(false)}
@@ -397,9 +446,9 @@ function FilterDropdown({ title, icon, align, children }: FilterDropDownProps) {
           </HeaderConainer>
 
           <FiltersContainer>{children}</FiltersContainer>
-        </DropdownContent>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+        </PopoverContent>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 
@@ -413,22 +462,75 @@ const SortIcon = styled(SortIconSvg)`
   height: auto;
 `;
 
-function App() {
+function Filters() {
+  const yearsData = ['2020', '2021', '2022', '2023'];
+  const authorsData = [
+    'Оганес Мартиросян',
+    'Алексей Михайлов',
+    'Анна Пашкова',
+    'Александ Гаврилов',
+    'Николай Старообрядцев',
+  ];
+
+  const [selectedYears, years, dispatchYearsAction] = useMultiselect({
+    selected: [],
+    options: yearsData,
+  });
+
+  const [selectedAuthors, authors, dispatchAuthorsAction] = useMultiselect({
+    selected: [],
+    options: authorsData,
+  });
+
+  function resetAll() {
+    dispatchAuthorsAction({ type: 'reset', item: '' });
+    dispatchYearsAction({ type: 'reset', item: '' });
+  }
+
   return (
     <Triggers>
-      <FilterDropdown align='start' title='Фильтры' icon={<FilterIcon />}>
-        <Filters />
-      </FilterDropdown>
+      <FilterPopover
+        reset={resetAll}
+        align='start'
+        title='Фильтры'
+        icon={<FilterIcon />}
+      >
+        <Multiselect
+          dispatch={dispatchAuthorsAction}
+          selected={selectedAuthors}
+          options={authors}
+          twoColumn
+          title='Автор'
+          withSearch
+        />
+        <Multiselect
+          dispatch={dispatchYearsAction}
+          selected={selectedYears}
+          options={years}
+          title='Тип издания'
+        />
+        <Multiselect
+          dispatch={dispatchYearsAction}
+          selected={selectedYears}
+          options={years}
+          title='Год издания'
+        />
+      </FilterPopover>
       <Separator />
-      <FilterDropdown align='end' title='Сортировка' icon={<SortIcon />}>
+      <FilterPopover
+        reset={() => console.log('reset sorting')}
+        align='end'
+        title='Сортировка'
+        icon={<SortIcon />}
+      >
         <SortList>
           <li>По дате издания</li>
           <li>По автору</li>
           <li>По цене</li>
         </SortList>
-      </FilterDropdown>
+      </FilterPopover>
     </Triggers>
   );
 }
 
-export default App;
+export default Filters;
