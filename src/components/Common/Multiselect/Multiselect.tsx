@@ -1,115 +1,127 @@
-import React, {
-  ReactElement,
-  useState,
-  MouseEvent,
-  PropsWithChildren,
-} from 'react';
-import styled from 'styled-components';
 import { Command } from 'cmdk';
-import * as Popover from '@radix-ui/react-popover';
+import { Dispatch, useReducer } from 'react';
 import {
-  PopoverTrigger,
-  PopoverContent,
-  SelectedList,
+  CommandInput,
+  CommandList,
+  CommandSeparator,
+  CommandTitle,
+  ItemText,
+  RemoveButton,
+  SearchContainer,
+  SelectItem,
+  SelectList,
   SelectedItem,
-  ButtonsContainer,
-  Button,
+  SelectedList,
 } from './styles';
+import { Cross2Icon } from '@radix-ui/react-icons';
 
-const years = ['2023', '2022', '2021'];
+type SelectData = string[];
 
-type MultiselectType = {
-  withInput?: boolean;
+type MultiselectProps = {
+  withSearch?: boolean;
+  twoColumn?: boolean;
   title: string;
+  options: SelectData;
+  selected: SelectData;
+  dispatch: Dispatch<MultiselectAction>;
 };
 
-const StyledCommand = styled(Command)`
-  background-color: var(--main-black);
-  padding: 16px;
-  border-radius: 4px;
-  [cmdk-group-heading] {
-    padding-bottom: 16px;
-  }
-`;
+type UseMultiselectType = {
+  selected: SelectData;
+  options: SelectData;
+};
 
-export function Multiselect(props: MultiselectType) {
-  const { withInput, title } = props;
-  const [options, setOptions] = useState<string[]>(years);
-  const [selected, setSelected] = useState<string[]>([]);
+type MultiselectActionTypes = 'selected' | 'removed' | 'reset';
 
-  const handleSelect = (value: string) => {
-    setSelected([...selected, value]);
-    setOptions((prev) => prev.filter((option) => value !== option));
-  };
+type MultiselectAction = {
+  type: MultiselectActionTypes;
+  item: string;
+};
 
-  const handleRemove = (e: MouseEvent) => {
-    const { target } = e;
-    const value = (target as HTMLElement).textContent;
-    if (value) {
-      setOptions([...options, value]);
-      setSelected((prev) => {
-        return prev.filter((option) => value !== option);
-      });
+type MultiselectState = {
+  selected: string[];
+  options: string[];
+};
+
+function multiselectReducer(
+  { selected, options }: MultiselectState,
+  action: MultiselectAction
+) {
+  switch (action.type) {
+    case 'selected': {
+      const newSelected = [...selected, action.item].sort();
+      const newOptions = options
+        .filter((option) => action.item !== option)
+        .sort();
+      return { selected: newSelected, options: newOptions };
     }
-  };
+    case 'removed': {
+      const newOptions = [...options, action.item].sort();
+      const newSelected = selected
+        .filter((select) => action.item !== select)
+        .sort();
+      return { selected: newSelected, options: newOptions };
+    }
+    case 'reset': {
+      const newOptions = [...options, ...selected].sort();
+      return { selected: [], options: newOptions };
+    }
+  }
+}
+
+export function useMultiselect(
+  props: UseMultiselectType
+): [string[], string[], Dispatch<MultiselectAction>] {
+  const [{ selected, options }, dispatch] = useReducer(
+    multiselectReducer,
+    props
+  );
+
+  return [selected, options, dispatch];
+}
+
+export function Multiselect(props: MultiselectProps) {
+  const { options, selected, dispatch, title, withSearch, twoColumn } = props;
+
   return (
     <>
-      <StyledCommand loop label={title}>
-        {withInput && <Command.Input autoFocus />}
-        <Command.List>
-          {selected.length ? <Command.Separator alwaysRender /> : null}
-          <Command.Group heading={title}>
-            {options.map((option) => (
-              <Command.Item key={option} onSelect={handleSelect}>
-                {option}
-              </Command.Item>
-            ))}
-            {withInput ? (
-              <Command.Empty>Нет совпадений.</Command.Empty>
-            ) : (
-              <Command.Empty>Выбраны все варианты.</Command.Empty>
-            )}
-          </Command.Group>
-          {/* скорее всего лучше использовать Command компоненты,
-              чтобы облегчить handleRemove обработчик */}
-          <SelectedList>
-            {selected.map((item, id) => (
-              <SelectedItem key={`${item}-${id + 1}`} onClick={handleRemove}>
+      <Command label={title}>
+        <CommandList>
+          <CommandTitle>{title}</CommandTitle>
+          <CommandSeparator />
+          {withSearch && (
+            <SearchContainer>
+              <CommandInput />
+            </SearchContainer>
+          )}
+          <SelectList className={`${twoColumn ? 'two-column' : null}`}>
+            {options.map((item, idx) => (
+              <SelectItem
+                onSelect={() => dispatch({ type: 'selected', item })}
+                key={`${item}_${idx + Math.random()}`}
+              >
                 {item}
+              </SelectItem>
+            ))}
+          </SelectList>
+          <Command.Empty>Выбраны все фильтры.</Command.Empty>
+        </CommandList>
+        {selected.length > 0 && (
+          <SelectedList>
+            {selected.map((item, idx) => (
+              <SelectedItem
+                key={`${item}_${idx + Math.random()}`}
+                onClick={() => dispatch({ type: 'removed', item })}
+              >
+                <ItemText>{item}</ItemText>
+                <RemoveButton>
+                  <Cross2Icon />
+                </RemoveButton>
               </SelectedItem>
             ))}
           </SelectedList>
-        </Command.List>
-      </StyledCommand>
+        )}
+      </Command>
     </>
-  );
-}
-
-interface DropdownProps {
-  icon: string;
-}
-
-export function Dropdown(
-  props: PropsWithChildren<DropdownProps>
-): ReactElement {
-  const { icon, children } = props;
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className={open ? 'open' : ''}>
-        <p>{icon}</p>
-        <span>&#9660;</span>
-      </PopoverTrigger>
-      <Popover.Portal>
-        <PopoverContent sideOffset={0} align='start'>
-          {children}
-          <ButtonsContainer>
-            <Button>Применить</Button>
-            <Button secondary>Сбросить</Button>
-          </ButtonsContainer>
-        </PopoverContent>
-      </Popover.Portal>
-    </Popover.Root>
   );
 }

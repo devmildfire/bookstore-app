@@ -1,106 +1,148 @@
 import styled from 'styled-components';
-import * as Popover from '@radix-ui/react-popover';
+import { Command } from 'cmdk';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
-export const PopoverTrigger = styled(Popover.Trigger)`
-  display: flex;
+export const CommandTitle = styled.span`
+  display: inline-flex;
+  padding-bottom: 15px;
+`;
+
+export const SearchIcon = styled(MagnifyingGlassIcon)`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: #dcdcdc;
+`;
+
+export const SearchContainer = styled.div`
   position: relative;
-  background-color: transparent;
-  align-items: center;
-  gap: 1rem;
-  color: var(--main-white-100);
-  border: none;
-  padding: 8px 16px;
-  font-size: 1rem;
-  transition: 0.2s ease;
-  cursor: pointer;
-  &.open {
-    z-index: 2;
-  }
-  &:hover {
-    color: var(--main-red-100);
-  }
+  margin-bottom: 10px;
+`;
 
-  & p {
-    margin: 0;
+export const StyledCommand = styled(Command)``;
+
+export const CommandList = styled(Command.List)`
+  width: 100%;
+  border-radius: 4px;
+  background-color: #121212;
+  padding: 15px 28px;
+  color: #dcdcdc;
+  font-size: clamp(12px, 2vw, 16px); ;
+`;
+
+export const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scroll-padding-block: 8px;
+  gap: 9px;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+`;
+
+export const CommandInput = styled(Command.Input)`
+  background-color: #555;
+  border: none;
+  border-radius: 4px;
+  font-size: clamp(12px, 2vw, 16px);
+  padding: 4px 8px;
+  color: #dcdcdc;
+  width: -content;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+export const CommandSeparator = styled(Command.Separator)`
+  width: 100%;
+  height: 1px;
+  background-color: #555;
+  margin-bottom: 9px;
+`;
+
+export const SelectList = styled(Command.Group)`
+  [cmdk-group-items] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    grid-template-rows: 1fr;
+    padding-top: 8px;
+    gap: 8px;
+    max-height: 130px;
+    overflow-y: auto;
+    .two-column&[cmdk-group-items] {
+      grid-template-columns: 1fr 1fr;
+    }
+    /* width */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #232323;
+      border-radius: 8px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: var(--main-red-100);
+      border-radius: 8px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+`;
+
+export const SelectItem = styled(Command.Item)`
+  width: fit-content;
+  cursor: pointer;
+  transition: 0.15s;
+  font-variant-numeric: tabular-nums;
+  &[cmdk-item][data-selected='true'] {
+    color: var(--main-red-100);
+    text-decoration: underline;
   }
 `;
 
 export const SelectedList = styled.ul`
-  margin: 0;
-  padding: 0;
+  margin-bottom: 14px;
   display: flex;
-  flex-direction: column;
   gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 9px;
 `;
 
-export const SelectedItem = styled.div`
+export const SelectedItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-items: center;
+  background-color: #500000;
+  padding: 8px 10px 8px 16px;
   border-radius: 4px;
-  background: var(--main-red-50);
+  cursor: pointer;
+`;
+
+export const ItemText = styled.p`
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
-  padding: 4px 8px;
-  width: fit-content;
+`;
+
+export const RemoveButton = styled.button`
+  display: flex;
+  color: var(--main-black);
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
+  transition: 0.15s;
   &:hover {
-    color: var(--main-white-100);
+    opacity: 0.5;
   }
-`;
-
-export const PopoverContent = styled(Popover.Content)`
-  background-color: rgba(12, 12, 12, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  /* z-index: 1; */
-  color: var(--main-white-100);
-  width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  min-width: 160px;
-  max-width: 350px;
-  [cmdk-item] {
-    font-size: 1rem;
-    height: 2rem;
-    outline: none;
-    width: fit-content;
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-  }
-  [cmdk-item][aria-selected='true'] {
-    color: var(--main-red-100);
-    /* border-color: var(--red-hover); */
-  }
-  [cmdk-input] {
-    background-color: transparent;
-    border: thin solid var(--main-red-100);
-    padding: 0.5rem;
-    color: var(--main-white-100);
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  [cmdk-separator] {
-    height: 1rem;
-  }
-`;
-
-interface ButtonProps {
-  secondary?: boolean;
-}
-
-export const Button = styled.button<ButtonProps>`
-  width: fit-content;
-  background-color: ${(props) => {
-    return props.secondary ? 'gray' : 'var(--main-red-100)';
-  }};
-  padding: 8px 16px;
-  color: var(--main-white-100);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
-export const ButtonsContainer = styled.div`
-  display: flex;
-  gap: 8px;
 `;
