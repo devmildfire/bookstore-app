@@ -174,18 +174,18 @@ const RemoveButton = styled.button`
 const SelectList = styled(Command.Group)`
   [cmdk-group-items] {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
     grid-template-rows: 1fr;
     padding-top: 8px;
     gap: 8px;
     max-height: 130px;
     overflow-y: auto;
+    .two-column&[cmdk-group-items] {
+      grid-template-columns: 1fr 1fr;
+    }
     /* width */
     ::-webkit-scrollbar {
       width: 4px;
-    }
-    [cmdk-group-items] .two-columng {
-      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
     }
 
     /* Track */
