@@ -79,6 +79,14 @@ body {
   margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
 }
 
+/* попытка починить футер стилями корневого элемента */
+#__next {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .scroll-lock {
   overflow: hidden;
 }
