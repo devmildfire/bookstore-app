@@ -165,7 +165,11 @@ const BurgerIconStyled = styled(BurgerIcon)`
 `;
 
 const HeaderWrapper = styled.header`
-  position: sticky;
+  //  position: sticky вызывает overflow у тэга body на FF.
+  //  Замена на position: fixed и отступ у следующего за хедером элемента
+  //  на высоту хедера
+
+  position: fixed;
   top: 0;
   left: 0;
   display: flex;
