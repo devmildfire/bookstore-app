@@ -145,8 +145,8 @@ export const Image = styled.div<ImageProps>`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 5%;
-  right: 1%;
+  top: 30px;
+  right: 30px;
   width: 30px;
   color: white;
   background: transparent;
