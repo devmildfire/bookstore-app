@@ -15,23 +15,24 @@ import {
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
 import { useContext } from 'react';
 import { Multiselect, useMultiselect } from '../Common/Multiselect';
+import breakPoints from '@/utils/breakPoints';
 
 const PopoverContent = styled(Popover.Content)`
   position: relative;
   background-color: rgba(30, 30, 30, 0.6);
-  padding: 35px 50px;
+  padding: clamp(12px, 5vw, 35px) clamp(12px, 5vw, 50px);
   border-radius: 8px;
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
-  gap: 35px;
-  width: clamp(256px, 100vw, 755px);
+  gap: clamp(12px, 5vw, 35px);
+  width: clamp(256px, 90vw, 755px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
 `;
 
 const PopoverTrigger = styled(Popover.Trigger)`
   background: transparent;
-  color: #dcdcdc;
+  color: var(--main-white-80);
   padding: 16px;
   min-width: 64px;
   width: 100%;
@@ -120,6 +121,12 @@ const StyledIconButton = styled.button`
     right: -10px;
     bottom: -10px;
   }
+  @media ${breakPoints.sm} {
+    & > svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
 `;
 
 export const FiltersContainer = styled.div`
@@ -205,28 +212,44 @@ function FilterPopover(props: FilterPopoverProps) {
 }
 
 const FilterIcon = styled(MixerVerticalIcon)`
-  width: clamp(1rem, 3vw, 2rem);
+  width: clamp(1rem, 3vw, 30px);
   height: auto;
 `;
 
 const SortIcon = styled(SortIconSvg)`
-  width: clamp(1rem, 3vw, 2rem);
+  width: clamp(1rem, 3vw, 28px);
   height: auto;
 `;
 
 function Filters() {
   const yearsData = ['2020', '2021', '2022', '2023'];
+  const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
   const authorsData = [
     'Оганес Мартиросян',
     'Алексей Михайлов',
     'Анна Пашкова',
     'Александ Гаврилов',
     'Николай Старообрядцев',
+    'Андрей Янкус',
+    'Джек Керуак',
+    'Эдуард Диа Диникин',
+    'Андрей Платонов',
+    'Вячеслав Немиров',
+    'Фёдор Достоевский',
+    'Сергей Иннер',
+    'Эрих фон Нефф',
+    'Артём Северский',
+    'Владислав Несветаев',
   ];
 
   const [selectedYears, years, dispatchYearsAction] = useMultiselect({
     selected: [],
     options: yearsData,
+  });
+
+  const [selectedEditions, editions, dispatchEditionsAction] = useMultiselect({
+    selected: [],
+    options: editionsData,
   });
 
   const [selectedAuthors, authors, dispatchAuthorsAction] = useMultiselect({
@@ -237,6 +260,7 @@ function Filters() {
   function resetAll() {
     dispatchAuthorsAction({ type: 'reset', item: '' });
     dispatchYearsAction({ type: 'reset', item: '' });
+    dispatchEditionsAction({ type: 'reset', item: '' });
   }
 
   return (
@@ -256,10 +280,10 @@ function Filters() {
           withSearch
         />
         <Multiselect
-          dispatch={dispatchYearsAction}
-          selected={selectedYears}
-          options={years}
-          title='Тип издания'
+          dispatch={dispatchEditionsAction}
+          selected={selectedEditions}
+          options={editions}
+          title='Издания '
         />
         <Multiselect
           dispatch={dispatchYearsAction}

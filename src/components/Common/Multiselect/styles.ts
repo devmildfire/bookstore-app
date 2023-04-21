@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Command } from 'cmdk';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import breakPoints from '@/utils/breakPoints';
 
 export const CommandTitle = styled.span`
   display: inline-flex;
@@ -27,21 +28,7 @@ export const CommandList = styled(Command.List)`
   background-color: #121212;
   padding: 15px 28px;
   color: #dcdcdc;
-  font-size: clamp(12px, 2vw, 16px); ;
-`;
-
-export const FiltersContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  scroll-padding-block: 8px;
-  gap: 9px;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
-
-  &::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
+  font-size: clamp(12px, 2vw, 16px);
 `;
 
 export const CommandInput = styled(Command.Input)`
@@ -65,15 +52,17 @@ export const CommandSeparator = styled(Command.Separator)`
 
 export const SelectList = styled(Command.Group)`
   [cmdk-group-items] {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    grid-template-rows: 1fr;
+    display: flex;
+    flex-wrap: wrap;
+
     padding-top: 8px;
     gap: 8px;
     max-height: 130px;
     overflow-y: auto;
     .two-column&[cmdk-group-items] {
+      display: grid;
       grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
     }
     /* width */
     ::-webkit-scrollbar {
@@ -88,13 +77,20 @@ export const SelectList = styled(Command.Group)`
 
     /* Handle */
     ::-webkit-scrollbar-thumb {
-      background: var(--main-red-100);
+      background: var(--grey);
       border-radius: 8px;
     }
 
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
       background: #555;
+    }
+    @media ${breakPoints.sm} {
+      .two-column&[cmdk-group-items] {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+      }
     }
   }
 `;

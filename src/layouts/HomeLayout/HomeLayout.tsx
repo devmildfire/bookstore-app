@@ -11,7 +11,7 @@ const StyledTitle = styled(Text)`
   background: linear-gradient(
     180deg,
     rgba(5, 5, 5, 1) 0%,
-    rgba(0, 0, 0, 0.1) 100%
+    var(--main-black) 100%
   );
   width: 100%;
   padding: 2rem 0;

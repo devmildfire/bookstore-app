@@ -91,14 +91,14 @@ export function Multiselect(props: MultiselectProps) {
           <CommandSeparator />
           {withSearch && (
             <SearchContainer>
-              <CommandInput />
+              <CommandInput autoFocus />
             </SearchContainer>
           )}
           <SelectList className={`${twoColumn ? 'two-column' : null}`}>
-            {options.map((item, idx) => (
+            {options.map((item) => (
               <SelectItem
                 onSelect={() => dispatch({ type: 'selected', item })}
-                key={`${item}_${idx + Math.random()}`}
+                key={item}
               >
                 {item}
               </SelectItem>
@@ -108,9 +108,9 @@ export function Multiselect(props: MultiselectProps) {
         </CommandList>
         {selected.length > 0 && (
           <SelectedList>
-            {selected.map((item, idx) => (
+            {selected.map((item) => (
               <SelectedItem
-                key={`${item}_${idx + Math.random()}`}
+                key={item}
                 onClick={() => dispatch({ type: 'removed', item })}
               >
                 <ItemText>{item}</ItemText>
