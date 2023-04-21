@@ -32,6 +32,7 @@ const StyledWrapper = styled.main`
   /* * {
     outline: 1px solid green;
   } */
+  /* overflow-x: hidden; */
 
   align-items: center;
 
@@ -103,6 +104,9 @@ const StyledWrapper = styled.main`
       '. stonks2'
       'stonks1 .'
       'content content';
+
+    //  обрезка картинок графиков, чтобы они не выходили за поля хедера и текста
+    clip-path: inset(0px 5vw 0px 5vw);
   }
 
   @media ${breakPoints.smd} {
@@ -187,8 +191,8 @@ const Stonks2 = styled.svg`
 const Stonks3 = styled.svg`
   position: relative;
   color: red;
-  bottom: 3vw;
-  left: 3vw;
+  bottom: -2vw;
+  left: -2vw;
   grid-area: stonks1;
   height: 10vh;
   width: 100%;
@@ -209,8 +213,8 @@ const Stonks3 = styled.svg`
 const Stonks4 = styled.svg`
   position: relative;
   color: red;
-  bottom: 3vw;
-  left: 3vw;
+  bottom: -2vw;
+  left: -2vw;
   grid-area: stonks2;
   height: 100%;
   max-height: 1550px;
