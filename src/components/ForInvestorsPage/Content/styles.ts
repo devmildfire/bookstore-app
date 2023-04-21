@@ -115,9 +115,9 @@ const Icon = styled.svg`
   transition: all 0.3s ease-in-out;
   flex-shrink: 0;
 
-  :hover {
+  /* :hover {
     color: var(--main-red-100);
-  }
+  } */
 
   --size: 85px;
 

@@ -56,7 +56,7 @@ const Content = (): React.ReactElement => {
         <Text variant='manText' fontWeight={700}>
           {seventhPar}
           <a href='https://boosty.to/russiandino' target='_blank'>
-            на нашу страницу Бусти
+            на нашу страницу Бусти.
           </a>
         </Text>
       </TextDiv>
