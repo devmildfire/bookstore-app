@@ -115,8 +115,10 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.sm} {
     padding-top: 50px;
     padding-bottom: 50px;
-    padding-left: 16px;
-    padding-right: 16px;
+    /* padding-left: 16px;
+    padding-right: 16px; */
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
 `;
 
