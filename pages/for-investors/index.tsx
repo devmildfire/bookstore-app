@@ -92,11 +92,17 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.md} {
     grid-template-columns: 3fr 1fr;
 
-    grid-template-areas:
+    /* grid-template-areas:
       'title title'
       'content content'
       '. stonks2'
-      'stonks1 .';
+      'stonks1 .'; */
+
+    grid-template-areas:
+      'title title'
+      '. stonks2'
+      'stonks1 .'
+      'content content';
   }
 
   @media ${breakPoints.smd} {
