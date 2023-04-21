@@ -52,6 +52,9 @@ const StyledWrapper = styled.main`
   padding-left: calc((100vw - 1440px) / 2);
   padding-right: 115px;
 
+  //  подрезка графика по левому полю хедера
+  clip-path: inset(0px 0vw 0px calc((100vw - 1440px) / 2));
+
   @media ${breakPoints.xxl} {
     padding-top: 100px;
     padding-bottom: 100px;
@@ -81,13 +84,20 @@ const StyledWrapper = styled.main`
     padding-bottom: 100px;
     /* padding-left: 100px; */
     padding-left: 10vw;
-    padding-right: 50px;
+    /* padding-right: 50px; */
+    padding-right: 10vw;
+
+    //  подрезка графика по левому полю хедера
+    clip-path: inset(0px 0vw 0px 10vw);
   }
 
   @media ${breakPoints.lg} {
     /* padding-left: 10vw; */
     padding-left: 5vw;
     padding-right: 5vw;
+
+    //  подрезка графика по левому полю хедера
+    clip-path: inset(0px 0vw 0px 5vw);
   }
 
   @media ${breakPoints.md} {
