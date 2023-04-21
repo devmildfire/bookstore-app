@@ -14,7 +14,7 @@ const title = 'Уважаемые инвесторы и донаторы';
 const ForInvestors: NextPage = () => {
   return (
     <StyledWrapper>
-      <ToInvestors variant='h3_1Man'>{title}</ToInvestors>
+      <ToInvestors variant='h1_Inv'>{title}</ToInvestors>
       <Content />
       <Stonks1 as={stonksLow1} />
       <Stonks2 as={stonksHigh1} />

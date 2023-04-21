@@ -19,7 +19,7 @@ const sixthPar =
   'Рекомендуйте нас тем, кому может быть интересно менять реальность вместе с нами.';
 
 const seventhPar =
-  'А если хотите сделать небольшой разовый или ежемесячный донат и получить бонусы от Чтива и Русского Динозавра, добро пожаловать сюда – Бусти.';
+  'А если хотите сделать небольшой разовый или ежемесячный донат и получить бонусы от Чтива и Русского Динозавра, добро пожаловать сюда – ';
 
 const AwardIcons = (): React.ReactElement => {
   return (
@@ -49,7 +49,12 @@ const Content = (): React.ReactElement => {
         <Text variant='manText'>{fourthPar}</Text>
         <Text variant='manText'>{fifthPar}</Text>
         <Text variant='manText'>{sixthPar}</Text>
-        <Text variant='manText'>{seventhPar}</Text>
+        <Text variant='manText' fontWeight={700}>
+          {seventhPar}
+          <a href='https://boosty.to/russiandino' target='_blank'>
+            Бусти
+          </a>
+        </Text>
       </TextDiv>
     </ContentDiv>
   );
