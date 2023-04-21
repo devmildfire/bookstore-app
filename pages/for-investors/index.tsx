@@ -46,32 +46,46 @@ const StyledWrapper = styled.main`
 
   padding-top: 100px;
   padding-bottom: 100px;
-  padding-left: 239px;
+  /* padding-left: 239px; */
+  /* padding-left: 10vw; */
+  padding-left: calc((100vw - 1440px) / 2);
   padding-right: 115px;
+
+  @media ${breakPoints.xxl} {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    /* padding-left: 120px; */
+    padding-left: 10vw;
+    padding-right: 60px;
+  }
 
   @media screen and (max-width: 1600px) {
     padding-top: 100px;
     padding-bottom: 100px;
-    padding-left: 120px;
+    /* padding-left: 120px; */
+    padding-left: 10vw;
     padding-right: 60px;
   }
 
   @media ${breakPoints.xl} {
     padding-top: 100px;
     padding-bottom: 100px;
-    padding-left: 120px;
+    /* padding-left: 120px; */
+    padding-left: 10vw;
     padding-right: 60px;
   }
 
   @media screen and (max-width: 1200px) {
     padding-top: 100px;
     padding-bottom: 100px;
-    padding-left: 100px;
+    /* padding-left: 100px; */
+    padding-left: 10vw;
     padding-right: 50px;
   }
 
   @media ${breakPoints.lg} {
-    padding-left: 10vw;
+    /* padding-left: 10vw; */
+    padding-left: 5vw;
     padding-right: 5vw;
   }
 

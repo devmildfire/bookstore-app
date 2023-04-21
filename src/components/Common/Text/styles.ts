@@ -673,6 +673,7 @@ const ManuscriptTextStyle = css<StyledTextProps>`
 
     :hover {
       text-decoration: underline;
+      color: red;
     }
   }
 
