@@ -29,7 +29,8 @@ const StyledTitle = styled(Text)`
 const RelativeDiv = styled.div`
   position: relative;
   margin: 0;
-  width: var(--width);
+  max-width: var(--width);
+  width: 100%;
 `;
 
 const AboutList = (): React.ReactElement => {
