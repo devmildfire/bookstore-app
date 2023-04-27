@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import React, {
   useEffect,
   useMemo,
@@ -5,7 +6,7 @@ import React, {
   useRef,
   KeyboardEvent as ReactKeyEvent,
   ReactElement,
-  RefObject,
+  // RefObject,
 } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -88,6 +89,10 @@ const InfoContainer = styled(Container)`
   grid-area: info;
 `;
 
+const MotionPreview = styled(motion.div)`
+  display: flex;
+`;
+
 interface RowProps {
   row: Book[];
   data: Book[];
@@ -125,22 +130,20 @@ function Row({ row, data }: RowProps) {
     }
   };
 
-  const closeOnEscape = (event: KeyboardEvent) => {
-    if (isOpen && event.key === 'Escape') {
-      close();
-    }
-  };
-
-  useScrollTo(previewRef.current, isOpen);
+  useScrollTo(previewRef.current, isOpen, 300);
 
   useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (isOpen && event.key === 'Escape') {
+        close();
+      }
+    };
     window.addEventListener('keydown', closeOnEscape);
 
     return () => {
       window.removeEventListener('keydown', closeOnEscape);
     };
   }, [isOpen]);
-
   return (
     <RowItem>
       <RowContainer>
@@ -154,143 +157,161 @@ function Row({ row, data }: RowProps) {
         ))}
       </RowContainer>
       <div ref={previewRef}>
-        {isOpen && preview && width > 512 && (
-          <Preview
-            className={isOpen ? 'visible' : 'hidden'}
-            width={document.body.clientWidth}
-          >
-            <BookDescriptionContainer gap={32}>
-              <InfoContainer gap={12}>
-                <Title>{preview.title}</Title>
-                <Author>
-                  {preview.authors.map((author) => author.name).join(', ')}
-                </Author>
-                <Slogan>{preview.thesis}</Slogan>
-              </InfoContainer>
-              <DescriptionBox>
-                <Description>
-                  {preview.description}
-                  {preview.description}
-                  {preview.description}
-                </Description>
-              </DescriptionBox>
-              <Button type='button'>Познать</Button>
-            </BookDescriptionContainer>
-            <VideoContainer ref={videoContainerRef}>
-              <Video autoPlay muted loop>
-                <source src='video/composition.mp4' />
-              </Video>
-              <Noise containerRef={videoContainerRef} />
-            </VideoContainer>
-            <CloseButton onClick={close} type='button'>
-              <CloseIcon />
-            </CloseButton>
-          </Preview>
-        )}
+        <AnimatePresence>
+          {isOpen && preview && width > 512 && (
+            <Preview
+              style={{ overflowX: 'hidden', overflowY: 'hidden' }}
+              className={isOpen ? 'visible' : 'hidden'}
+              width={document.body.clientWidth}
+            >
+              <MotionPreview
+                initial={{
+                  opacity: 0,
+                  height: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                }}
+                exit={{
+                  opacity: 0,
+                  height: 0,
+                }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <BookDescriptionContainer gap={32}>
+                  <InfoContainer gap={12}>
+                    <Title>{preview.title}</Title>
+                    <Author>
+                      {preview.authors.map((author) => author.name).join(', ')}
+                    </Author>
+                    <Slogan>{preview.thesis}</Slogan>
+                  </InfoContainer>
+                  <DescriptionBox>
+                    <Description>
+                      {preview.description}
+                      {preview.description}
+                      {preview.description}
+                    </Description>
+                  </DescriptionBox>
+                  <Button type='button'>Познать</Button>
+                </BookDescriptionContainer>
+                <VideoContainer ref={videoContainerRef}>
+                  <Video autoPlay muted loop>
+                    <source src='video/composition.mp4' />
+                  </Video>
+                </VideoContainer>
+                <CloseButton onClick={close} type='button'>
+                  <CloseIcon />
+                </CloseButton>
+              </MotionPreview>
+            </Preview>
+          )}
+        </AnimatePresence>
       </div>
     </RowItem>
   );
 }
 
-const Canvas = styled.canvas`
-  z-index: 100;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.2;
-`;
+// const Canvas = styled.canvas`
+//   z-index: 100;
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   pointer-events: none;
+//   opacity: 0.2;
+// `;
 
-function Noise({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
-  useEffect(() => {
-    let canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D;
+// function Noise({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
+//   useEffect(() => {
+//     let canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D;
 
-    let wWidth: number, wHeight: number;
+//     let wWidth: number, wHeight: number;
 
-    const noiseData: ImageData[] = [];
-    let frame = 0;
+//     const noiseData: ImageData[] = [];
+//     let frame = 0;
 
-    let loopTimeout: number;
+//     let loopTimeout: number;
 
-    // Create Noise
-    const createNoise = () => {
-      const idata = ctx.createImageData(wWidth, wHeight);
-      const buffer32 = new Uint32Array(idata.data.buffer);
-      const len = buffer32.length;
+//     // Create Noise
+//     const createNoise = () => {
+//       const idata = ctx.createImageData(wWidth, wHeight);
+//       const buffer32 = new Uint32Array(idata.data.buffer);
+//       const len = buffer32.length;
 
-      for (let i = 0; i < len; i++) {
-        if (Math.random() < 0.5) {
-          buffer32[i] = 0xff000000;
-        }
-      }
+//       for (let i = 0; i < len; i++) {
+//         if (Math.random() < 0.5) {
+//           buffer32[i] = 0xff000000;
+//         }
+//       }
 
-      noiseData.push(idata);
-    };
+//       noiseData.push(idata);
+//     };
 
-    // Play Noise
-    const paintNoise = () => {
-      if (frame === 9) {
-        frame = 0;
-      } else {
-        frame++;
-      }
+//     // Play Noise
+//     const paintNoise = () => {
+//       if (frame === 9) {
+//         frame = 0;
+//       } else {
+//         frame++;
+//       }
 
-      ctx.putImageData(noiseData[frame], 0, 0);
-    };
+//       ctx.putImageData(noiseData[frame], 0, 0);
+//     };
 
-    // Loop
-    const loop = () => {
-      paintNoise();
+//     // Loop
+//     const loop = () => {
+//       paintNoise();
 
-      loopTimeout = window.setTimeout(() => {
-        window.requestAnimationFrame(loop);
-      }, 1000 / 25);
-    };
+//       loopTimeout = window.setTimeout(() => {
+//         window.requestAnimationFrame(loop);
+//       }, 1000 / 25);
+//     };
 
-    // Setup
-    const setup = () => {
-      wWidth = (containerRef.current as HTMLDivElement).offsetWidth;
-      wHeight = (containerRef.current as HTMLDivElement).offsetHeight;
+//     // Setup
+//     const setup = () => {
+//       wWidth = (containerRef.current as HTMLDivElement).offsetWidth;
+//       wHeight = (containerRef.current as HTMLDivElement).offsetHeight;
 
-      canvas.width = wWidth;
-      canvas.height = wHeight;
+//       canvas.width = wWidth;
+//       canvas.height = wHeight;
 
-      for (let i = 0; i < 10; i++) {
-        createNoise();
-      }
+//       for (let i = 0; i < 10; i++) {
+//         createNoise();
+//       }
 
-      loop();
-    };
+//       loop();
+//     };
 
-    // Reset
-    let resizeThrottle: number;
-    const reset = () => {
-      window.addEventListener(
-        'resize',
-        () => {
-          window.clearTimeout(resizeThrottle);
+//     // Reset
+//     let resizeThrottle: number;
+//     const reset = () => {
+//       window.addEventListener(
+//         'resize',
+//         () => {
+//           window.clearTimeout(resizeThrottle);
 
-          resizeThrottle = window.setTimeout(() => {
-            window.clearTimeout(loopTimeout);
-            setup();
-          }, 200);
-        },
-        false
-      );
-    };
+//           resizeThrottle = window.setTimeout(() => {
+//             window.clearTimeout(loopTimeout);
+//             setup();
+//           }, 200);
+//         },
+//         false
+//       );
+//     };
 
-    // Init
-    const init = (() => {
-      canvas = document.querySelector('.noise') as HTMLCanvasElement;
-      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+//     // Init
+//     const init = (() => {
+//       canvas = document.querySelector('.noise') as HTMLCanvasElement;
+//       ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-      setup();
-    })();
-  }, []);
-  return <Canvas className='noise' />;
-}
+//       setup();
+//     })();
+//   }, []);
+//   return <Canvas className='noise' />;
+// }
 
 interface GridProps {
   data: Book[];

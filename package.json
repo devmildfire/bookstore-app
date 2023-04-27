@@ -28,7 +28,7 @@
     "dayjs": "^1.11.2",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
-    "framer-motion": "^9.0.1",
+    "framer-motion": "^10.12.4",
     "next": "^13.1.5",
     "next-redux-wrapper": "^7.0.5",
     "react": "^18.2.0",
