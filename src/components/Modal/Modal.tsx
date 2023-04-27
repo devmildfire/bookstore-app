@@ -64,22 +64,35 @@ function makeMap<V = unknown>(obj: Record<string, V>) {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   gap: 12px;
   width: 100%;
-  max-width: 768px;
-  @media ${breakPoints.sm} {
-    max-width: 280px;
-    gap: 4px;
-  }
+  z-index: 99;
 `;
-
+const ModalTitleWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0px 5vw;
+`;
 const ModalTitle = styled(Text)`
   font-size: 24px;
   opacity: 0.5;
-  font-size: clamp(14px, 3vw, 24px);
+  text-align: left;
+  max-width: 580px;
+  width: 100%;
+  padding-top: 35px;
+  font-size: clamp(14px, 3vw, 18px);
+  @media ${breakPoints.md} {
+    padding-top: 16px;
+  }
 `;
-const Title = styled(Text)``;
+const Title = styled(Text)`
+  font-size: clamp(18px, 3vw, 30px);
+  font-weight: bold;
+`;
 const Author = styled(Text)`
   font-size: clamp(14px, 3vw, 24px);
 `;
@@ -90,36 +103,43 @@ const Price = styled(Text)`
 
 const Buttons = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 24px;
-  justify-content: space-evenly;
-
+  flex-direction: column;
+  align-items: center;
+  transition: 0.2s;
+  width: 100%;
   @media ${breakPoints.sm} {
     gap: 8px;
   }
 `;
 
-const IconButtonContainer = styled.div`
+const IconButtonWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin: 32px 0 64px;
-  @media ${breakPoints.sm} {
-    margin: 0;
-    margin: 24px 0;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 5vw;
+  cursor: pointer;
+  &:hover {
+    background: var(--main-red-30);
   }
+`;
+
+const IconButtonContainer = styled.div`
+  display: grid;
+  max-width: 580px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  justify-items: start;
+  width: 100%;
+  margin: 0;
 `;
 
 const IconButton = styled.button`
   background-color: transparent;
-  width: clamp(48px, 10vw, 150px);
-  height: clamp(48px, 10vw, 150px);
-  padding: min(2vw, 24px);
+  width: clamp(40px, 10vw, 55px);
+  height: clamp(40px, 10vw, 55px);
   color: var(--main-white-100);
-  border: thin solid var(--main-white-100);
-  border-radius: 4px;
   transition: 0.15s;
+  padding: 0;
   cursor: pointer;
 
   &:hover {
@@ -127,18 +147,12 @@ const IconButton = styled.button`
     border-color: var(--main-red-100);
   }
 
-  @media ${breakPoints.md} {
-    & circle {
-      stroke-width: 0px;
-    }
-
-    & path {
-      stroke-width: 2px;
-    }
+  & path {
+    stroke-width: 2px;
   }
 
-  @media ${breakPoints.sm} {
-    padding: 8px;
+  & circle {
+    stroke-width: 2px;
   }
 `;
 
@@ -146,6 +160,11 @@ const TotalPrice = styled(Text)`
   display: flex;
   gap: 55px;
   align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-top: thin solid var(--main-white-30);
+  max-width: 580px;
+  width: 100%;
 
   @media ${breakPoints.sm} {
     gap: 8px;
@@ -156,14 +175,17 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 5vw;
 
   @media ${breakPoints.sm} {
-    flex-direction: column-reverse;
     gap: 12px;
   }
 `;
 
-const ToCartButton = styled(Button)`
+const AddToCartButton = styled(Button)`
+  padding: 14px clamp(24px, 7vw, 80px);
   @media ${breakPoints.sm} {
     min-height: 48px;
     min-width: 100%;
@@ -172,11 +194,12 @@ const ToCartButton = styled(Button)`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 5%;
-  right: 3%;
-  width: 30px;
+  top: 30px;
+  right: 30px;
+  width: 24px;
   color: white;
   background: transparent;
+  padding: 0;
   cursor: pointer;
   transition: 0.1s;
   &:hover {
@@ -184,8 +207,32 @@ export const CloseButton = styled.button`
   }
 
   @media ${breakPoints.md} {
-    width: 24px;
+    width: 16px;
+    right: 24px;
+    top: 24px;
   }
+
+  @media ${breakPoints.sm} {
+    right: 16px;
+    top: 16px;
+  }
+`;
+
+type EditionsMap = {
+  [key: string]: string;
+};
+
+const editions: EditionsMap = {
+  write: 'Печатное издание',
+  book2: 'Книга 2.0',
+  digital: 'Цифровое издание',
+  audio: 'Аудиокнига',
+};
+
+const Edition = styled(Text)`
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 0 5vw;
 `;
 
 function BookModal(props: BookModalState) {
@@ -198,22 +245,24 @@ function BookModal(props: BookModalState) {
       <CloseButton type='button' onClick={() => handleOpenModal(false)}>
         <CloseIcon />
       </CloseButton>
-      <ModalTitle>Выберите тип издания</ModalTitle>
-      <Title variant='h2_2'>{title}</Title>
+      <Title variant='text'>{title}</Title>
       <Author>{author}</Author>
-
+      <ModalTitleWrapper>
+        <ModalTitle>Выберите тип издания</ModalTitle>
+      </ModalTitleWrapper>
       <Buttons>
         {types.map((type: string) => {
           return (
-            <IconButtonContainer key={type}>
-              <IconButton
-                onClick={() => setSum((prev) => prev + price)}
-                type='button'
-              >
-                {modalIconLookup[type]}
-              </IconButton>
-              <Price>{`${price}₽`}</Price>
-            </IconButtonContainer>
+            <IconButtonWrapper
+              onClick={() => setSum((prev) => prev + price)}
+              key={type}
+            >
+              <IconButtonContainer>
+                <IconButton type='button'>{modalIconLookup[type]}</IconButton>
+                <Edition variant='text'>{editions[type]}</Edition>
+                <Price>{`${price}₽`}</Price>
+              </IconButtonContainer>
+            </IconButtonWrapper>
           );
         })}
       </Buttons>
@@ -222,7 +271,7 @@ function BookModal(props: BookModalState) {
           Сумма:
           <Price>{`${sum}₽`}</Price>
         </TotalPrice>
-        <ToCartButton>В корзину</ToCartButton>
+        <AddToCartButton>Добавить в корзину</AddToCartButton>
       </Footer>
     </Container>
   );
