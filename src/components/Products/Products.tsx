@@ -189,6 +189,7 @@ function Row({ row, data }: RowProps) {
                   </InfoContainer>
                   <DescriptionBox>
                     <Description>
+                      {/* TODO убрать повторение перед релизом */}
                       {preview.description}
                       {preview.description}
                       {preview.description}

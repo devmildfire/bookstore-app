@@ -98,6 +98,27 @@ export const DescriptionBox = styled.div`
   grid-area: description;
   mask-image: linear-gradient(black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
+  /* width */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #232323;
+    border-radius: 8px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--grey);
+    border-radius: 8px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
   @media screen and (max-width: 1024px) {
     max-height: 300px;
   }
