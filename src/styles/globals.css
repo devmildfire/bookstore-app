@@ -74,9 +74,17 @@ body {
   color: var(--main-white-100);
   width: 100%;
   min-height: 100%;
-  scrollbar-gutter: stable;
+  /* scrollbar-gutter: stable; */
   background-color: var(--main-black);
   margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
+}
+
+/* попытка починить футер стилями корневого элемента */
+#__next {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .scroll-lock {

@@ -38,7 +38,8 @@ const h21Style = css<StyledTextProps>`
 
   @media ${breakPoints.xl} {
     font-size: 60px;
-    width: var(--width);
+    max-width: var(--width);
+    width: 100%;
     margin: 0 auto;
   }
 
