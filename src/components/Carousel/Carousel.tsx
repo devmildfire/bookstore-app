@@ -175,7 +175,7 @@ const Container = styled.div`
 const SlideContainer = styled.div`
   max-width: 1440px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   gap: 24px;
   width: 100%;

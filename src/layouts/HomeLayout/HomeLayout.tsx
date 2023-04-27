@@ -14,6 +14,11 @@ const StyledTitle = styled(Text)`
     var(--main-black) 100%
   );
   width: 100%;
+  /* TODO Исправить:
+    max-width здесь недолжно быть, но в https://github.com/russiandino/chtivo-next/pull/35/files 
+    была добавлена максимальная ширина для глобального стиля h21Style. Нужно убрать и переместить в локальные стили.  
+  */
+  max-width: 100%;
   padding: 2rem 0;
 `;
 
