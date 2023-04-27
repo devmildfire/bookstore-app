@@ -5,9 +5,11 @@ export const ProductItem = styled.li`
   max-width: 350px;
   width: 100%;
   color: var(--main-white-100);
+  outline: none;
 `;
 export const Cover = styled(Image)`
   cursor: pointer;
+  outline: none;
   transition: 0.15s ease-in-out;
   :hover {
     transform: scale(1.05);

@@ -12,6 +12,7 @@ import books from '@/mocks/books';
 import { DotButton } from './DotButton';
 import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
+import { SliderContainer } from '../Slider/styles';
 
 type PropType = {
   slides: number[];
@@ -68,7 +69,7 @@ const lookupTextComponent: Record<
   text: StyledText,
   caption: StyledCaption,
 };
-
+// TODO вынести в компонент Typography
 function Text(props: PropsWithChildren<TextProps>) {
   const { variant, tag, children, ...rest } = props;
   const Component = lookupTextComponent[variant];
@@ -150,16 +151,16 @@ const Wrapper = styled.section`
   --slide-spacing: 16px;
   --slide-size: 100%;
   --slide-height: auto;
-  padding: 55px 10vw;
+  padding: 55px 0vw;
   background-color: #050505;
 
   @media ${breakPoints.lg} {
-    padding: 55px 5vw;
+    padding: 55px 0vw;
   }
 `;
 
 const Viewport = styled.div`
-  max-width: 1440px;
+  /* max-width: 1440px; */
   overflow: hidden;
   margin: 0 auto;
 `;
@@ -168,19 +169,27 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: auto;
-  gap: var(--slide-spacing);
+  /* gap: var(--slide-spacing); */
+`;
+
+const SlideContainer = styled.div`
+  max-width: 1440px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
 `;
 
 const Slide = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 48px;
+  padding: 0 10vw;
   flex: 0 0 var(--slide-size);
-  min-width: 0;
   position: relative;
-  @media screen and (max-width: 768px) {
-    gap: 12px;
+  @media ${breakPoints.lg} {
+    padding: 0 5vw;
   }
 `;
 
@@ -237,25 +246,25 @@ function Carousel(props: PropType): ReactElement {
         <Container>
           {slides.map((index) => (
             <Slide key={index}>
-              <Link href={`/books/${books[index].transliteratedTitle}`}>
-                <Cover
-                  className='embla__slide__img'
-                  src={books[index].cover}
-                  alt={books[index].title}
-                />
-              </Link>
-              <StyledInfo>
-                <StyledTitle variant='heading' tag='h1'>
-                  {books[index].title}
-                </StyledTitle>
-                <StyledAuthor variant='heading' tag='h2'>
-                  {books[index].authors.map((author) => author.name).join(', ')}
-                </StyledAuthor>
-                <StyledThesis variant='caption'>
-                  {books[index].thesis}
-                </StyledThesis>
-                <StyledButton type='button'>Познать</StyledButton>
-              </StyledInfo>
+              <SlideContainer>
+                <Link href={`/books/${books[index].transliteratedTitle}`}>
+                  <Cover src={books[index].cover} alt={books[index].title} />
+                </Link>
+                <StyledInfo>
+                  <StyledTitle variant='heading' tag='h1'>
+                    {books[index].title}
+                  </StyledTitle>
+                  <StyledAuthor variant='heading' tag='h2'>
+                    {books[index].authors
+                      .map((author) => author.name)
+                      .join(', ')}
+                  </StyledAuthor>
+                  <StyledThesis variant='caption'>
+                    {books[index].thesis}
+                  </StyledThesis>
+                  <StyledButton type='button'>Познать</StyledButton>
+                </StyledInfo>
+              </SlideContainer>
             </Slide>
           ))}
         </Container>

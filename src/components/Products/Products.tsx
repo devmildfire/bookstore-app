@@ -5,7 +5,6 @@ import React, {
   useRef,
   KeyboardEvent as ReactKeyEvent,
   ReactElement,
-  PropsWithChildren,
   RefObject,
 } from 'react';
 import { useRouter } from 'next/router';
@@ -30,7 +29,6 @@ import { Book } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
-// import Overlay from '@/assets/images/gradient-overlay.png';
 
 const VideoContainer = styled.div`
   display: flex;
@@ -74,7 +72,7 @@ const BookDescriptionContainer = styled(Container)`
     'description description description'
     'button . .';
   max-width: 40vw;
-  padding: 5vh 5vw 5vh 10vw;
+  padding: 5vh 5vw;
   @media screen and (max-width: 1024px) {
     max-width: 100%;
     grid-template-columns: 250px 1fr 1fr;
