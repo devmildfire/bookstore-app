@@ -9,7 +9,8 @@ import Content from '@/components/ForInvestorsPage/Content';
 import breakPoints from '@/utils/breakPoints';
 // import breakPoints from '@/utils/breakPoints';
 
-const title = 'Уважаемые инвесторы и донаторы';
+// const title = 'Уважаемые инвесторы и донаторы';
+const title = 'Уважаемые инвесторы и донаторы';
 
 const ForInvestors: NextPage = () => {
   return (
@@ -26,6 +27,18 @@ const ForInvestors: NextPage = () => {
 
 const ToInvestors = styled(Text)`
   grid-area: title;
+
+  @media ${breakPoints.md} {
+    grid-area: 1 / 1 / 3 / 3;
+    padding: 0 15vw 0 10vw;
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    grid-area: 1 / 1 / 3 / 3;
+    padding: 0 15vw 15vw 2vw;
+    font-size: 30px;
+  }
 `;
 
 const StyledWrapper = styled.main`
