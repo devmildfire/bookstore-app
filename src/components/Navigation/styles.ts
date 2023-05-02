@@ -26,7 +26,7 @@ export const StyledList = styled.ul`
   height: 40px;
 
   @media ${breakPoints.xxl} {
-    padding: 0 10vw;
+    padding: 0 10vw 2px;
   }
 
   @media screen and (max-width: 1600px) {
