@@ -13,13 +13,12 @@ const NavigationItem: FC<NavItem> = (props) => {
 
   return (
     <li>
-      <Text variant='h4_1' component='span'>
+      <Text variant='h4_nav' component='span'>
         <NavLink href={link}>{title}</NavLink>
       </Text>
     </li>
   );
 };
-
 
 // const NavigationItem: FC<NavigationItemProps> = (props) => {
 //   const { link, title } = props;

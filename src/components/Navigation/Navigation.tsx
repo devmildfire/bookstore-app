@@ -1,10 +1,9 @@
 import * as React from 'react';
-import Container from '@/components/Common/Container';
+// import Container from '@/components/Common/Container';
 import NavigationItem from './NavigationItem';
 import { StyledList } from './styles';
 import { ClassNameProps } from '@/types/className';
 import { NavItem } from '@/types/navItem';
-
 
 // const navigationItems: NavItem[] = [
 //   {
@@ -30,7 +29,7 @@ interface NavigationProps extends ClassNameProps {
 }
 
 const Navigation: React.FC<NavigationProps> = (props) => {
-  const { className, navigationItems} = props;
+  const { className, navigationItems } = props;
   return (
     // <Container className={className}>
     //   <StyledList>
@@ -39,13 +38,12 @@ const Navigation: React.FC<NavigationProps> = (props) => {
     //     ))}
     //   </StyledList>
     // </Container>
-    
+
     <StyledList className={className}>
       {navigationItems.map((item) => (
         <NavigationItem {...item} key={item.link} />
       ))}
     </StyledList>
-  
   );
 };
 
