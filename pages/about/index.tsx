@@ -33,7 +33,8 @@ const About: NextPage = () => (
 export default About;
 
 const VideoContainer = styled(Container)`
-  width: var(--width);
+  max-width: var(--width);
+  width: 100%;
   display: grid;
   justify-items: center;
   margin: 0;
