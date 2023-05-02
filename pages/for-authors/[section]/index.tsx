@@ -3,13 +3,14 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 // import breakPoints from '@/utils/breakPoints';
-import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
-import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
-import sidebarItems from '@/mocks/sidebarItems';
+// import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
+// import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
+// import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
+import Navigation from '@/components/Navigation';
 
 const abzac = <Abzac />;
 const sendManuscript = <SendManuscript />;
@@ -35,11 +36,12 @@ const ForAuthors: NextPage = () => {
 
   return (
     <StyledWrapper>
-      <TwoPaneGrid>
+      {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />
-        <StyledSection>{content}</StyledSection>
-      </TwoPaneGrid>
+      </TwoPaneGrid> */}
+      <StyledSection>{content}</StyledSection>
+      <Navigation />
     </StyledWrapper>
   );
 };
