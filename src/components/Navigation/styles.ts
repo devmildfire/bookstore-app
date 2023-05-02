@@ -17,7 +17,7 @@ export const StyledList = styled.ul`
   padding: 0 calc((100vw - var(--width)) / 2);
 
   // margin: 0 auto;
-  background: #494949;
+  background: #49494970;
   backdrop-filter: blur(10px);
 
   text-transform: uppercase;
