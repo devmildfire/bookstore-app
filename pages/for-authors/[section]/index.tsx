@@ -36,12 +36,12 @@ const ForAuthors: NextPage = () => {
 
   return (
     <StyledWrapper>
+      <Navigation />
       {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />
       </TwoPaneGrid> */}
       <StyledSection>{content}</StyledSection>
-      <Navigation />
     </StyledWrapper>
   );
 };

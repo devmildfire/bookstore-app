@@ -31,13 +31,20 @@ const navigationItems: NavItem[] = [
 const Navigation: React.FC<ClassNameProps> = (props) => {
   const { className, } = props;
   return (
-    <Container className={className}>
-      <StyledList>
-        {navigationItems.map((item) => (
-          <NavigationItem {...item} key={item.path} />
-        ))}
-      </StyledList>
-    </Container>
+    // <Container className={className}>
+    //   <StyledList>
+    //     {navigationItems.map((item) => (
+    //       <NavigationItem {...item} key={item.path} />
+    //     ))}
+    //   </StyledList>
+    // </Container>
+    
+    <StyledList className={className}>
+      {navigationItems.map((item) => (
+        <NavigationItem {...item} key={item.path} />
+      ))}
+    </StyledList>
+  
   );
 };
 
