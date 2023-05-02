@@ -11,6 +11,7 @@ import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
 import Navigation from '@/components/Navigation';
+import navItems from '@/mocks/navItems';
 
 const abzac = <Abzac />;
 const sendManuscript = <SendManuscript />;
@@ -36,7 +37,7 @@ const ForAuthors: NextPage = () => {
 
   return (
     <StyledWrapper>
-      <Navigation />
+      <Navigation navigationItems={navItems} />
       {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />

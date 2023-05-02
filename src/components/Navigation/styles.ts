@@ -9,7 +9,6 @@ export const StyledList = styled.ul`
 
   width: 100%;
   // max-width: var(--width);
-  // max-width: var(--width);
   padding: 0 5vw;
 
   // margin: 0 auto;
