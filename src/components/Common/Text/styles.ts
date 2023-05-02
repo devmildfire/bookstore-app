@@ -479,6 +479,27 @@ const h41Style = css<StyledTextProps>`
   }
 `;
 
+const navItemStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-size: 14px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 12px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 10px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 10px;
+  }
+`;
+
 const h42Style = css<StyledTextProps>`
   ${h41Style}
   font-size: 12px;
@@ -865,6 +886,7 @@ const styles: Record<
   h4_4: h44Style,
   h4_p: partnerDisplayNameStyle,
   h4_n: h4Name,
+  h4_nav: navItemStyle,
 };
 
 export const tagMap: Record<Variant, string> = {
@@ -904,6 +926,7 @@ export const tagMap: Record<Variant, string> = {
   h4_4: 'h4',
   h4_p: 'h4',
   h4_n: 'h4',
+  h4_nav: 'h4',
 };
 
 export interface StyledTextProps {

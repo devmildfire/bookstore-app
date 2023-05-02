@@ -35,5 +35,6 @@ export type Variant =
   | 'h4_3'
   | 'h4_4'
   | 'h4_p'
-  | 'h4_n';
+  | 'h4_n'
+  | 'h4_nav';
 export type Color = 'red' | 'white' | 'white80' | 'inherit';

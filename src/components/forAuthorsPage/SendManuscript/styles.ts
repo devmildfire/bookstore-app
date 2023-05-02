@@ -105,7 +105,7 @@ const TextReqDiv = styled.div`
 const IconsDiv = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 
   @media ${breakPoints.xl} {
   }
