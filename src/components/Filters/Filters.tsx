@@ -1,10 +1,4 @@
-import React, {
-  PropsWithChildren,
-  ReactElement,
-  SetStateAction,
-  createContext,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import * as Popover from '@radix-ui/react-popover';
 import {
@@ -13,8 +7,7 @@ import {
   ReloadIcon,
 } from '@radix-ui/react-icons';
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
-import { useContext } from 'react';
-import { Multiselect, useMultiselect } from '../Common/Multiselect';
+import { Multiselect } from '../Common/Multiselect';
 import breakPoints from '@/utils/breakPoints';
 
 const PopoverContent = styled(Popover.Content)`
@@ -151,38 +144,16 @@ type FilterPopoverProps = PropsWithChildren<{
   title: string;
   icon: ReactElement;
   align: 'start' | 'center' | 'end';
-  reset: () => void;
 }>;
 
-type FilterContextProps = {
-  handleRemove: (value: string) => void;
-  handleSelect: (value: string) => void;
-  setOptions: SetStateAction<unknown>; // TODO @sergromm убрать unknown и any, использовать более точные типы.
-  selected: any[];
-  options: any[];
-};
-
-const FilterContext = createContext<FilterContextProps>({
-  handleRemove: () => undefined,
-  handleSelect: () => undefined,
-  setOptions: () => undefined,
-  selected: [],
-  options: [],
-});
-
-export const useFilter = () => {
-  const currentFilterContext = useContext(FilterContext);
-
-  if (!currentFilterContext) {
-    throw new Error('useFilter has to be used within <ModalFilter.Provider>');
-  }
-
-  return currentFilterContext;
-};
-
 function FilterPopover(props: FilterPopoverProps) {
-  const { title, icon, align, reset, children } = props;
+  const { title, icon, align, children } = props;
   const [visible, setVisible] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  function reset() {
+    setResetKey((prev) => (prev += 1));
+  }
 
   return (
     <Popover.Root modal={false} open={visible} onOpenChange={setVisible}>
@@ -204,7 +175,7 @@ function FilterPopover(props: FilterPopoverProps) {
             />
           </HeaderConainer>
 
-          <FiltersContainer>{children}</FiltersContainer>
+          <FiltersContainer key={resetKey}>{children}</FiltersContainer>
         </PopoverContent>
       </Popover.Portal>
     </Popover.Root>
@@ -242,63 +213,15 @@ function Filters() {
     'Владислав Несветаев',
   ];
 
-  const [selectedYears, years, dispatchYearsAction] = useMultiselect({
-    selected: [],
-    options: yearsData,
-  });
-
-  const [selectedEditions, editions, dispatchEditionsAction] = useMultiselect({
-    selected: [],
-    options: editionsData,
-  });
-
-  const [selectedAuthors, authors, dispatchAuthorsAction] = useMultiselect({
-    selected: [],
-    options: authorsData,
-  });
-
-  function resetAll() {
-    dispatchAuthorsAction({ type: 'reset', item: '' });
-    dispatchYearsAction({ type: 'reset', item: '' });
-    dispatchEditionsAction({ type: 'reset', item: '' });
-  }
-
   return (
     <Triggers>
-      <FilterPopover
-        reset={resetAll}
-        align='start'
-        title='Фильтры'
-        icon={<FilterIcon />}
-      >
-        <Multiselect
-          dispatch={dispatchAuthorsAction}
-          selected={selectedAuthors}
-          options={authors}
-          twoColumn
-          title='Автор'
-          withSearch
-        />
-        <Multiselect
-          dispatch={dispatchEditionsAction}
-          selected={selectedEditions}
-          options={editions}
-          title='Издания '
-        />
-        <Multiselect
-          dispatch={dispatchYearsAction}
-          selected={selectedYears}
-          options={years}
-          title='Год издания'
-        />
+      <FilterPopover align='start' title='Фильтры' icon={<FilterIcon />}>
+        <Multiselect data={authorsData} twoColumn title='Автор' withSearch />
+        <Multiselect data={editionsData} title='Издания ' />
+        <Multiselect data={yearsData} title='Год издания' />
       </FilterPopover>
       <Separator />
-      <FilterPopover
-        reset={() => console.log('reset sorting')}
-        align='end'
-        title='Сортировка'
-        icon={<SortIcon />}
-      >
+      <FilterPopover align='end' title='Сортировка' icon={<SortIcon />}>
         <SortList>
           <li>По дате издания</li>
           <li>По автору</li>

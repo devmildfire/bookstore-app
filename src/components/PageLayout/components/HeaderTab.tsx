@@ -79,7 +79,6 @@ const PopperContainer = styled.div`
   padding: 20px;
 `;
 
-/* TODO: исправить таб с учетом нового popper'а */
 const HeaderTab = ({
   item: { title, link, submenu },
 }: HeaderTabProps): React.ReactElement => (

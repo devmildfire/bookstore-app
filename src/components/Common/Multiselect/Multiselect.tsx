@@ -21,9 +21,7 @@ type MultiselectProps = {
   withSearch?: boolean;
   twoColumn?: boolean;
   title: string;
-  options: SelectData;
-  selected: SelectData;
-  dispatch: Dispatch<MultiselectAction>;
+  data: SelectData;
 };
 
 type UseMultiselectType = {
@@ -81,7 +79,11 @@ export function useMultiselect(
 }
 
 export function Multiselect(props: MultiselectProps) {
-  const { options, selected, dispatch, title, withSearch, twoColumn } = props;
+  const { data, title, withSearch, twoColumn } = props;
+  const [selected, options, dispatch] = useMultiselect({
+    selected: [],
+    options: data,
+  });
 
   return (
     <>
