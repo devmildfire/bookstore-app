@@ -175,7 +175,7 @@ const HeaderWrapper = styled.header`
 `;
 
 const HeaderContainer = styled.div`
-  --header-height: 80px;
+  // --header-height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -188,15 +188,15 @@ const HeaderContainer = styled.div`
 
   @media ${breakPoints.xl} {
     max-width: auto;
-    --header-height: 70px;
+    // --header-height: 70px;
   }
 
   @media ${breakPoints.lg} {
-    --header-height: 60px;
+    // --header-height: 60px;
   }
 
   @media ${breakPoints.md} {
-    --header-height: 58px;
+    // --header-height: 58px;
     gap: 0px;
   }
 `;

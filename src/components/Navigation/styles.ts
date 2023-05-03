@@ -2,27 +2,27 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const StyledList = styled.ul`
-  position: fixed;
-  transform: translate(0, -1px);
+  position: sticky;
+
+  //  перемещение меню навигации, чтобы не спрятаться под хедером
+  top: calc(var(--header-height) - 1px);
+  left: 0px;
+  
   z-index: 10;
 
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  // justify-content: space-around;
   align-items: center;
 
   width: 100%;
-  // max-width: var(--width);
   padding: 0 calc((100vw - var(--width)) / 2);
 
-  // margin: 0 auto;
   background: #49494970;
   backdrop-filter: blur(10px);
 
   text-transform: uppercase;
-  /* background-color: grey; */
-
+  
   height: 40px;
 
   @media ${breakPoints.xxl} {

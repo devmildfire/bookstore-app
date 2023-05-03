@@ -57,13 +57,7 @@
   display: none;
 } */
 
-@media screen and (max-width: 830px) {
-  :root {
-    /* --width: 580px; */
-    --width: 722px;
-    --top-div-gap: 40px;
-  }
-}
+
 
 html,
 body {
@@ -124,6 +118,8 @@ body {
     --width: 1024px;
     --searchBarWidth: 256px;
     --top-div-gap: 70px;
+
+    --header-height: 70px;
   }
 }
 
@@ -132,6 +128,8 @@ body {
     --width: 830px;
     --searchBarWidth: 186px;
     --top-div-gap: 50px;
+
+    --header-height: 60px;
   }
 
   .max-width {
@@ -148,6 +146,8 @@ body {
     /* --width: 580px; */
     --width: 722px;
     --top-div-gap: 40px;
+
+    --header-height: 58px;
   }
 }
 
