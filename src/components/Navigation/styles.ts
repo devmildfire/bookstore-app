@@ -16,7 +16,7 @@ export const StyledList = styled.ul`
   align-items: center;
 
   width: 100%;
-  padding: 0 calc((100vw - var(--width)) / 2);
+  padding: 2px calc((100vw - var(--width)) / 2) 0;
 
   background: #49494970;
   backdrop-filter: blur(10px);
@@ -26,7 +26,7 @@ export const StyledList = styled.ul`
   height: 40px;
 
   @media ${breakPoints.xxl} {
-    padding: 0 10vw 2px;
+    padding: 2px 10vw 0;
   }
 
   @media screen and (max-width: 1600px) {
