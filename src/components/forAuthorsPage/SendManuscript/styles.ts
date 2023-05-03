@@ -12,38 +12,44 @@ const ManuscriptDiv = styled.div`
   gap: 48px;
 
   --padding-top: 100px;
-  --padding-sides: 235px;
+  // --padding-sides: 235px;
+  --padding-sides: 0px;
   --padding-bottom: 100px;
 
   padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
 
   @media screen and (max-width: 1900px) {
     --padding-top: 100px;
-    --padding-sides: 96px;
+    // --padding-sides: 96px;
+    --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media ${breakPoints.xl} {
     --padding-top: 100px;
-    --padding-sides: 96px;
+    // --padding-sides: 96px;
+    --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media screen and (max-width: 1200px) {
     --padding-top: 90px;
-    --padding-sides: 106px;
+    // --padding-sides: 106px;
+    --padding-sides: 0px;
     --padding-bottom: 73px;
   }
 
   @media ${breakPoints.lg} {
     --padding-top: 90px;
-    --padding-sides: 106px;
+    // --padding-sides: 106px;
+    --padding-sides: 0px;
     --padding-bottom: 73px;
   }
 
   @media ${breakPoints.md} {
     --padding-top: 57px;
-    --padding-sides: 23px;
+    // --padding-sides: 23px;
+    --padding-sides: 0px;
     --padding-bottom: 50px;
     gap: 16px;
   }

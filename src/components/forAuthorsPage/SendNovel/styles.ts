@@ -39,8 +39,10 @@ const NovelDiv = styled.div`
   row-gap: 0px;
 
   --padding-top: 100px;
-  --padding-left: 95px;
-  --padding-right: 60px;
+  // --padding-left: 95px;
+  // --padding-right: 60px;
+  --padding-left: 0px;
+  --padding-right: 0px;
   --padding-bottom: 100px;
 
   padding: var(--padding-top) var(--padding-right) var(--padding-bottom)
@@ -48,8 +50,10 @@ const NovelDiv = styled.div`
 
   @media screen and (max-width: 1600px) {
     --padding-top: 100px;
-    --padding-left: 24px;
-    --padding-right: 40px;
+    // --padding-left: 24px;
+    // --padding-right: 40px;
+    --padding-left: 0px;
+    --padding-right: 0px;
     --padding-bottom: 100px;
 
     grid-template-areas:
@@ -67,8 +71,10 @@ const NovelDiv = styled.div`
 
   @media ${breakPoints.xl} {
     --padding-top: 100px;
-    --padding-left: 24px;
-    --padding-right: 40px;
+    // --padding-left: 24px;
+    // --padding-right: 40px;
+    --padding-left: 0px;
+    --padding-right: 0px;
     --padding-bottom: 100px;
 
     grid-template-areas:
@@ -94,8 +100,10 @@ const NovelDiv = styled.div`
       'link picture';
 
     --padding-top: 90px;
-    --padding-left: 14px;
-    --padding-right: 20px;
+    // --padding-left: 14px;
+    // --padding-right: 20px;
+    --padding-left: 0px;
+    --padding-right: 0px;
     --padding-bottom: 100px;
 
     column-gap: 35px;
@@ -115,8 +123,10 @@ const NovelDiv = styled.div`
       'picture';
 
     --padding-top: 50px;
-    --padding-left: 31px;
-    --padding-right: 29px;
+    // --padding-left: 31px;
+    // --padding-right: 29px;
+    --padding-left: 0px;
+    --padding-right: 0px;
     --padding-bottom: 70px;
 
     column-gap: 35px;
@@ -125,16 +135,20 @@ const NovelDiv = styled.div`
     .text {
       padding-top: 30px;
       padding-bottom: 39px;
-      padding-left: 5vw;
-      padding-right: 5vw;
+      // padding-left: 5vw;
+      // padding-right: 5vw;
+      padding-left: 0vw;
+      padding-right: 0vw;
       grid-area: text;
       /* align-self: center; */
     }
 
     .title,
     .link {
-      padding-left: 5vw;
-      padding-right: 5vw;
+      // padding-left: 5vw;
+      // padding-right: 5vw;
+      padding-left: 0vw;
+      padding-right: 0vw;
     }
   }
 
@@ -146,8 +160,10 @@ const NovelDiv = styled.div`
       'picture';
 
     --padding-top: 50px;
-    --padding-left: 31px;
-    --padding-right: 29px;
+    // --padding-left: 31px;
+    // --padding-right: 29px;
+    --padding-left: 0px;
+    --padding-right: 0px;    
     --padding-bottom: 70px;
 
     column-gap: 10px;
@@ -156,8 +172,10 @@ const NovelDiv = styled.div`
     .text {
       padding-top: 30px;
       padding-bottom: 30px;
-      padding-left: 5vw;
-      padding-right: 5vw;
+      // padding-left: 5vw;
+      // padding-right: 5vw;
+      padding-left: 0vw;
+      padding-right: 0vw;
       grid-area: text;
       /* align-self: center; */
     }
@@ -167,8 +185,10 @@ const NovelDiv = styled.div`
     .text {
       padding-top: 30px;
       padding-bottom: 30px;
-      padding-left: 5vw;
-      padding-right: 5vw;
+      // padding-left: 5vw;
+      // padding-right: 5vw;
+      padding-left: 0vw;
+      padding-right: 0vw;
       grid-area: text;
       /* align-self: center; */
     }
@@ -290,7 +310,8 @@ const DinoPawsBook = styled.svg`
 
   @media ${breakPoints.lg} {
     width: 100%;
-    padding: 30px 5vw 0px;
+    // padding: 30px 5vw 0px;
+    padding: 30px 0vw 0px;
   }
 
   @media ${breakPoints.md} {
