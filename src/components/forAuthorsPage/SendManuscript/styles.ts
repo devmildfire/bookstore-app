@@ -1,6 +1,7 @@
 // import Link from 'next/link';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import { Text } from '@/components/Common/Text/Text';
 
 const ManuscriptDiv = styled.div`
   /* * {
@@ -222,6 +223,14 @@ const ReqDiv = styled.div`
   }
 `;
 
+const TextForMobile = styled(Text)`
+  display: none;
+
+  @media ${breakPoints.lg} {
+    display: block;
+  }
+`;
+
 export {
   TextDiv,
   ManuscriptDiv,
@@ -230,4 +239,5 @@ export {
   OneIconDiv,
   ReqDiv,
   TextReqDiv,
+  TextForMobile,
 };

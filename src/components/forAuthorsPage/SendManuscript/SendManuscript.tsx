@@ -8,6 +8,7 @@ import {
   OneIconDiv,
   ReqDiv,
   TextReqDiv,
+  TextForMobile,
 } from './styles';
 import { mediaTypes } from './MediaTypes';
 import { requirements } from './Requirements';
@@ -72,18 +73,18 @@ const Conditions = (): React.ReactElement => {
     <ReqDiv>
       <Text variant='manRec'>Рукописи не рецензируются</Text>
       <Text variant='h3_1SendMan' align='start'>
-        {'отправить рукопись можно на почту '}
+        {'отправить рукопись можно на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
       <Text variant='h3_1Bel' align='start'>
         {'Верим в вас '}
       </Text>
-      <Text variant='h3_1SendMan' align='start'>
+      <TextForMobile variant='h3_1SendMan' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
         <a href=' '>литжурнале Русского Динозавра</a>
-      </Text>
+      </TextForMobile>
     </ReqDiv>
   );
 };
