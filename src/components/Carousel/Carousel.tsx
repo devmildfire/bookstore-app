@@ -202,7 +202,6 @@ const Cover = styled.img`
 `;
 
 const Dots = styled.div`
-  z-index: 1;
   bottom: auto;
   position: absolute;
   left: 0;
