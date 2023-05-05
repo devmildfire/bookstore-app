@@ -19,10 +19,10 @@ const HallDiv = styled.div`
   /* justify-items: space-around; */
   /* height: 100%; */
 
-  padding: 10vw;
+  padding: 0 10vw;
 
   @media ${breakPoints.lg} {
-    padding: 5vw;
+    padding: 0 5vw;
   }
 `;
 
