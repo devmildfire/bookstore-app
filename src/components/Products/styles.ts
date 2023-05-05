@@ -54,7 +54,6 @@ interface PreviewProps {
 
 export const Preview = styled.div<PreviewProps>`
   position: relative;
-  display: flex;
   transform: translateX(-50%);
   bottom: 0;
   left: 50%;
@@ -72,10 +71,6 @@ export const Preview = styled.div<PreviewProps>`
   &.visible {
     visibility: visible;
     opacity: 1;
-  }
-
-  @media screen and (max-width: 1024px) {
-    flex-direction: column-reverse;
   }
 `;
 

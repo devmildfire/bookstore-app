@@ -72,10 +72,12 @@ const BookDescriptionContainer = styled(Container)`
     'info info info'
     'description description description'
     'button . .';
-  max-width: 40vw;
-  padding: 5vh 5vw;
+  width: 80vw;
+  max-width: 850px;
+  padding: 5vh 5vw 5vh 10vw;
   @media screen and (max-width: 1024px) {
     max-width: 100%;
+    width: 100%;
     grid-template-columns: 250px 1fr 1fr;
     grid-template-areas:
       'info  description description'
@@ -91,6 +93,9 @@ const InfoContainer = styled(Container)`
 
 const MotionPreview = styled(motion.div)`
   display: flex;
+  @media screen and (max-width: 1024px) {
+    flex-direction: column-reverse;
+  }
 `;
 
 interface RowProps {
