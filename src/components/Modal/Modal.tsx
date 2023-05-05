@@ -5,6 +5,7 @@ import React, {
   SetStateAction,
   ReactNode,
   useContext,
+  PropsWithChildren,
 } from 'react';
 import styled from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -17,6 +18,7 @@ import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -112,12 +114,13 @@ const Buttons = styled.div`
   width: 100%;
 `;
 
-const IconButtonWrapper = styled.div`
+const IconButtonWrapper = styled.div<{ selected: boolean }>`
   display: flex;
   justify-content: center;
   width: 100%;
   padding: 10px 5vw;
   cursor: pointer;
+  background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')};
   &:hover {
     background: var(--main-red-30);
   }
@@ -141,11 +144,6 @@ const IconButton = styled.button`
   transition: 0.15s;
   padding: 0;
   cursor: pointer;
-
-  &:hover {
-    color: var(--main-red-100);
-    border-color: var(--main-red-100);
-  }
 
   & path {
     stroke-width: 2px;
@@ -233,11 +231,23 @@ const editions: EditionsMap = {
   audio: 'Аудиокнига',
 };
 
-const Edition = styled(Text)`
+const EditionName = styled(Text)`
   font-size: clamp(10px, 3vw, 16px);
   text-transform: uppercase;
   padding: 0 5vw;
 `;
+
+function Edition({ children }: PropsWithChildren) {
+  const [isSelected, setIsSelected] = useState(false);
+  return (
+    <IconButtonWrapper
+      selected={isSelected}
+      onClick={() => setIsSelected((prev) => !prev)}
+    >
+      <IconButtonContainer>{children}</IconButtonContainer>
+    </IconButtonWrapper>
+  );
+}
 
 function BookModal(props: BookModalState) {
   const { title, types, author, price } = props;
@@ -257,16 +267,11 @@ function BookModal(props: BookModalState) {
       <Buttons>
         {types.map((type: string) => {
           return (
-            <IconButtonWrapper
-              onClick={() => setSum((prev) => prev + price)}
-              key={type}
-            >
-              <IconButtonContainer>
-                <IconButton type='button'>{modalIconLookup[type]}</IconButton>
-                <Edition variant='text'>{editions[type]}</Edition>
-                <Price>{`${price}₽`}</Price>
-              </IconButtonContainer>
-            </IconButtonWrapper>
+            <Edition key={type}>
+              <IconButton type='button'>{modalIconLookup[type]}</IconButton>
+              <EditionName variant='text'>{editions[type]}</EditionName>
+              <Price>{`${price}₽`}</Price>
+            </Edition>
           );
         })}
       </Buttons>
@@ -305,10 +310,33 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
       {children}
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
-          <DialogOverlay />
-          <DialogContent>
-            <ModalContent {...modalState} />
-          </DialogContent>
+          <DialogOverlay open={open} />
+          <Dialog.Content>
+            <AnimatePresence>
+              <DialogContent
+                layout
+                initial={{
+                  opacity: 0,
+                  transform: 'translate(-50%, -50%) scale(0.5)',
+                }}
+                animate={{
+                  opacity: 1,
+                  transform: 'translate(-50%, -50%) scale(1)',
+                }}
+                exit={{
+                  opacity: 0,
+                  transform: 'translate(-50%, -50%) scale(0.5)',
+                }}
+                transition={{
+                  duration: 0.2,
+                  ease: 'easeInOut',
+                  opacity: { duration: 0.4 },
+                }}
+              >
+                <ModalContent {...modalState} />
+              </DialogContent>
+            </AnimatePresence>
+          </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
     </ModalContext.Provider>

@@ -50,6 +50,7 @@
   --font-s: 12px;
   /* --heading-xl */
   --top-div-gap: 100px;
+  --scrollbar-width: 0;
 }
 
 /* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
@@ -63,6 +64,15 @@
     --width: 722px;
     --top-div-gap: 40px;
   }
+}
+
+html {
+  /* 
+    Временно оставляю скролл даже при открытых модальных окнах.
+    Так же заставляет исчезнуть хедер.
+  */
+  overflow-y: scroll;
+  color-scheme: dark;
 }
 
 html,

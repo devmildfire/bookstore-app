@@ -1,8 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import { motion } from 'framer-motion';
 
-export const DialogOverlay = styled(Dialog.Overlay)`
+export const DialogOverlay = styled(Dialog.Overlay)<{ open: boolean }>`
   background-color: #0000009d;
   backdrop-filter: blur(4px);
   position: fixed;
@@ -10,7 +11,7 @@ export const DialogOverlay = styled(Dialog.Overlay)`
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 `;
 
-export const DialogContent = styled(Dialog.Content)`
+export const DialogContent = styled(motion.div)`
   display: flex;
   justify-content: center;
   background: linear-gradient(115deg, #0b0b0b 3%, rgba(18, 18, 18, 1) 100%);
@@ -18,7 +19,7 @@ export const DialogContent = styled(Dialog.Content)`
   border-radius: 8px;
   position: fixed;
   overflow: hidden;
-  top: calc(50% + var(--header-height) / 2);
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
