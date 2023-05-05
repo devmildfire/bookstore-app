@@ -122,7 +122,7 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
   cursor: pointer;
   background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')};
   &:hover {
-    background: var(--main-red-30);
+    background: var(--main-red-20);
   }
 `;
 
