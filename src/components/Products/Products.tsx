@@ -73,7 +73,7 @@ const BookDescriptionContainer = styled(Container)`
     'description description description'
     'button . .';
   width: 80vw;
-  max-width: 850px;
+  max-width: 1024px;
   padding: 5vh 5vw 5vh 10vw;
   @media screen and (max-width: 1024px) {
     max-width: 100%;

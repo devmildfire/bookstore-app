@@ -11,7 +11,8 @@ export const Cover = styled(Image)`
   cursor: pointer;
   outline: none;
   transition: 0.15s ease-in-out;
-  :hover {
+  :hover,
+  :focus {
     transform: scale(1.05);
     box-shadow: var(--red-hover);
   }
