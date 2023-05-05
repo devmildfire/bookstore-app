@@ -4,7 +4,7 @@ import breakPoints from '@/utils/breakPoints';
 import { motion } from 'framer-motion';
 
 export const DialogOverlay = styled(Dialog.Overlay)<{ open: boolean }>`
-  background-color: #0000009d;
+  background-color: #0505059d;
   backdrop-filter: blur(4px);
   position: fixed;
   inset: 0;
@@ -24,7 +24,7 @@ export const DialogContent = styled(motion.div)`
   transform: translate(-50%, -50%);
   width: 90vw;
   max-width: 1100px;
-  max-height: 85vh;
+  max-height: 95vh;
   padding: 45px 0 55px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   :focus {
