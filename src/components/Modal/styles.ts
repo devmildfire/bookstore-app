@@ -4,6 +4,7 @@ import breakPoints from '@/utils/breakPoints';
 
 export const DialogOverlay = styled(Dialog.Overlay)`
   background-color: #0000009d;
+  backdrop-filter: blur(4px);
   position: fixed;
   inset: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -17,7 +18,7 @@ export const DialogContent = styled(Dialog.Content)`
   border-radius: 8px;
   position: fixed;
   overflow: hidden;
-  top: 50%;
+  top: calc(50% + var(--header-height) / 2);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;

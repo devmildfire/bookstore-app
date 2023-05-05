@@ -67,9 +67,12 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 12px;
   width: 100%;
   z-index: 99;
+  gap: 12px;
+  @media ${breakPoints.lg} {
+    gap: 0;
+  }
 `;
 const ModalTitleWrapper = styled.div`
   display: flex;
@@ -83,21 +86,21 @@ const ModalTitle = styled(Text)`
   text-align: left;
   max-width: 580px;
   width: 100%;
-  padding-top: 35px;
-  font-size: clamp(14px, 3vw, 18px);
+  padding-top: clamp(16px, 10vh, 35px);
+  font-size: clamp(14px, 2vw, 18px);
   @media ${breakPoints.md} {
     padding-top: 16px;
   }
 `;
 const Title = styled(Text)`
-  font-size: clamp(18px, 3vw, 30px);
+  font-size: clamp(18px, 2vw, 30px);
   font-weight: bold;
 `;
 const Author = styled(Text)`
-  font-size: clamp(14px, 3vw, 24px);
+  font-size: clamp(14px, 2vw, 24px);
 `;
 const Price = styled(Text)`
-  font-size: clamp(14px, 3vw, 24px);
+  font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
 `;
 
@@ -107,9 +110,6 @@ const Buttons = styled.div`
   align-items: center;
   transition: 0.2s;
   width: 100%;
-  @media ${breakPoints.sm} {
-    gap: 8px;
-  }
 `;
 
 const IconButtonWrapper = styled.div`
@@ -185,7 +185,11 @@ const Footer = styled.div`
 `;
 
 const AddToCartButton = styled(Button)`
-  padding: 14px clamp(24px, 7vw, 80px);
+  padding: clamp(8px, 1vw, 14px) clamp(24px, 7vw, 80px);
+  @media ${breakPoints.sm} {
+    min-height: 48px;
+    min-width: 100%;
+  }
   @media ${breakPoints.sm} {
     min-height: 48px;
     min-width: 100%;
@@ -230,7 +234,7 @@ const editions: EditionsMap = {
 };
 
 const Edition = styled(Text)`
-  font-size: 16px;
+  font-size: clamp(10px, 3vw, 16px);
   text-transform: uppercase;
   padding: 0 5vw;
 `;
