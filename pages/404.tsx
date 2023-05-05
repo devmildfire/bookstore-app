@@ -33,7 +33,10 @@ const Hall = () => {
       <Text variant='h3_1Man' align='center'>
         I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that
       </Text>
-      <Button href='/'> Вернуться на главную </Button>
+      <Button href='/' variant='wide'>
+        {' '}
+        Вернуться на главную{' '}
+      </Button>
     </HallDiv>
   );
 };
