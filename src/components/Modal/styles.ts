@@ -23,7 +23,7 @@ export const DialogContent = styled(motion.div)`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: 1100px;
+  max-width: 850px;
   max-height: 95vh;
   padding: 45px 0 55px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -43,6 +43,10 @@ export const DialogContent = styled(motion.div)`
   }
   @media ${breakPoints.lg} {
     padding: 32px 0;
+  }
+
+  @media ${breakPoints.md} {
+    max-width: 450px;
   }
 
   @media ${breakPoints.sm} {

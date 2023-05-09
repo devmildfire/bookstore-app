@@ -85,7 +85,6 @@ const ModalTitle = styled(Text)`
   font-size: 24px;
   opacity: 0.5;
   text-align: left;
-  max-width: 580px;
   width: 100%;
   padding-top: clamp(16px, 10vh, 35px);
   font-size: clamp(14px, 2vw, 18px);
@@ -127,7 +126,6 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
 
 const IconButtonContainer = styled.div`
   display: grid;
-  max-width: 580px;
   grid-template-columns: auto 1fr auto auto;
   gap: 48px;
   align-items: center;
@@ -135,6 +133,11 @@ const IconButtonContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   margin: 0;
+  @media ${breakPoints.md} {
+    gap: 6px;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
 `;
 
 const IconButton = styled.button`
@@ -153,6 +156,10 @@ const IconButton = styled.button`
   & circle {
     stroke-width: 2px;
   }
+
+  @media ${breakPoints.md} {
+    place-self: flex-end;
+  }
 `;
 
 const TotalPrice = styled(Text)`
@@ -162,7 +169,6 @@ const TotalPrice = styled(Text)`
   justify-content: space-between;
   padding: 20px 0;
   border-top: thin solid var(--main-white-30);
-  max-width: 580px;
   width: 100%;
 
   @media ${breakPoints.sm} {
@@ -224,18 +230,25 @@ export const CloseButton = styled.button`
 const EditionName = styled(Text)`
   font-size: clamp(10px, 3vw, 16px);
   text-transform: uppercase;
+
+  @media ${breakPoints.md} {
+    order: -1;
+  }
 `;
 
 const ProductCopiesContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
+  padding: 2px 12px;
   background-color: var(--main-white-10);
   border-radius: 50px;
 `;
 
 const ChangeCopiesButton = styled.button`
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
   position: relative;
   background: transparent;
   cursor: pointer;
@@ -250,7 +263,7 @@ const ChangeCopiesButton = styled.button`
 `;
 
 const CopiesCount = styled.span`
-  padding: 0;
+  font-size: 14px;
 `;
 
 const Separator = styled.hr`
@@ -325,7 +338,7 @@ function BookModal(props: BookModalState) {
       <Title variant='text'>{title}</Title>
       <Author>{author}</Author>
       <ModalTitleWrapper>
-        <ModalTitle>Выберите тип издания</ModalTitle>
+        <ModalTitle>Типы издания</ModalTitle>
       </ModalTitleWrapper>
       <Buttons>
         {types.map((type: string) => {
@@ -334,7 +347,10 @@ function BookModal(props: BookModalState) {
               <IconButton type='button'>{modalIconLookup[type]}</IconButton>
               <EditionName variant='text'>{editions[type]}</EditionName>
               <ProductCopies setSum={setSum} price={price} />
-              <Price>{`${price}₽`}</Price>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Price>{`${price}₽`}</Price>
+                <Price>{`${price}₽`}</Price>
+              </div>
             </Edition>
           );
         })}
