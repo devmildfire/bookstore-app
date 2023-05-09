@@ -18,7 +18,6 @@ import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -129,9 +128,11 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
 const IconButtonContainer = styled.div`
   display: grid;
   max-width: 580px;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 48px;
   align-items: center;
   justify-items: start;
+  justify-content: space-between;
   width: 100%;
   margin: 0;
 `;
@@ -220,6 +221,74 @@ export const CloseButton = styled.button`
   }
 `;
 
+const EditionName = styled(Text)`
+  font-size: clamp(10px, 3vw, 16px);
+  text-transform: uppercase;
+`;
+
+const ProductCopiesContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background-color: var(--main-white-10);
+  border-radius: 50px;
+`;
+
+const ChangeCopiesButton = styled.button`
+  position: relative;
+  background: transparent;
+  cursor: pointer;
+  :before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+`;
+
+const CopiesCount = styled.span`
+  padding: 0;
+`;
+
+const Separator = styled.hr`
+  border: thin solid var(--main-black);
+  height: 10px;
+`;
+
+type ProductCopiesType = {
+  setSum: Dispatch<SetStateAction<number>>;
+  price: number;
+};
+
+function ProductCopies({ setSum, price }: ProductCopiesType) {
+  const [copies, setCopies] = useState(0);
+
+  function increment() {
+    setCopies((prev) => prev + 1);
+    setSum((prev) => prev + price);
+  }
+
+  function decrement() {
+    if (copies > 0) {
+      setCopies((prev) => prev - 1);
+      setSum((prev) => prev - price);
+    }
+  }
+
+  return (
+    <ProductCopiesContainer>
+      <ChangeCopiesButton onClick={decrement}>-</ChangeCopiesButton>
+      <Separator />
+      <CopiesCount>{copies}</CopiesCount>
+      <Separator />
+      <ChangeCopiesButton onClick={increment}>+</ChangeCopiesButton>
+    </ProductCopiesContainer>
+  );
+}
+
 type EditionsMap = {
   [key: string]: string;
 };
@@ -230,12 +299,6 @@ const editions: EditionsMap = {
   digital: 'Цифровое издание',
   audio: 'Аудиокнига',
 };
-
-const EditionName = styled(Text)`
-  font-size: clamp(10px, 3vw, 16px);
-  text-transform: uppercase;
-  padding: 0 5vw;
-`;
 
 function Edition({ children }: PropsWithChildren) {
   const [isSelected, setIsSelected] = useState(false);
@@ -270,6 +333,7 @@ function BookModal(props: BookModalState) {
             <Edition key={type}>
               <IconButton type='button'>{modalIconLookup[type]}</IconButton>
               <EditionName variant='text'>{editions[type]}</EditionName>
+              <ProductCopies setSum={setSum} price={price} />
               <Price>{`${price}₽`}</Price>
             </Edition>
           );
@@ -312,30 +376,28 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
         <Dialog.Portal>
           <DialogOverlay open={open} />
           <Dialog.Content>
-            <AnimatePresence>
-              <DialogContent
-                layout
-                initial={{
-                  opacity: 0,
-                  transform: 'translate(-50%, -50%) scale(0.5)',
-                }}
-                animate={{
-                  opacity: 1,
-                  transform: 'translate(-50%, -50%) scale(1)',
-                }}
-                exit={{
-                  opacity: 0,
-                  transform: 'translate(-50%, -50%) scale(0.5)',
-                }}
-                transition={{
-                  duration: 0.2,
-                  ease: 'easeInOut',
-                  opacity: { duration: 0.4 },
-                }}
-              >
-                <ModalContent {...modalState} />
-              </DialogContent>
-            </AnimatePresence>
+            <DialogContent
+              layout
+              initial={{
+                opacity: 0,
+                transform: 'translate(-50%, -50%) scale(0.7)',
+              }}
+              animate={{
+                opacity: 1,
+                transform: 'translate(-50%, -50%) scale(1)',
+              }}
+              exit={{
+                opacity: 0,
+                transform: 'translate(-50%, -50%) scale(0.7)',
+              }}
+              transition={{
+                duration: 0.2,
+                ease: 'easeInOut',
+                opacity: { duration: 0.4 },
+              }}
+            >
+              <ModalContent {...modalState} />
+            </DialogContent>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
