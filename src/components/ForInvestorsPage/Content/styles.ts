@@ -9,6 +9,8 @@ const ContentDiv = styled.div`
 
   grid-area: content;
 
+  z-index: 2;
+
   display: flex;
   flex-direction: column;
   gap: 60px;

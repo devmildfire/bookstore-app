@@ -29,24 +29,27 @@ const ToInvestors = styled(Text)`
   grid-area: title;
 
   @media ${breakPoints.md} {
-    grid-area: 1 / 1 / 3 / 3;
-    padding: 0 15vw 0 10vw;
-    font-size: 40px;
+    grid-area: 1 / 2 / 4 / 4;
+    padding: 0 15vw 0 0vw;
+    font-size: 45px;
+  }
+
+  @media ${breakPoints.smd} {
+    grid-area: 1 / 2 / 4 / 4;
+    padding: 0 15vw 0 0vw;
+    /* font-size: 35px; */
+    font-size: 6vw;
   }
 
   @media ${breakPoints.sm} {
-    grid-area: 1 / 1 / 3 / 3;
+    /* grid-area: 1 / 1 / 3 / 3; */
     padding: 0 15vw 15vw 2vw;
-    font-size: 30px;
+    /* font-size: 20px; */
+    font-size: 6.5vw;
   }
 `;
 
 const StyledWrapper = styled.main`
-  /* * {
-    outline: 1px solid green;
-  } */
-  /* overflow-x: hidden; */
-
   align-items: center;
 
   display: grid;
@@ -60,8 +63,6 @@ const StyledWrapper = styled.main`
 
   padding-top: 100px;
   padding-bottom: 100px;
-  /* padding-left: 239px; */
-  /* padding-left: 10vw; */
   padding-left: calc((100vw - 1440px) / 2);
   padding-right: 115px;
 
@@ -114,19 +115,13 @@ const StyledWrapper = styled.main`
   }
 
   @media ${breakPoints.md} {
-    grid-template-columns: 3fr 1fr;
-
-    /* grid-template-areas:
-      'title title'
-      'content content'
-      '. stonks2'
-      'stonks1 .'; */
+    grid-template-columns: 1fr 3fr 1fr 1fr;
 
     grid-template-areas:
-      'title title'
-      '. stonks2'
-      'stonks1 .'
-      'content content';
+      'title title title title'
+      '. . stonks2 .'
+      '. stonks1 . .'
+      'content content content content';
 
     //  обрезка картинок графиков, чтобы они не выходили за поля хедера и текста
     clip-path: inset(0px 5vw 0px 5vw);
@@ -203,7 +198,7 @@ const Stonks2 = styled.svg`
 
   @media ${breakPoints.md} {
     width: 100%;
-    height: 60vw;
+    height: 40vw;
   }
 
   @media ${breakPoints.smd} {
@@ -263,7 +258,7 @@ const Stonks4 = styled.svg`
 
   @media ${breakPoints.md} {
     width: 100%;
-    height: 60vw;
+    height: 40vw;
   }
 
   @media ${breakPoints.smd} {
