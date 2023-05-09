@@ -75,6 +75,9 @@ const StyledWrapper = styled.main`
     /* padding-left: 120px; */
     padding-left: 10vw;
     padding-right: 60px;
+
+    //  подрезка графика по левому полю хедера
+    clip-path: inset(0px 0vw 0px 10vw);
   }
 
   @media screen and (max-width: 1600px) {
@@ -100,9 +103,6 @@ const StyledWrapper = styled.main`
     padding-left: 10vw;
     /* padding-right: 50px; */
     padding-right: 10vw;
-
-    //  подрезка графика по левому полю хедера
-    clip-path: inset(0px 0vw 0px 10vw);
   }
 
   @media ${breakPoints.lg} {
