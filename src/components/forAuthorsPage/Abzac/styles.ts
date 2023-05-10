@@ -17,7 +17,7 @@ const AbzacDiv = styled.div`
 
   --padding-top: 100px;
   // --padding-sides: 96px;
-  --padding-sides: 0px;  
+  --padding-sides: 0px;
   --padding-bottom: 200px;
 
   padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
@@ -25,28 +25,28 @@ const AbzacDiv = styled.div`
   @media ${breakPoints.xl} {
     --padding-top: 100px;
     // --padding-sides: 96px;
-    --padding-sides: 0px;  
+    --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media screen and (max-width: 1200px) {
     --padding-top: 80px;
     // --padding-sides: 58px;
-    --padding-sides: 0px;  
+    --padding-sides: 0px;
     --padding-bottom: 120px;
   }
 
   @media ${breakPoints.lg} {
     --padding-top: 80px;
     // --padding-sides: 52px;
-    --padding-sides: 0px;  
+    --padding-sides: 0px;
     --padding-bottom: 120px;
   }
 
   @media ${breakPoints.md} {
     --padding-top: 39px;
     // --padding-sides: 36px;
-    --padding-sides: 0px;  
+    --padding-sides: 0px;
     --padding-bottom: 50px;
   }
 
@@ -261,6 +261,11 @@ const EnrollDiv = styled.div`
 
   a {
     color: var(--main-red-100);
+
+    :hover {
+      color: red;
+      text-decoration: underline;
+    }
   }
 
   @media ${breakPoints.xl} {

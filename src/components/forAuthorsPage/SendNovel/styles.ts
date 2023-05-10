@@ -27,6 +27,11 @@ const NovelDiv = styled.div`
   span,
   a {
     color: var(--main-red-100);
+
+    :hover {
+      color: red;
+      text-decoration: underline;
+    }
   }
 
   display: grid;
@@ -163,7 +168,7 @@ const NovelDiv = styled.div`
     // --padding-left: 31px;
     // --padding-right: 29px;
     --padding-left: 0px;
-    --padding-right: 0px;    
+    --padding-right: 0px;
     --padding-bottom: 70px;
 
     column-gap: 10px;

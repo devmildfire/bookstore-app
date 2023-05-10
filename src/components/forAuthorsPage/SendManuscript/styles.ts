@@ -140,9 +140,9 @@ const Icon = styled.svg`
   color: var(--main-white-100);
   transition: all 0.3s ease-in-out;
 
-  :hover {
+  /* :hover {
     color: var(--main-red-100);
-  }
+  } */
 
   --size: 85px;
 
@@ -202,6 +202,11 @@ const ReqDiv = styled.div`
   span,
   a {
     color: var(--main-red-100);
+  }
+
+  a:hover {
+    color: red;
+    text-decoration: underline;
   }
 
   @media ${breakPoints.xl} {
