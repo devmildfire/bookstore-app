@@ -30,20 +30,20 @@ const ToInvestors = styled(Text)`
 
   @media ${breakPoints.md} {
     grid-area: 1 / 1 / 4 / 4;
-    padding: 0 0 10vw 10vw;
+    padding: 0 0 10vw 0;
     font-size: 45px;
   }
 
   @media ${breakPoints.smd} {
     grid-area: 1 / 1 / 4 / 4;
-    padding: 0 0 10vw 8vw;
+    padding: 0 0 10vw 0;
     /* font-size: 35px; */
     font-size: 6vw;
   }
 
   @media ${breakPoints.sm} {
     /* grid-area: 1 / 1 / 3 / 3; */
-    padding: 0 0 10vw 8vw;
+    padding: 0 0 10vw 0;
     /* font-size: 20px; */
     font-size: 6.5vw;
   }
