@@ -29,21 +29,21 @@ const ToInvestors = styled(Text)`
   grid-area: title;
 
   @media ${breakPoints.md} {
-    grid-area: 1 / 2 / 4 / 4;
-    padding: 0 15vw 0 0vw;
+    grid-area: 1 / 1 / 4 / 4;
+    padding: 0 0 10vw 10vw;
     font-size: 45px;
   }
 
   @media ${breakPoints.smd} {
-    grid-area: 1 / 2 / 4 / 4;
-    padding: 0 15vw 0 0vw;
+    grid-area: 1 / 1 / 4 / 4;
+    padding: 0 0 10vw 8vw;
     /* font-size: 35px; */
     font-size: 6vw;
   }
 
   @media ${breakPoints.sm} {
     /* grid-area: 1 / 1 / 3 / 3; */
-    padding: 0 15vw 15vw 2vw;
+    padding: 0 0 10vw 8vw;
     /* font-size: 20px; */
     font-size: 6.5vw;
   }
