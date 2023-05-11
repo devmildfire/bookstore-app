@@ -30,6 +30,40 @@ const h1Style = css<StyledTextProps>`
   }
 `;
 
+const h1_InvStyle = css<StyledTextProps>`
+  ${h1Style}
+  font-weight: ${(props) => props.fontWeight || 600};
+  font-size: 60px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 50px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 50px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.md} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+  }
+`;
+
 const h21Style = css<StyledTextProps>`
   font-size: 60px;
   font-weight: ${(props) => props.fontWeight || 900};
@@ -445,6 +479,27 @@ const h41Style = css<StyledTextProps>`
   }
 `;
 
+const navItemStyle = css<StyledTextProps>`
+  ${h41Style}
+  font-size: 14px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 12px;
+  }
+
+  @media ${breakPoints.xl} {
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    font-size: 10px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 10px;
+  }
+`;
+
 const h42Style = css<StyledTextProps>`
   ${h41Style}
   font-size: 12px;
@@ -634,6 +689,16 @@ const ManuscriptTextStyle = css<StyledTextProps>`
   ${textStyle}
   font-size: 20px;
 
+  a {
+    text-decoration: none;
+    color: var(--main-red-100);
+
+    :hover {
+      text-decoration: underline;
+      color: red;
+    }
+  }
+
   @media ${breakPoints.xl} {
     font-size: 20px;
   }
@@ -786,6 +851,7 @@ const styles: Record<
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
 > = {
   h1: h1Style,
+  h1_Inv: h1_InvStyle,
   h2_1: h21Style,
   h2_1_LJ: h21LJStyle,
   h2_2: h22Style,
@@ -820,10 +886,12 @@ const styles: Record<
   h4_4: h44Style,
   h4_p: partnerDisplayNameStyle,
   h4_n: h4Name,
+  h4_nav: navItemStyle,
 };
 
 export const tagMap: Record<Variant, string> = {
   h1: 'h1',
+  h1_Inv: 'h1',
   h2_1: 'h2',
   h2_1_LJ: 'h2',
   h2_2: 'h2',
@@ -858,6 +926,7 @@ export const tagMap: Record<Variant, string> = {
   h4_4: 'h4',
   h4_p: 'h4',
   h4_n: 'h4',
+  h4_nav: 'h4',
 };
 
 export interface StyledTextProps {
