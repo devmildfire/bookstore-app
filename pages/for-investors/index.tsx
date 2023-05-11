@@ -115,13 +115,13 @@ const StyledWrapper = styled.main`
   }
 
   @media ${breakPoints.md} {
-    grid-template-columns: 1fr 3fr 1fr 1fr;
+    grid-template-columns: 3fr 1fr 1fr;
 
     grid-template-areas:
-      'title title title title'
-      '. . stonks2 .'
-      '. stonks1 . .'
-      'content content content content';
+      'title title title'
+      '. stonks2 .'
+      'stonks1 . .'
+      'content content content';
 
     //  обрезка картинок графиков, чтобы они не выходили за поля хедера и текста
     clip-path: inset(0px 5vw 0px 5vw);
