@@ -204,7 +204,7 @@ function Row({ row, data }: RowProps) {
                 </BookDescriptionContainer>
                 <VideoContainer ref={videoContainerRef}>
                   <Video autoPlay muted loop>
-                    <source src='video/composition.mp4' />
+                    <source src='video/composition-v2.mp4' />
                   </Video>
                 </VideoContainer>
                 <CloseButton onClick={close} type='button'>
