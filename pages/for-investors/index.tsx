@@ -29,13 +29,13 @@ const ToInvestors = styled(Text)`
   grid-area: title;
 
   @media ${breakPoints.md} {
-    grid-area: 1 / 1 / 4 / 4;
+    grid-area: 1 / 1 / 4 / 3;
     padding: 0 0 10vw 0;
     font-size: 45px;
   }
 
   @media ${breakPoints.smd} {
-    grid-area: 1 / 1 / 4 / 4;
+    grid-area: 1 / 1 / 4 / 3;
     padding: 0 0 10vw 0;
     /* font-size: 35px; */
     font-size: 6vw;
