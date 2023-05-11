@@ -72,9 +72,9 @@ const BookDescriptionContainer = styled(Container)`
     'info info info'
     'description description description'
     'button . .';
-  width: 80vw;
-  max-width: 1024px;
-  padding: 5vh 5vw 5vh 10vw;
+  width: 60vw;
+  max-width: 80ch;
+  padding: 5vh 1vw 5vh 10vw;
   @media screen and (max-width: 1024px) {
     max-width: 100%;
     width: 100%;
@@ -218,106 +218,6 @@ function Row({ row, data }: RowProps) {
     </RowItem>
   );
 }
-
-// const Canvas = styled.canvas`
-//   z-index: 100;
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   pointer-events: none;
-//   opacity: 0.2;
-// `;
-
-// function Noise({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
-//   useEffect(() => {
-//     let canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D;
-
-//     let wWidth: number, wHeight: number;
-
-//     const noiseData: ImageData[] = [];
-//     let frame = 0;
-
-//     let loopTimeout: number;
-
-//     // Create Noise
-//     const createNoise = () => {
-//       const idata = ctx.createImageData(wWidth, wHeight);
-//       const buffer32 = new Uint32Array(idata.data.buffer);
-//       const len = buffer32.length;
-
-//       for (let i = 0; i < len; i++) {
-//         if (Math.random() < 0.5) {
-//           buffer32[i] = 0xff000000;
-//         }
-//       }
-
-//       noiseData.push(idata);
-//     };
-
-//     // Play Noise
-//     const paintNoise = () => {
-//       if (frame === 9) {
-//         frame = 0;
-//       } else {
-//         frame++;
-//       }
-
-//       ctx.putImageData(noiseData[frame], 0, 0);
-//     };
-
-//     // Loop
-//     const loop = () => {
-//       paintNoise();
-
-//       loopTimeout = window.setTimeout(() => {
-//         window.requestAnimationFrame(loop);
-//       }, 1000 / 25);
-//     };
-
-//     // Setup
-//     const setup = () => {
-//       wWidth = (containerRef.current as HTMLDivElement).offsetWidth;
-//       wHeight = (containerRef.current as HTMLDivElement).offsetHeight;
-
-//       canvas.width = wWidth;
-//       canvas.height = wHeight;
-
-//       for (let i = 0; i < 10; i++) {
-//         createNoise();
-//       }
-
-//       loop();
-//     };
-
-//     // Reset
-//     let resizeThrottle: number;
-//     const reset = () => {
-//       window.addEventListener(
-//         'resize',
-//         () => {
-//           window.clearTimeout(resizeThrottle);
-
-//           resizeThrottle = window.setTimeout(() => {
-//             window.clearTimeout(loopTimeout);
-//             setup();
-//           }, 200);
-//         },
-//         false
-//       );
-//     };
-
-//     // Init
-//     const init = (() => {
-//       canvas = document.querySelector('.noise') as HTMLCanvasElement;
-//       ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-//       setup();
-//     })();
-//   }, []);
-//   return <Canvas className='noise' />;
-// }
 
 interface GridProps {
   data: Book[];

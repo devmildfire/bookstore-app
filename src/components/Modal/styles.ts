@@ -4,8 +4,8 @@ import breakPoints from '@/utils/breakPoints';
 import { motion } from 'framer-motion';
 
 export const DialogOverlay = styled(Dialog.Overlay)<{ open: boolean }>`
-  background-color: #0505059d;
-  backdrop-filter: blur(4px);
+  background-color: #0e0e0e99;
+  backdrop-filter: blur(8px);
   position: fixed;
   inset: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);

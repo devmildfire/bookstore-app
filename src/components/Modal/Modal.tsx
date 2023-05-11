@@ -18,6 +18,7 @@ import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
+import { AnimatePresence } from 'framer-motion';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -104,6 +105,25 @@ const Price = styled(Text)`
   font-weight: 700;
 `;
 
+const DiscountPrice = styled(Price)`
+  color: var(--main-red-50);
+  font-size: clamp(10px, 2vw, 20px);
+  position: relative;
+  /* text-decoration: line-through; */
+
+  ::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: var(--main-red-100);
+    transform: translate(5%, 30%) rotate(-15deg);
+    width: 90%;
+    height: 2px;
+  }
+`;
+
 const Buttons = styled.div`
   display: flex;
   flex-direction: column;
@@ -118,9 +138,13 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
   width: 100%;
   padding: 10px 5vw;
   cursor: pointer;
-  background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')};
-  &:hover {
+  font-variant-numeric: tabular-nums;
+  /* background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')}; */
+  /* &:hover {
     background: var(--main-red-20);
+  } */
+  @media ${breakPoints.md} {
+    padding: 4px 5vw;
   }
 `;
 
@@ -142,8 +166,8 @@ const IconButtonContainer = styled.div`
 
 const IconButton = styled.button`
   background-color: transparent;
-  width: clamp(40px, 10vw, 55px);
-  height: clamp(40px, 10vw, 55px);
+  width: clamp(20px, 10vw, 55px);
+  height: clamp(20px, 10vw, 55px);
   color: var(--main-white-100);
   transition: 0.15s;
   padding: 0;
@@ -347,8 +371,20 @@ function BookModal(props: BookModalState) {
               <IconButton type='button'>{modalIconLookup[type]}</IconButton>
               <EditionName variant='text'>{editions[type]}</EditionName>
               <ProductCopies setSum={setSum} price={price} />
-              <div style={{ display: 'flex', gap: 8 }}>
-                <Price>{`${price}₽`}</Price>
+              <div
+                style={{
+                  display: 'grid',
+                  gap: 8,
+                  gridTemplateColumns: '1fr 1fr',
+                  alignItems: 'center',
+                }}
+              >
+                {/* TODO заменить на логику со скидкой */}
+                {Math.random() * 2 > 1 ? (
+                  <DiscountPrice>{`${price}₽`}</DiscountPrice>
+                ) : (
+                  <span />
+                )}
                 <Price>{`${price}₽`}</Price>
               </div>
             </Edition>
@@ -392,28 +428,30 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
         <Dialog.Portal>
           <DialogOverlay open={open} />
           <Dialog.Content>
-            <DialogContent
-              layout
-              initial={{
-                opacity: 0,
-                transform: 'translate(-50%, -50%) scale(0.7)',
-              }}
-              animate={{
-                opacity: 1,
-                transform: 'translate(-50%, -50%) scale(1)',
-              }}
-              exit={{
-                opacity: 0,
-                transform: 'translate(-50%, -50%) scale(0.7)',
-              }}
-              transition={{
-                duration: 0.2,
-                ease: 'easeInOut',
-                opacity: { duration: 0.4 },
-              }}
-            >
-              <ModalContent {...modalState} />
-            </DialogContent>
+            <AnimatePresence>
+              <DialogContent
+                layout
+                initial={{
+                  opacity: 0,
+                  transform: 'translate(-50%, -50%) scale(0.7)',
+                }}
+                animate={{
+                  opacity: 1,
+                  transform: 'translate(-50%, -50%) scale(1)',
+                }}
+                exit={{
+                  opacity: 0,
+                  transform: 'translate(-50%, -50%) scale(0.7)',
+                }}
+                transition={{
+                  duration: 0.2,
+                  ease: 'easeInOut',
+                  opacity: { duration: 0.4 },
+                }}
+              >
+                <ModalContent {...modalState} />
+              </DialogContent>
+            </AnimatePresence>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
