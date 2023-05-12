@@ -1,18 +1,20 @@
 import React from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
+import bookWorm from '@/assets/images/preloader_animation.gif';
 
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   width: 100%;
   height: 100%;
-  justify-content: center;
   align-items: center;
 
-  gap: 85px;
+  gap: 20px;
 `;
 
 // const Title = styled.h1``;
@@ -51,12 +53,37 @@ const Title = styled(Text)`
   }
 `;
 
+const BookWorm = styled(Image)`
+  @media screen and (max-width: 1600px) {
+  }
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media screen and (max-width: 1200px) {
+  }
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.md} {
+    max-width: 80vw;
+  }
+
+  @media ${breakPoints.smd} {
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
 function NotFoundPage() {
   return (
     <PageContainer>
       <Title variant='h1' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
+      <BookWorm alt='bookworm' src={bookWorm} />
       <Button href='/' variant='wide'>
         {' '}
         Вернуться на главную{' '}
