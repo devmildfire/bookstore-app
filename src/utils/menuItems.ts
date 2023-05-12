@@ -75,7 +75,7 @@ const menu: MenuItem[] = [
   },
   {
     title: 'Инвесторам и донаторам',
-    link: '/not-found',
+    link: '/for-investors',
   },
   // {
   //   title: 'Партнёрам',
