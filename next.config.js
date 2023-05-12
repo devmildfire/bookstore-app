@@ -11,9 +11,25 @@ const options = {
   reactStrictMode: true,
   async redirects() {
     return [
+      //  Редиректы изменены для показа премиуму страниц Инвесторам и Авторам
+      // {
+      //   source: '/',
+      //   destination: '/books',
+      //   permanent: true,
+      // },
       {
         source: '/',
-        destination: '/books',
+        destination: '/for-investors',
+        permanent: true,
+      },
+      {
+        source: '/about',
+        destination: '/for-investors',
+        permanent: true,
+      },
+      {
+        source: '/for-authors/abzac',
+        destination: '/not-found',
         permanent: true,
       },
     ];
