@@ -2,13 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
+import Button from '@/components/Common/Button';
 
 const PageContainer = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   justify-content: center;
   align-items: center;
+
+  gap: 85px;
 `;
 
 // const Title = styled.h1``;
@@ -53,6 +57,10 @@ function NotFoundPage() {
       <Title variant='h1' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
+      <Button href='/' variant='wide'>
+        {' '}
+        Вернуться на главную{' '}
+      </Button>
     </PageContainer>
   );
 }
