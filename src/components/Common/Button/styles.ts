@@ -1,4 +1,5 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import Link from 'next/link';
 import { Variant } from './types';
 import breakPoints from '@/utils/breakPoints';
 
@@ -16,6 +17,10 @@ const standardStyle = css`
 
 const wideStyle = css`
   min-width: 340px;
+
+  @media ${breakPoints.sm} {
+    min-width: 300px;
+  }
 `;
 
 const styles: Record<Variant, FlattenSimpleInterpolation> = {
@@ -23,6 +28,11 @@ const styles: Record<Variant, FlattenSimpleInterpolation> = {
   wide: wideStyle,
   small: smallStyle,
 };
+
+export const StyledLink = styled(Link)`
+  width: min-content;
+  text-align: center;
+`;
 
 export const StyledButton = styled.button<StyledButtonProps>`
   --button-border-color: var(--main-white-100);

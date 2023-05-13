@@ -54,6 +54,8 @@ const Title = styled(Text)`
 `;
 
 const BookWorm = styled(Image)`
+  width: 175px;
+
   @media screen and (max-width: 1600px) {
   }
 
@@ -67,7 +69,7 @@ const BookWorm = styled(Image)`
   }
 
   @media ${breakPoints.md} {
-    max-width: 80vw;
+    /* max-width: 80vw; */
   }
 
   @media ${breakPoints.smd} {
@@ -80,7 +82,7 @@ const BookWorm = styled(Image)`
 function NotFoundPage() {
   return (
     <PageContainer>
-      <Title variant='h1' align='center'>
+      <Title variant='h1_Inv' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
       <BookWorm alt='bookworm' src={bookWorm} />
