@@ -23,15 +23,20 @@ interface ListItemProps {
   title: string;
   link?: string;
   submenu?: SubmenuItem[];
+  backgroundColor: string;
 }
 
-function ListItem({ title, link, submenu }: ListItemProps) {
+function ListItem({ title, link, submenu, backgroundColor }: ListItemProps) {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   return (
     <NavListItem onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
       <NavLink href={link}>{title}</NavLink>
       {submenu && (
-        <Submenu className='submenu-dropdown' isOpen={isSubmenuOpen}>
+        <Submenu
+          backgroundColor={backgroundColor}
+          className='submenu-dropdown'
+          isOpen={isSubmenuOpen}
+        >
           {submenu.map((item) => (
             <SubmenuListItem key={item.subtitle}>
               <NavLink href={item.link}>{item.subtitle}</NavLink>
@@ -80,9 +85,18 @@ function Header({
       <HeaderContainer>
         <LogoStyled />
         <MenuOverlay ref={overlayRef} className={isOpen ? 'active' : ''} />
-        <NavList className={isOpen ? 'active' : ''}>
+        <NavList
+          className={isOpen ? 'active' : ''}
+          backgroundColor={backgroundColor}
+        >
           {menu.map(({ title, link, submenu }) => (
-            <ListItem key={title} title={title} link={link} submenu={submenu} />
+            <ListItem
+              backgroundColor={backgroundColor}
+              key={title}
+              title={title}
+              link={link}
+              submenu={submenu}
+            />
           ))}
         </NavList>
         <SearchInput

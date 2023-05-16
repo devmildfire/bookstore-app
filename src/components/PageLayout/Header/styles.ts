@@ -8,6 +8,7 @@ import BurgerIcon from '@/assets/icons/burger.svg';
 
 interface HeaderList {
   className: string;
+  backgroundColor: string;
 }
 
 interface MenuButtonProps {
@@ -17,6 +18,7 @@ interface MenuButtonProps {
 
 interface SubmenuProps {
   isOpen: boolean;
+  backgroundColor: string;
 }
 
 const LogoLinkContainer = styled.div`
@@ -213,6 +215,7 @@ const NavList = styled.ul<HeaderList>`
   width: 55%;
   min-width: 480px;
   @media ${breakPoints.lg} {
+    background-color: ${(props) => props.backgroundColor};
     width: 50vw;
     min-width: 260px;
     visibility: hidden;
@@ -263,17 +266,22 @@ const Submenu = styled.ul<SubmenuProps>`
   display: flex;
   flex-direction: column;
   gap: 14px;
-  background-color: var(--main-black);
+  background-color: ${(props) => props.backgroundColor};
   position: absolute;
   top: 28px;
   left: -10px;
   min-width: 160px;
-  padding: 12px 12px 24px;
+  width: max-content;
+  padding: 24px;
+  border-radius: 4px;
   visibility: hidden;
   opacity: 0;
   transition: 0.4s;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.25);
   @media ${breakPoints.lg} {
     display: ${(props) => (props.isOpen ? 'flex' : 'none')};
+    box-shadow: none;
+    width: auto;
     visibility: visible;
     opacity: 1;
     position: relative;
@@ -322,7 +330,11 @@ const MenuOverlay = styled.div`
   top: var(--header-height);
   left: 0;
   width: 100%;
-  height: calc(100vh - var(--header-height));
+  /* 
+    +1px нужен из-за top:-1px у хедера, 
+    который фиксит баг с пустым пространством под футером при ресайзе окна.
+  */
+  height: calc(100vh - var(--header-height) + 1px);
   background-color: black;
   opacity: 0;
   visibility: hidden;

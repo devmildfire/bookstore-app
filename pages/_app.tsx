@@ -10,6 +10,7 @@ import '@/styles/globals.css';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
+import { userAgent } from 'next/server';
 
 function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);

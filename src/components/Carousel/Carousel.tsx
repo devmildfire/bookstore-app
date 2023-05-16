@@ -179,6 +179,9 @@ const SlideContainer = styled.div`
   align-items: center;
   gap: 24px;
   width: 100%;
+  @media ${breakPoints.sm} {
+    justify-content: center;
+  }
 `;
 
 const Slide = styled.div`

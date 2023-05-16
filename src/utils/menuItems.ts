@@ -49,7 +49,7 @@ const forAuthors: SubmenuItem[] = [
     link: '/for-authors/send-manuscript',
   },
   {
-    subtitle: 'Отправить материал в литжурнал РД',
+    subtitle: 'Отправить рассказ',
     link: '/for-authors/send-novel',
   },
   {
@@ -66,7 +66,6 @@ const menu: MenuItem[] = [
   {
     title: 'Чтецам',
     submenu: forReaders,
-    link: '/not-found',
   },
   {
     title: 'Авторам',

@@ -49,12 +49,11 @@ const CloseIcon = styled(Cross1Icon)`
 `;
 
 const Triggers = styled.div`
-  background-color: rgba(30, 30, 30, 0.4);
+  background-color: #171717;
   border-radius: 60px;
   display: flex;
   justify-content: space-evenly;
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(4px);
   width: 100%;
   max-width: 755px;
   height: auto;
