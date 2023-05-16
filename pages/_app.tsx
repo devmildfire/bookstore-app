@@ -3,8 +3,6 @@ import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { Router } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
-
-// import PageLayout from '@/layouts/PageLayout';
 import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
@@ -48,20 +46,31 @@ const MyApp: NextPage<AppProps> = (props) => {
     Router.events.on('routeChangeError', toggleOff);
     Router.events.on('routeChangeComplete', toggleOff);
 
+    // Отключение поворота экрана для мобильых.
+    // Возможно врменно, пока не появится адаптив.
+    // Работает только если запросить полноэкранный режим у браузера.
+    // Что, скорее всего, будет немного раздражать.
+    async function lockOrientation() {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      }
+      await screen.orientation.lock('portrait');
+    }
+    screen.orientation.addEventListener('change', lockOrientation);
+
     return () => {
+      screen.orientation.removeEventListener('change', lockOrientation);
+
       Router.events.off('routeChangeStart', toggleOn);
       Router.events.off('routeChangeError', toggleOff);
       Router.events.off('routeChangeComplete', toggleOff);
     };
   }, [toggleOff, toggleOn, isSliderOnScreen]);
 
-  // console.log(intersectionRef);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          {/* <PageLayout> */}
           <Header
             backgroundColor={isSliderOnScreen ? '#050505' : 'var(--main-black)'}
           />
@@ -69,7 +78,6 @@ const MyApp: NextPage<AppProps> = (props) => {
             {value && <PageLoading />}
             <Component {...pageProps} forwardedRef={intersectionRef} />
           </>
-          {/* </PageLayout> */}
           <Footer />
         </ModalProvider>
       </Hydrate>

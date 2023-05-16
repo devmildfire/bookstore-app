@@ -52,4 +52,8 @@ export const DialogContent = styled(motion.div)`
   @media ${breakPoints.sm} {
     padding: 16px 0;
   }
+
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    max-width: 85vw;
+  }
 `;

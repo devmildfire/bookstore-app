@@ -103,10 +103,13 @@ const Author = styled(Text)`
 const Price = styled(Text)`
   font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
+  @media ${breakPoints.sm} {
+    order: -1;
+  }
 `;
 
 const DiscountPrice = styled(Price)`
-  color: var(--main-red-50);
+  color: var(--main-red-100);
   font-size: clamp(10px, 2vw, 20px);
   position: relative;
   /* text-decoration: line-through; */
@@ -121,6 +124,9 @@ const DiscountPrice = styled(Price)`
     transform: translate(5%, 30%) rotate(-15deg);
     width: 90%;
     height: 2px;
+  }
+  @media ${breakPoints.sm} {
+    order: 1;
   }
 `;
 
@@ -143,8 +149,11 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
   /* &:hover {
     background: var(--main-red-20);
   } */
-  @media ${breakPoints.md} {
+  @media screen and (orientation: landscape) and (max-width: 883px) {
     padding: 4px 5vw;
+  }
+  @media screen and (orientation: landscape) and (max-width: 700px) {
+    padding: 2px 5vw;
   }
 `;
 
@@ -161,6 +170,9 @@ const IconButtonContainer = styled.div`
     gap: 6px;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
+  }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    grid-template-columns: 1fr 1fr auto;
   }
 `;
 
@@ -183,6 +195,14 @@ const IconButton = styled.button`
 
   @media ${breakPoints.md} {
     place-self: flex-end;
+  }
+
+  @media ${breakPoints.sm} {
+    display: none;
+  }
+
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    display: none;
   }
 `;
 
@@ -223,6 +243,9 @@ const AddToCartButton = styled(Button)`
     min-height: 48px;
     min-width: 100%;
   }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    min-height: auto;
+  }
 `;
 
 export const CloseButton = styled.button`
@@ -258,6 +281,9 @@ const EditionName = styled(Text)`
   @media ${breakPoints.md} {
     order: -1;
   }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    font-size: clamp(10px, 2vw, 16px);
+  }
 `;
 
 const ProductCopiesContainer = styled.div`
@@ -267,6 +293,10 @@ const ProductCopiesContainer = styled.div`
   padding: 2px 12px;
   background-color: var(--main-white-10);
   border-radius: 50px;
+
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    place-self: center;
+  }
 `;
 
 const ChangeCopiesButton = styled.button`
@@ -275,6 +305,7 @@ const ChangeCopiesButton = styled.button`
   line-height: 1;
   position: relative;
   background: transparent;
+  color: var(--main-white-100);
   cursor: pointer;
   :before {
     content: '';
@@ -283,6 +314,16 @@ const ChangeCopiesButton = styled.button`
     left: -10px;
     right: -10px;
     bottom: -10px;
+  }
+`;
+
+const PriceContainer = styled.div`
+  display: grid;
+  gap: 8;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+
+  @media ${breakPoints.sm} {
   }
 `;
 
@@ -371,14 +412,7 @@ function BookModal(props: BookModalState) {
               <IconButton type='button'>{modalIconLookup[type]}</IconButton>
               <EditionName variant='text'>{editions[type]}</EditionName>
               <ProductCopies setSum={setSum} price={price} />
-              <div
-                style={{
-                  display: 'grid',
-                  gap: 8,
-                  gridTemplateColumns: '1fr 1fr',
-                  alignItems: 'center',
-                }}
-              >
+              <PriceContainer>
                 {/* TODO заменить на логику со скидкой */}
                 {Math.random() * 2 > 1 ? (
                   <DiscountPrice>{`${price}₽`}</DiscountPrice>
@@ -386,7 +420,7 @@ function BookModal(props: BookModalState) {
                   <span />
                 )}
                 <Price>{`${price}₽`}</Price>
-              </div>
+              </PriceContainer>
             </Edition>
           );
         })}
