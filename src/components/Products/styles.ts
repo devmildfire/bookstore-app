@@ -1,6 +1,7 @@
 import breakPoints from '@/utils/breakPoints';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { Trigger } from '../Common/Trigger';
 
 export const GridContainer = styled.ul`
   display: flex;
@@ -145,13 +146,9 @@ interface ImageProps {
   url: string;
 }
 
-export const Button = styled.button`
-  background-color: transparent;
-  border: thin solid var(--main-white-100);
+export const Button = styled(Trigger)`
   cursor: pointer;
   padding: 20px 80px;
-  color: var(--main-white-100);
-  border-radius: 4px;
   grid-area: button;
 `;
 

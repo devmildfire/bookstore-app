@@ -101,9 +101,10 @@ const MotionPreview = styled(motion.div)`
 interface RowProps {
   row: Book[];
   data: Book[];
+  buttonStyle: 'outlined' | 'filled';
 }
 
-function Row({ row, data }: RowProps) {
+function Row({ row, data, buttonStyle }: RowProps) {
   const [preview, setPreview] = useState<Book>();
   const [isOpen, setIsOpen] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -157,6 +158,7 @@ function Row({ row, data }: RowProps) {
             key={props.id}
             onEnterKey={onEnterKey}
             onClick={() => open(props.id)}
+            buttonStyle={buttonStyle}
             {...props}
           />
         ))}
@@ -200,7 +202,9 @@ function Row({ row, data }: RowProps) {
                       {preview.description}
                     </Description>
                   </DescriptionBox>
-                  <Button type='button'>Познать</Button>
+                  <Button variant='outlined' onClick={() => undefined}>
+                    Познать
+                  </Button>
                 </BookDescriptionContainer>
                 <VideoContainer ref={videoContainerRef}>
                   <Video autoPlay muted loop>
@@ -233,15 +237,41 @@ const getColumns = (width: number) => {
   return 3;
 };
 
+const Select = styled.select`
+  width: 200px;
+  padding: 10px;
+  border-radius: 4px;
+`;
+
 export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
   const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
-
+  const [buttonStyle, setButtonStyle] = useState<'outlined' | 'filled'>(
+    'outlined'
+  );
   return (
     <GridContainer>
+      <label htmlFor='select-style'>Варианты кнопок:</label>
+      {/* TODO @sergromm: удалить выбор стилей после того как решится что делать с кнопками */}
+      <Select
+        onChange={(e) => {
+          const value = e.currentTarget.value as 'outlined' | 'filled';
+          setButtonStyle(value);
+        }}
+        name='styles'
+        id='select-style'
+      >
+        <option value='outlined'>C обводкой</option>
+        <option value='filled'>Цветные</option>
+      </Select>
       {books.map((arr, idx) => (
-        <Row key={`${arr.toString()}+${idx + 1}`} row={arr} data={data} />
+        <Row
+          buttonStyle={buttonStyle}
+          key={`${arr.toString()}+${idx + 1}`}
+          row={arr}
+          data={data}
+        />
       ))}
     </GridContainer>
   );

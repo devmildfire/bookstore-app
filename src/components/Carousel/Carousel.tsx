@@ -13,6 +13,7 @@ import { DotButton } from './DotButton';
 import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { SliderContainer } from '../Slider/styles';
+import { Trigger } from '../Common/Trigger';
 
 type PropType = {
   slides: number[];
@@ -132,15 +133,12 @@ const StyledThesis = styled(Text)`
   }
 `;
 
-const StyledButton = styled.button`
-  background-color: transparent;
-  border: thin solid white;
-  color: white;
+const StyledButton = styled(Trigger)`
   min-height: 44px;
   width: 100%;
-  border-radius: 4px;
   margin-top: 24px;
   max-width: 256px;
+  padding: 20px 80px;
   @media screen and (max-width: 512px) {
     max-width: 256px;
     margin-top: 10px;
@@ -154,8 +152,8 @@ const Wrapper = styled.section`
   padding: 55px 0vw;
   background-color: #050505;
 
-  @media ${breakPoints.lg} {
-    padding: 55px 0vw;
+  @media ${breakPoints.md} {
+    padding: 25px 0vw 55px;
   }
 `;
 
@@ -264,7 +262,9 @@ function Carousel(props: PropType): ReactElement {
                   <StyledThesis variant='caption'>
                     {books[index].thesis}
                   </StyledThesis>
-                  <StyledButton type='button'>Познать</StyledButton>
+                  <StyledButton variant='outlined' onClick={() => undefined}>
+                    Познать
+                  </StyledButton>
                 </StyledInfo>
               </SlideContainer>
             </Slide>

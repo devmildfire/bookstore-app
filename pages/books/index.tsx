@@ -1,4 +1,3 @@
-import type { NextPage } from 'next';
 import React from 'react';
 import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
@@ -14,11 +13,6 @@ const data = Array(12)
     id: book.id + idx,
   }));
 
-// const getRandomInt = (min: number, max: number): number => {
-//   min = Math.ceil(min);
-//   max = Math.floor(max);
-//   return Math.floor(Math.random() * (max - min) + min);
-// };
 function BooksPage({ forwardedRef }: { forwardedRef: null }) {
   return (
     <>

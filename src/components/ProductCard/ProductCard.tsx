@@ -7,15 +7,16 @@ import {
   PriceContainer,
   ButtonsContainer,
   Button,
+  BuyIcon,
   OldPrice,
 } from './styles';
-import CartIcon from '@/assets/icons/shop-cart.svg';
 import { Book } from '@/models/books';
 import { useModal } from '../Modal/Modal';
 
 export interface ProductCardProps extends Book {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
+  buttonStyle: 'outlined' | 'filled';
 }
 
 export default function ProductCard(props: ProductCardProps) {
@@ -52,8 +53,12 @@ export default function ProductCard(props: ProductCardProps) {
           <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
-          <Button type='button' onClick={onAddToCartClick}>
-            <CartIcon />
+          <Button
+            variant={props.buttonStyle}
+            leftSlot={<BuyIcon />}
+            onClick={onAddToCartClick}
+          >
+            Обрести
           </Button>
           {/* <Button type='button'>В Избранное</Button> */}
         </ButtonsContainer>
