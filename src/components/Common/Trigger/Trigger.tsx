@@ -27,7 +27,7 @@ export const FilledButton = styled.button`
       var(--main-red-30) 0%,
       var(--main-red-50) 100%
     );
-    transform: translateY(1px);
+    /* transform: translateY(1px); */
   }
 `;
 
@@ -70,11 +70,12 @@ export function Trigger({
   leftSlot,
   rightSlot,
   className,
+  onClick,
   children,
 }: PropsWithChildren<TriggerProps>) {
   const Button = buttons[variant];
   return (
-    <Button className={className}>
+    <Button onClick={onClick} className={className}>
       {leftSlot && leftSlot}
       {children}
       {leftSlot && rightSlot}
