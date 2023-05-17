@@ -16,9 +16,9 @@ import BookTwoIcon from '@/assets/icons/book2.svg';
 import BookIcon from '@/assets/icons/book.svg';
 import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
-import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
 import { AnimatePresence } from 'framer-motion';
+import { Trigger } from '../Common/Trigger';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -217,6 +217,7 @@ const TotalPrice = styled(Text)`
 
   @media ${breakPoints.sm} {
     gap: 8px;
+    flex-direction: row-reverse;
   }
 `;
 
@@ -233,18 +234,17 @@ const Footer = styled.div`
   }
 `;
 
-const AddToCartButton = styled(Button)`
-  padding: clamp(8px, 1vw, 14px) clamp(24px, 7vw, 80px);
-  @media ${breakPoints.sm} {
-    min-height: 48px;
+const AddToCartButton = styled(Trigger)`
+  padding: clamp(14px, 3vw, 24px) clamp(24px, 7vw, 80px);
+  font-size: clamp(12px, 3vw, 16px);
+  max-width: 340px;
+
+  @media ${breakPoints.md} {
     min-width: 100%;
   }
   @media ${breakPoints.sm} {
-    min-height: 48px;
-    min-width: 100%;
   }
   @media screen and (orientation: landscape) and (max-width: 883px) {
-    min-height: auto;
   }
 `;
 
@@ -319,7 +319,7 @@ const ChangeCopiesButton = styled.button`
 
 const PriceContainer = styled.div`
   display: grid;
-  gap: 8;
+  gap: 8px;
   grid-template-columns: 1fr 1fr;
   align-items: center;
 
@@ -427,10 +427,15 @@ function BookModal(props: BookModalState) {
       </Buttons>
       <Footer>
         <TotalPrice>
-          Сумма:
+          <span>Сумма:</span>
           <Price>{`${sum}₽`}</Price>
         </TotalPrice>
-        <AddToCartButton>Добавить в корзину</AddToCartButton>
+        <AddToCartButton
+          variant='outlined'
+          onClick={() => console.log('added to the cart')}
+        >
+          Добавить в корзину
+        </AddToCartButton>
       </Footer>
     </Container>
   );

@@ -1,25 +1,27 @@
 import { ButtonHTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 import styled from 'styled-components';
 
-export const FilledButton = styled.button`
+const BaseButton = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
   font-weight: 500;
+  width: fit-content;
+  border-radius: 4px;
+  transition: 0.18s;
+  letter-spacing: -0.3px;
+  cursor: pointer;
+`;
+
+export const FilledButton = styled(BaseButton)`
   background: linear-gradient(
     to bottom,
     var(--main-red-50) 0%,
     var(--main-red-30) 100%
   );
-  /* box-shadow: 0px 4px 5px var(--main-red-40); */
-  width: fit-content;
   color: var(--main-white-80);
-  border-radius: 4px;
-  transition: 0.18s;
-  letter-spacing: -0.3px;
-  cursor: pointer;
   :hover {
     color: var(--main-white-100);
-    /* box-shadow: 0px 2px 8px var(--main-red-50); */
   }
   :focus {
     background: linear-gradient(
@@ -27,22 +29,13 @@ export const FilledButton = styled.button`
       var(--main-red-30) 0%,
       var(--main-red-50) 100%
     );
-    /* transform: translateY(1px); */
   }
 `;
 
-export const OutlinedButton = styled.button`
-  display: flex;
-  align-items: center;
-  font-weight: 500;
+export const OutlinedButton = styled(BaseButton)`
   background: transparent;
-  width: fit-content;
   border: thin solid var(--main-white-100);
   color: var(--main-white-100);
-  border-radius: 4px;
-  transition: 0.18s;
-  letter-spacing: -0.3px;
-  cursor: pointer;
   :hover {
     border-color: var(--main-red-50);
     background: var(--main-red-50);

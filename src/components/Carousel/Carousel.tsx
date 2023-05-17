@@ -12,7 +12,6 @@ import books from '@/mocks/books';
 import { DotButton } from './DotButton';
 import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
-import { SliderContainer } from '../Slider/styles';
 import { Trigger } from '../Common/Trigger';
 
 type PropType = {
