@@ -10,7 +10,6 @@ import '@/styles/globals.css';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
-import { userAgent } from 'next/server';
 
 function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -52,10 +51,14 @@ const MyApp: NextPage<AppProps> = (props) => {
     // Работает только если запросить полноэкранный режим у браузера.
     // Что, скорее всего, будет немного раздражать.
     async function lockOrientation() {
-      if (!document.fullscreenElement) {
+      if (
+        navigator.maxTouchPoints > 0 &&
+        !document.fullscreenElement &&
+        screen.orientation.lock
+      ) {
         await document.documentElement.requestFullscreen();
+        await screen.orientation.lock('portrait');
       }
-      await screen.orientation.lock('portrait');
     }
     screen.orientation.addEventListener('change', lockOrientation);
 
