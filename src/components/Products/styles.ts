@@ -9,6 +9,10 @@ export const GridContainer = styled.ul`
   justify-content: center;
   gap: 2rem;
   width: 100%;
+  /* TODO(@sergromm): убрать стили для div нужны чтобы спозиционировать дебагер leva */
+  & > div {
+    top: 80px;
+  }
 `;
 
 export const RowItem = styled.li``;

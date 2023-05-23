@@ -31,6 +31,8 @@ import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
 import { TriggerStyles } from '../Common/Trigger/Trigger';
+import ProductCard3d from '../ProductCard/ProductCard3d';
+import { Leva, useControls } from 'leva';
 
 const VideoContainer = styled.div`
   display: flex;
@@ -103,9 +105,10 @@ interface RowProps {
   row: Book[];
   data: Book[];
   buttonStyle: TriggerStyles;
+  bookStyle: '3d' | 'flat';
 }
 
-function Row({ row, data, buttonStyle }: RowProps) {
+function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
   const [preview, setPreview] = useState<Book>();
   const [isOpen, setIsOpen] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -151,18 +154,29 @@ function Row({ row, data, buttonStyle }: RowProps) {
       window.removeEventListener('keydown', closeOnEscape);
     };
   }, [isOpen]);
+  ProductCard3d;
   return (
     <RowItem>
       <RowContainer>
-        {row.map((props) => (
-          <ProductCard
-            key={props.id}
-            onEnterKey={onEnterKey}
-            onClick={() => open(props.id)}
-            buttonStyle={buttonStyle}
-            {...props}
-          />
-        ))}
+        {row.map((props) =>
+          bookStyle === '3d' ? (
+            <ProductCard3d
+              key={props.id}
+              onEnterKey={onEnterKey}
+              onClick={() => open(props.id)}
+              buttonStyle={buttonStyle}
+              {...props}
+            />
+          ) : (
+            <ProductCard
+              key={props.id}
+              onEnterKey={onEnterKey}
+              onClick={() => open(props.id)}
+              buttonStyle={buttonStyle}
+              {...props}
+            />
+          )
+        )}
       </RowContainer>
       <div ref={previewRef}>
         <AnimatePresence>
@@ -238,36 +252,32 @@ const getColumns = (width: number) => {
   return 3;
 };
 
-const Select = styled.select`
-  width: 200px;
-  padding: 10px;
-  border-radius: 4px;
-`;
-
 export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
   const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
-  const [buttonStyle, setButtonStyle] = useState<TriggerStyles>('outlined');
+
+  const config = useControls({
+    buttonStyle: {
+      value: 'white',
+      label: 'Стили кнопок',
+      options: { Белая: 'white', Красная: 'red', 'С обводкой': 'outlined' },
+    } as const,
+    bookStyle: {
+      value: '3d',
+      label: 'Стили книг',
+      options: { Объёмная: '3d', Обычная: 'flat' },
+    } as const,
+  });
   return (
     <GridContainer>
-      <label htmlFor='select-style'>Варианты кнопок:</label>
       {/* TODO @sergromm: удалить выбор стилей после того как решится что делать с кнопками */}
-      <Select
-        onChange={(e) => {
-          const value = e.currentTarget.value as TriggerStyles;
-          setButtonStyle(value);
-        }}
-        name='styles'
-        id='select-style'
-      >
-        <option value='outlined'>C обводкой</option>
-        <option value='red'>Красная</option>
-        <option value='white'>Белая</option>
-      </Select>
+      <Leva />
+
       {books.map((arr, idx) => (
         <Row
-          buttonStyle={buttonStyle}
+          buttonStyle={config.buttonStyle}
+          bookStyle={config.bookStyle}
           key={`${arr.toString()}+${idx + 1}`}
           row={arr}
           data={data}

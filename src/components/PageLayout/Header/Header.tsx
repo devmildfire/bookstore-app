@@ -21,6 +21,7 @@ import {
 import { useModal } from '@/components/Modal/Modal';
 import { SearchIcon } from '@/components/Common/Multiselect/styles';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { Leva } from 'leva';
 
 interface ListItemProps {
   title: string;
