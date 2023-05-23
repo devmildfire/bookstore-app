@@ -6,6 +6,7 @@ import React, {
   ReactNode,
   useContext,
   PropsWithChildren,
+  useCallback,
 } from 'react';
 import styled from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -19,6 +20,7 @@ import CloseIcon from '@/assets/icons/cross.svg';
 import breakPoints from '@/utils/breakPoints';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
+import { SearchModal } from './SearchModal';
 
 interface LookupPros {
   [key: string]: ReactNode;
@@ -40,12 +42,12 @@ interface BookModalState {
 }
 
 interface ModalContextProps {
-  handleOpenModal: Dispatch<SetStateAction<boolean>>;
+  handleOpenModal: (open: boolean, type?: string) => void;
   handleModalState: Dispatch<SetStateAction<BookModalState>>;
 }
 
 export const ModalContext = createContext<ModalContextProps>({
-  handleOpenModal: () => undefined,
+  handleOpenModal: () => () => undefined,
   handleModalState: () => undefined,
 });
 
@@ -80,8 +82,8 @@ const ModalTitleWrapper = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 0px 5vw;
 `;
+
 const ModalTitle = styled(Text)`
   font-size: 24px;
   opacity: 0.5;
@@ -100,7 +102,7 @@ const Title = styled(Text)`
 const Author = styled(Text)`
   font-size: clamp(14px, 2vw, 24px);
 `;
-const Price = styled(Text)`
+const Price = styled.span`
   font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
   @media ${breakPoints.sm} {
@@ -142,7 +144,7 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 10px 5vw;
+  padding: 10px 0;
   cursor: pointer;
   font-variant-numeric: tabular-nums;
   /* background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')}; */
@@ -227,8 +229,6 @@ const Footer = styled.div`
   align-items: center;
   flex-direction: column;
   width: 100%;
-  padding: 0 5vw;
-
   @media ${breakPoints.sm} {
     gap: 12px;
   }
@@ -252,12 +252,14 @@ export const CloseButton = styled.button`
   position: absolute;
   top: 30px;
   right: 30px;
-  width: 24px;
+  width: 30px;
   color: white;
   background: transparent;
   padding: 0;
   cursor: pointer;
   transition: 0.1s;
+  z-index: 999999;
+  display: flex;
   &:hover {
     opacity: 0.5;
   }
@@ -393,13 +395,9 @@ function Edition({ children }: PropsWithChildren) {
 function BookModal(props: BookModalState) {
   const { title, types, author, price } = props;
   const [sum, setSum] = useState(0);
-  const { handleOpenModal } = useModal();
 
   return (
     <Container>
-      <CloseButton type='button' onClick={() => handleOpenModal(false)}>
-        <CloseIcon />
-      </CloseButton>
       <Title variant='text'>{title}</Title>
       <Author>{author}</Author>
       <ModalTitleWrapper>
@@ -441,29 +439,57 @@ function BookModal(props: BookModalState) {
   );
 }
 
-const modalLookup = makeMap({ book: BookModal });
+const modalLookup = makeMap({ book: BookModal, search: SearchModal });
 
 function ModalContentFallback() {
   return <div>Не удалось загрузить модальное окно</div>;
 }
 
 export default function ModalProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [{ open, modalType }, setOpen] = useState({
+    open: false,
+    modalType: '',
+  });
   const [modalState, setModalState] = useState({
     title: '',
     price: 0,
     author: '',
     types: [''],
   });
-  const type = 'book';
-  const ModalContent = modalLookup.get(type) ?? ModalContentFallback;
+
+  const ModalContent = modalLookup.get(modalType) ?? ModalContentFallback;
+
+  const handleOpenModal = useCallback(
+    (open: boolean, type: string = modalType) => {
+      return setOpen({ open, modalType: type });
+    },
+    [modalType]
+  );
+
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if ((e.key === 'k' || e.key === 'л') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleOpenModal(true, 'search');
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, [handleOpenModal]);
 
   return (
     <ModalContext.Provider
-      value={{ handleOpenModal: setOpen, handleModalState: setModalState }}
+      value={{
+        handleOpenModal,
+        handleModalState: setModalState,
+      }}
     >
       {children}
-      <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(open: boolean) => setOpen({ open, modalType })}
+      >
         <Dialog.Portal>
           <DialogOverlay open={open} />
           <Dialog.Content>
@@ -489,6 +515,15 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
                 }}
               >
                 <ModalContent {...modalState} />
+                <Dialog.Close asChild>
+                  <CloseButton
+                    type='button'
+                    onClick={() => handleOpenModal(false)}
+                    aria-label='Закрыть'
+                  >
+                    <CloseIcon />
+                  </CloseButton>
+                </Dialog.Close>
               </DialogContent>
             </AnimatePresence>
           </Dialog.Content>

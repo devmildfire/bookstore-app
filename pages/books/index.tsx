@@ -16,7 +16,11 @@ const data = Array(12)
 function BooksPage({ forwardedRef }: { forwardedRef: null }) {
   return (
     <>
-      <Carousel forwardedRef={forwardedRef} slides={[0, 1, 2]} />
+      <Carousel
+        forwardedRef={forwardedRef}
+        slides={[0, 1, 2]}
+        options={{ dragThreshold: 1, duration: 25 }}
+      />
       <HomeLayout title='Издания'>
         <section className='max-width'>
           <Filters />

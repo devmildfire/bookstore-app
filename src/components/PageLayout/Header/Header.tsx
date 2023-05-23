@@ -18,6 +18,9 @@ import {
   SubmenuListItem,
   HeaderWrapper,
 } from './styles';
+import { useModal } from '@/components/Modal/Modal';
+import { SearchIcon } from '@/components/Common/Multiselect/styles';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
 interface ListItemProps {
   title: string;
@@ -58,6 +61,7 @@ function Header({
   const [isOpen, setIsOpen] = useState(false);
   const [isInputActive, setIsInputActive] = useState(false);
   const overlayRef = useRef(null);
+  const { handleOpenModal } = useModal();
 
   function handleClick(e: MouseEvent) {
     if (e.target === overlayRef.current) {
@@ -99,11 +103,14 @@ function Header({
             />
           ))}
         </NavList>
-        <SearchInput
+        {/* <SearchInput
           isInputActive={isInputActive}
           setIsInputActive={setIsInputActive}
-        />
+        /> */}
         <IconContainer>
+          <MenuButton onClick={() => handleOpenModal(true, 'search')}>
+            <MagnifyingGlassIcon />
+          </MenuButton>
           <MenuButton isVisible={isInputActive}>
             <CartIconStyled />
           </MenuButton>

@@ -30,6 +30,7 @@ import { Book } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
+import { TriggerStyles } from '../Common/Trigger/Trigger';
 
 const VideoContainer = styled.div`
   display: flex;
@@ -101,7 +102,7 @@ const MotionPreview = styled(motion.div)`
 interface RowProps {
   row: Book[];
   data: Book[];
-  buttonStyle: 'outlined' | 'filled';
+  buttonStyle: TriggerStyles;
 }
 
 function Row({ row, data, buttonStyle }: RowProps) {
@@ -247,23 +248,22 @@ export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
   const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
-  const [buttonStyle, setButtonStyle] = useState<'outlined' | 'filled'>(
-    'outlined'
-  );
+  const [buttonStyle, setButtonStyle] = useState<TriggerStyles>('outlined');
   return (
     <GridContainer>
       <label htmlFor='select-style'>Варианты кнопок:</label>
       {/* TODO @sergromm: удалить выбор стилей после того как решится что делать с кнопками */}
       <Select
         onChange={(e) => {
-          const value = e.currentTarget.value as 'outlined' | 'filled';
+          const value = e.currentTarget.value as TriggerStyles;
           setButtonStyle(value);
         }}
         name='styles'
         id='select-style'
       >
         <option value='outlined'>C обводкой</option>
-        <option value='filled'>Цветные</option>
+        <option value='red'>Красная</option>
+        <option value='white'>Белая</option>
       </Select>
       {books.map((arr, idx) => (
         <Row

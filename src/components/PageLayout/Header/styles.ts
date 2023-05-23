@@ -320,8 +320,18 @@ const MenuButton = styled.button<MenuButtonProps>`
   height: 20px;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: var(--main-white-80);
   @media ${breakPoints.lg} {
     display: ${(props) => (!props.isVisible ? 'flex' : 'none')};
+  }
+  /* TODO @sergromm: удалить после демо */
+  & > svg {
+    width: 17px;
+    height: 17px;
+  }
+  :hover {
+    color: var(--main-red-100);
   }
 `;
 

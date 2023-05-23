@@ -12,11 +12,12 @@ import {
 } from './styles';
 import { Book } from '@/models/books';
 import { useModal } from '../Modal/Modal';
+import { TriggerStyles } from '../Common/Trigger/Trigger';
 
 export interface ProductCardProps extends Book {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
-  buttonStyle: 'outlined' | 'filled';
+  buttonStyle: TriggerStyles;
 }
 
 export default function ProductCard(props: ProductCardProps) {
@@ -32,7 +33,7 @@ export default function ProductCard(props: ProductCardProps) {
       author: authors.map((author) => author.name).join(', '),
       types,
     });
-    handleOpenModal(true);
+    handleOpenModal(true, 'book');
   };
 
   return (
