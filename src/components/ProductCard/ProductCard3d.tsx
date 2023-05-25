@@ -122,7 +122,7 @@ const Footer = styled.div`
   padding: 48px 0 18px;
 `;
 
-const Light = styled(Image)<{ blur: number; visibility: boolean }>`
+const Light = styled(Image)<{ blur: number; isVisible: boolean }>`
   display: block;
   position: absolute;
   top: 40%;
@@ -138,7 +138,7 @@ const Light = styled(Image)<{ blur: number; visibility: boolean }>`
   transform: translate(-50%, -50%) scale(1);
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
-  visibility: ${(props) => (props.visibility ? 'visible' : 'hidden')};
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
 `;
 
 export default function ProductCard3d(props: ProductCardProps) {
@@ -199,7 +199,7 @@ export default function ProductCard3d(props: ProductCardProps) {
         width={330}
         src={config.cover}
         blur={config.blur}
-        visibility={config.visibility}
+        isVisible={config.visibility}
         className='light'
       >
         {/* TODO(@sergromm): Позже добавить react-blurhash в зависимости */}
