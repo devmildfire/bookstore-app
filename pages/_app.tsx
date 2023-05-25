@@ -45,26 +45,7 @@ const MyApp: NextPage<AppProps> = (props) => {
     Router.events.on('routeChangeStart', toggleOn);
     Router.events.on('routeChangeError', toggleOff);
     Router.events.on('routeChangeComplete', toggleOff);
-
-    // Отключение поворота экрана для мобильых.
-    // Возможно врменно, пока не появится адаптив.
-    // Работает только если запросить полноэкранный режим у браузера.
-    // Что, скорее всего, будет немного раздражать.
-    async function lockOrientation() {
-      if (
-        navigator.maxTouchPoints > 0 &&
-        !document.fullscreenElement &&
-        screen.orientation.lock
-      ) {
-        await document.documentElement.requestFullscreen();
-        await screen.orientation.lock('portrait');
-      }
-    }
-    screen.orientation.addEventListener('change', lockOrientation);
-
     return () => {
-      screen.orientation.removeEventListener('change', lockOrientation);
-
       Router.events.off('routeChangeStart', toggleOn);
       Router.events.off('routeChangeError', toggleOff);
       Router.events.off('routeChangeComplete', toggleOff);

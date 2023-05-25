@@ -152,6 +152,7 @@ export default function ProductCard3d(props: ProductCardProps) {
     visibility: { value: true, label: 'Видимость' },
     opacity: { value: 1, max: 1, min: 0.2, step: 0.1, label: 'Прозрачность' },
     cover: {
+      label: 'Обложка',
       value: cover,
       options: {
         DELETED: cover,
