@@ -177,7 +177,7 @@ const IconButtonContainer = styled.div`
   }
 `;
 
-const IconButton = styled.div`
+const IconWrapper = styled.div`
   background-color: transparent;
   width: clamp(20px, 10vw, 55px);
   height: clamp(20px, 10vw, 55px);
@@ -405,7 +405,7 @@ function BookModal(props: BookModalState) {
         {types.map((type: string) => {
           return (
             <Edition key={type}>
-              <IconButton type='button'>{modalIconLookup[type]}</IconButton>
+              <IconWrapper>{modalIconLookup[type]}</IconWrapper>
               <EditionName variant='text'>{editions[type]}</EditionName>
               <ProductCopies setSum={setSum} price={price} />
               <PriceContainer>
