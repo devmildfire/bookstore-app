@@ -145,7 +145,6 @@ const IconButtonWrapper = styled.div<{ selected: boolean }>`
   justify-content: center;
   width: 100%;
   padding: 10px 0;
-  cursor: pointer;
   font-variant-numeric: tabular-nums;
   /* background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')}; */
   /* &:hover {
@@ -178,14 +177,13 @@ const IconButtonContainer = styled.div`
   }
 `;
 
-const IconButton = styled.button`
+const IconButton = styled.div`
   background-color: transparent;
   width: clamp(20px, 10vw, 55px);
   height: clamp(20px, 10vw, 55px);
   color: var(--main-white-100);
   transition: 0.15s;
   padding: 0;
-  cursor: pointer;
 
   & path {
     stroke-width: 2px;
