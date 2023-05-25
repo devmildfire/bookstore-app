@@ -250,9 +250,9 @@ const AddToCartButton = styled(Trigger)`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 30px;
-  right: 30px;
-  width: 30px;
+  top: 20px;
+  right: 20px;
+  width: 20px;
   color: white;
   background: transparent;
   padding: 0;
