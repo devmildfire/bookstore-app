@@ -37,6 +37,7 @@ const Book = styled.div`
   position: relative;
   cursor: pointer;
   max-width: 335px;
+  aspect-ratio: 6/9;
   transition: transform 0.3s ease;
   transform-origin: left;
   transform-style: preserve-3d;
@@ -50,7 +51,9 @@ const Book = styled.div`
 const Cover = styled(Image)`
   position: relative;
   z-index: 1;
-  object-fit: contain;
+  /* NOTE(@sergromm): у обложек разное разрешение.
+    Нужно стандартизировать и убрать cover, иначе некотрые обложки обрезаются */
+  object-fit: cover;
   width: 100%;
 `;
 
