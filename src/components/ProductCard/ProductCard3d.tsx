@@ -10,19 +10,15 @@ import {
 } from './styles';
 import { ProductCardProps } from './ProductCard';
 import { useModal } from '../Modal/Modal';
-import { useControls } from 'leva';
-import craft from 'public/images/chtivo-covers-opt/craft.webp';
 
-const BookWrapper = styled.div<{ opacity: number }>`
+const BookWrapper = styled.div`
   position: relative;
   perspective: 800px;
-  &:hover .book {
-    transform: rotateY(-15deg) translateX(-20px) scale(1.05);
-  }
+  outline: none;
 
-  &:hover .book ~ .light {
-    opacity: ${(props) => props.opacity};
-    transform: translate(-50%, -50%) scale(1.3);
+  &:hover .book,
+  &:focus .book {
+    transform: rotateY(-15deg) translateX(-20px) scale(1.05);
   }
 `;
 
@@ -125,46 +121,11 @@ const Footer = styled.div`
   padding: 48px 0 18px;
 `;
 
-const Light = styled(Image)<{ blur: number; isVisible: boolean }>`
-  display: block;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  opacity: 0;
-  z-index: -1;
-  filter: blur(${(props) => props.blur}px) saturate(150%) brightness(70%);
-  width: 90%;
-  height: 70%;
-  background-position: center;
-  transition: 0.4s cubic-bezier(0.5, 0.2, 0.2, 0);
-  transition-delay: 0.16s;
-  transform: translate(-50%, -50%) scale(1);
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
-`;
-
 export default function ProductCard3d(props: ProductCardProps) {
   const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
     props;
 
   const { handleModalState, handleOpenModal } = useModal();
-  // TODO(@sergromm): убрать после демо.
-  const config = useControls('Аура книги', {
-    blur: { value: 40, min: 16, max: 40, step: 1, label: 'Интенсивность' },
-    visibility: { value: true, label: 'Видимость' },
-    opacity: { value: 1, max: 1, min: 0.2, step: 0.1, label: 'Прозрачность' },
-    cover: {
-      label: 'Обложка',
-      value: cover,
-      options: {
-        DELETED: cover,
-        'Достоевские дни':
-          'https://chtivo.spb.ru/assets/img/book-title_dostoevskie-dni.jpg',
-        Крафт: craft.src,
-      },
-    },
-  });
 
   const onAddToCartClick = () => {
     handleModalState({
@@ -178,43 +139,19 @@ export default function ProductCard3d(props: ProductCardProps) {
   };
 
   return (
-    <BookWrapper opacity={config.opacity}>
+    <BookWrapper tabIndex={0}>
       <Book onMouseUp={onClick} onKeyDown={onEnterKey} className='book'>
         <Cover
           alt='cover'
-          src={config.cover}
+          src={cover}
           width={330}
           height={550}
           className='cover'
         />
         <Pages className='pages' />
-        <BackCover
-          aria-hidden='true'
-          src={config.cover}
-          className='back-cover'
-        />
+        <BackCover aria-hidden='true' src={cover} className='back-cover' />
         <Lightmap className='lightmap' />
       </Book>
-      <Light
-        alt='light'
-        aria-hidden='true'
-        height={550}
-        width={330}
-        src={config.cover}
-        blur={config.blur}
-        isVisible={config.visibility}
-        className='light'
-      >
-        {/* TODO(@sergromm): Позже добавить react-blurhash в зависимости */}
-        {/* <Blurhash
-          hash='CGAJsH~A-UaK?G?FxWjE'
-          resolutionX={32}
-          resolutionY={32}
-          width='100%'
-          height='100%'
-          punch={1}
-        /> */}
-      </Light>
       <Footer>
         <PriceContainer>
           <Price>{`${newPrice === null ? price : newPrice}₽`}</Price>

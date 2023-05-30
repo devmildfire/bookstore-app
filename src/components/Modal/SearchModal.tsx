@@ -11,6 +11,7 @@ const CommandContainer = styled(Command)`
   position: relative;
   width: 100%;
   margin-top: 16px;
+  overflow-y: scroll;
 `;
 
 const CommandInput = styled(Command.Input)`
@@ -101,6 +102,16 @@ const MatchText = styled.p<{ weight?: 'normal' | 'bold' }>`
   }
 `;
 
+const Title = styled(Text)`
+  text-transform: capitalize;
+`;
+
+const SearchResults = styled(Command.List)`
+  overflow-y: scroll;
+  max-height: 388px;
+  min-height: 114px;
+`;
+
 function MatchItem(props: Book) {
   return (
     <MatchLink href={`/books/${props.transliteratedTitle}`}>
@@ -120,20 +131,20 @@ export function SearchModal() {
 
   return (
     <>
-      <Text variant='h3_3'>Поиск</Text>
+      <Title variant='h3_3'>Поиск</Title>
       <CommandContainer>
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />
         <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
-        <Command.List>
+        <SearchResults>
           <Command.Group>
             {books.map((book) => (
-              <CommandItem key={book.title}>
+              <CommandItem key={book.id}>
                 <MatchItem {...book} />
               </CommandItem>
             ))}
           </Command.Group>
-        </Command.List>
+        </SearchResults>
       </CommandContainer>
     </>
   );

@@ -496,15 +496,15 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
                 layout
                 initial={{
                   opacity: 0,
-                  transform: 'translate(-50%, -50%) scale(0.7)',
+                  transform: 'translate(-50%, 0) scale(0.7)',
                 }}
                 animate={{
                   opacity: 1,
-                  transform: 'translate(-50%, -50%) scale(1)',
+                  transform: 'translate(-50%, 0) scale(1)',
                 }}
                 exit={{
                   opacity: 0,
-                  transform: 'translate(-50%, -50%) scale(0.7)',
+                  transform: 'translate(-50%, 0) scale(0.7)',
                 }}
                 transition={{
                   duration: 0.2,

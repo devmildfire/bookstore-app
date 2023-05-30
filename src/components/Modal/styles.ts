@@ -20,9 +20,9 @@ export const DialogContent = styled(motion.div)`
   border-radius: 8px;
   position: fixed;
   overflow: hidden;
-  top: 50%;
+  top: 20%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
   width: 80vw;
   max-width: 850px;
   min-width: 290px;
