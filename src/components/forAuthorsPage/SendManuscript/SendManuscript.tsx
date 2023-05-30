@@ -73,7 +73,7 @@ const Conditions = (): React.ReactElement => {
     <ReqDiv>
       <Text variant='manRec'>Рукописи не рецензируются</Text>
       <Text variant='h3_1SendMan' align='start'>
-        {'отправить рукопись можно на имейл '}
+        {'Отправить рукопись можно на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
       <Text variant='h3_1Bel' align='start'>
