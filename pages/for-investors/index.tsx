@@ -13,14 +13,15 @@ import breakPoints from '@/utils/breakPoints';
 const title = 'Уважаемые инвесторы и донаторы';
 
 const ForInvestors: NextPage = () => {
+  const graphLineWidth = 5;
   return (
     <StyledWrapper>
       <ToInvestors variant='h1_Inv'>{title}</ToInvestors>
       <Content />
-      <Stonks1 as={stonksLow1} />
-      <Stonks2 as={stonksHigh1} />
-      <Stonks3 as={stonksLow1} />
-      <Stonks4 as={stonksHigh1} />
+      <Stonks1 as={stonksLow1} strokeWidth={graphLineWidth} />
+      <Stonks2 as={stonksHigh1} strokeWidth={graphLineWidth} />
+      <Stonks3 as={stonksLow1} strokeWidth={graphLineWidth} />
+      <Stonks4 as={stonksHigh1} strokeWidth={graphLineWidth} />
     </StyledWrapper>
   );
 };
