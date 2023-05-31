@@ -16,9 +16,11 @@ import {
   Submenu,
   SubmenuListItem,
   HeaderWrapper,
+  NavItem,
 } from './styles';
 import { useModal } from '@/components/Modal/Modal';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import Link from '@/components/Common/Link/Link';
 
 interface ListItemProps {
   title: string;
@@ -31,7 +33,11 @@ function ListItem({ title, link, submenu, backgroundColor }: ListItemProps) {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   return (
     <NavListItem onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
-      <NavLink href={link}>{title}</NavLink>
+      {link ? (
+        <NavLink href={link}>{title}</NavLink>
+      ) : (
+        <NavItem>{title}</NavItem>
+      )}
       {submenu && (
         <Submenu
           backgroundColor={backgroundColor}
@@ -80,11 +86,12 @@ function Header({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen]);
-
   return (
     <HeaderWrapper style={{ backgroundColor }} className='max-width'>
       <HeaderContainer>
-        <LogoStyled />
+        <Link href='/books'>
+          <LogoStyled />
+        </Link>
         <MenuOverlay ref={overlayRef} className={isOpen ? 'active' : ''} />
         <NavList
           className={isOpen ? 'active' : ''}

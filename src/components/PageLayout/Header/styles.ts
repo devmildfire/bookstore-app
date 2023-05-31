@@ -5,6 +5,7 @@ import CartIcon from '@/assets/icons/cart.svg';
 import CrossIcon from '@/assets/icons/close.svg';
 import ProfileIcon from '@/assets/icons/profile.svg';
 import BurgerIcon from '@/assets/icons/burger.svg';
+import Link from 'next/link';
 
 interface HeaderList {
   className: string;
@@ -255,7 +256,14 @@ const NavListItem = styled.li`
   }
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
+  &:hover {
+    -webkit-text-fill-color: var(--main-red-100);
+    color: var(--main-red-100);
+  }
+`;
+
+const NavItem = styled.span`
   &:hover {
     -webkit-text-fill-color: var(--main-red-100);
     color: var(--main-red-100);
@@ -367,6 +375,7 @@ export {
   NavList,
   NavListItem,
   NavLink,
+  NavItem,
   Submenu,
   SubmenuListItem,
   IconContainer,

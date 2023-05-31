@@ -16,16 +16,16 @@ export type MenuItem = {
 const forReaders: SubmenuItem[] = [
   {
     subtitle: 'Книжная лавка',
-    link: '/not-found',
+    link: '/books',
   },
   {
     subtitle: 'Литжурнал РД',
-    link: '/not-found',
+    link: '/soon',
   },
-  {
-    subtitle: 'Мейнстрим',
-    link: '/not-found',
-  },
+  // {
+  //   subtitle: 'Мейнстрим',
+  //   link: '/not-found',
+  // },
 ];
 
 // const forReaders: SubmenuItem[] = [
@@ -74,16 +74,16 @@ const menu: MenuItem[] = [
   },
   {
     title: 'Инвесторам и донаторам',
-    link: '/not-found',
+    link: '/for-investors',
   },
   // {
   //   title: 'Партнёрам',
   //   link: '/for-partners',
   // },
-  {
-    title: 'Контакты',
-    link: '/not-found',
-  },
+  // {
+  //   title: 'Контакты',
+  //   link: '/not-found',
+  // },
 ];
 
 const subMenu: MenuItem[] = [

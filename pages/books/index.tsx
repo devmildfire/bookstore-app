@@ -25,7 +25,7 @@ function BooksPage({ forwardedRef }: { forwardedRef: null }) {
       <HomeLayout title='Издания'>
         <section className='max-width'>
           <Filters />
-          <Drawer />
+          {/* <Drawer /> */}
           <Products data={data} />
         </section>
       </HomeLayout>

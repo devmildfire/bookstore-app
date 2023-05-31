@@ -213,8 +213,6 @@ function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
                     <Description>
                       {/* TODO убрать повторение перед релизом */}
                       {preview.description}
-                      {preview.description}
-                      {preview.description}
                     </Description>
                   </DescriptionBox>
                   <Button variant='outlined' onClick={() => undefined}>
@@ -257,27 +255,15 @@ export default function Products({ data }: GridProps): ReactElement {
   const inRow = useMemo(() => getColumns(width), [width]);
   const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
 
-  const config = useControls({
-    buttonStyle: {
-      value: 'white',
-      label: 'Стили кнопок',
-      options: { Белая: 'white', Красная: 'red', 'С обводкой': 'outlined' },
-    } as const,
-    bookStyle: {
-      value: '3d',
-      label: 'Стили книг',
-      options: { Объёмная: '3d', Обычная: 'flat' },
-    } as const,
-  });
   return (
     <GridContainer>
       {/* TODO @sergromm: удалить выбор стилей после того как решится что делать с кнопками */}
-      <Leva />
+      {/* <Leva /> */}
 
       {books.map((arr, idx) => (
         <Row
-          buttonStyle={config.buttonStyle}
-          bookStyle={config.bookStyle}
+          buttonStyle='outlined'
+          bookStyle='3d'
           key={`${arr.toString()}+${idx + 1}`}
           row={arr}
           data={data}
