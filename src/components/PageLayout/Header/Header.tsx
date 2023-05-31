@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
-import { SearchInput } from '../components/SearchInput';
 import { menu, SubmenuItem } from '../../../utils/menuItems';
 import {
   LogoStyled,
@@ -19,9 +18,7 @@ import {
   HeaderWrapper,
 } from './styles';
 import { useModal } from '@/components/Modal/Modal';
-import { SearchIcon } from '@/components/Common/Multiselect/styles';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
-import { Leva } from 'leva';
 
 interface ListItemProps {
   title: string;
@@ -60,7 +57,6 @@ function Header({
   backgroundColor?: Color;
 }): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
-  const [isInputActive, setIsInputActive] = useState(false);
   const overlayRef = useRef(null);
   const { handleOpenModal } = useModal();
 
@@ -104,15 +100,12 @@ function Header({
             />
           ))}
         </NavList>
-        {/* <SearchInput
-          isInputActive={isInputActive}
-          setIsInputActive={setIsInputActive}
-        /> */}
+
         <IconContainer>
           <MenuButton onClick={() => handleOpenModal(true, 'search')}>
             <MagnifyingGlassIcon />
           </MenuButton>
-          <MenuButton isVisible={isInputActive}>
+          <MenuButton>
             <CartIconStyled />
           </MenuButton>
           {/* <MenuButton isVisible={isInputActive}>

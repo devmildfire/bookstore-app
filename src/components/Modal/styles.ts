@@ -4,11 +4,12 @@ import breakPoints from '@/utils/breakPoints';
 import { motion } from 'framer-motion';
 
 export const DialogOverlay = styled(Dialog.Overlay)<{ open: boolean }>`
-  background-color: #0e0e0e99;
-  backdrop-filter: blur(8px);
+  background-color: #0505057a;
+  backdrop-filter: blur(16px);
   position: fixed;
   inset: 0;
-  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: overlay-appear 0.5s ease;
+  z-index: 99999;
 `;
 
 export const DialogContent = styled(motion.div)`
@@ -20,15 +21,16 @@ export const DialogContent = styled(motion.div)`
   border-radius: 8px;
   position: fixed;
   overflow: hidden;
-  top: 20%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, 0%);
+  transform: translate(-50%, -50%);
   width: 80vw;
   max-width: 850px;
   min-width: 290px;
   max-height: 95vh;
   padding: 45px 45px 55px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 99999;
   :focus {
     outline: none;
   }

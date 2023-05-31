@@ -4,6 +4,7 @@ import Products from '@/components/Products';
 import Filters from '@/components/Filters';
 import books from '@/mocks/books';
 import Carousel from '@/components/Carousel';
+import { Drawer } from '@/components/Drawer';
 
 const data = Array(12)
   .fill(0)
@@ -24,6 +25,7 @@ function BooksPage({ forwardedRef }: { forwardedRef: null }) {
       <HomeLayout title='Издания'>
         <section className='max-width'>
           <Filters />
+          <Drawer />
           <Products data={data} />
         </section>
       </HomeLayout>

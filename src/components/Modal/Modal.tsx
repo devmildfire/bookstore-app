@@ -488,44 +488,46 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
         open={open}
         onOpenChange={(open: boolean) => setOpen({ open, modalType })}
       >
-        <Dialog.Portal>
-          <DialogOverlay open={open} />
-          <Dialog.Content>
-            <AnimatePresence>
-              <DialogContent
-                layout
-                initial={{
-                  opacity: 0,
-                  transform: 'translate(-50%, 0) scale(0.7)',
-                }}
-                animate={{
-                  opacity: 1,
-                  transform: 'translate(-50%, 0) scale(1)',
-                }}
-                exit={{
-                  opacity: 0,
-                  transform: 'translate(-50%, 0) scale(0.7)',
-                }}
-                transition={{
-                  duration: 0.2,
-                  ease: 'easeInOut',
-                  opacity: { duration: 0.4 },
-                }}
-              >
-                <ModalContent {...modalState} />
-                <Dialog.Close asChild>
-                  <CloseButton
-                    type='button'
-                    onClick={() => handleOpenModal(false)}
-                    aria-label='Закрыть'
-                  >
-                    <CloseIcon />
-                  </CloseButton>
-                </Dialog.Close>
-              </DialogContent>
-            </AnimatePresence>
-          </Dialog.Content>
-        </Dialog.Portal>
+        <AnimatePresence>
+          {open ? (
+            <>
+              <DialogOverlay open={open} forceMount />
+              <Dialog.Content forceMount>
+                <DialogContent
+                  layout
+                  initial={{
+                    opacity: 0,
+                    transform: 'translate(-50%, -50%) scale(0.7)',
+                  }}
+                  animate={{
+                    opacity: 1,
+                    transform: 'translate(-50%, -50%) scale(1)',
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transform: 'translate(-50%, -50%) scale(0.9)',
+                  }}
+                  transition={{
+                    duration: 0.2,
+                    ease: 'easeInOut',
+                    opacity: { duration: 0.2 },
+                  }}
+                >
+                  <ModalContent {...modalState} />
+                  <Dialog.Close asChild>
+                    <CloseButton
+                      type='button'
+                      onClick={() => handleOpenModal(false)}
+                      aria-label='Закрыть'
+                    >
+                      <CloseIcon />
+                    </CloseButton>
+                  </Dialog.Close>
+                </DialogContent>
+              </Dialog.Content>
+            </>
+          ) : null}
+        </AnimatePresence>
       </Dialog.Root>
     </ModalContext.Provider>
   );

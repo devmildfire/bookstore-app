@@ -11,7 +11,6 @@ const CommandContainer = styled(Command)`
   position: relative;
   width: 100%;
   margin-top: 16px;
-  overflow-y: scroll;
 `;
 
 const CommandInput = styled(Command.Input)`
@@ -107,9 +106,30 @@ const Title = styled(Text)`
 `;
 
 const SearchResults = styled(Command.List)`
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 388px;
   min-height: 114px;
+  /* width */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #232323;
+    border-radius: 8px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--grey);
+    border-radius: 8px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;
 
 function MatchItem(props: Book) {
@@ -135,8 +155,8 @@ export function SearchModal() {
       <CommandContainer>
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />
-        <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
         <SearchResults>
+          <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
             {books.map((book) => (
               <CommandItem key={book.id}>
