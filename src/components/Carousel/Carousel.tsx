@@ -13,6 +13,7 @@ import { DotButton } from './DotButton';
 import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
+import { useRouter } from 'next/router';
 
 type PropType = {
   slides: number[];
@@ -238,7 +239,9 @@ function Carousel(props: PropType): ReactElement {
     setSelectedIndex(emblaApi.selectedScrollSnap());
     setScrollSnaps(emblaApi.scrollSnapList());
   }, [emblaApi, onSelect]);
-
+  // FIXME(@sergromm): убрать этот ужас, вместо кнопки должен использоваться Link
+  // нужно создать новый вариант для кнопки или новый компонент ссылки с такими же стилями
+  const router = useRouter();
   return (
     <Wrapper ref={forwardedRef}>
       <Viewport ref={emblaRef}>
@@ -261,7 +264,12 @@ function Carousel(props: PropType): ReactElement {
                   <StyledThesis variant='caption'>
                     {books[index].thesis}
                   </StyledThesis>
-                  <StyledButton variant='outlined' onClick={() => undefined}>
+                  <StyledButton
+                    variant='outlined'
+                    onClick={() =>
+                      router.push(`/books/${books[index].transliteratedTitle}`)
+                    }
+                  >
                     Познать
                   </StyledButton>
                 </StyledInfo>

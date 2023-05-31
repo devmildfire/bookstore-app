@@ -3,9 +3,12 @@ import { Book } from '@/models/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
-import { useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 import styled from 'styled-components';
 import { Text } from '../Common/Text/Text';
+import Link from 'next/link';
+import { useModal } from './Modal';
+import { useRouter } from 'next/router';
 
 const CommandContainer = styled(Command)`
   position: relative;
@@ -85,7 +88,7 @@ const BookCover = styled.img`
   object-fit: contain;
 `;
 
-const MatchLink = styled.a`
+const MatchLink = styled(Link)`
   display: flex;
   gap: 16px;
   @media ${breakPoints.sm} {
@@ -133,16 +136,29 @@ const SearchResults = styled(Command.List)`
 `;
 
 function MatchItem(props: Book) {
+  const { handleOpenModal } = useModal();
+  const router = useRouter();
+
+  function handleSelect() {
+    router.push(`/books/${props.transliteratedTitle}`);
+    handleOpenModal(false, 'search');
+  }
+
   return (
-    <MatchLink href={`/books/${props.transliteratedTitle}`}>
-      <BookCover src={props.cover} alt={props.title} />
-      <MatchInfoContainer>
-        <MatchText weight='bold'>{props.title}</MatchText>
-        <MatchText>
-          {props.authors.map((author) => author.name).join(', ')}
-        </MatchText>
-      </MatchInfoContainer>
-    </MatchLink>
+    <CommandItem onSelect={handleSelect}>
+      <MatchLink
+        onClick={() => handleOpenModal(false, 'search')}
+        href={`/books/${props.transliteratedTitle}`}
+      >
+        <BookCover src={props.cover} alt={props.title} />
+        <MatchInfoContainer>
+          <MatchText weight='bold'>{props.title}</MatchText>
+          <MatchText>
+            {props.authors.map((author) => author.name).join(', ')}
+          </MatchText>
+        </MatchInfoContainer>
+      </MatchLink>
+    </CommandItem>
   );
 }
 
@@ -159,9 +175,7 @@ export function SearchModal() {
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
             {books.map((book) => (
-              <CommandItem key={book.id}>
-                <MatchItem {...book} />
-              </CommandItem>
+              <MatchItem key={book.id} {...book} />
             ))}
           </Command.Group>
         </SearchResults>

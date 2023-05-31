@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import ProductCard from '../ProductCard';
 import {
   GridContainer,
-  Preview,
+  PreviewContainer,
   RowContainer,
   RowItem,
   CloseButton,
@@ -78,6 +78,8 @@ const BookDescriptionContainer = styled(Container)`
   width: 60vw;
   max-width: 80ch;
   padding: 5vh 1vw 5vh 10vw;
+  height: 100%;
+  max-height: 565px;
   @media screen and (max-width: 1024px) {
     max-width: 100%;
     width: 100%;
@@ -106,32 +108,122 @@ interface RowProps {
   data: Book[];
   buttonStyle: TriggerStyles;
   bookStyle: '3d' | 'flat';
+  rowId: number;
+  openRowId: number | undefined;
+  handleOpenRow: (id: number) => void;
 }
 
-function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
+type PreviwProps = {
+  isOpen: boolean;
+  shouldClose: boolean;
+  preview: Book;
+  width: number;
+  handleClose: () => void;
+  videoContainerRef: React.Ref<HTMLDivElement>;
+};
+
+function Preview({
+  isOpen,
+  shouldClose,
+  preview,
+  width,
+  videoContainerRef,
+  handleClose,
+}: PreviwProps) {
+  const router = useRouter();
+  return (
+    <>
+      {!shouldClose && isOpen && width > 512 && (
+        <PreviewContainer
+          style={{ overflowX: 'hidden', overflowY: 'hidden' }}
+          className={isOpen ? 'visible' : 'hidden'}
+          width={document.body.clientWidth}
+        >
+          <MotionPreview
+            initial={{
+              opacity: 0,
+              height: 0,
+            }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{
+              opacity: 0,
+              height: 0,
+            }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+          >
+            <BookDescriptionContainer gap={32}>
+              <InfoContainer gap={12}>
+                <Title>{preview.title}</Title>
+                <Author>
+                  {preview.authors.map((author) => author.name).join(', ')}
+                </Author>
+                <Slogan>{preview.thesis}</Slogan>
+              </InfoContainer>
+              <DescriptionBox>
+                <Description>
+                  {/* TODO убрать повторение перед релизом */}
+                  {preview.description}
+                </Description>
+              </DescriptionBox>
+              <Button
+                variant='outlined'
+                onClick={() => router.push(`/books/deleted`)}
+              >
+                Познать
+              </Button>
+            </BookDescriptionContainer>
+            <VideoContainer ref={videoContainerRef}>
+              <Video autoPlay muted loop>
+                <source src='video/composition-v2.mp4' />
+              </Video>
+            </VideoContainer>
+            <CloseButton onClick={handleClose} type='button'>
+              <CloseIcon />
+            </CloseButton>
+          </MotionPreview>
+        </PreviewContainer>
+      )}
+    </>
+  );
+}
+
+function Row({
+  row,
+  data,
+  buttonStyle,
+  bookStyle,
+  rowId,
+  openRowId,
+  handleOpenRow,
+}: RowProps) {
   const [preview, setPreview] = useState<Book>();
-  const [isOpen, setIsOpen] = useState(false);
+  const [shouldClose, setShouldClose] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [width] = useScreenSize();
   const router = useRouter();
   const REDIRECT_ON_CLICK_DISPLAY_WIDTH = 768;
+  const isOpen = openRowId === rowId;
 
   const open = (id: number) => {
     if (width <= REDIRECT_ON_CLICK_DISPLAY_WIDTH) {
       const bookItem = data.find((book) => book.id === id);
       return router.push(`/books/${bookItem?.transliteratedTitle}`);
     }
-    if (isOpen && id === preview?.id) {
-      setIsOpen(false);
-    } else {
-      setPreview(data.find((book) => book.id === id));
-      setIsOpen(true);
-    }
+
+    const newPreview = data.find((book) => book.id === id);
+
+    setShouldClose(false);
+    handleOpenRow(rowId);
+    setPreview(newPreview);
+    // }
   };
 
   const close = () => {
-    setIsOpen(false);
+    setShouldClose(true);
   };
 
   const onEnterKey = (event: ReactKeyEvent) => {
@@ -140,7 +232,7 @@ function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
     }
   };
 
-  useScrollTo(previewRef.current, isOpen, 300);
+  useScrollTo(previewRef.current, isOpen, 400);
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -154,7 +246,7 @@ function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
       window.removeEventListener('keydown', closeOnEscape);
     };
   }, [isOpen]);
-  ProductCard3d;
+
   return (
     <RowItem>
       <RowContainer>
@@ -180,55 +272,15 @@ function Row({ row, data, buttonStyle, bookStyle }: RowProps) {
       </RowContainer>
       <div ref={previewRef}>
         <AnimatePresence>
-          {isOpen && preview && width > 512 && (
+          {preview && (
             <Preview
-              style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-              className={isOpen ? 'visible' : 'hidden'}
-              width={document.body.clientWidth}
-            >
-              <MotionPreview
-                initial={{
-                  opacity: 0,
-                  height: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                  height: 'auto',
-                }}
-                exit={{
-                  opacity: 0,
-                  height: 0,
-                }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-              >
-                <BookDescriptionContainer gap={32}>
-                  <InfoContainer gap={12}>
-                    <Title>{preview.title}</Title>
-                    <Author>
-                      {preview.authors.map((author) => author.name).join(', ')}
-                    </Author>
-                    <Slogan>{preview.thesis}</Slogan>
-                  </InfoContainer>
-                  <DescriptionBox>
-                    <Description>
-                      {/* TODO убрать повторение перед релизом */}
-                      {preview.description}
-                    </Description>
-                  </DescriptionBox>
-                  <Button variant='outlined' onClick={() => undefined}>
-                    Познать
-                  </Button>
-                </BookDescriptionContainer>
-                <VideoContainer ref={videoContainerRef}>
-                  <Video autoPlay muted loop>
-                    <source src='video/composition-v2.mp4' />
-                  </Video>
-                </VideoContainer>
-                <CloseButton onClick={close} type='button'>
-                  <CloseIcon />
-                </CloseButton>
-              </MotionPreview>
-            </Preview>
+              isOpen={isOpen}
+              shouldClose={shouldClose}
+              preview={preview}
+              videoContainerRef={videoContainerRef}
+              width={width}
+              handleClose={close}
+            />
           )}
         </AnimatePresence>
       </div>
@@ -254,6 +306,11 @@ export default function Products({ data }: GridProps): ReactElement {
   const [width] = useScreenSize();
   const inRow = useMemo(() => getColumns(width), [width]);
   const books = useMemo(() => splitByRows(data, inRow), [data, inRow]);
+  const [openRowId, setOpenRowId] = useState<number>();
+
+  function handleOpenPreview(id: number) {
+    setOpenRowId(id);
+  }
 
   return (
     <GridContainer>
@@ -266,6 +323,9 @@ export default function Products({ data }: GridProps): ReactElement {
           bookStyle='3d'
           key={`${arr.toString()}+${idx + 1}`}
           row={arr}
+          handleOpenRow={handleOpenPreview}
+          openRowId={openRowId}
+          rowId={idx}
           data={data}
         />
       ))}

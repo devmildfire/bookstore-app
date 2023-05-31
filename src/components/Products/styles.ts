@@ -57,13 +57,12 @@ interface PreviewProps {
   width: number;
 }
 
-export const Preview = styled.div<PreviewProps>`
+export const PreviewContainer = styled.div<PreviewProps>`
   position: relative;
   transform: translateX(-50%);
   bottom: 0;
   left: 50%;
   width: ${(props) => `${props.width}px`};
-  height: auto;
   color: lightgray;
   background-color: #050505;
 
@@ -93,7 +92,7 @@ export const Container = styled.div<BoxProps>`
 
 export const DescriptionBox = styled.div`
   display: block;
-  max-height: 200px;
+  max-height: 150px;
   overflow-y: auto;
   grid-area: description;
   mask-image: linear-gradient(black 90%, transparent 100%);

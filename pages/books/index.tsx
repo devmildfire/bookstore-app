@@ -8,10 +8,10 @@ import { Drawer } from '@/components/Drawer';
 
 const data = Array(12)
   .fill(0)
-  .map(() => books[1])
+  .map((_, idx) => books[idx % 3])
   .map((book, idx) => ({
     ...book,
-    id: book.id + idx,
+    id: idx + 1,
   }));
 
 function BooksPage({ forwardedRef }: { forwardedRef: null }) {

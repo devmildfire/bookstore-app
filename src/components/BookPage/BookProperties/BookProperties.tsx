@@ -91,7 +91,7 @@ const Text = styled.p`
 `;
 const ButtonsText = styled(Text)`
   font-size: 12px;
-
+  text-align: end;
   @media ${breakPoints.lg} {
     font-size: 10px;
   }
@@ -101,6 +101,7 @@ const Descrption = styled.div`
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
+  gap: 16px;
   @media ${breakPoints.lg} {
     font-size: 12px;
   }
@@ -158,13 +159,14 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 223px;
+  align-items: flex-end;
+  /* max-width: 223px; */
   @media ${breakPoints.lg} {
-    max-width: 160px;
+    /* max-width: 160px; */
   }
   @media screen and (max-width: 576px) {
     gap: 0px;
-    max-width: 223px;
+    /* max-width: 223px; */
     padding-bottom: 22px;
     justify-content: center;
     align-items: right;

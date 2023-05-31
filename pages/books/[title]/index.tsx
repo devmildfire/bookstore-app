@@ -61,7 +61,7 @@ const BookPage = (): React.ReactElement => {
           <Head>
             <title>{book.title}</title>
           </Head>
-          <StyleWrapper>
+          <StyleWrapper className='max-width'>
             <BookDescription {...book} />
             <BookProperties {...book} />
             <BookTrailer src={book.trailerSrc} title={book.title} />
@@ -78,31 +78,12 @@ const StyleWrapper = styled.div`
   position: relative;
   display: grid;
   justify-content: center;
-  justify-self: center;
-  max-width: 1440px;
   gap: 170px;
-  box-sizing: content-box;
   @media ${breakPoints.lg} {
     gap: 48px;
   }
   @media screen and (max-width: 576px) {
     gap: 48px;
-  }
-
-  @media ${breakPoints.xl} {
-    padding: 0 90px;
-  }
-
-  @media ${breakPoints.lg} {
-    padding: 0 20px;
-  }
-
-  @media ${breakPoints.sm} {
-    padding: 0 0px;
-  }
-
-  @media screen and (min-width: 1440px) {
-    padding: 0 180px;
   }
 `;
 

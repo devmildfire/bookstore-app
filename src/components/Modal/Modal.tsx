@@ -409,12 +409,6 @@ function BookModal(props: BookModalState) {
               <EditionName variant='text'>{editions[type]}</EditionName>
               <ProductCopies setSum={setSum} price={price} />
               <PriceContainer>
-                {/* TODO заменить на логику со скидкой */}
-                {Math.random() * 2 > 1 ? (
-                  <DiscountPrice>{`${price}₽`}</DiscountPrice>
-                ) : (
-                  <span />
-                )}
                 <Price>{`${price}₽`}</Price>
               </PriceContainer>
             </Edition>

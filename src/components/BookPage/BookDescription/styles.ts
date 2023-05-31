@@ -52,7 +52,7 @@ export const DescriptionLayout = styled.div`
 
   @media ${breakPoints.sm} {
     padding: 0 20px;
-  } ;
+  }
 `;
 
 export const StyledTitle = styled(Text)`
@@ -120,7 +120,9 @@ export const CoverPopup = styled.div`
   width: 100%;
   height: 100%;
   z-index: 99999;
-  background-color: #000000d6;
+  background-color: #0505057a;
+  backdrop-filter: blur(16px);
+  animation: overlay-appear 0.5s ease;
   opacity: 0;
   visibility: hidden;
   transition: 0.3s;
