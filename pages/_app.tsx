@@ -55,7 +55,7 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeComplete', toggleOff);
     };
   }, [toggleOff, toggleOn, isSliderOnScreen]);
-  console.log(isSliderOnScreen, router.pathname);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
