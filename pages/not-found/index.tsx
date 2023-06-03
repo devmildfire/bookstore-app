@@ -103,6 +103,8 @@ const StyledBook = styled(Book)`
   width: 100%;
   height: 60%;
 
+  color: var(--main-black);
+
   align-items: center;
   justify-content: space-around;
   transform: ${(props) => props.variant === 'up' && 'translate(0, 48%)'};
