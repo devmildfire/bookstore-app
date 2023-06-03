@@ -71,7 +71,7 @@ const BookWorm = (props: BookWormProps): React.ReactElement => (
   </div>
 );
 
-const StyledBookWorm = styled(BookWorm)`
+const StyledBookWorm = styled(BookWorm)<{ variant?: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,6 +86,10 @@ const StyledBookWorm = styled(BookWorm)`
     animation: pulse calc(var(--delay-unit) * 10) infinite;
   }
 
+  --animation-color: ${(props) =>
+      props.variant === 'red' && 'var(--main-red-100)'}
+    ${(props) => props.variant === 'black' && 'var(--main-black)'};
+
   @keyframes pulse {
     0% {
       color: white;
@@ -94,12 +98,10 @@ const StyledBookWorm = styled(BookWorm)`
       color: white;
     }
     50% {
-      /* color: var(--main-black); */
-      color: var(--main-red-100);
+      color: var(--animation-color);
     }
     100% {
-      /* color: var(--main-black); */
-      color: var(--main-red-100);
+      color: var(--animation-color);
     }
   }
 
@@ -124,7 +126,6 @@ const BookStyled = styled(Book)<{ variant?: string }>`
   width: 100%;
 
   color: var(--main-black);
-  /* color: var(--main-red-100); */
 
   transform: ${(props) =>
     props.variant === 'down' && 'translate(0, -44%) rotate(180deg)'};
@@ -136,7 +137,7 @@ function NotFoundPage() {
       <Title variant='h1_Inv' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
-      <StyledBookWorm className='worm' />
+      <StyledBookWorm className='worm' variant='black' />
       <Button href='/' variant='wide'>
         Вернуться на главную
       </Button>
