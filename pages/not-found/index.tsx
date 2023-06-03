@@ -88,7 +88,8 @@ const StyledBookWorm = styled(BookWorm)<{ variant?: string }>`
 
   --animation-color: ${(props) =>
       props.variant === 'red' && 'var(--main-red-100)'}
-    ${(props) => props.variant === 'black' && 'var(--main-black)'};
+    ${(props) => props.variant === 'black' && 'var(--main-black)'}
+    ${(props) => !props.variant && 'rgba(0,0,0,0)'};
 
   @keyframes pulse {
     0% {
@@ -137,7 +138,7 @@ function NotFoundPage() {
       <Title variant='h1_Inv' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
-      <StyledBookWorm className='worm' variant='black' />
+      <StyledBookWorm className='worm' variant='red' />
       <Button href='/' variant='wide'>
         Вернуться на главную
       </Button>
