@@ -1,10 +1,9 @@
 import React from 'react';
-// import Image from 'next/image';
 import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
-// import bookWorm from '@/assets/images/preloader_animation.gif';
+import Book from '@/assets/icons/book_for_animation.svg';
 
 const PageContainer = styled.div`
   display: flex;
@@ -58,101 +57,21 @@ const Title = styled(Text)`
   }
 `;
 
-const HalfBook = styled.div<{ $variant: string }>`
-  background-color: currentColor;
-  height: 100%;
-  width: 100%;
-
-  transform: ${(props) => {
-    if (props.$variant === 'up') {
-      return 'skewY(30deg)';
-    }
-    if (props.$variant === 'down') {
-      return 'skewY(-30deg)';
-    }
-  }};
-`;
-
-interface BookProps {
-  readonly className: string;
-  variant: string;
-}
-
-function Book(props: BookProps): React.ReactElement {
-  let halves = <div></div>;
-  props.variant === 'up' &&
-    (halves = (
-      <div className={props.className}>
-        <HalfBook $variant='up' />
-        <HalfBook $variant='down' />
-      </div>
-    ));
-  props.variant === 'down' &&
-    (halves = (
-      <div className={props.className}>
-        <HalfBook $variant='down' />
-        <HalfBook $variant='up' />
-      </div>
-    ));
-
-  return halves;
-}
-
-const StyledBook = styled(Book)`
-  display: flex;
-  width: 100%;
-  height: 60%;
-
-  color: var(--main-black);
-
-  align-items: center;
-  justify-content: space-around;
-  transform: ${(props) => props.variant === 'up' && 'translate(0, 48%)'};
-`;
-
-// const BookWorm = styled(Image)`
-//   /* width: 175px; */
-//   max-height: 135px;
-//   width: auto;
-
-//   @media screen and (max-width: 1600px) {
-//   }
-
-//   @media ${breakPoints.xl} {
-//   }
-
-//   @media screen and (max-width: 1200px) {
-//   }
-
-//   @media ${breakPoints.lg} {
-//   }
-
-//   @media ${breakPoints.md} {
-//     /* max-width: 80vw; */
-//   }
-
-//   @media ${breakPoints.smd} {
-//   }
-
-//   @media ${breakPoints.sm} {
-//   }
-// `;
-
-interface HyperBookWormProps {
+interface BookWormProps {
   readonly className: string;
 }
 
-const HyperBookWorm = (props: HyperBookWormProps): React.ReactElement => (
+const BookWorm = (props: BookWormProps): React.ReactElement => (
   <div className={props.className}>
-    <StyledBook variant='up' className='bookClass' />
-    <StyledBook variant='down' className='bookClass' />
-    <StyledBook variant='up' className='bookClass' />
-    <StyledBook variant='down' className='bookClass' />
-    <StyledBook variant='up' className='bookClass' />
+    <BookStyled variant='up' />
+    <BookStyled variant='down' />
+    <BookStyled variant='up' />
+    <BookStyled variant='down' />
+    <BookStyled variant='up' />
   </div>
 );
 
-const Styledh = styled(HyperBookWorm)`
+const StyledBookWorm = styled(BookWorm)`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -163,7 +82,7 @@ const Styledh = styled(HyperBookWorm)`
 
   --delay-unit: 0.5s;
 
-  .bookClass {
+  svg {
     animation: pulse calc(var(--delay-unit) * 10) infinite;
   }
 
@@ -184,35 +103,42 @@ const Styledh = styled(HyperBookWorm)`
     }
   }
 
-  .bookClass:nth-child(2) {
+  svg:nth-child(2) {
     animation-delay: var(--delay-unit);
   }
 
-  .bookClass:nth-child(3) {
+  svg:nth-child(3) {
     animation-delay: calc(var(--delay-unit) * 2);
   }
 
-  .bookClass:nth-child(4) {
+  svg:nth-child(4) {
     animation-delay: calc(var(--delay-unit) * 3);
   }
 
-  .bookClass:nth-child(5) {
+  svg:nth-child(5) {
     animation-delay: calc(var(--delay-unit) * 4);
   }
+`;
+
+const BookStyled = styled(Book)<{ variant?: string }>`
+  width: 100%;
+
+  color: var(--main-black);
+  /* color: var(--main-red-100); */
+
+  transform: ${(props) =>
+    props.variant === 'down' && 'translate(0, -44%) rotate(180deg)'};
 `;
 
 function NotFoundPage() {
   return (
     <PageContainer>
       <Title variant='h1_Inv' align='center'>
-        {/* Любопытство — это хорошо, но придётся ещё немного подождать */}
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
-      {/* <BookWorm alt='bookworm' src={bookWorm} /> */}
-      <Styledh className='worm' />
+      <StyledBookWorm className='worm' />
       <Button href='/' variant='wide'>
-        {' '}
-        Вернуться на главную{' '}
+        Вернуться на главную
       </Button>
     </PageContainer>
   );
