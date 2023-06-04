@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import React, { useState } from 'react';
 import {
   useForm,
-  Controller,
+  // Controller,
   SubmitHandler,
   SubmitErrorHandler,
 } from 'react-hook-form';
@@ -21,7 +21,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 const DonateForm = (): React.ReactElement => {
   const {
     handleSubmit,
-    control,
+    // control,
     formState: { errors },
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -38,9 +38,11 @@ const DonateForm = (): React.ReactElement => {
     setWipe(false);
   };
 
+  const boostyLink = 'https://boosty.to/russiandino';
+
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
-      <Controller
+      {/* <Controller
         control={control}
         name='amount'
         render={({ field: { onChange, onBlur, value } }) => (
@@ -51,15 +53,28 @@ const DonateForm = (): React.ReactElement => {
             value={value}
           />
         )}
-      />
+      /> */}
 
-      <StyledButton
+      {/* //    кнопка отправляет данные с формы, но пока отправлять некуда
+//    она закоментарена и работает только кнопка-ссылка на бусти */}
+
+      {/* <StyledButton
         type='submit'
         onClick={() => {
           setWipe(true);
         }}
+        href={boostyLink}
       >
         Задонатить
+      </StyledButton> */}
+
+      <StyledButton
+        className='boostyBtn'
+        type='button'
+        href={boostyLink}
+        target='_blank'
+      >
+        Бусти
       </StyledButton>
       {!wipe && errors.amount && (
         <ErrorOutput>

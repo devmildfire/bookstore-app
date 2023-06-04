@@ -42,9 +42,14 @@ const SubscribeForm = (): React.ReactElement => {
     setWipe(false);
   };
 
+  const actionString = `https://ru.msndr.net/subscriptions/9fe4710aaeaac030713a32beb9b136d0/form`;
+
   return (
     <div>
-      <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
+      <StyledForm
+        onSubmit={handleSubmit(onSubmit, onError)}
+        action={actionString}
+      >
         <Controller
           control={control}
           name='email'
