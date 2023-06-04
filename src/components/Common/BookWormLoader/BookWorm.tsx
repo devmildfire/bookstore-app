@@ -3,6 +3,26 @@ import React from 'react';
 import Book from '@/assets/icons/book_for_animation.svg';
 import styled from 'styled-components';
 
+const BookStyled = styled(Book)<{ variant?: 'up' | 'down' }>`
+  width: 100%;
+  color: var(--main-black);
+  transform: ${(props) => props.variant === 'down' && 'rotate(180deg)'};
+`;
+
+interface BookWormProps {
+  readonly className: string;
+}
+
+const BookWormUnstyled = (props: BookWormProps): React.ReactElement => (
+  <div className={props.className}>
+    <BookStyled variant='up' />
+    <BookStyled variant='down' />
+    <BookStyled variant='up' />
+    <BookStyled variant='down' />
+    <BookStyled variant='up' />
+  </div>
+);
+
 /**
  *
  * @param variant вариант исполнения компонента. Влияет на раскраску "книжек"
@@ -23,27 +43,7 @@ import styled from 'styled-components';
  *
  */
 
-const BookStyled = styled(Book)<{ variant?: string }>`
-  width: 100%;
-  color: var(--main-black);
-  transform: ${(props) => props.variant === 'down' && 'rotate(180deg)'};
-`;
-
-interface BookWormProps {
-  readonly className: string;
-}
-
-const BookWormUnstyled = (props: BookWormProps): React.ReactElement => (
-  <div className={props.className}>
-    <BookStyled variant='up' />
-    <BookStyled variant='down' />
-    <BookStyled variant='up' />
-    <BookStyled variant='down' />
-    <BookStyled variant='up' />
-  </div>
-);
-
-const BookWorm = styled(BookWormUnstyled)<{ variant?: string }>`
+const BookWorm = styled(BookWormUnstyled)<{ variant?: 'red' | 'black' }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
