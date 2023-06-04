@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
-import Book from '@/assets/icons/book_for_animation.svg';
+import BookWorm from '@/components/Common/BookWormLoader';
 
 const PageContainer = styled.div`
   display: flex;
@@ -57,88 +57,13 @@ const Title = styled(Text)`
   }
 `;
 
-interface BookWormProps {
-  readonly className: string;
-}
-
-const BookWorm = (props: BookWormProps): React.ReactElement => (
-  <div className={props.className}>
-    <BookStyled variant='up' />
-    <BookStyled variant='down' />
-    <BookStyled variant='up' />
-    <BookStyled variant='down' />
-    <BookStyled variant='up' />
-  </div>
-);
-
-const StyledBookWorm = styled(BookWorm)<{ variant?: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 80vw;
-  aspect-ratio: 5;
-  max-width: 620px;
-  gap: 1%;
-
-  --delay-unit: 0.5s;
-
-  svg {
-    animation: pulse calc(var(--delay-unit) * 10) infinite;
-  }
-
-  --animation-color: ${(props) =>
-      props.variant === 'red' && 'var(--main-red-100)'}
-    ${(props) => props.variant === 'black' && 'var(--main-black)'}
-    ${(props) => !props.variant && 'rgba(0,0,0,0)'};
-
-  @keyframes pulse {
-    0% {
-      color: white;
-    }
-    49% {
-      color: white;
-    }
-    50% {
-      color: var(--animation-color);
-    }
-    100% {
-      color: var(--animation-color);
-    }
-  }
-
-  svg:nth-child(2) {
-    animation-delay: var(--delay-unit);
-  }
-
-  svg:nth-child(3) {
-    animation-delay: calc(var(--delay-unit) * 2);
-  }
-
-  svg:nth-child(4) {
-    animation-delay: calc(var(--delay-unit) * 3);
-  }
-
-  svg:nth-child(5) {
-    animation-delay: calc(var(--delay-unit) * 4);
-  }
-`;
-
-const BookStyled = styled(Book)<{ variant?: string }>`
-  width: 100%;
-
-  color: var(--main-black);
-
-  transform: ${(props) =>
-    props.variant === 'down' && 'translate(0, -44%) rotate(180deg)'};
-`;
-
 function NotFoundPage() {
   return (
     <PageContainer>
       <Title variant='h1_Inv' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
-      <StyledBookWorm className='worm' variant='red' />
+      <BookWorm className='worm' variant='red' />
       <Button href='/' variant='wide'>
         Вернуться на главную
       </Button>
