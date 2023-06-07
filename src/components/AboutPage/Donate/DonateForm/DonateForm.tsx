@@ -38,7 +38,7 @@ const DonateForm = (): React.ReactElement => {
     setWipe(false);
   };
 
-  const boostyLink = 'https://boosty.to/russiandino';
+  const boostyLink = 'https://boosty.to/russiandino/donate';
 
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
