@@ -7,12 +7,14 @@ import {
   Controller,
   SubmitHandler,
   SubmitErrorHandler,
+  ChangeHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import goat from '@/../../src/assets/images/hand_goat.png';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
+import debounce from '@/utils/debounce';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -21,6 +23,9 @@ const FormSchema = z.object({
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 const SubscribeForm = (): React.ReactElement => {
+  const [error, setError] = useState('');
+  const [isValid, setIsvalid] = useState(false);
+
   const {
     handleSubmit,
     control,
@@ -42,13 +47,33 @@ const SubscribeForm = (): React.ReactElement => {
     setWipe(false);
   };
 
+  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const { value } = input;
+    const valid = input.validity.valid;
+    // не показываем сообщение об ошибке если поле пустое
+    if (value !== '') {
+      setWipe(false);
+      setIsvalid(valid);
+      setError(
+        'Русский Динозар может писать только на валидные адреса электронной почты'
+      );
+    }
+    if (value === '') {
+      setWipe(true);
+    }
+  };
+
+  const debouncedOnChange = debounce(onChangeInput, 2000);
+
   const actionString = `https://ru.msndr.net/subscriptions/9fe4710aaeaac030713a32beb9b136d0/form`;
 
   return (
     <div>
       <StyledForm
-        onSubmit={handleSubmit(onSubmit, onError)}
+        // onSubmit={handleSubmit(onSubmit, onError)}
         action={actionString}
+        target='_blank'
       >
         <Controller
           control={control}
@@ -56,9 +81,20 @@ const SubscribeForm = (): React.ReactElement => {
           render={({ field: { onChange, onBlur, value } }) => (
             <StyledInput
               placeholder='E-mail'
-              onChange={onChange}
+              // onChange={onChange}
+              // onChange={onChangeInput}
+              onChange={debouncedOnChange}
+              onInvalid={(e) => {
+                // отключает системное сообщение валидации
+                e.preventDefault();
+              }}
               onBlur={onBlur}
               value={value}
+              type='email'
+              name='recipient[email]'
+              id='recipient_email'
+              required
+              className='form-control'
             />
           )}
         />
@@ -68,24 +104,28 @@ const SubscribeForm = (): React.ReactElement => {
           onClick={() => {
             setWipe(true);
           }}
+          disabled={!isValid}
         >
           Подписаться
         </StyledButton>
 
         <div />
 
-        {!wipe && isSubmitSuccessful && !errors.email && (
+        {/* пока мы пользуемся рассылкой через сторонний сервис ru.msndr.net, мы не выдаём сразу подтверждения о подписке */}
+
+        {/* {!wipe && isSubmitSuccessful && !errors.email && (
           <StyledOutput>
             Вы
             <br />
             подписались !
           </StyledOutput>
-        )}
+        )} */}
       </StyledForm>
-      {!wipe && errors.email && (
+      {!isValid && !wipe && error && (
         <ErrorOutput>
-          Русский Динозар может писать только на валидные адреса электронной
-          почты
+          {/* Русский Динозар может писать только на валидные адреса электронной
+          почты */}
+          {error}
         </ErrorOutput>
       )}
     </div>
