@@ -8,7 +8,7 @@ import {
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Input from '@/components/Common/Input';
+// import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
 
@@ -85,34 +85,34 @@ const DonateForm = (): React.ReactElement => {
   );
 };
 
-const StyledInput = styled(Input)`
-  background-color: var(--main-white-20);
-  border: none;
-  color: var(--main-white-100);
-  padding: 20px;
-  max-width: 640px;
-  width: 100%;
+// const StyledInput = styled(Input)`
+//   background-color: var(--main-white-20);
+//   border: none;
+//   color: var(--main-white-100);
+//   padding: 20px;
+//   max-width: 640px;
+//   width: 100%;
 
-  @media ${breakPoints.lg} {
-    width: 185px;
-    height: 45px;
-    padding: 0 10px;
-  }
+//   @media ${breakPoints.lg} {
+//     width: 185px;
+//     height: 45px;
+//     padding: 0 10px;
+//   }
 
-  @media ${breakPoints.smd} {
-    width: 150px;
-    height: 32px;
-    font-size: 12px;
-    margin: 0 auto;
-  }
+//   @media ${breakPoints.smd} {
+//     width: 150px;
+//     height: 32px;
+//     font-size: 12px;
+//     margin: 0 auto;
+//   }
 
-  @media ${breakPoints.sm} {
-    width: 150px;
-    height: 32px;
-    font-size: 10px;
-    margin: 0 auto;
-  }
-`;
+//   @media ${breakPoints.sm} {
+//     width: 150px;
+//     height: 32px;
+//     font-size: 10px;
+//     margin: 0 auto;
+//   }
+// `;
 
 const slideDown = keyframes`
   from {
