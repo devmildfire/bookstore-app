@@ -1,4 +1,4 @@
-import React, { MouseEvent, PropsWithChildren, useRef, useState } from 'react';
+import React, { MouseEvent, PropsWithChildren, useRef } from 'react';
 import styled from 'styled-components';
 
 type IconButtonProps = { onClick: (e: MouseEvent) => void };
@@ -56,17 +56,13 @@ export function IconButton({
     const diameter = Math.max(buttonBox.width, buttonBox.height);
     const radius = diameter / 2;
 
-    console.log(buttonBox.left, buttonBox.top);
-    console.log(event.clientX - buttonBox.left);
-    console.log(event.clientY - buttonBox.top);
-
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.top = `${event.clientY - buttonBox.top - radius}px`;
     circle.style.left = `${event.clientX - buttonBox.left - radius}px`;
     circle.classList.add('ripple');
 
     const ripple = button.querySelector('.ripple');
-    console.log(ripple);
+
     if (ripple) {
       ripple.remove();
     }
