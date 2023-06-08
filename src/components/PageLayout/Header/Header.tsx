@@ -27,14 +27,23 @@ interface ListItemProps {
   link?: string;
   submenu?: SubmenuItem[];
   backgroundColor: string;
+  onClick: () => void;
 }
 
-function ListItem({ title, link, submenu, backgroundColor }: ListItemProps) {
+function ListItem({
+  title,
+  link,
+  submenu,
+  backgroundColor,
+  onClick,
+}: ListItemProps) {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   return (
-    <NavListItem onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
+    <NavListItem onClick={() => setIsSubmenuOpen((prev) => !prev)}>
       {link ? (
-        <NavLink href={link}>{title}</NavLink>
+        <NavLink onClick={onClick} href={link}>
+          {title}
+        </NavLink>
       ) : (
         <NavItem>{title}</NavItem>
       )}
@@ -46,7 +55,9 @@ function ListItem({ title, link, submenu, backgroundColor }: ListItemProps) {
         >
           {submenu.map((item) => (
             <SubmenuListItem key={item.subtitle}>
-              <NavLink href={item.link}>{item.subtitle}</NavLink>
+              <NavLink onClick={onClick} href={item.link}>
+                {item.subtitle}
+              </NavLink>
             </SubmenuListItem>
           ))}
         </Submenu>
@@ -70,6 +81,10 @@ function Header({
     if (e.target === overlayRef.current) {
       setIsOpen(false);
     }
+  }
+
+  function close() {
+    setIsOpen(false);
   }
 
   function handleEscape(e: KeyboardEvent) {
@@ -99,6 +114,7 @@ function Header({
         >
           {menu.map(({ title, link, submenu }) => (
             <ListItem
+              onClick={close}
               backgroundColor={backgroundColor}
               key={title}
               title={title}
