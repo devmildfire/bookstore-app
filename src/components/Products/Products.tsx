@@ -83,7 +83,7 @@ const BookDescriptionContainer = styled(Container)`
   @media screen and (max-width: 1024px) {
     max-width: 100%;
     width: 100%;
-    grid-template-columns: 250px 1fr 1fr;
+    grid-template-columns: minmax(250px, min-content) 1fr;
     grid-template-areas:
       'info  description description'
       'button  description description';
@@ -146,7 +146,7 @@ function Preview({
             }}
             animate={{
               opacity: 1,
-              height: '60vh',
+              height: width > 1024 ? '60vh' : 'auto',
             }}
             exit={{
               opacity: 0,
