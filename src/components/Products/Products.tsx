@@ -219,7 +219,6 @@ function Row({
     setShouldClose(false);
     handleOpenRow(rowId);
     setPreview(newPreview);
-    // }
   };
 
   const close = () => {

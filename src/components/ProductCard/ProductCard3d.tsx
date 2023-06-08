@@ -11,15 +11,17 @@ import {
 import { ProductCardProps } from './ProductCard';
 import { useModal } from '../Modal/Modal';
 import { IconButton } from '../Common/IconButton';
+import breakPoints from '@/utils/breakPoints';
 
 const BookWrapper = styled.div`
   position: relative;
   perspective: 800px;
   outline: none;
-
-  &:hover .book,
-  &:focus .book {
-    transform: rotateY(-15deg) translateX(-20px) scale(1.05);
+  @media screen and (min-width: 512px) {
+    &:hover .book,
+    &:focus .book {
+      transform: rotateY(-15deg) translateX(-20px) scale(1.05);
+    }
   }
 `;
 
@@ -120,6 +122,10 @@ const Footer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 48px 0 18px;
+
+  @media ${breakPoints.sm} {
+    padding: 18px 0 18px;
+  }
 `;
 
 export default function ProductCard3d(props: ProductCardProps) {

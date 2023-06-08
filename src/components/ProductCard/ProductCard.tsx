@@ -18,6 +18,7 @@ export interface ProductCardProps extends Book {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
   buttonStyle: TriggerStyles;
+  isOpen?: boolean;
 }
 
 export default function ProductCard(props: ProductCardProps) {
