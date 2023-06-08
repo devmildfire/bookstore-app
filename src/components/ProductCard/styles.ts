@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import CartIcon from '@/assets/icons/shop-cart.svg';
+import CartIcon from '@/assets/icons/bag-with-plus-sign.svg';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 
@@ -85,7 +85,6 @@ export const Button = styled(Trigger)`
 `;
 
 export const BuyIcon = styled(CartIcon)`
-  width: 20px;
-  height: 20px;
-  margin-bottom: 4px;
+  width: 32px;
+  height: 32px;
 `;

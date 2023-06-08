@@ -2,7 +2,7 @@ import * as React from 'react';
 import Text from '@/components/Common/Text';
 import { Handler, Option, SelectValue } from '../types';
 import { StyledCross, StyledWrapper } from './styles';
-import IconButton from '@/components/Common/IconButton';
+import IconButton from '@/components/Common/IconButton(depricated';
 
 export interface SelectedProps {
   readonly value: Option<SelectValue>;

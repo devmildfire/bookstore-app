@@ -10,6 +10,7 @@ import {
 } from './styles';
 import { ProductCardProps } from './ProductCard';
 import { useModal } from '../Modal/Modal';
+import { IconButton } from '../Common/IconButton';
 
 const BookWrapper = styled.div`
   position: relative;
@@ -158,13 +159,9 @@ export default function ProductCard3d(props: ProductCardProps) {
           <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
-          <Button
-            variant={props.buttonStyle}
-            leftSlot={<BuyIcon />}
-            onClick={onAddToCartClick}
-          >
-            Обрести
-          </Button>
+          <IconButton onClick={onAddToCartClick}>
+            <BuyIcon />
+          </IconButton>
           {/* <Button type='button'>В Избранное</Button> */}
         </ButtonsContainer>
       </Footer>

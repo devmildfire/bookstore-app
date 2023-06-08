@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Link from '@/components/Common/Link';
 import Image from '@/components/Common/Image';
-import IconButton from '@/components/Common/IconButton';
+import IconButton from '@/components/Common/IconButton(depricated';
 import { PropsWithChildren } from 'react';
 
 export const StyledWrapper = styled(Link)<

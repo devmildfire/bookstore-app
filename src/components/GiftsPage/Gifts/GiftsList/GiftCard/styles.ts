@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Price from '@/components/Common/Price';
 import ProductCard from '@/components/Common/ProductCard';
-import IconButton from '@/components/Common/IconButton';
+import IconButton from '@/components/Common/IconButton(depricated';
 
 export const StyledWrapper = styled(ProductCard)`
   display: grid;

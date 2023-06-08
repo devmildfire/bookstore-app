@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '../IconButton';
+import IconButton from '../IconButton(deprecated)';
 import Container from '../Container';
 import { PropsWithChildren } from 'react';
 
