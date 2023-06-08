@@ -32,7 +32,6 @@ import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
 import { TriggerStyles } from '../Common/Trigger/Trigger';
 import ProductCard3d from '../ProductCard/ProductCard3d';
-import { Leva, useControls } from 'leva';
 
 const VideoContainer = styled.div`
   display: flex;
@@ -79,7 +78,8 @@ const BookDescriptionContainer = styled(Container)`
   max-width: 80ch;
   padding: 5vh 1vw 5vh 10vw;
   height: 100%;
-  max-height: 565px;
+  align-content: space-between;
+  /* max-height: 565px; */
   @media screen and (max-width: 1024px) {
     max-width: 100%;
     width: 100%;
@@ -116,7 +116,7 @@ interface RowProps {
 type PreviwProps = {
   isOpen: boolean;
   shouldClose: boolean;
-  preview: Book;
+  preview?: Book;
   width: number;
   handleClose: () => void;
   videoContainerRef: React.Ref<HTMLDivElement>;
@@ -132,8 +132,8 @@ function Preview({
 }: PreviwProps) {
   const router = useRouter();
   return (
-    <>
-      {!shouldClose && isOpen && width > 512 && (
+    <AnimatePresence>
+      {!shouldClose && preview && isOpen && width > 512 && (
         <PreviewContainer
           style={{ overflowX: 'hidden', overflowY: 'hidden' }}
           className={isOpen ? 'visible' : 'hidden'}
@@ -146,7 +146,7 @@ function Preview({
             }}
             animate={{
               opacity: 1,
-              height: 'auto',
+              height: '60vh',
             }}
             exit={{
               opacity: 0,
@@ -186,7 +186,7 @@ function Preview({
           </MotionPreview>
         </PreviewContainer>
       )}
-    </>
+    </AnimatePresence>
   );
 }
 
@@ -271,18 +271,14 @@ function Row({
         )}
       </RowContainer>
       <div ref={previewRef}>
-        <AnimatePresence>
-          {preview && (
-            <Preview
-              isOpen={isOpen}
-              shouldClose={shouldClose}
-              preview={preview}
-              videoContainerRef={videoContainerRef}
-              width={width}
-              handleClose={close}
-            />
-          )}
-        </AnimatePresence>
+        <Preview
+          isOpen={isOpen}
+          shouldClose={shouldClose}
+          preview={preview}
+          videoContainerRef={videoContainerRef}
+          width={width}
+          handleClose={close}
+        />
       </div>
     </RowItem>
   );

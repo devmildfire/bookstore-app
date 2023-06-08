@@ -65,17 +65,6 @@ export const PreviewContainer = styled.div<PreviewProps>`
   width: ${(props) => `${props.width}px`};
   color: lightgray;
   background-color: #050505;
-
-  &.hidden {
-    visibility: hidden;
-    opacity: 0;
-    height: 0;
-  }
-
-  &.visible {
-    visibility: visible;
-    opacity: 1;
-  }
 `;
 
 interface BoxProps {
