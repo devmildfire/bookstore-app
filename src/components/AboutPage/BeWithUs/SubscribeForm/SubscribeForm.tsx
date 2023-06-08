@@ -74,6 +74,7 @@ const SubscribeForm = (): React.ReactElement => {
         // onSubmit={handleSubmit(onSubmit, onError)}
         action={actionString}
         target='_blank'
+        method='POST'
       >
         <Controller
           control={control}
