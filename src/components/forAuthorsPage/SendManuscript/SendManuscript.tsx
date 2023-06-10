@@ -71,13 +71,14 @@ const Requirements = (): React.ReactElement => {
 const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='manRec'>Рукописи не рецензируются</Text>
+      <Text variant='manRec'>Рукописи не рецензируются.</Text>
       <Text variant='h3_1SendMan' align='start'>
         {'Отправить рукопись можно на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+        {'. '}
       </Text>
-      <Text variant='h3_1Bel' align='start'>
-        {'Верим в вас '}
+      <Text variant='h3_1SendMan' align='start'>
+        {'Верим в вас. '}
       </Text>
       <TextForMobile variant='h3_1SendMan' align='start'>
         {
