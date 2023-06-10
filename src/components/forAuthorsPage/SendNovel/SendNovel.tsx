@@ -29,6 +29,7 @@ const SendNovel = (): React.ReactElement => {
       <Text className='link' variant='h3_1SendMan' align='start'>
         {'Отправляйте ваши произведения на почту: '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+        {'. '}
       </Text>
       {/* </TextDiv> */}
       <DinoPawsBook as={dinoPaws} className='picture' />
