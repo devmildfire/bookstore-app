@@ -6,7 +6,8 @@ import styled from 'styled-components';
 const BookStyled = styled(Book)<{ variant?: 'up' | 'down' }>`
   width: 100%;
   color: var(--main-black);
-  transform: ${(props) => props.variant === 'down' && 'rotate(180deg)'};
+  transform: ${(props) =>
+    props.variant === 'down' && 'rotate(180deg) translate(0, 1.5%)'};
 `;
 
 interface BookWormProps {
