@@ -1,7 +1,7 @@
 import React from 'react';
 import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
-import Marquee from '@/components/Common/Marquee';
+// import Marquee from '@/components/Common/Marquee';
 import setUUIDField from '@/utils/setUUIDField';
 
 import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
