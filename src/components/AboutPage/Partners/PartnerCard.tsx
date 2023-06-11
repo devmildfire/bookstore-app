@@ -21,6 +21,11 @@ const StyledLogoImage = styled(Image)`
 `;
 
 const StyledCard = styled.div`
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
   background-color: rgba(18, 18, 18, 0.5);
   backdrop-filter: blur(8px);
 

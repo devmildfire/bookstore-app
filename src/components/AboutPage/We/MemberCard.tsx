@@ -7,6 +7,11 @@ import Text from '@/components/Common/Text';
 import useScreenSize from '@/hooks/useScreenSize';
 
 const StyledCard = styled.div`
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
   flex-shrink: 0;
   flex-grow: 0;
 
