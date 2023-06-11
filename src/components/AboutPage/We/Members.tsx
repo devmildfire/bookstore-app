@@ -33,6 +33,11 @@ const EmblaCarousel: React.FC<EmblaPropType> = ({ options, className }) => {
 };
 
 const StyledCarousel = styled(EmblaCarousel)`
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
   overflow: hidden;
 
   > div {
