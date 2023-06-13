@@ -99,7 +99,9 @@ const Conditions = (): React.ReactElement => {
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
-        <a href=' '>литжурнале Русского Динозавра</a>
+        <a href='https://t.me/russiandino' target='_blank'>
+          литжурнале Русского Динозавра
+        </a>
       </TextForMobile>
     </ReqDiv>
   );
