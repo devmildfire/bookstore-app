@@ -9,9 +9,13 @@ import {
   ReqDiv,
   TextReqDiv,
   TextForMobile,
+  ContentDiv,
+  BugDiv,
 } from './styles';
 import { mediaTypes } from './MediaTypes';
 import { requirements } from './Requirements';
+import BugTypeWriter from '@/assets/images/BugTypeWriter.png';
+import Image from 'next/image';
 
 const firstPar =
   'Здесь вы можете отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
@@ -20,16 +24,21 @@ const secondPar =
 
 const SendManuscript = (): React.ReactElement => {
   return (
-    <ManuscriptDiv>
-      <Text variant='h3_1Man'>Уважаемые авторы</Text>
-      <TextDiv>
-        <Text variant='manText'>{firstPar}</Text>
-        <Text variant='manText'>{secondPar}</Text>
-      </TextDiv>
-      <MediaIcons />
-      <Requirements />
-      <Conditions />
-    </ManuscriptDiv>
+    <ContentDiv>
+      <ManuscriptDiv>
+        <Text variant='h3_1Man'>Уважаемые авторы</Text>
+        <TextDiv>
+          <Text variant='manText'>{firstPar}</Text>
+          <Text variant='manText'>{secondPar}</Text>
+        </TextDiv>
+        <MediaIcons />
+        <Requirements />
+        <Conditions />
+      </ManuscriptDiv>
+      <BugDiv>
+        <Image src={BugTypeWriter} alt='the Bug TypeWriter' />
+      </BugDiv>
+    </ContentDiv>
   );
 };
 

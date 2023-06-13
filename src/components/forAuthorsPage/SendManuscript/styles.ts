@@ -3,11 +3,41 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import { Text } from '@/components/Common/Text/Text';
 
-const ManuscriptDiv = styled.div`
-  /* * {
-    outline: 1px solid red;
+const ContentDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+
+  /* outline: 1px solid red;
+  * {
+    outline: 1px solid green;
   } */
 
+  @media ${breakPoints.md} {
+    flex-direction: column;
+  }
+`;
+
+const BugDiv = styled.div`
+  flex-shrink: 0;
+  /* width: 70vw; */
+  width: 50%;
+  /* width: 250px; */
+  max-width: 600px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  @media ${breakPoints.md} {
+    flex-direction: row;
+    width: 100%;
+    margin: 0 auto;
+  }
+`;
+
+const ManuscriptDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 48px;
@@ -17,7 +47,7 @@ const ManuscriptDiv = styled.div`
   --padding-sides: 0px;
   --padding-bottom: 100px;
 
-  padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
+  /* padding: var(--padding-top) var(--padding-sides) var(--padding-bottom); */
 
   @media screen and (max-width: 1900px) {
     --padding-top: 100px;
@@ -245,4 +275,6 @@ export {
   ReqDiv,
   TextReqDiv,
   TextForMobile,
+  ContentDiv,
+  BugDiv,
 };
