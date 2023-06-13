@@ -35,10 +35,16 @@ const SendManuscript = (): React.ReactElement => {
         <Requirements />
         <Conditions />
       </ManuscriptDiv>
-      <BugDiv>
-        <Image src={BugTypeWriter} alt='theBugTypeWriter' />
-      </BugDiv>
+      <BugPart />
     </ContentDiv>
+  );
+};
+
+const BugPart = (): React.ReactElement => {
+  return (
+    <BugDiv>
+      <Image src={BugTypeWriter} alt='theBugTypeWriter' />
+    </BugDiv>
   );
 };
 
