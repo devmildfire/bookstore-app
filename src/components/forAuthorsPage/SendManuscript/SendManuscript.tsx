@@ -36,7 +36,7 @@ const SendManuscript = (): React.ReactElement => {
         <Conditions />
       </ManuscriptDiv>
       <BugDiv>
-        <Image src={BugTypeWriter} alt='the Bug TypeWriter' />
+        <Image src={BugTypeWriter} alt='theBugTypeWriter' />
       </BugDiv>
     </ContentDiv>
   );
