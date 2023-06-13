@@ -102,6 +102,7 @@ const Conditions = (): React.ReactElement => {
         <a href='https://t.me/russiandino' target='_blank'>
           литжурнале Русского Динозавра
         </a>
+        {'. '}
       </TextForMobile>
     </ReqDiv>
   );
