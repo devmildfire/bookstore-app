@@ -128,6 +128,28 @@ const Title = styled(Text)`
   }
 `;
 
+const DragHandle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  &::before {
+    content: '';
+    display: block;
+    border-radius: 4px;
+    height: 4px;
+    width: 100px;
+    background-color: var(--main-white-50);
+  }
+  &:hover {
+    cursor: grab;
+  }
+  &:hover ::before {
+    background-color: var(--main-white-10);
+  }
+`;
+
 type WrapperProps = { position: 'bottom' | 'left' };
 
 const wrapperLookup = {

@@ -220,7 +220,6 @@ function Carousel(props: PropType): ReactElement {
 
   const scrollTo = useCallback(
     (index: number) => {
-      console.log('hi');
       return emblaApi && emblaApi.scrollTo(index);
     },
     [emblaApi]

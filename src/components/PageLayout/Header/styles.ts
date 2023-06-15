@@ -2,10 +2,11 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Logo from '@/assets/images/logo.svg';
 import CartIcon from '@/assets/icons/cart.svg';
-import CrossIcon from '@/assets/icons/close.svg';
+
 import ProfileIcon from '@/assets/icons/profile.svg';
 import BurgerIcon from '@/assets/icons/burger.svg';
 import Link from 'next/link';
+import { IconButton } from '@/components/Common/IconButton';
 
 interface HeaderList {
   className: string;
@@ -87,21 +88,10 @@ const CartIconStyled = styled(CartIcon)`
   }
 `;
 
-const CrossIconStyled = styled(CrossIcon)`
-  width: 13px;
-  height: 13px;
-
-  stroke: var(--main-white-100);
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media (max-width: 320px) {
-    width: 14px;
-    height: 14px;
+const MenuButton = styled.div`
+  display: none;
+  @media ${breakPoints.lg} {
+    display: block;
   }
 `;
 
@@ -245,9 +235,7 @@ const NavListItem = styled.li`
   gap: 10px;
   text-align: end;
   font-size: 16px;
-  @media ${breakPoints.xl} {
-    font-size: 14px;
-  }
+
   @media screen and (min-width: 1024px) {
     &:hover .submenu-dropdown {
       visibility: visible;
@@ -302,44 +290,21 @@ const Submenu = styled.ul<SubmenuProps>`
 const SubmenuListItem = styled.li`
   cursor: pointer;
   text-align: start;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  color: var(--main-white);
+  color: var(--main-white-60);
   @media ${breakPoints.lg} {
     text-align: end;
   }
 `;
 const IconContainer = styled.div`
   display: flex;
-  gap: 24px;
+  gap: 12px;
   justify-content: center;
   align-items: center;
-  @media ${breakPoints.lg} {
-    gap: 12px;
-  }
-`;
 
-const MenuButton = styled.button<MenuButtonProps>`
-  display: ${(props) => (props.mobile ? 'none' : 'flex')};
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--main-white-80);
-  @media ${breakPoints.lg} {
-    display: ${(props) => (!props.isVisible ? 'flex' : 'none')};
-  }
-  /* TODO @sergromm: удалить после демо */
-  & > svg {
-    width: 17px;
-    height: 17px;
-  }
-  :hover {
-    color: var(--main-red-100);
+  @media ${breakPoints.md} {
+    gap: 4px;
   }
 `;
 
@@ -367,7 +332,7 @@ export {
   LogoLinkContainer,
   LogoStyled,
   CartIconStyled,
-  CrossIconStyled,
+  MenuButton,
   ProfileIconStyled,
   BurgerIconStyled,
   HeaderWrapper,
@@ -379,6 +344,5 @@ export {
   Submenu,
   SubmenuListItem,
   IconContainer,
-  MenuButton,
   MenuOverlay,
 };

@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { menu, SubmenuItem } from '../../../utils/menuItems';
 import {
   LogoStyled,
-  CartIconStyled,
-  CrossIconStyled,
+  // CartIconStyled,
   // ProfileIconStyled,
+  MenuButton,
   BurgerIconStyled,
   HeaderContainer,
   IconContainer,
-  MenuButton,
   MenuOverlay,
   NavLink,
   NavList,
@@ -18,9 +17,13 @@ import {
   HeaderWrapper,
   NavItem,
 } from './styles';
+import CrossIcon from '@/assets/icons/close.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import CartIcon from '@/assets/icons/cart.svg';
+import BurgerIcon from '@/assets/icons/burger.svg';
 import { useModal } from '@/components/Modal/Modal';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import Link from '@/components/Common/Link/Link';
+import { IconButton } from '@/components/Common/IconButton';
 
 interface ListItemProps {
   title: string;
@@ -125,17 +128,24 @@ function Header({
         </NavList>
 
         <IconContainer>
-          <MenuButton onClick={() => handleOpenModal(true, 'search')}>
-            <MagnifyingGlassIcon />
-          </MenuButton>
+          <IconButton
+            label='поиск'
+            onClick={() => handleOpenModal(true, 'search')}
+          >
+            <SearchIcon />
+          </IconButton>
+          <IconButton label='карзина' onClick={() => console.log('open cart')}>
+            {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
+             Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
+            <CartIcon style={{ marginBottom: '4px' }} />
+          </IconButton>
           <MenuButton>
-            <CartIconStyled />
-          </MenuButton>
-          {/* <MenuButton isVisible={isInputActive}>
-            <ProfileIconStyled />
-          </MenuButton> */}
-          <MenuButton mobile onClick={() => setIsOpen((prev) => !prev)}>
-            {isOpen ? <CrossIconStyled /> : <BurgerIconStyled />}
+            <IconButton
+              label={isOpen ? 'закрыть' : 'меню'}
+              onClick={() => setIsOpen((prev) => !prev)}
+            >
+              {isOpen ? <CrossIcon /> : <BurgerIcon />}
+            </IconButton>
           </MenuButton>
         </IconContainer>
       </HeaderContainer>

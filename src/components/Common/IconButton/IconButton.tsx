@@ -1,15 +1,22 @@
 import React, { MouseEvent, PropsWithChildren, useRef } from 'react';
 import styled from 'styled-components';
 
-type IconButtonProps = { onClick: (e: MouseEvent) => void };
+type IconButtonProps = {
+  onClick: (e: MouseEvent) => void;
+  label: string;
+};
 
 const Button = styled.button`
   display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   overflow: hidden;
   border: none;
   background-color: transparent;
   padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
   cursor: pointer;
   transition: 0.3s ease-out;
@@ -40,11 +47,23 @@ const Button = styled.button`
 const IconContainer = styled.div`
   display: flex;
   position: relative;
+  width: max-content;
+  height: max-content;
   z-index: 2;
+  & > svg {
+    display: flex;
+    color: var(--main-white-80);
+    width: clamp(16px, 4vw, 24px);
+    height: clamp(16px, 4vw, 24px);
+  }
+  &:hover > svg {
+    color: var(--main-red-100);
+  }
 `;
 
 export function IconButton({
   children,
+  label,
   onClick,
 }: PropsWithChildren<IconButtonProps>) {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -72,7 +91,7 @@ export function IconButton({
   };
 
   return (
-    <Button ref={buttonRef} onClick={handleClick}>
+    <Button aria-label={label} ref={buttonRef} onClick={handleClick}>
       <IconContainer>{children}</IconContainer>
     </Button>
   );
