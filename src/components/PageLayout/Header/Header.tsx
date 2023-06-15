@@ -134,7 +134,7 @@ function Header({
           >
             <SearchIcon />
           </IconButton>
-          <IconButton label='карзина' onClick={() => console.log('open cart')}>
+          <IconButton label='корзина' onClick={() => console.log('open cart')}>
             {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
              Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
             <CartIcon style={{ marginBottom: '4px' }} />

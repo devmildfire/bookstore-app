@@ -1,4 +1,4 @@
-import React, { MouseEvent, PropsWithChildren, useRef } from 'react';
+import React, { MouseEvent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 type IconButtonProps = {
@@ -20,9 +20,8 @@ const Button = styled.button`
   border-radius: 50%;
   cursor: pointer;
   transition: 0.3s ease-out;
-
+  color: var(--main-white-80);
   &:hover {
-    /* background-color: rgba(10, 10, 10, 1); */
     color: var(--main-red-100);
   }
 
@@ -33,7 +32,7 @@ const Button = styled.button`
     border-radius: 50%;
     transform: scale(0);
     animation: grow 600ms ease-out;
-    background-color: var(--main-white-10);
+    background-color: var(--main-red-10);
 
     @keyframes grow {
       to {
@@ -52,12 +51,8 @@ const IconContainer = styled.div`
   z-index: 2;
   & > svg {
     display: flex;
-    color: var(--main-white-80);
     width: clamp(16px, 4vw, 24px);
     height: clamp(16px, 4vw, 24px);
-  }
-  &:hover > svg {
-    color: var(--main-red-100);
   }
 `;
 
@@ -66,8 +61,6 @@ export function IconButton({
   label,
   onClick,
 }: PropsWithChildren<IconButtonProps>) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
   const handleClick = (event: MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
     const circle = document.createElement('span');
@@ -91,7 +84,7 @@ export function IconButton({
   };
 
   return (
-    <Button aria-label={label} ref={buttonRef} onClick={handleClick}>
+    <Button aria-label={label} onClick={handleClick}>
       <IconContainer>{children}</IconContainer>
     </Button>
   );

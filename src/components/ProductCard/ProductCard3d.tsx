@@ -165,7 +165,7 @@ export default function ProductCard3d(props: ProductCardProps) {
           <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
-          <IconButton onClick={onAddToCartClick}>
+          <IconButton label='добавить в корзину' onClick={onAddToCartClick}>
             <BuyIcon />
           </IconButton>
           {/* <Button type='button'>В Избранное</Button> */}

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 import { useRouter } from 'next/router';
+import texture from '@/assets/images/mockup-texture.png';
 
 type PropType = {
   slides: number[];
@@ -196,10 +197,22 @@ const Slide = styled.div`
 
 const Cover = styled.img`
   display: block;
+  position: relative;
   height: var(--slide-height);
   max-height: 70vh;
   width: 100%;
   object-fit: contain;
+`;
+
+const Texture = styled.img`
+  display: block;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 `;
 
 const Dots = styled.div`
@@ -210,6 +223,10 @@ const Dots = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const CoverLink = styled(Link)`
+  position: relative;
 `;
 
 function Carousel(props: PropType): ReactElement {
@@ -248,9 +265,10 @@ function Carousel(props: PropType): ReactElement {
           {slides.map((index) => (
             <Slide key={index}>
               <SlideContainer>
-                <Link href={`/books/${books[index].transliteratedTitle}`}>
+                <CoverLink href={`/books/${books[index].transliteratedTitle}`}>
+                  <Texture src={texture.src} />
                   <Cover src={books[index].cover} alt={books[index].title} />
-                </Link>
+                </CoverLink>
                 <StyledInfo>
                   <StyledTitle variant='heading' tag='h1'>
                     {books[index].title}

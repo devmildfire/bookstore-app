@@ -292,9 +292,10 @@ const SubmenuListItem = styled.li`
   text-align: start;
   font-size: 14px;
   font-weight: 400;
-  color: var(--main-white-60);
+
   @media ${breakPoints.lg} {
     text-align: end;
+    color: var(--main-white-60);
   }
 `;
 const IconContainer = styled.div`
