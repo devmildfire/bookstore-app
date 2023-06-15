@@ -67,7 +67,6 @@ const DonateForm = (): React.ReactElement => {
       >
         Задонатить
       </StyledButton> */}
-
       <StyledButton
         className='boostyBtn'
         type='button'
