@@ -22,7 +22,7 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
 
   if (href) {
     return (
-      <Link href={href} scroll={scroll}>
+      <Link href={href} scroll={scroll} className={className}>
         <StyledButton variant={variant} {...params}>
           <Text variant='text' textColor='inherit' key={0}>
             {children}
