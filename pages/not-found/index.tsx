@@ -57,13 +57,23 @@ const Title = styled(Text)`
   }
 `;
 
+const StyledBookWorm = styled(BookWorm)`
+  width: 100vw;
+
+  max-width: 340px;
+
+  @media ${breakPoints.sm} {
+    max-width: 300px;
+  }
+`;
+
 function NotFoundPage() {
   return (
     <PageContainer>
       <Title variant='h1_Inv' align='center'>
         Любопытство — это хорошо, но придётся ещё немного подождать
       </Title>
-      <BookWorm className='worm' variant='red' />
+      <StyledBookWorm className='worm' variant='red' />
       <Button href='/' variant='wide'>
         Вернуться на главную
       </Button>
