@@ -30,45 +30,52 @@ const HallDiv = styled.div`
 
 const HalLogoStyled = styled(HalLogo)`
   width: 100%;
-  max-width: 404px;
-  padding-bottom: 90px;
+  /* max-width: 404px; */
+  max-width: 200px;
+  /* padding-bottom: 90px; */
+  padding-bottom: 5px;
 
   @media ${breakPoints.lg} {
-    padding-bottom: 70px;
+    /* padding-bottom: 70px; */
+    /* padding-bottom: 10px; */
   }
-  
+
   @media ${breakPoints.md} {
-    padding-bottom: 20px;
-    max-width: 204px;
+    /* padding-bottom: 20px; */
+    /* padding-bottom: 10px; */
+    /* max-width: 204px; */
+    max-width: 122px;
   }
 `;
 
 const HallIconStyled = styled(HallIcon)`
   width: 100%;
-  max-width: 550px;
+  /* max-width: 550px; */
+  max-width: 240px;
 
   @media ${breakPoints.md} {
-    max-width: 250px;
+    /* max-width: 250px; */
+    max-width: 150px;
   }
 `;
 
 const StyledButton = styled(Button)`
-padding-top: 50px;
+  /* padding-top: 50px; */
+  padding-top: 5px;
 
-@media ${breakPoints.md} {
-  padding-top: 20px;
+  @media ${breakPoints.md} {
+    /* padding-top: 20px; */
+    /* padding-top: 12px; */
 
-  > button {
-    max-width: 217px;
-    min-width: 217px;
+    > button {
+      max-width: 217px;
+      min-width: 217px;
 
-    > p {
-      font-size: 10px;
+      > p {
+        font-size: 10px;
+      }
     }
   }
-
-}
-
 `;
 
 const Hall = () => {
@@ -77,11 +84,11 @@ const Hall = () => {
       {/* <HallIcon as={Hal9000} /> */}
       <HallIconStyled />
       <HalLogoStyled />
-      <Text variant='h2_1' align='center'>
+      <Text variant='h2_1_HAL' align='center'>
         «Прости, Дэйв, боюсь,
         {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
       </Text>
-      <Text variant='h2_1' align='center'>
+      <Text variant='h2_1_HAL' align='center'>
         я не могу этого сделать»
         {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
       </Text>
