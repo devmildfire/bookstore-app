@@ -7,6 +7,9 @@ import Text from '@/components/Common/Text';
 import useScreenSize from '@/hooks/useScreenSize';
 
 const StyledCard = styled.div`
+  flex-shrink: 0;
+  flex-grow: 0;
+
   -webkit-user-drag: none;
   user-select: none;
   -moz-user-select: none;
