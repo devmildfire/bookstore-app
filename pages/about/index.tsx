@@ -11,11 +11,13 @@ import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-import rorshah from '@/assets/images/rorshah_new.png';
+import rorshah from '@/assets/images/rorshah_whole_2.png';
+import Text from '@/components/Common/Text';
 
 const About: NextPage = () => (
   <StyledWrapper>
     <VideoContainer>
+      <PageTitle />
       <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
     </VideoContainer>
     <AboutUs />
@@ -31,6 +33,32 @@ const About: NextPage = () => (
 );
 
 export default About;
+
+const StyledText = styled(Text)<{ classname: string }>`
+  padding-bottom: 60px;
+
+  @media ${breakPoints.xl} {
+    padding-bottom: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-bottom: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-bottom: 10px;
+  }
+`;
+
+const PageTitle = (): React.ReactElement => (
+  <StyledText classname='TitleText' align='center' variant='h2_1'>
+    О Чтиве
+  </StyledText>
+);
 
 const VideoContainer = styled(Container)`
   max-width: var(--width);

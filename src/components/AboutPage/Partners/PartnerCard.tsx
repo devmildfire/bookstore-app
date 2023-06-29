@@ -24,6 +24,9 @@ const StyledCard = styled.div`
   background-color: rgba(18, 18, 18, 0.5);
   backdrop-filter: blur(8px);
 
+  flex-shrink: 0;
+  flex-grow: 0;
+
   border-radius: 5%;
 
   display: grid;

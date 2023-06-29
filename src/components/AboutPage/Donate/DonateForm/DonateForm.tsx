@@ -3,12 +3,12 @@ import styled, { keyframes } from 'styled-components';
 import React, { useState } from 'react';
 import {
   useForm,
-  Controller,
+  // Controller,
   SubmitHandler,
   SubmitErrorHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Input from '@/components/Common/Input';
+// import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
 
@@ -21,7 +21,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 const DonateForm = (): React.ReactElement => {
   const {
     handleSubmit,
-    control,
+    // control,
     formState: { errors },
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -38,9 +38,11 @@ const DonateForm = (): React.ReactElement => {
     setWipe(false);
   };
 
+  const boostyLink = 'https://boosty.to/russiandino/donate';
+
   return (
     <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
-      <Controller
+      {/* <Controller
         control={control}
         name='amount'
         render={({ field: { onChange, onBlur, value } }) => (
@@ -51,15 +53,27 @@ const DonateForm = (): React.ReactElement => {
             value={value}
           />
         )}
-      />
+      /> */}
 
-      <StyledButton
+      {/* //    кнопка отправляет данные с формы, но пока отправлять некуда
+//    она закоментарена и работает только кнопка-ссылка на бусти */}
+
+      {/* <StyledButton
         type='submit'
         onClick={() => {
           setWipe(true);
         }}
+        href={boostyLink}
       >
         Задонатить
+      </StyledButton> */}
+      <StyledButton
+        className='boostyBtn'
+        type='button'
+        href={boostyLink}
+        target='_blank'
+      >
+        Бусти
       </StyledButton>
       {!wipe && errors.amount && (
         <ErrorOutput>
@@ -70,34 +84,34 @@ const DonateForm = (): React.ReactElement => {
   );
 };
 
-const StyledInput = styled(Input)`
-  background-color: var(--main-white-20);
-  border: none;
-  color: var(--main-white-100);
-  padding: 20px;
-  max-width: 640px;
-  width: 100%;
+// const StyledInput = styled(Input)`
+//   background-color: var(--main-white-20);
+//   border: none;
+//   color: var(--main-white-100);
+//   padding: 20px;
+//   max-width: 640px;
+//   width: 100%;
 
-  @media ${breakPoints.lg} {
-    width: 185px;
-    height: 45px;
-    padding: 0 10px;
-  }
+//   @media ${breakPoints.lg} {
+//     width: 185px;
+//     height: 45px;
+//     padding: 0 10px;
+//   }
 
-  @media ${breakPoints.smd} {
-    width: 150px;
-    height: 32px;
-    font-size: 12px;
-    margin: 0 auto;
-  }
+//   @media ${breakPoints.smd} {
+//     width: 150px;
+//     height: 32px;
+//     font-size: 12px;
+//     margin: 0 auto;
+//   }
 
-  @media ${breakPoints.sm} {
-    width: 150px;
-    height: 32px;
-    font-size: 10px;
-    margin: 0 auto;
-  }
-`;
+//   @media ${breakPoints.sm} {
+//     width: 150px;
+//     height: 32px;
+//     font-size: 10px;
+//     margin: 0 auto;
+//   }
+// `;
 
 const slideDown = keyframes`
   from {
