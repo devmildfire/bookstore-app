@@ -151,7 +151,7 @@ export const StyledSecondaryText = styled(Text)`
   }
 
   @media ${breakPoints.md} {
-    text-align: center;
+    /* text-align: center; */
   }
 
   @media ${breakPoints.smd} {

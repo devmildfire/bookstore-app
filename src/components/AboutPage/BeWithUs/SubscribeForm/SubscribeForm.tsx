@@ -272,6 +272,7 @@ const StyledInput = styled(Input)`
     height: 45px;
     max-width: 415px;
     padding: 0px 6px;
+    /* padding: 0px 0px; */
     margin: 0 auto;
     font-size: 14px;
   }
