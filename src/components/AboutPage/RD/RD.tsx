@@ -13,6 +13,7 @@ import litMagIcon from '@/assets/icons/litmagIcon.svg';
 import MovingPicsGrid from '@/components/Common/MovingPicsGrid';
 
 const StyledButton = styled(Button)`
+  display: block;
   padding: 0 40px;
 
   max-width: var(--box-width);
@@ -164,19 +165,26 @@ const RD = (): React.ReactElement => {
         <StyledMainText variant='text' align='left'>
           {string1}
           {s2}
-          <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
+          <a href='https://russiandino.ru/' target='_blank'>
+            Русский&nbsp;Динозавр
+          </a>
           {string3}
         </StyledMainText>
 
         <StyledSecondaryText variant='text' align='left'>
           Избранные рассказы попадают в&nbsp;ежегодник «
-          <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
+          <a
+            href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'
+            target='_blank'
+          >
             Могучий&nbsp;Русский Динозавр
           </a>
           ».
         </StyledSecondaryText>
 
-        <StyledButton>Литжурнал Русского Динозавра</StyledButton>
+        <StyledButton href='https://dzen.ru/russiandino' target='_blank'>
+          Литжурнал Русского Динозавра
+        </StyledButton>
       </StyledContent>
     </StyledWrapper>
   );
