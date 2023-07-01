@@ -58,7 +58,7 @@ export const StyledContent = styled.div`
   max-width: 1060px;
 
   padding: 40px 40px;
-  gap: 10px 0;
+  gap: 1vw 0;
 
   background: linear-gradient(
     113.04deg,
@@ -82,22 +82,26 @@ export const StyledContent = styled.div`
     flex-direction: column;
   }
 
+  @media ${breakPoints.xl} {
+    gap: 1.5vw 0;
+  }
+
   @media ${breakPoints.lg} {
     padding: 25px 25px;
-    gap: 10px 0;
+    gap: 1.5vw 0;
   }
 
   @media ${breakPoints.md} {
-    gap: 10px 0;
+    gap: 1.5vw 0;
   }
 
   @media ${breakPoints.smd} {
-    padding: 20px 25px;
-    gap: 5px 0;
+    padding: 25px 25px;
+    gap: 2vw 0;
   }
 
   @media ${breakPoints.sm} {
-    gap: 5px 0;
+    gap: 2.5vw 0;
   }
 `;
 

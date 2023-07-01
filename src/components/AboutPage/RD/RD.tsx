@@ -18,7 +18,8 @@ const StyledButton = styled(Button)`
 
   max-width: var(--box-width);
   width: calc(0.45 * var(--box-width));
-  margin: 2% auto;
+  /* margin: 2% auto; */
+  margin: 0 auto;
 
   max-height: 60px;
   min-height: 60px;
@@ -42,16 +43,15 @@ const StyledButton = styled(Button)`
   @media ${breakPoints.lg} {
     padding: 0 20px;
     align-self: center;
-    margin: 0.5% auto 2% auto;
+    margin: 0 auto;
     max-height: 45px;
     min-height: 45px;
     width: calc(0.45 * var(--box-width));
   }
 
   @media ${breakPoints.md} {
-    /* padding: 0 10px; */
     align-self: center;
-    margin-right: auto;
+    margin: 0 auto;
     max-height: 45px;
     min-height: 45px;
     width: calc(0.6 * var(--box-width));
@@ -59,10 +59,9 @@ const StyledButton = styled(Button)`
 
   @media ${breakPoints.smd} {
     align-self: center;
-    margin-right: auto;
+    margin: 0 auto;
     max-height: 32px;
     min-height: 32px;
-    /* width: calc(0.7 * var(--box-width)); */
     width: 100%;
   }
 
