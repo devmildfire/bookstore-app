@@ -57,7 +57,7 @@ export const StyledContent = styled.div`
 
   max-width: 1060px;
 
-  padding: 40px 40px;
+  padding: 40px 50px;
   gap: 1vw 0;
 
   background: linear-gradient(
@@ -82,8 +82,13 @@ export const StyledContent = styled.div`
     flex-direction: column;
   }
 
+  @media ${breakPoints.xxl} {
+    padding: 40px 54px;
+  }
+
   @media ${breakPoints.xl} {
     gap: 1.5vw 0;
+    padding: 40px 54px;
   }
 
   @media ${breakPoints.lg} {
