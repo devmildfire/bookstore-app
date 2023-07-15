@@ -41,6 +41,8 @@ const AbzacDiv = styled.div`
     // --padding-sides: 52px;
     --padding-sides: 0px;
     --padding-bottom: 120px;
+
+    gap: 90px;
   }
 
   @media ${breakPoints.md} {
@@ -51,6 +53,7 @@ const AbzacDiv = styled.div`
   }
 
   @media ${breakPoints.smd} {
+    gap: 50px;
   }
 
   @media ${breakPoints.sm} {
@@ -292,26 +295,24 @@ const TrailerDiv = styled.div`
   display: flex;
   /* justify-content: space-around; */
   flex-direction: column;
-  gap: 29px;
+  gap: 90px;
 
   > video {
     max-width: unset;
   }
 
   @media ${breakPoints.xl} {
-    gap: 36px;
   }
 
   @media ${breakPoints.lg} {
-    gap: 40px;
+    gap: 70px;
   }
 
   @media ${breakPoints.md} {
-    gap: 41px;
+    gap: 30px;
   }
 
   @media ${breakPoints.smd} {
-    gap: 40px;
   }
 
   @media ${breakPoints.sm} {

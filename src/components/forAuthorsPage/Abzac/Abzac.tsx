@@ -3,6 +3,7 @@ import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
 import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+import ArrowDown from '@/assets/icons/arrow_down.svg';
 import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
 import { curriculum } from './Curriculum';
@@ -22,6 +23,7 @@ import {
   TrailerDiv,
 } from './styles';
 import Video from '@/components/Common/Video/Video';
+import * as Accordion from '@radix-ui/react-accordion';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -96,14 +98,25 @@ const Curriculum = (): React.ReactElement => {
       <Text variant='h3_Abzac' align='start'>
         Направления обучения
       </Text>
-      {curriculumWID.map((course) => (
-        <CourseCard
-          title={course.title}
-          about={course.about ? course.about : ''}
-          teacher={course.lector}
-          key={course.key}
-        />
-      ))}
+
+      <Accordion.Root type='single' defaultValue='item-1' collapsible>
+        {curriculumWID.map((course) => (
+          <Accordion.Item
+            value={'item-value-' + course.key}
+            key={'item-key-' + course.key}
+          >
+            <Accordion.Trigger>{course.title}</Accordion.Trigger>
+            <Accordion.Content>
+              <CourseCard
+                title={course.title}
+                about={course.about ? course.about : ''}
+                teacher={course.lector}
+                key={course.key}
+              />
+            </Accordion.Content>
+          </Accordion.Item>
+        ))}
+      </Accordion.Root>
     </CoursesDiv>
   );
 };
@@ -118,6 +131,7 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
   const { teacher, title, about } = props;
   return (
     <CourseCardDiv>
+      <ArrowDown />
       <CourseTextDiv>
         <Text variant='courseBig'>{title}</Text>
 
