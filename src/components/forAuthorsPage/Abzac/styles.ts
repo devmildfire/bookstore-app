@@ -13,7 +13,7 @@ const AbzacDiv = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 150px;
 
   --padding-top: 100px;
   // --padding-sides: 96px;
@@ -257,7 +257,7 @@ const EnrollDiv = styled.div`
   display: flex;
   /* justify-content: space-around; */
   flex-direction: column;
-  gap: 64px;
+  gap: 29px;
 
   a {
     color: var(--main-red-100);
@@ -269,11 +269,11 @@ const EnrollDiv = styled.div`
   }
 
   @media ${breakPoints.xl} {
-    gap: 82px;
+    gap: 36px;
   }
 
   @media ${breakPoints.lg} {
-    gap: 8px;
+    gap: 40px;
   }
 
   @media ${breakPoints.md} {
@@ -281,11 +281,47 @@ const EnrollDiv = styled.div`
   }
 
   @media ${breakPoints.smd} {
-    gap: 22px;
+    gap: 40px;
   }
 
   @media ${breakPoints.sm} {
   }
+`;
+
+const TrailerDiv = styled.div`
+  display: flex;
+  /* justify-content: space-around; */
+  flex-direction: column;
+  gap: 29px;
+
+  > video {
+    max-width: unset;
+  }
+
+  @media ${breakPoints.xl} {
+    gap: 36px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 40px;
+  }
+
+  @media ${breakPoints.md} {
+    gap: 41px;
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const StaffEnrollDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
 `;
 
 export {
@@ -299,4 +335,6 @@ export {
   CourseCardDiv,
   CourseTextDiv,
   EnrollDiv,
+  TrailerDiv,
+  StaffEnrollDiv,
 };

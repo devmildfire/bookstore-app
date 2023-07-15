@@ -15,10 +15,13 @@ import {
   CourseTextDiv,
   EnrollDiv,
   HeroDiv,
+  StaffEnrollDiv,
   TeacherPic,
   TeachersDiv,
   TextDiv,
+  TrailerDiv,
 } from './styles';
+import Video from '@/components/Common/Video/Video';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -45,9 +48,12 @@ const Abzac = (): React.ReactElement => {
 
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
-      <Staff />
+      <StaffEnrollDiv>
+        <Staff />
+        <Enrollment />
+      </StaffEnrollDiv>
+      <Trailer />
       <Curriculum />
-      <Enrollment />
     </AbzacDiv>
   );
 };
@@ -124,19 +130,36 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
 };
 
 const enrollText =
-  'Предварительная запись в онлайн-мастерскую уже открыта — от вас пока требуется только обозначить свой интерес. Вы получите все подробности непосредственно перед запуском курса, и тогда сможете решить, участвовать или нет.';
+  'Интенсив мастерской Абзац прошёл в 2023 году и теперь доступен в формате видеолекций (подробности ниже). Онлайн-мастерская продолжает работать в режиме факультатива, в формате личных и групповых встреч с мастерами по заявкам учащихся.';
+
+const enrollAdress = [
+  'Чтобы попасть в чат мастерской в Телеграм и узнать подробности, ',
+  <br key='br' />,
+  'напишите немного о себе на\u00A0',
+];
 
 const Enrollment = (): React.ReactElement => {
   return (
     <EnrollDiv>
-      <Text variant='abzacCardText' align='start'>
+      <Text variant='abzacText' align='start'>
         {enrollText}
       </Text>
       <Text variant='h4_Abzac' align='start'>
-        {'Чтобы записаться, напишите немного о себе на почту '}
+        {enrollAdress}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
     </EnrollDiv>
+  );
+};
+
+const Trailer = (): React.ReactElement => {
+  return (
+    <TrailerDiv>
+      <Text variant='h3_Abzac' align='start'>
+        Трейлер
+      </Text>
+      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
+    </TrailerDiv>
   );
 };
 
