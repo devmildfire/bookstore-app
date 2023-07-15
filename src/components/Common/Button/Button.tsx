@@ -7,6 +7,7 @@ export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement & HTMLAnchorElement>,
     Partial<StyledButtonProps> {
   readonly href?: string;
+  readonly target?: string;
   readonly scroll?: boolean;
 }
 
@@ -15,6 +16,7 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
     children,
     className,
     href,
+    target,
     scroll,
     variant = 'standard',
     ...params
@@ -22,9 +24,9 @@ const Button = (props: PropsWithChildren<ButtonProps>) => {
 
   if (href) {
     return (
-      <Link href={href} scroll={scroll}>
+      <Link href={href} scroll={scroll} target={target}>
         <StyledButton variant={variant} {...params}>
-          <Text variant='text' textColor='inherit' key={0}>
+          <Text variant='buttonText' textColor='inherit' key={0}>
             {children}
           </Text>
         </StyledButton>
