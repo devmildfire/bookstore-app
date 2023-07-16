@@ -4,12 +4,15 @@ import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
 import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
 import ArrowDown from '@/assets/icons/arrow_down.svg';
+import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
 import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
 import { curriculum } from './Curriculum';
 import setUUIDField from '@/utils/setUUIDField';
 import {
   AbzacDiv,
+  AnimatedAccordionItem,
+  ButtonsDiv,
   CardDiv,
   CourseCardDiv,
   CourseCardTitleDiv,
@@ -31,7 +34,6 @@ import {
 } from './styles';
 import Video from '@/components/Common/Video/Video';
 import * as Accordion from '@radix-ui/react-accordion';
-import Button from '@/components/Common/Button';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -109,7 +111,8 @@ const Curriculum = (): React.ReactElement => {
 
       <Accordion.Root type='single' defaultValue='item-value-0' collapsible>
         {curriculumWID.map((course, index) => (
-          <Accordion.Item
+          //  <Accordion.Item>
+          <AnimatedAccordionItem
             value={'item-value-' + index}
             key={'item-key-' + course.key}
           >
@@ -121,7 +124,8 @@ const Curriculum = (): React.ReactElement => {
                 key={'title' + course.key}
               />
             </Accordion.Trigger>
-            <Accordion.Content>
+            {/* <AnimatedAccordionContent className='AccordionContent'> */}
+            <Accordion.Content className='AccordionContent'>
               <CourseCard
                 format={course.format}
                 duration={course.duration}
@@ -131,8 +135,10 @@ const Curriculum = (): React.ReactElement => {
                 key={course.key}
               />
             </Accordion.Content>
+            {/* </AnimatedAccordionContent> */}
             <hr />
-          </Accordion.Item>
+            {/* </Accordion.Item> */}
+          </AnimatedAccordionItem>
         ))}
       </Accordion.Root>
     </CoursesDiv>
@@ -207,9 +213,12 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
             {price + ' \u20BD'}
           </Text>
         )}
-        <StyledButton className='cartButton' type='button'>
-          Добавить в корзину
-        </StyledButton>
+        <ButtonsDiv>
+          <StyledButton className='cartButton' type='button'>
+            Добавить в корзину
+          </StyledButton>
+          <CartPlusOne />
+        </ButtonsDiv>
       </CoursePriceDiv>
     </CourseCardDiv>
   );

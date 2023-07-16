@@ -2,6 +2,38 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
+// import { Accordion } from '@radix-ui/react-accordion';
+import * as Accordion from '@radix-ui/react-accordion';
+
+const AnimatedAccordionItem = styled(Accordion.Item)`
+  .AccordionContent {
+    overflow: hidden;
+  }
+  .AccordionContent[data-state='open'] {
+    animation: slideDown 300ms ease-out;
+  }
+  .AccordionContent[data-state='closed'] {
+    animation: slideUp 300ms ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+`;
 
 const AbzacDiv = styled.div`
   /* * {
@@ -357,6 +389,30 @@ const ItemsValuesDiv = styled.div`
   }
 `;
 
+const ButtonsDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  align-items: end;
+
+  > svg {
+    display: none;
+    @media ${breakPoints.sm} {
+      display: block;
+
+      :hover {
+        color: var(--main-red-100);
+      }
+    }
+  }
+
+  > button {
+    @media ${breakPoints.sm} {
+      display: none;
+    }
+  }
+`;
+
 const CourseTextTitleDiv = styled.div`
   display: flex;
   justify-content: space-around;
@@ -497,6 +553,7 @@ const StyledButton = styled(Button)<{ className?: string }>`
 `;
 
 export {
+  AnimatedAccordionItem,
   HeroDiv,
   CardDiv,
   TeacherPic,
@@ -516,4 +573,5 @@ export {
   ValuesDiv,
   ItemsDiv,
   ItemsValuesDiv,
+  ButtonsDiv,
 };
