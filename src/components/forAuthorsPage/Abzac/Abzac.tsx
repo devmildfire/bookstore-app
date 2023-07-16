@@ -12,6 +12,7 @@ import {
   AbzacDiv,
   CardDiv,
   CourseCardDiv,
+  CourseCardTitleDiv,
   CoursesDiv,
   CourseTextDiv,
   EnrollDiv,
@@ -99,21 +100,31 @@ const Curriculum = (): React.ReactElement => {
         Направления обучения
       </Text>
 
-      <Accordion.Root type='single' defaultValue='item-1' collapsible>
-        {curriculumWID.map((course) => (
+      <Accordion.Root type='single' defaultValue='item-value-0' collapsible>
+        {curriculumWID.map((course, index) => (
           <Accordion.Item
-            value={'item-value-' + course.key}
+            value={'item-value-' + index}
             key={'item-key-' + course.key}
           >
-            <Accordion.Trigger>{course.title}</Accordion.Trigger>
-            <Accordion.Content>
-              <CourseCard
+            <Accordion.Trigger>
+              <CourseCardTitle
                 title={course.title}
                 about={course.about ? course.about : ''}
+                teacher={course.lector}
+                key={'title' + course.key}
+              />
+            </Accordion.Trigger>
+            <Accordion.Content>
+              <CourseCard
+                format={course.format}
+                duration={course.duration}
+                price={course.price}
+                title={course.title}
                 teacher={course.lector}
                 key={course.key}
               />
             </Accordion.Content>
+            <hr />
           </Accordion.Item>
         ))}
       </Accordion.Root>
@@ -125,17 +136,38 @@ interface CourseCardProps {
   teacher: Teacher | undefined;
   title: string;
   about?: string | undefined;
+  format?: string | undefined;
+  duration?: string | undefined;
+  price?: number;
 }
 
-const CourseCard = (props: CourseCardProps): React.ReactElement => {
+const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
   const { teacher, title, about } = props;
   return (
-    <CourseCardDiv>
-      <ArrowDown />
+    <CourseCardTitleDiv>
+      <Text variant='courseBig'>{teacher?.name}</Text>
       <CourseTextDiv>
         <Text variant='courseBig'>{title}</Text>
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
+      </CourseTextDiv>
+      <ArrowDown />
+    </CourseCardTitleDiv>
+  );
+};
+
+const CourseCard = (props: CourseCardProps): React.ReactElement => {
+  const { format, teacher, duration, price } = props;
+  return (
+    <CourseCardDiv>
+      <CourseTextDiv>
+        <Text variant='abzacCardText'>
+          Формат: {format} <br />
+          Лектор: {teacher?.name} <br />
+          Длительность: {duration}
+        </Text>
+
+        {price && <Text variant='abzacCardText'>{price}</Text>}
       </CourseTextDiv>
 
       <Text variant='courseBig'>{teacher?.name}</Text>
@@ -172,7 +204,7 @@ const Trailer = (): React.ReactElement => {
       <Text variant='h3_Abzac' align='start'>
         Трейлер
       </Text>
-      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
+      <Video src='/videos/abzac.mp4' poster='/images/poster_abzac.png' />
     </TrailerDiv>
   );
 };

@@ -181,6 +181,11 @@ const CoursesDiv = styled.div`
   flex-direction: column;
   gap: 35px;
 
+  button {
+    background: none;
+    width: 100%;
+  }
+
   @media ${breakPoints.xl} {
     gap: 35px;
   }
@@ -199,6 +204,50 @@ const CoursesDiv = styled.div`
   }
 `;
 
+const CourseCardTitleDiv = styled.div`
+  background-color: var(--main-black);
+
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+
+  padding-bottom: 24px;
+
+  > h4 {
+    flex-grow: 1;
+    text-align: left;
+
+    @media ${breakPoints.sm} {
+      display: none;
+    }
+  }
+
+  /* var(--main-white-80) */
+
+  @media ${breakPoints.xl} {
+    gap: 50px;
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 30px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 7px;
+    padding-bottom: 12px;
+    /* align-items: flex-end; */
+  }
+
+  @media ${breakPoints.sm} {
+    /* justify-content: flex-end; */
+  }
+`;
+
 const CourseCardDiv = styled.div`
   display: flex;
   justify-content: space-between;
@@ -206,7 +255,7 @@ const CourseCardDiv = styled.div`
   align-items: center;
   gap: 50px;
 
-  border-bottom: 1px solid var(--main-white-100);
+  /* border-bottom: 1px solid var(--main-white-100); */
   padding-bottom: 24px;
 
   /* var(--main-white-80) */
@@ -237,6 +286,8 @@ const CourseTextDiv = styled.div`
   justify-content: space-around;
   flex-direction: column;
   gap: 8px;
+  align-items: end;
+  text-align: right;
 
   @media ${breakPoints.xl} {
   }
@@ -253,6 +304,7 @@ const CourseTextDiv = styled.div`
   }
 
   @media ${breakPoints.sm} {
+    align-items: start;
   }
 `;
 
@@ -301,6 +353,10 @@ const TrailerDiv = styled.div`
     max-width: unset;
   }
 
+  video[poster] {
+    object-fit: cover;
+  }
+
   @media ${breakPoints.xl} {
   }
 
@@ -334,6 +390,7 @@ export {
   AbzacDiv,
   CoursesDiv,
   CourseCardDiv,
+  CourseCardTitleDiv,
   CourseTextDiv,
   EnrollDiv,
   TrailerDiv,
