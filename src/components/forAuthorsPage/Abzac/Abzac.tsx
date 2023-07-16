@@ -13,18 +13,25 @@ import {
   CardDiv,
   CourseCardDiv,
   CourseCardTitleDiv,
+  CoursePriceDiv,
   CoursesDiv,
   CourseTextDiv,
+  CourseTextTitleDiv,
   EnrollDiv,
   HeroDiv,
+  ItemsDiv,
+  ItemsValuesDiv,
   StaffEnrollDiv,
+  StyledButton,
   TeacherPic,
   TeachersDiv,
   TextDiv,
   TrailerDiv,
+  ValuesDiv,
 } from './styles';
 import Video from '@/components/Common/Video/Video';
 import * as Accordion from '@radix-ui/react-accordion';
+import Button from '@/components/Common/Button';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -106,7 +113,7 @@ const Curriculum = (): React.ReactElement => {
             value={'item-value-' + index}
             key={'item-key-' + course.key}
           >
-            <Accordion.Trigger>
+            <Accordion.Trigger className='AccordionTrigger'>
               <CourseCardTitle
                 title={course.title}
                 about={course.about ? course.about : ''}
@@ -146,11 +153,11 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
   return (
     <CourseCardTitleDiv>
       <Text variant='courseBig'>{teacher?.name}</Text>
-      <CourseTextDiv>
+      <CourseTextTitleDiv>
         <Text variant='courseBig'>{title}</Text>
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
-      </CourseTextDiv>
+      </CourseTextTitleDiv>
       <ArrowDown />
     </CourseCardTitleDiv>
   );
@@ -161,16 +168,49 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
   return (
     <CourseCardDiv>
       <CourseTextDiv>
-        <Text variant='abzacCardText'>
-          Формат: {format} <br />
-          Лектор: {teacher?.name} <br />
-          Длительность: {duration}
-        </Text>
-
-        {price && <Text variant='abzacCardText'>{price}</Text>}
+        <ItemsDiv>
+          <Text variant='abzacCardText'>Формат: </Text>
+          <Text variant='abzacCardText'>Лектор: </Text>
+          <Text variant='abzacCardText'>Длительность: </Text>
+        </ItemsDiv>
+        <ValuesDiv>
+          <Text variant='abzacCardText'>{format}</Text>
+          <Text variant='abzacCardText'>{teacher?.name}</Text>
+          <Text variant='abzacCardText'>{duration}</Text>
+        </ValuesDiv>
+        <ItemsValuesDiv>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Формат:
+            </Text>
+            <Text variant='buttonText' textColor='white'>
+              {format}
+            </Text>
+          </div>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Лектор:{' '}
+            </Text>
+            <Text variant='buttonText'>{teacher?.name}</Text>
+          </div>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Длительность:{' '}
+            </Text>
+            <Text variant='buttonText'>{duration}</Text>
+          </div>
+        </ItemsValuesDiv>
       </CourseTextDiv>
-
-      <Text variant='courseBig'>{teacher?.name}</Text>
+      <CoursePriceDiv>
+        {price && (
+          <Text variant='courseBig' align='right'>
+            {price + ' \u20BD'}
+          </Text>
+        )}
+        <StyledButton className='cartButton' type='button'>
+          Добавить в корзину
+        </StyledButton>
+      </CoursePriceDiv>
     </CourseCardDiv>
   );
 };

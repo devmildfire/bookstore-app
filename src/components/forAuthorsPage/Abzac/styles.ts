@@ -1,6 +1,7 @@
 // import Link from 'next/link';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import Button from '@/components/Common/Button';
 
 const AbzacDiv = styled.div`
   /* * {
@@ -181,9 +182,16 @@ const CoursesDiv = styled.div`
   flex-direction: column;
   gap: 35px;
 
-  button {
+  //  правило для кнопки, которая представляет собой пункт меню-аккордиона
+  > div > div > button {
     background: none;
     width: 100%;
+  }
+
+  .AccordionTrigger[data-state='open'] {
+    svg {
+      color: var(--main-red-100);
+    }
   }
 
   @media ${breakPoints.xl} {
@@ -214,6 +222,10 @@ const CourseCardTitleDiv = styled.div`
   gap: 50px;
 
   padding-bottom: 24px;
+
+  svg {
+    color: var(--main-white-80);
+  }
 
   > h4 {
     flex-grow: 1;
@@ -283,11 +295,77 @@ const CourseCardDiv = styled.div`
 
 const CourseTextDiv = styled.div`
   display: flex;
+  justify-content: start;
+  flex-direction: row;
+  gap: 40px;
+  align-items: start;
+  text-align: left;
+
+  flex-grow: 1;
+
+  @media ${breakPoints.xl} {
+  }
+
+  @media ${breakPoints.lg} {
+    gap: 8px;
+  }
+
+  @media ${breakPoints.md} {
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 5px;
+  }
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const ItemsDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  gap: 5px;
+  align-items: start;
+
+  @media ${breakPoints.sm} {
+    display: none;
+  }
+`;
+
+const ValuesDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  gap: 5px;
+  align-items: start;
+
+  @media ${breakPoints.sm} {
+    display: none;
+  }
+`;
+
+const ItemsValuesDiv = styled.div`
+  display: none;
+
+  @media ${breakPoints.sm} {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    gap: 2px;
+    align-items: start;
+  }
+`;
+
+const CourseTextTitleDiv = styled.div`
+  display: flex;
   justify-content: space-around;
   flex-direction: column;
   gap: 8px;
   align-items: end;
   text-align: right;
+
+  flex-grow: 1;
 
   @media ${breakPoints.xl} {
   }
@@ -305,6 +383,7 @@ const CourseTextDiv = styled.div`
 
   @media ${breakPoints.sm} {
     align-items: start;
+    text-align: left;
   }
 `;
 
@@ -381,6 +460,42 @@ const StaffEnrollDiv = styled.div`
   gap: 60px;
 `;
 
+const CoursePriceDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 35px;
+`;
+
+const StyledButton = styled(Button)<{ className?: string }>`
+  max-width: 900px;
+
+  @media ${breakPoints.xl} {
+    max-width: 720px;
+  }
+
+  @media ${breakPoints.lg} {
+    max-width: 570px;
+    height: 45px;
+    min-height: 45px;
+    width: 185px;
+    min-width: 185px;
+  }
+
+  @media ${breakPoints.md} {
+    width: 100%;
+  }
+
+  @media ${breakPoints.smd} {
+    max-width: 150px;
+    height: 32px;
+    min-height: 32px;
+    width: 150px;
+    min-width: 150px;
+    margin: 0 auto;
+  }
+`;
+
 export {
   HeroDiv,
   CardDiv,
@@ -391,8 +506,14 @@ export {
   CoursesDiv,
   CourseCardDiv,
   CourseCardTitleDiv,
+  CourseTextTitleDiv,
   CourseTextDiv,
   EnrollDiv,
   TrailerDiv,
   StaffEnrollDiv,
+  StyledButton,
+  CoursePriceDiv,
+  ValuesDiv,
+  ItemsDiv,
+  ItemsValuesDiv,
 };
