@@ -1,7 +1,7 @@
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
-import { Router } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 // import PageLayout from '@/layouts/PageLayout';
@@ -55,13 +55,14 @@ const MyApp: NextPage<AppProps> = (props) => {
     };
   }, [toggleOff, toggleOn, isSliderOnScreen]);
 
-  // console.log(intersectionRef);
+  const smallRouter = useRouter();
+  //  условие для непоказывания футера - путь страницы контактов
+  const dontShowFooter = smallRouter.pathname === '/contacts';
 
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          {/* <PageLayout> */}
           <Header
             backgroundColor={isSliderOnScreen ? '#050505' : 'var(--main-black)'}
           />
@@ -69,8 +70,9 @@ const MyApp: NextPage<AppProps> = (props) => {
             {value && <PageLoading />}
             <Component {...pageProps} forwardedRef={intersectionRef} />
           </>
-          {/* </PageLayout> */}
-          <Footer />
+
+          {/* показываем футер, только если ложно условие его непоказывания */}
+          {dontShowFooter || <Footer />}
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
