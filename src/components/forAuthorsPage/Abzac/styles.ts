@@ -2,7 +2,6 @@
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
-// import { Accordion } from '@radix-ui/react-accordion';
 import * as Accordion from '@radix-ui/react-accordion';
 
 const AnimatedAccordionItem = styled(Accordion.Item)`
@@ -526,15 +525,43 @@ const CoursePriceDiv = styled.div`
 const StyledButton = styled(Button)<{ className?: string }>`
   max-width: 900px;
 
+  height: 70px;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+
+  @media screen and (max-width: 1600px) {
+    height: 47px;
+    min-height: unset;
+    padding: 0 10px;
+  }
+
   @media ${breakPoints.xl} {
     max-width: 720px;
+    height: 47px;
+    min-height: unset;
+    padding: 0 0;
+
+    > p {
+      padding: 0 34.5px;
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    height: 45px;
+    min-height: unset;
+    padding: 0 0;
+
+    > p {
+      padding: 0 24px;
+    }
   }
 
   @media ${breakPoints.lg} {
     max-width: 570px;
     height: 45px;
     min-height: 45px;
-    width: 185px;
     min-width: 185px;
   }
 
@@ -543,12 +570,6 @@ const StyledButton = styled(Button)<{ className?: string }>`
   }
 
   @media ${breakPoints.smd} {
-    max-width: 150px;
-    height: 32px;
-    min-height: 32px;
-    width: 150px;
-    min-width: 150px;
-    margin: 0 auto;
   }
 `;
 
