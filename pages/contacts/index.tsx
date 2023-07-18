@@ -4,12 +4,13 @@ import styled from 'styled-components';
 
 import socials from '@/utils/socials';
 import contacts from '@/mocks/contacts';
+import { string } from 'zod';
 
 const PageContainer = styled.div`
-  * {
-    outline: 1px solid green;
-  }
-  outline: 1px solid green;
+  // * {
+  //   outline: 1px solid green;
+  // }
+  // outline: 1px solid green;
 
   display: flex;
   flex-direction: column;
@@ -45,9 +46,12 @@ const Icon = styled.svg`
 `;
 // const ContactsDiv = styled.div``;
 
-const ContactsDiv = () => {
+
+
+const ContactsDiv = ({ className }):React.ReactElement => {
   return (
-    <div>
+    <div className={className}>
+      {/* {children} */}
       <div>
         <Text variant='h3_1Man'> Соцсети </Text>
         <ul>
@@ -78,6 +82,32 @@ const ContactsDiv = () => {
   );
 };
 
+// <{className: string;}>
+
+const StyledContDiv = styled(ContactsDiv)`
+
+
+border-left: 1px solid grey;
+
+> div > h3 {
+  border-left: 1px solid white;
+  padding-left: 2vw;
+}
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 2vw;
+  }  
+
+  a {
+      display: flex;
+      justify-content: start;
+      gap: 20px;
+  }
+`;
+
 const SubscribeDiv = styled.div``;
 
 function ContactsPage() {
@@ -87,7 +117,7 @@ function ContactsPage() {
         тут будет страница контактов
       </Title>
       <InfoDiv>
-        <ContactsDiv />
+        <StyledContDiv className='SCDName' />
         <SubscribeDiv>тут подписка</SubscribeDiv>
       </InfoDiv>
     </PageContainer>
