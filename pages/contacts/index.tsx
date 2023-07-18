@@ -44,11 +44,9 @@ const Icon = styled.svg`
     color: var(--main-red-100);
   }
 `;
-// const ContactsDiv = styled.div``;
 
 
-
-const ContactsDiv = ({ className }):React.ReactElement => {
+const ContactsDiv:  React.FC<{ className: string }> = ({ className, ...props }) => {
   return (
     <div className={className}>
       {/* {children} */}
@@ -117,7 +115,7 @@ function ContactsPage() {
         тут будет страница контактов
       </Title>
       <InfoDiv>
-        <StyledContDiv className='SCDName' />
+        <StyledContDiv className='SCDName'/>
         <SubscribeDiv>тут подписка</SubscribeDiv>
       </InfoDiv>
     </PageContainer>
