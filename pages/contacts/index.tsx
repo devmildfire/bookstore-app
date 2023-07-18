@@ -2,9 +2,11 @@ import { Text } from '@/components/Common/Text/Text';
 import React from 'react';
 import styled from 'styled-components';
 
+import SubscribeForm from '@/components/AboutPage/BeWithUs/SubscribeForm/SubscribeForm';
+
 import socials from '@/utils/socials';
 import contacts from '@/mocks/contacts';
-import { string } from 'zod';
+// import { string } from 'zod';
 import breakPoints from '@/utils/breakPoints';
 
 const PageContainer = styled.div`
@@ -37,6 +39,11 @@ const InfoDiv = styled.div`
   justify-content: space-between;
 
   width: 100%;
+
+  @media ${breakPoints.sm} {
+    flex-direction: column;
+    gap: 5vw;
+  }
 `;
 
 const Icon = styled.svg`
@@ -89,15 +96,13 @@ const ContactsDiv: React.FC<{ className: string }> = ({ className }) => {
   );
 };
 
-// <{className: string;}>
-
 const StyledContDiv = styled(ContactsDiv)`
   display: flex;
   flex-direction: column;
   gap: 1.56vw;
 
   border-left: 1px solid grey;
-  padding: 5.5vw 0;
+  padding: 3vw 0;
 
   > div > h4 {
     border-left: 1px solid white;
@@ -121,7 +126,66 @@ const StyledContDiv = styled(ContactsDiv)`
   }
 `;
 
-const SubscribeDiv = styled.div``;
+const SubscribeDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+
+  gap: 30px;
+
+  width: 45vw;
+
+  > div {
+    width: 100%;
+  }
+
+  > div > div {
+    max-width: 100%;
+    height: unset;
+    line-height: unset;
+    padding: 10px 20px;
+  }
+
+  @media ${breakPoints.xl} {
+    width: 55vw;
+  }
+
+  @media ${breakPoints.lg} {
+    width: 45vw;
+  }
+
+  @media ${breakPoints.md} {
+    > div > form {
+      grid-template-columns: 1fr;
+      justify-items: center;
+
+      input {
+        max-width: 223px;
+      }
+      button {
+        max-width: unset;
+        min-width: unset;
+        width: 223px;
+
+        @media ${breakPoints.sm} {
+          width: 150px;
+        }
+      }
+    }
+  }
+
+  @media ${breakPoints.sm} {
+    width: 100%;
+  }
+`;
+
+const SubscribeCTA = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: flex-start;
+`;
 
 function ContactsPage() {
   return (
@@ -131,7 +195,13 @@ function ContactsPage() {
       </Title>
       <InfoDiv>
         <StyledContDiv className='SCDName' />
-        <SubscribeDiv>тут подписка</SubscribeDiv>
+        <SubscribeDiv>
+          <SubscribeCTA>
+            <Text variant='h4_Abzac'> Подписка на рассылку </Text>
+            <Text variant='manText'> Знайте о Чтиве больше, чем кто-либо </Text>
+          </SubscribeCTA>
+          <SubscribeForm />
+        </SubscribeDiv>
       </InfoDiv>
     </PageContainer>
   );
