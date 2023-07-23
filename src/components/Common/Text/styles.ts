@@ -91,6 +91,27 @@ const h21Style = css<StyledTextProps>`
   }
 `;
 
+const h21HalStyle = css<StyledTextProps>`
+  ${h21Style}
+  font-size: 40px;
+
+  @media ${breakPoints.xxl} {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 24px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+  }
+`;
+
 // Это специальный стиль для заголовка блока литжурнала на странице О Чтиве
 const h21LJStyle = css<StyledTextProps>`
   ${h21Style}
@@ -853,6 +874,7 @@ const styles: Record<
   h1_Inv: h1_InvStyle,
   h2_1: h21Style,
   h2_1_LJ: h21LJStyle,
+  h2_1_HAL: h21HalStyle,
   h2_2: h22Style,
   h3_1: h31Style,
   h3_1Man: h31ManuscriptStyle,
@@ -893,6 +915,7 @@ export const tagMap: Record<Variant, string> = {
   h1_Inv: 'h1',
   h2_1: 'h2',
   h2_1_LJ: 'h2',
+  h2_1_HAL: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
   h3_1Man: 'h3',
