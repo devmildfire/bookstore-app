@@ -2,15 +2,17 @@ import type { NextPage } from 'next';
 import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
-import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
-import sidebarItems from '@/mocks/sidebarItems';
+// import breakPoints from '@/utils/breakPoints';
+// import TwoPaneGrid from '@/components/forAuthorsPage/TwoPaneGrid';
+// import SidebarNav from '@/components/forAuthorsPage/SidebarNav';
+// import sidebarItems from '@/mocks/sidebarItems';
 import Abzac from '@/components/forAuthorsPage/Abzac';
 import SendManuscript from '@/components/forAuthorsPage/SendManuscript';
 import breakPoints from '@/utils/breakPoints';
 import SendNovel from '@/components/forAuthorsPage/SendNovel';
-// import notFound from 'pages/not-found';
-import NotFound from 'pages/not-found';
+import Navigation from '@/components/Navigation';
+import navItems from '@/mocks/navItems';
+import NotFoundPage from 'pages/not-found';
 
 type TRoutes = 'send-novel' | 'send-manuscript' | 'abzac';
 type TQuery = { section: TRoutes };
@@ -33,16 +35,17 @@ const ForAuthors: NextPage = () => {
   const content = lookUp[slug];
 
   if (!content) {
-    return <NotFound />;
+    return <NotFoundPage />;
   }
 
   return (
     <StyledWrapper>
-      <TwoPaneGrid>
+      <Navigation navigationItems={navItems} />
+      {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />
-        <StyledSection>{content}</StyledSection>
-      </TwoPaneGrid>
+      </TwoPaneGrid> */}
+      <StyledSection>{content}</StyledSection>
     </StyledWrapper>
   );
 };

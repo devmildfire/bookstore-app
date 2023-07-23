@@ -5,14 +5,16 @@ import { z } from 'zod';
 import {
   useForm,
   Controller,
-  SubmitHandler,
-  SubmitErrorHandler,
+  // SubmitHandler,
+  // SubmitErrorHandler,
+  // ChangeHandler,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import goat from '@/../../src/assets/images/hand_goat.png';
+// import goat from '@/../../src/assets/images/hand_goat.png';
 import Input from '@/components/Common/Input';
 import { StyledButton, StyledForm } from './styles';
 import breakPoints from '@/utils/breakPoints';
+import debounce from '@/utils/debounce';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -21,10 +23,13 @@ const FormSchema = z.object({
 type FormSchemaType = z.infer<typeof FormSchema>;
 
 const SubscribeForm = (): React.ReactElement => {
+  const [error, setError] = useState('');
+  const [isValid, setIsvalid] = useState(false);
+
   const {
-    handleSubmit,
+    // handleSubmit,
     control,
-    formState: { errors, isSubmitSuccessful },
+    // formState: { errors, isSubmitSuccessful },
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
@@ -32,28 +37,70 @@ const SubscribeForm = (): React.ReactElement => {
   const [wipe, setWipe] = useState(false);
 
   // const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
-  const onSubmit: SubmitHandler<FormSchemaType> = () => {
-    // console.log(data);
-    setWipe(false);
+  // const onSubmit: SubmitHandler<FormSchemaType> = () => {
+  //   console.log(data);
+  //   setWipe(false);
+  // };
+
+  // const onError: SubmitErrorHandler<FormSchemaType> = () => {
+  //   console.log(errors);
+  //   setWipe(false);
+  // };
+
+  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const { value } = input;
+    const valid = input.validity.valid;
+    // не показываем сообщение об ошибке если поле пустое
+    if (value !== '') {
+      setWipe(false);
+      setIsvalid(valid);
+      setError(
+        'Русский Динозар может писать только на валидные адреса электронной почты'
+      );
+    }
+    if (value === '') {
+      setWipe(true);
+    }
   };
 
-  const onError: SubmitErrorHandler<FormSchemaType> = () => {
-    // console.log(errors);
-    setWipe(false);
-  };
+  const debouncedOnChange = debounce(onChangeInput, 2000);
+
+  const actionString = `https://ru.msndr.net/subscriptions/9fe4710aaeaac030713a32beb9b136d0/form`;
 
   return (
     <div>
-      <StyledForm onSubmit={handleSubmit(onSubmit, onError)}>
+      <StyledForm
+        // onSubmit={handleSubmit(onSubmit, onError)}
+        action={actionString}
+        target='_blank'
+        method='POST'
+      >
         <Controller
           control={control}
           name='email'
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({
+            field: {
+              // onChange,
+              onBlur,
+              value,
+            },
+          }) => (
             <StyledInput
               placeholder='E-mail'
-              onChange={onChange}
+              // onChange={onChange}
+              onChange={debouncedOnChange}
+              onInvalid={(e) => {
+                // отключает системное сообщение валидации
+                e.preventDefault();
+              }}
               onBlur={onBlur}
               value={value}
+              type='email'
+              name='recipient[email]'
+              id='recipient_email'
+              required
+              className='form-control'
             />
           )}
         />
@@ -63,24 +110,28 @@ const SubscribeForm = (): React.ReactElement => {
           onClick={() => {
             setWipe(true);
           }}
+          disabled={!isValid}
         >
           Подписаться
         </StyledButton>
 
         <div />
 
-        {!wipe && isSubmitSuccessful && !errors.email && (
+        {/* пока мы пользуемся рассылкой через сторонний сервис ru.msndr.net, мы не выдаём сразу подтверждения о подписке */}
+
+        {/* {!wipe && isSubmitSuccessful && !errors.email && (
           <StyledOutput>
             Вы
             <br />
             подписались !
           </StyledOutput>
-        )}
+        )} */}
       </StyledForm>
-      {!wipe && errors.email && (
+      {!isValid && !wipe && error && (
         <ErrorOutput>
-          Русский Динозар может писать только на валидные адреса электронной
-          почты
+          {/* Русский Динозар может писать только на валидные адреса электронной
+          почты */}
+          {error}
         </ErrorOutput>
       )}
     </div>
@@ -102,56 +153,60 @@ const slideDown = keyframes`
   }
 `;
 
-interface StyledOutputProps {
-  passed?: number;
+{
+  /* пока мы пользуемся рассылкой через сторонний сервис ru.msndr.net, мы не выдаём сразу подтверждения о подписке */
 }
 
-const StyledOutput = styled.div<StyledOutputProps>`
-  animation: ${slideDown} 0.2s linear;
-  top: 0px;
-  background-color: var(--main-white-60);
-  color: var(--main-black);
-  border: none;
-  border-radius: 4px;
-  padding: 60px 20px 20px 20px;
-  max-width: 270px;
-  margin: auto;
-  width: 100%;
-  height: 120px;
-  text-transform: uppercase;
-  text-align: left;
-  background-repeat: no-repeat;
-  background-position: calc(100% - 15px) calc(100% - 2px);
-  background-image: url(${goat.src});
+// interface StyledOutputProps {
+//   passed?: number;
+// }
 
-  @media ${breakPoints.lg} {
-    background-size: 35%;
-    background-position: calc(100% - 15px) calc(100% - 0px);
-    padding: 45px 10px 10px 10px;
-    height: 83px;
-    font-size: 12px;
-    width: 185px;
-  }
+// const StyledOutput = styled.div<StyledOutputProps>`
+//   animation: ${slideDown} 0.2s linear;
+//   top: 0px;
+//   background-color: var(--main-white-60);
+//   color: var(--main-black);
+//   border: none;
+//   border-radius: 4px;
+//   padding: 60px 20px 20px 20px;
+//   max-width: 270px;
+//   margin: auto;
+//   width: 100%;
+//   height: 120px;
+//   text-transform: uppercase;
+//   text-align: left;
+//   background-repeat: no-repeat;
+//   background-position: calc(100% - 15px) calc(100% - 2px);
+//   background-image: url(${goat.src});
 
-  @media ${breakPoints.smd} {
-    background-size: 28%;
-    background-position: calc(100% - 17px) calc(100% - 0px);
-    padding: 25px 10px 10px 10px;
+//   @media ${breakPoints.lg} {
+//     background-size: 35%;
+//     background-position: calc(100% - 15px) calc(100% - 0px);
+//     padding: 45px 10px 10px 10px;
+//     height: 83px;
+//     font-size: 12px;
+//     width: 185px;
+//   }
 
-    width: 150px;
-    height: 51px;
-    max-width: var(--width);
-    margin: 0 auto;
-    font-size: 8px;
-  }
+//   @media ${breakPoints.smd} {
+//     background-size: 28%;
+//     background-position: calc(100% - 17px) calc(100% - 0px);
+//     padding: 25px 10px 10px 10px;
 
-  @media ${breakPoints.sm} {
-    width: 150px;
-    max-width: var(--width);
-    margin: 0 auto;
-    font-size: 8px;
-  }
-`;
+//     width: 150px;
+//     height: 51px;
+//     max-width: var(--width);
+//     margin: 0 auto;
+//     font-size: 8px;
+//   }
+
+//   @media ${breakPoints.sm} {
+//     width: 150px;
+//     max-width: var(--width);
+//     margin: 0 auto;
+//     font-size: 8px;
+//   }
+// `;
 
 const ErrorOutput = styled.div`
   background-color: var(--main-red-20);
@@ -217,6 +272,7 @@ const StyledInput = styled(Input)`
     height: 45px;
     max-width: 415px;
     padding: 0px 6px;
+    /* padding: 0px 0px; */
     margin: 0 auto;
     font-size: 14px;
   }

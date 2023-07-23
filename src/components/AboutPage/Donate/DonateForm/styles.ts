@@ -3,6 +3,40 @@ import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
 
 export const StyledForm = styled.form`
+  a {
+    grid-column: 1 / 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button {
+      max-width: 900px;
+      @media ${breakPoints.xl} {
+        max-width: 720px;
+      }
+
+      @media ${breakPoints.lg} {
+        max-width: 570px;
+        height: 45px;
+        min-height: 45px;
+        width: 185px;
+        min-width: 185px;
+      }
+
+      @media ${breakPoints.md} {
+        width: 100%;
+      }
+
+      @media ${breakPoints.smd} {
+        max-width: 150px;
+        height: 40px;
+        min-height: 40px;
+        width: 150px;
+        min-width: 150px;
+        margin: 0 auto;
+      }
+    }
+  }
+
   display: grid;
   width: 550px;
   grid-template-columns: minmax(220px, 300px) min-content;
@@ -34,7 +68,7 @@ export const StyledForm = styled.form`
   }
 `;
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)<{ className?: string }>`
   max-width: 900px;
   @media ${breakPoints.xl} {
     max-width: 720px;
@@ -54,8 +88,8 @@ export const StyledButton = styled(Button)`
 
   @media ${breakPoints.smd} {
     max-width: 150px;
-    height: 32px;
-    min-height: 32px;
+    height: 40px;
+    min-height: 40px;
     width: 150px;
     min-width: 150px;
     margin: 0 auto;

@@ -135,7 +135,13 @@ const AboutUs = (): React.ReactElement => (
         автора, работаем с несерийными и неформальными текстами и считаем, что
         книгоиздание не должно быть бизнесом, а тем более&nbsp;— монополией.
       </StyledDescription>
-      <StyledButton variant='small'>Манифест Чтива</StyledButton>
+      <StyledButton
+        href='https://dzen.ru/media/russiandino/manifest-chtivov-5dcb0402dc9fec67cf65eece?utm_referer=chtivo.spb.ru'
+        target='_blank'
+        variant='small'
+      >
+        Манифест Чтива
+      </StyledButton>
     </StyledDescriptionContainer>
   </StyledSection>
 );
