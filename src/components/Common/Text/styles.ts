@@ -405,7 +405,6 @@ const abzacCardStyle = css<StyledTextProps>`
 
 const buttonTextStyle = css<StyledTextProps>`
   ${textStyle}
-  padding: 0 40px;
   font-size: 16px;
 
   @media ${breakPoints.xl} {
@@ -430,7 +429,6 @@ const buttonTextStyle = css<StyledTextProps>`
   @media ${breakPoints.sm} {
     /* padding: 0 20px; */
     font-size: 10px;
-    padding: 0;
   }
 `;
 
