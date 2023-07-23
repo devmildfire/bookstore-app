@@ -1,7 +1,8 @@
-import Link from 'next/link';
+// import Link from 'next/link';
 import React, { ButtonHTMLAttributes, memo, PropsWithChildren } from 'react';
 import Text from '../Text';
-import { StyledButton, StyledButtonProps } from './styles';
+import { StyledButton, StyledButtonProps, StyledLink } from './styles';
+import Link from 'next/link';
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement & HTMLAnchorElement>,

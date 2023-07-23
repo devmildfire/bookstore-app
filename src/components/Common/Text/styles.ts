@@ -34,6 +34,7 @@ const h1_InvStyle = css<StyledTextProps>`
   ${h1Style}
   font-weight: ${(props) => props.fontWeight || 600};
   font-size: 60px;
+  line-height: 84px;
 
   @media screen and (max-width: 1600px) {
     font-size: 50px;
