@@ -8,6 +8,7 @@ import socials from '@/utils/socials';
 import contacts from '@/mocks/contacts';
 // import { string } from 'zod';
 import breakPoints from '@/utils/breakPoints';
+import Hands from '@/assets/images/handshake.svg';
 
 const PageContainer = styled.div`
   // * {
@@ -201,6 +202,7 @@ function ContactsPage() {
             <Text variant='manText'> Знайте о Чтиве больше, чем кто-либо </Text>
           </SubscribeCTA>
           <SubscribeForm />
+          <Hands />
         </SubscribeDiv>
       </InfoDiv>
     </PageContainer>
