@@ -83,7 +83,7 @@ const menu: MenuItem[] = [
   // },
   {
     title: 'Контакты',
-    link: '/not-found',
+    link: '/contacts',
   },
 ];
 
