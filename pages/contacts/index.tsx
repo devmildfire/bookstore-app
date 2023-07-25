@@ -188,6 +188,14 @@ const SubscribeCTA = styled.div`
   align-items: flex-start;
 `;
 
+const StyledHands = styled(Hands)<{ className: string }>`
+  padding-bottom: 0vw;
+
+  @media ${breakPoints.md} {
+    padding-bottom: 10vw;
+  }
+`;
+
 function ContactsPage() {
   return (
     <PageContainer>
@@ -202,7 +210,7 @@ function ContactsPage() {
             <Text variant='manText'> Знайте о Чтиве больше, чем кто-либо </Text>
           </SubscribeCTA>
           <SubscribeForm />
-          <Hands />
+          <StyledHands className='hands_svg' />
         </SubscribeDiv>
       </InfoDiv>
     </PageContainer>
