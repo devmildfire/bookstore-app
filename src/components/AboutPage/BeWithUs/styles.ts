@@ -19,6 +19,7 @@ const StyledWrapper = styled.section`
 
   @media ${breakPoints.sm} {
     gap: 30px;
+    padding: 0 5vw;
   }
 `;
 

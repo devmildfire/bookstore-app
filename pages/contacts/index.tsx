@@ -28,6 +28,10 @@ const PageContainer = styled.div`
   margin: auto 0;
 
   padding: 0 10vw;
+
+  @media ${breakPoints.lg} {
+    padding: 0 5vw;
+  }
 `;
 
 const Title = styled(Text)`
@@ -103,11 +107,13 @@ const StyledContDiv = styled(ContactsDiv)`
   gap: 1.56vw;
 
   border-left: 1px solid grey;
-  padding: 3vw 0;
+  /* padding: 3vw 0; */
 
   > div > h4 {
     border-left: 1px solid white;
     padding-left: 1.25vw;
+    padding-bottom: 10px;
+    padding-top: 10px;
   }
 
   ul {
@@ -124,7 +130,22 @@ const StyledContDiv = styled(ContactsDiv)`
     justify-content: start;
     align-items: center;
     gap: 1.2vw;
+    /* transition: all 0.6s ease-in-out; */
+
+    :hover {
+      p,
+      svg {
+        color: var(--main-red-100);
+        transition: all 0.3s ease-in-out;
+      }
+    }
   }
+
+  /* @media ${breakPoints.sm} {
+    ul {
+      gap: 3vw;
+    }
+  } */
 `;
 
 const SubscribeDiv = styled.div`
@@ -170,7 +191,7 @@ const SubscribeDiv = styled.div`
         width: 223px;
 
         @media ${breakPoints.sm} {
-          width: 150px;
+          /* width: 150px; */
         }
       }
     }
@@ -186,6 +207,10 @@ const SubscribeCTA = styled.div`
   flex-direction: column;
   gap: 25px;
   align-items: flex-start;
+
+  @media ${breakPoints.sm} {
+    gap: 10px;
+  }
 `;
 
 const StyledHands = styled(Hands)<{ className: string }>`
