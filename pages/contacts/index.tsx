@@ -36,6 +36,8 @@ const PageContainer = styled.div`
 
 const Title = styled(Text)`
   width: 100%;
+  margin: 0;
+  align-self: flex-start;
 `;
 
 const InfoDiv = styled.div`
@@ -141,11 +143,23 @@ const StyledContDiv = styled(ContactsDiv)`
     }
   }
 
-  /* @media ${breakPoints.sm} {
+  @media ${breakPoints.sm} {
     ul {
+      gap: 2vw;
+      padding-left: 4.25vw;
+    }
+
+    > div > h4 {
+      border-left: 1px solid white;
+      padding-left: 4.25vw;
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+
+    a {
       gap: 3vw;
     }
-  } */
+  }
 `;
 
 const SubscribeDiv = styled.div`
