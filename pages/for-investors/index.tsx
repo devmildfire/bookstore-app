@@ -6,7 +6,7 @@ import Text from '@/components/Common/Text';
 import Content from '@/components/ForInvestorsPage/Content';
 import breakPoints from '@/utils/breakPoints';
 
-const title = 'Уважаемые Соц.инвесторы и донаторы';
+const title = 'Уважаемые Социнвесторы';
 
 const ForInvestors: NextPage = () => {
   return (
@@ -37,7 +37,8 @@ const StyledMoneyPlanes = styled(MoneyPlanes)`
 `;
 
 const ContentWrapper = styled.div`
-  padding: 90px 5.6vw 0;
+  /* padding: 90px 5.6vw 0; */
+  padding: 90px 0 0;
 
   display: flex;
   flex-direction: column;
@@ -45,13 +46,15 @@ const ContentWrapper = styled.div`
   gap: 96px;
 
   @media ${breakPoints.xl} {
-    padding: 90px 3.5vw 0;
+    /* padding: 90px 3.5vw 0; */
+    padding: 90px 0 0;
     gap: 90px;
   }
 
   @media ${breakPoints.lg} {
     /* padding-top: 60px; */
-    padding: 60px 4.7vw 0;
+    /* padding: 60px 4.7vw 0; */
+    padding: 60px 0 0;
     gap: 60px;
   }
 
