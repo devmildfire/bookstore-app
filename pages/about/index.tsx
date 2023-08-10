@@ -11,11 +11,13 @@ import Partners from '@/components/AboutPage/Partners';
 import BeWithUs from '@/components/AboutPage/BeWithUs';
 import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
-import rorshah from '@/assets/images/rorshah_new.png';
+import rorshah from '@/assets/images/rorshah_whole_2.png';
+import Text from '@/components/Common/Text';
 
 const About: NextPage = () => (
   <StyledWrapper>
     <VideoContainer>
+      <PageTitle />
       <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
     </VideoContainer>
     <AboutUs />
@@ -32,6 +34,36 @@ const About: NextPage = () => (
 
 export default About;
 
+const StyledText = styled(Text)<{ classname: string }>`
+  padding-top: 100px;
+  padding-bottom: 60px;
+
+  @media ${breakPoints.xl} {
+    padding-bottom: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-top: 65px;
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-top: 40px;
+    padding-bottom: 30px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+`;
+
+const PageTitle = (): React.ReactElement => (
+  <StyledText classname='TitleText' align='center' variant='h2_1'>
+    О Чтиве
+  </StyledText>
+);
+
 const VideoContainer = styled(Container)`
   max-width: var(--width);
   width: 100%;
@@ -43,7 +75,8 @@ const VideoContainer = styled(Container)`
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
   --lastMarginBottom: 600px;
-  --rowGap: 150px;
+  /* --rowGap: 150px; */
+  --rowGap: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,21 +86,23 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 150px;
+    --rowGap: 100px;
   }
 
   @media ${breakPoints.lg} {
     --marginBottom: 100px;
     --lastMarginBottom: 200px;
     padding-top: 0px;
-    --rowGap: 100px;
+    /* --rowGap: 100px; */
+    --rowGap: 60px;
   }
 
   @media ${breakPoints.md} {
     --marginBottom: 85px;
     --lastMarginBottom: 175px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 
   @media ${breakPoints.smd} {
@@ -75,7 +110,8 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 
   @media ${breakPoints.sm} {
@@ -83,7 +119,8 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 `;
 
