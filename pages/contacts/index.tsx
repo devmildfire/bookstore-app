@@ -8,7 +8,8 @@ import socials from '@/utils/socials';
 import contacts from '@/mocks/contacts';
 // import { string } from 'zod';
 import breakPoints from '@/utils/breakPoints';
-import Hands from '@/assets/images/handshake.svg';
+// import Hands from '@/assets/images/handshake.svg';
+import Hands from '@/assets/images/handshake_2.svg';
 
 const PageContainer = styled.div`
   // * {
@@ -49,7 +50,7 @@ const InfoDiv = styled.div`
 
   @media ${breakPoints.sm} {
     flex-direction: column;
-    gap: 5vw;
+    gap: 30px;
   }
 `;
 
@@ -145,19 +146,19 @@ const StyledContDiv = styled(ContactsDiv)`
 
   @media ${breakPoints.sm} {
     ul {
-      gap: 2vw;
-      padding-left: 4.25vw;
+      gap: 10px;
+      padding-left: max(4.25vw, 15px);
     }
 
     > div > h4 {
       border-left: 1px solid white;
-      padding-left: 4.25vw;
+      padding-left: max(4.25vw, 15px);
       padding-bottom: 10px;
       padding-top: 10px;
     }
 
     a {
-      gap: 3vw;
+      gap: max(8px, 3vw);
     }
   }
 `;
@@ -165,8 +166,11 @@ const StyledContDiv = styled(ContactsDiv)`
 const SubscribeDiv = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
+  justify-content: flex-start;
   align-items: flex-end;
+
+  padding-top: 10px;
 
   gap: 30px;
 
