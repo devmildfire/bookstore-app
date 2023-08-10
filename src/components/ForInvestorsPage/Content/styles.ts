@@ -15,39 +15,39 @@ const ContentDiv = styled.div`
   flex-direction: column;
   gap: 60px;
 
-  padding-top: 96px;
+  /* padding-top: 96px; */
   /* padding-right: 3vw; */
-  padding-bottom: 130px;
+  /* padding-bottom: 130px; */
 
   @media screen and (max-width: 1600px) {
-    padding-top: 96px;
+    /* padding-top: 96px; */
     /* padding-right: 3vw; */
-    padding-bottom: 110px;
+    /* padding-bottom: 110px; */
     gap: 50px;
   }
 
   @media ${breakPoints.xl} {
-    padding-top: 96px;
+    /* padding-top: 96px; */
     /* padding-right: 3vw; */
     padding-bottom: 110px;
   }
 
   @media screen and (max-width: 1200px) {
-    padding-top: 75px;
+    /* padding-top: 75px; */
     /* padding-right: 3vw; */
     padding-bottom: 110px;
   }
 
   @media ${breakPoints.lg} {
-    padding-top: 75px;
-    padding-right: 3vw;
-    padding-bottom: 110px;
+    /* padding-top: 75px; */
+    /* padding-right: 3vw; */
+    /* padding-bottom: 110px; */
   }
 
   @media ${breakPoints.md} {
-    padding-top: 34px;
-    padding-right: 0vw;
-    padding-bottom: 50px;
+    /* padding-top: 34px; */
+    /* padding-right: 0vw; */
+    /* padding-bottom: 50px; */
 
     /* gap: 16px; */
   }
