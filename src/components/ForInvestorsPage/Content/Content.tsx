@@ -53,7 +53,7 @@ const Content = (): React.ReactElement => {
           </a>
         </Text>
         <Text variant='manText'>{sixthPar}</Text>
-        <Text variant='manText' fontWeight={700}>
+        <Text variant='manText' fontWeight={400}>
           {seventhPar}
           <a href='https://boosty.to/russiandino' target='_blank'>
             на нашу страницу Бусти.
