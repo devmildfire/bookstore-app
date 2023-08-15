@@ -32,7 +32,7 @@ const StyledMoneyPlanes = styled(MoneyPlanes)`
   }
 
   @media ${breakPoints.sm} {
-    padding-top: 50px;
+    padding-top: 0px;
   }
 `;
 
@@ -60,7 +60,7 @@ const ContentWrapper = styled.div`
 
   @media ${breakPoints.sm} {
     /* padding-top: 50px; */
-    padding: 50px 0 0;
+    padding: 20px 0 0;
     gap: 30px;
   }
 `;
