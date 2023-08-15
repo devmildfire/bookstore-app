@@ -10,7 +10,7 @@ const title = 'Уважаемые Социнвесторы';
 
 const ForInvestors: NextPage = () => {
   return (
-    <StyledWrapper>
+    <StyledWrapper className='max-width'>
       <StyledMoneyPlanes />
       <ContentWrapper>
         <ToInvestors variant='h1_Inv'>{title}</ToInvestors>
