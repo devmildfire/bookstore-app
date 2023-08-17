@@ -17,9 +17,9 @@ import {
   HeaderWrapper,
   NavItem,
 } from './styles';
-import CrossIcon from '@/assets/icons/close.svg';
-import SearchIcon from '@/assets/icons/search.svg';
-import CartIcon from '@/assets/icons/cart.svg';
+import CrossIcon from '@/assets/icons/ui-icons/close.svg';
+import SearchIcon from '@/assets/icons/ui-icons/search.svg';
+import CartIcon from '@/assets/icons/ui-icons/cart.svg';
 import BurgerIcon from '@/assets/icons/burger.svg';
 import { useModal } from '@/components/Modal/Modal';
 import Link from '@/components/Common/Link/Link';
@@ -137,7 +137,7 @@ function Header({
           <IconButton label='корзина' onClick={() => console.log('open cart')}>
             {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
              Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
-            <CartIcon style={{ marginBottom: '4px' }} />
+            <CartIcon />
           </IconButton>
           <MenuButton>
             <IconButton

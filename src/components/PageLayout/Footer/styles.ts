@@ -12,25 +12,27 @@ export const StyleWrapper = styled.footer`
   padding: 0;
 `;
 
-export const FooterContent = styled.div`
-  padding: 30px 10vw 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin: 0 auto;
+export const FooterWrapper = styled.div`
+  display: grid;
   width: 100%;
-  /* max-width: 1394px; */
-
-  @media ${breakPoints.xl} {
-    /* max-width: 1024px; */
+  grid-template-columns: repeat(3, 200px);
+  justify-content: space-between;
+  align-items: center;
+  @media screen and (max-width: 668px) {
+    grid-template-columns: 200px;
+    grid-template-rows: repeat(3, 1fr);
+    justify-content: center;
+    gap: 16px;
   }
+`;
 
-  @media ${breakPoints.lg} {
-    /* max-width: 768px; */
-  }
+export const FooterContent = styled.div`
+  padding-top: 120px;
+  padding-bottom: 42px;
+  display: flex;
+  justify-content: center;
 
   @media ${breakPoints.md} {
-    /* max-width: 576px; */
     flex-wrap: wrap;
     align-items: center;
   }
@@ -45,12 +47,6 @@ export const FooterContacts = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-
-  padding-top: 64px;
-
-  @media ${breakPoints.md} {
-    padding: 0;
-  }
 
   @media ${breakPoints.sm} {
     text-align: center;
@@ -84,7 +80,6 @@ export const FooterInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  translate: -29.5px;
 
   @media ${breakPoints.md} {
     width: 100%;
@@ -129,11 +124,10 @@ export const ContactIcon = styled.svg`
 `;
 
 export const FooterLogoLink = styled.a`
-  margin-top: 56px;
   display: flex;
-
-  @media ${breakPoints.md} {
-    margin: 0;
+  justify-self: flex-end;
+  @media screen and (max-width: 668px) {
+    justify-self: center;
   }
 `;
 

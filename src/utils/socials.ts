@@ -26,10 +26,6 @@ const socials: ISocialItem[] = [
     icon: IconFb,
     href: 'https://www.facebook.com/ichtivo',
   },
-  {
-    icon: IconTwitter,
-    href: 'https://twitter.com/ichtivo',
-  },
 ];
 
 export default socials;

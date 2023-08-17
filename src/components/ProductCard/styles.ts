@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import CartIcon from '@/assets/icons/bag-with-plus-sign.svg';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 
@@ -82,9 +81,4 @@ export const Button = styled(Trigger)`
   @media ${breakPoints.sm} {
     /* padding: 6px 8px 4px; */
   }
-`;
-
-export const BuyIcon = styled(CartIcon)`
-  width: 32px;
-  height: 32px;
 `;

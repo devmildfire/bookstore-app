@@ -7,11 +7,15 @@ export const GridContainer = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2rem;
+  gap: 4rem;
   width: 100%;
   /* TODO(@sergromm): убрать стили для div нужны чтобы спозиционировать дебагер leva */
   & > div {
     top: 80px;
+  }
+
+  @media ${breakPoints.sm} {
+    gap: 2rem;
   }
 `;
 

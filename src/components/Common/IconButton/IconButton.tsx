@@ -4,6 +4,8 @@ import styled from 'styled-components';
 type IconButtonProps = {
   onClick: (e: MouseEvent) => void;
   label: string;
+  width?: number;
+  height?: number;
 };
 
 const Button = styled.button`
@@ -43,7 +45,7 @@ const Button = styled.button`
   }
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.div<{ width?: number; height?: number }>`
   display: flex;
   position: relative;
   width: max-content;
@@ -51,8 +53,10 @@ const IconContainer = styled.div`
   z-index: 2;
   & > svg {
     display: flex;
-    width: clamp(16px, 4vw, 24px);
-    height: clamp(16px, 4vw, 24px);
+    width: ${(props) =>
+      props.width ? props.width + 'px' : 'clamp(16px, 4vw, 24px)'};
+    height: ${(props) =>
+      props.height ? props.height + 'px' : 'clamp(16px, 4vw, 24px)'};
   }
 `;
 
@@ -60,6 +64,8 @@ export function IconButton({
   children,
   label,
   onClick,
+  width,
+  height,
 }: PropsWithChildren<IconButtonProps>) {
   const handleClick = (event: MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -85,7 +91,9 @@ export function IconButton({
 
   return (
     <Button aria-label={label} onClick={handleClick}>
-      <IconContainer>{children}</IconContainer>
+      <IconContainer width={width} height={height}>
+        {children}
+      </IconContainer>
     </Button>
   );
 }

@@ -14,7 +14,7 @@ import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 import { useRouter } from 'next/router';
-import texture from '@/assets/images/mockup-texture.png';
+import texture from '@/assets/images/mockups/mockup-var-2.png';
 
 type PropType = {
   slides: number[];
@@ -204,10 +204,37 @@ const Cover = styled.img`
   object-fit: contain;
 `;
 
-const Texture = styled.img`
+const Texture = styled.div`
   display: block;
   object-fit: cover;
   position: absolute;
+  /* mix-blend-mode: normal; */
+
+  /* NOTE(@sergromm): можно использовать градиент от 3d книг для слайдера */
+  /* background-color: transparent;
+  background-image: linear-gradient(
+      90deg,
+      hsla(0, 0%, 100%, 0),
+      hsla(0, 0%, 100%, 0) 2%,
+      hsla(0, 0%, 100%, 0.08) 4%,
+      hsla(0, 0%, 100%, 0) 5%,
+      hsla(0, 0%, 100%, 0) 6%,
+      hsla(0, 0%, 100%, 0.04) 7%,
+      hsla(0, 0%, 100%, 0) 8%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.1) 1%,
+      transparent 2%,
+      rgba(0, 0, 0, 0.02) 4%,
+      rgba(0, 0, 0, 0.1) 5%,
+      rgba(0, 0, 0, 0.3) 6%,
+      rgba(0, 0, 0, 0.15) 7%,
+      transparent
+    );
+  background-position: bottom;
+  background-size: cover; */
   top: 0;
   left: 0;
   width: 100%;
@@ -266,7 +293,7 @@ function Carousel(props: PropType): ReactElement {
             <Slide key={index}>
               <SlideContainer>
                 <CoverLink href={`/books/${books[index].transliteratedTitle}`}>
-                  <Texture src={texture.src} />
+                  <Texture /*src={texture.src} */ />
                   <Cover src={books[index].cover} alt={books[index].title} />
                 </CoverLink>
                 <StyledInfo>

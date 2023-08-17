@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import {
   Button,
   ButtonsContainer,
-  BuyIcon,
   OldPrice,
   Price,
   PriceContainer,
 } from './styles';
 import { ProductCardProps } from './ProductCard';
 import { useModal } from '../Modal/Modal';
+import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 import { IconButton } from '../Common/IconButton';
 import breakPoints from '@/utils/breakPoints';
 
@@ -46,8 +46,8 @@ const Book = styled.div`
     inset 0 1.8px 1.8px hsla(0, 0%, 100%, 0.2),
     inset 3.6px 0 3.6px rgba(0, 0, 0, 0.2);
 `;
-
-const Cover = styled(Image)`
+// NOTE(@sergromm): использование next/image приводит к смещению разметки
+const Cover = styled.img`
   position: relative;
   z-index: 1;
   /* NOTE(@sergromm): у обложек разное разрешение.
@@ -165,8 +165,13 @@ export default function ProductCard3d(props: ProductCardProps) {
           <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
-          <IconButton label='добавить в корзину' onClick={onAddToCartClick}>
-            <BuyIcon />
+          <IconButton
+            width={36}
+            height={36}
+            label='добавить в корзину'
+            onClick={onAddToCartClick}
+          >
+            <CartIcon />
           </IconButton>
           {/* <Button type='button'>В Избранное</Button> */}
         </ButtonsContainer>

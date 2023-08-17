@@ -32,6 +32,7 @@ import useScreenSize from '@/hooks/useScreenSize';
 import useScrollTo from '@/hooks/useScrollTo';
 import { TriggerStyles } from '../Common/Trigger/Trigger';
 import ProductCard3d from '../ProductCard/ProductCard3d';
+import { GetStaticProps } from 'next';
 
 const VideoContainer = styled.div`
   display: flex;
@@ -311,7 +312,6 @@ export default function Products({ data }: GridProps): ReactElement {
     <GridContainer>
       {/* TODO @sergromm: удалить выбор стилей после того как решится что делать с кнопками */}
       {/* <Leva /> */}
-
       {books.map((arr, idx) => (
         <Row
           buttonStyle='outlined'

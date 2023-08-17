@@ -7,9 +7,10 @@ import {
   PriceContainer,
   ButtonsContainer,
   Button,
-  BuyIcon,
+  // BuyIcon,
   OldPrice,
 } from './styles';
+import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 import { Book } from '@/models/books';
 import { useModal } from '../Modal/Modal';
 import { TriggerStyles } from '../Common/Trigger/Trigger';
@@ -57,7 +58,7 @@ export default function ProductCard(props: ProductCardProps) {
         <ButtonsContainer>
           <Button
             variant={props.buttonStyle}
-            leftSlot={<BuyIcon />}
+            leftSlot={<CartIcon />}
             onClick={onAddToCartClick}
           >
             Обрести

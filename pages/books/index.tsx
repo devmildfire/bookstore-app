@@ -5,6 +5,11 @@ import Filters from '@/components/Filters';
 import books from '@/mocks/books';
 import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
+import { InferGetStaticPropsType } from 'next/types';
+
+type BooksPageProps = {
+  forwardedRef: null;
+} /* & InferGetStaticPropsType<typeof getStaticProps> */;
 
 const data = Array(12)
   .fill(0)
@@ -14,7 +19,7 @@ const data = Array(12)
     id: idx + 1,
   }));
 
-function BooksPage({ forwardedRef }: { forwardedRef: null }) {
+function BooksPage({ forwardedRef /* data */ }: BooksPageProps) {
   return (
     <>
       <Carousel
@@ -33,26 +38,10 @@ function BooksPage({ forwardedRef }: { forwardedRef: null }) {
   );
 }
 
-// export const getStaticProps = wrapper.getStaticProps(
-//   ({ dispatch }) =>
-//     async () => {
-//       const requests: Promise<unknown>[] = [
-//         dispatch(
-//           getBooks.initiate({
-//             page: 1,
-//             productType: [],
-//             publishYear: [],
-//           })
-//         ),
-//         dispatch(getPopularBooks.initiate(undefined)),
-//       ];
-//       await Promise.all(requests);
-
-//       return {
-//         props: {},
-//         revalidate: 1,
-//       };
-//     }
-// );
+// export const getStaticProps = async () => {
+//   const response = await fetch('http://localhost:3000/api/books');
+//   const data = await response.json();
+//   return { props: { data } };
+// };
 
 export default BooksPage;

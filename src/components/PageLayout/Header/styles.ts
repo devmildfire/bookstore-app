@@ -159,7 +159,7 @@ const BurgerIconStyled = styled(BurgerIcon)`
 
 const HeaderWrapper = styled.header`
   position: sticky;
-  top: -1px;
+  top: -2px;
   left: 0;
   display: flex;
   justify-content: center;
@@ -300,7 +300,6 @@ const SubmenuListItem = styled.li`
 `;
 const IconContainer = styled.div`
   display: flex;
-  gap: 12px;
   justify-content: center;
   align-items: center;
 
