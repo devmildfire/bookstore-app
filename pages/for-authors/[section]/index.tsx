@@ -59,15 +59,16 @@ const StyledWrapper = styled.main`
 
 const StyledSection = styled.div`
   height: 100%;
-  padding: 0 calc((100vw - 1440px)/2);
+  padding: 0 calc((100vw - 1440px) / 2);
 
   @media ${breakPoints.xxl} {
     padding: 0 10vw;
   }
-  
+
   @media ${breakPoints.lg} {
     padding: 0 5vw;
   }
 `;
 
+// comment added
 export default ForAuthors;
