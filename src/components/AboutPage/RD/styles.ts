@@ -82,6 +82,12 @@ export const StyledContent = styled.div`
     flex-direction: column;
   }
 
+  > a {
+    width: max-content;
+    align-self: center;
+    justify-self: center;
+  }
+
   @media ${breakPoints.xxl} {
     padding: 40px 54px;
   }
