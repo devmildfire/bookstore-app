@@ -18,7 +18,7 @@ import BugTypeWriter from '@/assets/images/BugTypeWriter.png';
 import Image from 'next/image';
 
 const firstPar =
-  'Здесь вы можете отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
+  'Здесь вы можете узнать, как отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
 const secondPar =
   'Мы предлагаем роялти 50% от всех чистых доходов с продаж всех изданий авторского текста:';
 
@@ -87,8 +87,9 @@ const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
       <Text variant='manRec'>Рукописи не рецензируются.</Text>
+      <Text variant='manRec'>Посетителей без предварительной записи в редакции не принимаем.</Text>
       <Text variant='h3_1SendMan' align='start'>
-        {'Отправить рукопись можно на имейл '}
+        {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
         {'. '}
       </Text>
