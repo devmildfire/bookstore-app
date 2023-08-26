@@ -39,6 +39,9 @@
   --width: 1440px;
   --searchBarWidth: 335px;
   --max-width: 1920px;
+
+  --text-max-width: 1000px;
+
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
 
