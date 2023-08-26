@@ -19,6 +19,14 @@ const colors: Record<Color, string> = {
   white80: 'var(--main-white-80)',
 };
 
+const ClampedH1Style = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 900};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.serif};
+
+  font-size: clamp(24px, 1.625vw + 18.8px, 50px);
+`;
+
 const h1Style = css<StyledTextProps>`
   font-size: 90px;
   font-weight: ${(props) => props.fontWeight || 900};
@@ -870,6 +878,7 @@ const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
 > = {
+  h1c: ClampedH1Style,
   h1: h1Style,
   h1_Inv: h1_InvStyle,
   h2_1: h21Style,
@@ -911,6 +920,7 @@ const styles: Record<
 };
 
 export const tagMap: Record<Variant, string> = {
+  h1c: 'h1',
   h1: 'h1',
   h1_Inv: 'h1',
   h2_1: 'h2',
