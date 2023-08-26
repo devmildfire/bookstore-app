@@ -13,7 +13,7 @@ const ForInvestors: NextPage = () => {
     <StyledWrapper className='max-width'>
       <StyledMoneyPlanes />
       <ContentWrapper>
-        <ToInvestors variant='h1_Inv'>{title}</ToInvestors>
+        <ToInvestors variant='h1c'>{title}</ToInvestors>
         <Content />
       </ContentWrapper>
     </StyledWrapper>
@@ -71,17 +71,17 @@ const ToInvestors = styled(Text)`
   @media ${breakPoints.md} {
     /* grid-area: 1 / 1 / 4 / 3; */
     padding: 0 0 10vw 0;
-    font-size: 45px;
+    /* font-size: 45px; */
   }
 
   @media ${breakPoints.smd} {
     padding: 0 0 10vw 0;
-    font-size: 6vw;
+    /* font-size: 6vw; */
   }
 
   @media ${breakPoints.sm} {
     padding: 0 0 10vw 0;
-    font-size: 6.5vw;
+    /* font-size: 6.5vw; */
   }
 `;
 
