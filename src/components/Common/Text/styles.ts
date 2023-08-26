@@ -25,6 +25,18 @@ const ClampedH1Style = css<StyledTextProps>`
   font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
   font-size: clamp(24px, 1.625vw + 18.8px, 50px);
+
+  max-width: var(--text-max-width);
+`;
+
+const ClampedBasicTextStyle = css<StyledTextProps>`
+  /* font-size: 20px; */
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(14px, 0.25vw + 13.2px, 18px);
+  max-width: var(--text-max-width);
 `;
 
 const h1Style = css<StyledTextProps>`
@@ -896,6 +908,7 @@ const styles: Record<
   h3_4: h34Style,
   manRec: h31ManRecStyle,
   text: textStyle,
+  ctext: ClampedBasicTextStyle,
   aboutText: aboutTextStyle,
   manIcon: ManuscriptIconStyle,
   manText: ManuscriptTextStyle,
@@ -935,6 +948,7 @@ export const tagMap: Record<Variant, string> = {
   h3_31: 'h3',
   h3_32: 'h3',
   h3_4: 'h3',
+  ctext: 'p',
   text: 'p',
   aboutText: 'p',
   text_italic: 'p',

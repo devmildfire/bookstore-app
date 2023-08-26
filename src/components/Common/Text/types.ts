@@ -17,6 +17,7 @@ export type Variant =
   | 'h3_31'
   | 'h3_32'
   | 'h3_4'
+  | 'ctext'
   | 'text'
   | 'manText'
   | 'manIcon'
