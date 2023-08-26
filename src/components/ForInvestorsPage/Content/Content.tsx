@@ -39,21 +39,21 @@ const Content = (): React.ReactElement => {
   return (
     <ContentDiv>
       <TextDiv>
-        <Text variant='manText'>{firstPar}</Text>
-        <Text variant='manText'>{secondPar}</Text>
-        <Text variant='manText'>{thirdPar}</Text>
+        <Text variant='ctext'>{firstPar}</Text>
+        <Text variant='ctext'>{secondPar}</Text>
+        <Text variant='ctext'>{thirdPar}</Text>
       </TextDiv>
       <AwardIcons />
       <TextDiv>
-        <Text variant='manText'>{fourthPar}</Text>
-        <Text variant='manText'>
+        <Text variant='ctext'>{fourthPar}</Text>
+        <Text variant='ctext'>
           {fifthPar}
           <a href='mailto:info@chtivo.spb.ru' target='_blank'>
             info@chtivo.spb.ru
           </a>
         </Text>
-        <Text variant='manText'>{sixthPar}</Text>
-        <Text variant='manText' fontWeight={400}>
+        <Text variant='ctext'>{sixthPar}</Text>
+        <Text variant='ctext' fontWeight={400}>
           {seventhPar}
           <a href='https://boosty.to/russiandino' target='_blank'>
             на нашу страницу Бусти.
