@@ -1,6 +1,9 @@
 export type FontFamily = 'serif' | 'sans';
 export type Variant =
   | 'h1c'
+  | 'h2c'
+  | 'h3c'
+  | 'h4c'
   | 'h1'
   | 'h1_Inv'
   | 'h2_1'

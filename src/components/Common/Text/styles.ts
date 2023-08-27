@@ -19,18 +19,45 @@ const colors: Record<Color, string> = {
   white80: 'var(--main-white-80)',
 };
 
+//  Стили, которые останутся
+
 const ClampedH1Style = css<StyledTextProps>`
   font-weight: ${(props) => props.fontWeight || 900};
   text-transform: ${(props) => props.textTransform || 'uppercase'};
   font-family: ${(props) => props.fontFamily || fontFamilies.serif};
 
   font-size: clamp(24px, 1.625vw + 18.8px, 50px);
+  max-width: var(--text-max-width);
+`;
 
+const ClampedH2TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(18px, 1.375vw + 15.6px, 40px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedH3TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(16px, 0.5vw + 14.4px, 24px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedH4TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(16px, 0.25vw + 15.2px, 20px);
   max-width: var(--text-max-width);
 `;
 
 const ClampedBasicTextStyle = css<StyledTextProps>`
-  /* font-size: 20px; */
   font-weight: ${(props) => props.fontWeight || 400};
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
@@ -38,6 +65,8 @@ const ClampedBasicTextStyle = css<StyledTextProps>`
   font-size: clamp(14px, 0.25vw + 13.2px, 18px);
   max-width: var(--text-max-width);
 `;
+
+//  Дальше идут стили, от всех из которых мы в какой-то момент избавимся
 
 const h1Style = css<StyledTextProps>`
   font-size: 90px;
@@ -891,6 +920,9 @@ const styles: Record<
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
 > = {
   h1c: ClampedH1Style,
+  h2c: ClampedH2TextStyle,
+  h3c: ClampedH3TextStyle,
+  h4c: ClampedH4TextStyle,
   h1: h1Style,
   h1_Inv: h1_InvStyle,
   h2_1: h21Style,
@@ -934,6 +966,9 @@ const styles: Record<
 
 export const tagMap: Record<Variant, string> = {
   h1c: 'h1',
+  h2c: 'h2',
+  h3c: 'h3',
+  h4c: 'h4',
   h1: 'h1',
   h1_Inv: 'h1',
   h2_1: 'h2',
