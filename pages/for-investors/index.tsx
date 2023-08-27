@@ -21,7 +21,7 @@ const ForInvestors: NextPage = () => {
 };
 
 const StyledMoneyPlanes = styled(MoneyPlanes)`
-  padding-top: 114px;
+  /* padding-top: 114px;
 
   @media ${breakPoints.xl} {
     padding-top: 80px;
@@ -33,35 +33,41 @@ const StyledMoneyPlanes = styled(MoneyPlanes)`
 
   @media ${breakPoints.sm} {
     padding-top: 0px;
-  }
+  } */
 `;
 
 const ContentWrapper = styled.div`
   /* padding: 90px 5.6vw 0; */
-  padding: 90px 0 0;
+  /* padding: 90px 0 0; */
+
+  align-self: flex-start;
+  padding-left: calc(40vw - 720px);
+
+  padding-top: var(--first-title-gap);
 
   display: flex;
   flex-direction: column;
 
-  gap: 96px;
+  /* gap: 96px; */
+  gap: var(--first-title-gap);
 
   @media ${breakPoints.xl} {
     /* padding: 90px 3.5vw 0; */
-    padding: 90px 0 0;
-    gap: 90px;
+    /* padding: 90px 0 0; */
+    /* gap: 90px; */
   }
 
   @media ${breakPoints.lg} {
     /* padding-top: 60px; */
     /* padding: 60px 4.7vw 0; */
-    padding: 60px 0 0;
-    gap: 60px;
+    /* padding: 60px 0 0; */
+    /* gap: 60px; */
   }
 
   @media ${breakPoints.sm} {
     /* padding-top: 50px; */
-    padding: 20px 0 0;
-    gap: 30px;
+    /* padding: 20px 0 0; */
+    /* gap: 30px; */
   }
 `;
 
@@ -97,6 +103,7 @@ const StyledWrapper = styled.main`
   padding-right: 115px; */
 
   padding: 0 10vw;
+  padding-top: var(--header-gap);
 
   @media ${breakPoints.xxl} {
     /* padding-top: 100px;
@@ -138,7 +145,7 @@ const StyledWrapper = styled.main`
   }
 
   @media ${breakPoints.sm} {
-    padding-top: 50px;
+    /* padding-top: 50px; */
     padding-bottom: 50px;
     padding-left: 5vw;
     padding-right: 5vw;
