@@ -14,7 +14,7 @@ const ContentDiv = styled.div`
   } */
 
   @media ${breakPoints.md} {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 `;
 
@@ -28,7 +28,7 @@ const BugDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
   @media ${breakPoints.md} {
     flex-direction: row;
@@ -40,7 +40,7 @@ const BugDiv = styled.div`
 const ManuscriptDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: var(--block-gap);
 
   --padding-top: 100px;
   // --padding-sides: 235px;
@@ -96,6 +96,8 @@ const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  padding-top: var(--first-title-gap);
 
   /* @media ${breakPoints.xl} {
     gap: 50px;

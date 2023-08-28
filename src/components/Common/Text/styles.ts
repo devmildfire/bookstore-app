@@ -31,7 +31,7 @@ const ClampedH1Style = css<StyledTextProps>`
 `;
 
 const ClampedH2TextStyle = css<StyledTextProps>`
-  font-weight: ${(props) => props.fontWeight || 400};
+  font-weight: ${(props) => props.fontWeight || 700};
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
 
@@ -40,7 +40,7 @@ const ClampedH2TextStyle = css<StyledTextProps>`
 `;
 
 const ClampedH3TextStyle = css<StyledTextProps>`
-  font-weight: ${(props) => props.fontWeight || 400};
+  font-weight: ${(props) => props.fontWeight || 700};
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
 
@@ -49,7 +49,7 @@ const ClampedH3TextStyle = css<StyledTextProps>`
 `;
 
 const ClampedH4TextStyle = css<StyledTextProps>`
-  font-weight: ${(props) => props.fontWeight || 400};
+  font-weight: ${(props) => props.fontWeight || 700};
   text-transform: ${(props) => props.textTransform || 'normal'};
   font-family: ${(props) => props.fontFamily || fontFamilies.sans};
 

@@ -26,11 +26,13 @@ const SendManuscript = (): React.ReactElement => {
   return (
     <ContentDiv>
       <ManuscriptDiv>
-        <Text variant='h3_1Man'>Уважаемые авторы</Text>
-        <TextDiv>
-          <Text variant='manText'>{firstPar}</Text>
-          <Text variant='manText'>{secondPar}</Text>
-        </TextDiv>
+        <div>
+          <Text variant='h1c'>Уважаемые авторы</Text>
+          <TextDiv>
+            <Text variant='ctext'>{firstPar}</Text>
+            <Text variant='ctext'>{secondPar}</Text>
+          </TextDiv>
+        </div>
         <MediaIcons />
         <Requirements />
         <Conditions />
@@ -58,7 +60,7 @@ const MediaIcons = (): React.ReactElement => {
             <Icon>
               <CurrentIcon />
             </Icon>
-            <Text variant='manIcon'>{type.name}</Text>
+            <Text variant='ctext'>{type.name}</Text>
           </OneIconDiv>
         );
       })}
@@ -69,13 +71,13 @@ const MediaIcons = (): React.ReactElement => {
 const Requirements = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='sn_Title'>Требования к рукописи:</Text>
+      <Text variant='h2c'>Требования к рукописи:</Text>
 
       {requirements.map((requirement) => {
         return (
           <TextReqDiv key={requirement}>
             <span>●</span>
-            <Text variant='manText'>{requirement}</Text>
+            <Text variant='ctext'>{requirement}</Text>
           </TextReqDiv>
         );
       })}
@@ -86,17 +88,17 @@ const Requirements = (): React.ReactElement => {
 const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='manRec'>Рукописи не рецензируются.</Text>
-      <Text variant='manRec'>Посетителей без предварительной записи в редакции не принимаем.</Text>
-      <Text variant='h3_1SendMan' align='start'>
+      <Text variant='ctext'>Рукописи не рецензируются.</Text>
+      <Text variant='ctext'>Посетителей без предварительной записи в редакции не принимаем.</Text>
+      <Text variant='h4c' align='start'>
         {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
         {'. '}
       </Text>
-      <Text variant='h3_1SendMan' align='start'>
+      <Text variant='h4c' align='start'>
         {'Верим в вас. '}
       </Text>
-      <TextForMobile variant='h3_1SendMan' align='start'>
+      <TextForMobile variant='ctext' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
