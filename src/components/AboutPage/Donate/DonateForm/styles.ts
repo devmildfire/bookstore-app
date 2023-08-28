@@ -28,8 +28,8 @@ export const StyledForm = styled.form`
 
       @media ${breakPoints.smd} {
         max-width: 150px;
-        height: 32px;
-        min-height: 32px;
+        height: 40px;
+        min-height: 40px;
         width: 150px;
         min-width: 150px;
         margin: 0 auto;
@@ -88,8 +88,8 @@ export const StyledButton = styled(Button)<{ className?: string }>`
 
   @media ${breakPoints.smd} {
     max-width: 150px;
-    height: 32px;
-    min-height: 32px;
+    height: 40px;
+    min-height: 40px;
     width: 150px;
     min-width: 150px;
     margin: 0 auto;

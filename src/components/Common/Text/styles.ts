@@ -19,6 +19,55 @@ const colors: Record<Color, string> = {
   white80: 'var(--main-white-80)',
 };
 
+//  Стили, которые останутся
+
+const ClampedH1Style = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 900};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.serif};
+
+  font-size: clamp(24px, 1.625vw + 18.8px, 50px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedH2TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(18px, 1.375vw + 15.6px, 40px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedH3TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(16px, 0.5vw + 14.4px, 24px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedH4TextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(16px, 0.25vw + 15.2px, 20px);
+  max-width: var(--text-max-width);
+`;
+
+const ClampedBasicTextStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 400};
+  text-transform: ${(props) => props.textTransform || 'normal'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: clamp(14px, 0.25vw + 13.2px, 18px);
+  max-width: var(--text-max-width);
+`;
+
+//  Дальше идут стили, от всех из которых мы в какой-то момент избавимся
+
 const h1Style = css<StyledTextProps>`
   font-size: 90px;
   font-weight: ${(props) => props.fontWeight || 900};
@@ -34,6 +83,7 @@ const h1_InvStyle = css<StyledTextProps>`
   ${h1Style}
   font-weight: ${(props) => props.fontWeight || 600};
   font-size: 60px;
+  line-height: 84px;
 
   @media screen and (max-width: 1600px) {
     font-size: 50px;
@@ -87,6 +137,27 @@ const h21Style = css<StyledTextProps>`
 
   @media ${breakPoints.sm} {
     font-size: 24px;
+  }
+`;
+
+const h21HalStyle = css<StyledTextProps>`
+  ${h21Style}
+  font-size: 40px;
+
+  @media ${breakPoints.xxl} {
+    font-size: 40px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 24px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
   }
 `;
 
@@ -404,7 +475,6 @@ const abzacCardStyle = css<StyledTextProps>`
 
 const buttonTextStyle = css<StyledTextProps>`
   ${textStyle}
-  padding: 0 40px;
   font-size: 16px;
 
   @media ${breakPoints.xl} {
@@ -429,7 +499,6 @@ const buttonTextStyle = css<StyledTextProps>`
   @media ${breakPoints.sm} {
     /* padding: 0 20px; */
     font-size: 10px;
-    padding: 0;
   }
 `;
 
@@ -850,10 +919,15 @@ const styles: Record<
   Variant,
   FlattenInterpolation<ThemedStyledProps<StyledTextProps, any>>
 > = {
+  h1c: ClampedH1Style,
+  h2c: ClampedH2TextStyle,
+  h3c: ClampedH3TextStyle,
+  h4c: ClampedH4TextStyle,
   h1: h1Style,
   h1_Inv: h1_InvStyle,
   h2_1: h21Style,
   h2_1_LJ: h21LJStyle,
+  h2_1_HAL: h21HalStyle,
   h2_2: h22Style,
   h3_1: h31Style,
   h3_1Man: h31ManuscriptStyle,
@@ -866,6 +940,7 @@ const styles: Record<
   h3_4: h34Style,
   manRec: h31ManRecStyle,
   text: textStyle,
+  ctext: ClampedBasicTextStyle,
   aboutText: aboutTextStyle,
   manIcon: ManuscriptIconStyle,
   manText: ManuscriptTextStyle,
@@ -890,10 +965,15 @@ const styles: Record<
 };
 
 export const tagMap: Record<Variant, string> = {
+  h1c: 'h1',
+  h2c: 'h2',
+  h3c: 'h3',
+  h4c: 'h4',
   h1: 'h1',
   h1_Inv: 'h1',
   h2_1: 'h2',
   h2_1_LJ: 'h2',
+  h2_1_HAL: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
   h3_1Man: 'h3',
@@ -903,6 +983,7 @@ export const tagMap: Record<Variant, string> = {
   h3_31: 'h3',
   h3_32: 'h3',
   h3_4: 'h3',
+  ctext: 'p',
   text: 'p',
   aboutText: 'p',
   text_italic: 'p',

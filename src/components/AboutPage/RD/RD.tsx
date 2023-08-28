@@ -13,13 +13,13 @@ import litMagIcon from '@/assets/icons/litmagIcon.svg';
 import MovingPicsGrid from '@/components/Common/MovingPicsGrid';
 
 const StyledButton = styled(Button)`
-  p {
-    padding: 0;
-  }
+  display: block;
+  padding: 0 40px;
 
   max-width: var(--box-width);
   width: calc(0.45 * var(--box-width));
-  margin: 2% auto;
+  /* margin: 2% auto; */
+  margin: 0 auto;
 
   max-height: 60px;
   min-height: 60px;
@@ -31,9 +31,19 @@ const StyledButton = styled(Button)`
     min-height: 60px;
   }
 
-  @media ${breakPoints.lg} {
+  @media ${breakPoints.xl} {
+    padding: 0 30px;
+
     align-self: center;
-    margin: 0.5% auto 2% auto;
+    width: calc(0.6 * var(--box-width));
+    max-height: 60px;
+    min-height: 60px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding: 0 20px;
+    align-self: center;
+    margin: 0 auto;
     max-height: 45px;
     min-height: 45px;
     width: calc(0.45 * var(--box-width));
@@ -41,7 +51,7 @@ const StyledButton = styled(Button)`
 
   @media ${breakPoints.md} {
     align-self: center;
-    margin-right: auto;
+    margin: 0 auto;
     max-height: 45px;
     min-height: 45px;
     width: calc(0.6 * var(--box-width));
@@ -49,10 +59,10 @@ const StyledButton = styled(Button)`
 
   @media ${breakPoints.smd} {
     align-self: center;
-    margin-right: auto;
+    margin: 0 auto;
     max-height: 32px;
     min-height: 32px;
-    width: calc(0.7 * var(--box-width));
+    width: 100%;
   }
 
   @media ${breakPoints.sm} {
@@ -92,7 +102,7 @@ const RDIcon = styled.svg`
 
 const GradientUpper = styled.div`
   position: absolute;
-  top: 0%;
+  top: -10%;
   height: calc(436 / 1080 * 100%);
   width: 100%;
   z-index: 50;
@@ -151,22 +161,29 @@ const RD = (): React.ReactElement => {
           </Text>
         </div>
 
-        <StyledMainText variant='text' align='center'>
+        <StyledMainText variant='text' align='left'>
           {string1}
           {s2}
-          <a href='https://russiandino.ru/'>Русский&nbsp;Динозавр</a>
+          <a href='https://russiandino.ru/' target='_blank'>
+            Русский&nbsp;Динозавр
+          </a>
           {string3}
         </StyledMainText>
 
-        <StyledSecondaryText variant='text' align='center'>
+        <StyledSecondaryText variant='text' align='left'>
           Избранные рассказы попадают в&nbsp;ежегодник «
-          <a href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'>
-            Могучий&nbsp;Русский&nbsp;Динозавр
+          <a
+            href='https://chtivo.spb.ru/book-moguchij-russkij-dinozavr.html'
+            target='_blank'
+          >
+            Могучий&nbsp;Русский Динозавр
           </a>
           ».
         </StyledSecondaryText>
 
-        <StyledButton>Литжурнал Русского Динозавра</StyledButton>
+        <StyledButton href='https://dzen.ru/russiandino' target='_blank'>
+          Литжурнал Русского Динозавра
+        </StyledButton>
       </StyledContent>
     </StyledWrapper>
   );

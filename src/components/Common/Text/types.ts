@@ -1,9 +1,14 @@
 export type FontFamily = 'serif' | 'sans';
 export type Variant =
+  | 'h1c'
+  | 'h2c'
+  | 'h3c'
+  | 'h4c'
   | 'h1'
   | 'h1_Inv'
   | 'h2_1'
   | 'h2_1_LJ'
+  | 'h2_1_HAL'
   | 'h2_2'
   | 'h3_1'
   | 'h3_1SendMan'
@@ -15,6 +20,7 @@ export type Variant =
   | 'h3_31'
   | 'h3_32'
   | 'h3_4'
+  | 'ctext'
   | 'text'
   | 'manText'
   | 'manIcon'
