@@ -28,6 +28,8 @@ const ClampedH1Style = css<StyledTextProps>`
 
   font-size: clamp(24px, 1.625vw + 18.8px, 50px);
   max-width: var(--text-max-width);
+
+  padding-bottom: var(--first-title-gap);
 `;
 
 const ClampedH2TextStyle = css<StyledTextProps>`
@@ -37,6 +39,8 @@ const ClampedH2TextStyle = css<StyledTextProps>`
 
   font-size: clamp(18px, 1.375vw + 15.6px, 40px);
   max-width: var(--text-max-width);
+
+  padding-bottom: var(--first-title-gap);
 `;
 
 const ClampedH3TextStyle = css<StyledTextProps>`

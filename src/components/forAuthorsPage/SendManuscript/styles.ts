@@ -96,9 +96,7 @@ const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-
-  padding-top: var(--first-title-gap);
-
+  
   /* @media ${breakPoints.xl} {
     gap: 50px;
   }
