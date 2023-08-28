@@ -43,8 +43,7 @@ const ContentWrapper = styled.div`
   align-self: flex-start;
   padding-left: calc(40vw - 720px);
 
-  padding-top: var(--first-title-gap);
-
+  
   display: flex;
   flex-direction: column;
 

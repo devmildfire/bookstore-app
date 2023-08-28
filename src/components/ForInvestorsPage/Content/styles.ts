@@ -13,7 +13,7 @@ const ContentDiv = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: var(--block-gap);
 
   /* padding-top: 96px; */
   /* padding-right: 3vw; */
@@ -23,7 +23,7 @@ const ContentDiv = styled.div`
     /* padding-top: 96px; */
     /* padding-right: 3vw; */
     /* padding-bottom: 110px; */
-    gap: 50px;
+    /* gap: 50px; */
   }
 
   @media ${breakPoints.xl} {
