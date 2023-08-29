@@ -36,7 +36,7 @@ const NovelDiv = styled.div`
 
   display: grid;
   grid-template-areas:
-    'title title'
+    'title picture'
     'text picture'
     'link picture';
   column-gap: 142px;
@@ -83,7 +83,7 @@ const NovelDiv = styled.div`
     --padding-bottom: 100px;
 
     grid-template-areas:
-      'title title'
+      'title picture'
       'text picture'
       'link picture';
 
@@ -100,7 +100,7 @@ const NovelDiv = styled.div`
 
   @media screen and (max-width: 1200px) {
     grid-template-areas:
-      'title title'
+      'title picture'
       'text picture'
       'link picture';
 
@@ -117,15 +117,15 @@ const NovelDiv = styled.div`
 
   @media ${breakPoints.lg} {
     /* grid-template-areas:
-      'title title'
+      'title picture'
       'text picture'
       'link picture'; */
 
     grid-template-areas:
+      'picture'
       'title'
       'text'
-      'link'
-      'picture';
+      'link';
 
     --padding-top: 50px;
     // --padding-left: 31px;
@@ -158,11 +158,11 @@ const NovelDiv = styled.div`
   }
 
   @media ${breakPoints.md} {
-    grid-template-areas:
+    grid-template-areas:\
+      'picture'
       'title'
       'text'
-      'link'
-      'picture';
+      'link';
 
     --padding-top: 50px;
     // --padding-left: 31px;
