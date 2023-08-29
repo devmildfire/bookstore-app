@@ -48,8 +48,7 @@ const ContentWrapper = styled.div`
   flex-direction: column;
 
   /* gap: 96px; */
-  gap: var(--first-title-gap);
-
+  
   @media ${breakPoints.xl} {
     /* padding: 90px 3.5vw 0; */
     /* padding: 90px 0 0; */
