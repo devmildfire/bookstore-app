@@ -39,6 +39,12 @@ const BugDiv = styled.div`
     flex-direction: row;
     width: 100%;
     margin: 0 auto;
+
+    img {
+      position: unset;
+      max-width: 100%;
+    }
+
   }
 `;
 
