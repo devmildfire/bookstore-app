@@ -30,10 +30,21 @@ const BugDiv = styled.div`
   align-items: center;
   justify-content: flex-start;
 
+  img {
+    position: fixed;
+    max-width: 30%;
+  }
+
   @media ${breakPoints.md} {
     flex-direction: row;
     width: 100%;
     margin: 0 auto;
+
+    img {
+      position: unset;
+      max-width: 100%;
+    }
+
   }
 `;
 
