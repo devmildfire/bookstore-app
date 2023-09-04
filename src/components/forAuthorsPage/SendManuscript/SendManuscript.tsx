@@ -89,7 +89,9 @@ const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
       <Text variant='ctext'>Рукописи не рецензируются.</Text>
-      <Text variant='ctext'>Посетителей без предварительной записи в редакции не принимаем.</Text>
+      <Text variant='ctext'>
+        Посетителей без предварительной записи в редакции не принимаем.
+      </Text>
       <Text variant='h4c' align='start'>
         {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
@@ -105,7 +107,6 @@ const Conditions = (): React.ReactElement => {
         <a href='https://t.me/russiandino' target='_blank'>
           литжурнале Русского Динозавра
         </a>
-        {'. '}
       </TextForMobile>
     </ReqDiv>
   );
