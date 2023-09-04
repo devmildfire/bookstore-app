@@ -95,7 +95,6 @@ const Conditions = (): React.ReactElement => {
       <Text variant='h4c' align='start'>
         {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
-        {'. '}
       </Text>
       <Text variant='h4c' align='start'>
         {'Верим в вас. '}
