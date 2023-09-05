@@ -63,11 +63,11 @@ const StyledSection = styled.div`
   padding-top: var(--header-gap);
 
   @media ${breakPoints.xxl} {
-    padding: 0 10vw;
+    padding: var(--header-gap) 10vw 0;
   }
 
   @media ${breakPoints.lg} {
-    padding: 0 5vw;
+    padding: var(--header-gap) 5vw 0;
   }
 `;
 
