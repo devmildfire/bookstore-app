@@ -25,6 +25,8 @@ const NovelDiv = styled.div`
 
     @media ${breakPoints.md} {
       width: unset;
+      max-width: unset;
+      align-items: center;
     }
   }
 
@@ -104,12 +106,28 @@ const IconsDiv = styled.div`
 `;
 
 const DinoPawsBook = styled.svg`
-  max-width: 30%;
+  box-sizing: content-box;
+
+  width: 40%;
+  max-width: 500px;
   position: fixed;
+
+  right: 0;
+
+  padding-right: calc((100vw - 1440px) / 2);
+
+  @media ${breakPoints.xxl} {
+    padding-right: 10vw;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-right: 5vw;
+  }
 
   @media ${breakPoints.md} {
     position: unset;
-    max-width: unset;
+    width: unset;
+    max-width: 80%;
   }
 `;
 
