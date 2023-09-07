@@ -10,6 +10,15 @@ const NovelDiv = styled.div`
     display: flex;
     flex-direction: column;
     gap: var(--block-gap);
+
+    a {
+      color: var(--main-red-100);
+    }
+
+    a:hover {
+      color: red;
+      text-decoration: underline;
+    }
   }
 
   .PawsDiv {
