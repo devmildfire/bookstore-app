@@ -1,19 +1,7 @@
-import Image from 'next/image';
-import styled from 'styled-components';
-import {
-  Button,
-  ButtonsContainer,
-  OldPrice,
-  Price,
-  PriceContainer,
-} from './styles';
-import { ProductCardProps } from './ProductCard';
-import { useModal } from '../Modal/Modal';
-import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
-import { IconButton } from '../Common/IconButton';
 import breakPoints from '@/utils/breakPoints';
+import styled from 'styled-components';
 
-const BookWrapper = styled.div`
+export const BookWrapper = styled.div`
   position: relative;
   perspective: 800px;
   outline: none;
@@ -25,7 +13,7 @@ const BookWrapper = styled.div`
   }
 `;
 
-const Book = styled.div`
+export const Book = styled.div`
   img {
     border-radius: 6px 2px 2px 6px;
     outline: thin solid transparent;
@@ -47,7 +35,7 @@ const Book = styled.div`
     inset 3.6px 0 3.6px rgba(0, 0, 0, 0.2);
 `;
 // NOTE(@sergromm): использование next/image приводит к смещению разметки
-const Cover = styled.img`
+export const Cover = styled.img`
   position: relative;
   z-index: 1;
   /* NOTE(@sergromm): у обложек разное разрешение.
@@ -56,7 +44,7 @@ const Cover = styled.img`
   width: 100%;
 `;
 
-const Lightmap = styled.div`
+export const Lightmap = styled.div`
   inset: 0;
   position: absolute;
   z-index: 2;
@@ -86,7 +74,7 @@ const Lightmap = styled.div`
   background-size: cover;
 `;
 
-const Pages = styled.div`
+export const Pages = styled.div`
   content: '';
   background: linear-gradient(90deg, rgb(201, 201, 201) 0, transparent 30%),
     linear-gradient(rgb(238, 238, 238), rgb(218, 218, 218));
@@ -99,7 +87,7 @@ const Pages = styled.div`
   transform: translateX(92%) rotateY(80deg);
 `;
 
-const BackCover = styled.div<{ src: string }>`
+export const BackCover = styled.div<{ src: string }>`
   position: absolute;
   top: 50%;
   right: 0;
@@ -115,7 +103,7 @@ const BackCover = styled.div<{ src: string }>`
   outline: thin solid transparent;
 `;
 
-const Footer = styled.div`
+export const Footer = styled.div`
   position: relative;
   background-color: transparent;
   display: flex;
@@ -127,55 +115,3 @@ const Footer = styled.div`
     padding: 18px 0 18px;
   }
 `;
-
-export default function ProductCard3d(props: ProductCardProps) {
-  const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
-    props;
-
-  const { handleModalState, handleOpenModal } = useModal();
-
-  const onAddToCartClick = () => {
-    handleModalState({
-      title,
-      price,
-      // newPrice,
-      author: authors.map((author) => author.name).join(', '),
-      types,
-    });
-    handleOpenModal(true, 'book');
-  };
-
-  return (
-    <BookWrapper tabIndex={0}>
-      <Book onMouseUp={onClick} onKeyDown={onEnterKey} className='book'>
-        <Cover
-          alt='cover'
-          src={cover}
-          width={330}
-          height={550}
-          className='cover'
-        />
-        <Pages className='pages' />
-        <BackCover aria-hidden='true' src={cover} className='back-cover' />
-        <Lightmap className='lightmap' />
-      </Book>
-      <Footer>
-        <PriceContainer>
-          <Price>{`${newPrice === null ? price : newPrice}₽`}</Price>
-          <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
-        </PriceContainer>
-        <ButtonsContainer>
-          <IconButton
-            width={36}
-            height={36}
-            label='добавить в корзину'
-            onClick={onAddToCartClick}
-          >
-            <CartIcon />
-          </IconButton>
-          {/* <Button type='button'>В Избранное</Button> */}
-        </ButtonsContainer>
-      </Footer>
-    </BookWrapper>
-  );
-}

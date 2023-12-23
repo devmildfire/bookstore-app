@@ -109,7 +109,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
-          {authors.map((author) => author.name)}
+          {/* {authors.map((author) => author.name)} */}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
           {`${year} | ${genre} | ${ageRestriction}`}
@@ -123,7 +123,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
           {thesis}
         </StyledThesis>
         <StyledDescription>
-          {description.map((paragraph: string) => (
+          {/* {description.map((paragraph: string) => (
             <Text
               key={paragraph}
               variant='text'
@@ -133,7 +133,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
             >
               {paragraph}
             </Text>
-          ))}
+          ))} */}
         </StyledDescription>
       </DescriptionLayout>
     </StyledWrapper>

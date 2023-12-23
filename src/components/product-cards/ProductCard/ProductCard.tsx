@@ -9,11 +9,11 @@ import {
   Button,
   // BuyIcon,
   OldPrice,
-} from './styles';
+} from '../styles';
 import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 import { Book } from '@/models/books';
-import { useModal } from '../Modal/Modal';
-import { TriggerStyles } from '../Common/Trigger/Trigger';
+import { useModal } from '../../Modal/Modal';
+import { TriggerStyles } from '@/components/Common/Trigger/types';
 
 export interface ProductCardProps extends Book {
   onClick: () => void;
@@ -22,7 +22,7 @@ export interface ProductCardProps extends Book {
   isOpen?: boolean;
 }
 
-export default function ProductCard(props: ProductCardProps) {
+function ProductCard(props: ProductCardProps) {
   const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
     props;
   const { handleModalState, handleOpenModal } = useModal();
@@ -69,3 +69,5 @@ export default function ProductCard(props: ProductCardProps) {
     </ProductItem>
   );
 }
+
+export default React.memo(ProductCard);

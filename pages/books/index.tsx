@@ -1,25 +1,24 @@
 import React from 'react';
+import { InferGetStaticPropsType } from 'next';
 import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
 import Filters from '@/components/Filters';
-import books from '@/mocks/books';
 import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
-import { InferGetStaticPropsType } from 'next/types';
+import { Book } from '@/models/books';
+import { supabase } from 'api';
+import Header from '@/components/PageLayout/Header';
 
 type BooksPageProps = {
   forwardedRef: null;
-} /* & InferGetStaticPropsType<typeof getStaticProps> */;
+} & InferGetStaticPropsType<typeof getServerSideProps>;
 
-const data = Array(12)
-  .fill(0)
-  .map((_, idx) => books[idx % 3])
-  .map((book, idx) => ({
-    ...book,
-    id: idx + 1,
-  }));
+export const getServerSideProps = async () => {
+  const { data: books, error } = await supabase.from('Titles').select('*');
+  return { props: { books: books as Book[] } };
+};
 
-function BooksPage({ forwardedRef /* data */ }: BooksPageProps) {
+function BooksPage({ forwardedRef, books }: BooksPageProps) {
   return (
     <>
       <Carousel
@@ -31,7 +30,7 @@ function BooksPage({ forwardedRef /* data */ }: BooksPageProps) {
         <section className='max-width'>
           <Filters />
           <Drawer />
-          <Products data={data} />
+          <Products data={books} />
         </section>
       </HomeLayout>
     </>
@@ -44,4 +43,4 @@ function BooksPage({ forwardedRef /* data */ }: BooksPageProps) {
 //   return { props: { data } };
 // };
 
-export default BooksPage;
+export default React.memo(BooksPage);

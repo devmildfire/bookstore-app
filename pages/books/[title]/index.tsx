@@ -1,75 +1,55 @@
 /* eslint-disable operator-linebreak */
 import React from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
-import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { Book } from '@/models/books';
 import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
 import BookAuthor from '@/components/BookPage/BookAuthor';
-import books from '@/mocks/books';
 import breakPoints from '@/utils/breakPoints';
+import { supabase } from 'api';
 
-// interface BookPageProps {
-//   readonly book: Book;
-// }
-
-async function getBook(
-  title: string | string[] | undefined
-): Promise<Book | null> {
-  const book = books.find(
-    (b) => b.transliteratedTitle?.toLowerCase() === title
-  );
-  if (!book) return null;
-  return book;
+interface BookPageProps {
+  readonly book: Book;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { title } = context.query;
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['book', title], () => getBook(title));
+  const { data, error } = await supabase
+    .from('Titles')
+    .select('*')
+    .eq('slug', title);
+
+  if (data) {
+    const book = data[0];
+
+    return {
+      props: { book },
+    };
+  }
+
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
+    props: { book: null },
   };
 };
 
-const BookPage = (): React.ReactElement => {
-  const router = useRouter();
-  const { title } = router.query;
-  const { data: book, isLoading } = useQuery(
-    ['book', title],
-    () => getBook(title),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    }
-  );
-
+const BookPage = ({ book }: BookPageProps): React.ReactElement => {
   if (!book) return <p>Не удалось загрузить страницу книги</p>;
-  // const { book } = props;
+
   return (
     <>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <>
-          <Head>
-            <title>{book.title}</title>
-          </Head>
-          <StyleWrapper className='max-width'>
-            <BookDescription {...book} />
-            <BookProperties {...book} />
-            <BookTrailer src={book.trailerSrc} title={book.title} />
-            <BookAuthor authors={book.authors} />
-            {/* <SimilarBooks /> */}
-          </StyleWrapper>
-        </>
-      )}
+      <Head>
+        <title>{book.title}</title>
+      </Head>
+      <StyleWrapper className='max-width'>
+        <BookDescription {...book} />
+        <BookProperties {...book} />
+        <BookTrailer src={book.trailerSrc} title={book.title} />
+        <BookAuthor authors={book.authors} />
+        {/* <SimilarBooks /> */}
+      </StyleWrapper>
     </>
   );
 };

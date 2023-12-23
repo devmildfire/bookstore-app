@@ -1,7 +1,5 @@
 import breakPoints from '@/utils/breakPoints';
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { Trigger } from '../Common/Trigger';
 
 export const GridContainer = styled.ul`
   display: flex;
@@ -16,21 +14,6 @@ export const GridContainer = styled.ul`
 
   @media ${breakPoints.sm} {
     gap: 2rem;
-  }
-`;
-
-export const RowItem = styled.li``;
-
-export const RowContainer = styled.ul`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap: 2rem;
-
-  @media screen and (max-width: 512px) {
-    & {
-      justify-content: center;
-    }
   }
 `;
 
@@ -54,115 +37,5 @@ export const Cover = styled.img`
   &:hover {
     transform: translateY(-3%);
     box-shadow: 0 0 8px 4px darkred;
-  }
-`;
-
-interface PreviewProps {
-  width: number;
-}
-
-export const PreviewContainer = styled.div<PreviewProps>`
-  position: relative;
-  transform: translateX(-50%);
-  bottom: 0;
-  left: 50%;
-  width: ${(props) => `${props.width}px`};
-  color: lightgray;
-  background-color: #050505;
-`;
-
-interface BoxProps {
-  gap: number;
-}
-
-export const Container = styled.div<BoxProps>`
-  display: flex;
-  flex-direction: column;
-  gap: ${(props) => `${props.gap}px`};
-  align-items: flex-start;
-  justify-content: center;
-`;
-
-export const DescriptionBox = styled.div`
-  display: block;
-  max-height: 150px;
-  overflow-y: auto;
-  grid-area: description;
-  mask-image: linear-gradient(black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
-  /* width */
-  ::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #232323;
-    border-radius: 8px;
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: var(--grey);
-    border-radius: 8px;
-  }
-
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  @media screen and (max-width: 1024px) {
-    max-height: 300px;
-  }
-`;
-
-export const Title = styled.h2`
-  font-size: var(--font-heading-xl);
-  font-family: 'Cheque', serif;
-`;
-
-export const Author = styled.p`
-  font-size: var(--font-xl);
-`;
-
-export const Slogan = styled.p`
-  text-transform: uppercase;
-  font-size: var(--font-m);
-  opacity: 0.5;
-  font-style: italic;
-`;
-
-export const Description = styled.p`
-  font-size: var(--font-m);
-  padding-top: 8px;
-  line-height: 1.4;
-`;
-
-interface ImageProps {
-  url: string;
-}
-
-export const Button = styled(Trigger)`
-  cursor: pointer;
-  padding: 20px 80px;
-  grid-area: button;
-`;
-
-export const Image = styled.div<ImageProps>`
-  height: 100%;
-  width: 100%;
-`;
-
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  width: 30px;
-  color: white;
-  background: transparent;
-  cursor: pointer;
-  transition: 0.1s;
-  &:hover {
-    opacity: 0.5;
   }
 `;
