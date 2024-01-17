@@ -7,7 +7,6 @@ import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
 import { Book } from '@/models/books';
 import { supabase } from 'api';
-import Header from '@/components/PageLayout/Header';
 
 type BooksPageProps = {
   forwardedRef: null;
@@ -36,11 +35,5 @@ function BooksPage({ forwardedRef, books }: BooksPageProps) {
     </>
   );
 }
-
-// export const getStaticProps = async () => {
-//   const response = await fetch('http://localhost:3000/api/books');
-//   const data = await response.json();
-//   return { props: { data } };
-// };
 
 export default React.memo(BooksPage);
