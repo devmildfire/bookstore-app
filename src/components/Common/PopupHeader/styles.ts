@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
-import IconButton from '../IconButton';
+import IconButton from '../IconButton(deprecated)';
 
 export const StyledWrapper = styled.header`
   position: relative;

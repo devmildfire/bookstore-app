@@ -2,12 +2,15 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Logo from '@/assets/images/logo.svg';
 import CartIcon from '@/assets/icons/cart.svg';
-import CrossIcon from '@/assets/icons/close.svg';
+
 import ProfileIcon from '@/assets/icons/profile.svg';
 import BurgerIcon from '@/assets/icons/burger.svg';
+import Link from 'next/link';
+import { IconButton } from '@/components/Common/IconButton';
 
 interface HeaderList {
   className: string;
+  backgroundColor: string;
 }
 
 interface MenuButtonProps {
@@ -17,6 +20,7 @@ interface MenuButtonProps {
 
 interface SubmenuProps {
   isOpen: boolean;
+  backgroundColor: string;
 }
 
 const LogoLinkContainer = styled.div`
@@ -84,21 +88,10 @@ const CartIconStyled = styled(CartIcon)`
   }
 `;
 
-const CrossIconStyled = styled(CrossIcon)`
-  width: 13px;
-  height: 13px;
-
-  stroke: var(--main-white-100);
-
-  cursor: pointer;
-
-  :hover {
-    stroke: var(--main-red-100);
-  }
-
-  @media (max-width: 320px) {
-    width: 14px;
-    height: 14px;
+const MenuButton = styled.div`
+  display: none;
+  @media ${breakPoints.lg} {
+    display: block;
   }
 `;
 
@@ -166,11 +159,12 @@ const BurgerIconStyled = styled(BurgerIcon)`
 
 const HeaderWrapper = styled.header`
   position: sticky;
-  top: -1px;
+  top: -2px;
   left: 0;
   display: flex;
   justify-content: center;
   width: 100%;
+  transition: all 0.2s ease-in-out 0s;
   z-index: 99999;
 `;
 
@@ -212,6 +206,7 @@ const NavList = styled.ul<HeaderList>`
   width: 55%;
   min-width: 480px;
   @media ${breakPoints.lg} {
+    background-color: ${(props) => props.backgroundColor};
     width: 50vw;
     min-width: 260px;
     visibility: hidden;
@@ -240,9 +235,7 @@ const NavListItem = styled.li`
   gap: 10px;
   text-align: end;
   font-size: 16px;
-  @media ${breakPoints.xl} {
-    font-size: 14px;
-  }
+
   @media screen and (min-width: 1024px) {
     &:hover .submenu-dropdown {
       visibility: visible;
@@ -251,8 +244,16 @@ const NavListItem = styled.li`
   }
 `;
 
-const NavLink = styled.a`
+const NavLink = styled(Link)`
   &:hover {
+    -webkit-text-fill-color: var(--main-red-100);
+    color: var(--main-red-100);
+  }
+`;
+
+const NavItem = styled.span`
+  &:hover {
+    -webkit-text-fill-color: var(--main-red-100);
     color: var(--main-red-100);
   }
 `;
@@ -261,17 +262,22 @@ const Submenu = styled.ul<SubmenuProps>`
   display: flex;
   flex-direction: column;
   gap: 14px;
-  background-color: var(--main-black);
+  background-color: ${(props) => props.backgroundColor};
   position: absolute;
   top: 28px;
   left: -10px;
   min-width: 160px;
-  padding: 12px 12px 24px;
+  width: max-content;
+  padding: 24px;
+  border-radius: 4px;
   visibility: hidden;
   opacity: 0;
   transition: 0.4s;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.25);
   @media ${breakPoints.lg} {
     display: ${(props) => (props.isOpen ? 'flex' : 'none')};
+    box-shadow: none;
+    width: auto;
     visibility: visible;
     opacity: 1;
     position: relative;
@@ -284,34 +290,21 @@ const Submenu = styled.ul<SubmenuProps>`
 const SubmenuListItem = styled.li`
   cursor: pointer;
   text-align: start;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  color: var(--main-white);
+
   @media ${breakPoints.lg} {
     text-align: end;
+    color: var(--main-white-60);
   }
 `;
 const IconContainer = styled.div`
   display: flex;
-  gap: 24px;
   justify-content: center;
   align-items: center;
-  @media ${breakPoints.lg} {
-    gap: 12px;
-  }
-`;
 
-const MenuButton = styled.button<MenuButtonProps>`
-  display: ${(props) => (props.mobile ? 'none' : 'flex')};
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  align-items: center;
-  justify-content: center;
-  @media ${breakPoints.lg} {
-    display: ${(props) => (!props.isVisible ? 'flex' : 'none')};
+  @media ${breakPoints.md} {
+    gap: 4px;
   }
 `;
 
@@ -320,7 +313,11 @@ const MenuOverlay = styled.div`
   top: var(--header-height);
   left: 0;
   width: 100%;
-  height: calc(100vh - var(--header-height));
+  /* 
+    +1px нужен из-за top:-1px у хедера, 
+    который фиксит баг с пустым пространством под футером при ресайзе окна.
+  */
+  height: calc(100vh - var(--header-height) + 1px);
   background-color: black;
   opacity: 0;
   visibility: hidden;
@@ -335,7 +332,7 @@ export {
   LogoLinkContainer,
   LogoStyled,
   CartIconStyled,
-  CrossIconStyled,
+  MenuButton,
   ProfileIconStyled,
   BurgerIconStyled,
   HeaderWrapper,
@@ -343,9 +340,9 @@ export {
   NavList,
   NavListItem,
   NavLink,
+  NavItem,
   Submenu,
   SubmenuListItem,
   IconContainer,
-  MenuButton,
   MenuOverlay,
 };

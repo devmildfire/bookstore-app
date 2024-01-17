@@ -11,6 +11,10 @@ import styled, { StyledComponent } from 'styled-components';
 import books from '@/mocks/books';
 import { DotButton } from './DotButton';
 import Link from 'next/link';
+import breakPoints from '@/utils/breakPoints';
+import { Trigger } from '../Common/Trigger';
+import { useRouter } from 'next/router';
+import texture from '@/assets/images/mockups/mockup-var-2.png';
 
 type PropType = {
   slides: number[];
@@ -24,9 +28,7 @@ const StyledInfo = styled.div`
   gap: 8px;
   max-width: 720px;
   width: 100%;
-  @media screen and (max-width: 768px) {
-    align-items: center;
-  }
+
   @media screen and (max-width: 512px) {
     display: none;
   }
@@ -69,7 +71,7 @@ const lookupTextComponent: Record<
   text: StyledText,
   caption: StyledCaption,
 };
-
+// TODO вынести в компонент Typography
 function Text(props: PropsWithChildren<TextProps>) {
   const { variant, tag, children, ...rest } = props;
   const Component = lookupTextComponent[variant];
@@ -94,7 +96,6 @@ const StyledTitle = styled(Text)`
   }
   @media screen and (max-width: 768px) {
     font-size: 36px;
-    text-align: center;
   }
   @media screen and (max-width: 512px) {
     font-size: 24px;
@@ -110,7 +111,6 @@ const StyledAuthor = styled(Text)`
   }
   @media screen and (max-width: 768px) {
     font-size: 24px;
-    text-align: center;
   }
 
   @media screen and (max-width: 512px) {
@@ -126,7 +126,6 @@ const StyledThesis = styled(Text)`
   opacity: 0.6;
   @media screen and (max-width: 768px) {
     font-size: 14px;
-    text-align: center;
   }
 
   @media screen and (max-width: 512px) {
@@ -135,15 +134,12 @@ const StyledThesis = styled(Text)`
   }
 `;
 
-const StyledButton = styled.button`
-  background-color: transparent;
-  border: thin solid white;
-  color: white;
+const StyledButton = styled(Trigger)`
   min-height: 44px;
   width: 100%;
-  border-radius: 4px;
   margin-top: 24px;
   max-width: 256px;
+  padding: 20px 80px;
   @media screen and (max-width: 512px) {
     max-width: 256px;
     margin-top: 10px;
@@ -154,48 +150,99 @@ const Wrapper = styled.section`
   --slide-spacing: 16px;
   --slide-size: 100%;
   --slide-height: auto;
-  padding: 55px 5vw;
+  padding: 55px 0vw;
   background-color: #050505;
+
+  @media ${breakPoints.md} {
+    padding: 25px 0vw 55px;
+  }
 `;
 
 const Viewport = styled.div`
+  /* max-width: 1440px; */
   overflow: hidden;
+  margin: 0 auto;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: auto;
-  gap: var(--slide-spacing);
+  /* gap: var(--slide-spacing); */
+`;
+
+const SlideContainer = styled.div`
+  max-width: 1440px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  @media ${breakPoints.sm} {
+    justify-content: center;
+  }
 `;
 
 const Slide = styled.div`
-  display: grid;
+  display: flex;
   justify-content: center;
   align-items: center;
-  grid-template-columns: minmax(300px, auto) minmax(50vw, 1fr);
-  gap: 48px;
+  padding: 0 10vw;
   flex: 0 0 var(--slide-size);
-  min-width: 0;
   position: relative;
-  @media screen and (max-width: 768px) {
-    align-items: flex-start;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(150px, 1fr) auto;
-    gap: 12px;
+  @media ${breakPoints.lg} {
+    padding: 0 5vw;
   }
 `;
 
 const Cover = styled.img`
   display: block;
+  position: relative;
   height: var(--slide-height);
   max-height: 70vh;
   width: 100%;
   object-fit: contain;
 `;
 
-const Dots = styled.div`
+const Texture = styled.div`
+  display: block;
+  object-fit: cover;
+  position: absolute;
+  /* mix-blend-mode: normal; */
+
+  /* NOTE(@sergromm): можно использовать градиент от 3d книг для слайдера */
+  /* background-color: transparent;
+  background-image: linear-gradient(
+      90deg,
+      hsla(0, 0%, 100%, 0),
+      hsla(0, 0%, 100%, 0) 2%,
+      hsla(0, 0%, 100%, 0.08) 4%,
+      hsla(0, 0%, 100%, 0) 5%,
+      hsla(0, 0%, 100%, 0) 6%,
+      hsla(0, 0%, 100%, 0.04) 7%,
+      hsla(0, 0%, 100%, 0) 8%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.1) 1%,
+      transparent 2%,
+      rgba(0, 0, 0, 0.02) 4%,
+      rgba(0, 0, 0, 0.1) 5%,
+      rgba(0, 0, 0, 0.3) 6%,
+      rgba(0, 0, 0, 0.15) 7%,
+      transparent
+    );
+  background-position: bottom;
+  background-size: cover; */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 1;
+`;
+
+const Dots = styled.div`
   bottom: auto;
   position: absolute;
   left: 0;
@@ -203,6 +250,10 @@ const Dots = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const CoverLink = styled(Link)`
+  position: relative;
 `;
 
 function Carousel(props: PropType): ReactElement {
@@ -213,7 +264,6 @@ function Carousel(props: PropType): ReactElement {
 
   const scrollTo = useCallback(
     (index: number) => {
-      console.log('hi');
       return emblaApi && emblaApi.scrollTo(index);
     },
     [emblaApi]
@@ -232,32 +282,42 @@ function Carousel(props: PropType): ReactElement {
     setSelectedIndex(emblaApi.selectedScrollSnap());
     setScrollSnaps(emblaApi.scrollSnapList());
   }, [emblaApi, onSelect]);
-
+  // FIXME(@sergromm): убрать этот ужас, вместо кнопки должен использоваться Link
+  // нужно создать новый вариант для кнопки или новый компонент ссылки с такими же стилями
+  const router = useRouter();
   return (
     <Wrapper ref={forwardedRef}>
       <Viewport ref={emblaRef}>
         <Container>
           {slides.map((index) => (
             <Slide key={index}>
-              <Link href={`/books/${books[index].transliteratedTitle}`}>
-                <Cover
-                  className='embla__slide__img'
-                  src={books[index].cover}
-                  alt={books[index].title}
-                />
-              </Link>
-              <StyledInfo>
-                <StyledTitle variant='heading' tag='h1'>
-                  {books[index].title}
-                </StyledTitle>
-                <StyledAuthor variant='heading' tag='h2'>
-                  {books[index].authors.map((author) => author.name).join(', ')}
-                </StyledAuthor>
-                <StyledThesis variant='caption'>
-                  {books[index].thesis}
-                </StyledThesis>
-                <StyledButton type='button'>Познать</StyledButton>
-              </StyledInfo>
+              <SlideContainer>
+                <CoverLink href={`/books/${books[index].transliteratedTitle}`}>
+                  <Texture /*src={texture.src} */ />
+                  <Cover src={books[index].cover} alt={books[index].title} />
+                </CoverLink>
+                <StyledInfo>
+                  <StyledTitle variant='heading' tag='h1'>
+                    {books[index].title}
+                  </StyledTitle>
+                  <StyledAuthor variant='heading' tag='h2'>
+                    {books[index].authors
+                      .map((author) => author.name)
+                      .join(', ')}
+                  </StyledAuthor>
+                  <StyledThesis variant='caption'>
+                    {books[index].thesis}
+                  </StyledThesis>
+                  <StyledButton
+                    variant='outlined'
+                    onClick={() =>
+                      router.push(`/books/${books[index].transliteratedTitle}`)
+                    }
+                  >
+                    Познать
+                  </StyledButton>
+                </StyledInfo>
+              </SlideContainer>
             </Slide>
           ))}
         </Container>

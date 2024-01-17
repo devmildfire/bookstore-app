@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 
-const useScrollTo = (element: HTMLElement | null, ready: boolean) => {
+const useScrollTo = (
+  element: HTMLElement | null,
+  ready: boolean,
+  delay = 250
+) => {
   useEffect(() => {
     if (!element || !ready) {
       return;
@@ -12,10 +16,11 @@ const useScrollTo = (element: HTMLElement | null, ready: boolean) => {
     setTimeout(() => {
       element.scrollIntoView({
         behavior: 'smooth',
-        block: 'nearest',
+        block: 'center',
+        inline: 'center',
       });
-    }, 0);
-  }, [element, ready]);
+    }, delay);
+  }, [element, ready, delay]);
 };
 
 export default useScrollTo;

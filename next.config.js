@@ -25,6 +25,14 @@ const options = {
     locales: ['ru'],
     defaultLocale: 'ru',
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'chtivo.spb.ru',
+      },
+    ],
+  },
 };
 
 module.exports = options;

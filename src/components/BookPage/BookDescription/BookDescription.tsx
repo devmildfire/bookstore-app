@@ -22,7 +22,7 @@ interface BookDescriptionProps {
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
-  readonly image?: string;
+  readonly cover?: string;
   readonly description: string[];
   readonly authors: Author[];
   readonly thesis?: string;
@@ -60,7 +60,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
     publishDate,
     genre,
     ageRestriction,
-    image,
+    cover,
     description,
     authors,
     thesis,
@@ -100,16 +100,16 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         </CloseButton>
         <FullscreenCover
           className={isImageOpen ? 'active' : ''}
-          src={image}
+          src={cover}
           alt={title}
         />
       </CoverPopup>
 
-      <StyledImage onClick={handleOpenPopup} src={image} alt={title} />
+      <StyledImage onClick={handleOpenPopup} src={cover} alt={title} />
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{title}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
-          {authors.map((author) => author.name)}
+          {/* {authors.map((author) => author.name)} */}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
           {`${year} | ${genre} | ${ageRestriction}`}
@@ -123,7 +123,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
           {thesis}
         </StyledThesis>
         <StyledDescription>
-          {description.map((paragraph: string) => (
+          {/* {description.map((paragraph: string) => (
             <Text
               key={paragraph}
               variant='text'
@@ -133,7 +133,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
             >
               {paragraph}
             </Text>
-          ))}
+          ))} */}
         </StyledDescription>
       </DescriptionLayout>
     </StyledWrapper>

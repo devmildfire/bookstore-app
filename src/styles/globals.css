@@ -2,7 +2,7 @@
 @import url('./normalize.css');
 
 :root {
-  --main-red-100: rgba(147, 0, 0, 1);
+  --main-red-100: rgb(147, 0, 0);
   --main-red-90: rgba(147, 0, 0, 0.9);
   --main-red-80: rgba(147, 0, 0, 0.8);
   --main-red-70: rgba(147, 0, 0, 0.7);
@@ -50,12 +50,30 @@
   --font-s: 12px;
   /* --heading-xl */
   --top-div-gap: 100px;
+  --scrollbar-width: 0;
 }
 
-/* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
-/* ::-webkit-scrollbar {
-  display: none;
-} */
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #232323;
+  border-radius: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--grey);
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
 @media screen and (max-width: 830px) {
   :root {
@@ -63,6 +81,15 @@
     --width: 722px;
     --top-div-gap: 40px;
   }
+}
+
+html {
+  /* 
+    Временно оставляю скролл даже при открытых модальных окнах.
+    Так же заставляет исчезнуть хедер.
+  */
+  overflow-y: scroll;
+  color-scheme: dark;
 }
 
 html,
@@ -176,5 +203,16 @@ body {
   :root {
     --searchBarWidth: 99px;
     --top-div-gap: 30px;
+  }
+}
+
+@keyframes overlay-appear {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(16px);
   }
 }

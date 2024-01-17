@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
-import { SearchInput } from '../components/SearchInput';
 import { menu, SubmenuItem } from '../../../utils/menuItems';
 import {
   LogoStyled,
-  CartIconStyled,
-  CrossIconStyled,
+  // CartIconStyled,
   // ProfileIconStyled,
+  MenuButton,
   BurgerIconStyled,
   HeaderContainer,
   IconContainer,
-  MenuButton,
   MenuOverlay,
   NavLink,
   NavList,
@@ -17,24 +15,52 @@ import {
   Submenu,
   SubmenuListItem,
   HeaderWrapper,
+  NavItem,
 } from './styles';
+import CrossIcon from '@/assets/icons/ui-icons/close.svg';
+import SearchIcon from '@/assets/icons/ui-icons/search.svg';
+import CartIcon from '@/assets/icons/ui-icons/cart.svg';
+import BurgerIcon from '@/assets/icons/burger.svg';
+import { useModal } from '@/components/Modal/Modal';
+import Link from '@/components/Common/Link/Link';
+import { IconButton } from '@/components/Common/IconButton';
 
 interface ListItemProps {
   title: string;
   link?: string;
   submenu?: SubmenuItem[];
+  backgroundColor: string;
+  onClick: () => void;
 }
 
-function ListItem({ title, link, submenu }: ListItemProps) {
+function ListItem({
+  title,
+  link,
+  submenu,
+  backgroundColor,
+  onClick,
+}: ListItemProps) {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   return (
-    <NavListItem onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}>
-      <NavLink href={link}>{title}</NavLink>
+    <NavListItem onClick={() => setIsSubmenuOpen((prev) => !prev)}>
+      {link ? (
+        <NavLink onClick={onClick} href={link}>
+          {title}
+        </NavLink>
+      ) : (
+        <NavItem>{title}</NavItem>
+      )}
       {submenu && (
-        <Submenu className='submenu-dropdown' isOpen={isSubmenuOpen}>
+        <Submenu
+          backgroundColor={backgroundColor}
+          className='submenu-dropdown'
+          isOpen={isSubmenuOpen}
+        >
           {submenu.map((item) => (
             <SubmenuListItem key={item.subtitle}>
-              <NavLink href={item.link}>{item.subtitle}</NavLink>
+              <NavLink onClick={onClick} href={item.link}>
+                {item.subtitle}
+              </NavLink>
             </SubmenuListItem>
           ))}
         </Submenu>
@@ -51,13 +77,17 @@ function Header({
   backgroundColor?: Color;
 }): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
-  const [isInputActive, setIsInputActive] = useState(false);
   const overlayRef = useRef(null);
+  const { handleOpenModal } = useModal();
 
   function handleClick(e: MouseEvent) {
     if (e.target === overlayRef.current) {
       setIsOpen(false);
     }
+  }
+
+  function close() {
+    setIsOpen(false);
   }
 
   function handleEscape(e: KeyboardEvent) {
@@ -74,30 +104,48 @@ function Header({
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen]);
-
   return (
     <HeaderWrapper style={{ backgroundColor }} className='max-width'>
       <HeaderContainer>
-        <LogoStyled />
+        <Link href='/books'>
+          <LogoStyled />
+        </Link>
         <MenuOverlay ref={overlayRef} className={isOpen ? 'active' : ''} />
-        <NavList className={isOpen ? 'active' : ''}>
+        <NavList
+          className={isOpen ? 'active' : ''}
+          backgroundColor={backgroundColor}
+        >
           {menu.map(({ title, link, submenu }) => (
-            <ListItem key={title} title={title} link={link} submenu={submenu} />
+            <ListItem
+              onClick={close}
+              backgroundColor={backgroundColor}
+              key={title}
+              title={title}
+              link={link}
+              submenu={submenu}
+            />
           ))}
         </NavList>
-        <SearchInput
-          isInputActive={isInputActive}
-          setIsInputActive={setIsInputActive}
-        />
+
         <IconContainer>
-          <MenuButton isVisible={isInputActive}>
-            <CartIconStyled />
-          </MenuButton>
-          {/* <MenuButton isVisible={isInputActive}>
-            <ProfileIconStyled />
-          </MenuButton> */}
-          <MenuButton mobile onClick={() => setIsOpen((prev) => !prev)}>
-            {isOpen ? <CrossIconStyled /> : <BurgerIconStyled />}
+          <IconButton
+            label='поиск'
+            onClick={() => handleOpenModal(true, 'search')}
+          >
+            <SearchIcon />
+          </IconButton>
+          <IconButton label='корзина' onClick={() => console.log('open cart')}>
+            {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
+             Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
+            <CartIcon />
+          </IconButton>
+          <MenuButton>
+            <IconButton
+              label={isOpen ? 'закрыть' : 'меню'}
+              onClick={() => setIsOpen((prev) => !prev)}
+            >
+              {isOpen ? <CrossIcon /> : <BurgerIcon />}
+            </IconButton>
           </MenuButton>
         </IconContainer>
       </HeaderContainer>

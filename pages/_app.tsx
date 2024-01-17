@@ -1,10 +1,8 @@
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
-import { Router } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
-
-// import PageLayout from '@/layouts/PageLayout';
 import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
@@ -31,7 +29,7 @@ function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
     return () => {
       observer.unobserve(element);
     };
-  }, [isIntersecting, ref.current, ref, rootMargin]);
+  }, [isIntersecting, ref, ref.current, rootMargin]);
 
   return isIntersecting;
 }
@@ -41,13 +39,16 @@ const MyApp: NextPage<AppProps> = (props) => {
   const { Component, pageProps } = props;
   const { value, toggleOff, toggleOn } = useToggle();
   const intersectionRef = useRef<HTMLElement>(null);
+  // FIXME(@sergromm): что-то не так с отслеживанием баннера.
+  // при переключении пути через Link не сбрасывается состояние
+  // isSliderOnScreen из-за чего фон хедера остаётся чёрным.
+  // Временный фикс: проверять чтобы текущий путь был !'/books'.
   const isSliderOnScreen = useOnScreen(intersectionRef);
-
+  const router = useRouter();
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
     Router.events.on('routeChangeError', toggleOff);
     Router.events.on('routeChangeComplete', toggleOff);
-
     return () => {
       Router.events.off('routeChangeStart', toggleOn);
       Router.events.off('routeChangeError', toggleOff);
@@ -55,21 +56,21 @@ const MyApp: NextPage<AppProps> = (props) => {
     };
   }, [toggleOff, toggleOn, isSliderOnScreen]);
 
-  // console.log(intersectionRef);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          {/* <PageLayout> */}
           <Header
-            backgroundColor={isSliderOnScreen ? '#050505' : 'var(--main-black)'}
+            backgroundColor={
+              isSliderOnScreen && router.pathname === '/books'
+                ? '#050505'
+                : 'var(--main-black)'
+            }
           />
           <>
             {value && <PageLoading />}
             <Component {...pageProps} forwardedRef={intersectionRef} />
           </>
-          {/* </PageLayout> */}
           <Footer />
         </ModalProvider>
       </Hydrate>

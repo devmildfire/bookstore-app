@@ -7,18 +7,22 @@ import {
   PriceContainer,
   ButtonsContainer,
   Button,
+  // BuyIcon,
   OldPrice,
-} from './styles';
-import CartIcon from '@/assets/icons/shop-cart.svg';
+} from '../styles';
+import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 import { Book } from '@/models/books';
-import { useModal } from '../Modal/Modal';
+import { useModal } from '../../Modal/Modal';
+import { TriggerStyles } from '@/components/Common/Trigger/types';
 
 export interface ProductCardProps extends Book {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
+  buttonStyle: TriggerStyles;
+  isOpen?: boolean;
 }
 
-export default function ProductCard(props: ProductCardProps) {
+function ProductCard(props: ProductCardProps) {
   const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
     props;
   const { handleModalState, handleOpenModal } = useModal();
@@ -31,7 +35,7 @@ export default function ProductCard(props: ProductCardProps) {
       author: authors.map((author) => author.name).join(', '),
       types,
     });
-    handleOpenModal(true);
+    handleOpenModal(true, 'book');
   };
 
   return (
@@ -52,8 +56,12 @@ export default function ProductCard(props: ProductCardProps) {
           <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
-          <Button type='button' onClick={onAddToCartClick}>
-            <CartIcon />
+          <Button
+            variant={props.buttonStyle}
+            leftSlot={<CartIcon />}
+            onClick={onAddToCartClick}
+          >
+            Обрести
           </Button>
           {/* <Button type='button'>В Избранное</Button> */}
         </ButtonsContainer>
@@ -61,3 +69,5 @@ export default function ProductCard(props: ProductCardProps) {
     </ProductItem>
   );
 }
+
+export default React.memo(ProductCard);

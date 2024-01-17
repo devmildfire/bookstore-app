@@ -1,30 +1,47 @@
 import styled from 'styled-components';
 import Image from 'next/image';
+import breakPoints from '@/utils/breakPoints';
+import { Trigger } from '../Common/Trigger';
 
 export const ProductItem = styled.li`
   max-width: 350px;
   width: 100%;
   color: var(--main-white-100);
+  outline: none;
 `;
 export const Cover = styled(Image)`
   cursor: pointer;
+  outline: none;
   transition: 0.15s ease-in-out;
-  :hover {
+  :hover,
+  :focus {
     transform: scale(1.05);
     box-shadow: var(--red-hover);
   }
 `;
-export const ButtonsContainer = styled.div``;
+export const ButtonsContainer = styled.div`
+  display: flex;
+`;
 export const Footer = styled.footer`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 18px 0;
+  gap: 10px;
 `;
 export const PriceContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: clamp(8px, 1vw, 1rem);
+  @media screen and (max-width: 1070px) {
+    flex-direction: column-reverse;
+    gap: 0;
+  }
+
+  @media ${breakPoints.sm} {
+    gap: clamp(8px, 1vw, 1rem);
+    flex-direction: row;
+  }
 `;
 interface PriceProps {
   discount?: boolean;
@@ -33,13 +50,14 @@ interface PriceProps {
 export const Price = styled.span<PriceProps>`
   position: relative;
   color: var(--main-white-100);
-  font-size: var(--font-xl);
+  font-size: clamp(18px, 3vw, 24px);
   font-weight: 700;
 `;
 
 export const OldPrice = styled(Price)`
   color: var(--main-red-100);
   font-size: var(--font-l);
+  font-size: clamp(14px, 3vw, 20px);
   ::before {
     content: '';
     position: absolute;
@@ -55,14 +73,12 @@ export const OldPrice = styled(Price)`
   }
 `;
 
-export const Button = styled.button`
-  width: 30px;
-  height: 30px;
-  background-color: transparent;
-  color: var(--main-white-100);
-  transition: 0.15s;
-  cursor: pointer;
-  :hover {
-    color: var(--main-red-100);
+export const Button = styled(Trigger)`
+  gap: 8px;
+  font-size: clamp(12px, 2vw, 16px);
+  padding: clamp(8px, 1vw, 12px) clamp(8px, 1vw, 20px) clamp(6px, 1vw, 10px);
+
+  @media ${breakPoints.sm} {
+    /* padding: 6px 8px 4px; */
   }
 `;
