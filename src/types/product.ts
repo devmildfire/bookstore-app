@@ -1,7 +1,7 @@
 import { Item } from './common';
 
 export interface Product extends Item {
-  readonly title: string;
+  readonly name: string;
   readonly transliteratedTitle?: string;
   readonly cover: string;
   readonly price: number;
