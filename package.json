@@ -47,7 +47,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/node": "18.11.18",
+    "@types/node": "18.x",
     "@types/react": "^18.0.30",
     "@types/react-dom": "^18.0.6",
     "@types/react-redux": "^7.1.24",
@@ -62,5 +62,8 @@
     "lint-staged": "^12.3.2",
     "pre-commit": "^1.2.2",
     "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
