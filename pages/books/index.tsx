@@ -33,7 +33,9 @@ export const getServerSideProps = async () => {
       trailer,
       ageRestriction: age_restriction,
       cover,
-      isFeatured: is_featured
+      isFeatured: is_featured,
+      types: 1
+      
     `
   );
   if (error) {
