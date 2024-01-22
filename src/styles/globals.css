@@ -216,3 +216,7 @@ body {
     backdrop-filter: blur(16px);
   }
 }
+
+pre {
+  white-space: pre-wrap;
+}
