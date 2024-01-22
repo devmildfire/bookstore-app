@@ -27,7 +27,7 @@ export const getServerSideProps = async () => {
   const { data: titles, error } = await supabase.from('Titles').select(
     `
     *,
-    AuthorsList: Titles_Authors ( ...Authors(*)),
+    authors: Titles_Authors ( ...Authors(*)),
     Photos( * ),
     CardBooks ( * ),
     Audiobooks ( * ),
