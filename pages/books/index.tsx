@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { InferGetStaticPropsType } from 'next';
 import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
@@ -7,6 +7,7 @@ import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
 import { Book, Title } from '@/models/books';
 import { supabase } from 'api';
+import { setOrGetCartCookie } from '@/utils/cardID';
 
 type BooksPageProps = {
   forwardedRef: null;
@@ -50,6 +51,14 @@ export const getServerSideProps = async () => {
   return { props: { titles: titles as unknown as Title[] } };
 };
 
+function CartID() {
+  const [cartID, setCartID] = useState('');
+  useEffect(() => {
+    setCartID(setOrGetCartCookie()!.toString());
+  }, []);
+  return <div> ID корзины: {cartID} </div>;
+}
+
 function BooksPage({ forwardedRef, titles }: BooksPageProps) {
   return (
     <>
@@ -62,6 +71,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
         <section className='max-width'>
           <Filters />
           <Drawer />
+          <CartID />
           <pre>{titles && JSON.stringify(titles, null, 2)}</pre>
           {/* <Products data={titles} /> */}
         </section>
