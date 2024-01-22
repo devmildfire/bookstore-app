@@ -26,17 +26,20 @@ export const getServerSideProps = async () => {
   // return { props: { books: books as Book[] } };
   const { data: titles, error } = await supabase.from('Titles').select(
     `
-      id,
-      name,
-      description,
-      thesis,
-      trailer,
-      ageRestriction: age_restriction,
-      cover,
-      isFeatured: is_featured,
-      types: 1
-      
-    `
+    *,
+    AuthorsList: Titles_Authors ( ...Authors(*)),
+    Photos( * ),
+    CardBooks ( * ),
+    Audiobooks ( * ),
+    Ebooks ( * ),
+    PrintedBooks ( *,
+      options:PrintOptions ( *,
+        size:PrintSize( * )
+      ),
+      cover:PrintedCover( * )
+    ),
+    awards: TitlesAwards ( *,  ...Awards(*) )
+  `
   );
   if (error) {
     console.error(error);
