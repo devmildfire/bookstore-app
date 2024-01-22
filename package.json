@@ -62,5 +62,8 @@
     "lint-staged": "^12.3.2",
     "pre-commit": "^1.2.2",
     "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": "20.11.0"
   }
 }

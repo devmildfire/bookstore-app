@@ -1,7 +1,7 @@
 import { Author } from '@/types/author';
 import { Product } from '@/types/product';
 
-export type BookType = 'printedBook' | 'book2.0' | 'audioBook' | 'eBook';
+export type BookType = 'write' | 'book2' | 'audio' | 'digital';
 
 export interface Title {
   readonly id: number;
