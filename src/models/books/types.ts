@@ -31,9 +31,9 @@ export interface Book extends Product {
   readonly description: string[];
 
   readonly symbolCount: number;
-  // readonly workers: Worker[];
+  readonly workers: Worker[];
   readonly formats: string[];
-  // readonly readers: Reader[];
+  readonly readers: Reader[];
 
   // readonly awards: string[];
   // readonly ISBN: string;
