@@ -9,10 +9,83 @@ export interface Title {
   readonly description: string;
   readonly thesis: string;
   readonly trailer: string;
-  
+
   readonly ageRestriction: number;
   readonly cover?: string;
   readonly isFeatured: boolean;
+  readonly PrintedBooks: {
+    id: number;
+    pages: number;
+    extra: string;
+    lit_form: string;
+    is_published: boolean;
+    publish_date: string;
+    release_date: string;
+    price: number;
+    discount: number;
+    sold: number;
+    title_id: number;
+    options: {
+      id: number;
+      PrintedBookID: number;
+      bindings: string;
+      cover: string;
+      paper: string;
+      illustrations: string;
+      size: {
+        id: number;
+        PrintOptionsID: number;
+        width: number;
+        height: number;
+      }[];
+    }[];
+    cover: {
+      id: number;
+      PrintedBookID: number;
+      source: string;
+      shade: string;
+      blurHash: string;
+    }[];
+  };
+  Audiobooks: {
+    id: number;
+    duration: number;
+    src: string;
+    file_volume: number;
+    extra: string;
+    price: number;
+    discount: number;
+    sold: number;
+    is_published: number;
+    publish_date: string;
+    release_date: string;
+    title_id: number;
+  };
+  Ebooks: {
+    id: number;
+    src: string;
+    file_volume: number;
+    characters: number;
+    extra: string;
+    price: number;
+    discount: number;
+    sold: number;
+    is_published: number;
+    publish_date: string;
+    release_date: string;
+    title_id: number;
+  };
+  CardBooks: {
+    id: number;
+    extra: string;
+    price: number;
+    discount: number;
+    sold: number;
+    is_published: number;
+    publish_date: string;
+    release_date: string;
+    title_id: number;
+  };
 }
 
 export interface Book extends Product {
