@@ -60,43 +60,60 @@ function CartID() {
 }
 
 function CartItems() {
-  type itemType = {
-    name: string;
-    type: string;
-    price: number;
-    number: number;
-  };
 
-  const [cart, setCart] = useState<itemType[]>([]);
+    async function postData(url = "", data = {}) {
+      
+      const response = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+      });
+      return response.json(); // parses JSON response into native JavaScript objects
+    }
+
+    type cartItemType = {
+      id: string;
+      name: string;
+      category: string;
+      quantity: number;
+      summ: number;
+      price: number;
+    };
+  
+
+  // type itemType = {
+  //   name: string;
+  //   type: string;
+  //   price: number;
+  //   number: number;
+  // };
+
+  const [cart, setCart] = useState<cartItemType[]>([]);
   const [cartID, setCartID] = useState('');
   useEffect(() => {
     setCartID(setOrGetCartCookie()!.toString());
-    getCartFromDB(setOrGetCartCookie()!.toString());
   }, []);
 
+  useEffect(()=>{
+    cartID && getCartFromDB(cartID);
+  }, [cartID])
+
+
   async function getCartFromDB(id: string) {
-    const { data, error } = await supabase.from('Cart').select().eq('id', id);
+    // const cartItems: cartItemType[] =  await postData("http://localhost:3000/api/cart", { id: cartID })
+   
+    const cartItems: cartItemType[] =  await postData(`/api/cart`, { id: cartID })
 
-    data &&
-      console.log('DB cart fetch success ... ', JSON.stringify(data, null, 2));
-    error &&
-      console.log('DBcart fetch FAILED ... ', JSON.stringify(error, null, 2));
-
-    let itemList: itemType[] = [];
-
-    data &&
-      (itemList = data?.map((item) => {
-        return {
-          name: item.name,
-          type: item.category,
-          price: item.price,
-          number: item.quantity,
-        };
-      }));
-
-    console.log('fetched item list ... ', JSON.stringify(itemList, null, 2));
-
-    setCart([...itemList]);
+    console.log('fetched cart items list ... ', JSON.stringify(cartItems, null, 2));
+    setCart([...cartItems]);
   }
 
   return (
@@ -108,6 +125,7 @@ function CartItems() {
   );
 }
 
+
 interface ProductListProps {
   titles: Title[];
 }
@@ -117,16 +135,17 @@ function ProductList({ titles }: ProductListProps): ReactElement {
     <div>
       {titles.map((title) => {
         return (
-          <>
+          <ul key={title.name + title.id}>
+
             {title.PrintedBooks && (
-              <div>
+              <div key={title.name + title.PrintedBooks.id}>
                 <p>Printed Book - {title.name}</p>
                 <button> buy </button>
               </div>
             )}
 
             {title.Audiobooks && (
-              <div>
+              <div >
                 <p>Audiobook - {title.name}</p>
                 <button> buy </button>
               </div>
@@ -145,7 +164,7 @@ function ProductList({ titles }: ProductListProps): ReactElement {
                 <button> buy </button>
               </div>
             )}
-          </>
+          </ul>
         );
       })}
     </div>
