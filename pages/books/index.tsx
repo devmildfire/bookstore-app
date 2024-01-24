@@ -8,6 +8,25 @@ import { Drawer } from '@/components/Drawer';
 import { Book, Title } from '@/models/books';
 import { supabase } from 'api';
 import { setOrGetCartCookie } from '@/utils/cardID';
+import { Cart, CartItem } from "@/types/api";
+
+async function postData(url = "", data = {}) {
+      
+  const response = await fetch(url, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+  });
+  return response.json(); // parses JSON response into native JavaScript objects
+}
 
 type BooksPageProps = {
   forwardedRef: null;
@@ -61,42 +80,26 @@ function CartID() {
 
 function CartItems() {
 
-    async function postData(url = "", data = {}) {
+    // async function postData(url = "", data = {}) {
       
-      const response = await fetch(url, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        headers: {
-          "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-      });
-      return response.json(); // parses JSON response into native JavaScript objects
-    }
+    //   const response = await fetch(url, {
+    //     method: "POST", // *GET, POST, PUT, DELETE, etc.
+    //     mode: "cors", // no-cors, *cors, same-origin
+    //     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    //     credentials: "same-origin", // include, *same-origin, omit
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       // 'Content-Type': 'application/x-www-form-urlencoded',
+    //     },
+    //     redirect: "follow", // manual, *follow, error
+    //     referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    //     body: JSON.stringify(data), // body data type must match "Content-Type" header
+    //   });
+    //   return response.json(); // parses JSON response into native JavaScript objects
+    // }
 
-    type cartItemType = {
-      id: string;
-      name: string;
-      category: string;
-      quantity: number;
-      summ: number;
-      price: number;
-    };
   
-
-  // type itemType = {
-  //   name: string;
-  //   type: string;
-  //   price: number;
-  //   number: number;
-  // };
-
-  const [cart, setCart] = useState<cartItemType[]>([]);
+  const [cart, setCart] = useState<Cart>([]);
   const [cartID, setCartID] = useState('');
   useEffect(() => {
     setCartID(setOrGetCartCookie()!.toString());
@@ -108,10 +111,7 @@ function CartItems() {
 
 
   async function getCartFromDB(id: string) {
-    // const cartItems: cartItemType[] =  await postData("http://localhost:3000/api/cart", { id: cartID })
-   
-    const cartItems: cartItemType[] =  await postData(`/api/cart`, { id: cartID })
-
+    const cartItems: Cart =  await postData(`/api/cart`, { oper: 'fetch', id: cartID })
     console.log('fetched cart items list ... ', JSON.stringify(cartItems, null, 2));
     setCart([...cartItems]);
   }
@@ -171,6 +171,63 @@ function ProductList({ titles }: ProductListProps): ReactElement {
   );
 }
 
+interface AddItemProps {
+  item: CartItem;
+}
+
+const testItem: CartItem = 
+{
+  id: "f3534c84-70e0-404a-adb1-52689ee06feb",
+  name: "The TESTBook of Westmarch",
+  category: "Book2.0",
+  quantity: 12345,
+  summ: 987987,
+  price: 989808
+}
+
+function TestAddItem({ item }: AddItemProps ) {
+
+  async function addItemToDB(item: CartItem) {
+    const addedItem: CartItem =  await postData(`/api/cart`, { oper: 'add', item: item })
+    console.log('added item items list ... ', JSON.stringify(addedItem, null, 2));
+  }
+
+  async function removeItemFromDB(item: CartItem) {
+    const removedItem: CartItem =  await postData(`/api/cart`, { oper: 'remove', item: item })
+    console.log('removed item items list ... ', JSON.stringify(removedItem, null, 2));
+  }
+
+return (
+  <div>
+    <p>Add a test item to Cart DB</p>
+    <button
+      onClick={
+        ()=>{
+          addItemToDB(
+            item
+          )
+        }
+      }
+    >
+      add test item
+    </button>
+    <p>remove a test item from Cart DB</p>
+    <button
+      onClick={
+        ()=>{
+          removeItemFromDB(
+            item
+          )
+        }
+      }
+    >
+      remove test item
+    </button>
+  </div>
+)
+
+}
+
 function BooksPage({ forwardedRef, titles }: BooksPageProps) {
   return (
     <>
@@ -185,6 +242,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
           <Drawer />
           <CartID />
           <CartItems />
+          <TestAddItem item={testItem}/>
           <ProductList titles={titles} />
           <pre>{titles && JSON.stringify(titles, null, 2)}</pre>
           {/* <Products data={titles} /> */}
