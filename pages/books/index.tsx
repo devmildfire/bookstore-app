@@ -57,14 +57,6 @@ async function postData(url = '', data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-const testItem: CartItem = {
-  id: '5a1b6bb4-7fac-4a2d-b3df-d3baa041991b',
-  name: 'The TESTBook of Westmarch',
-  category: 'Book2.0',
-  quantity: 12345,
-  summ: 987987,
-  price: 989808,
-};
 
 function TestBox({ titles }: { titles: Title[] }) {
   const [cart, setCart] = useState<Cart>([]);
@@ -82,13 +74,61 @@ function TestBox({ titles }: { titles: Title[] }) {
     setCart([...cartItems]);
   }
 
+ 
+  function findItemIndex(name: string, category: string): number {
+    const index = cart.findIndex(
+      (item) => item?.name == name && item?.category == category
+    );
+    return index;
+  }
+
+
+  function updateCart(updatedItem : CartItem ) {
+    const index = findItemIndex(updatedItem.name, updatedItem.category)
+
+    let list = [...cart]
+
+    index == -1 && (
+      setCart(
+        [...cart.filter(
+          (item) => item.quantity !== 0
+        ), 
+        updatedItem]
+      ),
+      addItemToDB(updatedItem)
+    )
+
+    index !== -1 && (
+      list[index] = updatedItem,
+      list = list.filter(
+        (item) => item.quantity !== 0
+      ),
+      setCart([...list]),
+      updatedItem.quantity == 0
+        ? removeItemFromDB(updatedItem)
+        : updateItemInDB(updatedItem)
+    )
+  }
+
+  async function updateItemInDB(item: CartItem) {
+    const updatedItem: CartItem = await postData(`/api/cart`, {
+      oper: 'update',
+      item: item,
+    });
+    console.log(
+      'updated item ... ',
+      JSON.stringify(updatedItem, null, 2)
+    );
+    cartID && getCartFromDB(cartID);
+  }
+
   async function addItemToDB(item: CartItem) {
     const addedItem: CartItem = await postData(`/api/cart`, {
       oper: 'add',
       item: item,
     });
     console.log(
-      'added item items list ... ',
+      'added item to list ... ',
       JSON.stringify(addedItem, null, 2)
     );
     cartID && getCartFromDB(cartID);
@@ -100,35 +140,70 @@ function TestBox({ titles }: { titles: Title[] }) {
       item: item,
     });
     console.log(
-      'removed item items list ... ',
+      'removed item from list ... ',
       JSON.stringify(removedItem, null, 2)
     );
     cartID && getCartFromDB(cartID);
   }
 
-  // function TestAddItem({ item }: { item: CartItem }) {
+ 
+  interface productItemProps {
+    updateCart: (item: CartItem) => void,
+    item: CartItem;
+  }
 
-  //   return (
-  //     <div>
-  //       <p>Add a test item to Cart DB</p>
-  //       <button
-  //         onClick={() => {
-  //           addItemToDB(item);
-  //         }}
-  //       >
-  //         add test item
-  //       </button>
-  //       <p>remove a test item from Cart DB</p>
-  //       <button
-  //         onClick={() => {
-  //           removeItemFromDB(item);
-  //         }}
-  //       >
-  //         remove test item
-  //       </button>
-  //     </div>
-  //   );
-  // }
+  function ProductItem({updateCart, item }: productItemProps) {
+
+    const [number, setNumber] = useState(0)
+
+    useEffect(
+      ()=> {
+        const index = cart.findIndex(
+          (cartItem) => cartItem.name == item.name && cartItem.category == item.category
+        )
+
+        index !== -1 && (
+          setNumber(cart[index].quantity),
+          item.quantity = cart[index].quantity,
+          item.summ = item.quantity * item.price,
+          console.log(`item number for ${item.name} - ${item.category} is ${cart[index].quantity}`)
+        )
+      }
+    )
+
+    return (
+      <div key={item.name + item.category}>
+        <span> {item.name} - {item.category} - {item.price} </span>
+        <button
+          onClick={
+            ()=>{
+              setNumber(number - 1);
+              item.quantity -= 1;
+              item.summ -= item.price;
+              updateCart(item)
+            }
+          }
+          disabled = {number == 0}
+        >
+          -
+        </button>
+        <span> {item.quantity} </span>
+        <button
+          onClick={
+            ()=>{
+              setNumber(number + 1);
+              item.quantity += 1;
+              item.summ += item.price;
+              updateCart(item)
+            }
+          }
+        >
+          +
+        </button>
+      </div>
+    )
+
+  }
 
   function ProductList({ titles }: { titles: Title[] }): ReactElement {
     return (
@@ -136,86 +211,49 @@ function TestBox({ titles }: { titles: Title[] }) {
         {titles.map((title) => {
           return (
             <ul key={title.name + title.id}>
+
               {title.PrintedBooks && (
-                <div key={title.name + title.PrintedBooks.id}>
-                  <p>Printed Book - {title.name}</p>
-                  <button
-                    onClick={() => {
-                      addItemToDB({
-                        id: cartID,
-                        name: title.name,
-                        category: 'PrintBook',
-                        quantity: 12345,
-                        summ: 987987,
-                        price: 989808,
-                      });
-                    }}
-                  >
-                    add
-                  </button>
-                  <button
-                    onClick={() => {
-                      removeItemFromDB({
-                        id: cartID,
-                        name: title.name,
-                        category: 'PrintBook',
-                        quantity: 12345,
-                        summ: 987987,
-                        price: 989808,
-                      });
-                    }}
-                  >
-                    remove
-                  </button>
-                </div>
+                <ProductItem updateCart={updateCart} item={
+                 { id: cartID,
+                  name: title.name,
+                  category: 'PrintBook',
+                  quantity: 0,
+                  summ: 0,
+                  price: title.PrintedBooks.price}
+                }/>
               )}
 
               {title.Audiobooks && (
-                <div>
-                  <p>Audiobook - {title.name}</p>
-                  <button
-                    onClick={() => {
-                      addItemToDB({
-                        id: cartID,
-                        name: title.name,
-                        category: 'AudioBook',
-                        quantity: 12345,
-                        summ: 987987,
-                        price: 989808,
-                      });
-                    }}
-                  >
-                    add
-                  </button>
-                  <button
-                    onClick={() => {
-                      removeItemFromDB({
-                        id: cartID,
-                        name: title.name,
-                        category: 'AudioBook',
-                        quantity: 12345,
-                        summ: 987987,
-                        price: 989808,
-                      });
-                    }}
-                  >
-                    remove
-                  </button>
-                </div>
+                <ProductItem updateCart={updateCart} item={
+                  { id: cartID,
+                    name: title.name,
+                    category: 'AudioBook',
+                    quantity: 0,
+                    summ: 0,
+                    price: title.Audiobooks.price}
+                  }/>
               )}
 
               {title.Ebooks && (
-                <div>
-                  <p>eBook - {title.name}</p>
-                  <button> add </button>
-                </div>
+                <ProductItem updateCart={updateCart} item={
+                  { id: cartID,
+                    name: title.name,
+                    category: 'EBook',
+                    quantity: 0,
+                    summ: 0,
+                    price: title.Ebooks.price}
+                  }/>
               )}
 
               {title.CardBooks && (
-                <div>
-                  <p>CardBooks - {title.name}</p>
-                  <button> add </button>
-                </div>
+                <ProductItem updateCart={updateCart} item={
+                  { id: cartID,
+                    name: title.name,
+                    category: 'Book2.0',
+                    quantity: 0,
+                    summ: 0,
+                    price: title.CardBooks.price}
+                  }/>
               )}
             </ul>
           );
@@ -236,7 +274,6 @@ function TestBox({ titles }: { titles: Title[] }) {
     <div>
       <CartID cartID={cartID} />
       <CartItems cart={cart} />
-      {/* <TestAddItem item={testItem} /> */}
       <ProductList titles={titles} />
     </div>
   );

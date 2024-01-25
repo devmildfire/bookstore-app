@@ -54,6 +54,20 @@ async function removeItemFromCart(item: CartItem): Promise<string> {
     return JSON.stringify(error, null, 2)
 }
 
+async function updateItemInCart(item: CartItem): Promise<Cart | PostgrestError> {
+    const {data, error} = await supabaseService
+        .from('Cart')
+        .upsert(item)
+        .select();
+
+    if (error) {
+        console.error(error);
+        return error;
+      } else {
+        return data;
+    }
+}
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -66,6 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let cart: Cart | PostgrestError;
     let item: CartItem;
     let errorMessage: string;
+    let updatedItem: Cart | PostgrestError;
 
     body.oper == 'fetch' &&  
     (     
@@ -85,6 +100,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         item = body.item,
         errorMessage = await removeItemFromCart(item),
         res.status(200).json(errorMessage)
+    )
+
+    body.oper == 'update' &&  
+    (
+        item = body.item,
+        updatedItem = await updateItemInCart(item),
+        res.status(200).json(updatedItem)
     )
 
 }
