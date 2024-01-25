@@ -219,7 +219,7 @@ function TestBox({ titles }: { titles: Title[] }) {
                   category: 'PrintBook',
                   quantity: 0,
                   summ: 0,
-                  price: title.PrintedBooks.price * ( 100 - title.PrintedBooks.discount)}
+                  price: Math.floor(title.PrintedBooks.price * ( 100 - title.PrintedBooks.discount)/100)}
                 }/>
               )}
 
@@ -230,7 +230,7 @@ function TestBox({ titles }: { titles: Title[] }) {
                     category: 'AudioBook',
                     quantity: 0,
                     summ: 0,
-                    price: title.Audiobooks.price * ( 100 - title.Audiobooks.discount) }
+                    price: Math.floor(title.Audiobooks.price * ( 100 - title.Audiobooks.discount) /100)}
                   }/>
               )}
 
@@ -241,7 +241,7 @@ function TestBox({ titles }: { titles: Title[] }) {
                     category: 'EBook',
                     quantity: 0,
                     summ: 0,
-                    price: title.Ebooks.price  * ( 100 - title.Ebooks.discount)}
+                    price: Math.floor(title.Ebooks.price  * ( 100 - title.Ebooks.discount)/100)}
                   }/>
               )}
 
@@ -252,7 +252,7 @@ function TestBox({ titles }: { titles: Title[] }) {
                     category: 'Book2.0',
                     quantity: 0,
                     summ: 0,
-                    price: title.CardBooks.price * ( 100 - title.CardBooks.discount)}
+                    price: Math.floor(title.CardBooks.price * ( 100 - title.CardBooks.discount) / 100)}
                   }/>
               )}
             </ul>
