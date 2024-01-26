@@ -9,7 +9,6 @@ export interface Title {
   readonly description: string;
   readonly thesis: string;
   readonly trailer: string;
-
   readonly ageRestriction: number;
   readonly cover?: string;
   readonly isFeatured: boolean;
