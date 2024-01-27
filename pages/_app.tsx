@@ -10,6 +10,7 @@ import '@/styles/globals.css';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
+import { setOrGetCartCookie } from '@/utils/cardID';
 
 function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -55,6 +56,12 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeComplete', toggleOff);
     };
   }, [toggleOff, toggleOn, isSliderOnScreen]);
+
+  //  при старте работы приложения всем пользователям раздаётся
+  //  принудительное cookie с номером их корзины покупок
+  useEffect(() => {
+    setOrGetCartCookie();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
