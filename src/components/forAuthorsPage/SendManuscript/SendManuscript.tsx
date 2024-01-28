@@ -8,27 +8,45 @@ import {
   OneIconDiv,
   ReqDiv,
   TextReqDiv,
+  TextForMobile,
+  ContentDiv,
+  BugDiv,
 } from './styles';
 import { mediaTypes } from './MediaTypes';
 import { requirements } from './Requirements';
+import BugTypeWriter from '@/assets/images/BugTypeWriter.png';
+import Image from 'next/image';
 
 const firstPar =
-  'Здесь вы можете отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
+  'Здесь вы можете узнать, как отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
 const secondPar =
   'Мы предлагаем роялти 50% от всех чистых доходов с продаж всех изданий авторского текста:';
 
 const SendManuscript = (): React.ReactElement => {
   return (
-    <ManuscriptDiv>
-      <Text variant='h3_1Man'>Уважаемые авторы</Text>
-      <TextDiv>
-        <Text variant='manText'>{firstPar}</Text>
-        <Text variant='manText'>{secondPar}</Text>
-      </TextDiv>
-      <MediaIcons />
-      <Requirements />
-      <Conditions />
-    </ManuscriptDiv>
+    <ContentDiv>
+      <ManuscriptDiv>
+        <div>
+          <Text variant='h1c'>Уважаемые авторы</Text>
+          <TextDiv>
+            <Text variant='ctext'>{firstPar}</Text>
+            <Text variant='ctext'>{secondPar}</Text>
+          </TextDiv>
+        </div>
+        <MediaIcons />
+        <Requirements />
+        <Conditions />
+      </ManuscriptDiv>
+      <BugPart />
+    </ContentDiv>
+  );
+};
+
+const BugPart = (): React.ReactElement => {
+  return (
+    <BugDiv>
+      <Image src={BugTypeWriter} alt='theBugTypeWriter' />
+    </BugDiv>
   );
 };
 
@@ -42,7 +60,7 @@ const MediaIcons = (): React.ReactElement => {
             <Icon>
               <CurrentIcon />
             </Icon>
-            <Text variant='manIcon'>{type.name}</Text>
+            <Text variant='ctext'>{type.name}</Text>
           </OneIconDiv>
         );
       })}
@@ -53,13 +71,13 @@ const MediaIcons = (): React.ReactElement => {
 const Requirements = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='sn_Title'>Требования к рукописи:</Text>
+      <Text variant='h2c'>Требования к рукописи:</Text>
 
       {requirements.map((requirement) => {
         return (
           <TextReqDiv key={requirement}>
             <span>●</span>
-            <Text variant='manText'>{requirement}</Text>
+            <Text variant='ctext'>{requirement}</Text>
           </TextReqDiv>
         );
       })}
@@ -70,20 +88,25 @@ const Requirements = (): React.ReactElement => {
 const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='manRec'>Рукописи не рецензируются</Text>
-      <Text variant='h3_1SendMan' align='start'>
-        {'отправить рукопись можно на почту '}
+      <Text variant='ctext'>Рукописи не рецензируются.</Text>
+      <Text variant='ctext'>
+        Посетителей без предварительной записи в редакции не принимаем.
+      </Text>
+      <Text variant='h4c' align='start'>
+        {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
-      <Text variant='h3_1Bel' align='start'>
-        {'Верим в вас '}
+      <Text variant='h4c' align='start'>
+        {'Верим в вас. '}
       </Text>
-      <Text variant='h3_1SendMan' align='start'>
+      <TextForMobile variant='ctext' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
-        <a href=' '>литжурнале Русского Динозавра</a>
-      </Text>
+        <a href='https://t.me/russiandino' target='_blank'>
+          литжурнале Русского Динозавра
+        </a>
+      </TextForMobile>
     </ReqDiv>
   );
 };

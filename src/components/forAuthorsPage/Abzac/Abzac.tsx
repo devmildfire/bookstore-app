@@ -3,22 +3,37 @@ import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
 import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+import ArrowDown from '@/assets/icons/arrow_down.svg';
+import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
 import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
 import { curriculum } from './Curriculum';
 import setUUIDField from '@/utils/setUUIDField';
 import {
   AbzacDiv,
+  AnimatedAccordionItem,
+  ButtonsDiv,
   CardDiv,
   CourseCardDiv,
+  CourseCardTitleDiv,
+  CoursePriceDiv,
   CoursesDiv,
   CourseTextDiv,
+  CourseTextTitleDiv,
   EnrollDiv,
   HeroDiv,
+  ItemsDiv,
+  ItemsValuesDiv,
+  StaffEnrollDiv,
+  StyledButton,
   TeacherPic,
   TeachersDiv,
   TextDiv,
+  TrailerDiv,
+  ValuesDiv,
 } from './styles';
+import Video from '@/components/Common/Video/Video';
+import * as Accordion from '@radix-ui/react-accordion';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -45,9 +60,12 @@ const Abzac = (): React.ReactElement => {
 
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
-      <Staff />
+      <StaffEnrollDiv>
+        <Staff />
+        <Enrollment />
+      </StaffEnrollDiv>
+      <Trailer />
       <Curriculum />
-      <Enrollment />
     </AbzacDiv>
   );
 };
@@ -90,14 +108,39 @@ const Curriculum = (): React.ReactElement => {
       <Text variant='h3_Abzac' align='start'>
         Направления обучения
       </Text>
-      {curriculumWID.map((course) => (
-        <CourseCard
-          title={course.title}
-          about={course.about ? course.about : ''}
-          teacher={course.lector}
-          key={course.key}
-        />
-      ))}
+
+      <Accordion.Root type='single' defaultValue='item-value-0' collapsible>
+        {curriculumWID.map((course, index) => (
+          //  <Accordion.Item>
+          <AnimatedAccordionItem
+            value={'item-value-' + index}
+            key={'item-key-' + course.key}
+          >
+            <Accordion.Trigger className='AccordionTrigger'>
+              <CourseCardTitle
+                title={course.title}
+                about={course.about ? course.about : ''}
+                teacher={course.lector}
+                key={'title' + course.key}
+              />
+            </Accordion.Trigger>
+            {/* <AnimatedAccordionContent className='AccordionContent'> */}
+            <Accordion.Content className='AccordionContent'>
+              <CourseCard
+                format={course.format}
+                duration={course.duration}
+                price={course.price}
+                title={course.title}
+                teacher={course.lector}
+                key={course.key}
+              />
+            </Accordion.Content>
+            {/* </AnimatedAccordionContent> */}
+            <hr />
+            {/* </Accordion.Item> */}
+          </AnimatedAccordionItem>
+        ))}
+      </Accordion.Root>
     </CoursesDiv>
   );
 };
@@ -106,37 +149,112 @@ interface CourseCardProps {
   teacher: Teacher | undefined;
   title: string;
   about?: string | undefined;
+  format?: string | undefined;
+  duration?: string | undefined;
+  price?: number;
 }
 
-const CourseCard = (props: CourseCardProps): React.ReactElement => {
+const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
   const { teacher, title, about } = props;
   return (
-    <CourseCardDiv>
-      <CourseTextDiv>
+    <CourseCardTitleDiv>
+      <Text variant='courseBig'>{teacher?.name}</Text>
+      <CourseTextTitleDiv>
         <Text variant='courseBig'>{title}</Text>
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
-      </CourseTextDiv>
+      </CourseTextTitleDiv>
+      <ArrowDown />
+    </CourseCardTitleDiv>
+  );
+};
 
-      <Text variant='courseBig'>{teacher?.name}</Text>
+const CourseCard = (props: CourseCardProps): React.ReactElement => {
+  const { format, teacher, duration, price } = props;
+  return (
+    <CourseCardDiv>
+      <CourseTextDiv>
+        <ItemsDiv>
+          <Text variant='abzacCardText'>Формат: </Text>
+          <Text variant='abzacCardText'>Лектор: </Text>
+          <Text variant='abzacCardText'>Длительность: </Text>
+        </ItemsDiv>
+        <ValuesDiv>
+          <Text variant='abzacCardText'>{format}</Text>
+          <Text variant='abzacCardText'>{teacher?.name}</Text>
+          <Text variant='abzacCardText'>{duration}</Text>
+        </ValuesDiv>
+        <ItemsValuesDiv>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Формат:
+            </Text>
+            <Text variant='buttonText' textColor='white'>
+              {format}
+            </Text>
+          </div>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Лектор:{' '}
+            </Text>
+            <Text variant='buttonText'>{teacher?.name}</Text>
+          </div>
+          <div>
+            <Text variant='buttonText' textColor='white80'>
+              Длительность:{' '}
+            </Text>
+            <Text variant='buttonText'>{duration}</Text>
+          </div>
+        </ItemsValuesDiv>
+      </CourseTextDiv>
+      <CoursePriceDiv>
+        {price && (
+          <Text variant='courseBig' align='right'>
+            {price + ' \u20BD'}
+          </Text>
+        )}
+        <ButtonsDiv>
+          <StyledButton className='cartButton' type='button'>
+            Добавить в корзину
+          </StyledButton>
+          <CartPlusOne />
+        </ButtonsDiv>
+      </CoursePriceDiv>
     </CourseCardDiv>
   );
 };
 
 const enrollText =
-  'Предварительная запись в онлайн-мастерскую уже открыта — от вас пока требуется только обозначить свой интерес. Вы получите все подробности непосредственно перед запуском курса, и тогда сможете решить, участвовать или нет.';
+  'Интенсив мастерской Абзац прошёл в 2023 году и теперь доступен в формате видеолекций (подробности ниже). Онлайн-мастерская продолжает работать в режиме факультатива, в формате личных и групповых встреч с мастерами по заявкам учащихся.';
+
+const enrollAdress = [
+  'Чтобы попасть в чат мастерской в Телеграм и узнать подробности, ',
+  <br key='br' />,
+  'напишите немного о себе на\u00A0',
+];
 
 const Enrollment = (): React.ReactElement => {
   return (
     <EnrollDiv>
-      <Text variant='abzacCardText' align='start'>
+      <Text variant='abzacText' align='start'>
         {enrollText}
       </Text>
       <Text variant='h4_Abzac' align='start'>
-        {'Чтобы записаться, напишите немного о себе на почту '}
+        {enrollAdress}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
       </Text>
     </EnrollDiv>
+  );
+};
+
+const Trailer = (): React.ReactElement => {
+  return (
+    <TrailerDiv>
+      <Text variant='h3_Abzac' align='start'>
+        Трейлер
+      </Text>
+      <Video src='/videos/abzac.mp4' poster='/images/poster_abzac.png' />
+    </TrailerDiv>
   );
 };
 

@@ -1,49 +1,97 @@
 // import Link from 'next/link';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import { Text } from '@/components/Common/Text/Text';
 
-const ManuscriptDiv = styled.div`
-  /* * {
-    outline: 1px solid red;
+const ContentDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+
+  /* outline: 1px solid red;
+  * {
+    outline: 1px solid green;
   } */
+
+  @media ${breakPoints.md} {
+    flex-direction: column-reverse;
+  }
+`;
+
+const BugDiv = styled.div`
+  flex-shrink: 0;
+  /* width: 70vw; */
+  width: 50%;
+  /* width: 250px; */
+  max-width: 600px;
 
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  align-items: center;
+  justify-content: flex-start;
+
+  img {
+    position: fixed;
+    max-width: 30%;
+  }
+
+  @media ${breakPoints.md} {
+    flex-direction: row;
+    width: 100%;
+    margin: 0 auto;
+
+    img {
+      position: unset;
+      max-width: 100%;
+    }
+
+  }
+`;
+
+const ManuscriptDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-gap);
 
   --padding-top: 100px;
-  --padding-sides: 235px;
+  // --padding-sides: 235px;
+  --padding-sides: 0px;
   --padding-bottom: 100px;
 
-  padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
+  /* padding: var(--padding-top) var(--padding-sides) var(--padding-bottom); */
 
   @media screen and (max-width: 1900px) {
     --padding-top: 100px;
-    --padding-sides: 96px;
+    // --padding-sides: 96px;
+    --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media ${breakPoints.xl} {
     --padding-top: 100px;
-    --padding-sides: 96px;
+    // --padding-sides: 96px;
+    --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media screen and (max-width: 1200px) {
     --padding-top: 90px;
-    --padding-sides: 106px;
+    // --padding-sides: 106px;
+    --padding-sides: 0px;
     --padding-bottom: 73px;
   }
 
   @media ${breakPoints.lg} {
     --padding-top: 90px;
-    --padding-sides: 106px;
+    // --padding-sides: 106px;
+    --padding-sides: 0px;
     --padding-bottom: 73px;
   }
 
   @media ${breakPoints.md} {
     --padding-top: 57px;
-    --padding-sides: 23px;
+    // --padding-sides: 23px;
+    --padding-sides: 0px;
     --padding-bottom: 50px;
     gap: 16px;
   }
@@ -59,7 +107,7 @@ const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-
+  
   /* @media ${breakPoints.xl} {
     gap: 50px;
   }
@@ -133,9 +181,9 @@ const Icon = styled.svg`
   color: var(--main-white-100);
   transition: all 0.3s ease-in-out;
 
-  :hover {
+  /* :hover {
     color: var(--main-red-100);
-  }
+  } */
 
   --size: 85px;
 
@@ -197,6 +245,11 @@ const ReqDiv = styled.div`
     color: var(--main-red-100);
   }
 
+  a:hover {
+    color: red;
+    text-decoration: underline;
+  }
+
   @media ${breakPoints.xl} {
     gap: 24px;
   }
@@ -216,6 +269,14 @@ const ReqDiv = styled.div`
   }
 `;
 
+const TextForMobile = styled(Text)`
+  display: none;
+
+  @media ${breakPoints.lg} {
+    display: block;
+  }
+`;
+
 export {
   TextDiv,
   ManuscriptDiv,
@@ -224,4 +285,7 @@ export {
   OneIconDiv,
   ReqDiv,
   TextReqDiv,
+  TextForMobile,
+  ContentDiv,
+  BugDiv,
 };
