@@ -20,8 +20,7 @@ function ProductCard3d(props: ProductCardProps) {
   const { price, cover, name, onClick, onEnterKey, authors, types } = props;
 
   const { handleModalState, handleOpenModal } = useModal();
-  console.log({ price });
-  // console.log({ price: price.filter((price) => price !== null) });
+
   const onAddToCartClick = () => {
     handleModalState({
       name,
