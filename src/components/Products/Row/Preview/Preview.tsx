@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { PreviewProps } from '../../types';
 import { AnimatePresence } from 'framer-motion';
 import CloseIcon from '@/assets/icons/close.svg';
@@ -23,11 +23,17 @@ function Preview({
   isOpen,
   shouldClose,
   preview,
+  slug,
   width,
   videoContainerRef,
   handleClose,
 }: PreviewProps) {
   const router = useRouter();
+
+  const onOpenTitlePage = useCallback(() => {
+    router.push(`/books/${slug}`);
+  }, [slug, router]);
+
   return (
     <AnimatePresence>
       {!shouldClose && preview && isOpen && width > 512 && (
@@ -53,7 +59,7 @@ function Preview({
           >
             <BookDescriptionContainer gap={32}>
               <InfoContainer gap={12}>
-                <Title>{preview.title}</Title>
+                <Title>{preview.name}</Title>
                 <Author>
                   {preview.authors.map((author) => author.name).join(', ')}
                 </Author>
@@ -65,10 +71,7 @@ function Preview({
                   {preview.description}
                 </Description>
               </DescriptionBox>
-              <Button
-                variant='outlined'
-                onClick={() => router.push(`/books/deleted`)}
-              >
+              <Button variant='outlined' onClick={onOpenTitlePage}>
                 Познать
               </Button>
             </BookDescriptionContainer>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import {
   StyledIcon,
   StyledIconsList,
@@ -14,7 +14,7 @@ import IconButton from '@/components/Common/IconButton(deprecated)';
 import { bookTypeIconMap } from '@/consts/products';
 
 interface SetBookCardProps
-  extends Pick<Book, 'id' | 'authors' | 'title' | 'cover' | 'types'>,
+  extends Pick<Title, 'id' | 'authors' | 'title' | 'cover' | 'types'>,
     ClassNameProps {}
 
 const SetBookCard: React.FC<SetBookCardProps> = (props) => {

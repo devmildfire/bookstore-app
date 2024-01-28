@@ -1,5 +1,5 @@
 import books from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
@@ -104,7 +104,7 @@ const MatchText = styled.p<{ weight?: 'normal' | 'bold' }>`
   }
 `;
 
-const Title = styled(Text)`
+const BookTitle = styled(Text)`
   text-transform: capitalize;
 `;
 
@@ -135,12 +135,12 @@ const SearchResults = styled(Command.List)`
   }
 `;
 
-function MatchItem(props: Book) {
+function MatchItem(props: Title) {
   const { handleOpenModal } = useModal();
   const router = useRouter();
 
   function handleSelect() {
-    router.push(`/books/${props.transliteratedTitle}`);
+    router.push(`/books/${props.slug}`);
     handleOpenModal(false, 'search');
   }
 
@@ -148,11 +148,11 @@ function MatchItem(props: Book) {
     <CommandItem onSelect={handleSelect}>
       <MatchLink
         onClick={() => handleOpenModal(false, 'search')}
-        href={`/books/${props.transliteratedTitle}`}
+        href={`/books/${props.slug}`}
       >
-        <BookCover src={props.cover} alt={props.title} />
+        <BookCover src={props.cover} alt={props.name} />
         <MatchInfoContainer>
-          <MatchText weight='bold'>{props.title}</MatchText>
+          <MatchText weight='bold'>{props.name}</MatchText>
           <MatchText>
             {props.authors.map((author) => author.name).join(', ')}
           </MatchText>
@@ -167,7 +167,7 @@ export function SearchModal() {
 
   return (
     <>
-      <Title variant='h3_3'>Поиск</Title>
+      <BookTitle variant='h3_3'>Поиск</BookTitle>
       <CommandContainer>
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />

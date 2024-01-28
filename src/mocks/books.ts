@@ -1,4 +1,4 @@
-import { Book, BookType, Reader, Worker } from '@/models/books';
+import { Title, BookType, Reader, Worker } from '@/models/books';
 import getRandomBetween from '@/utils/getRandomBetween';
 import { authors } from './authors';
 
@@ -75,7 +75,7 @@ const publishDate = [
 
 const types: BookType[] = ['write', 'book2', 'digital', 'audio'];
 
-const book: Book = {
+const book: Title = {
   id: 2,
   title: 'DELETED',
   transliteratedTitle: 'deleted',
@@ -101,7 +101,7 @@ const book: Book = {
   workers,
 };
 
-const books: Book[] = [
+const books: Title[] = [
   {
     id: 1,
     title: 'Аристотель в\u00A0Казахстане',
@@ -181,7 +181,7 @@ const books: Book[] = [
   },
 ];
 
-export const generateBook = (id: number): Book => ({
+export const generateBook = (id: number): Title => ({
   ...book,
   id,
   publishDate: publishDate[getRandomBetween(0, publishDate.length)],

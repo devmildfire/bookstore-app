@@ -1,7 +1,7 @@
 import { Product } from '@/types/product';
-import { Book } from '../books';
+import { Title } from '../books';
 
 export interface BoxSet extends Product {
-  readonly books: Book[];
+  readonly books: Title[];
   readonly description: string;
 }

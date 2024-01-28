@@ -368,7 +368,7 @@ const editions: editionTypes = {
 const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
   return (
     <StyledWrapper>
-      <Tabs {...props} editions={editions} />
+      {/* <Tabs {...props} editions={editions} /> */}
     </StyledWrapper>
   );
 };

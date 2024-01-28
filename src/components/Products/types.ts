@@ -1,9 +1,9 @@
-import { Book } from '@/models/books/types';
+import { Title } from '@/models/books/types';
 import { TriggerStyles } from '../Common/Trigger/types';
 
 export type RowProps = {
-  row: Book[];
-  data: Book[];
+  row: Title[];
+  data: Title[];
   buttonStyle: TriggerStyles;
   bookStyle: '3d' | 'flat';
   rowId: number;
@@ -14,7 +14,8 @@ export type RowProps = {
 export type PreviewProps = {
   isOpen: boolean;
   shouldClose: boolean;
-  preview?: Book;
+  preview?: Title;
+  slug: string | null;
   width: number;
   handleClose: () => void;
   videoContainerRef: React.Ref<HTMLDivElement>;

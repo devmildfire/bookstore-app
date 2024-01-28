@@ -18,21 +18,22 @@ interface BookAuthorProps {
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
   const { authors } = props;
-  const author = authors[0];
+  console.log(authors);
+  // const author = authors[0];
   return (
     <StyleWrapper>
       <Title>Об авторе</Title>
       <AuthorInfo>
-        <AuthorPhoto src={author.photo} alt={author.name} />
+        {/* <AuthorPhoto src={author.photo} alt={author.name} /> */}
         <AuthorDescr>
           <AuthorProps>
-            {authors.map(({ name }) => {
+            {/* {authors.map(({ name }) => {
               return <span key={name}>{`${name} `}</span>;
-            })}
-            <span>{`${author.city} | ${author.dateOfBirth}`}</span>
+            })} */}
+            {/* <span>{`${author.city} | ${author.dateOfBirth}`}</span> */}
           </AuthorProps>
-          <AuthorSpeech>{author.phrase}</AuthorSpeech>
-          <AuthorAbout>{author.biography}</AuthorAbout>
+          {/* <AuthorSpeech>{author.phrase}</AuthorSpeech> */}
+          {/* <AuthorAbout>{author.biography}</AuthorAbout> */}
           {/* <AuthorContacts>
             <span>Контакты:</span>
           </AuthorContacts> */}

@@ -11,11 +11,11 @@ import {
   OldPrice,
 } from '../styles';
 import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import { useModal } from '../../Modal/Modal';
 import { TriggerStyles } from '@/components/Common/Trigger/types';
 
-export interface ProductCardProps extends Book {
+export interface ProductCardProps extends Title {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
   buttonStyle: TriggerStyles;
@@ -23,14 +23,13 @@ export interface ProductCardProps extends Book {
 }
 
 function ProductCard(props: ProductCardProps) {
-  const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
-    props;
+  const { price, cover, name, onClick, onEnterKey, authors, types } = props;
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
     handleModalState({
-      title,
-      price,
+      name,
+      price: Math.min(...price),
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
@@ -48,12 +47,12 @@ function ProductCard(props: ProductCardProps) {
         height={525}
         quality={75}
         src={cover}
-        alt={title}
+        alt={name}
       />
       <Footer>
         <PriceContainer>
-          <Price>{`${newPrice === null ? price : newPrice}₽`}</Price>
-          <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
+          <Price>{`${price}₽`}</Price>
+          {/* <OldPrice discount>{newPrice && `${price}₽`}</OldPrice> */}
         </PriceContainer>
         <ButtonsContainer>
           <Button

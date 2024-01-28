@@ -1,8 +1,8 @@
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import { action, makeObservable, observable, runInAction } from 'mobx';
 import { supabase } from 'api';
 
-type CartItem = Book;
+type CartItem = Title;
 
 export class CartStore {
   cart: Array<CartItem> | null = null;

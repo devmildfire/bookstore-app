@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { generateItems } from '@/utils/generateItems';
 import { generateBook } from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 
 export default function handler(
   _: NextApiRequest,
-  res: NextApiResponse<Book[]>
+  res: NextApiResponse<Title[]>
 ): void {
-  const books: Book[] = generateItems({
+  const books: Title[] = generateItems({
     generator: generateBook,
     pagination: {
       count: 5,
