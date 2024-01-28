@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import { StyledContent, StyledWrapper } from './styles';
-import Popups from '@/components/Popups';
 import { PropsWithChildren } from 'react';
 
 export interface PageLayoutProps {
@@ -25,7 +24,6 @@ const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
         <Header />
         <StyledContent>{children}</StyledContent>
         <Footer />
-        <Popups />
       </StyledWrapper>
     </>
   );

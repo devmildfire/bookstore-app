@@ -21,12 +21,12 @@ export class CartStore {
     });
   };
 
-  addToCart = async (item: CartItem): Promise<Array<CartItem>> => {
-    const { data, error } = await supabase.from('Cart').insert([item]).select();
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data as Array<CartItem>;
+  addToCart = async (item: CartItem) => {
+    // const { data, error } = await supabase.from('Cart').insert([item]).select();
+    // if (error) {
+    //   throw new Error(error.message);
+    // }
+    // return data as Array<CartItem>;
+    return null;
   };
 }

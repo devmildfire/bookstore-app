@@ -17,7 +17,13 @@ interface BookPageProps {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  console.log(slug);
+
+  if (!slug) {
+    return {
+      props: { book: null },
+    };
+  }
+
   const { data, error } = await supabase
     .from('Titles')
     .select('*')
@@ -46,8 +52,8 @@ const BookPage = ({ book }: BookPageProps): React.ReactElement => {
       </Head>
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
-        <BookProperties {...book} />
-        <BookTrailer src={book.trailerSrc} title={book.name} />
+        {/* <BookProperties {...book} /> */}
+        <BookTrailer src={book.trailer} title={book.name} />
         <BookAuthor authors={book.authors} />
         {/* <SimilarBooks /> */}
       </StyleWrapper>

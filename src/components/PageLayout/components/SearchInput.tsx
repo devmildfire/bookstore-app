@@ -4,7 +4,7 @@ import Glass from '../../../assets/icons/search.svg';
 import colors from '@/utils/colors';
 import breakPoints from '@/utils/breakPoints';
 import books from '@/mocks/books';
-import { Title } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 const StyledGlass = styled(Glass)`
   position: absolute;
@@ -167,7 +167,7 @@ function SearchInput({
   isInputActive?: boolean;
   setIsInputActive: (a: boolean) => void;
 }): ReactElement {
-  const [matches, setMatches] = useState<Title[]>([]);
+  const [matches, setMatches] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   // const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const dropdownRef: any = useOuterClick(() => {
@@ -180,7 +180,7 @@ function SearchInput({
     const query = event.target.value;
     setSearchQuery(query);
     if (query.length > 0) {
-      const matched: Title[] = books.filter((b) => {
+      const matched: Book[] = books.filter((b) => {
         return b.title.toLowerCase().includes(query.toLowerCase());
       });
       setMatches(matched);

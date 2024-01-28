@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { generateBook } from '@/mocks/books';
-import { Title } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Title | null>
+  res: NextApiResponse<Book | null>
 ): void {
   const id = Number(req.query.id);
-  const book: Title | null = id <= 150 ? generateBook(id) : null;
+  const book: Book | null = id <= 150 ? generateBook(id) : null;
   res.status(200).json(book);
 }

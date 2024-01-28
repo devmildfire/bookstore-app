@@ -1,5 +1,5 @@
 import books from '@/mocks/books';
-import { Title } from '@/models/books';
+import { Book, Title } from '@/models/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
@@ -135,12 +135,12 @@ const SearchResults = styled(Command.List)`
   }
 `;
 
-function MatchItem(props: Title) {
+function MatchItem(props: Book) {
   const { handleOpenModal } = useModal();
   const router = useRouter();
 
   function handleSelect() {
-    router.push(`/books/${props.slug}`);
+    router.push(`/books/${props.transliteratedTitle}`);
     handleOpenModal(false, 'search');
   }
 
@@ -148,11 +148,11 @@ function MatchItem(props: Title) {
     <CommandItem onSelect={handleSelect}>
       <MatchLink
         onClick={() => handleOpenModal(false, 'search')}
-        href={`/books/${props.slug}`}
+        href={`/books/${props.transliteratedTitle}`}
       >
-        <BookCover src={props.cover} alt={props.name} />
+        <BookCover src={props.cover} alt={props.title} />
         <MatchInfoContainer>
-          <MatchText weight='bold'>{props.name}</MatchText>
+          <MatchText weight='bold'>{props.title}</MatchText>
           <MatchText>
             {props.authors.map((author) => author.name).join(', ')}
           </MatchText>

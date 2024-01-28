@@ -1,7 +1,7 @@
 import books from '@/mocks/books';
-import { Title } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
-const getBookInfo = (bookId: number | number[] | undefined): Title | null => {
+const getBookInfo = (bookId: number | number[] | undefined): Book | null => {
   if (!bookId) {
     return null;
   }
