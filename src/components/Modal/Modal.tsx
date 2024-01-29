@@ -18,27 +18,24 @@ import BookIcon from '@/assets/icons/book.svg';
 import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import breakPoints from '@/utils/breakPoints';
+import { BookTableTypesTuple } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
 
-interface LookupPros {
-  [key: string]: ReactNode;
-}
-
-const modalIconLookup: LookupPros = {
-  audio: <AudioIcon />,
-  book2: <BookTwoIcon />,
-  write: <BookIcon />,
-  digital: <DigitalIcon />,
+const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
+  Audiobooks: <AudioIcon />,
+  CardBooks: <BookTwoIcon />,
+  PrintedBooks: <BookIcon />,
+  Ebooks: <DigitalIcon />,
 };
 
 interface BookModalState {
-  title: string;
+  name: string;
   price: number;
   // newPrice?: number;
   author: string;
-  types: string[];
+  types: BookTableTypesTuple[number][];
 }
 
 interface ModalContextProps {
@@ -391,28 +388,30 @@ function Edition({ children }: PropsWithChildren) {
 }
 
 function BookModal(props: BookModalState) {
-  const { title, types, author, price } = props;
+  const { name, types, author, price } = props;
   const [sum, setSum] = useState(0);
 
   return (
     <Container>
-      <Title variant='text'>{title}</Title>
+      <Title variant='text'>{name}</Title>
       <Author>{author}</Author>
       <ModalTitleWrapper>
         <ModalTitle>Типы издания</ModalTitle>
       </ModalTitleWrapper>
       <Buttons>
-        {types.map((type: string) => {
-          return (
-            <Edition key={type}>
-              <IconWrapper>{modalIconLookup[type]}</IconWrapper>
-              <EditionName variant='text'>{editions[type]}</EditionName>
-              <ProductCopies setSum={setSum} price={price} />
-              <PriceContainer>
-                <Price>{`${price}₽`}</Price>
-              </PriceContainer>
-            </Edition>
-          );
+        {types.map((type) => {
+          if (type !== null) {
+            return (
+              <Edition key={type}>
+                <IconWrapper>{modalIconLookup[type]}</IconWrapper>
+                <EditionName variant='text'>{editions[type]}</EditionName>
+                <ProductCopies setSum={setSum} price={price} />
+                <PriceContainer>
+                  <Price>{`${price}₽`}</Price>
+                </PriceContainer>
+              </Edition>
+            );
+          }
         })}
       </Buttons>
       <Footer>
@@ -442,11 +441,11 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
     open: false,
     modalType: '',
   });
-  const [modalState, setModalState] = useState({
-    title: '',
+  const [modalState, setModalState] = useState<BookModalState>({
+    name: '',
     price: 0,
     author: '',
-    types: [''],
+    types: [],
   });
 
   const ModalContent = modalLookup.get(modalType) ?? ModalContentFallback;

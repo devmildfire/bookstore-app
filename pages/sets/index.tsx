@@ -14,11 +14,11 @@ const SetsPage: NextPage = () => (
 );
 
 export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch, }) =>
+  ({ dispatch }) =>
     async () => {
       const requests: Promise<unknown>[] = [
-        dispatch(getBoxSets.initiate({ page: 1, })),
-        dispatch(getPopularBooks.initiate(undefined))
+        dispatch(getBoxSets.initiate({ page: 1 })),
+        dispatch(getPopularBooks.initiate(undefined)),
       ];
 
       await Promise.all(requests);

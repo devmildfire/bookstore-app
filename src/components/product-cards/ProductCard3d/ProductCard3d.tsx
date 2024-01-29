@@ -17,15 +17,14 @@ import { useModal } from '@/components/Modal/Modal';
 import { ProductCardProps } from '../ProductCard/ProductCard';
 
 function ProductCard3d(props: ProductCardProps) {
-  const { price, cover, title, onClick, onEnterKey, newPrice, authors, types } =
-    props;
+  const { price, cover, name, onClick, onEnterKey, authors, types } = props;
 
   const { handleModalState, handleOpenModal } = useModal();
-  console.log({ cover });
+
   const onAddToCartClick = () => {
     handleModalState({
-      title,
-      price,
+      name,
+      price: Math.min(...price),
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
@@ -49,8 +48,8 @@ function ProductCard3d(props: ProductCardProps) {
       </Book>
       <Footer>
         <PriceContainer>
-          <Price>{`${newPrice === null ? price : newPrice}₽`}</Price>
-          <OldPrice discount>{newPrice && `${price}₽`}</OldPrice>
+          <Price>от {`${Math.min(...price)}₽`}</Price>
+          {/* <OldPrice discount>{newPrice `${price}₽`}</OldPrice> */}
         </PriceContainer>
         <ButtonsContainer>
           <IconButton

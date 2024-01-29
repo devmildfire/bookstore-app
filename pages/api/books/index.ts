@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import books, { generateBook } from '@/mocks/books';
-import { Book, /* BookType, */ GetBooksQuery } from '@/models/books';
+import { Title, /* BookType, */ GetBooksQuery } from '@/models/books';
 import { generateItems } from '@/utils/generateItems';
 
 const data = Array(12)

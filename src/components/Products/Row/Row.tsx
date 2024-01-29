@@ -1,6 +1,6 @@
 import React from 'react';
 import { RowProps } from '../types';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import useScreenSize from '@/hooks/useScreenSize';
 import { useRouter } from 'next/router';
 import useScrollTo from '@/hooks/useScrollTo';
@@ -17,7 +17,9 @@ const Row = ({
   openRowId,
   handleOpenRow,
 }: RowProps) => {
-  const [preview, setPreview] = React.useState<Book>();
+  const [preview, setPreview] = React.useState<Title>();
+  const [titleSlug, setTitleSlug] = React.useState<string | null>(null);
+
   const [shouldClose, setShouldClose] = React.useState(false);
   const previewRef = React.useRef<HTMLDivElement>(null);
   const videoContainerRef = React.useRef<HTMLDivElement>(null);
@@ -27,16 +29,21 @@ const Row = ({
   const isOpen = openRowId === rowId;
 
   const open = (id: number) => {
-    if (width <= REDIRECT_ON_CLICK_DISPLAY_WIDTH) {
-      const bookItem = data.find((book) => book.id === id);
-      return router.push(`/books/${bookItem?.transliteratedTitle}`);
+    const bookItem = data.find((book) => book.id === id);
+
+    if (!bookItem) {
+      return;
     }
 
-    const newPreview = data.find((book) => book.id === id);
+    if (width <= REDIRECT_ON_CLICK_DISPLAY_WIDTH) {
+      router.push(`/books/${bookItem?.slug}`);
+      return;
+    }
 
     setShouldClose(false);
     handleOpenRow(rowId);
-    setPreview(newPreview);
+    setPreview(bookItem);
+    setTitleSlug(bookItem?.slug);
   };
 
   const close = () => {
@@ -92,6 +99,7 @@ const Row = ({
           isOpen={isOpen}
           shouldClose={shouldClose}
           preview={preview}
+          slug={titleSlug}
           videoContainerRef={videoContainerRef}
           width={width}
           handleClose={close}

@@ -1,8 +1,8 @@
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import { action, makeObservable, observable, runInAction } from 'mobx';
 import { supabase } from 'api';
 
-type CartItem = Book;
+type CartItem = Title;
 
 export class CartStore {
   cart: Array<CartItem> | null = null;
@@ -21,12 +21,12 @@ export class CartStore {
     });
   };
 
-  addToCart = async (item: CartItem): Promise<Array<CartItem>> => {
-    const { data, error } = await supabase.from('Cart').insert([item]).select();
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return data as Array<CartItem>;
+  addToCart = async (item: CartItem) => {
+    // const { data, error } = await supabase.from('Cart').insert([item]).select();
+    // if (error) {
+    //   throw new Error(error.message);
+    // }
+    // return data as Array<CartItem>;
+    return null;
   };
 }

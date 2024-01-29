@@ -4,7 +4,7 @@ import Glass from '../../../assets/icons/search.svg';
 import colors from '@/utils/colors';
 import breakPoints from '@/utils/breakPoints';
 import books from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 const StyledGlass = styled(Glass)`
   position: absolute;

@@ -16,6 +16,7 @@ import CloseIcon from '@/assets/icons/close.svg';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
 import breakPoints from '@/utils/breakPoints';
+import { Title } from '@/models/books';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -54,11 +55,11 @@ const StyledCloseIcon = styled(CloseIcon)`
   }
 `;
 
-const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
+const BookDescription = (props: Title): React.ReactElement => {
   const {
-    title,
-    publishDate,
-    genre,
+    name,
+    // publishDate,
+    // genre,
     ageRestriction,
     cover,
     description,
@@ -67,7 +68,7 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
   } = props;
 
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const year = new Date(publishDate).getFullYear();
+  // const year = new Date(publishDate).getFullYear();
 
   const handleClosePopup = () => {
     // document.body.style.overflow = 'unset';
@@ -101,18 +102,18 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         <FullscreenCover
           className={isImageOpen ? 'active' : ''}
           src={cover}
-          alt={title}
+          alt={name}
         />
       </CoverPopup>
 
-      <StyledImage onClick={handleOpenPopup} src={cover} alt={title} />
+      <StyledImage onClick={handleOpenPopup} src={cover} alt={name} />
       <DescriptionLayout>
-        <StyledTitle variant='h2_1'>{title}</StyledTitle>
+        <StyledTitle variant='h2_1'>{name}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {/* {authors.map((author) => author.name)} */}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
-          {`${year} | ${genre} | ${ageRestriction}`}
+          {/* {`${year} | ${genre} | ${ageRestriction}`} */}
         </StyledInfo>
         <StyledThesis
           variant='h3_3'

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 import {
   StyledIcon,
   StyledIconsList,

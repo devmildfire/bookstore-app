@@ -1,4 +1,4 @@
-import { Book, BookType, Reader, Worker } from '@/models/books';
+import { Title, BookType, Reader, Worker, Book } from '@/models/books';
 import getRandomBetween from '@/utils/getRandomBetween';
 import { authors } from './authors';
 

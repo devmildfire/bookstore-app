@@ -1,5 +1,5 @@
 import books from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
@@ -104,7 +104,7 @@ const MatchText = styled.p<{ weight?: 'normal' | 'bold' }>`
   }
 `;
 
-const Title = styled(Text)`
+const BookTitle = styled(Text)`
   text-transform: capitalize;
 `;
 
@@ -167,7 +167,7 @@ export function SearchModal() {
 
   return (
     <>
-      <Title variant='h3_3'>Поиск</Title>
+      <BookTitle variant='h3_3'>Поиск</BookTitle>
       <CommandContainer>
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />

@@ -3,7 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import BookDescription from '@/components/BookPage/BookDescription';
 import BookProperties from '@/components/BookPage/BookProperties';
 import BookTrailer from '@/components/BookPage/BookTrailer';
@@ -12,15 +12,22 @@ import breakPoints from '@/utils/breakPoints';
 import { supabase } from 'api';
 
 interface BookPageProps {
-  readonly book: Book;
+  readonly book: Title;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { title } = context.query;
+  const { slug } = context.query;
+
+  if (!slug) {
+    return {
+      props: { book: null },
+    };
+  }
+
   const { data, error } = await supabase
     .from('Titles')
     .select('*')
-    .eq('slug', title);
+    .eq('slug', slug);
 
   if (data) {
     const book = data[0];
@@ -41,12 +48,12 @@ const BookPage = ({ book }: BookPageProps): React.ReactElement => {
   return (
     <>
       <Head>
-        <title>{book.title}</title>
+        <title>{book.name}</title>
       </Head>
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
-        <BookProperties {...book} />
-        <BookTrailer src={book.trailerSrc} title={book.title} />
+        {/* <BookProperties {...book} /> */}
+        <BookTrailer src={book.trailer} title={book.name} />
         <BookAuthor authors={book.authors} />
         {/* <SimilarBooks /> */}
       </StyleWrapper>

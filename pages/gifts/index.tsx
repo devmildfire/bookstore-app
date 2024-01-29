@@ -14,11 +14,11 @@ const GiftsPage: NextPage = () => (
 );
 
 export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch, }) =>
+  ({ dispatch }) =>
     async () => {
       const requests = [
         dispatch(getPopularBooks.initiate(undefined)),
-        dispatch(getGifts.initiate(undefined))
+        dispatch(getGifts.initiate(undefined)),
       ];
 
       await Promise.all(requests);

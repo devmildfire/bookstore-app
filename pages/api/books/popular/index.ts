@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { generateItems } from '@/utils/generateItems';
 import { generateBook } from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 export default function handler(
   _: NextApiRequest,

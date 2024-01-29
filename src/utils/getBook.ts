@@ -1,5 +1,5 @@
 import books from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 const getBookInfo = (bookId: number | number[] | undefined): Book | null => {
   if (!bookId) {
@@ -8,7 +8,7 @@ const getBookInfo = (bookId: number | number[] | undefined): Book | null => {
   return (
     books.find(
       ({ id }) =>
-        id === bookId || (Array.isArray(bookId) && bookId.includes(id)),
+        id === bookId || (Array.isArray(bookId) && bookId.includes(id))
     ) || null
   );
 };

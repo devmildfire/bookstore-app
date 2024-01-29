@@ -1,12 +1,12 @@
 import React, { useMemo, useState, ReactElement } from 'react';
 import { GridContainer } from './styles';
-import { Book } from '@/models/books';
+import { Title } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import { Row } from './Row';
 
 interface GridProps {
-  data: Book[];
+  data: Title[];
 }
 
 const getColumns = (width: number) => {
