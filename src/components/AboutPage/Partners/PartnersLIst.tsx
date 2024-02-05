@@ -17,6 +17,7 @@ const emblaOptions: EmblaOptionsType = {
   loop: true,
   // FIXME: закомментировал из-за ошибки типа. Нужно вернуть опцию скорости(?)
   // speed: 0.00575,
+  duration: 15000,
 
   direction: 'rtl',
 };
