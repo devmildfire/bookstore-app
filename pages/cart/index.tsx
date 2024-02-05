@@ -6,6 +6,9 @@ import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
 
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { Cart, CartItem as CartItemType } from '@/types/api';
+
 interface Product {
   id: number;
   bookCover: string;
@@ -60,7 +63,10 @@ const ReturnButton = styled.button`
 `;
 
 const calculateTotalPrice = (products: Product[]): number => {
-  const result = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
+  const result = products.reduce(
+    (acc, product) => acc + product.price * product.quantity,
+    0
+  );
   return result;
 };
 
@@ -118,7 +124,10 @@ const Cart = (): React.ReactElement => {
     dispatch({ type: productsActionKind.remove, productId });
   }
 
-  const productQuantity = products.reduce((acc, product) => acc + product.quantity, 0) as number;
+  const productQuantity = products.reduce(
+    (acc, product) => acc + product.quantity,
+    0
+  ) as number;
 
   return (
     <Styled.Main>
