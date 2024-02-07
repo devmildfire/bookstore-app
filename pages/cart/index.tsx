@@ -7,7 +7,7 @@ import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
 
 import { setOrGetCartCookie } from '@/utils/cardID';
-import { Cart, CartItem as CartItemType } from '@/types/api';
+import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
 
 interface Product {
   id: number;

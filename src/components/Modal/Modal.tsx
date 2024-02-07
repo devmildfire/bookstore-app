@@ -420,6 +420,7 @@ function BookModal(props: BookModalState) {
           <Price>{`${sum}₽`}</Price>
         </TotalPrice>
         <AddToCartButton
+          // добавить функцию добавления нужного количества копий книги в корзину
           variant='outlined'
           onClick={() => console.log('added to the cart')}
         >

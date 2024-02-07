@@ -10,6 +10,7 @@ export type CartItem = {
   quantity: number;
   summ: number;
   price: number;
-}
+  discount: number;
+};
 
-export type Cart = CartItem[]
+export type Cart = CartItem[];
