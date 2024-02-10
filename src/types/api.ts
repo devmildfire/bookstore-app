@@ -11,6 +11,8 @@ export type CartItem = {
   summ: number;
   price: number;
   discount: number;
+  subtitle: string;
+  picture: string;
 };
 
 export type Cart = CartItem[];

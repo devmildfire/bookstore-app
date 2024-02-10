@@ -6,14 +6,9 @@ import { Cart, CartItem } from '@/types/api';
 async function getCart(id: string): Promise<Cart | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Cart')
-    .select(
-      `
-            *,
-            authors: Titles(authors),
-            cover: Titles(cover)
-      `
-    )
-    .eq('id', id);
+    .select('*')
+    .eq('id', id)
+    .order('name');
 
   if (error) {
     console.error(error);

@@ -21,6 +21,17 @@ interface Product {
   quantity: number;
 }
 
+const readableCategories = {
+  PrintBook: 'печатное издание',
+  AudioBook: 'аудиокнига',
+  EBook: 'электронное издание',
+  'Book2.0': 'книга 2.0',
+  GiftCard: 'карта даров',
+  BoxSet: 'бокс сет',
+  Subscription: 'подписка',
+  Course: 'курс',
+};
+
 // const cartProductsMock: Product[] = [
 //   {
 //     id: 1,
@@ -63,11 +74,13 @@ const ReturnButton = styled.button`
   cursor: pointer;
 `;
 
-const calculateTotalPrice = (products: Product[]): number => {
-  const result = products.reduce(
-    (acc, product) => acc + product.price * product.quantity,
-    0
-  );
+const calculateTotalPrice = (products: CartItemType[]): number => {
+  const result = products.reduce((acc, product) => {
+    const price = product.discount
+      ? product.price * (1 - product.discount / 100)
+      : product.price;
+    return acc + price * product.quantity;
+  }, 0);
   return result;
 };
 
@@ -207,9 +220,9 @@ const Cart = (): React.ReactElement => {
     cartID && getCartFromDB(cartID);
   }
 
-  // useEffect(() => {
-  //   setTotalPrice(calculateTotalPrice(products));
-  // }, [products]);
+  useEffect(() => {
+    setTotalPrice(calculateTotalPrice(cart));
+  }, [cart]);
 
   // function handleIncrementQuantity(productId: number) {
   //   dispatch({ type: productsActionKind.increment, productId });
@@ -228,11 +241,45 @@ const Cart = (): React.ReactElement => {
     0
   ) as number;
 
+  function CartID({ cartID }: { cartID: string }) {
+    return <div> ID корзины: {cartID} </div>;
+  }
+
+  function CartItems({ cart }: { cart: CartType }) {
+    return (
+      <div>
+        <div>cart contents</div>
+        <pre>{JSON.stringify(cart, null, 2)}</pre>
+      </div>
+    );
+  }
+
   return (
     <Styled.Main>
       <Styled.Title>Корзина</Styled.Title>
+
+      <CartID cartID={cartID} />
+      <CartItems cart={cart} />
+
       <ColumnLabels />
       <Styled.ProductsList>
+        {cart.map((product) => (
+          <CartItem
+            key={product.id}
+            {...product}
+            handleDelete={() => {
+              removeItemFromDB(product);
+            }}
+            incrementQuantity={() => {
+              updateItemInDB({ ...product, quantity: product.quantity + 1 });
+            }}
+            decrimentQuantity={() => {
+              updateItemInDB({ ...product, quantity: product.quantity - 1 });
+            }}
+          />
+        ))}
+      </Styled.ProductsList>
+      {/* <Styled.ProductsList>
         {cart.map((product) => (
           <CartItem
             key={product.id}
@@ -242,7 +289,7 @@ const Cart = (): React.ReactElement => {
             decrimentQuantity={() => handleDecrimentQuantity(product.id)}
           />
         ))}
-      </Styled.ProductsList>
+      </Styled.ProductsList> */}
       <ReturnButton>
         <BackIcon />
         Вернуться назад
