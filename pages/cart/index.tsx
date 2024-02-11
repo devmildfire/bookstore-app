@@ -9,18 +9,6 @@ import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabel
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
 import { postData } from '@/utils/postData';
-import { Enums } from 'api/books/types';
-
-// interface Product {
-//   titleId: number;
-//   category: string;
-//   bookCover: string;
-//   title: string;
-//   author: string;
-//   price: number;
-//   oldPrice?: number;
-//   quantity: number;
-// }
 
 const BackIcon = styled(backLinkArrow)`
   margin-right: 5px;
@@ -36,7 +24,7 @@ const ReturnButton = styled.button`
 const calculateTotalPrice = (products: CartItemType[]): number => {
   const result = products.reduce((acc, product) => {
     const price = product.discount
-      ? product.price * (1 - product.discount / 100)
+      ? Math.floor(product.price * (1 - product.discount / 100))
       : product.price;
     return acc + price * product.quantity;
   }, 0);
@@ -176,7 +164,7 @@ const Cart = (): React.ReactElement => {
       <Styled.ProductsList>
         {cart.map((product) => (
           <CartItem
-            key={product.id}
+            key={product.name + product.category}
             {...product}
             handleDelete={() => {
               removeItemFromDB(product);

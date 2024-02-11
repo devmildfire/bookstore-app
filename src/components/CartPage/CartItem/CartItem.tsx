@@ -37,7 +37,9 @@ const CartItem = (props: CartItemProps): React.ReactElement => {
     decrimentQuantity,
   } = props;
 
-  const currentPrice = discount ? price * (1 - discount / 100) : price;
+  const currentPrice = discount
+    ? Math.floor(price * (1 - discount / 100))
+    : price;
   let readableCategory = '';
   if (isValidCategory(category)) {
     readableCategory = readableCategories[category];

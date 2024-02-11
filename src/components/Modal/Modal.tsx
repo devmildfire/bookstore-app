@@ -42,6 +42,10 @@ interface BookModalState {
   types: BookTableTypesTuple[number][];
 }
 
+interface BookModalProps extends BookModalState {
+  closeFunc: () => void;
+}
+
 interface ModalContextProps {
   handleOpenModal: (open: boolean, type?: string) => void;
   handleModalState: Dispatch<SetStateAction<BookModalState>>;
@@ -354,7 +358,8 @@ function ProductCopies({
   index,
   copies,
 }: ProductCopiesType) {
-  const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price;
+  const discountedPrice =
+    discount > 0 ? Math.floor(price * (1 - discount / 100)) : price;
 
   function increment() {
     setCopies((prev) => {
@@ -418,8 +423,8 @@ function Edition({ children }: PropsWithChildren) {
   );
 }
 
-function BookModal(props: BookModalState) {
-  const { cover, name, types, author, price, discount } = props;
+function BookModal(props: BookModalProps) {
+  const { cover, name, types, author, price, discount, closeFunc } = props;
   const [sum, setSum] = useState(0);
   const typesNumber = types.length;
   const initialCopiesArray = new Array(typesNumber).fill(0);
@@ -492,7 +497,7 @@ function BookModal(props: BookModalState) {
                   <Price>
                     {`${
                       discount[index] > 0 &&
-                      price[index] * (1 - discount[index] / 100)
+                      Math.floor(price[index] * (1 - discount[index] / 100))
                     }₽`}{' '}
                   </Price>
                   <DiscountPrice>{`${price[index]}₽`}</DiscountPrice>
@@ -512,6 +517,7 @@ function BookModal(props: BookModalState) {
           onClick={() => {
             // console.log('added to the cart', createCartObjects(props));
             addMultipleItemsToCart();
+            closeFunc();
           }}
         >
           Добавить в корзину
@@ -599,7 +605,10 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
                     opacity: { duration: 0.2 },
                   }}
                 >
-                  <ModalContent {...modalState} />
+                  <ModalContent
+                    {...modalState}
+                    closeFunc={() => handleOpenModal(false)}
+                  />
                   <Dialog.Close asChild>
                     <CloseButton
                       type='button'

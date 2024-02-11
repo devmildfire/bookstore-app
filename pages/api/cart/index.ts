@@ -8,7 +8,7 @@ async function getCart(id: string): Promise<Cart | PostgrestError> {
     .from('Cart')
     .select('*')
     .eq('id', id)
-    .order('name');
+    .order('name, category');
 
   if (error) {
     console.error(error);
