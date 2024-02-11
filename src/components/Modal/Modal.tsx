@@ -344,12 +344,14 @@ type ProductCopiesType = {
   price: number;
   index: number;
   copies: number[];
+  discount: number;
 };
 
 function ProductCopies({
   setSum,
   setCopies,
   price,
+  discount,
   index,
   copies,
 }: ProductCopiesType) {
@@ -361,7 +363,8 @@ function ProductCopies({
       console.log(newArr);
       return newArr;
     });
-    setSum((prev) => prev + price);
+    const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price;
+    setSum((prev) => prev + discountedPrice);
   }
 
   function decrement() {
@@ -485,10 +488,17 @@ function BookModal(props: BookModalState) {
                   setCopies={setCopies}
                   index={index}
                   price={price[index]}
+                  discount={discount[index]}
                   copies={copies}
                 />
                 <PriceContainer>
-                  <Price>{`${price[index]}₽`}</Price>
+                  <Price>
+                    {`${
+                      discount[index] > 0 &&
+                      price[index] * (1 - discount[index] / 100)
+                    }₽`}{' '}
+                  </Price>
+                  <DiscountPrice>{`${price[index]}₽`}</DiscountPrice>
                 </PriceContainer>
               </Edition>
             );
