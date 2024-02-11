@@ -21,16 +21,16 @@ interface Product {
   quantity: number;
 }
 
-const readableCategories = {
-  PrintBook: 'печатное издание',
-  AudioBook: 'аудиокнига',
-  EBook: 'электронное издание',
-  'Book2.0': 'книга 2.0',
-  GiftCard: 'карта даров',
-  BoxSet: 'бокс сет',
-  Subscription: 'подписка',
-  Course: 'курс',
-};
+// const readableCategories = {
+//   PrintBook: 'печатное издание',
+//   AudioBook: 'аудиокнига',
+//   EBook: 'электронное издание',
+//   'Book2.0': 'книга 2.0',
+//   GiftCard: 'карта даров',
+//   BoxSet: 'бокс сет',
+//   Subscription: 'подписка',
+//   Course: 'курс',
+// };
 
 // const cartProductsMock: Product[] = [
 //   {
@@ -165,30 +165,30 @@ const Cart = (): React.ReactElement => {
     [cartID]
   );
 
-  function findItemIndex(name: string, category: string): number {
-    const index = cart.findIndex(
-      (item) => item?.name == name && item?.category == category
-    );
-    return index;
-  }
+  // function findItemIndex(name: string, category: string): number {
+  //   const index = cart.findIndex(
+  //     (item) => item?.name == name && item?.category == category
+  //   );
+  //   return index;
+  // }
 
-  function updateCart(updatedItem: CartItemType) {
-    const index = findItemIndex(updatedItem.name, updatedItem.category);
+  // function updateCart(updatedItem: CartItemType) {
+  //   const index = findItemIndex(updatedItem.name, updatedItem.category);
 
-    let list = [...cart];
+  //   let list = [...cart];
 
-    index == -1 &&
-      (setCart([...cart.filter((item) => item.quantity !== 0), updatedItem]),
-      addItemToDB(updatedItem));
+  //   index == -1 &&
+  //     (setCart([...cart.filter((item) => item.quantity !== 0), updatedItem]),
+  //     addItemToDB(updatedItem));
 
-    index !== -1 &&
-      ((list[index] = updatedItem),
-      (list = list.filter((item) => item.quantity !== 0)),
-      setCart([...list]),
-      updatedItem.quantity == 0
-        ? removeItemFromDB(updatedItem)
-        : updateItemInDB(updatedItem));
-  }
+  //   index !== -1 &&
+  //     ((list[index] = updatedItem),
+  //     (list = list.filter((item) => item.quantity !== 0)),
+  //     setCart([...list]),
+  //     updatedItem.quantity == 0
+  //       ? removeItemFromDB(updatedItem)
+  //       : updateItemInDB(updatedItem));
+  // }
 
   async function updateItemInDB(item: CartItemType) {
     const updatedItem: CartItemType = await postData(`/api/cart`, {
@@ -199,14 +199,14 @@ const Cart = (): React.ReactElement => {
     cartID && getCartFromDB(cartID);
   }
 
-  async function addItemToDB(item: CartItemType) {
-    const addedItem: CartItemType = await postData(`/api/cart`, {
-      oper: 'add',
-      item: item,
-    });
-    console.log('added item to list ... ', JSON.stringify(addedItem, null, 2));
-    cartID && getCartFromDB(cartID);
-  }
+  // async function addItemToDB(item: CartItemType) {
+  //   const addedItem: CartItemType = await postData(`/api/cart`, {
+  //     oper: 'add',
+  //     item: item,
+  //   });
+  //   console.log('added item to list ... ', JSON.stringify(addedItem, null, 2));
+  //   cartID && getCartFromDB(cartID);
+  // }
 
   async function removeItemFromDB(item: CartItemType) {
     const removedItem: CartItemType = await postData(`/api/cart`, {

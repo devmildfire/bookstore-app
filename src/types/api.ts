@@ -8,7 +8,7 @@ export type CartItem = {
   name: string;
   category: string;
   quantity: number;
-  summ: number;
+  // summ: number;
   price: number;
   discount: number;
   subtitle: string;

@@ -66,7 +66,7 @@ const CartItem = (props: CartItemProps): React.ReactElement => {
       <Styled.Edition>{readableCategory}</Styled.Edition>
       <Styled.PriceContainer>
         <Styled.BookPrice>{currentPrice}</Styled.BookPrice>
-        {discount && <Styled.OldBookPrice>{price}</Styled.OldBookPrice>}
+        {discount > 0 && <Styled.OldBookPrice>{price}</Styled.OldBookPrice>}
       </Styled.PriceContainer>
       <Styled.QuantityContainer>
         <Styled.QuantityControls

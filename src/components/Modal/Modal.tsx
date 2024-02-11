@@ -22,6 +22,9 @@ import { BookTableTypesTuple } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
+import { CartItem } from '@/types/api';
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { postData } from '@/utils/postData';
 
 const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
   Audiobooks: <AudioIcon />,
@@ -31,8 +34,10 @@ const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
 };
 
 interface BookModalState {
+  cover: string;
   name: string;
-  price: number;
+  price: number[];
+  discount: number[];
   // newPrice?: number;
   author: string;
   types: BookTableTypesTuple[number][];
@@ -335,20 +340,39 @@ const Separator = styled.hr`
 
 type ProductCopiesType = {
   setSum: Dispatch<SetStateAction<number>>;
+  setCopies: Dispatch<SetStateAction<number[]>>;
   price: number;
+  index: number;
+  copies: number[];
 };
 
-function ProductCopies({ setSum, price }: ProductCopiesType) {
-  const [copies, setCopies] = useState(0);
-
+function ProductCopies({
+  setSum,
+  setCopies,
+  price,
+  index,
+  copies,
+}: ProductCopiesType) {
   function increment() {
-    setCopies((prev) => prev + 1);
+    setCopies((prev) => {
+      const newArr = [...prev];
+      newArr[index] = newArr[index] + 1;
+      console.log('done incrementing');
+      console.log(newArr);
+      return newArr;
+    });
     setSum((prev) => prev + price);
   }
 
   function decrement() {
-    if (copies > 0) {
-      setCopies((prev) => prev - 1);
+    if (copies[index] > 0) {
+      setCopies((prev) => {
+        const newArr = [...prev];
+        newArr[index] = newArr[index] - 1;
+        console.log('done incrementing');
+        console.log(newArr);
+        return newArr;
+      });
       setSum((prev) => prev - price);
     }
   }
@@ -357,7 +381,7 @@ function ProductCopies({ setSum, price }: ProductCopiesType) {
     <ProductCopiesContainer>
       <ChangeCopiesButton onClick={decrement}>-</ChangeCopiesButton>
       <Separator />
-      <CopiesCount>{copies}</CopiesCount>
+      <CopiesCount>{copies[index]}</CopiesCount>
       <Separator />
       <ChangeCopiesButton onClick={increment}>+</ChangeCopiesButton>
     </ProductCopiesContainer>
@@ -375,6 +399,13 @@ const editions: EditionsMap = {
   audio: 'Аудиокнига',
 };
 
+const bookTypes: EditionsMap = {
+  PrintedBooks: 'PrintBook',
+  Ebooks: 'EBook',
+  Audiobooks: 'AudioBook',
+  CardBooks: 'Book2.0',
+};
+
 function Edition({ children }: PropsWithChildren) {
   const [isSelected, setIsSelected] = useState(false);
   return (
@@ -388,8 +419,50 @@ function Edition({ children }: PropsWithChildren) {
 }
 
 function BookModal(props: BookModalState) {
-  const { name, types, author, price } = props;
+  const { cover, name, types, author, price, discount } = props;
   const [sum, setSum] = useState(0);
+  const typesNumber = types.length;
+  const initialCopiesArray = new Array(typesNumber).fill(0);
+  const [copies, setCopies] = useState<number[]>(initialCopiesArray);
+
+  console.log(props);
+
+  const createCartObjects = ({
+    cover,
+    name,
+    types,
+    author,
+    price,
+  }: typeof props): CartItem[] => {
+    const items: CartItem[] = [];
+    types.forEach((type, index) => {
+      copies[index] &&
+        items.push({
+          id: setOrGetCartCookie()!.toString(),
+          name: name,
+          category: bookTypes[type],
+          quantity: copies[index],
+          // summ: copies[index] * price[index],
+          price: price[index],
+          discount: discount[index], //  это значение скидки всегда нулевое, пока в компонент скидка не пробрасывается. Нужно добавить ещё и скидку
+          subtitle: author,
+          picture: cover,
+        });
+    });
+    // console.log(items);
+    return items;
+  };
+
+  async function addMultipleItemsToCart() {
+    const items = createCartObjects(props);
+
+    items.forEach(async (item) => {
+      const addedItem: CartItem = await postData(`/api/cart`, {
+        oper: 'update',
+        item: item,
+      });
+    });
+  }
 
   return (
     <Container>
@@ -399,15 +472,23 @@ function BookModal(props: BookModalState) {
         <ModalTitle>Типы издания</ModalTitle>
       </ModalTitleWrapper>
       <Buttons>
-        {types.map((type) => {
+        {types.map((type, index) => {
+          console.log(type, index);
+
           if (type !== null) {
             return (
               <Edition key={type}>
                 <IconWrapper>{modalIconLookup[type]}</IconWrapper>
                 <EditionName variant='text'>{editions[type]}</EditionName>
-                <ProductCopies setSum={setSum} price={price} />
+                <ProductCopies
+                  setSum={setSum}
+                  setCopies={setCopies}
+                  index={index}
+                  price={price[index]}
+                  copies={copies}
+                />
                 <PriceContainer>
-                  <Price>{`${price}₽`}</Price>
+                  <Price>{`${price[index]}₽`}</Price>
                 </PriceContainer>
               </Edition>
             );
@@ -420,9 +501,11 @@ function BookModal(props: BookModalState) {
           <Price>{`${sum}₽`}</Price>
         </TotalPrice>
         <AddToCartButton
-          // добавить функцию добавления нужного количества копий книги в корзину
           variant='outlined'
-          onClick={() => console.log('added to the cart')}
+          onClick={() => {
+            // console.log('added to the cart', createCartObjects(props));
+            addMultipleItemsToCart();
+          }}
         >
           Добавить в корзину
         </AddToCartButton>
@@ -444,7 +527,9 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
   });
   const [modalState, setModalState] = useState<BookModalState>({
     name: '',
-    price: 0,
+    cover: '',
+    price: [],
+    discount: [],
     author: '',
     types: [],
   });

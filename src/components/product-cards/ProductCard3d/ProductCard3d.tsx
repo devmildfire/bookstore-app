@@ -17,14 +17,18 @@ import { useModal } from '@/components/Modal/Modal';
 import { ProductCardProps } from '../ProductCard/ProductCard';
 
 function ProductCard3d(props: ProductCardProps) {
-  const { price, cover, name, onClick, onEnterKey, authors, types } = props;
+  const { price, discount, cover, name, onClick, onEnterKey, authors, types } =
+    props;
 
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
     handleModalState({
+      cover,
       name,
-      price: Math.min(...price),
+      price,
+      discount,
+      // price: Math.min(...price),
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
