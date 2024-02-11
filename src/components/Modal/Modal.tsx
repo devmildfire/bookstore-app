@@ -38,7 +38,6 @@ interface BookModalState {
   name: string;
   price: number[];
   discount: number[];
-  // newPrice?: number;
   author: string;
   types: BookTableTypesTuple[number][];
 }
@@ -355,15 +354,15 @@ function ProductCopies({
   index,
   copies,
 }: ProductCopiesType) {
+  const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price;
+
   function increment() {
     setCopies((prev) => {
       const newArr = [...prev];
       newArr[index] = newArr[index] + 1;
-      console.log('done incrementing');
-      console.log(newArr);
       return newArr;
     });
-    const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price;
+
     setSum((prev) => prev + discountedPrice);
   }
 
@@ -372,11 +371,9 @@ function ProductCopies({
       setCopies((prev) => {
         const newArr = [...prev];
         newArr[index] = newArr[index] - 1;
-        console.log('done incrementing');
-        console.log(newArr);
         return newArr;
       });
-      setSum((prev) => prev - price);
+      setSum((prev) => prev - discountedPrice);
     }
   }
 

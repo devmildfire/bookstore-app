@@ -2,19 +2,6 @@ import React from 'react';
 import * as Styled from './CartItem.styled';
 import { CartItem as CartItemType } from '@/types/api';
 
-// type CartItemProps = {
-//   bookCover: string;
-//   title: string;
-//   author: string;
-//   edition: string;
-//   price: number;
-//   oldPrice?: number;
-//   quantity: number;
-//   handleDelete: () => void;
-//   incrementQuantity: () => void;
-//   decrimentQuantity: () => void;
-// };
-
 const readableCategories = {
   PrintBook: 'печатное издание',
   AudioBook: 'аудиокнига',

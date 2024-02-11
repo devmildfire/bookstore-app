@@ -145,6 +145,63 @@ export interface Database {
         }
         Relationships: []
       }
+      BoxSets: {
+        Row: {
+          description: string | null
+          discount: number | null
+          id: number
+          name: string | null
+          price: number | null
+        }
+        Insert: {
+          description?: string | null
+          discount?: number | null
+          id?: number
+          name?: string | null
+          price?: number | null
+        }
+        Update: {
+          description?: string | null
+          discount?: number | null
+          id?: number
+          name?: string | null
+          price?: number | null
+        }
+        Relationships: []
+      }
+      BoxSets_Books: {
+        Row: {
+          box_set: number
+          category: Database["public"]["Enums"]["category"]
+          title_id: number
+        }
+        Insert: {
+          box_set: number
+          category: Database["public"]["Enums"]["category"]
+          title_id: number
+        }
+        Update: {
+          box_set?: number
+          category?: Database["public"]["Enums"]["category"]
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "BoxSets_Books_box_set_fkey"
+            columns: ["box_set"]
+            isOneToOne: false
+            referencedRelation: "BoxSets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "BoxSets_Books_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       CardBooks: {
         Row: {
           discount: number | null
@@ -195,27 +252,30 @@ export interface Database {
           discount: number | null
           id: string
           name: string
+          picture: string | null
           price: number | null
           quantity: number | null
-          summ: number | null
+          subtitle: string | null
         }
         Insert: {
           category: Database["public"]["Enums"]["category"]
           discount?: number | null
           id?: string
           name: string
+          picture?: string | null
           price?: number | null
           quantity?: number | null
-          summ?: number | null
+          subtitle?: string | null
         }
         Update: {
           category?: Database["public"]["Enums"]["category"]
           discount?: number | null
           id?: string
           name?: string
+          picture?: string | null
           price?: number | null
           quantity?: number | null
-          summ?: number | null
+          subtitle?: string | null
         }
         Relationships: []
       }
@@ -326,6 +386,27 @@ export interface Database {
           extention?: string
           id?: number
           type?: Database["public"]["Enums"]["digitaleditionextentiontype"]
+        }
+        Relationships: []
+      }
+      GiftCards: {
+        Row: {
+          amount: number | null
+          id: string
+          price: number | null
+          title: string | null
+        }
+        Insert: {
+          amount?: number | null
+          id?: string
+          price?: number | null
+          title?: string | null
+        }
+        Update: {
+          amount?: number | null
+          id?: string
+          price?: number | null
+          title?: string | null
         }
         Relationships: []
       }
@@ -656,6 +737,30 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      Subscriptions: {
+        Row: {
+          description: string | null
+          id: number
+          name: string | null
+          payment: number | null
+          period: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          name?: string | null
+          payment?: number | null
+          period?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string | null
+          payment?: number | null
+          period?: string | null
+        }
+        Relationships: []
       }
       Titles: {
         Row: {
