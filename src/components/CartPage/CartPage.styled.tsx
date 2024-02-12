@@ -13,12 +13,13 @@ export const Main = styled.main`
 `;
 
 export const Title = styled.h1`
+  text-align: left;
   width: fit-content;
   font-family: Cheque, serif;
   font-size: 24px;
   font-style: normal;
   font-weight: 900;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   margin-bottom: 30px;
   @media (min-width: 530px) {
     font-size: 32px;

@@ -9,6 +9,29 @@ import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabel
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
 import { postData } from '@/utils/postData';
+// import StyledText from '@/components/Common/Text/styles';
+import Text from '@/components/Common/Text';
+import breakPoints from '@/utils/breakPoints';
+
+const StyledText = styled(Text)`
+  padding-bottom: 65px;
+
+  @media ${breakPoints.xxl} {
+    padding-bottom: 65px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-bottom: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-bottom: 40px;
+  }
+`;
 
 const BackIcon = styled(backLinkArrow)`
   margin-right: 5px;
@@ -140,25 +163,28 @@ const Cart = (): React.ReactElement => {
     0
   ) as number;
 
-  function CartID({ cartID }: { cartID: string }) {
-    return <div> ID корзины: {cartID} </div>;
-  }
+  // function CartID({ cartID }: { cartID: string }) {
+  //   return <div> ID корзины: {cartID} </div>;
+  // }
 
-  function CartItems({ cart }: { cart: CartType }) {
-    return (
-      <div>
-        <div>cart contents</div>
-        <pre>{JSON.stringify(cart, null, 2)}</pre>
-      </div>
-    );
-  }
+  // function CartItems({ cart }: { cart: CartType }) {
+  //   return (
+  //     <div>
+  //       <div>cart contents</div>
+  //       <pre>{JSON.stringify(cart, null, 2)}</pre>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Styled.Main>
-      <Styled.Title>Корзина</Styled.Title>
+      {/* <Styled.Title>Корзина</Styled.Title> */}
+      <StyledText textColor='white' variant='h2_1_Cart'>
+        Корзина
+      </StyledText>
 
-      <CartID cartID={cartID} />
-      <CartItems cart={cart} />
+      {/* <CartID cartID={cartID} />
+      <CartItems cart={cart} /> */}
 
       <ColumnLabels />
       <Styled.ProductsList>

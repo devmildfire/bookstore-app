@@ -165,6 +165,32 @@ const h21HalStyle = css<StyledTextProps>`
   }
 `;
 
+const h21CartStyle = css<StyledTextProps>`
+  font-weight: ${(props) => props.fontWeight || 700};
+  text-transform: ${(props) => props.textTransform || 'uppercase'};
+  font-family: ${(props) => props.fontFamily || fontFamilies.sans};
+
+  font-size: 40px;
+  text-align: left;
+
+  @media ${breakPoints.xxl} {
+    font-size: 30px;
+  }
+
+  @media ${breakPoints.lg} {
+    font-size: 24px;
+  }
+
+  @media ${breakPoints.smd} {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.sm} {
+    font-size: 20px;
+    text-align: center;
+  }
+`;
+
 // Это специальный стиль для заголовка блока литжурнала на странице О Чтиве
 const h21LJStyle = css<StyledTextProps>`
   ${h21Style}
@@ -931,6 +957,7 @@ const styles: Record<
   h1_Inv: h1_InvStyle,
   h2_1: h21Style,
   h2_1_LJ: h21LJStyle,
+  h2_1_Cart: h21CartStyle,
   h2_1_HAL: h21HalStyle,
   h2_2: h22Style,
   h3_1: h31Style,
@@ -978,6 +1005,7 @@ export const tagMap: Record<Variant, string> = {
   h2_1: 'h2',
   h2_1_LJ: 'h2',
   h2_1_HAL: 'h2',
+  h2_1_Cart: 'h2',
   h2_2: 'h2',
   h3_1: 'h3',
   h3_1Man: 'h3',
