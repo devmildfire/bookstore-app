@@ -3,6 +3,7 @@ import { Product } from '@/types/product';
 import { Tables } from 'api/supabase-client/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
+
 export type BookTableTypesTuple = [
   'PrintedBooks',
   'Ebooks',
@@ -37,6 +38,7 @@ export interface Title {
   readonly slug: string;
   readonly isFeatured: boolean;
   readonly price: number[];
+  readonly discount: number[];
   readonly types: BookTableTypesTuple;
   readonly PrintedBooks: PrintedBookType;
   Audiobooks: AudioBook;

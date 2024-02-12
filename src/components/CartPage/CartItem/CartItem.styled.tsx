@@ -3,7 +3,8 @@ import closeButton from '../../../assets/icons/close-button.svg';
 
 export const CartItemContainer = styled.li`
   display: grid;
-  grid-template-columns: 125px 125px repeat(4, 1fr) 24px;
+  grid-template-columns: 150px 150px repeat(4, 1fr) 24px;
+
   max-height: 144px;
   justify-items: center;
   align-items: center;
@@ -16,6 +17,10 @@ export const CartItemContainer = styled.li`
   margin-bottom: 20px;
   /* border-bottom: 1px solid #dcdcdc33; */
   transition: 0.3s;
+
+  /* * {
+    outline: 1px solid green;
+  } */
 
   :hover {
     background-color: #202020;
@@ -30,6 +35,10 @@ export const CartItemContainer = styled.li`
       'image edition .'
       'image price .'
       'image quantity .';
+  }
+
+  @media (max-width: 568px) {
+    margin-bottom: 40px;
   }
 `;
 
@@ -65,13 +74,15 @@ export const BookTitle = styled.h3`
 `;
 
 export const Author = styled.p`
-  width: max-content;
+  width: fit-content;
   margin-bottom: 7px;
 `;
 
 export const Edition = styled.p`
   font-weight: 400;
-  width: max-content;
+  width: fit-content;
+  white-space: break-spaces;
+  padding: 0 10px;
   margin-bottom: 11px;
   @media (max-width: 768px) {
     grid-area: edition;

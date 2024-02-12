@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import * as Styled from '../../src/components/CartPage/CartPage.styled';
 import CartItem from '../../src/components/CartPage/CartItem/CartItem';
@@ -6,47 +6,32 @@ import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
 
-interface Product {
-  id: number;
-  bookCover: string;
-  title: string;
-  author: string;
-  edition: string;
-  price: number;
-  oldPrice?: number;
-  quantity: number;
-}
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
+import { postData } from '@/utils/postData';
+// import StyledText from '@/components/Common/Text/styles';
+import Text from '@/components/Common/Text';
+import breakPoints from '@/utils/breakPoints';
 
-const cartProductsMock: Product[] = [
-  {
-    id: 1,
-    bookCover: '/images/bookTitleDeleted.jpg',
-    author: 'Катерина Кюне',
-    edition: 'печатное',
-    title: 'DELETED',
-    price: 300,
-    oldPrice: 350,
-    quantity: 2,
-  },
-  {
-    id: 2,
-    bookCover: '/images/bookTitleDeleted.jpg',
-    author: 'Катерина Кюне',
-    edition: 'цифровое',
-    title: 'DELETED',
-    price: 300,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    bookCover: '/images/bookTitleDeleted.jpg',
-    author: 'Катерина Кюне',
-    edition: 'Книга2.0',
-    title: 'DELETED',
-    price: 300,
-    quantity: 1,
-  },
-];
+const StyledText = styled(Text)`
+  padding-bottom: 65px;
+
+  @media ${breakPoints.xxl} {
+    padding-bottom: 65px;
+  }
+
+  @media ${breakPoints.lg} {
+    padding-bottom: 50px;
+  }
+
+  @media ${breakPoints.smd} {
+    padding-bottom: 40px;
+  }
+
+  @media ${breakPoints.sm} {
+    padding-bottom: 40px;
+  }
+`;
 
 const BackIcon = styled(backLinkArrow)`
   margin-right: 5px;
@@ -59,82 +44,167 @@ const ReturnButton = styled.button`
   cursor: pointer;
 `;
 
-const calculateTotalPrice = (products: Product[]): number => {
-  const result = products.reduce((acc, product) => acc + product.price * product.quantity, 0);
+const calculateTotalPrice = (products: CartItemType[]): number => {
+  const result = products.reduce((acc, product) => {
+    const price = product.discount
+      ? Math.floor(product.price * (1 - product.discount / 100))
+      : product.price;
+    return acc + price * product.quantity;
+  }, 0);
   return result;
 };
 
-enum productsActionKind {
-  increment = 'increment',
-  decriment = 'decriment',
-  remove = 'remove',
-}
+// enum productsActionKind {
+//   increment = 'increment',
+//   decriment = 'decriment',
+//   remove = 'remove',
+// }
 
-type productsAction = {
-  type: productsActionKind;
-  productId: number;
-};
+// type productsAction = {
+//   type: productsActionKind;
+//   titleId: number;
+//   category: string;
+// };
 
-function productsReducer(state: Product[], action: productsAction): Product[] {
-  switch (action.type) {
-    case productsActionKind.increment:
-      return state.map((product) => {
-        if (product.id === action.productId) {
-          return { ...product, quantity: product.quantity + 1 };
-        }
-        return product;
-      });
-    case productsActionKind.decriment:
-      return state.map((product) => {
-        if (product.id === action.productId && product.quantity > 1) {
-          return { ...product, quantity: product.quantity - 1 };
-        }
-        return product;
-      });
-    case productsActionKind.remove:
-      return state.filter((product) => product.id !== action.productId);
-    default:
-      return state;
-  }
-}
+// function productsReducer(state: Product[], action: productsAction): Product[] {
+//   switch (action.type) {
+//     case productsActionKind.increment:
+//       return state.map((product) => {
+//         if (
+//           product.titleId === action.titleId &&
+//           product.category === action.category
+//         ) {
+//           return { ...product, quantity: product.quantity + 1 };
+//         }
+//         return product;
+//       });
+//     case productsActionKind.decriment:
+//       return state.map((product) => {
+//         if (
+//           product.titleId === action.titleId &&
+//           product.category === action.category &&
+//           product.quantity > 1
+//         ) {
+//           return { ...product, quantity: product.quantity - 1 };
+//         }
+//         return product;
+//       });
+//     case productsActionKind.remove:
+//       return state.filter(
+//         (product) =>
+//           product.titleId !== action.titleId ||
+//           product.category !== action.category
+//       );
+//     default:
+//       return state;
+//   }
+// }
 
 const Cart = (): React.ReactElement => {
-  const [products, dispatch] = useReducer(productsReducer, cartProductsMock);
-  const [totalPrice, setTotalPrice] = useState(calculateTotalPrice(products));
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const [cart, setCart] = useState<CartType>([]);
+  const [cartID, setCartID] = useState('');
 
   useEffect(() => {
-    setTotalPrice(calculateTotalPrice(products));
-  }, [products]);
+    const newCartID = setOrGetCartCookie()?.toString();
 
-  function handleIncrementQuantity(productId: number) {
-    dispatch({ type: productsActionKind.increment, productId });
+    if (newCartID) {
+      setCartID(newCartID);
+    }
+  }, []);
+
+  useEffect(() => {
+    cartID && getCartFromDB(cartID);
+  }, [cartID]);
+
+  const getCartFromDB = useCallback(
+    async (id: string) => {
+      const cartItems: CartType = await postData(`/api/cart`, {
+        oper: 'fetch',
+        id: cartID,
+      });
+      console.log(
+        'fetched cart items list ... ',
+        JSON.stringify(cartItems, null, 2)
+      );
+      setCart([...cartItems]);
+    },
+    [cartID]
+  );
+
+  async function updateItemInDB(item: CartItemType) {
+    const updatedItem: CartItemType = await postData(`/api/cart`, {
+      oper: 'update',
+      item: item,
+    });
+    console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
+    cartID && getCartFromDB(cartID);
   }
 
-  function handleDecrimentQuantity(productId: number) {
-    dispatch({ type: productsActionKind.decriment, productId });
+  async function removeItemFromDB(item: CartItemType) {
+    const removedItem: CartItemType = await postData(`/api/cart`, {
+      oper: 'remove',
+      item: item,
+    });
+    console.log(
+      'removed item from list ... ',
+      JSON.stringify(removedItem, null, 2)
+    );
+    cartID && getCartFromDB(cartID);
   }
 
-  function handleDelete(productId: number) {
-    dispatch({ type: productsActionKind.remove, productId });
-  }
+  useEffect(() => {
+    setTotalPrice(calculateTotalPrice(cart));
+  }, [cart]);
 
-  const productQuantity = products.reduce((acc, product) => acc + product.quantity, 0) as number;
+  const productQuantity = cart.reduce(
+    (acc, product) => acc + product.quantity,
+    0
+  ) as number;
+
+  // function CartID({ cartID }: { cartID: string }) {
+  //   return <div> ID корзины: {cartID} </div>;
+  // }
+
+  // function CartItems({ cart }: { cart: CartType }) {
+  //   return (
+  //     <div>
+  //       <div>cart contents</div>
+  //       <pre>{JSON.stringify(cart, null, 2)}</pre>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Styled.Main>
-      <Styled.Title>Корзина</Styled.Title>
+      {/* <Styled.Title>Корзина</Styled.Title> */}
+      <StyledText textColor='white' variant='h2_1_Cart'>
+        Корзина
+      </StyledText>
+
+      {/* <CartID cartID={cartID} />
+      <CartItems cart={cart} /> */}
+
       <ColumnLabels />
       <Styled.ProductsList>
-        {products.map((product) => (
+        {cart.map((product) => (
           <CartItem
-            key={product.id}
+            key={product.name + product.category}
             {...product}
-            handleDelete={() => handleDelete(product.id)}
-            incrementQuantity={() => handleIncrementQuantity(product.id)}
-            decrimentQuantity={() => handleDecrimentQuantity(product.id)}
+            handleDelete={() => {
+              removeItemFromDB(product);
+            }}
+            incrementQuantity={() => {
+              updateItemInDB({ ...product, quantity: product.quantity + 1 });
+            }}
+            decrimentQuantity={() => {
+              updateItemInDB({ ...product, quantity: product.quantity - 1 });
+            }}
           />
         ))}
       </Styled.ProductsList>
+
       <ReturnButton>
         <BackIcon />
         Вернуться назад

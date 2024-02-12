@@ -31,6 +31,9 @@ export const getServerSideProps = async () => {
       price: bookTypes
         .map((type) => (title[type] ? title[type].price : null))
         .filter((price) => price !== null) as number[],
+      discount: bookTypes
+        .map((type) => (title[type] ? title[type].discount : null))
+        .filter((discount) => discount !== null) as number[],
       types: bookTypes
         .map((type) => (title[type] ? type : null))
         .filter((type) => type !== null) as BookTableTypesTuple,

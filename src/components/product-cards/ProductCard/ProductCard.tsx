@@ -23,13 +23,18 @@ export interface ProductCardProps extends Title {
 }
 
 function ProductCard(props: ProductCardProps) {
-  const { price, cover, name, onClick, onEnterKey, authors, types } = props;
+  const { price, discount, cover, name, onClick, onEnterKey, authors, types } =
+    props;
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
+    console.log('Product card onclick - onAddToCartClick');
     handleModalState({
+      cover,
       name,
-      price: Math.min(...price),
+      // price: Math.min(...price),
+      price,
+      discount,
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
@@ -51,7 +56,7 @@ function ProductCard(props: ProductCardProps) {
       />
       <Footer>
         <PriceContainer>
-          <Price>{`${price}₽`}</Price>
+          <Price>{`${Math.min(...price)}₽`}</Price>
           {/* <OldPrice discount>{newPrice && `${price}₽`}</OldPrice> */}
         </PriceContainer>
         <ButtonsContainer>
