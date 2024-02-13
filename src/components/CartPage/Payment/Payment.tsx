@@ -1,9 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as Styled from './Payment.styled';
 import PurchaseInfo from '../PurchaseInfo/PurchaseInfo';
+import Robokaska from "@/utils/robokaska";
+import { CartItem } from '@/types/api';
 
-const Payment = ({ quantity, price }: { quantity: number; price: number }): React.ReactElement => (
-  <Styled.Container>
+interface roboUrlProps {
+  invoiceID: number;
+  email: string;
+  outSum: string;
+  invoiceDescription: string;
+}
+
+interface paymentProps {
+  cart: CartItem[];
+  cartID: string;
+  quantity: number;
+  price: number;
+}
+
+function generateRoboURL({invoiceID, email, outSum, invoiceDescription}: roboUrlProps) {
+  const config = {
+    shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
+    password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
+    password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
+    testMode: true, // Указываем true, если работаем в тестовом режиме
+  };
+
+  const roboKassa = new Robokaska(config);
+
+  // Вернёт строку с URL адресом, на который можно отправить пользователя
+  const payURL = roboKassa.generateUrl(
+    invoiceID,
+    email,
+    outSum,
+    invoiceDescription
+  );
+
+  return payURL;
+}
+
+const Payment = ({ cart, cartID, quantity, price }: paymentProps): React.ReactElement => {
+
+  const [payURL, setPayURL] = useState("");
+
+
+  return (
+    <Styled.Container>
     <Styled.Subtitle>Промокод</Styled.Subtitle>
     <Styled.Input placeholder='Введите промокод' />
     <Styled.Button>Применить</Styled.Button>
@@ -14,6 +56,7 @@ const Payment = ({ quantity, price }: { quantity: number; price: number }): Reac
       После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
     </Styled.Instruction>
   </Styled.Container>
-);
+  );
+};
 
 export default Payment;
