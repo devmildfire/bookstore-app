@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as Styled from './Payment.styled';
 import PurchaseInfo from '../PurchaseInfo/PurchaseInfo';
-import Robokaska from "@/utils/robokaska";
+import Robokaska from '@/utils/robokaska';
 import { CartItem } from '@/types/api';
 
 interface roboUrlProps {
@@ -12,13 +12,17 @@ interface roboUrlProps {
 }
 
 interface paymentProps {
-  cart: CartItem[];
-  cartID: string;
+  setStage: (stage: string) => void;
   quantity: number;
   price: number;
 }
 
-function generateRoboURL({invoiceID, email, outSum, invoiceDescription}: roboUrlProps) {
+function generateRoboURL({
+  invoiceID,
+  email,
+  outSum,
+  invoiceDescription,
+}: roboUrlProps) {
   const config = {
     shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
     password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
@@ -39,23 +43,31 @@ function generateRoboURL({invoiceID, email, outSum, invoiceDescription}: roboUrl
   return payURL;
 }
 
-const Payment = ({ cart, cartID, quantity, price }: paymentProps): React.ReactElement => {
-
-  const [payURL, setPayURL] = useState("");
-
+const Payment = ({
+  setStage,
+  quantity,
+  price,
+}: paymentProps): React.ReactElement => {
+  const [payURL, setPayURL] = useState('');
 
   return (
     <Styled.Container>
-    <Styled.Subtitle>Промокод</Styled.Subtitle>
-    <Styled.Input placeholder='Введите промокод' />
-    <Styled.Button>Применить</Styled.Button>
-    <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
-    <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
-    <Styled.CheckoutButton>Продолжить</Styled.CheckoutButton>
-    <Styled.Instruction>
-      После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
-    </Styled.Instruction>
-  </Styled.Container>
+      <Styled.Subtitle>Промокод</Styled.Subtitle>
+      <Styled.Input placeholder='Введите промокод' />
+      <Styled.Button>Применить</Styled.Button>
+      <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
+      <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
+      <Styled.CheckoutButton
+        onClick={() => {
+          setStage('shipmentStage');
+        }}
+      >
+        Продолжить
+      </Styled.CheckoutButton>
+      <Styled.Instruction>
+        После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
+      </Styled.Instruction>
+    </Styled.Container>
   );
 };
 

@@ -9,7 +9,6 @@ import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabel
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
 import { postData } from '@/utils/postData';
-// import StyledText from '@/components/Common/Text/styles';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 
@@ -54,57 +53,31 @@ const calculateTotalPrice = (products: CartItemType[]): number => {
   return result;
 };
 
-// enum productsActionKind {
-//   increment = 'increment',
-//   decriment = 'decriment',
-//   remove = 'remove',
-// }
+interface shipmentProps {
+  setStage: (stage: string) => void;
+}
 
-// type productsAction = {
-//   type: productsActionKind;
-//   titleId: number;
-//   category: string;
-// };
-
-// function productsReducer(state: Product[], action: productsAction): Product[] {
-//   switch (action.type) {
-//     case productsActionKind.increment:
-//       return state.map((product) => {
-//         if (
-//           product.titleId === action.titleId &&
-//           product.category === action.category
-//         ) {
-//           return { ...product, quantity: product.quantity + 1 };
-//         }
-//         return product;
-//       });
-//     case productsActionKind.decriment:
-//       return state.map((product) => {
-//         if (
-//           product.titleId === action.titleId &&
-//           product.category === action.category &&
-//           product.quantity > 1
-//         ) {
-//           return { ...product, quantity: product.quantity - 1 };
-//         }
-//         return product;
-//       });
-//     case productsActionKind.remove:
-//       return state.filter(
-//         (product) =>
-//           product.titleId !== action.titleId ||
-//           product.category !== action.category
-//       );
-//     default:
-//       return state;
-//   }
-// }
+function Shipment({ setStage }: shipmentProps): React.ReactElement {
+  return (
+    <div>
+      Тут будет доставка
+      <button
+        onClick={() => {
+          setStage('cartStage');
+        }}
+      >
+        Вернуться
+      </button>
+    </div>
+  );
+}
 
 const Cart = (): React.ReactElement => {
   const [totalPrice, setTotalPrice] = useState(0);
 
   const [cart, setCart] = useState<CartType>([]);
   const [cartID, setCartID] = useState('');
+  const [stage, setStage] = useState('cartStage');
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
@@ -163,6 +136,51 @@ const Cart = (): React.ReactElement => {
     0
   ) as number;
 
+  function EmptyCart() {
+    return <div>В корзине пока ничего нет</div>;
+  }
+
+  function FullCart() {
+    return (
+      <>
+        <ColumnLabels />
+        <Styled.ProductsList>
+          {cart.map((product) => (
+            <CartItem
+              key={product.name + product.category}
+              {...product}
+              handleDelete={() => {
+                removeItemFromDB(product);
+              }}
+              incrementQuantity={() => {
+                updateItemInDB({
+                  ...product,
+                  quantity: product.quantity + 1,
+                });
+              }}
+              decrimentQuantity={() => {
+                updateItemInDB({
+                  ...product,
+                  quantity: product.quantity - 1,
+                });
+              }}
+            />
+          ))}
+        </Styled.ProductsList>
+
+        <ReturnButton>
+          <BackIcon />
+          Вернуться назад
+        </ReturnButton>
+        <Payment
+          setStage={setStage}
+          quantity={productQuantity}
+          price={totalPrice}
+        />
+      </>
+    );
+  }
+
   // function CartID({ cartID }: { cartID: string }) {
   //   return <div> ID корзины: {cartID} </div>;
   // }
@@ -178,38 +196,13 @@ const Cart = (): React.ReactElement => {
 
   return (
     <Styled.Main>
-      {/* <Styled.Title>Корзина</Styled.Title> */}
       <StyledText textColor='white' variant='h2_1_Cart'>
-        Корзина
+        {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
       </StyledText>
 
-      {/* <CartID cartID={cartID} />
-      <CartItems cart={cart} /> */}
+      {stage === 'cartStage' && (cart.length ? <FullCart /> : <EmptyCart />)}
 
-      <ColumnLabels />
-      <Styled.ProductsList>
-        {cart.map((product) => (
-          <CartItem
-            key={product.name + product.category}
-            {...product}
-            handleDelete={() => {
-              removeItemFromDB(product);
-            }}
-            incrementQuantity={() => {
-              updateItemInDB({ ...product, quantity: product.quantity + 1 });
-            }}
-            decrimentQuantity={() => {
-              updateItemInDB({ ...product, quantity: product.quantity - 1 });
-            }}
-          />
-        ))}
-      </Styled.ProductsList>
-
-      <ReturnButton>
-        <BackIcon />
-        Вернуться назад
-      </ReturnButton>
-      <Payment quantity={productQuantity} price={totalPrice} />
+      {stage === 'shipmentStage' && <Shipment setStage={setStage} />}
     </Styled.Main>
   );
 };
