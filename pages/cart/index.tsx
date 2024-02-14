@@ -1,16 +1,36 @@
 import React, { useCallback, useEffect, useReducer, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import * as Styled from '../../src/components/CartPage/CartPage.styled';
 import CartItem from '../../src/components/CartPage/CartItem/CartItem';
 import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
-
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
 import { postData } from '@/utils/postData';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
+import { StyledForm, StyledButton } from '@/components/CartPage/styles';
+import StyledInput from '@/components/Common/Input/styles';
+import debounce from '@/utils/debounce';
+import { z } from 'zod';
+import {
+  useForm,
+  Controller,
+  // SubmitHandler,
+  // SubmitErrorHandler,
+  // ChangeHandler,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Robokaska from '@/utils/robokaska';
+
+const FormSchema = z.object({
+  email: z.string().email(),
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
+
+
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -57,10 +77,150 @@ interface shipmentProps {
   setStage: (stage: string) => void;
 }
 
+interface roboUrlProps {
+  invoiceID: number;
+  email: string;
+  outSum: string;
+  invoiceDescription: string;
+}
+
+// interface paymentProps {
+//   setStage: (stage: string) => void;
+//   quantity: number;
+//   price: number;
+// }
+
+function generateRoboURL({
+  invoiceID,
+  email,
+  outSum,
+  invoiceDescription,
+}: roboUrlProps) {
+  const config = {
+    shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
+    password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
+    password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
+    testMode: true, // Указываем true, если работаем в тестовом режиме
+  };
+
+  const roboKassa = new Robokaska(config);
+
+  // Вернёт строку с URL адресом, на который можно отправить пользователя
+  const payURL = roboKassa.generateUrl(
+    invoiceID,
+    email,
+    outSum,
+    invoiceDescription
+  );
+
+  return payURL;
+}
+
 function Shipment({ setStage }: shipmentProps): React.ReactElement {
+  const [wipe, setWipe] = useState(false);
+  const [isValid, setIsvalid] = useState(false);
+  const [error, setError] = useState('');
+  const [payURL, setPayURL] = useState('');
+
+  const {
+    // handleSubmit,
+    control,
+    // formState: { errors, isSubmitSuccessful },
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+  });
+
+
+  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const { value } = input;
+    const valid = input.validity.valid;
+    // не показываем сообщение об ошибке если поле пустое
+    if (value !== '') {
+      setWipe(false);
+      setIsvalid(valid);
+      setError(
+        'Русский Динозар может писать только на валидные адреса электронной почты'
+      );
+    }
+    if (value === '') {
+      setWipe(true);
+    }
+
+    valid && setPayURL(generateRoboURL({
+      invoiceID: 1111,
+      email: value,
+      outSum: '555',
+      invoiceDescription: 'testInvoice'
+    }))
+  };
+
+  const debouncedOnChange = debounce(onChangeInput, 2000);
+
+
+
   return (
     <div>
-      Тут будет доставка
+      
+
+      <div>
+      <StyledForm
+        // onSubmit={handleSubmit(onSubmit, onError)}
+        action={payURL}
+        target='_blank'
+        method='POST'
+      >
+        <Controller
+          control={control}
+          name='email'
+          render={({
+            field: {
+              // onChange,
+              onBlur,
+              value,
+            },
+          }) => (
+            <StyledInput
+              placeholder='E-mail'
+              
+              onChange={debouncedOnChange}
+              onInvalid={(e) => {
+                // отключает системное сообщение валидации
+                e.preventDefault();
+              }}
+              onBlur={onBlur}
+              value={value}
+              type='email'
+              name='recipient[email]'
+              id='recipient_email'
+              required
+              className='form-control'
+            />
+          )}
+        />
+
+        <StyledButton
+          type='submit'
+          onClick={() => {
+            setWipe(true);
+          }}
+          disabled={!isValid}
+        >
+          Перейти к оплате
+        </StyledButton>
+
+        <div />
+
+
+      </StyledForm>
+      {!isValid && !wipe && error && (
+        <ErrorOutput>
+          {error}
+        </ErrorOutput>
+      )}
+    </div>
+
+
       <button
         onClick={() => {
           setStage('cartStage');
@@ -206,5 +366,72 @@ const Cart = (): React.ReactElement => {
     </Styled.Main>
   );
 };
+
+const slideDown = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0%);
+    opacity: 1;  
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+`;
+
+const ErrorOutput = styled.div`
+  background-color: var(--main-red-20);
+  color: var(--main-white-100);
+  border: none;
+  padding: 20px 0;
+  margin: 0 auto;
+  width: 879px;
+  font-size: 16px;
+  text-align: center;
+  animation: ${slideDown} 0.2s linear;
+  max-width: var(--width);
+  border-radius: 2px;
+  text-align: center;
+
+  @media ${breakPoints.xl} {
+    width: 879px;
+    height: 42px;
+    line-height: 42px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.lg} {
+    width: 612px;
+    height: 42px;
+    line-height: 42px;
+    margin: 0 auto;
+    font-size: 12px;
+    padding: 0 6px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 400px;
+    height: 32px;
+    margin: 0 auto;
+    font-size: 8px;
+    padding: 0 6px;
+    line-height: 32px;
+  }
+
+  @media ${breakPoints.sm} {
+    width: 285px;
+    margin: 0 auto;
+    font-size: 8px;
+    padding: 0 6px;
+    line-height: 16px;
+  }
+`;
+
+
 
 export default Cart;
