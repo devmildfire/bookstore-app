@@ -1,40 +1,44 @@
-import breakPoints from "@/utils/breakPoints";
-import styled from "styled-components";
+import breakPoints from '@/utils/breakPoints';
+import styled from 'styled-components';
 import Button from '@/components/Common/Button';
 
 export const StyledForm = styled.form`
-  display: grid;
-  grid-template-columns: auto min-content;
-  column-gap: 24px;
-  row-gap: 10px;
+  display: flex;
+  align-items: center;
+  /* grid-template-columns: auto min-content; */
+  /* grid-template-columns: auto; */
+  flex-direction: column;
+  /* column-gap: 24px;
+  row-gap: 10px; */
+  gap: 10px;
   margin: 0 auto;
   max-width: 879px;
 
   @media ${breakPoints.lg} {
-    grid-template-columns: auto min-content;
+    /* grid-template-columns: auto min-content;
     column-gap: 12px;
-    row-gap: 5px;
+    row-gap: 5px; */
     max-width: 612px;
   }
 
   @media ${breakPoints.md} {
-    grid-template-columns: auto min-content;
+    /* grid-template-columns: auto min-content;
     column-gap: 12px;
-    row-gap: 5px;
+    row-gap: 5px; */
     max-width: 400px;
   }
 
   @media ${breakPoints.smd} {
-    grid-template-columns: auto fit-content();
+    /* grid-template-columns: auto fit-content();
     column-gap: 12px;
-    row-gap: 5px;
+    row-gap: 5px; */
     max-width: 400px;
   }
 
   @media ${breakPoints.sm} {
-    grid-template-columns: 1fr;
+    /* grid-template-columns: 1fr; */
     gap: 4px;
-    row-gap: 16px;
+    /* row-gap: 16px; */
   }
 `;
 

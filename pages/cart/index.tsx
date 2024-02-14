@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import styled, { keyframes } from 'styled-components';
 import * as Styled from '../../src/components/CartPage/CartPage.styled';
 import CartItem from '../../src/components/CartPage/CartItem/CartItem';
@@ -11,9 +18,8 @@ import { postData } from '@/utils/postData';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import { StyledForm, StyledButton } from '@/components/CartPage/styles';
-import StyledInput from '@/components/Common/Input/styles';
 import debounce from '@/utils/debounce';
-import { z } from 'zod';
+import { ZodError, ZodType, z } from 'zod';
 import {
   useForm,
   Controller,
@@ -21,16 +27,12 @@ import {
   // SubmitErrorHandler,
   // ChangeHandler,
 } from 'react-hook-form';
+import { FieldError, UseFormRegister } from 'react-hook-form';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import Robokaska from '@/utils/robokaska';
-
-const FormSchema = z.object({
-  email: z.string().email(),
-});
-
-type FormSchemaType = z.infer<typeof FormSchema>;
-
-
+import Input from '@/components/Common/Input';
+import { json } from 'stream/consumers';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -116,110 +118,331 @@ function generateRoboURL({
   return payURL;
 }
 
+type FormData = {
+  email: string;
+  adress: string;
+};
+
+type FormFieldProps = {
+  type: string;
+  placeholder: string;
+  name: ValidFieldNames;
+  register: UseFormRegister<FormData>;
+  error: FieldError | undefined;
+  valueAsNumber?: boolean;
+  onChange: (event: any) => void;
+};
+
+type ValidFieldNames = 'email' | 'adress';
+
+const FormField: React.FC<FormFieldProps> = ({
+  type,
+  placeholder,
+  name,
+  register,
+  error,
+  valueAsNumber,
+  onChange,
+}) => (
+  <>
+    <input
+      type={type}
+      placeholder={placeholder}
+      {...register(name, { valueAsNumber })}
+      onChange={onChange}
+    />
+    {error && <span className='error-message'>{error.message}</span>}
+  </>
+);
+
+function Form() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+  } = useForm<FormData>({
+    resolver: zodResolver(UserSchema), // Apply the zodResolver
+  });
+
+  const onSubmit = async (data: FormData) => {
+    console.log('SUCCESS', data);
+    console.log('errors', errors);
+  };
+
+  const inputAdress = useRef() as MutableRefObject<HTMLInputElement>;
+  const inputEmail = useRef() as MutableRefObject<HTMLInputElement>;
+
+  function onAdressChange() {
+    console.log(isValid);
+    // console.log(
+    //   'event parse...',
+    //   UserSchema.safeParse({
+    //     email: inputEmail.current.value,
+    //     // adress: event.target.value,
+    //     adress: inputAdress.current.value,
+    //   })
+    // );
+
+    const result = UserSchema.safeParse({
+      email: inputEmail.current.value,
+      // adress: event.target.value,
+      adress: inputAdress.current.value,
+    });
+
+    if (result.success === false) {
+      // const errorArr = JSON.parse(result.error);
+      const error = result.error;
+
+      if (error instanceof ZodError) {
+        // console.error('Object is not valid:', error.errors);
+        // const errorAr = error.errors[0].message;
+        const errorAr = error.errors;
+
+        console.log(errorAr);
+
+        errorAr.forEach((item) => {
+          console.log(item.message);
+        });
+      }
+
+      // error && console.log('error ... ', error);
+      // const errorArr = JSON.parse(error.errors as string);
+
+      // error && console.log('error amount ... ', errorArr);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className='grid col-auto'>
+        <h1 className='text-3xl font-bold mb-4'>Zod & React-Hook-Form</h1>
+
+        {/* <FormField
+          // ref={inputEmail}
+          type='email'
+          placeholder='Email'
+          name='email'
+          register={register}
+          error={errors.email}
+          onChange={() => {
+            console.log(isValid);
+          }}
+        /> */}
+
+        <input
+          type='email'
+          placeholder='Email'
+          // name='email'
+          {...register('email')}
+          // error={errors.email}
+          ref={inputEmail}
+          onChange={onAdressChange}
+        />
+
+        <input
+          type='text'
+          placeholder='Adress'
+          // name='email'
+          {...register('adress')}
+          // error={errors.email}
+          ref={inputAdress}
+          onChange={onAdressChange}
+        />
+
+        {/* <FormField
+          // ref={inputAdress}
+          type='text'
+          placeholder='адрес'
+          name='adress'
+          register={register}
+          error={errors.adress}
+          onChange={(event) => {
+            console.log('validity ...', isValid);
+            console.log(
+              'event parse...',
+              // z.string().min(6).safeParse(event.target.value),
+              UserSchema.safeParse({
+                email: 'email@mail.com',
+                adress: event.target.value,
+              })
+            );
+
+            // console.log('adress error ...', errors.adress);
+          }}
+        /> */}
+
+        {/* <button disabled={!isValid} type='submit' className='submit-button'> */}
+        <button type='submit' className='submit-button'>
+          Submit
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export const UserSchema: ZodType<FormData> = z.object({
+  email: z.string().email(),
+  adress: z.string().min(6),
+});
+
+const FormSchema = z.object({
+  // email: z.string().email(),
+  email: z.string(),
+  adress: z.string(),
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
+
 function Shipment({ setStage }: shipmentProps): React.ReactElement {
-  const [wipe, setWipe] = useState(false);
-  const [isValid, setIsvalid] = useState(false);
-  const [error, setError] = useState('');
+  // const [wipe, setWipe] = useState(false);
+  // const [isValid, setIsvalid] = useState(false);
+  // const [error, setError] = useState('');
   const [payURL, setPayURL] = useState('');
 
   const {
     // handleSubmit,
+    register,
     control,
     // formState: { errors, isSubmitSuccessful },
+    formState: { errors, isValid },
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
-
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    const { value } = input;
-    const valid = input.validity.valid;
-    // не показываем сообщение об ошибке если поле пустое
-    if (value !== '') {
-      setWipe(false);
-      setIsvalid(valid);
-      setError(
-        'Русский Динозар может писать только на валидные адреса электронной почты'
-      );
-    }
-    if (value === '') {
-      setWipe(true);
-    }
 
-    valid && setPayURL(generateRoboURL({
-      invoiceID: 1111,
-      email: value,
-      outSum: '555',
-      invoiceDescription: 'testInvoice'
-    }))
+    const form = e.target.parentElement;
+
+    console.log('is valid form ...', isValid);
+    console.log('form errors ...', { ...errors });
+
+    const { value } = input;
+    // const valid = input.validity.valid;
+    // не показываем сообщение об ошибке если поле пустое
+    // if (value !== '') {
+    //   setWipe(false);
+    //   // setIsvalid(valid);
+    //   setError(
+    //     'Русский Динозар может писать только на валидные адреса электронной почты'
+    //   );
+    // }
+    // if (value === '') {
+    //   setWipe(true);
+    // }
+
+    // valid &&
+    //   setPayURL(
+    //     generateRoboURL({
+    //       invoiceID: 1111,
+    //       email: value,
+    //       outSum: '555',
+    //       invoiceDescription: 'testInvoice',
+    //     })
+    //   );
   };
 
-  const debouncedOnChange = debounce(onChangeInput, 2000);
-
-
+  // const debouncedOnChange = debounce(onChangeInput, 2000);
+  const debouncedOnChange = onChangeInput;
 
   return (
     <div>
-      
-
       <div>
-      <StyledForm
-        // onSubmit={handleSubmit(onSubmit, onError)}
-        action={payURL}
-        target='_blank'
-        method='POST'
-      >
-        <Controller
-          control={control}
-          name='email'
-          render={({
-            field: {
-              // onChange,
-              onBlur,
-              value,
-            },
-          }) => (
-            <StyledInput
-              placeholder='E-mail'
-              
-              onChange={debouncedOnChange}
-              onInvalid={(e) => {
-                // отключает системное сообщение валидации
-                e.preventDefault();
-              }}
-              onBlur={onBlur}
-              value={value}
-              type='email'
-              name='recipient[email]'
-              id='recipient_email'
-              required
-              className='form-control'
-            />
-          )}
-        />
-
-        <StyledButton
-          type='submit'
-          onClick={() => {
-            setWipe(true);
-          }}
-          disabled={!isValid}
+        {/* <StyledForm
+          // onSubmit={handleSubmit(onSubmit, onError)}
+          action={payURL}
+          target='_blank'
+          method='POST'
         >
-          Перейти к оплате
-        </StyledButton>
+          <input
+            {...register('email', {
+              required: 'This is email required error.',
+            })}
+            onChange={debouncedOnChange}
+          />
 
-        <div />
+          <input
+            {...register('adress', {
+              required: 'This is adress required error.',
+            })}
+            onChange={debouncedOnChange}
+          /> */}
 
+        {/* <Controller
+            control={control}
+            name='email'
+            render={({
+              field: {
+                // onChange,
+                onBlur,
+                value,
+              },
+            }) => (
+              <StyledInput
+                placeholder='E-mail'
+                onChange={debouncedOnChange}
+                onInvalid={(e) => {
+                  // отключает системное сообщение валидации
+                  e.preventDefault();
+                }}
+                onBlur={onBlur}
+                value={value}
+                type='email'
+                name='recipient[email]'
+                id='recipient_email'
+                required
+                className='form-control'
+              />
+            )}
+          /> */}
 
-      </StyledForm>
-      {!isValid && !wipe && error && (
-        <ErrorOutput>
-          {error}
-        </ErrorOutput>
-      )}
-    </div>
+        {/* <Controller
+            control={control}
+            name='adress'
+            render={({
+              field: {
+                // onChange,
+                onBlur,
+                value,
+              },
+            }) => (
+              <StyledInput
+                placeholder='адрес'
+                onChange={debouncedOnChange}
+                onInvalid={(e) => {
+                  // отключает системное сообщение валидации
+                  e.preventDefault();
+                }}
+                onBlur={onBlur}
+                value={value}
+                type='text'
+                name='recipient[adress]'
+                id='recipient_adress'
+                required
+                className='form-control'
+              />
+            )}
+          /> */}
 
+        {/* <StyledButton
+            type='submit'
+            // onClick={() => {
+            //   setWipe(true);
+            // }}
+            disabled={!isValid}
+            // disabled={!!errors}
+          >
+            Перейти к оплате
+          </StyledButton>
+
+          <div />
+        </StyledForm> */}
+        {/* {!isValid && !wipe && error && <ErrorOutput>{error}</ErrorOutput>} */}
+        {/* {!isValid && <ErrorOutput> form is not valid </ErrorOutput>} */}
+      </div>
+
+      <Form />
 
       <button
         onClick={() => {
@@ -382,6 +605,44 @@ const slideDown = keyframes`
   }
 `;
 
+const StyledInput = styled(Input)`
+  background-color: var(--main-white-20);
+  border: none;
+  color: var(--main-white-100);
+  padding: 20px;
+  max-width: var(--width);
+  margin: 0 auto;
+  width: 100%;
+
+  @media ${breakPoints.lg} {
+    width: 100%;
+    height: 45px;
+    max-width: 415px;
+    padding: 0px 6px;
+    /* padding: 0px 0px; */
+    margin: 0 auto;
+    font-size: 14px;
+  }
+
+  @media ${breakPoints.smd} {
+    width: 100%;
+    height: 32px;
+    max-width: 239px;
+    padding: 0px 6px;
+    margin: 0 auto;
+    font-size: 10px;
+  }
+
+  @media ${breakPoints.sm} {
+    width: 150px;
+    height: 32px;
+    max-width: var(--width);
+    padding: 0px 6px;
+    margin: 0 auto;
+    font-size: 10px;
+  }
+`;
+
 const ErrorOutput = styled.div`
   background-color: var(--main-red-20);
   color: var(--main-white-100);
@@ -431,7 +692,5 @@ const ErrorOutput = styled.div`
     line-height: 16px;
   }
 `;
-
-
 
 export default Cart;
