@@ -2,6 +2,11 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Cart, CartItem } from '@/types/api';
+import { Database, Tables } from 'api/books/types';
+
+// export type CartItemType = Tables<'Cart'>;
+export type CartItemType = Database['public']['Tables']['Cart']['Row'];
+export type CartItemInsertType = Database['public']['Tables']['Cart']['Insert'];
 
 async function getCart(id: string): Promise<Cart | PostgrestError> {
   const { data, error } = await supabaseService
@@ -55,19 +60,16 @@ async function removeItemFromCart(item: CartItem): Promise<string> {
 
 async function emptyCart(cartID: string): Promise<string> {
   const { error } = await supabaseService
-  .from('Cart')
-  .delete()
-  .eq('id', cartID)
+    .from('Cart')
+    .delete()
+    .eq('id', cartID);
 
-!error &&
-  console.log('empty cart success ... ', JSON.stringify(error, null, 2));
-error &&
-  console.log(
-    'empty cart FAILED ... ',
-    JSON.stringify(error, null, 2)
-  );
+  !error &&
+    console.log('empty cart success ... ', JSON.stringify(error, null, 2));
+  error &&
+    console.log('empty cart FAILED ... ', JSON.stringify(error, null, 2));
 
-return JSON.stringify(error, null, 2);
+  return JSON.stringify(error, null, 2);
 }
 
 async function updateItemInCart(
@@ -121,8 +123,6 @@ export default async function handler(
     res.status(200).json(updatedItem));
 
   body.oper == 'emptycart' &&
-    (
-      (errorMessage = await emptyCart(cartID)),
-      (res.status(200).json(errorMessage))
-    );
+    ((errorMessage = await emptyCart(cartID)),
+    res.status(200).json(errorMessage));
 }

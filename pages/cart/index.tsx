@@ -13,7 +13,9 @@ import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
 import { setOrGetCartCookie } from '@/utils/cardID';
-import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
+// import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
+// import { Cart as CartType,  } from '@/types/api';
+import { CartItemType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
@@ -35,7 +37,12 @@ import Robokaska from '@/utils/robokaska';
 import Input from '@/components/Common/Input';
 import { json } from 'stream/consumers';
 import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
-import { OrdersInsertType, OrdersType } from 'pages/api/order';
+import {
+  OrderItemInsertType,
+  OrdersInsertType,
+  OrdersType,
+} from 'pages/api/order';
+import { PostgrestError } from '@supabase/supabase-js';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -71,9 +78,9 @@ const ReturnButton = styled.button`
 const calculateTotalPrice = (products: CartItemType[]): number => {
   const result = products.reduce((acc, product) => {
     const price = product.discount
-      ? Math.floor(product.price * (1 - product.discount / 100))
+      ? Math.floor(product.price! * (1 - product.discount / 100))
       : product.price;
-    return acc + price * product.quantity;
+    return acc + price! * product.quantity!;
   }, 0);
   return result;
 };
@@ -82,6 +89,7 @@ interface shipmentProps {
   setStage: (stage: string) => void;
   cartID: string;
   totalPrice: number;
+  cart: CartItemType[];
 }
 
 interface roboUrlProps {
@@ -123,7 +131,6 @@ function generateRoboURL({
   return payURL;
 }
 
-
 type ValidFieldNames = keyof ShipmentFormData;
 
 type FormFieldProps = {
@@ -142,18 +149,12 @@ const FormField: React.FC<FormFieldProps> = ({
   register,
   error,
   valueAsNumber,
-  }) => (
-    <>
-      <input
-        type={type}
-        placeholder={placeholder}
-        {...register}
-      />
-      {error && <p>{error.message}</p>}
-    </>
-  );
-
-
+}) => (
+  <>
+    <input type={type} placeholder={placeholder} {...register} />
+    {error && <p>{error.message}</p>}
+  </>
+);
 
 function Form() {
   const {
@@ -170,15 +171,13 @@ function Form() {
     console.log('errors', errors);
   };
 
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-    
       <div>
         <input
           type='email'
           placeholder='Email'
-          {...register('email', {required: 'email is required'})}
+          {...register('email', { required: 'email is required' })}
         />
         {errors.email && <p> {errors.email.message} </p>}
       </div>
@@ -187,15 +186,14 @@ function Form() {
         <input
           type='text'
           placeholder='Adress'
-          {...register('adress', {required: 'adress is required'})}
+          {...register('adress', { required: 'adress is required' })}
         />
         {errors.adress && <p> {errors.adress.message} </p>}
       </div>
 
       <button type='submit' className='submit-button'>
-          Submit
+        Submit
       </button>
-      
     </form>
   );
 }
@@ -212,18 +210,46 @@ async function emptyCartFromDB(cartID: string) {
 }
 
 async function createNewOrder(order: OrdersInsertType) {
-  const newOrderResponse: string = await postData(`/api/order`, {
+  const newOrderResponse: OrdersType[] = await postData(`/api/order`, {
     oper: 'add',
-    order: order
+    order: order,
   });
   console.log(
     'created new order ... ',
-    JSON.stringify(newOrderResponse, null, 2)
+    // JSON.stringify(newOrderResponse, null, 2)
+    newOrderResponse
   );
+  // return JSON.parse(newOrderResponse)[0].id;
+  return newOrderResponse[0].id;
 }
 
+function createOrderItemsAr(
+  cart: CartItemType[],
+  orderID: number
+): OrderItemInsertType[] {
+  const orderItems = cart.map((item) => {
+    return {
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      discount: item.discount,
+      summ: Math.floor(
+        item.quantity! * ((item.price! * (100 - item.discount!)) / 100)
+      ),
+      type: item.category,
+      order_id: orderID,
+    };
+  });
 
-function Shipment({ setStage, cartID, totalPrice }: shipmentProps): React.ReactElement {
+  return orderItems;
+}
+
+function Shipment({
+  setStage,
+  cartID,
+  totalPrice,
+  cart,
+}: shipmentProps): React.ReactElement {
   // const [wipe, setWipe] = useState(false);
   // const [isValid, setIsvalid] = useState(false);
   // const [error, setError] = useState('');
@@ -242,47 +268,43 @@ function Shipment({ setStage, cartID, totalPrice }: shipmentProps): React.ReactE
     const order: OrdersInsertType = {
       adress: data.adress,
       email: data.email,
-    status: 'pending',
-    cart_id: cartID,
-    summ: totalPrice
-    }
-    createNewOrder(order);
+      status: 'pending',
+      cart_id: cartID,
+      summ: totalPrice,
+    };
+    const orderID = await createNewOrder(order);
+
+    // const orderItemsAr = createOrderItemsAr(cart, orderID);
+
+    console.log('order ID is...', orderID);
     emptyCartFromDB(cartID);
   };
 
   return (
     <div>
       <div>
-        <StyledForm
-          onSubmit={handleSubmit(onSubmit)}
-        >
-
-          <FormField 
+        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <FormField
             type='text'
             placeholder='Email'
-            register = {register('email', {required: 'email is required'})}
-            name = 'email'
-            error = {errors.email}
+            register={register('email', { required: 'email is required' })}
+            name='email'
+            error={errors.email}
           />
 
-          <FormField 
+          <FormField
             type='text'
             placeholder='adress'
             // register = {register}
-            register = {register('adress', {required: 'adress is required'})}
-            name = 'adress'
-            error = {errors.adress}
+            register={register('adress', { required: 'adress is required' })}
+            name='adress'
+            error={errors.adress}
           />
 
-          <StyledButton
-              type='submit'
-            >
-              Перейти к оплате
-          </StyledButton>
+          <StyledButton type='submit'>Перейти к оплате</StyledButton>
 
           <div />
         </StyledForm>
-
       </div>
 
       {/* <Form /> */}
@@ -440,7 +462,14 @@ const Cart = (): React.ReactElement => {
 
       {stage === 'cartStage' && (cart.length ? <FullCart /> : <EmptyCart />)}
 
-      {stage === 'shipmentStage' && <Shipment setStage={setStage} cartID={cartID} totalPrice={totalPrice}/>}
+      {stage === 'shipmentStage' && (
+        <Shipment
+          setStage={setStage}
+          cartID={cartID}
+          totalPrice={totalPrice}
+          cart={cart}
+        />
+      )}
     </Styled.Main>
   );
 };

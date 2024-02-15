@@ -2,12 +2,17 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Cart, CartItem } from '@/types/api';
-import { Tables } from 'api/supabase-client/types';
+import { Tables } from 'api/books/types';
 
 export type OrdersType = Tables<'Orders'>;
-export type OrdersInsertType = Omit<OrdersType, 'id' |'created_at' >
+export type OrdersInsertType = Omit<OrdersType, 'id' | 'created_at'>;
 
-async function addOrder(order: OrdersInsertType): Promise<OrdersType[] | PostgrestError> {
+export type OrderItemType = Tables<'OrderItems'>;
+export type OrderItemInsertType = Omit<OrderItemType, 'id'>;
+
+async function addOrder(
+  order: OrdersInsertType
+): Promise<OrdersType[] | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Orders')
     .insert(order)
@@ -21,7 +26,6 @@ async function addOrder(order: OrdersInsertType): Promise<OrdersType[] | Postgre
     return data;
   }
 }
-
 
 export default async function handler(
   req: NextApiRequest,
