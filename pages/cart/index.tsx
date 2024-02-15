@@ -23,6 +23,7 @@ import { ZodError, ZodType, z } from 'zod';
 import {
   useForm,
   Controller,
+  UseFormRegisterReturn,
   // SubmitHandler,
   // SubmitErrorHandler,
   // ChangeHandler,
@@ -33,6 +34,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Robokaska from '@/utils/robokaska';
 import Input from '@/components/Common/Input';
 import { json } from 'stream/consumers';
+import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
+import { OrdersInsertType, OrdersType } from 'pages/api/order';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -77,6 +80,8 @@ const calculateTotalPrice = (products: CartItemType[]): number => {
 
 interface shipmentProps {
   setStage: (stage: string) => void;
+  cartID: string;
+  totalPrice: number;
 }
 
 interface roboUrlProps {
@@ -119,48 +124,36 @@ function generateRoboURL({
 }
 
 
+type ValidFieldNames = keyof ShipmentFormData;
 
-// type FormFieldProps = {
-//   type: string;
-//   placeholder: string;
-//   name: ValidFieldNames;
-//   register: UseFormRegister<FormData>;
-//   error: FieldError | undefined;
-//   valueAsNumber?: boolean;
-//   onChange: (event: any) => void;
-// };
-
-// type ValidFieldNames = 'email' | 'adress';
-
-// const FormField: React.FC<FormFieldProps> = ({
-//   type,
-//   placeholder,
-//   name,
-//   register,
-//   error,
-//   valueAsNumber,
-//   onChange,
-// }) => (
-//   <>
-//     <input
-//       type={type}
-//       placeholder={placeholder}
-//       {...register(name, { valueAsNumber })}
-//       onChange={onChange}
-//     />
-//     {error && <span className='error-message'>{error.message}</span>}
-//   </>
-// );
-
-type FormData = {
-  email: string;
-  adress: string;
+type FormFieldProps = {
+  type: string;
+  placeholder: string;
+  name: ValidFieldNames;
+  register: UseFormRegisterReturn<ValidFieldNames>;
+  error: FieldError | undefined;
+  valueAsNumber?: boolean;
 };
 
-export const UserSchema: ZodType<FormData> = z.object({
-  email: z.string().email('email musrt be a valid email'),
-  adress: z.string().min(6, 'adress must be at least 6 characters long'),
-});
+const FormField: React.FC<FormFieldProps> = ({
+  type,
+  placeholder,
+  name,
+  register,
+  error,
+  valueAsNumber,
+  }) => (
+    <>
+      <input
+        type={type}
+        placeholder={placeholder}
+        {...register}
+      />
+      {error && <p>{error.message}</p>}
+    </>
+  );
+
+
 
 function Form() {
   const {
@@ -168,11 +161,11 @@ function Form() {
     handleSubmit,
     formState: { errors, isValid },
     setError,
-  } = useForm<FormData>({
-    resolver: zodResolver(UserSchema), // Apply the zodResolver
+  } = useForm<ShipmentFormData>({
+    resolver: zodResolver(ShipmentSchema), // Apply the zodResolver
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ShipmentFormData) => {
     console.log('SUCCESS', data);
     console.log('errors', errors);
   };
@@ -207,165 +200,92 @@ function Form() {
   );
 }
 
+async function emptyCartFromDB(cartID: string) {
+  const emptyCartResponse: string = await postData(`/api/cart`, {
+    oper: 'emptycart',
+    id: cartID,
+  });
+  console.log(
+    'emptied cart of all items ... ',
+    JSON.stringify(emptyCartResponse, null, 2)
+  );
+}
+
+async function createNewOrder(order: OrdersInsertType) {
+  const newOrderResponse: string = await postData(`/api/order`, {
+    oper: 'add',
+    order: order
+  });
+  console.log(
+    'created new order ... ',
+    JSON.stringify(newOrderResponse, null, 2)
+  );
+}
 
 
-const FormSchema = z.object({
-  // email: z.string().email(),
-  email: z.string(),
-  adress: z.string(),
-});
-
-type FormSchemaType = z.infer<typeof FormSchema>;
-
-function Shipment({ setStage }: shipmentProps): React.ReactElement {
+function Shipment({ setStage, cartID, totalPrice }: shipmentProps): React.ReactElement {
   // const [wipe, setWipe] = useState(false);
   // const [isValid, setIsvalid] = useState(false);
   // const [error, setError] = useState('');
   const [payURL, setPayURL] = useState('');
 
   const {
-    // handleSubmit,
     register,
-    control,
-    // formState: { errors, isSubmitSuccessful },
-    formState: { errors, isValid },
-  } = useForm<FormSchemaType>({
-    resolver: zodResolver(FormSchema),
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ShipmentFormData>({
+    resolver: zodResolver(ShipmentSchema),
   });
 
-  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target;
-
-    const form = e.target.parentElement;
-
-    console.log('is valid form ...', isValid);
-    console.log('form errors ...', { ...errors });
-
-    const { value } = input;
-    // const valid = input.validity.valid;
-    // не показываем сообщение об ошибке если поле пустое
-    // if (value !== '') {
-    //   setWipe(false);
-    //   // setIsvalid(valid);
-    //   setError(
-    //     'Русский Динозар может писать только на валидные адреса электронной почты'
-    //   );
-    // }
-    // if (value === '') {
-    //   setWipe(true);
-    // }
-
-    // valid &&
-    //   setPayURL(
-    //     generateRoboURL({
-    //       invoiceID: 1111,
-    //       email: value,
-    //       outSum: '555',
-    //       invoiceDescription: 'testInvoice',
-    //     })
-    //   );
+  const onSubmit = async (data: ShipmentFormData) => {
+    console.log('SUCCESS', data);
+    const order: OrdersInsertType = {
+      adress: data.adress,
+      email: data.email,
+    status: 'pending',
+    cart_id: cartID,
+    summ: totalPrice
+    }
+    createNewOrder(order);
+    emptyCartFromDB(cartID);
   };
-
-  // const debouncedOnChange = debounce(onChangeInput, 2000);
-  const debouncedOnChange = onChangeInput;
 
   return (
     <div>
       <div>
-        {/* <StyledForm
-          // onSubmit={handleSubmit(onSubmit, onError)}
-          action={payURL}
-          target='_blank'
-          method='POST'
+        <StyledForm
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <input
-            {...register('email', {
-              required: 'This is email required error.',
-            })}
-            onChange={debouncedOnChange}
+
+          <FormField 
+            type='text'
+            placeholder='Email'
+            register = {register('email', {required: 'email is required'})}
+            name = 'email'
+            error = {errors.email}
           />
 
-          <input
-            {...register('adress', {
-              required: 'This is adress required error.',
-            })}
-            onChange={debouncedOnChange}
-          /> */}
+          <FormField 
+            type='text'
+            placeholder='adress'
+            // register = {register}
+            register = {register('adress', {required: 'adress is required'})}
+            name = 'adress'
+            error = {errors.adress}
+          />
 
-        {/* <Controller
-            control={control}
-            name='email'
-            render={({
-              field: {
-                // onChange,
-                onBlur,
-                value,
-              },
-            }) => (
-              <StyledInput
-                placeholder='E-mail'
-                onChange={debouncedOnChange}
-                onInvalid={(e) => {
-                  // отключает системное сообщение валидации
-                  e.preventDefault();
-                }}
-                onBlur={onBlur}
-                value={value}
-                type='email'
-                name='recipient[email]'
-                id='recipient_email'
-                required
-                className='form-control'
-              />
-            )}
-          /> */}
-
-        {/* <Controller
-            control={control}
-            name='adress'
-            render={({
-              field: {
-                // onChange,
-                onBlur,
-                value,
-              },
-            }) => (
-              <StyledInput
-                placeholder='адрес'
-                onChange={debouncedOnChange}
-                onInvalid={(e) => {
-                  // отключает системное сообщение валидации
-                  e.preventDefault();
-                }}
-                onBlur={onBlur}
-                value={value}
-                type='text'
-                name='recipient[adress]'
-                id='recipient_adress'
-                required
-                className='form-control'
-              />
-            )}
-          /> */}
-
-        {/* <StyledButton
-            type='submit'
-            // onClick={() => {
-            //   setWipe(true);
-            // }}
-            disabled={!isValid}
-            // disabled={!!errors}
-          >
-            Перейти к оплате
+          <StyledButton
+              type='submit'
+            >
+              Перейти к оплате
           </StyledButton>
 
           <div />
-        </StyledForm> */}
-        {/* {!isValid && !wipe && error && <ErrorOutput>{error}</ErrorOutput>} */}
-        {/* {!isValid && <ErrorOutput> form is not valid </ErrorOutput>} */}
+        </StyledForm>
+
       </div>
 
-      <Form />
+      {/* <Form /> */}
 
       <button
         onClick={() => {
@@ -432,6 +352,18 @@ const Cart = (): React.ReactElement => {
     );
     cartID && getCartFromDB(cartID);
   }
+
+  // async function emptyCartFromDB() {
+  //   const emptyCartResponse: string = await postData(`/api/cart`, {
+  //     oper: 'emptycart',
+  //     id: cartID,
+  //   });
+  //   console.log(
+  //     'emptied cart of all items ... ',
+  //     JSON.stringify(emptyCartResponse, null, 2)
+  //   );
+  //   cartID && getCartFromDB(cartID);
+  // }
 
   useEffect(() => {
     setTotalPrice(calculateTotalPrice(cart));
@@ -508,7 +440,7 @@ const Cart = (): React.ReactElement => {
 
       {stage === 'cartStage' && (cart.length ? <FullCart /> : <EmptyCart />)}
 
-      {stage === 'shipmentStage' && <Shipment setStage={setStage} />}
+      {stage === 'shipmentStage' && <Shipment setStage={setStage} cartID={cartID} totalPrice={totalPrice}/>}
     </Styled.Main>
   );
 };
