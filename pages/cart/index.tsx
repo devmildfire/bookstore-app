@@ -118,42 +118,49 @@ function generateRoboURL({
   return payURL;
 }
 
+
+
+// type FormFieldProps = {
+//   type: string;
+//   placeholder: string;
+//   name: ValidFieldNames;
+//   register: UseFormRegister<FormData>;
+//   error: FieldError | undefined;
+//   valueAsNumber?: boolean;
+//   onChange: (event: any) => void;
+// };
+
+// type ValidFieldNames = 'email' | 'adress';
+
+// const FormField: React.FC<FormFieldProps> = ({
+//   type,
+//   placeholder,
+//   name,
+//   register,
+//   error,
+//   valueAsNumber,
+//   onChange,
+// }) => (
+//   <>
+//     <input
+//       type={type}
+//       placeholder={placeholder}
+//       {...register(name, { valueAsNumber })}
+//       onChange={onChange}
+//     />
+//     {error && <span className='error-message'>{error.message}</span>}
+//   </>
+// );
+
 type FormData = {
   email: string;
   adress: string;
 };
 
-type FormFieldProps = {
-  type: string;
-  placeholder: string;
-  name: ValidFieldNames;
-  register: UseFormRegister<FormData>;
-  error: FieldError | undefined;
-  valueAsNumber?: boolean;
-  onChange: (event: any) => void;
-};
-
-type ValidFieldNames = 'email' | 'adress';
-
-const FormField: React.FC<FormFieldProps> = ({
-  type,
-  placeholder,
-  name,
-  register,
-  error,
-  valueAsNumber,
-  onChange,
-}) => (
-  <>
-    <input
-      type={type}
-      placeholder={placeholder}
-      {...register(name, { valueAsNumber })}
-      onChange={onChange}
-    />
-    {error && <span className='error-message'>{error.message}</span>}
-  </>
-);
+export const UserSchema: ZodType<FormData> = z.object({
+  email: z.string().email('email musrt be a valid email'),
+  adress: z.string().min(6, 'adress must be at least 6 characters long'),
+});
 
 function Form() {
   const {
@@ -170,121 +177,37 @@ function Form() {
     console.log('errors', errors);
   };
 
-  const inputAdress = useRef() as MutableRefObject<HTMLInputElement>;
-  const inputEmail = useRef() as MutableRefObject<HTMLInputElement>;
-
-  function onAdressChange() {
-    console.log(isValid);
-    // console.log(
-    //   'event parse...',
-    //   UserSchema.safeParse({
-    //     email: inputEmail.current.value,
-    //     // adress: event.target.value,
-    //     adress: inputAdress.current.value,
-    //   })
-    // );
-
-    const result = UserSchema.safeParse({
-      email: inputEmail.current.value,
-      // adress: event.target.value,
-      adress: inputAdress.current.value,
-    });
-
-    if (result.success === false) {
-      // const errorArr = JSON.parse(result.error);
-      const error = result.error;
-
-      if (error instanceof ZodError) {
-        // console.error('Object is not valid:', error.errors);
-        // const errorAr = error.errors[0].message;
-        const errorAr = error.errors;
-
-        console.log(errorAr);
-
-        errorAr.forEach((item) => {
-          console.log(item.message);
-        });
-      }
-
-      // error && console.log('error ... ', error);
-      // const errorArr = JSON.parse(error.errors as string);
-
-      // error && console.log('error amount ... ', errorArr);
-    }
-  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className='grid col-auto'>
-        <h1 className='text-3xl font-bold mb-4'>Zod & React-Hook-Form</h1>
-
-        {/* <FormField
-          // ref={inputEmail}
-          type='email'
-          placeholder='Email'
-          name='email'
-          register={register}
-          error={errors.email}
-          onChange={() => {
-            console.log(isValid);
-          }}
-        /> */}
-
+    
+      <div>
         <input
           type='email'
           placeholder='Email'
-          // name='email'
-          {...register('email')}
-          // error={errors.email}
-          ref={inputEmail}
-          onChange={onAdressChange}
+          {...register('email', {required: 'email is required'})}
         />
+        {errors.email && <p> {errors.email.message} </p>}
+      </div>
 
+      <div>
         <input
           type='text'
           placeholder='Adress'
-          // name='email'
-          {...register('adress')}
-          // error={errors.email}
-          ref={inputAdress}
-          onChange={onAdressChange}
+          {...register('adress', {required: 'adress is required'})}
         />
-
-        {/* <FormField
-          // ref={inputAdress}
-          type='text'
-          placeholder='адрес'
-          name='adress'
-          register={register}
-          error={errors.adress}
-          onChange={(event) => {
-            console.log('validity ...', isValid);
-            console.log(
-              'event parse...',
-              // z.string().min(6).safeParse(event.target.value),
-              UserSchema.safeParse({
-                email: 'email@mail.com',
-                adress: event.target.value,
-              })
-            );
-
-            // console.log('adress error ...', errors.adress);
-          }}
-        /> */}
-
-        {/* <button disabled={!isValid} type='submit' className='submit-button'> */}
-        <button type='submit' className='submit-button'>
-          Submit
-        </button>
+        {errors.adress && <p> {errors.adress.message} </p>}
       </div>
+
+      <button type='submit' className='submit-button'>
+          Submit
+      </button>
+      
     </form>
   );
 }
 
-export const UserSchema: ZodType<FormData> = z.object({
-  email: z.string().email(),
-  adress: z.string().min(6),
-});
+
 
 const FormSchema = z.object({
   // email: z.string().email(),
