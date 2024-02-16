@@ -402,12 +402,16 @@ type EditionsMap = {
   [key: string]: CartItemType['category'];
 };
 
-// const editions: EditionsMap = {
-//   write: 'Печатное издание',
-//   book2: 'Книга 2.0',
-//   digital: 'Цифровое издание',
-//   audio: 'Аудиокнига',
-// };
+type EditionsShownMap = {
+  [key: string]: string;
+};
+
+const editions: EditionsShownMap = {
+  PrintedBooks: 'Печатное издание',
+  Ebooks: 'Книга 2.0',
+  Audiobooks: 'Цифровое издание',
+  CardBooks: 'Аудиокнига',
+};
 
 const bookTypes: EditionsMap = {
   PrintedBooks: 'PrintBook',
@@ -489,7 +493,7 @@ function BookModal(props: BookModalProps) {
             return (
               <Edition key={type}>
                 <IconWrapper>{modalIconLookup[type]}</IconWrapper>
-                <EditionName variant='text'>{bookTypes[type]}</EditionName>
+                <EditionName variant='text'>{editions[type]}</EditionName>
                 <ProductCopies
                   setSum={setSum}
                   setCopies={setCopies}
