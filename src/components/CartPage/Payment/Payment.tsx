@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as Styled from './Payment.styled';
 import PurchaseInfo from '../PurchaseInfo/PurchaseInfo';
 import Robokaska from '@/utils/robokaska';
-import { CartItem } from '@/types/api';
+// import { CartItem } from '@/types/api';
 
 interface roboUrlProps {
   invoiceID: number;

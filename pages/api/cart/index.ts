@@ -1,14 +1,13 @@
 import { PostgrestError } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Cart, CartItem } from '@/types/api';
+// import { Cart, CartItem } from '@/types/api';
 import { Database, Tables } from 'api/books/types';
 
-// export type CartItemType = Tables<'Cart'>;
 export type CartItemType = Database['public']['Tables']['Cart']['Row'];
 export type CartItemInsertType = Database['public']['Tables']['Cart']['Insert'];
 
-async function getCart(id: string): Promise<Cart | PostgrestError> {
+async function getCart(id: string): Promise<CartItemType[] | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Cart')
     .select('*')
@@ -24,7 +23,9 @@ async function getCart(id: string): Promise<Cart | PostgrestError> {
   }
 }
 
-async function addItemToCart(item: CartItem): Promise<Cart | PostgrestError> {
+async function addItemToCart(
+  item: CartItemType
+): Promise<CartItemType[] | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Cart')
     .insert(item)
@@ -39,7 +40,7 @@ async function addItemToCart(item: CartItem): Promise<Cart | PostgrestError> {
   }
 }
 
-async function removeItemFromCart(item: CartItem): Promise<string> {
+async function removeItemFromCart(item: CartItemType): Promise<string> {
   const { error } = await supabaseService
     .from('Cart')
     .delete()
@@ -73,8 +74,8 @@ async function emptyCart(cartID: string): Promise<string> {
 }
 
 async function updateItemInCart(
-  item: CartItem
-): Promise<Cart | PostgrestError> {
+  item: CartItemType
+): Promise<CartItemType[] | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Cart')
     .upsert(item)
@@ -98,11 +99,11 @@ export default async function handler(
   const cartID: string = body.id ? body.id : '';
   console.log('id is', cartID);
 
-  let cart: Cart | PostgrestError;
-  let item: CartItem;
+  let cart: CartItemType[] | PostgrestError;
+  let item: CartItemType;
   let errorMessage: string;
 
-  let updatedItem: Cart | PostgrestError;
+  let updatedItem: CartItemType[] | PostgrestError;
 
   body.oper == 'fetch' &&
     ((cart = await getCart(cartID)), res.status(200).json(cart));

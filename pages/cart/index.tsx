@@ -41,8 +41,10 @@ import {
   OrderItemInsertType,
   OrdersInsertType,
   OrdersType,
+  roboUrlProps,
 } from 'pages/api/order';
 import { PostgrestError } from '@supabase/supabase-js';
+import { Router } from 'next/router';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -90,45 +92,6 @@ interface shipmentProps {
   cartID: string;
   totalPrice: number;
   cart: CartItemType[];
-}
-
-interface roboUrlProps {
-  invoiceID: number;
-  email: string;
-  outSum: string;
-  invoiceDescription: string;
-}
-
-// interface paymentProps {
-//   setStage: (stage: string) => void;
-//   quantity: number;
-//   price: number;
-// }
-
-function generateRoboURL({
-  invoiceID,
-  email,
-  outSum,
-  invoiceDescription,
-}: roboUrlProps) {
-  const config = {
-    shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
-    password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
-    password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
-    testMode: true, // Указываем true, если работаем в тестовом режиме
-  };
-
-  const roboKassa = new Robokaska(config);
-
-  // Вернёт строку с URL адресом, на который можно отправить пользователя
-  const payURL = roboKassa.generateUrl(
-    invoiceID,
-    email,
-    outSum,
-    invoiceDescription
-  );
-
-  return payURL;
 }
 
 type ValidFieldNames = keyof ShipmentFormData;
@@ -223,6 +186,19 @@ async function createNewOrder(order: OrdersInsertType) {
   return newOrderResponse[0].id;
 }
 
+async function createNewOrderItems(itemsList: OrderItemInsertType[]) {
+  const newOrderItemsResponse: OrderItemInsertType[] = await postData(
+    `/api/order`,
+    {
+      oper: 'additems',
+      items: itemsList,
+    }
+  );
+  console.log('created new order items ... ', newOrderItemsResponse);
+
+  return newOrderItemsResponse;
+}
+
 function createOrderItemsAr(
   cart: CartItemType[],
   orderID: number
@@ -242,6 +218,16 @@ function createOrderItemsAr(
   });
 
   return orderItems;
+}
+
+async function getPayUrl(props: roboUrlProps) {
+  const roboUrl: string = await postData(`/api/order`, {
+    oper: 'payurl',
+    props: props,
+  });
+  console.log('created new pay url ... ', roboUrl);
+
+  return roboUrl;
 }
 
 function Shipment({
@@ -274,10 +260,44 @@ function Shipment({
     };
     const orderID = await createNewOrder(order);
 
-    // const orderItemsAr = createOrderItemsAr(cart, orderID);
+    const orderItemsAr = createOrderItemsAr(cart, orderID);
 
     console.log('order ID is...', orderID);
+    console.log('order items array is...', orderItemsAr);
+
+    const orderItemsArReturn = createNewOrderItems(orderItemsAr);
+    console.log('order items return array is...', orderItemsArReturn);
+
+    const orderDescription = orderItemsAr
+      .map((item) => {
+        return (
+          item.name! +
+          ' - ' +
+          item.type! +
+          ' - количество ' +
+          item.quantity +
+          'шт. - ' +
+          'цена ' +
+          // item.summ +
+          item.summ +
+          '₽'
+        );
+      })
+      .toString();
+
+    const payUrlProps: roboUrlProps = {
+      invoiceID: orderID,
+      email: data.email,
+      // outSum: totalPrice.toString(),
+      outSum: '1',
+      invoiceDescription: orderDescription,
+    };
+    const payUrl = await getPayUrl(payUrlProps);
+    console.log('order pay url return is...', payUrl);
+
     emptyCartFromDB(cartID);
+
+    window.open(payUrl, '_blank');
   };
 
   return (
@@ -323,7 +343,9 @@ function Shipment({
 const Cart = (): React.ReactElement => {
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const [cart, setCart] = useState<CartType>([]);
+  // const [cart, setCart] = useState<CartType>([]);
+  const [cart, setCart] = useState<CartItemType[]>([]);
+
   const [cartID, setCartID] = useState('');
   const [stage, setStage] = useState('cartStage');
 
@@ -341,7 +363,7 @@ const Cart = (): React.ReactElement => {
 
   const getCartFromDB = useCallback(
     async (id: string) => {
-      const cartItems: CartType = await postData(`/api/cart`, {
+      const cartItems: CartItemType[] = await postData(`/api/cart`, {
         oper: 'fetch',
         id: cartID,
       });
@@ -392,7 +414,7 @@ const Cart = (): React.ReactElement => {
   }, [cart]);
 
   const productQuantity = cart.reduce(
-    (acc, product) => acc + product.quantity,
+    (acc, product) => acc + product.quantity!,
     0
   ) as number;
 
@@ -415,13 +437,13 @@ const Cart = (): React.ReactElement => {
               incrementQuantity={() => {
                 updateItemInDB({
                   ...product,
-                  quantity: product.quantity + 1,
+                  quantity: product.quantity! + 1,
                 });
               }}
               decrimentQuantity={() => {
                 updateItemInDB({
                   ...product,
-                  quantity: product.quantity - 1,
+                  quantity: product.quantity! - 1,
                 });
               }}
             />
