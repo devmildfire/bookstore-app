@@ -7,7 +7,7 @@ import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
 import { BookTableTypesTuple, Title } from '@/models/books';
 import { setOrGetCartCookie } from '@/utils/cardID';
-import { Cart, CartItem } from '@/types/api';
+// import { Cart, CartItem } from '@/types/api';
 import { Course } from '@/types/course';
 import { API } from 'api/books/';
 

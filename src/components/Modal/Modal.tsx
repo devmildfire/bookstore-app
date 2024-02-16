@@ -22,9 +22,10 @@ import { BookTableTypesTuple } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
-import { CartItem } from '@/types/api';
+// import { CartItem } from '@/types/api';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { postData } from '@/utils/postData';
+import { CartItemType } from 'pages/api/cart';
 
 const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
   Audiobooks: <AudioIcon />,
@@ -393,16 +394,20 @@ function ProductCopies({
   );
 }
 
+// type EditionsMap = {
+//   [key: string]: string;
+// };
+
 type EditionsMap = {
-  [key: string]: string;
+  [key: string]: CartItemType['category'];
 };
 
-const editions: EditionsMap = {
-  write: 'Печатное издание',
-  book2: 'Книга 2.0',
-  digital: 'Цифровое издание',
-  audio: 'Аудиокнига',
-};
+// const editions: EditionsMap = {
+//   write: 'Печатное издание',
+//   book2: 'Книга 2.0',
+//   digital: 'Цифровое издание',
+//   audio: 'Аудиокнига',
+// };
 
 const bookTypes: EditionsMap = {
   PrintedBooks: 'PrintBook',
@@ -438,8 +443,8 @@ function BookModal(props: BookModalProps) {
     types,
     author,
     price,
-  }: typeof props): CartItem[] => {
-    const items: CartItem[] = [];
+  }: typeof props): CartItemType[] => {
+    const items: CartItemType[] = [];
     types.forEach((type, index) => {
       copies[index] &&
         items.push({
@@ -462,7 +467,7 @@ function BookModal(props: BookModalProps) {
     const items = createCartObjects(props);
 
     items.forEach(async (item) => {
-      const addedItem: CartItem = await postData(`/api/cart`, {
+      const addedItem: CartItemType = await postData(`/api/cart`, {
         oper: 'update',
         item: item,
       });
@@ -484,7 +489,7 @@ function BookModal(props: BookModalProps) {
             return (
               <Edition key={type}>
                 <IconWrapper>{modalIconLookup[type]}</IconWrapper>
-                <EditionName variant='text'>{editions[type]}</EditionName>
+                <EditionName variant='text'>{bookTypes[type]}</EditionName>
                 <ProductCopies
                   setSum={setSum}
                   setCopies={setCopies}
