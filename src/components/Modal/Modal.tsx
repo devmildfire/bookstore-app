@@ -394,10 +394,6 @@ function ProductCopies({
   );
 }
 
-// type EditionsMap = {
-//   [key: string]: string;
-// };
-
 type EditionsMap = {
   [key: string]: CartItemType['category'];
 };
@@ -456,14 +452,12 @@ function BookModal(props: BookModalProps) {
           name: name,
           category: bookTypes[type],
           quantity: copies[index],
-          // summ: copies[index] * price[index],
           price: price[index],
-          discount: discount[index], //  это значение скидки всегда нулевое, пока в компонент скидка не пробрасывается. Нужно добавить ещё и скидку
+          discount: discount[index],
           subtitle: author,
           picture: cover,
         });
     });
-    // console.log(items);
     return items;
   };
 
