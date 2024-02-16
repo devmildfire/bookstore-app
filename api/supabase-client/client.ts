@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { Database } from 'api/books/types';
 
-import { Database } from './types';
+// import { Database } from './types';
 
 // Use a custom domain as the supabase URL
 // export const supabase = createClient(
