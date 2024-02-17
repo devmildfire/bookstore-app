@@ -1,3 +1,5 @@
+'use client';
+
 // import Hal9000 from '@/assets/images/HAL9000.svg';
 import HallIcon from '@/assets/images/HAL9000_iconic_eye.svg';
 import HalLogo from '@/assets/images/HALLOGO.svg';
@@ -5,11 +7,14 @@ import Button from '@/components/Common/Button';
 import { Text } from '@/components/Common/Text/Text';
 import breakPoints from '@/utils/breakPoints';
 import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { OrdersInsertType, OrdersType } from './api/order';
 import { postData } from '@/utils/postData';
 import { useCallback, useEffect, useState } from 'react';
 import { setOrGetCartCookie } from '@/utils/cardID';
+
+import { useRouter } from 'next/router';
 
 // const HallIcon = styled.svg`
 //   /* stroke: var(--main-white-100); */
@@ -83,34 +88,23 @@ const StyledButton = styled(Button)`
   }
 `;
 
-// const getCartFromDB = useCallback(
-//   async (id: string) => {
-//     const cartItems: CartItemType[] = await postData(`/api/cart`, {
-//       oper: 'fetch',
-//       id: cartID,
-//     });
-//     console.log(
-//       'fetched cart items list ... ',
-//       JSON.stringify(cartItems, null, 2)
-//     );
-//     setCart([...cartItems]);
-//   },
-//   [cartID]
-// );
-
 const Hall = (): React.ReactElement => {
-  // const [orderID, setOrderID] = useState();
   const [cartID, setCartID] = useState('');
-  const [order, setOrder] = useState<OrdersType[]>([]);
+  const [id, setID] = useState(0);
+  const [email, setEmail] = useState('');
+  const [adress, setAdress] = useState('');
+
+  const [sum, setSum] = useState(0);
+
+  const [order, setOrder] = useState<OrdersType>();
 
   const params = useSearchParams();
 
-  const sum = params.get('summ');
-  const invID = params.get('inv_id');
+  // const sum = params.get('summ');
+  const invID = params.get('invid');
 
-  // setOrderID(invID!);
-
-  // let order;
+  console.log('order id is ...', invID);
+  console.log('sum is ...', sum);
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
@@ -121,62 +115,50 @@ const Hall = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    cartID && getOrder(cartID, invID!);
-  }, [cartID]);
+    cartID && invID && getOrder(cartID, invID);
+  }, [invID]);
+
+  useEffect(() => {
+    if (order) {
+      setID(order.id);
+      setEmail(order.email!);
+      setSum(order.summ!);
+      setAdress(order.adress!);
+    }
+  }, [order]);
 
   const getOrder = useCallback(
     async (cartID: string, orderID: string) => {
-      const OrderResponse: OrdersType[] = await postData(`/api/order`, {
+      const OrderResponse: OrdersType = await postData(`/api/order`, {
         oper: 'fetch',
-        // id: id,
         cartID: cartID,
         orderID: orderID,
       });
-      console.log(
-        'got order ... ',
-        // JSON.stringify(newOrderResponse, null, 2)
-        OrderResponse
-      );
-      // return JSON.parse(newOrderResponse)[0].id;
+      console.log('got order ... ', OrderResponse);
       setOrder(OrderResponse);
-      // return OrderResponse;
     },
     [cartID]
   );
-
-  // const order = getOrder('45');
-
-  // const getOrder = useCallback(async (id: string) => {
-  //   const OrderResponse: OrdersType[] = await postData(`/api/order`, {
-  //     oper: 'fetch',
-  //     id: id,
-  //   });
-  //   console.log(
-  //     'got order ... ',
-  //     // JSON.stringify(newOrderResponse, null, 2)
-  //     OrderResponse
-  //   );
-  //   // return JSON.parse(newOrderResponse)[0].id;
-  //   // return OrderResponse;
-  //   setOrder(OrderResponse);
-  // }, []);
-
-  // useEffect(() => {
-  //   const ID = params.get('inv_id');
-  //   getOrder(ID!.toString());
-  //   // getOrder('45');
-  // }, []);
 
   return (
     <HallDiv>
       <HallIconStyled />
       <HalLogoStyled />
       <Text variant='h2_1_HAL' align='center'>
-        «молодец, Дэйв {invID} !
+        «молодец, Дэйв {id} !
       </Text>
       <Text variant='h2_1_HAL' align='center'>
         ты превратил {sum} денег в книги»
       </Text>
+
+      <Text variant='buttonText' align='center'>
+        бумагу отправим по адресу {adress}
+      </Text>
+
+      <Text variant='buttonText' align='center'>
+        байты отправим на e-mail {email}
+      </Text>
+
       <StyledButton className='backButton' href='/' variant='wide'>
         {' '}
         Вернуться на главную{' '}

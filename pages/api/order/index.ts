@@ -47,18 +47,19 @@ function generateRoboURL({
 async function getOrder(
   cartID: string,
   orderID: string
-): Promise<OrdersType[] | PostgrestError> {
+): Promise<OrdersType | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Orders')
     .select('*')
-    .eq('cart_id', cartID)
-    .eq('id', +orderID);
+    .eq('id', orderID)
+    .single();
+  // .eq('cart_id', cartID)
 
   if (error) {
     console.error(error);
     return error;
   } else {
-    // data && console.log('data is ...', JSON.stringify(data, null, 2));
+    data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -145,6 +146,8 @@ export default async function handler(
   // console.log('id is', cartID);
 
   let order: OrdersType[] | PostgrestError;
+  let singleOrder: OrdersType | PostgrestError;
+
   let newOrder: OrdersInsertType;
   let itemsList: OrderItemInsertType[];
   let itemsListReturn: OrderItemType[] | PostgrestError;
@@ -158,8 +161,8 @@ export default async function handler(
   body.oper == 'fetch' &&
     ((cartID = body.cartID),
     (orderID = body.orderID),
-    (order = await getOrder(cartID, orderID)),
-    res.status(200).json(order));
+    (singleOrder = await getOrder(cartID, orderID)),
+    res.status(200).json(singleOrder));
 
   body.oper == 'add' &&
     ((newOrder = body.order),
