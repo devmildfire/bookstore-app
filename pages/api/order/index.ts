@@ -44,6 +44,23 @@ function generateRoboURL({
   return payURL;
 }
 
+async function getOrder(
+  cartID: string
+): Promise<OrdersType[] | PostgrestError> {
+  const { data, error } = await supabaseService
+    .from('Orders')
+    .select('*')
+    .eq('cart_id', cartID);
+
+  if (error) {
+    console.error(error);
+    return error;
+  } else {
+    // data && console.log('data is ...', JSON.stringify(data, null, 2));
+    return data;
+  }
+}
+
 async function addOrder(
   order: OrdersInsertType
 ): Promise<OrdersType[] | PostgrestError> {
@@ -78,6 +95,43 @@ async function addOrderItems(
   }
 }
 
+async function makeOrderPaid(
+  orderID: string
+): Promise<OrdersType[] | PostgrestError> {
+  const id: number = +orderID;
+
+  const { data, error } = await supabaseService
+    .from('Orders')
+    .select('*')
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    return error;
+  } else {
+    data && console.log('data is ...', JSON.stringify(data, null, 2));
+
+    if (data.length > 0) {
+      const paidOrderData = await supabaseService
+        .from('Orders')
+        .update({ status: 'paid' })
+        .eq('id', id)
+        .select();
+
+      if (paidOrderData.error) {
+        console.error(paidOrderData.error);
+        return paidOrderData.error;
+      } else {
+        console.log(JSON.stringify(paidOrderData.data, null, 2));
+        return paidOrderData.data;
+      }
+    } else {
+      console.error('data is zero length. No such order');
+      return data;
+    }
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -94,13 +148,15 @@ export default async function handler(
   let itemsListReturn: OrderItemType[] | PostgrestError;
   let urlProps: roboUrlProps;
   let returnUrl: string;
-  // let item: CartItem;
-  // let errorMessage: string;
+  let cartID: string;
 
-  // let updatedItem: Cart | PostgrestError;
+  let orderID: string;
+  let sum: string;
 
-  // body.oper == 'fetch' &&
-  //   ((cart = await getCart(cartID)), res.status(200).json(cart));
+  body.oper == 'fetch' &&
+    ((cartID = body.cartID),
+    (order = await getOrder(cartID)),
+    res.status(200).json(order));
 
   body.oper == 'add' &&
     ((newOrder = body.order),
@@ -116,19 +172,16 @@ export default async function handler(
     ((urlProps = body.props),
     (returnUrl = generateRoboURL(urlProps)),
     res.status(200).json(returnUrl));
-  // body.oper == 'remove' &&
-  //   ((item = body.item),
-  //   (errorMessage = await removeItemFromCart(item)),
-  //   res.status(200).json(errorMessage));
 
-  // body.oper == 'update' &&
-  //   ((item = body.item),
-  //   (updatedItem = await updateItemInCart(item)),
-  //   res.status(200).json(updatedItem));
-
-  // body.oper == 'emptycart' &&
-  //   (
-  //     (errorMessage = await emptyCart(cartID)),
-  //     (res.status(200).json(errorMessage))
-  //   );
+  body.oper == 'success' &&
+    ((orderID = body.orderID),
+    (sum = body.sum),
+    console.log(
+      ' ... successful payment ... orderID:',
+      orderID,
+      ', summ: ',
+      sum
+    ),
+    makeOrderPaid(orderID),
+    res.status(200).json({ order: orderID, sum: sum }));
 }
