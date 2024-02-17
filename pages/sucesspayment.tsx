@@ -121,15 +121,16 @@ const Hall = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    cartID && getOrder(cartID);
+    cartID && getOrder(cartID, invID!);
   }, [cartID]);
 
   const getOrder = useCallback(
-    async (cartID: string) => {
+    async (cartID: string, orderID: string) => {
       const OrderResponse: OrdersType[] = await postData(`/api/order`, {
         oper: 'fetch',
         // id: id,
         cartID: cartID,
+        orderID: orderID,
       });
       console.log(
         'got order ... ',

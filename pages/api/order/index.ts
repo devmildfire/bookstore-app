@@ -45,12 +45,14 @@ function generateRoboURL({
 }
 
 async function getOrder(
-  cartID: string
+  cartID: string,
+  orderID: string
 ): Promise<OrdersType[] | PostgrestError> {
   const { data, error } = await supabaseService
     .from('Orders')
     .select('*')
-    .eq('cart_id', cartID);
+    .eq('cart_id', cartID)
+    .eq('id', +orderID);
 
   if (error) {
     console.error(error);
@@ -155,7 +157,8 @@ export default async function handler(
 
   body.oper == 'fetch' &&
     ((cartID = body.cartID),
-    (order = await getOrder(cartID)),
+    (orderID = body.orderID),
+    (order = await getOrder(cartID, orderID)),
     res.status(200).json(order));
 
   body.oper == 'add' &&
