@@ -164,9 +164,6 @@ const Hall = (): React.ReactElement => {
         Вернуться на главную{' '}
       </StyledButton>
       <pre>{JSON.stringify(order, null, 2)}</pre>
-      {/* <pre>{JSON.stringify(getOrder('45'), null, 2)}</pre> */}
-
-      {/* {order[0].adress} */}
     </HallDiv>
   );
 };

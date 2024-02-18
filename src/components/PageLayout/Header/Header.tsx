@@ -24,6 +24,7 @@ import BurgerIcon from '@/assets/icons/burger.svg';
 import { useModal } from '@/components/Modal/Modal';
 import Link from '@/components/Common/Link/Link';
 import { IconButton } from '@/components/Common/IconButton';
+import { useRouter } from 'next/router';
 
 interface ListItemProps {
   title: string;
@@ -76,6 +77,7 @@ function Header({
 }: {
   backgroundColor?: Color;
 }): ReactElement {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const overlayRef = useRef(null);
   const { handleOpenModal } = useModal();
@@ -134,7 +136,7 @@ function Header({
           >
             <SearchIcon />
           </IconButton>
-          <IconButton label='корзина' onClick={() => console.log('open cart')}>
+          <IconButton label='корзина' onClick={() => router.push('/cart')}>
             {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
              Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
             <CartIcon />
