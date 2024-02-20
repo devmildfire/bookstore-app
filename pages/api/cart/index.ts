@@ -1,14 +1,12 @@
 import { PostgrestError } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
+import { Database } from 'api/books/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 // import { Cart, CartItem } from '@/types/api';
-// import { Database, Tables } from '../api/books/types';
-import {Database, Tables } from '../../api/books/types'
 
 export type CartItemType = Database['public']['Tables']['Cart']['Row'];
 export type CartItemInsertType = Database['public']['Tables']['Cart']['Insert'];
-export type PromoCodeType = Database['public']['Tables']['Promocodes']['Row']
-
+export type PromoCodeType = Database['public']['Tables']['Promocodes']['Row'];
 
 async function getPromo(code: string): Promise<PromoCodeType | PostgrestError> {
   const { data, error } = await supabaseService
@@ -24,9 +22,6 @@ async function getPromo(code: string): Promise<PromoCodeType | PostgrestError> {
     return data;
   }
 }
-
-
-
 
 async function getCart(id: string): Promise<CartItemType[] | PostgrestError> {
   const { data, error } = await supabaseService
@@ -128,12 +123,12 @@ export default async function handler(
 
   let errorMessage: string;
 
-
   let updatedItem: CartItemType[] | PostgrestError;
 
   body.oper == 'getpromo' &&
-    ( (code = body.code),
-      (promo = await getPromo(code)), res.status(200).json(promo));
+    ((code = body.code),
+    (promo = await getPromo(code)),
+    res.status(200).json(promo));
 
   body.oper == 'fetch' &&
     ((cart = await getCart(cartID)), res.status(200).json(cart));

@@ -50,16 +50,13 @@ const Payment = ({
   setStage,
   quantity,
   price,
-  cart
+  cart,
 }: paymentProps): React.ReactElement => {
   const [payURL, setPayURL] = useState('');
 
   return (
     <Styled.Container>
-
-
-      <Promocode cart={cart} />
-
+      <Promocode cart={cart} price={price} />
 
       <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
       <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
