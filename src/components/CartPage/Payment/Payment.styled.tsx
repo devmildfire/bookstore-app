@@ -55,7 +55,7 @@ export const Container = styled.div`
     grid-template-columns: minmax(210px, 320px) auto minmax(210px, 320px);
     grid-column-gap: 20px;
     grid-template-areas:
-      '. . quantity'
+      '. . quantity'  
       'input-label . sum'
       'input . checkout'
       'apply . text';

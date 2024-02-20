@@ -397,18 +397,6 @@ const Cart = (): React.ReactElement => {
     cartID && getCartFromDB(cartID);
   }
 
-  // async function emptyCartFromDB() {
-  //   const emptyCartResponse: string = await postData(`/api/cart`, {
-  //     oper: 'emptycart',
-  //     id: cartID,
-  //   });
-  //   console.log(
-  //     'emptied cart of all items ... ',
-  //     JSON.stringify(emptyCartResponse, null, 2)
-  //   );
-  //   cartID && getCartFromDB(cartID);
-  // }
-
   useEffect(() => {
     setTotalPrice(calculateTotalPrice(cart));
   }, [cart]);
@@ -458,23 +446,11 @@ const Cart = (): React.ReactElement => {
           setStage={setStage}
           quantity={productQuantity}
           price={totalPrice}
+          cart={cart}
         />
       </>
     );
   }
-
-  // function CartID({ cartID }: { cartID: string }) {
-  //   return <div> ID корзины: {cartID} </div>;
-  // }
-
-  // function CartItems({ cart }: { cart: CartType }) {
-  //   return (
-  //     <div>
-  //       <div>cart contents</div>
-  //       <pre>{JSON.stringify(cart, null, 2)}</pre>
-  //     </div>
-  //   );
-  // }
 
   return (
     <Styled.Main>

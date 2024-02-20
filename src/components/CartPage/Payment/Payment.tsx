@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import * as Styled from './Payment.styled';
 import PurchaseInfo from '../PurchaseInfo/PurchaseInfo';
 import Robokaska from '@/utils/robokaska';
+import { CartItemType } from 'pages/api/cart';
+import Promocode from '../Promocode/Promocode';
 // import { CartItem } from '@/types/api';
 
 interface roboUrlProps {
@@ -15,6 +17,7 @@ interface paymentProps {
   setStage: (stage: string) => void;
   quantity: number;
   price: number;
+  cart: CartItemType[];
 }
 
 function generateRoboURL({
@@ -47,14 +50,17 @@ const Payment = ({
   setStage,
   quantity,
   price,
+  cart
 }: paymentProps): React.ReactElement => {
   const [payURL, setPayURL] = useState('');
 
   return (
     <Styled.Container>
-      <Styled.Subtitle>Промокод</Styled.Subtitle>
-      <Styled.Input placeholder='Введите промокод' />
-      <Styled.Button>Применить</Styled.Button>
+
+
+      <Promocode cart={cart} />
+
+
       <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
       <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
       <Styled.CheckoutButton
