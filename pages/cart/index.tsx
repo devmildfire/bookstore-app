@@ -1,11 +1,4 @@
-import React, {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import * as Styled from '../../src/components/CartPage/CartPage.styled';
 import CartItem from '../../src/components/CartPage/CartItem/CartItem';
@@ -13,29 +6,16 @@ import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
 import { setOrGetCartCookie } from '@/utils/cardID';
-// import { Cart as CartType, CartItem as CartItemType } from '@/types/api';
-// import { Cart as CartType,  } from '@/types/api';
 import { CartItemType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import { StyledForm, StyledButton } from '@/components/CartPage/styles';
-import debounce from '@/utils/debounce';
-import { ZodError, ZodType, z } from 'zod';
-import {
-  useForm,
-  Controller,
-  UseFormRegisterReturn,
-  // SubmitHandler,
-  // SubmitErrorHandler,
-  // ChangeHandler,
-} from 'react-hook-form';
+import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import Robokaska from '@/utils/robokaska';
 import Input from '@/components/Common/Input';
-import { json } from 'stream/consumers';
 import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
 import {
   OrderItemInsertType,
@@ -43,8 +23,6 @@ import {
   OrdersType,
   roboUrlProps,
 } from 'pages/api/order';
-import { PostgrestError } from '@supabase/supabase-js';
-import { Router } from 'next/router';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -119,48 +97,6 @@ const FormField: React.FC<FormFieldProps> = ({
   </>
 );
 
-function Form() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-    setError,
-  } = useForm<ShipmentFormData>({
-    resolver: zodResolver(ShipmentSchema), // Apply the zodResolver
-  });
-
-  const onSubmit = async (data: ShipmentFormData) => {
-    console.log('SUCCESS', data);
-    console.log('errors', errors);
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <input
-          type='email'
-          placeholder='Email'
-          {...register('email', { required: 'email is required' })}
-        />
-        {errors.email && <p> {errors.email.message} </p>}
-      </div>
-
-      <div>
-        <input
-          type='text'
-          placeholder='Adress'
-          {...register('adress', { required: 'adress is required' })}
-        />
-        {errors.adress && <p> {errors.adress.message} </p>}
-      </div>
-
-      <button type='submit' className='submit-button'>
-        Submit
-      </button>
-    </form>
-  );
-}
-
 async function emptyCartFromDB(cartID: string) {
   const emptyCartResponse: string = await postData(`/api/cart`, {
     oper: 'emptycart',
@@ -209,9 +145,9 @@ function createOrderItemsAr(
       quantity: item.quantity,
       price: item.price,
       discount: item.discount,
-      summ: Math.floor(
-        item.quantity! * ((item.price! * (100 - item.discount!)) / 100)
-      ),
+      summ:
+        item.quantity! *
+        Math.floor((item.price! * (100 - item.discount!)) / 100),
       type: item.category,
       order_id: orderID,
     };
@@ -315,7 +251,6 @@ function Shipment({
           <FormField
             type='text'
             placeholder='adress'
-            // register = {register}
             register={register('adress', { required: 'adress is required' })}
             name='adress'
             error={errors.adress}
@@ -343,7 +278,6 @@ function Shipment({
 const Cart = (): React.ReactElement => {
   const [totalPrice, setTotalPrice] = useState(0);
 
-  // const [cart, setCart] = useState<CartType>([]);
   const [cart, setCart] = useState<CartItemType[]>([]);
 
   const [cartID, setCartID] = useState('');
