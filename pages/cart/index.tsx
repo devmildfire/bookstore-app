@@ -73,15 +73,15 @@ const ReturnButton = styled.button`
   cursor: pointer;
 `;
 
-const calculateTotalPrice = (products: CartItemType[]): number => {
-  const result = products.reduce((acc, product) => {
-    const price = product.discount
-      ? Math.floor(product.price! * (1 - product.discount / 100))
-      : product.price;
-    return acc + price! * product.quantity!;
-  }, 0);
-  return result;
-};
+// const calculateTotalPrice = (products: CartItemType[]): number => {
+//   const result = products.reduce((acc, product) => {
+//     const price = product.discount
+//       ? Math.floor(product.price! * (1 - product.discount / 100))
+//       : product.price;
+//     return acc + price! * product.quantity!;
+//   }, 0);
+//   return result;
+// };
 
 interface shipmentProps {
   setStage: (stage: string) => void;
@@ -193,7 +193,7 @@ function Shipment({
   // const [wipe, setWipe] = useState(false);
   // const [isValid, setIsvalid] = useState(false);
   // const [error, setError] = useState('');
-  const [payURL, setPayURL] = useState('');
+  // const [payURL, setPayURL] = useState('');
 
   const {
     register,
@@ -214,7 +214,7 @@ function Shipment({
     };
     const orderID = await createNewOrder(order);
 
-    const orderItemsAr = createOrderItemsAr(cart, orderID);
+    const orderItemsAr = createOrderItemsAr(cartStore.cart, orderID);
 
     console.log('order ID is...', orderID);
     console.log('order items array is...', orderItemsAr);
@@ -293,10 +293,10 @@ function Shipment({
   );
 }
 
-const Cart = (): React.ReactElement => {
-  const [totalPrice, setTotalPrice] = useState(0);
+const Cart = observer((): React.ReactElement => {
+  // const [totalPrice, setTotalPrice] = useState(0);
 
-  const [cart, setCart] = useState<CartItemType[]>([]);
+  // const [cart, setCart] = useState<CartItemType[]>([]);
 
   const [cartID, setCartID] = useState('');
   const [stage, setStage] = useState('cartStage');
@@ -310,7 +310,7 @@ const Cart = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    cartID && getCartFromDB(cartID);
+    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }, [cartID]);
 
@@ -324,7 +324,7 @@ const Cart = (): React.ReactElement => {
         'fetched cart items list ... ',
         JSON.stringify(cartItems, null, 2)
       );
-      setCart([...cartItems]);
+      // setCart([...cartItems]);
     },
     [cartID]
   );
@@ -335,7 +335,7 @@ const Cart = (): React.ReactElement => {
       item: item,
     });
     console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
-    cartID && getCartFromDB(cartID);
+    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }
 
@@ -348,15 +348,22 @@ const Cart = (): React.ReactElement => {
       'removed item from list ... ',
       JSON.stringify(removedItem, null, 2)
     );
-    cartID && getCartFromDB(cartID);
+    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }
 
-  useEffect(() => {
-    setTotalPrice(calculateTotalPrice(cart));
-  }, [cart]);
+  // useEffect(() => {
+  //   //   setTotalPrice(calculateTotalPrice(cart));
+  //   // }, [cart]);
+  //   setTotalPrice(calculateTotalPrice(cartStore.cart));
+  // }, [cartStore.cart]);
 
-  const productQuantity = cart.reduce(
+  // const productQuantity = cart.reduce(
+  //   (acc, product) => acc + product.quantity!,
+  //   0
+  // ) as number;
+
+  const productQuantity = cartStore.cart.reduce(
     (acc, product) => acc + product.quantity!,
     0
   ) as number;
@@ -370,7 +377,8 @@ const Cart = (): React.ReactElement => {
       <>
         <ColumnLabels />
         <Styled.ProductsList>
-          {cart.map((product) => (
+          {/* {cart.map((product) => ( */}
+          {cartStore.cart.map((product) => (
             <CartItem
               key={product.name + product.category}
               {...product}
@@ -403,8 +411,10 @@ const Cart = (): React.ReactElement => {
         <Payment
           setStage={setStage}
           quantity={productQuantity}
-          price={totalPrice}
-          cart={cart}
+          // price={totalPrice}
+          price={cartStore.price}
+          // cart={cart}
+          cart={cartStore.cart}
         />
       </>
     );
@@ -416,19 +426,22 @@ const Cart = (): React.ReactElement => {
         {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
       </StyledText>
 
-      {stage === 'cartStage' && (cart.length ? <FullCart /> : <EmptyCart />)}
+      {stage === 'cartStage' &&
+        (cartStore.cart.length ? <FullCart /> : <EmptyCart />)}
 
       {stage === 'shipmentStage' && (
         <Shipment
           setStage={setStage}
           cartID={cartID}
-          totalPrice={totalPrice}
-          cart={cart}
+          // totalPrice={totalPrice}
+          totalPrice={cartStore.price}
+          // cart={cart}
+          cart={cartStore.cart}
         />
       )}
     </Styled.Main>
   );
-};
+});
 
 const slideDown = keyframes`
   from {
