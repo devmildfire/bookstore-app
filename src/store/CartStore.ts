@@ -1,32 +1,44 @@
-import { Title } from '@/models/books';
-import { action, makeObservable, observable, runInAction } from 'mobx';
-import { supabase } from 'api';
+import { getCart } from '@/utils/getCart';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
+import { CartItemType, CartItemInsertType } from 'pages/api/cart';
 
-type CartItem = Title;
-
-export class CartStore {
-  cart: Array<CartItem> | null = null;
+class CartStore {
+  cart: CartItemType[] = [];
 
   constructor() {
     makeObservable(this, {
       cart: observable,
       setCart: action,
-      addToCart: action,
+      price: computed,
+      // discountedPrice: computed,
+      // promoAdjustedPrice: computed,
     });
   }
 
-  setCart = (item: CartItem): void => {
-    runInAction(async () => {
-      this.cart = await this.addToCart(item);
-    });
-  };
+  get price() {
+    console.log('Computing cart price from store...');
 
-  addToCart = async (item: CartItem) => {
-    // const { data, error } = await supabase.from('Cart').insert([item]).select();
-    // if (error) {
-    //   throw new Error(error.message);
-    // }
-    // return data as Array<CartItem>;
-    return null;
+    let price = 0;
+
+    this.cart.forEach((item) => {
+      price +=
+        Math.floor((item.price! * (100 - item.discount!)) / 100) *
+        item.quantity!;
+    });
+
+    return price;
+  }
+
+  setCart = async (cartID: string) => {
+    this.cart = await getCart({ cartID });
+    console.log('setting new cart in MobX store');
   };
 }
+
+export const cartStore = new CartStore();

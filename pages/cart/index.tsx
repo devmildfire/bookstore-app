@@ -13,7 +13,6 @@ import breakPoints from '@/utils/breakPoints';
 import { StyledForm, StyledButton } from '@/components/CartPage/styles';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/Common/Input';
 import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
@@ -23,6 +22,25 @@ import {
   OrdersType,
   roboUrlProps,
 } from 'pages/api/order';
+import { cartStore } from '@/store/CartStore';
+import { observer } from 'mobx-react-lite';
+
+const CartView = () => {
+  return (
+    <div>
+      <pre>{JSON.stringify(cartStore.cart, null, 2)}</pre>
+      <p>
+        {cartStore.price &&
+          `cart full price with discount is... ${cartStore.price} `}
+      </p>
+      {/* <p>{cartStore.codeItemIsValid && 'promo code item is valid'}</p>
+      <p>{cartStore.codeDiscountIsValid && 'promo code discount is valid'}</p>
+      <p>{cartStore.codeIsValid && 'promo code is valid'}</p> */}
+    </div>
+  );
+};
+
+const CartViewObs = observer(CartView);
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -293,6 +311,7 @@ const Cart = (): React.ReactElement => {
 
   useEffect(() => {
     cartID && getCartFromDB(cartID);
+    cartID && cartStore.setCart(cartID);
   }, [cartID]);
 
   const getCartFromDB = useCallback(
@@ -317,6 +336,7 @@ const Cart = (): React.ReactElement => {
     });
     console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
     cartID && getCartFromDB(cartID);
+    cartID && cartStore.setCart(cartID);
   }
 
   async function removeItemFromDB(item: CartItemType) {
@@ -329,6 +349,7 @@ const Cart = (): React.ReactElement => {
       JSON.stringify(removedItem, null, 2)
     );
     cartID && getCartFromDB(cartID);
+    cartID && cartStore.setCart(cartID);
   }
 
   useEffect(() => {
@@ -376,6 +397,9 @@ const Cart = (): React.ReactElement => {
           <BackIcon />
           Вернуться назад
         </ReturnButton>
+
+        <CartViewObs />
+
         <Payment
           setStage={setStage}
           quantity={productQuantity}

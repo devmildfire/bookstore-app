@@ -1,8 +1,27 @@
 import { CartItemType, PromoCodeType } from 'pages/api/cart';
 import * as Styled from '../Payment/Payment.styled';
 import { FormEvent, useEffect, useState } from 'react';
-import { postData } from '@/utils/postData';
+// import { postData } from '@/utils/postData';
 import { PostgrestError } from '@supabase/supabase-js';
+import { getPromoCodeFromDB } from '@/utils/getPromoCode';
+import { promoStore } from '@/store/PromoStore';
+import { observer } from 'mobx-react-lite';
+
+// const PromoView = observer(() => {
+//   return <pre>{JSON.stringify(promoStore.promoCode, null, 2)}</pre>;
+// });
+
+const PromoView = () => {
+  return (
+    <div>
+      <pre>{JSON.stringify(promoStore.promoCode, null, 2)}</pre>
+      <p>{promoStore.codeDatesAreValid && 'promo code dates are valid'}</p>
+      <p>{promoStore.codeItemIsValid && 'promo code item is valid'}</p>
+      <p>{promoStore.codeDiscountIsValid && 'promo code discount is valid'}</p>
+      <p>{promoStore.codeIsValid && 'promo code is valid'}</p>
+    </div>
+  );
+};
 
 const promoDateIsValid = (promo: PromoCodeType): boolean => {
   const currentDateTime = new Date();
@@ -72,39 +91,6 @@ const promoDiscountDetails = (promo: PromoCodeType, cart: CartItemType[]) => {
   };
 };
 
-interface getPromoProps {
-  setPromo: (promo: PromoCodeType | null) => void;
-  setError: (promo: PostgrestError | null) => void;
-
-  code: string;
-}
-
-const getPromoCodeFromDB = async ({
-  setPromo,
-  setError,
-  code,
-}: getPromoProps) => {
-  const promoCode: PromoCodeType | PostgrestError = await postData(
-    `/api/cart`,
-    {
-      oper: 'getpromo',
-      code: code,
-    }
-  );
-  console.log(
-    'got back promo code data... ',
-    JSON.stringify(promoCode, null, 2)
-  );
-
-  if (!('message' in promoCode)) {
-    setPromo(promoCode);
-    setError(null);
-  } else {
-    setPromo(null);
-    setError(promoCode);
-  }
-};
-
 interface promoProps {
   cart: CartItemType[];
   price: number;
@@ -128,6 +114,8 @@ const Promocode = ({ cart, price }: promoProps): React.ReactElement => {
     console.log('promo submitted');
     console.log('code is ...', code);
     setCode(code);
+
+    promoStore.setCode(code);
   };
 
   return (
@@ -175,6 +163,8 @@ const Promocode = ({ cart, price }: promoProps): React.ReactElement => {
 
       <pre>{promo && JSON.stringify(promo, null, 2)}</pre>
       <pre>{error && JSON.stringify(error, null, 2)}</pre>
+
+      <PromoView />
     </form>
   );
 };
