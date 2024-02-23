@@ -24,6 +24,7 @@ import {
 } from 'pages/api/order';
 import { cartStore } from '@/store/CartStore';
 import { observer } from 'mobx-react-lite';
+import { promoStore } from '@/store/PromoStore';
 
 const CartView = () => {
   return (
@@ -171,6 +172,14 @@ function createOrderItemsAr(
     };
   });
 
+  if (promoStore.codeIsValid && promoStore.promoCode?.type === 'item') {
+    const index = promoStore.discountItemIndex!;
+    const item = orderItems[index];
+    item.summ =
+      item.quantity! *
+      Math.floor((item.price! * (100 - promoStore.promoCode.discount!)) / 100);
+  }
+
   return orderItems;
 }
 
@@ -190,11 +199,6 @@ function Shipment({
   totalPrice,
   cart,
 }: shipmentProps): React.ReactElement {
-  // const [wipe, setWipe] = useState(false);
-  // const [isValid, setIsvalid] = useState(false);
-  // const [error, setError] = useState('');
-  // const [payURL, setPayURL] = useState('');
-
   const {
     register,
     handleSubmit,
@@ -205,12 +209,15 @@ function Shipment({
 
   const onSubmit = async (data: ShipmentFormData) => {
     console.log('SUCCESS', data);
+
+    const price = promoStore.cartPromoPrice || totalPrice;
+
     const order: OrdersInsertType = {
       adress: data.adress,
       email: data.email,
       status: 'pending',
       cart_id: cartID,
-      summ: totalPrice,
+      summ: price,
     };
     const orderID = await createNewOrder(order);
 
@@ -242,8 +249,7 @@ function Shipment({
     const payUrlProps: roboUrlProps = {
       invoiceID: orderID,
       email: data.email,
-      // outSum: totalPrice.toString(),
-      outSum: '1',
+      outSum: price.toString(),
       invoiceDescription: orderDescription,
     };
     const payUrl = await getPayUrl(payUrlProps);
@@ -411,9 +417,7 @@ const Cart = observer((): React.ReactElement => {
         <Payment
           setStage={setStage}
           quantity={productQuantity}
-          // price={totalPrice}
           price={cartStore.price}
-          // cart={cart}
           cart={cartStore.cart}
         />
       </>

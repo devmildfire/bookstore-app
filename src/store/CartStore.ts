@@ -8,7 +8,7 @@ import {
 } from 'mobx';
 import { CartItemType, CartItemInsertType } from 'pages/api/cart';
 
-class CartStore {
+export class CartStore {
   cart: CartItemType[] = [];
 
   constructor() {

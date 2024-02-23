@@ -7,6 +7,7 @@ import {
 } from 'mobx';
 import { PromoCodeType } from 'pages/api/cart';
 import { getPromoCodeFromDB } from '@/utils/getPromoCode';
+import { cartStore, CartStore } from './CartStore';
 
 const setPromo = () => {
   console.log('function call for setPromo');
@@ -17,17 +18,96 @@ const setError = () => {
 };
 
 class PromoStore {
+  codeEntered = false;
   promoCode: PromoCodeType | null = null;
+  cartStore: CartStore;
 
-  constructor() {
+  constructor(cartStore: CartStore) {
+    this.cartStore = cartStore;
     makeObservable(this, {
       promoCode: observable,
+      codeEntered: observable,
       setCode: action,
       codeDatesAreValid: computed,
       codeItemIsValid: computed,
+      discountItemIndex: computed,
       codeDiscountIsValid: computed,
       codeIsValid: computed,
+      cartFullPrice: computed,
+      cartDiscountPrice: computed,
+      cartPromoPrice: computed,
     });
+  }
+
+  get cartFullPrice() {
+    let fullPrice = 0;
+    this.cartStore.cart.forEach((product) => {
+      fullPrice += Math.floor(product.price!) * product.quantity!;
+    });
+    return fullPrice;
+  }
+
+  get cartDiscountPrice() {
+    let discountPrice = 0;
+    this.cartStore.cart.forEach((product) => {
+      discountPrice +=
+        Math.floor((product.price! * (100 - product.discount!)) / 100) *
+        product.quantity!;
+    });
+    return discountPrice;
+  }
+
+  get discountItemIndex() {
+    if (!this.promoCode) {
+      return null;
+    }
+
+    const cartItemsNames = this.cartStore.cart.map((item) => {
+      return item.name + item.category;
+    });
+    console.log('cartItemsNames are ... ', cartItemsNames);
+
+    const promoItemName =
+      this.promoCode.product_name! + this.promoCode.product_type!;
+    console.log(promoItemName);
+
+    const promoItemInCartIndex = cartItemsNames.findIndex((x) => {
+      return x === promoItemName;
+    });
+
+    return promoItemInCartIndex >= 0 ? promoItemInCartIndex : null;
+  }
+
+  get cartPromoPrice() {
+    if (!this.promoCode || !this.codeIsValid) {
+      return null;
+    }
+
+    if (this.promoCode.type === 'item' && !(this.discountItemIndex == null)) {
+      const item = this.cartStore.cart[this.discountItemIndex];
+      const itemDiscountPrice = Math.floor(
+        (item.price! * (100 - item.discount!)) / 100
+      );
+      const itemPromoPrice = Math.floor(
+        (item.price! * (100 - this.promoCode.discount!)) / 100
+      );
+      const priceDelta = (itemDiscountPrice - itemPromoPrice) * item.quantity!;
+
+      const promoPrice = this.cartDiscountPrice - priceDelta;
+      return promoPrice;
+    }
+
+    if (this.promoCode.type === 'cart') {
+      const priceDelta =
+        this.cartDiscountPrice -
+        Math.floor(
+          (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
+        );
+      const promoPrice = this.cartFullPrice - priceDelta;
+      return promoPrice;
+    }
+
+    return null;
   }
 
   get codeDatesAreValid() {
@@ -51,8 +131,13 @@ class PromoStore {
       return false;
     }
 
-    // пока нет CartStore этот стор не может получить данные о состоянии корзины, с этим состояние можно проверять валидность "честно"
-    return true;
+    if (this.promoCode.type === 'cart') {
+      return true;
+    }
+
+    const promoItemInCart = this.discountItemIndex == null ? false : true;
+
+    return promoItemInCart;
   }
 
   get codeDiscountIsValid() {
@@ -62,14 +147,30 @@ class PromoStore {
       return false;
     }
 
-    // пока нет CartStore этот стор не может получить данные о состоянии корзины, с этим состояние можно проверять валидность "честно"
-    return true;
+    if (this.promoCode.type === 'item') {
+      if (this.codeItemIsValid && !(this.discountItemIndex == null)) {
+        const cartSingleItemDiscount =
+          this.cartStore.cart[this.discountItemIndex].discount;
+        const promoItemDiscount = this.promoCode.discount;
+
+        return promoItemDiscount! > cartSingleItemDiscount!;
+      } else {
+        return false;
+      }
+    }
+
+    if (this.promoCode.type === 'cart') {
+      const cartPriceWithPromo = Math.floor(
+        (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
+      );
+
+      return cartPriceWithPromo! < this.cartDiscountPrice!;
+    }
   }
 
   get codeIsValid() {
     console.log('Computing promo validity...');
 
-    // пока нет CartStore этот стор не может получить данные о состоянии корзины, с этим состояние можно проверять валидность "честно"
     return (
       this.codeDatesAreValid && this.codeItemIsValid && this.codeDiscountIsValid
     );
@@ -86,4 +187,4 @@ class PromoStore {
   };
 }
 
-export const promoStore = new PromoStore();
+export const promoStore = new PromoStore(cartStore);
