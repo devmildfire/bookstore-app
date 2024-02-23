@@ -34,9 +34,6 @@ const CartView = () => {
         {cartStore.price &&
           `cart full price with discount is... ${cartStore.price} `}
       </p>
-      {/* <p>{cartStore.codeItemIsValid && 'promo code item is valid'}</p>
-      <p>{cartStore.codeDiscountIsValid && 'promo code discount is valid'}</p>
-      <p>{cartStore.codeIsValid && 'promo code is valid'}</p> */}
     </div>
   );
 };
@@ -74,21 +71,11 @@ const ReturnButton = styled.button`
   cursor: pointer;
 `;
 
-// const calculateTotalPrice = (products: CartItemType[]): number => {
-//   const result = products.reduce((acc, product) => {
-//     const price = product.discount
-//       ? Math.floor(product.price! * (1 - product.discount / 100))
-//       : product.price;
-//     return acc + price! * product.quantity!;
-//   }, 0);
-//   return result;
-// };
-
 interface shipmentProps {
   setStage: (stage: string) => void;
   cartID: string;
   totalPrice: number;
-  cart: CartItemType[];
+  // cart: CartItemType[];
 }
 
 type ValidFieldNames = keyof ShipmentFormData;
@@ -197,8 +184,8 @@ function Shipment({
   setStage,
   cartID,
   totalPrice,
-  cart,
-}: shipmentProps): React.ReactElement {
+}: // cart,
+shipmentProps): React.ReactElement {
   const {
     register,
     handleSubmit,
@@ -257,7 +244,7 @@ function Shipment({
 
     emptyCartFromDB(cartID);
 
-    window.open(payUrl, '_blank');
+    window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
   };
 
   return (
@@ -300,10 +287,6 @@ function Shipment({
 }
 
 const Cart = observer((): React.ReactElement => {
-  // const [totalPrice, setTotalPrice] = useState(0);
-
-  // const [cart, setCart] = useState<CartItemType[]>([]);
-
   const [cartID, setCartID] = useState('');
   const [stage, setStage] = useState('cartStage');
 
@@ -320,20 +303,20 @@ const Cart = observer((): React.ReactElement => {
     cartID && cartStore.setCart(cartID);
   }, [cartID]);
 
-  const getCartFromDB = useCallback(
-    async (id: string) => {
-      const cartItems: CartItemType[] = await postData(`/api/cart`, {
-        oper: 'fetch',
-        id: cartID,
-      });
-      console.log(
-        'fetched cart items list ... ',
-        JSON.stringify(cartItems, null, 2)
-      );
-      // setCart([...cartItems]);
-    },
-    [cartID]
-  );
+  // const getCartFromDB = useCallback(
+  //   async (id: string) => {
+  //     const cartItems: CartItemType[] = await postData(`/api/cart`, {
+  //       oper: 'fetch',
+  //       id: cartID,
+  //     });
+  //     console.log(
+  //       'fetched cart items list ... ',
+  //       JSON.stringify(cartItems, null, 2)
+  //     );
+  //     // setCart([...cartItems]);
+  //   },
+  //   [cartID]
+  // );
 
   async function updateItemInDB(item: CartItemType) {
     const updatedItem: CartItemType = await postData(`/api/cart`, {
@@ -341,7 +324,6 @@ const Cart = observer((): React.ReactElement => {
       item: item,
     });
     console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
-    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }
 
@@ -354,20 +336,8 @@ const Cart = observer((): React.ReactElement => {
       'removed item from list ... ',
       JSON.stringify(removedItem, null, 2)
     );
-    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }
-
-  // useEffect(() => {
-  //   //   setTotalPrice(calculateTotalPrice(cart));
-  //   // }, [cart]);
-  //   setTotalPrice(calculateTotalPrice(cartStore.cart));
-  // }, [cartStore.cart]);
-
-  // const productQuantity = cart.reduce(
-  //   (acc, product) => acc + product.quantity!,
-  //   0
-  // ) as number;
 
   const productQuantity = cartStore.cart.reduce(
     (acc, product) => acc + product.quantity!,
@@ -383,7 +353,6 @@ const Cart = observer((): React.ReactElement => {
       <>
         <ColumnLabels />
         <Styled.ProductsList>
-          {/* {cart.map((product) => ( */}
           {cartStore.cart.map((product) => (
             <CartItem
               key={product.name + product.category}
@@ -437,10 +406,8 @@ const Cart = observer((): React.ReactElement => {
         <Shipment
           setStage={setStage}
           cartID={cartID}
-          // totalPrice={totalPrice}
           totalPrice={cartStore.price}
-          // cart={cart}
-          cart={cartStore.cart}
+          // cart={cartStore.cart}
         />
       )}
     </Styled.Main>
