@@ -54,7 +54,7 @@ const Payment = observer(
 
     return (
       <Styled.Container>
-        <Promocode cart={cart} price={price} />
+        <Promocode />
 
         <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
         <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
