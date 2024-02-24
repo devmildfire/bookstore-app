@@ -1,9 +1,6 @@
 import { CartItemType, PromoCodeType } from 'pages/api/cart';
 import * as Styled from '../Payment/Payment.styled';
 import { FormEvent, useEffect, useState } from 'react';
-// import { postData } from '@/utils/postData';
-import { PostgrestError } from '@supabase/supabase-js';
-import { getPromoCodeFromDB } from '@/utils/getPromoCode';
 import { promoStore } from '@/store/PromoStore';
 import { observer } from 'mobx-react-lite';
 
@@ -43,12 +40,12 @@ const PromoView = observer(() => {
   );
 });
 
-interface promoProps {
-  cart: CartItemType[];
-  price: number;
-}
+// interface promoProps {
+//   cart: CartItemType[];
+//   price: number;
+// }
 
-const Promocode = ({ cart, price }: promoProps): React.ReactElement => {
+const Promocode = (): React.ReactElement => {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
@@ -72,7 +69,7 @@ const Promocode = ({ cart, price }: promoProps): React.ReactElement => {
       />
       <Styled.Button type='submit'>Применить</Styled.Button>
 
-      <PromoView />
+      {/* <PromoView /> */}
     </form>
   );
 };

@@ -40,6 +40,42 @@ const CartView = () => {
 
 const CartViewObs = observer(CartView);
 
+const PromoMessage = observer((): React.ReactElement => {
+  let message = '';
+
+  promoStore.promoCode === null &&
+    promoStore.codeEntered &&
+    (message = 'Мы не знаем такого промокода');
+
+  if (promoStore.promoCode) {
+    !promoStore.codeDiscountIsValid &&
+      (message =
+        'Скидка по введённому промокоду меньше скидки, которая и так уже действует');
+
+    !promoStore.codeItemIsValid &&
+      (message =
+        'Продукта, для которого работает введённый промокод, нет в корзине');
+
+    !promoStore.codeDatesAreValid &&
+      (message =
+        'Период действия введённого промокода истёк либо ещё не начался');
+
+    promoStore.codeIsValid &&
+      (message = `применён промокод  ${
+        promoStore.promoCode.code
+      }. Действует скидка ${promoStore.promoCode.discount}% на ${
+        promoStore.promoCode.type === 'cart'
+          ? 'всю корзину'
+          : 'издание ' +
+            promoStore.promoCode.product_name +
+            ' ' +
+            promoStore.promoCode.product_type
+      }`);
+  }
+
+  return <div>{message}</div>;
+});
+
 const StyledText = styled(Text)`
   padding-bottom: 65px;
 
@@ -198,7 +234,7 @@ function Shipment({
       promoStore.cartPromoPrice &&
       promoStore.promoCode &&
       promoStore.promoCode.type! === 'cart'
-        ? ` с учётом промокода: ${price}₽`
+        ? ` C учётом промокода: ${price}₽`
         : '';
 
     const orderDescription =
@@ -214,7 +250,7 @@ function Shipment({
             'цена ' +
             // item.summ +
             item.summ +
-            '₽'
+            '₽.'
           );
         })
         .toString() + promoNotice;
@@ -343,12 +379,14 @@ const Cart = observer((): React.ReactElement => {
           ))}
         </Styled.ProductsList>
 
+        <PromoMessage />
+
         <ReturnButton>
           <BackIcon />
           Вернуться назад
         </ReturnButton>
 
-        <CartViewObs />
+        {/* <CartViewObs /> */}
 
         <Payment
           setStage={setStage}
