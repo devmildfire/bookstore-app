@@ -75,7 +75,6 @@ interface shipmentProps {
   setStage: (stage: string) => void;
   cartID: string;
   totalPrice: number;
-  // cart: CartItemType[];
 }
 
 type ValidFieldNames = keyof ShipmentFormData;
@@ -108,10 +107,6 @@ async function emptyCartFromDB(cartID: string) {
     oper: 'emptycart',
     id: cartID,
   });
-  console.log(
-    'emptied cart of all items ... ',
-    JSON.stringify(emptyCartResponse, null, 2)
-  );
 }
 
 async function createNewOrder(order: OrdersInsertType) {
@@ -119,12 +114,6 @@ async function createNewOrder(order: OrdersInsertType) {
     oper: 'add',
     order: order,
   });
-  console.log(
-    'created new order ... ',
-    // JSON.stringify(newOrderResponse, null, 2)
-    newOrderResponse
-  );
-  // return JSON.parse(newOrderResponse)[0].id;
   return newOrderResponse[0].id;
 }
 
@@ -136,8 +125,6 @@ async function createNewOrderItems(itemsList: OrderItemInsertType[]) {
       items: itemsList,
     }
   );
-  console.log('created new order items ... ', newOrderItemsResponse);
-
   return newOrderItemsResponse;
 }
 
@@ -175,8 +162,6 @@ async function getPayUrl(props: roboUrlProps) {
     oper: 'payurl',
     props: props,
   });
-  console.log('created new pay url ... ', roboUrl);
-
   return roboUrl;
 }
 
@@ -184,8 +169,7 @@ function Shipment({
   setStage,
   cartID,
   totalPrice,
-}: // cart,
-shipmentProps): React.ReactElement {
+}: shipmentProps): React.ReactElement {
   const {
     register,
     handleSubmit,
@@ -195,8 +179,6 @@ shipmentProps): React.ReactElement {
   });
 
   const onSubmit = async (data: ShipmentFormData) => {
-    console.log('SUCCESS', data);
-
     const price = promoStore.cartPromoPrice || totalPrice;
 
     const order: OrdersInsertType = {
@@ -210,28 +192,32 @@ shipmentProps): React.ReactElement {
 
     const orderItemsAr = createOrderItemsAr(cartStore.cart, orderID);
 
-    console.log('order ID is...', orderID);
-    console.log('order items array is...', orderItemsAr);
-
     const orderItemsArReturn = createNewOrderItems(orderItemsAr);
-    console.log('order items return array is...', orderItemsArReturn);
 
-    const orderDescription = orderItemsAr
-      .map((item) => {
-        return (
-          item.name! +
-          ' - ' +
-          item.type! +
-          ' - количество ' +
-          item.quantity +
-          'шт. - ' +
-          'цена ' +
-          // item.summ +
-          item.summ +
-          '₽'
-        );
-      })
-      .toString();
+    const promoNotice =
+      promoStore.cartPromoPrice &&
+      promoStore.promoCode &&
+      promoStore.promoCode.type! === 'cart'
+        ? ` с учётом промокода: ${price}₽`
+        : '';
+
+    const orderDescription =
+      orderItemsAr
+        .map((item) => {
+          return (
+            item.name! +
+            ' - ' +
+            item.type! +
+            ' - количество ' +
+            item.quantity +
+            'шт. - ' +
+            'цена ' +
+            // item.summ +
+            item.summ +
+            '₽'
+          );
+        })
+        .toString() + promoNotice;
 
     const payUrlProps: roboUrlProps = {
       invoiceID: orderID,
@@ -240,7 +226,6 @@ shipmentProps): React.ReactElement {
       invoiceDescription: orderDescription,
     };
     const payUrl = await getPayUrl(payUrlProps);
-    console.log('order pay url return is...', payUrl);
 
     emptyCartFromDB(cartID);
 
@@ -273,8 +258,6 @@ shipmentProps): React.ReactElement {
         </StyledForm>
       </div>
 
-      {/* <Form /> */}
-
       <button
         onClick={() => {
           setStage('cartStage');
@@ -299,24 +282,8 @@ const Cart = observer((): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    // cartID && getCartFromDB(cartID);
     cartID && cartStore.setCart(cartID);
   }, [cartID]);
-
-  // const getCartFromDB = useCallback(
-  //   async (id: string) => {
-  //     const cartItems: CartItemType[] = await postData(`/api/cart`, {
-  //       oper: 'fetch',
-  //       id: cartID,
-  //     });
-  //     console.log(
-  //       'fetched cart items list ... ',
-  //       JSON.stringify(cartItems, null, 2)
-  //     );
-  //     // setCart([...cartItems]);
-  //   },
-  //   [cartID]
-  // );
 
   async function updateItemInDB(item: CartItemType) {
     const updatedItem: CartItemType = await postData(`/api/cart`, {

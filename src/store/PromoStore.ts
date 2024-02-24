@@ -9,14 +9,6 @@ import { PromoCodeType } from 'pages/api/cart';
 import { getPromoCodeFromDB } from '@/utils/getPromoCode';
 import { cartStore, CartStore } from './CartStore';
 
-const setPromo = () => {
-  console.log('function call for setPromo');
-};
-
-const setError = () => {
-  console.log('function call for setError');
-};
-
 class PromoStore {
   codeEntered = false;
   promoCode: PromoCodeType | null = null;
@@ -48,12 +40,14 @@ class PromoStore {
   }
 
   get cartDiscountPrice() {
-    let discountPrice = 0;
-    this.cartStore.cart.forEach((product) => {
-      discountPrice +=
-        Math.floor((product.price! * (100 - product.discount!)) / 100) *
-        product.quantity!;
-    });
+    const discountPrice = this.cartStore.cart.reduce(
+      (acc, product) =>
+        (acc +=
+          Math.floor((product.price! * (100 - product.discount!)) / 100) *
+          product.quantity!),
+      0
+    );
+
     return discountPrice;
   }
 
@@ -98,12 +92,9 @@ class PromoStore {
     }
 
     if (this.promoCode.type === 'cart') {
-      const priceDelta =
-        this.cartDiscountPrice -
-        Math.floor(
-          (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
-        );
-      const promoPrice = this.cartFullPrice - priceDelta;
+      const promoPrice = Math.floor(
+        (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
+      );
       return promoPrice;
     }
 
@@ -164,6 +155,7 @@ class PromoStore {
         (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
       );
 
+      console.log('cart price with promo code is ...', cartPriceWithPromo);
       return cartPriceWithPromo! < this.cartDiscountPrice!;
     }
   }
@@ -183,7 +175,7 @@ class PromoStore {
   // };
 
   setCode = async (code: string) => {
-    this.promoCode = await getPromoCodeFromDB({ setPromo, setError, code });
+    this.promoCode = await getPromoCodeFromDB(code);
   };
 }
 

@@ -2,17 +2,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import { PromoCodeType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 
-interface getPromoProps {
-  setPromo: (promo: PromoCodeType | null) => void;
-  setError: (promoError: PostgrestError | null) => void;
-  code: string;
-}
-
-export const getPromoCodeFromDB = async ({
-  setPromo,
-  setError,
-  code,
-}: getPromoProps) => {
+export const getPromoCodeFromDB = async (code: string) => {
   const promoCode: PromoCodeType | PostgrestError = await postData(
     `/api/cart`,
     {
@@ -26,12 +16,8 @@ export const getPromoCodeFromDB = async ({
   );
 
   if (!('message' in promoCode)) {
-    setPromo(promoCode);
-    setError(null);
     return promoCode;
   } else {
-    setPromo(null);
-    setError(promoCode);
     return null;
   }
 };

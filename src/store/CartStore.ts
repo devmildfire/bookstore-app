@@ -6,7 +6,7 @@ import {
   observable,
   runInAction,
 } from 'mobx';
-import { CartItemType, CartItemInsertType } from 'pages/api/cart';
+import { CartItemType } from 'pages/api/cart';
 
 export class CartStore {
   cart: CartItemType[] = [];
@@ -16,8 +16,6 @@ export class CartStore {
       cart: observable,
       setCart: action,
       price: computed,
-      // discountedPrice: computed,
-      // promoAdjustedPrice: computed,
     });
   }
 
@@ -36,7 +34,7 @@ export class CartStore {
   }
 
   setCart = async (cartID: string) => {
-    this.cart = await getCart({ cartID });
+    this.cart = await getCart(cartID);
     console.log('setting new cart in MobX store');
   };
 }
