@@ -138,7 +138,8 @@ const StyledPromoMessage = styled(PromoMessage)`
   .shownDiv {
     animation: ${slideDown} 0.4s linear;
 
-    background-color: var(--main-red-100);
+    /* background-color: var(--main-red-100); */
+    background-color: #202020;
     padding: 20px;
     border-radius: 4px;
     text-align: center;
