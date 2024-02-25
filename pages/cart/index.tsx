@@ -26,55 +26,111 @@ import { cartStore } from '@/store/CartStore';
 import { observer } from 'mobx-react-lite';
 import { promoStore } from '@/store/PromoStore';
 
-const CartView = () => {
-  return (
-    <div>
-      <pre>{JSON.stringify(cartStore.cart, null, 2)}</pre>
-      <p>
-        {cartStore.price &&
-          `cart full price with discount is... ${cartStore.price} `}
-      </p>
-    </div>
-  );
-};
+// const CartView = () => {
+//   return (
+//     <div>
+//       <pre>{JSON.stringify(cartStore.cart, null, 2)}</pre>
+//       <p>
+//         {cartStore.price &&
+//           `cart full price with discount is... ${cartStore.price} `}
+//       </p>
+//     </div>
+//   );
+// };
 
-const CartViewObs = observer(CartView);
+// const CartViewObs = observer(CartView);
 
-const PromoMessage = observer((): React.ReactElement => {
-  let message = '';
+interface promoMessageProps {
+  className: string;
+}
 
-  promoStore.promoCode === null &&
-    promoStore.codeEntered &&
-    (message = 'Мы не знаем такого промокода');
+const PromoMessage = observer(
+  ({ className }: promoMessageProps): React.ReactElement => {
+    let message = <div></div>;
 
-  if (promoStore.promoCode) {
-    !promoStore.codeDiscountIsValid &&
-      (message =
-        'Скидка по введённому промокоду меньше скидки, которая и так уже действует');
+    promoStore.promoCode === null &&
+      !promoStore.codeEntered &&
+      promoStore.showRules &&
+      !promoStore.rulesShown &&
+      (message = (
+        <div className='shownDiv'>
+          <h3>как работают промокоды:</h3>
+          <div>- к заказу можно применить только один промокод</div>
+          <div>
+            - промокоды бывают двух видов: на какое-то одно издание и на всю
+            корзину
+          </div>
+          <div>
+            - если промокод применить для издания, у которого и так есть скидка,
+            то действует только одна, наибольшая из двух скидок
+          </div>
+          <div>
+            - если промокод применить для корзины, у товаров в которй и так есть
+            скидки, то действует только одна, наибольшая из двух скидок: либо
+            скидки всех отдельных изданий в корзине, либо скида по промокоду на
+            всю корзину
+          </div>
+        </div>
+      ));
 
-    !promoStore.codeItemIsValid &&
-      (message =
-        'Продукта, для которого работает введённый промокод, нет в корзине');
+    promoStore.promoCode === null &&
+      promoStore.codeEntered &&
+      (message = <div className='shownDiv'> Мы не знаем такого промокода</div>);
 
-    !promoStore.codeDatesAreValid &&
-      (message =
-        'Период действия введённого промокода истёк либо ещё не начался');
+    if (promoStore.promoCode) {
+      !promoStore.codeDiscountIsValid &&
+        (message = (
+          <div className='shownDiv'>
+            Скидка по введённому промокоду меньше скидки, которая и так уже
+            действует
+          </div>
+        ));
 
-    promoStore.codeIsValid &&
-      (message = `применён промокод  ${
-        promoStore.promoCode.code
-      }. Действует скидка ${promoStore.promoCode.discount}% на ${
-        promoStore.promoCode.type === 'cart'
-          ? 'всю корзину'
-          : 'издание ' +
-            promoStore.promoCode.product_name +
-            ' ' +
-            promoStore.promoCode.product_type
-      }`);
+      !promoStore.codeItemIsValid &&
+        (message = (
+          <div className='shownDiv'>
+            Продукта, для которого работает введённый промокод, нет в корзине
+          </div>
+        ));
+
+      !promoStore.codeDatesAreValid &&
+        (message = (
+          <div className='shownDiv'>
+            Период действия введённого промокода истёк либо ещё не начался
+          </div>
+        ));
+
+      promoStore.codeIsValid &&
+        (message = (
+          <div className='shownDiv'>
+            применён промокод {promoStore.promoCode.code}. Действует скидка{' '}
+            {promoStore.promoCode.discount}% на
+            {promoStore.promoCode.type === 'cart'
+              ? ' всю корзину'
+              : ' издание "' +
+                promoStore.promoCode.product_name +
+                '" - ' +
+                promoStore.promoCode.product_type}
+          </div>
+        ));
+    }
+
+    return <div className={className}>{message}</div>;
   }
+);
 
-  return <div>{message}</div>;
-});
+const StyledPromoMessage = styled(PromoMessage)`
+  .shownDiv {
+    background-color: var(--main-red-100);
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+
+    div {
+      text-align: left;
+    }
+  }
+`;
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -379,7 +435,7 @@ const Cart = observer((): React.ReactElement => {
           ))}
         </Styled.ProductsList>
 
-        <PromoMessage />
+        <StyledPromoMessage className='sdfsdfsdf' />
 
         <ReturnButton>
           <BackIcon />

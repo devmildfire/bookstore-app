@@ -47,7 +47,8 @@ export const Container = styled.div`
   font-size: 16px;
   display: flex;
   flex-direction: column;
-  margin: 50px 19px;
+  /* margin: 50px 19px; */
+  margin: 50px 0px;
 
   @media (min-width: 530px) {
     display: grid;

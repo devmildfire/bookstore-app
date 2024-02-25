@@ -11,12 +11,16 @@ import { cartStore, CartStore } from './CartStore';
 
 class PromoStore {
   codeEntered = false;
+  showRules = false;
+  rulesShown = false;
   promoCode: PromoCodeType | null = null;
   cartStore: CartStore;
 
   constructor(cartStore: CartStore) {
     this.cartStore = cartStore;
     makeObservable(this, {
+      showRules: observable,
+      rulesShown: observable,
       promoCode: observable,
       codeEntered: observable,
       setCode: action,
@@ -176,6 +180,10 @@ class PromoStore {
 
   setCode = async (code: string) => {
     this.promoCode = await getPromoCodeFromDB(code);
+  };
+
+  setRules = (show: boolean) => {
+    this.showRules = show;
   };
 }
 
