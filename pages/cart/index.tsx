@@ -119,8 +119,25 @@ const PromoMessage = observer(
   }
 );
 
+const slideDown = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0%);
+    opacity: 1;  
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+`;
+
 const StyledPromoMessage = styled(PromoMessage)`
   .shownDiv {
+    animation: ${slideDown} 0.4s linear;
+
     background-color: var(--main-red-100);
     padding: 20px;
     border-radius: 4px;
@@ -468,27 +485,11 @@ const Cart = observer((): React.ReactElement => {
           setStage={setStage}
           cartID={cartID}
           totalPrice={cartStore.price}
-          // cart={cartStore.cart}
         />
       )}
     </Styled.Main>
   );
 });
-
-const slideDown = keyframes`
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  50% {
-    transform: translateY(0%);
-    opacity: 1;  
-  }
-  to {
-    transform: translateY(0%);
-    opacity: 1;
-  }
-`;
 
 const StyledInput = styled(Input)`
   background-color: var(--main-white-20);

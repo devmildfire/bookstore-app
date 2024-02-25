@@ -38,9 +38,11 @@ const Promocode = observer((): React.ReactElement => {
         type='text'
         maxLength={20}
         onFocus={onFocus}
-        onBlur={onBlur}
+        // onBlur={onBlur}
       />
-      <Styled.Button type='submit'>Применить</Styled.Button>
+      <Styled.Button type='submit' onClick={onBlur}>
+        Применить
+      </Styled.Button>
     </StyledForm>
   );
 });
