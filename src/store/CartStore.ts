@@ -1,3 +1,4 @@
+import { setOrGetCartCookie } from '@/utils/cardID';
 import { getCart } from '@/utils/getCart';
 import {
   action,
@@ -10,9 +11,11 @@ import { CartItemType } from 'pages/api/cart';
 
 export class CartStore {
   cart: CartItemType[] = [];
+  cartID: string | undefined = '';
 
   constructor() {
     makeObservable(this, {
+      cartID: observable,
       cart: observable,
       setCart: action,
       price: computed,
@@ -32,6 +35,11 @@ export class CartStore {
 
     return price;
   }
+
+  setCartID = () => {
+    this.cartID = setOrGetCartCookie()!.toString();
+    console.log('getting cartID from coockie')
+  } 
 
   setCart = async (cartID: string) => {
     this.cart = await getCart(cartID);

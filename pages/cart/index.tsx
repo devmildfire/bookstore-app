@@ -391,12 +391,11 @@ function EmptyCart() {
 }
 
 interface fullCartProps {
-  cartID: string;
   productQuantity: number;
   setStage: (stage: string)=> void;
 }
 
-function FullCart({ cartID, productQuantity, setStage }: fullCartProps) {
+function FullCart({ productQuantity, setStage }: fullCartProps) {
   return (
     <>
       <ColumnLabels />
@@ -406,19 +405,19 @@ function FullCart({ cartID, productQuantity, setStage }: fullCartProps) {
             key={product.name + product.category}
             {...product}
             handleDelete={() => {
-              removeItemFromDB(product, cartID);
+              removeItemFromDB(product, cartStore.cartID!);
             }}
             incrementQuantity={() => {
               updateItemInDB({
                 ...product,
                 quantity: product.quantity! + 1,
-              }, cartID);
+              }, cartStore.cartID!);
             }}
             decrimentQuantity={() => {
               updateItemInDB({
                 ...product,
                 quantity: product.quantity! - 1,
-              }, cartID);
+              }, cartStore.cartID!);
             }}
           />
         ))}
@@ -444,20 +443,23 @@ function FullCart({ cartID, productQuantity, setStage }: fullCartProps) {
 }
 
 const Cart = observer((): React.ReactElement => {
-  const [cartID, setCartID] = useState('');
+  // const [cartID, setCartID] = useState('');
   const [stage, setStage] = useState('cartStage');
 
   useEffect(() => {
-    const newCartID = setOrGetCartCookie()?.toString();
+    // const newCartID = setOrGetCartCookie()?.toString();
+    cartStore.cartID = setOrGetCartCookie()?.toString();
 
-    if (newCartID) {
-      setCartID(newCartID);
+
+    if (cartStore.cartID) {
+      cartStore.setCart(cartStore.cartID);
     }
   }, []);
 
-  useEffect(() => {
-    cartID && cartStore.setCart(cartID);
-  }, [cartID]);
+  // useEffect(() => {
+  //   cartStore.setCartID;
+  //   cartStore.setCart(cartStore.cartID);
+  // }, []);
 
   const productQuantity = cartStore.cart.reduce(
     (acc, product) => acc + product.quantity!,
@@ -472,13 +474,13 @@ const Cart = observer((): React.ReactElement => {
 
       {stage === 'cartStage' &&
         (cartStore.cart.length 
-          ? <FullCart cartID={cartID} productQuantity={productQuantity} setStage={setStage} /> 
+          ? <FullCart productQuantity={productQuantity} setStage={setStage} /> 
           : <EmptyCart />)}
 
       {stage === 'shipmentStage' && (
         <Shipment
           setStage={setStage}
-          cartID={cartID}
+          cartID={cartStore.cartID!}
           totalPrice={cartStore.price}
         />
       )}
