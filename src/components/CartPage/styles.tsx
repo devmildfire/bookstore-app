@@ -2,12 +2,17 @@ import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 import Button from '@/components/Common/Button';
 
+export const FormDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const StyledForm = styled.form`
   display: flex;
   align-items: center;
   /* grid-template-columns: auto min-content; */
   /* grid-template-columns: auto; */
-  flex-direction: column;
+
   /* column-gap: 24px;
   row-gap: 10px; */
   gap: 10px;
@@ -36,6 +41,8 @@ export const StyledForm = styled.form`
   }
 
   @media ${breakPoints.sm} {
+    flex-direction: column;
+
     /* grid-template-columns: 1fr; */
     gap: 4px;
     /* row-gap: 16px; */

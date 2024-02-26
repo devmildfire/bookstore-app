@@ -1,5 +1,9 @@
 import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
-import { StyledForm, StyledButton } from '@/components/CartPage/styles';
+import {
+  StyledForm,
+  StyledButton,
+  FormDiv,
+} from '@/components/CartPage/styles';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -179,21 +183,25 @@ export function Shipment({
     <div>
       <div>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <FormField
-            type='text'
-            placeholder='Email'
-            register={register('email', { required: 'email is required' })}
-            name='email'
-            error={errors.email}
-          />
+          <FormDiv>
+            <FormField
+              type='text'
+              placeholder='Email'
+              register={register('email', { required: 'email is required' })}
+              name='email'
+              error={errors.email}
+            />
+          </FormDiv>
 
-          <FormField
-            type='text'
-            placeholder='adress'
-            register={register('adress', { required: 'adress is required' })}
-            name='adress'
-            error={errors.adress}
-          />
+          <FormDiv>
+            <FormField
+              type='text'
+              placeholder='adress'
+              register={register('adress', { required: 'adress is required' })}
+              name='adress'
+              error={errors.adress}
+            />
+          </FormDiv>
 
           <StyledButton type='submit'>Перейти к оплате</StyledButton>
 
