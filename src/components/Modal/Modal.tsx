@@ -430,9 +430,13 @@ function Edition({ children }: PropsWithChildren) {
 
 function BookModal(props: BookModalProps) {
   const { cover, name, types, author, price, discount, closeFunc } = props;
-  const [sum, setSum] = useState(0);
+  // const [sum, setSum] = useState(0);
+  const firstPrice = Math.floor((price[0] * (100 - discount[0])) / 100);
+
+  const [sum, setSum] = useState(firstPrice);
   const typesNumber = types.length;
   const initialCopiesArray = new Array(typesNumber).fill(0);
+  initialCopiesArray[0] = 1;
   const [copies, setCopies] = useState<number[]>(initialCopiesArray);
 
   console.log(props);
