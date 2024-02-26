@@ -26,20 +26,6 @@ import { cartStore } from '@/store/CartStore';
 import { observer } from 'mobx-react-lite';
 import { promoStore } from '@/store/PromoStore';
 
-// const CartView = () => {
-//   return (
-//     <div>
-//       <pre>{JSON.stringify(cartStore.cart, null, 2)}</pre>
-//       <p>
-//         {cartStore.price &&
-//           `cart full price with discount is... ${cartStore.price} `}
-//       </p>
-//     </div>
-//   );
-// };
-
-// const CartViewObs = observer(CartView);
-
 interface promoMessageProps {
   className: string;
 }
@@ -275,6 +261,27 @@ async function getPayUrl(props: roboUrlProps) {
   return roboUrl;
 }
 
+async function updateItemInDB(item: CartItemType, cartID: string) {
+  const updatedItem: CartItemType = await postData(`/api/cart`, {
+    oper: 'update',
+    item: item,
+  });
+  console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
+  cartID && cartStore.setCart(cartID);
+}
+
+async function removeItemFromDB(item: CartItemType, cartID: string) {
+  const removedItem: CartItemType = await postData(`/api/cart`, {
+    oper: 'remove',
+    item: item,
+  });
+  console.log(
+    'removed item from list ... ',
+    JSON.stringify(removedItem, null, 2)
+  );
+  cartID && cartStore.setCart(cartID);
+}
+
 function Shipment({
   setStage,
   cartID,
@@ -379,6 +386,63 @@ function Shipment({
   );
 }
 
+function EmptyCart() {
+  return <div>В корзине пока ничего нет</div>;
+}
+
+interface fullCartProps {
+  cartID: string;
+  productQuantity: number;
+  setStage: (stage: string)=> void;
+}
+
+function FullCart({ cartID, productQuantity, setStage }: fullCartProps) {
+  return (
+    <>
+      <ColumnLabels />
+      <Styled.ProductsList>
+        {cartStore.cart.map((product) => (
+          <CartItem
+            key={product.name + product.category}
+            {...product}
+            handleDelete={() => {
+              removeItemFromDB(product, cartID);
+            }}
+            incrementQuantity={() => {
+              updateItemInDB({
+                ...product,
+                quantity: product.quantity! + 1,
+              }, cartID);
+            }}
+            decrimentQuantity={() => {
+              updateItemInDB({
+                ...product,
+                quantity: product.quantity! - 1,
+              }, cartID);
+            }}
+          />
+        ))}
+      </Styled.ProductsList>
+
+      <StyledPromoMessage className='sdfsdfsdf' />
+
+      <ReturnButton>
+        <BackIcon />
+        Вернуться назад
+      </ReturnButton>
+
+      {/* <CartViewObs /> */}
+
+      <Payment
+        setStage={setStage}
+        quantity={productQuantity}
+        price={cartStore.price}
+        cart={cartStore.cart}
+      />
+    </>
+  );
+}
+
 const Cart = observer((): React.ReactElement => {
   const [cartID, setCartID] = useState('');
   const [stage, setStage] = useState('cartStage');
@@ -395,82 +459,10 @@ const Cart = observer((): React.ReactElement => {
     cartID && cartStore.setCart(cartID);
   }, [cartID]);
 
-  async function updateItemInDB(item: CartItemType) {
-    const updatedItem: CartItemType = await postData(`/api/cart`, {
-      oper: 'update',
-      item: item,
-    });
-    console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
-    cartID && cartStore.setCart(cartID);
-  }
-
-  async function removeItemFromDB(item: CartItemType) {
-    const removedItem: CartItemType = await postData(`/api/cart`, {
-      oper: 'remove',
-      item: item,
-    });
-    console.log(
-      'removed item from list ... ',
-      JSON.stringify(removedItem, null, 2)
-    );
-    cartID && cartStore.setCart(cartID);
-  }
-
   const productQuantity = cartStore.cart.reduce(
     (acc, product) => acc + product.quantity!,
     0
   ) as number;
-
-  function EmptyCart() {
-    return <div>В корзине пока ничего нет</div>;
-  }
-
-  function FullCart() {
-    return (
-      <>
-        <ColumnLabels />
-        <Styled.ProductsList>
-          {cartStore.cart.map((product) => (
-            <CartItem
-              key={product.name + product.category}
-              {...product}
-              handleDelete={() => {
-                removeItemFromDB(product);
-              }}
-              incrementQuantity={() => {
-                updateItemInDB({
-                  ...product,
-                  quantity: product.quantity! + 1,
-                });
-              }}
-              decrimentQuantity={() => {
-                updateItemInDB({
-                  ...product,
-                  quantity: product.quantity! - 1,
-                });
-              }}
-            />
-          ))}
-        </Styled.ProductsList>
-
-        <StyledPromoMessage className='sdfsdfsdf' />
-
-        <ReturnButton>
-          <BackIcon />
-          Вернуться назад
-        </ReturnButton>
-
-        {/* <CartViewObs /> */}
-
-        <Payment
-          setStage={setStage}
-          quantity={productQuantity}
-          price={cartStore.price}
-          cart={cartStore.cart}
-        />
-      </>
-    );
-  }
 
   return (
     <Styled.Main>
@@ -479,7 +471,9 @@ const Cart = observer((): React.ReactElement => {
       </StyledText>
 
       {stage === 'cartStage' &&
-        (cartStore.cart.length ? <FullCart /> : <EmptyCart />)}
+        (cartStore.cart.length 
+          ? <FullCart cartID={cartID} productQuantity={productQuantity} setStage={setStage} /> 
+          : <EmptyCart />)}
 
       {stage === 'shipmentStage' && (
         <Shipment
