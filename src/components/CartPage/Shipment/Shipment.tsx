@@ -3,6 +3,9 @@ import {
   StyledForm,
   StyledButton,
   FormDiv,
+  ButtonDiv,
+  StyledInput,
+  FormColumn,
 } from '@/components/CartPage/styles';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
@@ -17,6 +20,9 @@ import { postData } from '@/utils/postData';
 import { CartItemType } from 'pages/api/cart';
 import { promoStore } from '@/store/PromoStore';
 import { cartStore } from '@/store/CartStore';
+import styled from 'styled-components';
+import breakPoints from '@/utils/breakPoints';
+import Input from '@/components/Common/Input';
 
 async function emptyCartFromDB(cartID: string) {
   const emptyCartResponse: string = await postData(`/api/cart`, {
@@ -82,6 +88,7 @@ async function getPayUrl(props: roboUrlProps) {
 }
 
 type FormFieldProps = {
+  className: string;
   type: string;
   placeholder: string;
   name: ValidFieldNames;
@@ -97,12 +104,23 @@ const FormField: React.FC<FormFieldProps> = ({
   register,
   error,
   valueAsNumber,
+  className,
 }) => (
-  <>
-    <input type={type} placeholder={placeholder} {...register} />
+  <div className={className}>
+    <label htmlFor={name}>{name}</label>
+    <StyledInput type={type} placeholder={placeholder} {...register} />
     {error && <p>{error.message}</p>}
-  </>
+  </div>
 );
+
+const StyledFormField = styled(FormField)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  font-size: 20px;
+  gap: 10px;
+`;
 
 type ValidFieldNames = keyof ShipmentFormData;
 
@@ -127,6 +145,8 @@ export function Shipment({
 
   const onSubmit = async (data: ShipmentFormData) => {
     const price = promoStore.cartPromoPrice || totalPrice;
+
+    console.log('submitting');
 
     const order: OrdersInsertType = {
       adress: data.adress,
@@ -183,29 +203,51 @@ export function Shipment({
     <div>
       <div>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <FormDiv>
-            <FormField
-              type='text'
-              placeholder='Email'
-              register={register('email', { required: 'email is required' })}
-              name='email'
-              error={errors.email}
-            />
-          </FormDiv>
+          {/* <FormDiv>
+            <FormColumn> */}
+          <FormField
+            className='formField'
+            type='text'
+            placeholder='Имя'
+            register={register('name', { required: 'name is required' })}
+            name='name'
+            error={errors.name}
+          />
 
-          <FormDiv>
-            <FormField
-              type='text'
-              placeholder='adress'
-              register={register('adress', { required: 'adress is required' })}
-              name='adress'
-              error={errors.adress}
-            />
-          </FormDiv>
+          <FormField
+            className='formField'
+            type='text'
+            placeholder='Телефон'
+            register={register('phone', { required: 'phone is required' })}
+            name='phone'
+            error={errors.phone}
+          />
 
+          <FormField
+            className='formField'
+            type='text'
+            placeholder='Email'
+            register={register('email', { required: 'email is required' })}
+            name='email'
+            error={errors.email}
+          />
+
+          <FormField
+            className='formField'
+            type='text'
+            placeholder='адрес'
+            register={register('adress', {
+              required: 'adress is required',
+            })}
+            name='adress'
+            error={errors.adress}
+          />
+          {/* </FormColumn>
+          </FormDiv> */}
+
+          {/* <ButtonDiv> */}
           <StyledButton type='submit'>Перейти к оплате</StyledButton>
-
-          <div />
+          {/* </ButtonDiv> */}
         </StyledForm>
       </div>
 
