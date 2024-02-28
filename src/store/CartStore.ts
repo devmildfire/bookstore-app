@@ -12,6 +12,7 @@ import { CartItemType } from 'pages/api/cart';
 export class CartStore {
   cart: CartItemType[] = [];
   cartID: string | undefined = '';
+  // hasPhysicalGoods: boolean;
 
   constructor() {
     makeObservable(this, {
@@ -19,6 +20,7 @@ export class CartStore {
       cart: observable,
       setCart: action,
       price: computed,
+      hasPhysicalGoods: computed,
     });
   }
 
@@ -45,6 +47,22 @@ export class CartStore {
     this.cart = await getCart(cartID);
     console.log('setting new cart in MobX store');
   };
+
+  get hasPhysicalGoods() {
+    console.log('Computing if cart has physical goods from store...');
+
+    let hasPhysicalGoods = false;
+
+    this.cart.forEach((item) => {
+      if (item.category === 'Book2.0' || item.category === 'PrintBook') {
+        hasPhysicalGoods = true 
+      }
+    });
+
+    return hasPhysicalGoods;
+  }
+
+
 }
 
 export const cartStore = new CartStore();

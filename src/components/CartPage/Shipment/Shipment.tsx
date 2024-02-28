@@ -149,7 +149,7 @@ export function Shipment({
     console.log('submitting');
 
     const order: OrdersInsertType = {
-      adress: data.adress,
+      adress : data.adress || null,
       email: data.email,
       status: 'pending',
       cart_id: cartID,
@@ -205,23 +205,40 @@ export function Shipment({
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
           {/* <FormDiv>
             <FormColumn> */}
-          <FormField
-            className='formField'
-            type='text'
-            placeholder='Имя'
-            register={register('name', { required: 'name is required' })}
-            name='name'
-            error={errors.name}
-          />
 
-          <FormField
-            className='formField'
-            type='text'
-            placeholder='Телефон'
-            register={register('phone', { required: 'phone is required' })}
-            name='phone'
-            error={errors.phone}
-          />
+            {cartStore.hasPhysicalGoods && (
+              <>
+              <FormField
+                className='formField'
+                type='text'
+                placeholder='Имя'
+                register={register('name')}
+                name='name'
+                error={errors.name}
+              />  
+                
+              <FormField
+                className='formField'
+                type='text'
+                placeholder='Телефон'
+                register={register('phone')}
+                name='phone'
+                error={errors.phone}
+              />
+
+
+              <FormField
+              className='formField'
+              type='text'
+              placeholder='адрес'
+              register={register('adress')}
+              name='adress'
+              error={errors.adress}
+            />
+            </> )
+            }
+
+
 
           <FormField
             className='formField'
@@ -232,16 +249,7 @@ export function Shipment({
             error={errors.email}
           />
 
-          <FormField
-            className='formField'
-            type='text'
-            placeholder='адрес'
-            register={register('adress', {
-              required: 'adress is required',
-            })}
-            name='adress'
-            error={errors.adress}
-          />
+
           {/* </FormColumn>
           </FormDiv> */}
 

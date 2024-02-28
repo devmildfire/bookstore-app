@@ -6,6 +6,7 @@ import { CartItemType } from 'pages/api/cart';
 import Promocode from '../Promocode/Promocode';
 import { promoStore } from '@/store/PromoStore';
 import { observer } from 'mobx-react-lite';
+import { cartStore } from '@/store/CartStore';
 // import { CartItem } from '@/types/api';
 
 interface roboUrlProps {
@@ -76,6 +77,7 @@ const Payment = observer(
         </Styled.CheckoutButton>
         <Styled.Instruction>
           После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
+          { cartStore.hasPhysicalGoods && 'this cart contains physical items'}
         </Styled.Instruction>
       </Styled.Container>
     );
