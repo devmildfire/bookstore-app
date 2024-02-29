@@ -112,8 +112,7 @@ export const StyledInput = styled.input`
   padding: 20px;
   max-width: var(--width);
   margin: 0 auto;
-  /* width: 640px; */
-  width: 100%;
+  width: 640px;
 
   font-size: 20px;
 

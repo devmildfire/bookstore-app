@@ -149,7 +149,7 @@ export function Shipment({
     console.log('submitting');
 
     const order: OrdersInsertType = {
-      adress : data.adress || null,
+      adress: data.adress || null,
       email: data.email,
       status: 'pending',
       cart_id: cartID,
@@ -206,18 +206,18 @@ export function Shipment({
           {/* <FormDiv>
             <FormColumn> */}
 
-            {cartStore.hasPhysicalGoods && (
-              <>
-              <FormField
+          {cartStore.hasPhysicalGoods && (
+            <>
+              <StyledFormField
                 className='formField'
                 type='text'
                 placeholder='Имя'
                 register={register('name')}
                 name='name'
                 error={errors.name}
-              />  
-                
-              <FormField
+              />
+
+              <StyledFormField
                 className='formField'
                 type='text'
                 placeholder='Телефон'
@@ -226,21 +226,18 @@ export function Shipment({
                 error={errors.phone}
               />
 
+              <StyledFormField
+                className='formField'
+                type='text'
+                placeholder='адрес'
+                register={register('adress')}
+                name='adress'
+                error={errors.adress}
+              />
+            </>
+          )}
 
-              <FormField
-              className='formField'
-              type='text'
-              placeholder='адрес'
-              register={register('adress')}
-              name='adress'
-              error={errors.adress}
-            />
-            </> )
-            }
-
-
-
-          <FormField
+          <StyledFormField
             className='formField'
             type='text'
             placeholder='Email'
@@ -248,7 +245,6 @@ export function Shipment({
             name='email'
             error={errors.email}
           />
-
 
           {/* </FormColumn>
           </FormDiv> */}
