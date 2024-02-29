@@ -31,7 +31,7 @@ const PromoMessage = observer(
       promoStore.showRules &&
       !promoStore.rulesShown &&
       (message = (
-        <div className='shownDiv'>
+        <div className={'shownDiv extraDiv'}>
           <h3>как работают промокоды:</h3>
           <div>- к заказу можно применить только один промокод</div>
           <div>
