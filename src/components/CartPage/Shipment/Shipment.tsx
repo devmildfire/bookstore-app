@@ -92,6 +92,7 @@ type FormFieldProps = {
   type: string;
   placeholder: string;
   name: ValidFieldNames;
+  label: string;
   register: UseFormRegisterReturn<ValidFieldNames>;
   error: FieldError | undefined;
   valueAsNumber?: boolean;
@@ -105,9 +106,10 @@ const FormField: React.FC<FormFieldProps> = ({
   error,
   valueAsNumber,
   className,
+  label,
 }) => (
   <div className={className}>
-    <label htmlFor={name}>{name}</label>
+    <label htmlFor={name}>{label}</label>
     <StyledInput type={type} placeholder={placeholder} {...register} />
     {error && <p>{error.message}</p>}
   </div>
@@ -120,6 +122,10 @@ const StyledFormField = styled(FormField)`
   align-items: left;
   font-size: 20px;
   gap: 10px;
+
+  p {
+    color: var(--main-red-100);
+  }
 `;
 
 type ValidFieldNames = keyof ShipmentFormData;
@@ -212,6 +218,7 @@ export function Shipment({
                 className='formField'
                 type='text'
                 placeholder='Имя'
+                label='Ф.И.О.'
                 register={register('name')}
                 name='name'
                 error={errors.name}
@@ -220,7 +227,8 @@ export function Shipment({
               <StyledFormField
                 className='formField'
                 type='text'
-                placeholder='Телефон'
+                placeholder=''
+                label='Телефон'
                 register={register('phone')}
                 name='phone'
                 error={errors.phone}
@@ -230,6 +238,7 @@ export function Shipment({
                 className='formField'
                 type='text'
                 placeholder='адрес'
+                label='Адрес удобного Boxberry'
                 register={register('adress')}
                 name='adress'
                 error={errors.adress}
@@ -241,6 +250,7 @@ export function Shipment({
             className='formField'
             type='text'
             placeholder='Email'
+            label='Email'
             register={register('email', { required: 'email is required' })}
             name='email'
             error={errors.email}

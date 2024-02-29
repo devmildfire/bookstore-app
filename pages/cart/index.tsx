@@ -53,42 +53,42 @@ const PromoMessage = observer(
 
     promoStore.promoCode === null &&
       promoStore.codeEntered &&
-      (message = <div className='shownDiv'> Мы не знаем такого промокода</div>);
+      (message = <div className='shownDiv'>Такого промокода мы не знаем.</div>);
 
     if (promoStore.promoCode) {
       !promoStore.codeDiscountIsValid &&
         (message = (
           <div className='shownDiv'>
-            Скидка по введённому промокоду меньше скидки, которая и так уже
-            действует
+            Скидка по введённому промокоду меньше скидки, которая уже действует.
           </div>
         ));
 
       !promoStore.codeItemIsValid &&
         (message = (
           <div className='shownDiv'>
-            Продукта, для которого работает введённый промокод, нет в корзине
+            Продукта, для которого работает введённый промокод, нет в корзине.
           </div>
         ));
 
       !promoStore.codeDatesAreValid &&
         (message = (
           <div className='shownDiv'>
-            Период действия введённого промокода истёк либо ещё не начался
+            Период действия введённого промокода истёк либо ещё не начался.
           </div>
         ));
 
       promoStore.codeIsValid &&
         (message = (
           <div className='shownDiv'>
-            применён промокод {promoStore.promoCode.code}. Действует скидка{' '}
+            применён промокод {promoStore.promoCode.code}: действует скидка{' '}
             {promoStore.promoCode.discount}% на
             {promoStore.promoCode.type === 'cart'
-              ? ' всю корзину'
+              ? ' всю корзину.'
               : ' издание "' +
                 promoStore.promoCode.product_name +
                 '" - ' +
-                promoStore.promoCode.product_type}
+                promoStore.promoCode.product_type +
+                '.'}
           </div>
         ));
     }
