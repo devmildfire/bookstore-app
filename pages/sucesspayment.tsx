@@ -61,22 +61,20 @@ const StyledButton = styled(Button)`
   }
 `;
 
+
+
 const Hall = (): React.ReactElement => {
   const [cartID, setCartID] = useState('');
-  const [id, setID] = useState(0);
-  const [email, setEmail] = useState('');
-  const [adress, setAdress] = useState('');
 
-  const [sum, setSum] = useState(0);
-
-  const [order, setOrder] = useState<OrdersType>();
+  const [order, setOrder] = useState<OrdersType | null>(null);
 
   const params = useSearchParams();
 
   const invID = params.get('invid');
 
   console.log('order id is ...', invID);
-  console.log('sum is ...', sum);
+  console.log('sum is ...', order?.summ);
+
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
@@ -90,14 +88,7 @@ const Hall = (): React.ReactElement => {
     cartID && invID && getOrder(cartID, invID);
   }, [invID]);
 
-  useEffect(() => {
-    if (order) {
-      setID(order.id);
-      setEmail(order.email!);
-      setSum(order.summ!);
-      setAdress(order.adress!);
-    }
-  }, [order]);
+
 
   const getOrder = useCallback(
     async (cartID: string, orderID: string) => {
@@ -117,18 +108,18 @@ const Hall = (): React.ReactElement => {
       <HallIconStyled />
       <HalLogoStyled />
       <Text variant='h2_1_HAL' align='center'>
-        «молодец, Дэйв {id} !
+        «молодец, Дэйв {order?.id} !
       </Text>
       <Text variant='h2_1_HAL' align='center'>
-        ты превратил {sum} денег в книги»
+        ты превратил {order?.summ} денег в книги»
       </Text>
 
       <Text variant='buttonText' align='center'>
-        бумагу отправим по адресу {adress}
+        бумагу отправим по адресу {order?.adress}
       </Text>
 
       <Text variant='buttonText' align='center'>
-        байты отправим на e-mail {email}
+        байты отправим на e-mail {order?.email}
       </Text>
 
       <StyledButton className='backButton' href='/' variant='wide'>

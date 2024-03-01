@@ -489,6 +489,8 @@ export interface Database {
           cart_id: string | null
           created_at: string
           email: string | null
+          phone: string | null
+          name: string | null
           id: number
           status: string | null
           summ: number | null
@@ -498,6 +500,8 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
+          phone?: string | null
+          name?: string | null
           id?: number
           status?: string | null
           summ?: number | null
@@ -507,6 +511,8 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
+          phone?: string | null
+          name?: string | null
           id?: number
           status?: string | null
           summ?: number | null

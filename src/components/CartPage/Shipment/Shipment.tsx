@@ -156,6 +156,8 @@ export function Shipment({
 
     const order: OrdersInsertType = {
       adress: data.adress || null,
+      phone: data.phone || null,
+      name: data.name || null,
       email: data.email,
       status: 'pending',
       cart_id: cartID,
