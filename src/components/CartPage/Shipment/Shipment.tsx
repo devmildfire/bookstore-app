@@ -136,7 +136,7 @@ interface shipmentProps {
   totalPrice: number;
 }
 
-let sWindow: Window | null;
+// let sWindow: Window | null;
 
 export function Shipment({
   setStage,
@@ -206,9 +206,9 @@ export function Shipment({
 
     emptyCartFromDB(cartID);
 
-    // window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
+    window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
     
-    sWindow && (sWindow.location = payUrl)
+    // sWindow && (sWindow.location = payUrl)
 
   };
 
@@ -267,9 +267,8 @@ export function Shipment({
           </FormDiv> */}
 
           {/* <ButtonDiv> */}
-          <StyledButton type='submit' onClick={() => {
-            sWindow = window.open()
-          }}>Перейти к оплате</StyledButton>
+          <StyledButton type='submit'           
+          >Перейти к оплате</StyledButton>
           {/* </ButtonDiv> */}
         </StyledForm>
       </div>
