@@ -14,6 +14,8 @@ import { cartStore } from '@/store/CartStore';
 import { observer } from 'mobx-react-lite';
 import { Shipment } from '@/components/CartPage/Shipment/Shipment';
 import { StyledPromoMessage } from '@/components/CartPage/PromoMessage/Message';
+import { StyledButton } from '@/components/CartPage/styles';
+import { useRouter } from 'next/router';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -67,8 +69,54 @@ async function removeItemFromDB(item: CartItemType, cartID: string) {
   cartID && cartStore.setCart(cartID);
 }
 
-function EmptyCart() {
-  return <div>В корзине пока ничего нет</div>;
+const StyledEmptyCart = styled(EmptyCart)`
+  display: flex;
+  flex-direction: column;
+
+  button {
+    margin-left: 0;
+  }
+
+  @media ${breakPoints.xxl} {
+  }
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.smd} {
+  }
+
+  @media ${breakPoints.sm} {
+    button {
+      margin-left: auto;
+    }
+
+    h2,
+    p {
+      text-align: center;
+    }
+  }
+`;
+
+function EmptyCart({ className }: { className: string }) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/books');
+  };
+
+  return (
+    <div className={className}>
+      <Text variant='h2c'>В корзине пока ничего нет</Text>
+
+      <Text variant='text'>
+        Вернитесь на главную или воспользуйтесь поиском, чтобы выбрать что-то
+      </Text>
+      <StyledButton type='button' onClick={handleClick}>
+        Перейти на главную
+      </StyledButton>
+    </div>
+  );
 }
 
 interface fullCartProps {
@@ -152,7 +200,7 @@ const Cart = observer((): React.ReactElement => {
         (cartStore.cart.length ? (
           <FullCart productQuantity={productQuantity} setStage={setStage} />
         ) : (
-          <EmptyCart />
+          <StyledEmptyCart className='emptyCart' />
         ))}
 
       {stage === 'shipmentStage' && (
