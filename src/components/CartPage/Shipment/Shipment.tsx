@@ -6,6 +6,7 @@ import {
   ButtonDiv,
   StyledInput,
   FormColumn,
+  StyledBackButton,
 } from '@/components/CartPage/styles';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
@@ -126,6 +127,29 @@ const StyledFormField = styled(FormField)`
   p {
     color: var(--main-red-100);
   }
+
+  label {
+    font-size: 20px;
+  }
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.smd} {
+    gap: 7px;
+
+    label {
+      font-size: 14px;
+    }
+  }
+
+  @media ${breakPoints.sm} {
+    gap: 6px;
+
+    label {
+      font-size: 10px;
+    }
+  }
 `;
 
 type ValidFieldNames = keyof ShipmentFormData;
@@ -207,24 +231,20 @@ export function Shipment({
     emptyCartFromDB(cartID);
 
     window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
-    
-    // sWindow && (sWindow.location = payUrl)
 
+    // sWindow && (sWindow.location = payUrl)
   };
 
   return (
     <div>
       <div>
         <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          {/* <FormDiv>
-            <FormColumn> */}
-
           {cartStore.hasPhysicalGoods && (
             <>
               <StyledFormField
                 className='formField'
                 type='text'
-                placeholder='Имя'
+                placeholder='Иванов Иван Иванович'
                 label='Ф.И.О.'
                 register={register('name')}
                 name='name'
@@ -234,7 +254,7 @@ export function Shipment({
               <StyledFormField
                 className='formField'
                 type='text'
-                placeholder=''
+                placeholder='89101112131'
                 label='Телефон'
                 register={register('phone')}
                 name='phone'
@@ -244,7 +264,7 @@ export function Shipment({
               <StyledFormField
                 className='formField'
                 type='text'
-                placeholder='адрес'
+                placeholder='улица Двинская, дом 10, корпус 2'
                 label='Адрес удобного Boxberry'
                 register={register('adress')}
                 name='adress'
@@ -256,30 +276,24 @@ export function Shipment({
           <StyledFormField
             className='formField'
             type='text'
-            placeholder='Email'
+            placeholder='example@example.ru'
             label='Email'
             register={register('email', { required: 'email is required' })}
             name='email'
             error={errors.email}
           />
 
-          {/* </FormColumn>
-          </FormDiv> */}
+          <StyledButton type='submit'>Перейти к оплате</StyledButton>
 
-          {/* <ButtonDiv> */}
-          <StyledButton type='submit'           
-          >Перейти к оплате</StyledButton>
-          {/* </ButtonDiv> */}
+          <StyledBackButton
+            onClick={() => {
+              setStage('cartStage');
+            }}
+          >
+            Вернуться
+          </StyledBackButton>
         </StyledForm>
       </div>
-
-      <button
-        onClick={() => {
-          setStage('cartStage');
-        }}
-      >
-        Вернуться
-      </button>
     </div>
   );
 }
