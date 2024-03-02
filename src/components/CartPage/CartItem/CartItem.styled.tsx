@@ -3,7 +3,7 @@ import closeButton from '../../../assets/icons/close-button.svg';
 
 export const CartItemContainer = styled.li`
   display: grid;
-  grid-template-columns: 150px 150px repeat(4, 1fr) 24px;
+  grid-template-columns: 150px 250px repeat(4, 1fr) 24px;
 
   /* max-height: 144px; */
   justify-items: center;
@@ -21,6 +21,10 @@ export const CartItemContainer = styled.li`
 
   :hover {
     background-color: #202020;
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 100px 200px repeat(4, 1fr) 24px;
   }
 
   @media (max-width: 768px) {
@@ -51,6 +55,7 @@ export const Product = styled.div`
 
 export const ProductInfo = styled.div`
   padding-left: 20px;
+  width: 100%;
 
   @media (max-width: 768px) {
     padding-left: 0;
@@ -72,6 +77,7 @@ export const BookImage = styled.img`
 `;
 
 export const BookTitle = styled.h3`
+  text-align: left;
   font-weight: 700;
   font-size: 20px;
   padding: 0 0 5px;
