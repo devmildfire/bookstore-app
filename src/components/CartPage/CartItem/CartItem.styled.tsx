@@ -37,6 +37,8 @@ export const CartItemContainer = styled.li`
       'image  text . button'
       'image  edition . .'
       'image  quantity price price';
+
+    grid-template-rows: repeat(2, min-content) 1fr;
   }
 
   @media (max-width: 568px) {
@@ -158,10 +160,9 @@ export const BookPrice = styled.span`
 
 export const OldBookPrice = styled.span`
   font-size: 20px;
-  color: var(--main-red);
+  color: var(--main-red-100);
   text-decoration: line-through;
   font-weight: 500;
-  margin-left: 7px;
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -238,8 +239,15 @@ export const CloseButton = styled.button`
 `;
 
 export const PriceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   @media (max-width: 768px) {
     margin-left: auto;
+    margin-top: auto;
+
     margin-right: 6px;
 
     grid-area: price;
@@ -254,6 +262,7 @@ export const QuantityContainer = styled.div`
   justify-content: center;
   @media (max-width: 768px) {
     grid-area: quantity;
+    margin-top: auto;
   }
 `;
 
