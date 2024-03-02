@@ -1,15 +1,10 @@
 import styled from 'styled-components';
 
 export const Main = styled.main`
-  padding: 40px;
-  max-width: 1400px;
+  /* padding: 40px; */
+  width: 100%;
+  /* max-width: 1440px; */
   margin: 0 auto;
-  @media (max-width: 758px) {
-    padding: 40px 16px;
-  }
-  @media (min-width: 786px) {
-    padding-top: 80px;
-  }
 `;
 
 export const Title = styled.h1`
@@ -36,7 +31,8 @@ export const Title = styled.h1`
 `;
 
 export const ProductsList = styled.ul`
-  margin: auto;
+  width: 100%;
+  /* margin: auto; */
   height: 520px;
   overflow-y: auto;
 

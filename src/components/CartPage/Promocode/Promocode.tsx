@@ -6,6 +6,16 @@ import { observer } from 'mobx-react-lite';
 
 const StyledForm = styled.form`
   position: relative;
+  display: flex;
+  flex-direction: column;
+
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* width: 100%; */
+    gap: 20px;
+  }
 `;
 
 const Promocode = observer((): React.ReactElement => {
@@ -32,17 +42,19 @@ const Promocode = observer((): React.ReactElement => {
     <StyledForm onSubmit={onSubmit}>
       <Styled.Subtitle>Промокод</Styled.Subtitle>
 
-      <Styled.Input
-        name='code'
-        placeholder='Введите промокод'
-        type='text'
-        maxLength={20}
-        onFocus={onFocus}
-        onBlur={onBlur}
-      />
-      <Styled.Button type='submit' onClick={onBlur}>
-        Применить
-      </Styled.Button>
+      <div>
+        <Styled.Input
+          name='code'
+          placeholder='Введите промокод'
+          type='text'
+          maxLength={20}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+        <Styled.PromoButton type='submit' onClick={onBlur}>
+          Применить
+        </Styled.PromoButton>
+      </div>
     </StyledForm>
   );
 });

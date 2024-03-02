@@ -9,7 +9,11 @@ type PurchaseInfoProps = {
   gridArea: string;
 };
 
-const PurchaseInfo = ({ text, value, gridArea }: PurchaseInfoProps): React.ReactElement => (
+const PurchaseInfo = ({
+  text,
+  value,
+  gridArea,
+}: PurchaseInfoProps): React.ReactElement => (
   <Styled.Container theme={{ area: gridArea }}>
     <Styled.Text>{text}</Styled.Text>
     <Styled.Value>{renderNumber(value)}</Styled.Value>

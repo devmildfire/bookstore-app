@@ -57,28 +57,34 @@ const Payment = observer(
       <Styled.Container>
         <Promocode />
 
-        <PurchaseInfo text='Количество:' value={quantity} gridArea='quantity' />
-        <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
-
-        {promoStore.cartPromoPrice && (
+        <div>
           <PurchaseInfo
-            text='с учётом промокода:'
-            value={promoStore.cartPromoPrice}
-            gridArea='promoPrice'
+            text='Количество:'
+            value={quantity}
+            gridArea='quantity'
           />
-        )}
+          <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
 
-        <Styled.CheckoutButton
-          onClick={() => {
-            setStage('shipmentStage');
-          }}
-        >
-          Продолжить
-        </Styled.CheckoutButton>
-        <Styled.Instruction>
-          После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
-          { cartStore.hasPhysicalGoods && 'this cart contains physical items'}
-        </Styled.Instruction>
+          {promoStore.cartPromoPrice && (
+            <PurchaseInfo
+              text='с учётом промокода:'
+              value={promoStore.cartPromoPrice}
+              gridArea='promoPrice'
+            />
+          )}
+
+          <Styled.CheckoutButton
+            onClick={() => {
+              setStage('shipmentStage');
+            }}
+          >
+            Продолжить
+          </Styled.CheckoutButton>
+          <Styled.Instruction>
+            После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
+            {cartStore.hasPhysicalGoods && 'this cart contains physical items'}
+          </Styled.Instruction>
+        </div>
       </Styled.Container>
     );
   }

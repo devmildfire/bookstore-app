@@ -125,6 +125,12 @@ interface fullCartProps {
 }
 
 function FullCart({ productQuantity, setStage }: fullCartProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/books');
+  };
+
   return (
     <>
       <ColumnLabels />
@@ -160,7 +166,7 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
 
       <StyledPromoMessage className='sdfsdfsdf' />
 
-      <ReturnButton>
+      <ReturnButton onClick={handleClick}>
         <BackIcon />
         Вернуться назад
       </ReturnButton>
@@ -191,7 +197,7 @@ const Cart = observer((): React.ReactElement => {
   ) as number;
 
   return (
-    <Styled.Main>
+    <Styled.Main className='max-width'>
       <StyledText textColor='white' variant='h2_1_Cart'>
         {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
       </StyledText>

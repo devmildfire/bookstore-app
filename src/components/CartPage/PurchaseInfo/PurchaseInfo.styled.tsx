@@ -6,9 +6,9 @@ export const Container = styled.div`
   justify-content: space-between;
   grid-area: ${(props) => props.theme.area};
 
-  :first-of-type {
+  /* :first-of-type {
     margin-bottom: 15px;
-  }
+  } */
 `;
 export const Text = styled.p``;
 
