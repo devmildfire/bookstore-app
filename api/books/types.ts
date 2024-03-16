@@ -489,6 +489,8 @@ export interface Database {
           cart_id: string | null
           created_at: string
           email: string | null
+          phone: string | null
+          name: string | null
           id: number
           status: string | null
           summ: number | null
@@ -498,6 +500,8 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
+          phone?: string | null
+          name?: string | null
           id?: number
           status?: string | null
           summ?: number | null
@@ -507,6 +511,8 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
+          phone?: string | null
+          name?: string | null
           id?: number
           status?: string | null
           summ?: number | null
@@ -699,44 +705,36 @@ export interface Database {
       }
       Promocodes: {
         Row: {
-          code: string | null
-          description: string | null
+          code: string
           discount: number | null
           end_date: string | null
           id: number
+          product_name: string | null
+          product_type: Database["public"]["Enums"]["category"] | null
           start_date: string | null
-          title_id: number
-          type: Database["public"]["Enums"]["category"]
+          type: Database["public"]["Enums"]["promotype"] | null
         }
         Insert: {
-          code?: string | null
-          description?: string | null
+          code: string
           discount?: number | null
           end_date?: string | null
           id?: number
+          product_name?: string | null
+          product_type?: Database["public"]["Enums"]["category"] | null
           start_date?: string | null
-          title_id: number
-          type: Database["public"]["Enums"]["category"]
+          type?: Database["public"]["Enums"]["promotype"] | null
         }
         Update: {
-          code?: string | null
-          description?: string | null
+          code?: string
           discount?: number | null
           end_date?: string | null
           id?: number
+          product_name?: string | null
+          product_type?: Database["public"]["Enums"]["category"] | null
           start_date?: string | null
-          title_id?: number
-          type?: Database["public"]["Enums"]["category"]
+          type?: Database["public"]["Enums"]["promotype"] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "promocodes_title_id_fkey"
-            columns: ["title_id"]
-            isOneToOne: false
-            referencedRelation: "Titles"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       Subscriptions: {
         Row: {
@@ -968,6 +966,7 @@ export interface Database {
         | "ibooks"
         | "edt"
       productcategory: "PrintedBook" | "AudioBook" | "Ebook" | "CardBook"
+      promotype: "cart" | "item"
     }
     CompositeTypes: {
       [_ in never]: never

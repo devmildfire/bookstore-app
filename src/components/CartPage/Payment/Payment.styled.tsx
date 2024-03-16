@@ -2,34 +2,54 @@ import styled from 'styled-components';
 
 export const Button = styled.button`
   cursor: pointer;
-  height: 40px;
-  padding: 0;
+  height: 32px;
+  padding: 0 40px;
 
   border-radius: 4px;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   grid-area: apply;
 
   @media (min-width: 768px) {
-    height: 48px;
+    height: 45px;
     /* width: 160px; */
   }
 
   @media (min-width: 1024px) {
-    height: 70px;
-    width: 160px;
+    height: 50px;
+    /* width: 160px; */
   }
+
+  :hover {
+    background-color: var(--main-red-100);
+  }
+
+  transition: all 0.2s;
 `;
 
 export const CheckoutButton = styled(Button)`
   background-color: transparent;
   color: white;
-  border: 2px solid white;
+  border: 1px solid white;
+  width: 280px;
+
+  /* margin: 20px 0px 10px; */
+  /* grid-area: checkout; */
+
+  @media (max-width: 530px) {
+    width: 100%;
+  }
+`;
+
+export const PromoButton = styled(Button)`
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
   width: auto;
-  margin: 50px 0px 10px;
   grid-area: checkout;
 
-  @media (min-width: 530px) {
+  @media (max-width: 530px) {
     margin: 0;
+    padding: 0 10px;
   }
 `;
 
@@ -44,35 +64,49 @@ export const Instruction = styled.p`
 `;
 
 export const Container = styled.div`
+  width: 100%;
   font-size: 16px;
   display: flex;
-  flex-direction: column;
-  margin: 50px 19px;
+  margin: 2vw 0px;
+  justify-content: space-between;
 
-  @media (min-width: 530px) {
-    display: grid;
-    /* grid-template-columns: minmax(auto, 320px) auto minmax(auto, 320px); */
-    grid-template-columns: minmax(210px, 320px) auto minmax(210px, 320px);
-    grid-column-gap: 20px;
-    grid-template-areas:
-      '. . quantity'
-      'input-label . sum'
-      'input . checkout'
-      'apply . text';
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 
-  @media (min-width: 1024px) {
-    font-size: 20px;
-  }
-
-  @media (min-width: 1440px) {
-    grid-template-areas:
-      '. . quantity'
-      'input-label . sum'
-      'input apply checkout'
-      '. . text';
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 `;
+
+// @media (min-width: 1440px) {
+//   grid-template-areas:
+//     '. . quantity'
+//     'input-label . . sum'
+//     'input-label . . promoPrice'
+//     'input apply . checkout'
+//     '. . . text';
+// }
+
+// @media (min-width: 1024px) {
+//   font-size: 20px;
+// }
+
+// @media (min-width: 530px) {
+//   display: grid;
+//   /* grid-template-columns: minmax(auto, 320px) auto minmax(auto, 320px); */
+//   grid-template-columns: minmax(210px, 320px) auto auto minmax(210px, 320px);
+//   justify-content: space-between;
+//   grid-column-gap: 20px;
+//   grid-template-areas:
+//     '. . . quantity'
+//     'input-label . . sum'
+//     'input-label . . promoPrice'
+//     'input . . checkout'
+//     'apply . . text';
+// }
 
 export const Subtitle = styled.h2`
   font-weight: 400;
@@ -86,11 +120,12 @@ export const Subtitle = styled.h2`
 `;
 
 export const Input = styled.input`
-  height: 40px;
+  height: 32px;
   background: #767676;
   padding: 0px 16px;
   border-radius: 4px;
   margin-bottom: 10px;
+  width: 150px;
   grid-area: input;
 
   ::placeholder {
@@ -99,13 +134,18 @@ export const Input = styled.input`
   }
 
   @media (min-width: 768px) {
-    height: 48px;
+    height: 45px;
     margin-bottom: 15px;
   }
 
   @media (min-width: 1024px) {
-    height: 70px;
+    height: 50px;
     margin-bottom: 15px;
+    width: 200px;
+  }
+
+  @media (min-width: 1920px) {
+    width: 300px;
   }
 `;
 

@@ -1,6 +1,6 @@
 import { Author } from '@/types/author';
 import { Product } from '@/types/product';
-import { Tables } from 'api/supabase-client/types';
+import { Tables } from 'api/books/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
 

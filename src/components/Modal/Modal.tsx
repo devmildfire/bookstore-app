@@ -22,9 +22,10 @@ import { BookTableTypesTuple } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
-import { CartItem } from '@/types/api';
+// import { CartItem } from '@/types/api';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { postData } from '@/utils/postData';
+import { CartItemType } from 'pages/api/cart';
 
 const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
   Audiobooks: <AudioIcon />,
@@ -394,14 +395,18 @@ function ProductCopies({
 }
 
 type EditionsMap = {
+  [key: string]: CartItemType['category'];
+};
+
+type EditionsShownMap = {
   [key: string]: string;
 };
 
-const editions: EditionsMap = {
-  write: 'Печатное издание',
-  book2: 'Книга 2.0',
-  digital: 'Цифровое издание',
-  audio: 'Аудиокнига',
+const editions: EditionsShownMap = {
+  PrintedBooks: 'Печатное издание',
+  Ebooks: 'Книга 2.0',
+  Audiobooks: 'Цифровое издание',
+  CardBooks: 'Аудиокнига',
 };
 
 const bookTypes: EditionsMap = {
@@ -425,9 +430,13 @@ function Edition({ children }: PropsWithChildren) {
 
 function BookModal(props: BookModalProps) {
   const { cover, name, types, author, price, discount, closeFunc } = props;
-  const [sum, setSum] = useState(0);
+  // const [sum, setSum] = useState(0);
+  const firstPrice = Math.floor((price[0] * (100 - discount[0])) / 100);
+
+  const [sum, setSum] = useState(firstPrice);
   const typesNumber = types.length;
   const initialCopiesArray = new Array(typesNumber).fill(0);
+  initialCopiesArray[0] = 1;
   const [copies, setCopies] = useState<number[]>(initialCopiesArray);
 
   console.log(props);
@@ -438,8 +447,8 @@ function BookModal(props: BookModalProps) {
     types,
     author,
     price,
-  }: typeof props): CartItem[] => {
-    const items: CartItem[] = [];
+  }: typeof props): CartItemType[] => {
+    const items: CartItemType[] = [];
     types.forEach((type, index) => {
       copies[index] &&
         items.push({
@@ -447,14 +456,12 @@ function BookModal(props: BookModalProps) {
           name: name,
           category: bookTypes[type],
           quantity: copies[index],
-          // summ: copies[index] * price[index],
           price: price[index],
-          discount: discount[index], //  это значение скидки всегда нулевое, пока в компонент скидка не пробрасывается. Нужно добавить ещё и скидку
+          discount: discount[index],
           subtitle: author,
           picture: cover,
         });
     });
-    // console.log(items);
     return items;
   };
 
@@ -462,7 +469,7 @@ function BookModal(props: BookModalProps) {
     const items = createCartObjects(props);
 
     items.forEach(async (item) => {
-      const addedItem: CartItem = await postData(`/api/cart`, {
+      const addedItem: CartItemType = await postData(`/api/cart`, {
         oper: 'update',
         item: item,
       });

@@ -32,6 +32,7 @@
     "embla-carousel-react": "^8.0.0-rc04",
     "framer-motion": "^10.12.4",
     "leva": "^0.9.34",
+    "md5": "^2.3.0",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^4.0.5",
     "next": "^13.1.5",

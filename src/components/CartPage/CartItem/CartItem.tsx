@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Styled from './CartItem.styled';
-import { CartItem as CartItemType } from '@/types/api';
+import { CartItemType } from 'pages/api/cart';
 
 const readableCategories = {
   PrintBook: 'печатное издание',
@@ -38,7 +38,7 @@ const CartItem = (props: CartItemProps): React.ReactElement => {
   } = props;
 
   const currentPrice = discount
-    ? Math.floor(price * (1 - discount / 100))
+    ? Math.floor(price! * (1 - discount / 100))
     : price;
   let readableCategory = '';
   if (isValidCategory(category)) {
@@ -47,20 +47,20 @@ const CartItem = (props: CartItemProps): React.ReactElement => {
 
   return (
     <Styled.CartItemContainer>
-      <Styled.BookImage src={picture} alt={name} />
+      <Styled.BookImage src={picture!} alt={name} />
       <Styled.ProductInfo>
         <Styled.BookTitle>{name}</Styled.BookTitle>
         <Styled.Author>{subtitle}</Styled.Author>
       </Styled.ProductInfo>
       <Styled.Edition>{readableCategory}</Styled.Edition>
       <Styled.PriceContainer>
-        <Styled.BookPrice>{currentPrice}</Styled.BookPrice>
-        {discount > 0 && <Styled.OldBookPrice>{price}</Styled.OldBookPrice>}
+        <Styled.BookPrice>{currentPrice} ₽</Styled.BookPrice>
+        {discount! > 0 && <Styled.OldBookPrice>{price} ₽</Styled.OldBookPrice>}
       </Styled.PriceContainer>
       <Styled.QuantityContainer>
         <Styled.QuantityControls
           onClick={decrimentQuantity}
-          disabled={quantity <= 1}
+          disabled={quantity! <= 1}
         >
           -
         </Styled.QuantityControls>
@@ -69,7 +69,7 @@ const CartItem = (props: CartItemProps): React.ReactElement => {
           +
         </Styled.QuantityControls>
       </Styled.QuantityContainer>
-      <Styled.PriceSum>{currentPrice * quantity}</Styled.PriceSum>
+      <Styled.PriceSum>{currentPrice! * quantity!}</Styled.PriceSum>
       <Styled.CloseButton type='button' onClick={handleDelete}>
         <Styled.CloseButtonIcon />
       </Styled.CloseButton>
