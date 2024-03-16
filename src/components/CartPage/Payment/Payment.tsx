@@ -62,14 +62,21 @@ const Payment = observer(
             text='Количество:'
             value={quantity}
             gridArea='quantity'
+            isCurrencyAmount={false}
           />
-          <PurchaseInfo text='Итоговая сумма:' value={price} gridArea='sum' />
+          <PurchaseInfo
+            text='Итоговая сумма:'
+            value={price}
+            gridArea='sum'
+            isCurrencyAmount={true}
+          />
 
           {promoStore.cartPromoPrice && (
             <PurchaseInfo
               text='с учётом промокода:'
               value={promoStore.cartPromoPrice}
               gridArea='promoPrice'
+              isCurrencyAmount={true}
             />
           )}
 
