@@ -230,7 +230,9 @@ export function Shipment({
 
     emptyCartFromDB(cartID);
 
-    window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
+    // window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
+
+    window.location.assign(payUrl);
 
     // sWindow && (sWindow.location = payUrl)
   };
