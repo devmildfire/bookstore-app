@@ -33,7 +33,7 @@ export const Title = styled.h1`
 export const ProductsList = styled.ul`
   width: 100%;
   /* margin: auto; */
-  max-height: 520px;
+  /* max-height: 520px; */
   overflow-y: auto;
 
   ::-webkit-scrollbar {
