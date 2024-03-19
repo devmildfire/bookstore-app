@@ -1,228 +1,76 @@
-@import url('./fonts.css');
-@import url('./normalize.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --main-red-100: rgb(147, 0, 0);
-  --main-red-90: rgba(147, 0, 0, 0.9);
-  --main-red-80: rgba(147, 0, 0, 0.8);
-  --main-red-70: rgba(147, 0, 0, 0.7);
-  --main-red-60: rgba(147, 0, 0, 0.6);
-  --main-red-50: rgba(147, 0, 0, 0.5);
-  --main-red-40: rgba(147, 0, 0, 0.4);
-  --main-red-30: rgba(147, 0, 0, 0.3);
-  --main-red-20: rgba(147, 0, 0, 0.2);
-  --main-red-10: rgba(147, 0, 0, 0.1);
-
-  --red-hover: 0 0 15px 5px var(--main-red-60);
-
-  --main-white-100: rgba(220, 220, 220, 1);
-  --main-white-90: rgba(220, 220, 220, 0.9);
-  --main-white-80: rgba(220, 220, 220, 0.8);
-  --main-white-70: rgba(220, 220, 220, 0.7);
-  --main-white-60: rgba(220, 220, 220, 0.6);
-  --main-white-50: rgba(220, 220, 220, 0.5);
-  --main-white-40: rgba(220, 220, 220, 0.4);
-  --main-white-30: rgba(220, 220, 220, 0.3);
-  --main-white-20: rgba(220, 220, 220, 0.2);
-  --main-white-10: rgba(220, 220, 220, 0.1);
-
-  --main-black: #121212;
-  --main-black-80: #121212e0;
-  --key: #000000;
-  --grey: #c4c4c4;
-
-  --low-z-index: -1;
-  --up-z-index: 1;
-  --upper-z-index: 2;
-  --top-z-index: 99999;
-
-  --width: 1440px;
-  --searchBarWidth: 335px;
-  --max-width: 1920px;
-
-  --text-max-width: 1000px;
-
-  --main-margin: calc((100vw - var(--width)) / 2);
-  --header-height: 80px;
-  --header-gap: clamp(30px, 3.1vw + 20px, 80px);
-  --first-title-gap: clamp(20px, 0.625vw + 18px, 30px);
-  --block-gap: clamp(50px, 6.25vw + 30px, 150px);
-
-  --font-heading-xl: 50px;
-
-  --font-xl: 24px;
-  --font-l: 20px;
-  --font-m: 16;
-  --font-s: 12px;
-  /* --heading-xl */
-  --top-div-gap: 100px;
-  --scrollbar-width: 0;
-}
-
-/* width */
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #232323;
-  border-radius: 8px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: var(--grey);
-  border-radius: 8px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-
-
-html {
-  /* 
-    Временно оставляю скролл даже при открытых модальных окнах.
-    Так же заставляет исчезнуть хедер.
-  */
-  overflow-y: scroll;
-  color-scheme: dark;
-}
-
-html,
-body {
-  /* display: flex;
-  justify-content: center; */
-  font-family: 'Montserrat', sans-serif;
-  font-style: normal;
-  color: var(--main-white-100);
-  width: 100%;
-  min-height: 100%;
-  /* scrollbar-gutter: stable; */
-  background-color: var(--main-black);
-  margin: 0; /* изначально этот параметр не был указан и по умолчанию поля в 8px */
-}
-
-/* попытка починить футер стилями корневого элемента */
-#__next {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.scroll-lock {
-  overflow: hidden;
-}
-
-.visibility-hidden {
-  position: absolute;
-  z-index: var(--low-z-index);
-
-  display: inline-block;
-
-  width: 1px;
-  height: 1px;
-
-  margin: -1px;
-
-  clip: rect(0, 0, 0, 0);
-
-  overflow: hidden;
-}
-
-.max-width {
-  padding: 0 10vw;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.max-width > * {
-  max-width: 1440px;
-}
-
-@media screen and (max-width: 1440px) {
+@layer base {
   :root {
-    --width: 1024px;
-    --searchBarWidth: 256px;
-    --top-div-gap: 70px;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
 
-    --header-height: 70px;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
   }
 }
 
-@media screen and (max-width: 1024px) {
-  :root {
-    --width: 830px;
-    --searchBarWidth: 186px;
-    --top-div-gap: 50px;
-
-    --header-height: 60px;
+@layer base {
+  * {
+    @apply border-border;
   }
-
-  .max-width {
-    padding: 0 5vw;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  body {
+    @apply bg-background text-foreground;
   }
-}
-
-@media screen and (max-width: 830px) {
-  :root {
-    /* --width: 580px; */
-    --width: 722px;
-    --top-div-gap: 40px;
-
-    --header-height: 58px;
-  }
-}
-
-@media screen and (max-width: 744px) {
-  :root {
-    --width: 640px;
-    --top-div-gap: 30px;
-  }
-}
-
-@media screen and (max-width: 650px) {
-  :root {
-    --width: 500px;
-    --top-div-gap: 30px;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  :root {
-    --width: 320px;
-    --top-div-gap: 30px;
-  }
-}
-
-@media screen and (max-width: 320px) {
-  :root {
-    --searchBarWidth: 99px;
-    --top-div-gap: 30px;
-  }
-}
-
-@keyframes overlay-appear {
-  from {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    backdrop-filter: blur(16px);
-  }
-}
-
-pre {
-  white-space: pre-wrap;
 }

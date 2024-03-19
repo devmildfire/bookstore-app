@@ -7,10 +7,17 @@ import { wrapper } from '@/models';
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
 import '@/styles/globals.css';
+import { Inter as FontSans } from 'next/font/google'; // замечание далее
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
 import { setOrGetCartCookie } from '@/utils/cardID';
+
+//  может быть это стоит использовать уже на уровне отдельных компонентов, а не здесь
+const fontSans = FontSans({
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-sans',
+});
 
 function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
