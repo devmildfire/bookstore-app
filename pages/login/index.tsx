@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import {
   Form,
   FormControl,
@@ -12,10 +12,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { supabase } from 'api/supabase-client';
+import { Session } from '@supabase/gotrue-js/src/lib/types';
+import { useRouter } from 'next/router';
+import { checkAdmin } from 'api/actions';
 
 const formSchema = z.object({
   email: z.string().email().min(3, {
@@ -26,24 +30,71 @@ const formSchema = z.object({
   }),
 });
 
-export function ProfileForm() {
+function LogOut({ session }: { session: Session }) {
+  const router = useRouter();
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    const { error } = await supabase.auth.signOut();
+
+    console.log('Logging out ...  ', error);
+
+    router.reload();
+  }
+
+  return (
+    <div className='space-y-4 w-48'>
+      <div>currently logged in as {session.user.email}</div>
+
+      {checkAdmin(session.user.id) && (
+        <div>you have admin access and can do stuff</div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <Button
+          type='submit'
+          variant={'outline'}
+          size={'default'}
+          className='w-full'
+        >
+          Log Out
+        </Button>
+      </form>
+    </div>
+  );
+}
+
+export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'mildfirey@yandex.ru',
+      password: '0892387639',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const router = useRouter();
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+
     console.log(values);
+    console.log('data from login ... ', data);
+    console.log('error from login ...', error);
+
+    error && window.alert(error.message);
+    data.session && router.reload();
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 w-48'>
         <FormField
           control={form.control}
           name='email'
@@ -90,11 +141,30 @@ export function ProfileForm() {
 }
 
 const Login = (): React.ReactElement => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [session, setSession] = useState<Session>();
+  //   const [user, setUser] = useState(null);
+
+  const get_session = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error(error);
+      } else {
+        data.session && setSession(data.session);
+        // setUser(data.session.user);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    get_session();
+  }, []);
 
   return (
     <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center'>
-      {loggedIn ? 'logged in' : <ProfileForm />}
+      {session ? <LogOut session={session} /> : <LoginForm />}
     </div>
   );
 };
