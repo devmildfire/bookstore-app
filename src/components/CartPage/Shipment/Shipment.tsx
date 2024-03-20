@@ -23,7 +23,6 @@ import { promoStore } from '@/store/PromoStore';
 import { cartStore } from '@/store/CartStore';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import Input from '@/components/Common/Input';
 
 async function emptyCartFromDB(cartID: string) {
   const emptyCartResponse: string = await postData(`/api/cart`, {
@@ -160,8 +159,6 @@ interface shipmentProps {
   totalPrice: number;
 }
 
-// let sWindow: Window | null;
-
 export function Shipment({
   setStage,
   cartID,
@@ -232,9 +229,7 @@ export function Shipment({
 
     // window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
 
-    window.location.assign(payUrl);
-
-    // sWindow && (sWindow.location = payUrl)
+    window.location.assign(payUrl); // открытие оплаты через робокассу в том же окне
   };
 
   return (
