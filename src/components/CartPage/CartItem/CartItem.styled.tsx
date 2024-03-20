@@ -11,7 +11,7 @@ export const CartItemContainer = styled.li`
   border-radius: 8px;
   cursor: pointer;
   box-sizing: content-box;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
   transition: 0.3s;
   /* column-gap: 14px; */
 
@@ -25,6 +25,7 @@ export const CartItemContainer = styled.li`
 
   @media (max-width: 1024px) {
     grid-template-columns: 100px 200px repeat(4, 1fr) 24px;
+    margin-bottom: 26px;
   }
 
   @media (max-width: 768px) {
@@ -42,7 +43,7 @@ export const CartItemContainer = styled.li`
   }
 
   @media (max-width: 568px) {
-    margin-bottom: 40px;
+    margin-bottom: 38px;
   }
 `;
 

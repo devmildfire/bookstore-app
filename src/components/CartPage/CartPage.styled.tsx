@@ -4,7 +4,21 @@ export const Main = styled.main`
   /* padding: 40px; */
   width: 100%;
   /* max-width: 1440px; */
-  margin: 0 auto;
+  margin: 92px auto 0 auto;
+  align-items: flex-start;
+
+  @media (max-width: 1024px) {
+    margin: 70px auto 0 auto;
+  }
+
+  @media (max-width: 744px) {
+    margin: 45px auto 0 auto;
+  }
+
+  @media (max-width: 530px) {
+    margin: 35px auto 0 auto;
+    align-items: center;
+  }
 `;
 
 export const Title = styled.h1`
@@ -33,7 +47,7 @@ export const Title = styled.h1`
 export const ProductsList = styled.ul`
   width: 100%;
   /* margin: auto; */
-  max-height: 520px;
+  /* max-height: 520px; */
   overflow-y: auto;
 
   ::-webkit-scrollbar {
