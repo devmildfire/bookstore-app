@@ -5,7 +5,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,8 +18,9 @@ import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { Session } from '@supabase/gotrue-js/src/lib/types';
+import { UserMetadata } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
-import { checkAdmin } from 'api/actions';
+// import { checkAdmin } from 'api/actions';
 
 const formSchema = z.object({
   email: z.string().email().min(3, {
@@ -32,6 +33,24 @@ const formSchema = z.object({
 
 function LogOut({ session }: { session: Session }) {
   const router = useRouter();
+  const [metaData, setMetaData] = useState<UserMetadata>();
+
+  async function userGet() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setMetaData(user?.user_metadata);
+  }
+
+  // async function userSet() {
+  //   const { data, error } = await supabase.auth.updateUser({
+  //     data: { isAdmin: true },
+  //   });
+
+  //   data && console.log('metadata update success!');
+  //   error && console.log('metadata update failed!');
+  // }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -43,13 +62,17 @@ function LogOut({ session }: { session: Session }) {
     router.reload();
   }
 
+  useEffect(() => {
+    // userSet();
+    userGet();
+  }, []);
+
   return (
     <div className='space-y-4 w-48'>
       <div>currently logged in as {session.user.email}</div>
 
-      {checkAdmin(session.user.id) && (
-        <div>you have admin access and can do stuff</div>
-      )}
+      {/* {checkAdmin(session.user.id) && ( */}
+      {metaData?.isAdmin && <div>you have admin access and can do stuff</div>}
 
       <form onSubmit={handleSubmit}>
         <Button
@@ -77,8 +100,6 @@ export function LoginForm() {
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
@@ -87,6 +108,7 @@ export function LoginForm() {
     console.log(values);
     console.log('data from login ... ', data);
     console.log('error from login ...', error);
+    console.log('session data ... ', data.session?.user);
 
     error && window.alert(error.message);
     data.session && router.reload();
