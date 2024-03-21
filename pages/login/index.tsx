@@ -67,6 +67,10 @@ function LogOut({ session }: { session: Session }) {
     userGet();
   }, []);
 
+  // useEffect(() => {
+  //   metaData?.isAdmin && router.push('/dashboard');
+  // }, [metaData, router]);
+
   return (
     <div className='space-y-4 w-48'>
       <div>currently logged in as {session.user.email}</div>
@@ -164,7 +168,7 @@ export function LoginForm() {
 
 const Login = (): React.ReactElement => {
   const [session, setSession] = useState<Session>();
-  //   const [user, setUser] = useState(null);
+  const router = useRouter();
 
   const get_session = async () => {
     try {
@@ -174,6 +178,7 @@ const Login = (): React.ReactElement => {
       } else {
         data.session && setSession(data.session);
         // setUser(data.session.user);
+        data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
       }
     } catch (error) {
       console.error(error);
@@ -182,7 +187,7 @@ const Login = (): React.ReactElement => {
 
   useEffect(() => {
     get_session();
-  }, []);
+  });
 
   return (
     <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center'>
