@@ -11,6 +11,15 @@ const config = {
   ],
   prefix: '',
   theme: {
+    screens: {
+      sm: '576px',
+      smd: '744px',
+      md: '830px',
+      lg: '1024px',
+      sxl: '1400px',
+      xl: '1440px',
+      xxl: '1920px',
+    },
     container: {
       center: true,
       padding: '2rem',
@@ -21,7 +30,8 @@ const config = {
         lg: '1024px',
         sxl: '1400px',
         xl: '1440px',
-        xxl: '1920px',
+        kl: '1700px',
+        ml: '1920px',
       },
     },
     extend: {
@@ -81,6 +91,13 @@ const config = {
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
+      },
+      gridTemplateColumns: {
+        // Simple 16 column grid
+        '16': 'repeat(16, minmax(0, 1fr))',
+
+        // Complex site-specific column configuration
+        authors: 'min-content 1fr',
       },
     },
   },
