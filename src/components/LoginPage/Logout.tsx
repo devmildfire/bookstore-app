@@ -46,7 +46,7 @@ export function LogOut({ session }: { session: Session }) {
   // }, [metaData, router]);
 
   return (
-    <div className='space-y-4 w-48'>
+    <div className='space-y-1 w-full'>
       <div>currently logged in as {session.user.email}</div>
 
       {/* {checkAdmin(session.user.id) && ( */}
@@ -57,7 +57,7 @@ export function LogOut({ session }: { session: Session }) {
           type='submit'
           variant={'outline'}
           size={'default'}
-          className='w-full'
+          className='w-full max-w-48'
         >
           Log Out
         </Button>

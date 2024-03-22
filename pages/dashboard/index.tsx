@@ -1,4 +1,6 @@
-import { LogOut } from '@/components/Login/Logout';
+import DashMain from '@/components/DashBoardPage/DashMain';
+import DashNav from '@/components/DashBoardPage/DashNav';
+import { LogOut } from '@/components/LoginPage/Logout';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
@@ -24,12 +26,15 @@ const Dashboard = (): React.ReactElement => {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
-    <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center'>
-      {session && <LogOut session={session} />}
-    </div>
+    <DashMain>
+      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+        <DashNav />
+        {session && <LogOut session={session} />}
+      </div>
+    </DashMain>
   );
 };
 
