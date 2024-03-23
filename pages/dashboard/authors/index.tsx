@@ -7,7 +7,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Database } from 'api/books/types';
 import Text from '@/components/Common/Text';
-import Image from 'next/image';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -32,66 +37,61 @@ const Authorslist = () => {
   }
 
   return (
-    <div>
+    <div className='w-full'>
       <Text variant='h3c'> Authors </Text>
-      <div className='grid gap-4  grid-cols-1 md:grid-cols-2 xxl:grid-cols-3'>
+
+      <Accordion type='single' collapsible className='w-full'>
         {authors.map((author) => (
-          <div
+          <AccordionItem
+            value={`item-${author.id}`}
             key={author.id}
-            // className='grid grid-cols-authors auto-rows-min gap-2 outline outline-1 p-2'
-            className='grid auto-rows-min gap-2 outline outline-1 p-2'
+            className='w-full'
           >
-            {/* <div className='text-right'>id:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>id: </span> {author.id}
-            </div>
+            <AccordionTrigger> {author.name} </AccordionTrigger>
+            <AccordionContent>
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>bio: </span>{' '}
+                {author.bio}
+              </div>
 
-            {/* <div className='text-right'>name:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>name: </span>
-              {author.name}
-            </div>
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>birth date: </span>
+                {author.birth_date}
+              </div>
 
-            {/* <div className='text-right'>bio:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>bio: </span> {author.bio}
-            </div>
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>death date: </span>{' '}
+                {author.death_date}
+              </div>
 
-            {/* <div className='text-right whitespace-nowrap'>birth date:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>birth date: </span>
-              {author.birth_date}
-            </div>
+              {/* <div className='text-right'>city:</div> */}
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>city: </span>{' '}
+                {author.city}
+              </div>
 
-            {/* <div className='text-right whitespace-nowrap'>death date:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>death date: </span>{' '}
-              {author.death_date}
-            </div>
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>photo: </span>
+              </div>
+              <div className='text-left'>
+                <img
+                  src={author.photo || undefined}
+                  alt='no photo'
+                  className='max-w-60'
+                />
+              </div>
 
-            {/* <div className='text-right'>city:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>city: </span>{' '}
-              {author.city}
-            </div>
+              {/* <div className='text-left'>{author.photo}</div> */}
 
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>photo: </span>
-            </div>
-            <div className='text-left'>
-              <img src={author.photo || undefined} alt='no photo' />
-            </div>
-
-            {/* <div className='text-left'>{author.photo}</div> */}
-
-            {/* <div className='text-right'>phrase:</div> */}
-            <div className='text-left'>
-              <span className='text-red-900 font-bold'>phrase: </span>{' '}
-              {author.phrase}
-            </div>
-          </div>
+              {/* <div className='text-right'>phrase:</div> */}
+              <div className='text-left'>
+                <span className='text-red-900 font-bold'>phrase: </span>{' '}
+                {author.phrase}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </div>
   );
 };
