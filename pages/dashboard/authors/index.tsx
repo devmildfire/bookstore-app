@@ -13,6 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import AuthorForm from '@/components/DashBoardPage/AuthorForm';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -104,7 +105,17 @@ const Authorslist = () => {
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent></AccordionContent>
+          <AccordionContent>
+            <AuthorForm
+              defaultName='sdfdsfsdf'
+              defaultBio='sdfdsfsdf'
+              defaultBirthDate={new Date('2022-03-25')}
+              defaultDeathDate={new Date('2022-03-25')}
+              defaultCity='sdfdsfsdfsd'
+              defaultPhoto='sdfsdfdsf'
+              defaultPhrase='sdfsdfsdf'
+            />
+          </AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>
