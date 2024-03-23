@@ -112,7 +112,7 @@ const Authorslist = () => {
               defaultBirthDate={new Date('2022-03-25')}
               defaultDeathDate={new Date('2022-03-25')}
               defaultCity='sdfdsfsdfsd'
-              defaultPhoto='sdfsdfdsf'
+              // defaultPhoto='sdfsdfdsf'
               defaultPhrase='sdfsdfsdf'
             />
           </AccordionContent>

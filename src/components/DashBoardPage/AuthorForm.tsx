@@ -73,7 +73,7 @@ type AuthorFormProps = {
   defaultBirthDate: Date;
   defaultDeathDate: Date;
   defaultCity: string;
-  defaultPhoto: File;
+  // defaultPhoto: File;
   defaultPhrase: string;
 };
 
