@@ -91,6 +91,21 @@ const Authorslist = () => {
             </AccordionContent>
           </AccordionItem>
         ))}
+
+        <AccordionItem
+          value='item-createnew'
+          key='create-new'
+          className='w-full'
+        >
+          <AccordionTrigger>
+            <div className='flex flex-grow items-center'>
+              <div className='flex-grow items-center text-red-800 hover:underline'>
+                Добавить нового
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent></AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );
