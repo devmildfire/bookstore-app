@@ -122,7 +122,7 @@ const Authorslist = () => {
   );
 };
 
-const Authors = (): React.ReactElement => {
+function Authors(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
 
@@ -142,7 +142,7 @@ const Authors = (): React.ReactElement => {
 
   useEffect(() => {
     check_session();
-  }, []);
+  });
 
   return (
     <DashMain>
@@ -153,6 +153,7 @@ const Authors = (): React.ReactElement => {
       </div>
     </DashMain>
   );
-};
+}
 
+// export { Authors };
 export default Authors;
