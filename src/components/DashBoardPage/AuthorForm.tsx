@@ -24,7 +24,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ChangeEvent, useRef } from 'react';
 
-const MAX_FILE_SIZE = 500000;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
@@ -51,17 +51,15 @@ const formSchema = z.object({
   // photo: z.string().min(6, {
   //   message: 'photo link string must be least 6 characters.',
   // }),
+
   photo: z
-    .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
+    .instanceof(File, { message: 'Image is required.' })
+    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
+
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
@@ -94,19 +92,38 @@ export default function AuthorForm(props: AuthorFormProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // const { data, error } = await supabase.auth.signInWithPassword({
-    //   email: values.email,
-    //   password: values.password,
-    // });
-    // console.log(values);
-    // console.log('data from login ... ', data);
-    // console.log('error from login ...', error);
-    // console.log('session data ... ', data.session?.user);
-    // error && window.alert(error.message);
-    // data.session && router.reload();
+    console.log(values);
+
+    const photoUpload = await supabase.storage
+      .from('authors')
+      .upload(`author_${values.photo.name}`, values.photo, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    const publicUrl = supabase.storage
+      .from('authors')
+      .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
+
+    const { data, error } = await supabase
+      .from('Authors')
+      .insert({
+        name: values.name,
+        birth_date: values.birthDate.toUTCString(),
+        death_date: values.deathDate.toUTCString(),
+        phrase: values.phrase,
+        photo: publicUrl,
+        city: values.city,
+        bio: values.bio,
+      })
+      .select('*')
+      .single();
+
+    error && window.alert(error.message);
+    data && window.alert(`${data.name} успешно добавлен к авторам`);
   }
 
-  function onImageInputChange(event: ChangeEvent<HTMLInputElement>): void {
+  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
     const imageInput = event.target;
     const pImage = photoImage.current;
 
@@ -263,8 +280,7 @@ export default function AuthorForm(props: AuthorFormProps) {
           <FormField
             control={form.control}
             name='photo'
-            render={({ field }) => (
-              // render={() => (
+            render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author Photo</FormLabel>
                 <FormControl>
@@ -272,8 +288,13 @@ export default function AuthorForm(props: AuthorFormProps) {
                   <Input
                     id='photo'
                     type='file'
-                    {...field}
-                    onChange={onImageInputChange}
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onImageInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
                   />
                 </FormControl>
                 {/* <FormDescription>This is your login email.</FormDescription> */}
@@ -284,6 +305,21 @@ export default function AuthorForm(props: AuthorFormProps) {
                   src=''
                   alt='photo image'
                 />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='phrase'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Author Phrase</FormLabel>
+                <FormControl>
+                  <Input placeholder='some profound saying' {...field} />
+                </FormControl>
+                {/* <FormDescription>This is your login email.</FormDescription> */}
+                <FormMessage />
               </FormItem>
             )}
           />
