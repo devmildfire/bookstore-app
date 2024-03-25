@@ -13,7 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import AuthorForm from '@/components/DashBoardPage/AuthorForm';
+import {AuthorEditForm, AuthorForm} from '@/components/DashBoardPage/AuthorForm';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -50,45 +50,9 @@ const Authorslist = () => {
           >
             <AccordionTrigger> {author.name} </AccordionTrigger>
             <AccordionContent>
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>bio: </span>{' '}
-                {author.bio}
-              </div>
 
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>birth date: </span>
-                {author.birth_date}
-              </div>
+              <AuthorEditForm  {...author} />
 
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>death date: </span>{' '}
-                {author.death_date}
-              </div>
-
-              {/* <div className='text-right'>city:</div> */}
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>city: </span>{' '}
-                {author.city}
-              </div>
-
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>photo: </span>
-              </div>
-              <div className='text-left'>
-                <img
-                  src={author.photo || undefined}
-                  alt='no photo'
-                  className='max-w-60'
-                />
-              </div>
-
-              {/* <div className='text-left'>{author.photo}</div> */}
-
-              {/* <div className='text-right'>phrase:</div> */}
-              <div className='text-left'>
-                <span className='text-red-900 font-bold'>phrase: </span>{' '}
-                {author.phrase}
-              </div>
             </AccordionContent>
           </AccordionItem>
         ))}
