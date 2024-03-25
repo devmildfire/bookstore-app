@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
@@ -24,7 +24,6 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ChangeEvent, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
-
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -41,12 +40,16 @@ const formSchema = z.object({
   bio: z.string().min(6, {
     message: 'Author bio must be at least 3 characters long.',
   }),
-  birthDate: z.date({
-    description: 'Author birth date',
-  }),
-  deathDate: z.date({
-    description: 'Author death date',
-  }).optional(),
+  birthDate: z
+    .date({
+      description: 'Author birth date',
+    })
+    .optional(),
+  deathDate: z
+    .date({
+      description: 'Author death date',
+    })
+    .optional(),
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
@@ -71,18 +74,22 @@ const formEditSchema = z.object({
   bio: z.string().min(6, {
     message: 'Author bio must be at least 3 characters long.',
   }),
-  birthDate: z.date({
-    description: 'Author birth date',
-  }).optional(),
-  deathDate: z.date({
-    description: 'Author death date',
-  }).optional(),
+  birthDate: z
+    .date({
+      description: 'Author birth date',
+    })
+    .optional(),
+  deathDate: z
+    .date({
+      description: 'Author death date',
+    })
+    .optional(),
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
   photo: z.any().optional(),
-// .refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
-// .refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 5MB.'),
+  // .refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
+  // .refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 5MB.'),
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
@@ -94,7 +101,6 @@ const formEditSchema = z.object({
 //   (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
 //   '.jpg, .jpeg, .png and .webp files are accepted.'
 // ),
-
 
 type AuthorFormProps = {
   defaultName: string;
@@ -114,7 +120,7 @@ function AuthorForm(props: AuthorFormProps) {
     defaultValues: {
       name: props.defaultName,
       bio: props.defaultBio,
-      birthDate: props.defaultBirthDate,
+      // birthDate: props.defaultBirthDate,
       // deathDate: props.defaultDeathDate,
       city: props.defaultCity,
       // photo: '',
@@ -244,6 +250,7 @@ function AuthorForm(props: AuthorFormProps) {
                     />
                   </PopoverContent>
                 </Popover>
+
                 {/* <FormDescription>Author date of birth</FormDescription>  */}
                 <FormMessage />
               </FormItem>
@@ -369,9 +376,10 @@ function AuthorForm(props: AuthorFormProps) {
   );
 }
 
+function AuthorEditForm(author: AuthorsType) {
+  // const [newImage, setNewImage] = useState(false);
+  const router = useRouter();
 
-function AuthorEditForm( author : AuthorsType) {
-  const [newImage, setNewImage] = useState(false);
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   const form = useForm<z.infer<typeof formEditSchema>>({
@@ -386,68 +394,73 @@ function AuthorEditForm( author : AuthorsType) {
     },
   });
 
-  // async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
-  //   console.log('values ... ', values);
-
-  //   let imageNameString = null
-  //   let imagePath = null
-
-  //   if (author.photo) {
-
-  //     console.log('current author photo ... ', author.photo);
-
-  //     const imageNameString = author.photo.split('/')
-
-  //     console.log('image Name String ... ', imageNameString);
-
-
-  //     const photoUdate = await supabase.storage
-  //     .from('authors')
-  //     .update(imageNameString.slice(-1)[0], values.photo, {
-  //       cacheControl: '3600',
-  //       upsert: true,
-  //     });
-
-  //     imagePath = photoUdate.data?.path
-  //   } else {
-
-  //     const photoUpload = await supabase.storage
-  //     .from('authors')
-  //     .upload(`author_${values.photo.name}`, values.photo, {
-  //       cacheControl: '3600',
-  //       upsert: true,
-  //     });
-  //     imagePath = photoUpload.data?.path
-
-  //   }
-    
-
-  //   const publicUrl = supabase.storage
-  //     .from('authors')
-  //     .getPublicUrl(imagePath!).data.publicUrl;
-
-  //   const { data, error } = await supabase
-  //     .from('Authors')
-  //     .update({
-  //       // name: values.name,
-  //       birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-  //       death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-  //       phrase: values.phrase,
-  //       photo: publicUrl,
-  //       city: values.city,
-  //       bio: values.bio,
-  //     }).eq(
-  //       'id', author.id
-  //     )
-  //     .select('*')
-  //     .single();
-
-  //   error && window.alert(error.message);
-  //   data && window.alert(`${data.name} успешно добавлен к авторам`);
-  // }
-
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+
+    let imagePath = null;
+    let publicUrl = null;
+
+    if (author.photo && values.photo) {
+      console.log('current author photo ... ', author.photo);
+
+      const imageNameString = author.photo.split('/');
+
+      console.log('image Name String ... ', imageNameString);
+
+      console.log('selected photo file ... ', values.photo);
+
+      const photoUdate = await supabase.storage
+        .from('authors')
+        .update(imageNameString.slice(-1)[0], values.photo, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      photoUdate.error &&
+        console.log('photo update error ... ', photoUdate.error.message);
+
+      imagePath = photoUdate.data?.path;
+      console.log('image path ... ', imagePath);
+    }
+
+    if (!author.photo && values.photo) {
+      const photoUpload = await supabase.storage
+        .from('authors')
+        .upload(`author_${values.photo.name}`, values.photo, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      imagePath = photoUpload.data?.path;
+    }
+
+    if (author.photo && !values.photo) {
+      imagePath = author.photo;
+      publicUrl = author.photo;
+    }
+
+    !publicUrl &&
+      imagePath &&
+      (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
+        .data.publicUrl);
+
+    console.log('public URL is ...', publicUrl);
+
+    const { data, error } = await supabase
+      .from('Authors')
+      .update({
+        birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
+        death_date: values.deathDate ? values.deathDate.toUTCString() : null,
+        phrase: values.phrase,
+        photo: publicUrl,
+        city: values.city,
+        bio: values.bio,
+      })
+      .eq('id', author.id)
+      .select('*')
+      .single();
+
+    error && window.alert(error.message);
+    data && window.alert(`автор ${data.name} успешно обновлён`);
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -458,7 +471,7 @@ function AuthorEditForm( author : AuthorsType) {
       const file = imageInput.files[0];
       if (file) {
         pImage && (pImage.src = URL.createObjectURL(file));
-        setNewImage(true);
+        // setNewImage(true);
       }
     }
   }
@@ -470,7 +483,6 @@ function AuthorEditForm( author : AuthorsType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
-
           <FormField
             control={form.control}
             name='bio'
@@ -525,8 +537,32 @@ function AuthorEditForm( author : AuthorsType) {
                       }
                       initialFocus
                     />
+                    <Button
+                      type='button'
+                      onClick={async () => {
+                        console.log('setting value ...');
+
+                        const { data, error } = await supabase
+                          .from('Authors')
+                          .update({
+                            birth_date: null,
+                          })
+                          .eq('id', author.id)
+                          .select('*')
+                          .single();
+
+                        error && window.alert(error.message);
+                        data && router.reload();
+
+                        console.log('set value ...', field.value);
+                      }}
+                    >
+                      {' '}
+                      Null{' '}
+                    </Button>
                   </PopoverContent>
                 </Popover>
+
                 {/* <FormDescription>Author date of birth</FormDescription>  */}
                 <FormMessage />
               </FormItem>
@@ -568,6 +604,29 @@ function AuthorEditForm( author : AuthorsType) {
                       }
                       initialFocus
                     />
+                    <Button
+                      type='button'
+                      onClick={async () => {
+                        console.log('setting value ...');
+
+                        const { data, error } = await supabase
+                          .from('Authors')
+                          .update({
+                            death_date: null,
+                          })
+                          .eq('id', author.id)
+                          .select('*')
+                          .single();
+
+                        error && window.alert(error.message);
+                        data && router.reload();
+
+                        console.log('set value ...', field.value);
+                      }}
+                    >
+                      {' '}
+                      Null{' '}
+                    </Button>
                   </PopoverContent>
                 </Popover>
                 {/* <FormDescription>Author date of birth</FormDescription>  */}
@@ -652,5 +711,4 @@ function AuthorEditForm( author : AuthorsType) {
   );
 }
 
-
-export {AuthorForm, AuthorEditForm}
+export { AuthorForm, AuthorEditForm };
