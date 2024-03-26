@@ -62,7 +62,7 @@ jobs:
             cd chtivo-next &&
             git checkout feature/deploy &&
             git pull &&
-            docker build . --tag testBuild &&
+            docker build . --tag testbuild &&
             exit"
 
 
