@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 // );
 
 export const supabaseService = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  // process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  'test',
   process.env.NEXT_PUBLIC_SERVICE_ROLE_KEY! // Убрать эти переменные окружения перед стартом работы на реальном окружении
 );
