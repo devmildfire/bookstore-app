@@ -10,7 +10,7 @@ import { Database } from './types';
 
 export const supabase = createClient<Database>(
   // process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  'test',
+  'https://test.org',
 
   // process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   'test'
