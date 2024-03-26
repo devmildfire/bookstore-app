@@ -60,7 +60,6 @@ jobs:
           # run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && eval '$(ssh-agent -s)' && ssh-add ${{ secrets.SSH_PRIVATE_KEY }} && ssh -T -p 443 git@ssh.github.com && git clone git@github.com:russiandino/chtivo-next.git && exit"
           # run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && eval '$(ssh-agent -s)' && echo '$(pwd)' && ssh -T -p 443 git@ssh.github.com && git clone git@github.com:russiandino/chtivo-next.git && exit"
           # run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git clone https://${{ secrets.PAT }}@github.com/russiandino/chtivo-next.git && exit"
-                                                                                                          # https://<pat>@github.com/<your account or organization>/<repo>.git
           run: |
             ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ${{ secrets.WORK_DIR }} &&
