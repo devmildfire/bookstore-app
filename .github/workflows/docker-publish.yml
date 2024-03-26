@@ -57,7 +57,7 @@ jobs:
             ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
         - name: connect and pull repo
           # run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose pull && docker compose up -d && exit"
-          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && eval '$(ssh-agent -s)' && ssh-add ~/.ssh/ghaction_key && ssh -T -p 443 git@ssh.github.com && git clone git@github.com:russiandino/chtivo-next.git && exit"
+          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && eval '$(ssh-agent -s)' && ssh-add .ssh/ghaction_key && ssh -T -p 443 git@ssh.github.com && git clone git@github.com:russiandino/chtivo-next.git && exit"
 
         - name: cleanup
           run: rm -rf ~/.ssh
