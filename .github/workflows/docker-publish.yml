@@ -9,12 +9,12 @@ env:
   REGISTRY: ghcr.io
   # IMAGE_NAME: ${{ github.actor }}/<image-name>:latest
   IMAGE_NAME: ${{ github.actor }}/chtivonext:latest
-  NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
-  NEXT_PUBLIC_SERVICE_ROLE_KEY: ${{secrets.NEXT_PUBLIC_SERVICE_ROLE_KEY}}
-  NEXT_PUBLIC_SHOP_ID: ${{secrets.NEXT_PUBLIC_SHOP_ID}}
-  NEXT_PUBLIC_ROBOPASS_ONE: ${{secrets.NEXT_PUBLIC_ROBOPASS_ONE}}
-  NEXT_PUBLIC_ROBOPASS_TWO: ${{secrets.NEXT_PUBLIC_ROBOPASS_TWO}}
+  # NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+  # NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
+  # NEXT_PUBLIC_SERVICE_ROLE_KEY: ${{secrets.NEXT_PUBLIC_SERVICE_ROLE_KEY}}
+  # NEXT_PUBLIC_SHOP_ID: ${{secrets.NEXT_PUBLIC_SHOP_ID}}
+  # NEXT_PUBLIC_ROBOPASS_ONE: ${{secrets.NEXT_PUBLIC_ROBOPASS_ONE}}
+  # NEXT_PUBLIC_ROBOPASS_TWO: ${{secrets.NEXT_PUBLIC_ROBOPASS_TWO}}
   
 
 
@@ -29,6 +29,13 @@ jobs:
           run: |
             echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         - name: Build and Publish
+            env:
+              NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
+              NEXT_PUBLIC_SERVICE_ROLE_KEY: ${{secrets.NEXT_PUBLIC_SERVICE_ROLE_KEY}}
+              NEXT_PUBLIC_SHOP_ID: ${{secrets.NEXT_PUBLIC_SHOP_ID}}
+              NEXT_PUBLIC_ROBOPASS_ONE: ${{secrets.NEXT_PUBLIC_ROBOPASS_ONE}}
+              NEXT_PUBLIC_ROBOPASS_TWO: ${{secrets.NEXT_PUBLIC_ROBOPASS_TWO}}
           run: |
             docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
