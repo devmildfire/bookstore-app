@@ -25,6 +25,16 @@ jobs:
           run: |
             docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          env: 
+            NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
+            NEXT_PUBLIC_SERVICE_ROLE_KEY: ${{secrets.NEXT_PUBLIC_SERVICE_ROLE_KEY}}
+            NEXT_PUBLIC_SHOP_ID: ${{secrets.NEXT_PUBLIC_SHOP_ID}}
+            NEXT_PUBLIC_ROBOPASS_ONE: ${{secrets.NEXT_PUBLIC_ROBOPASS_ONE}}
+            NEXT_PUBLIC_ROBOPASS_TWO: ${{secrets.NEXT_PUBLIC_ROBOPASS_TWO}}
+
+            
+
 
     deploy:
         needs: publish
