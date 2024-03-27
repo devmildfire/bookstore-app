@@ -24,6 +24,7 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ChangeEvent, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
+import { revalidatePath } from 'next/cache';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -460,6 +461,7 @@ function AuthorEditForm(author: AuthorsType) {
       .single();
 
     error && window.alert(error.message);
+    data && author.photo && revalidatePath(author.photo);
     data && window.alert(`автор ${data.name} успешно обновлён`);
   }
 
