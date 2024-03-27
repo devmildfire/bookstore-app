@@ -16,15 +16,17 @@ import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
+// import { useRouter } from 'next/navigation';
+
 import { Textarea } from '../ui/textarea';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, startTransition, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
-import { revalidatePath } from 'next/cache';
+import revalidateLink from 'api/actions';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -461,7 +463,11 @@ function AuthorEditForm(author: AuthorsType) {
       .single();
 
     error && window.alert(error.message);
-    data && author.photo && revalidatePath(author.photo);
+    // data && author.photo && revalidateLink(author.photo);
+    // data && author.photo && startTransition(()=>{
+    //   router.reload()
+    // })
+
     data && window.alert(`автор ${data.name} успешно обновлён`);
   }
 
