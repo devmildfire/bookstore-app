@@ -578,6 +578,9 @@ function AuthorEditForm(author: AuthorsType) {
                   </PopoverTrigger>
                   <PopoverContent className='dark w-auto p-0' align='start'>
                     <Calendar
+                      captionLayout='dropdown-buttons'
+                      fromYear={1800}
+                      toYear={2040}
                       mode='single'
                       selected={field.value}
                       onSelect={field.onChange}
@@ -648,6 +651,11 @@ function AuthorEditForm(author: AuthorsType) {
                   </PopoverTrigger>
                   <PopoverContent className='dark w-auto p-0' align='start'>
                     <Calendar
+                      captionLayout='dropdown-buttons'
+                      fromYear={1800}
+                      toYear={2040}
+                      // fromDate={new Date('1800-01-01')}
+                      // toDate={new Date('2030-01-01')}
                       mode='single'
                       selected={field.value}
                       onSelect={field.onChange}
