@@ -16,14 +16,17 @@ import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
+// import { useRouter } from 'next/navigation';
+
 import { Textarea } from '../ui/textarea';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, startTransition, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
+import revalidateLink from 'api/actions';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -377,10 +380,33 @@ function AuthorForm(props: AuthorFormProps) {
 }
 
 function AuthorEditForm(author: AuthorsType) {
-  // const [newImage, setNewImage] = useState(false);
-  const router = useRouter();
+  const [newPhoto, setNewPhoto] = useState<string>();
 
   const photoImage = useRef<HTMLImageElement | null>(null);
+
+  async function getDataFromReq() {
+
+    const {data} = await supabase.from('Authors').select('*').eq('id', author.id).single()
+
+    data && console.log('data from req is...', data)
+
+    data && (
+      data.photo && setNewPhoto(data.photo),
+      data.bio && form.setValue('bio', data.bio),
+      data.city && form.setValue('city', data.city),
+      data.phrase && form.setValue('phrase', data.phrase),
+      data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
+      data.death_date && form.setValue('deathDate', new Date(data.death_date))
+    )
+  }
+
+  useEffect(
+    ()=>{
+      getDataFromReq()
+    }, []
+  )
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formEditSchema>>({
     resolver: zodResolver(formEditSchema),
@@ -409,9 +435,23 @@ function AuthorEditForm(author: AuthorsType) {
 
       console.log('selected photo file ... ', values.photo);
 
+      const photoRemove = await supabase.storage
+        .from('authors')
+        .remove([imageNameString.slice(-1)[0]]);
+
+      photoRemove.error &&
+        console.log('photo Remove error ... ', photoRemove.error.message);
+
+      photoRemove.data &&
+        console.log('photo Remove data... ', photoRemove.data);
+
+      const fileName = values.photo?.name ? values.photo?.name : 'failNameString';
+      console.log('photo is...', values.photo)
+      console.log('photo name is...', values.photo?.name)
+
       const photoUdate = await supabase.storage
         .from('authors')
-        .update(imageNameString.slice(-1)[0], values.photo, {
+        .upload(`author_${fileName}`  , values.photo, {
           cacheControl: '3600',
           upsert: true,
         });
@@ -461,6 +501,7 @@ function AuthorEditForm(author: AuthorsType) {
 
     error && window.alert(error.message);
     data && window.alert(`автор ${data.name} успешно обновлён`);
+
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -494,6 +535,7 @@ function AuthorEditForm(author: AuthorsType) {
                     placeholder='Tell us a little bit about yourself'
                     className='resize-none'
                     {...field}
+                    // ref={bioRef}
                   />
                 </FormControl>
                 {/* <FormDescription>This is your password.</FormDescription> */}
@@ -642,7 +684,9 @@ function AuthorEditForm(author: AuthorsType) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author City</FormLabel>
                 <FormControl>
-                  <Input placeholder='default city' {...field} />
+                  <Input placeholder='default city' {...field} 
+                  // ref={cityRef}
+                  />
                 </FormControl>
                 {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
@@ -675,7 +719,7 @@ function AuthorEditForm(author: AuthorsType) {
                 <img
                   className='max-w-72'
                   ref={photoImage}
-                  src={author.photo || ''}
+                  src={  newPhoto || author.photo || ''}
                   alt='photo image'
                 />
               </FormItem>
@@ -689,7 +733,9 @@ function AuthorEditForm(author: AuthorsType) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author Phrase</FormLabel>
                 <FormControl>
-                  <Input placeholder='some profound saying' {...field} />
+                  <Input placeholder='some profound saying' {...field} 
+                  // ref={phraseRef}
+                   />
                 </FormControl>
                 {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
