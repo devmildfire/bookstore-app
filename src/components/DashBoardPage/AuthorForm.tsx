@@ -24,7 +24,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { ChangeEvent, startTransition, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import revalidateLink from 'api/actions';
 
@@ -385,26 +391,26 @@ function AuthorEditForm(author: AuthorsType) {
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   async function getDataFromReq() {
+    const { data } = await supabase
+      .from('Authors')
+      .select('*')
+      .eq('id', author.id)
+      .single();
 
-    const {data} = await supabase.from('Authors').select('*').eq('id', author.id).single()
+    data && console.log('data from req is...', data);
 
-    data && console.log('data from req is...', data)
-
-    data && (
-      data.photo && setNewPhoto(data.photo),
+    data &&
+      (data.photo && setNewPhoto(data.photo),
       data.bio && form.setValue('bio', data.bio),
       data.city && form.setValue('city', data.city),
       data.phrase && form.setValue('phrase', data.phrase),
       data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
-      data.death_date && form.setValue('deathDate', new Date(data.death_date))
-    )
+      data.death_date && form.setValue('deathDate', new Date(data.death_date)));
   }
 
-  useEffect(
-    ()=>{
-      getDataFromReq()
-    }, []
-  )
+  useEffect(() => {
+    getDataFromReq();
+  }, []);
 
   const router = useRouter();
 
@@ -445,13 +451,15 @@ function AuthorEditForm(author: AuthorsType) {
       photoRemove.data &&
         console.log('photo Remove data... ', photoRemove.data);
 
-      const fileName = values.photo?.name ? values.photo?.name : 'failNameString';
-      console.log('photo is...', values.photo)
-      console.log('photo name is...', values.photo?.name)
+      const fileName = values.photo?.name
+        ? values.photo?.name
+        : 'failNameString';
+      console.log('photo is...', values.photo);
+      console.log('photo name is...', values.photo?.name);
 
       const photoUdate = await supabase.storage
         .from('authors')
-        .upload(`author_${fileName}`  , values.photo, {
+        .upload(`author_${fileName}`, values.photo, {
           cacheControl: '3600',
           upsert: true,
         });
@@ -501,7 +509,6 @@ function AuthorEditForm(author: AuthorsType) {
 
     error && window.alert(error.message);
     data && window.alert(`автор ${data.name} успешно обновлён`);
-
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -569,7 +576,7 @@ function AuthorEditForm(author: AuthorsType) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className='w-auto p-0' align='start'>
+                  <PopoverContent className='dark w-auto p-0' align='start'>
                     <Calendar
                       mode='single'
                       selected={field.value}
@@ -579,29 +586,32 @@ function AuthorEditForm(author: AuthorsType) {
                       }
                       initialFocus
                     />
-                    <Button
-                      type='button'
-                      onClick={async () => {
-                        console.log('setting value ...');
+                    <div className='w-full flex flex-row justify-center pb-4 px-4'>
+                      <Button
+                        className='w-full py-4'
+                        type='button'
+                        onClick={async () => {
+                          console.log('setting value ...');
 
-                        const { data, error } = await supabase
-                          .from('Authors')
-                          .update({
-                            birth_date: null,
-                          })
-                          .eq('id', author.id)
-                          .select('*')
-                          .single();
+                          const { data, error } = await supabase
+                            .from('Authors')
+                            .update({
+                              birth_date: null,
+                            })
+                            .eq('id', author.id)
+                            .select('*')
+                            .single();
 
-                        error && window.alert(error.message);
-                        data && router.reload();
+                          error && window.alert(error.message);
+                          data && router.reload();
 
-                        console.log('set value ...', field.value);
-                      }}
-                    >
-                      {' '}
-                      Null{' '}
-                    </Button>
+                          console.log('set value ...', field.value);
+                        }}
+                      >
+                        {' '}
+                        Null{' '}
+                      </Button>
+                    </div>
                   </PopoverContent>
                 </Popover>
 
@@ -615,7 +625,7 @@ function AuthorEditForm(author: AuthorsType) {
             control={form.control}
             name='deathDate'
             render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
+              <FormItem className='dark flex flex-col items-start p-1'>
                 <FormLabel>Date of death</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -636,7 +646,7 @@ function AuthorEditForm(author: AuthorsType) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className='w-auto p-0' align='start'>
+                  <PopoverContent className='dark w-auto p-0' align='start'>
                     <Calendar
                       mode='single'
                       selected={field.value}
@@ -646,29 +656,33 @@ function AuthorEditForm(author: AuthorsType) {
                       }
                       initialFocus
                     />
-                    <Button
-                      type='button'
-                      onClick={async () => {
-                        console.log('setting value ...');
 
-                        const { data, error } = await supabase
-                          .from('Authors')
-                          .update({
-                            death_date: null,
-                          })
-                          .eq('id', author.id)
-                          .select('*')
-                          .single();
+                    <div className='w-full flex flex-row justify-center pb-4 px-4'>
+                      <Button
+                        className='w-full py-4'
+                        type='button'
+                        onClick={async () => {
+                          console.log('setting value ...');
 
-                        error && window.alert(error.message);
-                        data && router.reload();
+                          const { data, error } = await supabase
+                            .from('Authors')
+                            .update({
+                              death_date: null,
+                            })
+                            .eq('id', author.id)
+                            .select('*')
+                            .single();
 
-                        console.log('set value ...', field.value);
-                      }}
-                    >
-                      {' '}
-                      Null{' '}
-                    </Button>
+                          error && window.alert(error.message);
+                          data && router.reload();
+
+                          console.log('set value ...', field.value);
+                        }}
+                      >
+                        {' '}
+                        Null{' '}
+                      </Button>
+                    </div>
                   </PopoverContent>
                 </Popover>
                 {/* <FormDescription>Author date of birth</FormDescription>  */}
@@ -684,8 +698,10 @@ function AuthorEditForm(author: AuthorsType) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author City</FormLabel>
                 <FormControl>
-                  <Input placeholder='default city' {...field} 
-                  // ref={cityRef}
+                  <Input
+                    placeholder='default city'
+                    {...field}
+                    // ref={cityRef}
                   />
                 </FormControl>
                 {/* <FormDescription>This is your login email.</FormDescription> */}
@@ -719,7 +735,7 @@ function AuthorEditForm(author: AuthorsType) {
                 <img
                   className='max-w-72'
                   ref={photoImage}
-                  src={  newPhoto || author.photo || ''}
+                  src={newPhoto || author.photo || ''}
                   alt='photo image'
                 />
               </FormItem>
@@ -733,9 +749,11 @@ function AuthorEditForm(author: AuthorsType) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author Phrase</FormLabel>
                 <FormControl>
-                  <Input placeholder='some profound saying' {...field} 
-                  // ref={phraseRef}
-                   />
+                  <Input
+                    placeholder='some profound saying'
+                    {...field}
+                    // ref={phraseRef}
+                  />
                 </FormControl>
                 {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
