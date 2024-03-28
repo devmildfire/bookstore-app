@@ -17,7 +17,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "incremental": true
+    "incremental": true,
+    "downlevelIteration": true
   },
   "include": [
     "globals.d.ts",

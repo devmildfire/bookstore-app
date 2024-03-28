@@ -2,8 +2,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,23 +14,15 @@ import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
-// import { useRouter } from 'next/navigation';
-
 import { Textarea } from '../ui/textarea';
-import { Calendar } from '../ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
 import {
   ChangeEvent,
-  startTransition,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
-import revalidateLink from 'api/actions';
+import { DateTimePicker } from '../ui/datetime-picker';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -52,20 +42,16 @@ const formSchema = z.object({
   birthDate: z
     .date({
       description: 'Author birth date',
-    })
+    }).nullable()
     .optional(),
   deathDate: z
     .date({
       description: 'Author death date',
-    })
+    }).nullable()
     .optional(),
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
-  // photo: z.string().min(6, {
-  //   message: 'photo link string must be least 6 characters.',
-  // }),
-
   photo: z
     .instanceof(File, { message: 'Image is required.' })
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
@@ -86,30 +72,23 @@ const formEditSchema = z.object({
   birthDate: z
     .date({
       description: 'Author birth date',
-    })
-    .optional(),
+    }).nullable()
+    .optional()
+    ,
   deathDate: z
     .date({
       description: 'Author death date',
-    })
-    .optional(),
+    }).nullable()
+    .optional()
+    ,
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
   photo: z.any().optional(),
-  // .refine(file => file.length == 1 ? ACCEPTED_IMAGE_TYPES.includes(file?.[0]?.type) ? true : false : true, 'Invalid file. choose either JPEG or PNG image')
-  // .refine(file => file.length == 1 ? file[0]?.size <= MAX_FILE_SIZE ? true : false : true, 'Max file size allowed is 5MB.'),
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
 });
-
-// z.instanceof(File, { message: 'Image is required.' }).optional()
-// .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-// .refine(
-//   (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-//   '.jpg, .jpeg, .png and .webp files are accepted.'
-// ),
 
 type AuthorFormProps = {
   defaultName: string;
@@ -117,7 +96,6 @@ type AuthorFormProps = {
   defaultBirthDate: Date;
   defaultDeathDate: Date;
   defaultCity: string;
-  // defaultPhoto: File;
   defaultPhrase: string;
 };
 
@@ -129,10 +107,7 @@ function AuthorForm(props: AuthorFormProps) {
     defaultValues: {
       name: props.defaultName,
       bio: props.defaultBio,
-      // birthDate: props.defaultBirthDate,
-      // deathDate: props.defaultDeathDate,
       city: props.defaultCity,
-      // photo: '',
       phrase: props.defaultPhrase,
     },
   });
@@ -197,7 +172,6 @@ function AuthorForm(props: AuthorFormProps) {
                 <FormControl>
                   <Input placeholder='somebody' {...field} />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -216,98 +190,60 @@ function AuthorForm(props: AuthorFormProps) {
                     {...field}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your password.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name='birthDate'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Date of birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-auto p-0' align='start'>
-                    <Calendar
-                      mode='single'
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+<FormField
+          control={form.control}
+          name="birthDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="datetime">birth date</FormLabel>
+              <FormControl>
+                <DateTimePicker
+                  jsDate={field.value}
+                  onJsDateChange={field.onChange}
+                  onNull={ () => {
+                    form.setValue('birthDate', null)
 
-                {/* <FormDescription>Author date of birth</FormDescription>  */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    console.log('on null function call')
+                    console.log('form state is...', form.getValues())
+                    }
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name='deathDate'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Date of death</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-auto p-0' align='start'>
-                    <Calendar
-                      mode='single'
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                {/* <FormDescription>Author date of birth</FormDescription>  */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="deathDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="datetime">death date</FormLabel>
+              <FormControl>
+                <DateTimePicker
+                  jsDate={field.value}
+                  onJsDateChange={field.onChange}
+                  showClearButton={true}
+                  onNull={ () => {
+                    form.setValue('deathDate', null)
+
+                    console.log('on null function call')
+                    console.log('form state is...', form.getValues())
+
+                  }
+                }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
           <FormField
             control={form.control}
@@ -318,7 +254,6 @@ function AuthorForm(props: AuthorFormProps) {
                 <FormControl>
                   <Input placeholder='default city' {...field} />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -331,7 +266,6 @@ function AuthorForm(props: AuthorFormProps) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author Photo</FormLabel>
                 <FormControl>
-                  {/* <Input placeholder='default photo' type='file' {...field} /> */}
                   <Input
                     id='photo'
                     type='file'
@@ -344,7 +278,6 @@ function AuthorForm(props: AuthorFormProps) {
                     }}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
                 <img
                   className='max-w-72'
@@ -365,7 +298,6 @@ function AuthorForm(props: AuthorFormProps) {
                 <FormControl>
                   <Input placeholder='some profound saying' {...field} />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -493,6 +425,11 @@ function AuthorEditForm(author: AuthorsType) {
 
     console.log('public URL is ...', publicUrl);
 
+    console.log('birth date is ...', values.birthDate);
+    console.log('birth date to base is ...', values.birthDate ? values.birthDate.toUTCString() : null,);
+
+
+
     const { data, error } = await supabase
       .from('Authors')
       .update({
@@ -509,6 +446,7 @@ function AuthorEditForm(author: AuthorsType) {
 
     error && window.alert(error.message);
     data && window.alert(`автор ${data.name} успешно обновлён`);
+    data && router.reload();
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -519,7 +457,6 @@ function AuthorEditForm(author: AuthorsType) {
       const file = imageInput.files[0];
       if (file) {
         pImage && (pImage.src = URL.createObjectURL(file));
-        // setNewImage(true);
       }
     }
   }
@@ -539,165 +476,66 @@ function AuthorEditForm(author: AuthorsType) {
                 <FormLabel>Aithor Bio</FormLabel>
                 <FormControl>
                   <Textarea
+                    aria-label={'author bio'}
                     placeholder='Tell us a little bit about yourself'
                     className='resize-none'
                     {...field}
-                    // ref={bioRef}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your password.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name='birthDate'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Date of birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className='dark w-auto p-0' align='start'>
-                    <Calendar
-                      captionLayout='dropdown-buttons'
-                      fromYear={1800}
-                      toYear={2040}
-                      mode='single'
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                    <div className='w-full flex flex-row justify-center pb-4 px-4'>
-                      <Button
-                        className='w-full py-4'
-                        type='button'
-                        onClick={async () => {
-                          console.log('setting value ...');
+        <FormField
+          control={form.control}
+          name="birthDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="datetime">birth date</FormLabel>
+              <FormControl>
+                <DateTimePicker
+                  jsDate={field.value}
+                  onJsDateChange={field.onChange}
+                  onNull={ () => {
+                    form.setValue('birthDate', null)
 
-                          const { data, error } = await supabase
-                            .from('Authors')
-                            .update({
-                              birth_date: null,
-                            })
-                            .eq('id', author.id)
-                            .select('*')
-                            .single();
+                    console.log('on null function call')
+                    console.log('form state is...', form.getValues())
+                    }
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                          error && window.alert(error.message);
-                          data && router.reload();
+        <FormField
+          control={form.control}
+          name="deathDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="datetime">death date</FormLabel>
+              <FormControl>
+                <DateTimePicker
+                  jsDate={field.value}
+                  onJsDateChange={field.onChange}
+                  showClearButton={true}
+                  onNull={ () => {
+                    form.setValue('deathDate', null)
 
-                          console.log('set value ...', field.value);
-                        }}
-                      >
-                        {' '}
-                        Null{' '}
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                    console.log('on null function call')
+                    console.log('form state is...', form.getValues())
 
-                {/* <FormDescription>Author date of birth</FormDescription>  */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='deathDate'
-            render={({ field }) => (
-              <FormItem className='dark flex flex-col items-start p-1'>
-                <FormLabel>Date of death</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className='dark w-auto p-0' align='start'>
-                    <Calendar
-                      captionLayout='dropdown-buttons'
-                      fromYear={1800}
-                      toYear={2040}
-                      // fromDate={new Date('1800-01-01')}
-                      // toDate={new Date('2030-01-01')}
-                      mode='single'
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-
-                    <div className='w-full flex flex-row justify-center pb-4 px-4'>
-                      <Button
-                        className='w-full py-4'
-                        type='button'
-                        onClick={async () => {
-                          console.log('setting value ...');
-
-                          const { data, error } = await supabase
-                            .from('Authors')
-                            .update({
-                              death_date: null,
-                            })
-                            .eq('id', author.id)
-                            .select('*')
-                            .single();
-
-                          error && window.alert(error.message);
-                          data && router.reload();
-
-                          console.log('set value ...', field.value);
-                        }}
-                      >
-                        {' '}
-                        Null{' '}
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                {/* <FormDescription>Author date of birth</FormDescription>  */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  }
+                }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
           <FormField
             control={form.control}
@@ -707,12 +545,11 @@ function AuthorEditForm(author: AuthorsType) {
                 <FormLabel>Author City</FormLabel>
                 <FormControl>
                   <Input
+                    aria-label={'author city'}
                     placeholder='default city'
                     {...field}
-                    // ref={cityRef}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -725,8 +562,8 @@ function AuthorEditForm(author: AuthorsType) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>Author Photo</FormLabel>
                 <FormControl>
-                  {/* <Input placeholder='default photo' type='file' {...field} /> */}
                   <Input
+                    aria-label={'author photo'}
                     id='photo'
                     type='file'
                     {...fieldProps}
@@ -738,7 +575,6 @@ function AuthorEditForm(author: AuthorsType) {
                     }}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
                 <img
                   className='max-w-72'
@@ -758,12 +594,11 @@ function AuthorEditForm(author: AuthorsType) {
                 <FormLabel>Author Phrase</FormLabel>
                 <FormControl>
                   <Input
+                    aria-label={'author phrase'}
                     placeholder='some profound saying'
                     {...field}
-                    // ref={phraseRef}
                   />
                 </FormControl>
-                {/* <FormDescription>This is your login email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
