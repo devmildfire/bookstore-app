@@ -13,7 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { TitleForm } from '@/components/DashBoardPage/TitleForm';
+import { TitleEditForm, TitleForm } from '@/components/DashBoardPage/TitleForm';
 
 export type TitleType = Database['public']['Tables']['Titles']['Row'];
 
@@ -50,7 +50,7 @@ const Titleslist = () => {
           >
             <AccordionTrigger> {title.name} </AccordionTrigger>
             <AccordionContent>
-              {/* <AuthorEditForm {...author} /> */}
+              <TitleEditForm {...title} />
             </AccordionContent>
           </AccordionItem>
         ))}

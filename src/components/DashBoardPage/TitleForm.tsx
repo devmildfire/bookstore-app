@@ -16,9 +16,10 @@ import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { AuthorsType } from 'pages/dashboard/authors';
+import { TitleType } from 'pages/dashboard/titles';
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
+import slugify from 'slugify';
 
 const MAX_VIDEO_FILE_SIZE = 8 * 1024 * 1024; //  8MB
 const ACCEPTED_VIDEO_TYPES = [
@@ -41,7 +42,6 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const videoSchema = z
-  // .any()
   .instanceof(File, { message: 'Image is required.' })
   .optional()
   .refine(
@@ -54,11 +54,22 @@ const videoSchema = z
   );
 
 const imageSchema = z
-  // .any()
   .instanceof(File, { message: 'Image is required.' })
   .refine((file) => file?.size <= MAX_IMAGE_FILE_SIZE, `Max file size is 5MB.`)
   .refine(
     (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+    '.jpg, .jpeg, .png and .webp files are accepted.'
+  );
+
+const imageOptionalSchema = z
+  .instanceof(File, { message: 'Image is required.' })
+  .optional()
+  .refine(
+    (file) => !file || file?.size <= MAX_IMAGE_FILE_SIZE,
+    `Max file size is 5MB.`
+  )
+  .refine(
+    (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
     '.jpg, .jpeg, .png and .webp files are accepted.'
   );
 
@@ -73,19 +84,38 @@ const formSchema = z.object({
     message: 'Title thesis must be at least 6 characters long.',
   }),
   trailer: videoSchema,
-
   first_release: z
     .date({
       description: 'first release date',
     })
     .nullable()
     .optional(),
-
   age_restriction: z.number().min(0, {
     message: 'Age restriction must be 0 or more',
   }),
   cover: imageSchema,
 
+  is_featured: z.boolean().default(false).optional(),
+});
+
+const formEditSchema = z.object({
+  description: z.string().min(6, {
+    message: 'Title description must be at least 6 characters long.',
+  }),
+  thesis: z.string().min(6, {
+    message: 'Title thesis must be at least 6 characters long.',
+  }),
+  trailer: videoSchema,
+  first_release: z
+    .date({
+      description: 'first release date',
+    })
+    .nullable()
+    .optional(),
+  age_restriction: z.number().min(0, {
+    message: 'Age restriction must be 0 or more',
+  }),
+  cover: imageOptionalSchema,
   is_featured: z.boolean().default(false).optional(),
 });
 
@@ -117,33 +147,61 @@ function TitleForm(props: TitleFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    // const photoUpload = await supabase.storage
-    //   .from('authors')
-    //   .upload(`author_${values.photo.name}`, values.photo, {
-    //     cacheControl: '3600',
-    //     upsert: true,
-    //   });
+    const coverExtention = values.cover.name.split('.').pop();
 
-    // const publicUrl = supabase.storage
-    //   .from('authors')
-    //   .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
+    const photoUpload = await supabase.storage
+      .from('titles')
+      .upload(
+        `titles_${slugify(values.name)}.${coverExtention}`,
+        values.cover,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
 
-    // const { data, error } = await supabase
-    //   .from('Authors')
-    //   .insert({
-    //     name: values.name,
-    //     birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-    //     death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-    //     phrase: values.phrase,
-    //     photo: publicUrl,
-    //     city: values.city,
-    //     bio: values.bio,
-    //   })
-    //   .select('*')
-    //   .single();
+    const publicUrl = supabase.storage
+      .from('titles')
+      .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
 
-    // error && window.alert(error.message);
-    // data && window.alert(`${data.name} успешно добавлен к авторам`);
+    let videoPublicUrl = null;
+
+    if (values.trailer) {
+      const trailerExtention = values.trailer.name.split('.').pop();
+
+      const videoUpload = await supabase.storage
+        .from('trailers')
+        .upload(
+          `trailers_${slugify(values.name)}.${trailerExtention}`,
+          values.trailer,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      videoPublicUrl = supabase.storage
+        .from('trailers')
+        .getPublicUrl(`${videoUpload.data?.path}`).data.publicUrl;
+    }
+
+    const { data, error } = await supabase
+      .from('Titles')
+      .insert({
+        age_restriction: values.age_restriction,
+        cover: publicUrl,
+        description: values.description,
+        is_featured: values.is_featured,
+        name: values.name,
+        slug: slugify(values.name),
+        thesis: values.thesis,
+        trailer: values.trailer ? videoPublicUrl : null,
+      })
+      .select('*')
+      .single();
+
+    error && window.alert(error.message);
+    data && window.alert(`${data.name} успешно добавлен к тайтлам`);
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -315,6 +373,7 @@ function TitleForm(props: TitleFormProps) {
                   </FormControl>
                   <Button
                     type='button'
+                    variant={'outline'}
                     onClick={() => {
                       form.resetField('trailer');
                       const videoInput = document.getElementById(
@@ -328,7 +387,14 @@ function TitleForm(props: TitleFormProps) {
                 </div>
                 <FormMessage />
 
-                <video className='max-w-72' ref={trailerVideo} src='' />
+                {/* `max-w-72  ${value &&}` */}
+
+                <video
+                  className={value ? 'max-w-72' : 'max-w-72 hidden'}
+                  ref={trailerVideo}
+                  controls
+                  src=''
+                />
               </FormItem>
             )}
           />
@@ -340,6 +406,7 @@ function TitleForm(props: TitleFormProps) {
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
+                    className='bg-neutral-800'
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
@@ -365,176 +432,186 @@ function TitleForm(props: TitleFormProps) {
   );
 }
 
-// function AuthorEditForm(author: AuthorsType) {
-//   const [newPhoto, setNewPhoto] = useState<string>();
+function TitleEditForm(title: TitleType) {
+  //   const [newPhoto, setNewPhoto] = useState<string>();
+  //   const photoImage = useRef<HTMLImageElement | null>(null);
+  async function getDataFromReq() {
+    const { data } = await supabase
+      .from('Titles')
+      .select('*')
+      .eq('id', title.id)
+      .single();
+    data && console.log('data from req is...', data);
+    data &&
+      (data.description && form.setValue('description', data.description),
+      data.thesis && form.setValue('thesis', data.thesis));
+    //   data.photo && setNewPhoto(data.photo),
+    // data.bio && form.setValue('bio', data.bio),
+    // data.city && form.setValue('city', data.city),
+    // data.phrase && form.setValue('phrase', data.phrase),
+    // data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
+    // data.death_date && form.setValue('deathDate', new Date(data.death_date))
+  }
+  useEffect(() => {
+    getDataFromReq();
+  }, []);
+  const router = useRouter();
+  const form = useForm<z.infer<typeof formEditSchema>>({
+    resolver: zodResolver(formEditSchema),
+    defaultValues: {
+      description: title.description || undefined,
+      thesis: title.thesis || undefined,
+      first_release: title.first_release
+        ? new Date(title.first_release)
+        : undefined,
+      is_featured: title.is_featured !== null ? title.is_featured : undefined,
+    },
+  });
 
-//   const photoImage = useRef<HTMLImageElement | null>(null);
+  async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
+    console.log('values ... ', values);
+    //     let imagePath = null;
+    //     let publicUrl = null;
+    //     if (author.photo && values.photo) {
+    //       console.log('current author photo ... ', author.photo);
+    //       const imageNameString = author.photo.split('/');
+    //       console.log('image Name String ... ', imageNameString);
+    //       console.log('selected photo file ... ', values.photo);
+    //       const photoRemove = await supabase.storage
+    //         .from('authors')
+    //         .remove([imageNameString.slice(-1)[0]]);
+    //       photoRemove.error &&
+    //         console.log('photo Remove error ... ', photoRemove.error.message);
+    //       photoRemove.data &&
+    //         console.log('photo Remove data... ', photoRemove.data);
+    //       const fileName = values.photo?.name
+    //         ? values.photo?.name
+    //         : 'failNameString';
+    //       console.log('photo is...', values.photo);
+    //       console.log('photo name is...', values.photo?.name);
+    //       const photoUdate = await supabase.storage
+    //         .from('authors')
+    //         .upload(`author_${fileName}`, values.photo, {
+    //           cacheControl: '3600',
+    //           upsert: true,
+    //         });
+    //       photoUdate.error &&
+    //         console.log('photo update error ... ', photoUdate.error.message);
+    //       imagePath = photoUdate.data?.path;
+    //       console.log('image path ... ', imagePath);
+    //     }
+    //     if (!author.photo && values.photo) {
+    //       const photoUpload = await supabase.storage
+    //         .from('authors')
+    //         .upload(`author_${values.photo.name}`, values.photo, {
+    //           cacheControl: '3600',
+    //           upsert: true,
+    //         });
+    //       imagePath = photoUpload.data?.path;
+    //     }
+    //     if (author.photo && !values.photo) {
+    //       imagePath = author.photo;
+    //       publicUrl = author.photo;
+    //     }
+    //     !publicUrl &&
+    //       imagePath &&
+    //       (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
+    //         .data.publicUrl);
+    //     console.log('public URL is ...', publicUrl);
+    //     console.log('birth date is ...', values.birthDate);
+    //     console.log(
+    //       'birth date to base is ...',
+    //       values.birthDate ? values.birthDate.toUTCString() : null
+    //     );
+    //     const { data, error } = await supabase
+    //       .from('Authors')
+    //       .update({
+    //         birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
+    //         death_date: values.deathDate ? values.deathDate.toUTCString() : null,
+    //         phrase: values.phrase,
+    //         photo: publicUrl,
+    //         city: values.city,
+    //         bio: values.bio,
+    //       })
+    //       .eq('id', author.id)
+    //       .select('*')
+    //       .single();
+    //     error && window.alert(error.message);
+    //     data && window.alert(`автор ${data.name} успешно обновлён`);
+    //     data && router.reload();
+  }
 
-//   async function getDataFromReq() {
-//     const { data } = await supabase
-//       .from('Authors')
-//       .select('*')
-//       .eq('id', author.id)
-//       .single();
+  //   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
+  //     const imageInput = event.target;
+  //     const pImage = photoImage.current;
+  //     if (imageInput.files) {
+  //       const file = imageInput.files[0];
+  //       if (file) {
+  //         pImage && (pImage.src = URL.createObjectURL(file));
+  //       }
+  //     }
+  //   }
 
-//     data && console.log('data from req is...', data);
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onEditSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Title Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    aria-label={'titleDescription'}
+                    placeholder=''
+                    className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-//     data &&
-//       (data.photo && setNewPhoto(data.photo),
-//       data.bio && form.setValue('bio', data.bio),
-//       data.city && form.setValue('city', data.city),
-//       data.phrase && form.setValue('phrase', data.phrase),
-//       data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
-//       data.death_date && form.setValue('deathDate', new Date(data.death_date)));
-//   }
+          <FormField
+            control={form.control}
+            name='thesis'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Title Thesis</FormLabel>
+                <FormControl>
+                  <Textarea
+                    aria-label={'titleThesis'}
+                    placeholder=''
+                    className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-//   useEffect(() => {
-//     getDataFromReq();
-//   }, []);
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-48'
+          >
+            Обновить
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
 
-//   const router = useRouter();
-
-//   const form = useForm<z.infer<typeof formEditSchema>>({
-//     resolver: zodResolver(formEditSchema),
-//     defaultValues: {
-//       bio: author.bio ? author.bio : undefined,
-//       birthDate: author.birth_date ? new Date(author.birth_date) : undefined,
-//       deathDate: author.death_date ? new Date(author.death_date) : undefined,
-//       city: author.city ? author.city : undefined,
-//       // photo: undefined,
-//       phrase: author.phrase ? author.phrase : undefined,
-//     },
-//   });
-
-//   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
-//     console.log('values ... ', values);
-
-//     let imagePath = null;
-//     let publicUrl = null;
-
-//     if (author.photo && values.photo) {
-//       console.log('current author photo ... ', author.photo);
-
-//       const imageNameString = author.photo.split('/');
-
-//       console.log('image Name String ... ', imageNameString);
-
-//       console.log('selected photo file ... ', values.photo);
-
-//       const photoRemove = await supabase.storage
-//         .from('authors')
-//         .remove([imageNameString.slice(-1)[0]]);
-
-//       photoRemove.error &&
-//         console.log('photo Remove error ... ', photoRemove.error.message);
-
-//       photoRemove.data &&
-//         console.log('photo Remove data... ', photoRemove.data);
-
-//       const fileName = values.photo?.name
-//         ? values.photo?.name
-//         : 'failNameString';
-//       console.log('photo is...', values.photo);
-//       console.log('photo name is...', values.photo?.name);
-
-//       const photoUdate = await supabase.storage
-//         .from('authors')
-//         .upload(`author_${fileName}`, values.photo, {
-//           cacheControl: '3600',
-//           upsert: true,
-//         });
-
-//       photoUdate.error &&
-//         console.log('photo update error ... ', photoUdate.error.message);
-
-//       imagePath = photoUdate.data?.path;
-//       console.log('image path ... ', imagePath);
-//     }
-
-//     if (!author.photo && values.photo) {
-//       const photoUpload = await supabase.storage
-//         .from('authors')
-//         .upload(`author_${values.photo.name}`, values.photo, {
-//           cacheControl: '3600',
-//           upsert: true,
-//         });
-//       imagePath = photoUpload.data?.path;
-//     }
-
-//     if (author.photo && !values.photo) {
-//       imagePath = author.photo;
-//       publicUrl = author.photo;
-//     }
-
-//     !publicUrl &&
-//       imagePath &&
-//       (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-//         .data.publicUrl);
-
-//     console.log('public URL is ...', publicUrl);
-
-//     console.log('birth date is ...', values.birthDate);
-//     console.log(
-//       'birth date to base is ...',
-//       values.birthDate ? values.birthDate.toUTCString() : null
-//     );
-
-//     const { data, error } = await supabase
-//       .from('Authors')
-//       .update({
-//         birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-//         death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-//         phrase: values.phrase,
-//         photo: publicUrl,
-//         city: values.city,
-//         bio: values.bio,
-//       })
-//       .eq('id', author.id)
-//       .select('*')
-//       .single();
-
-//     error && window.alert(error.message);
-//     data && window.alert(`автор ${data.name} успешно обновлён`);
-//     data && router.reload();
-//   }
-
-//   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-//     const imageInput = event.target;
-//     const pImage = photoImage.current;
-
-//     if (imageInput.files) {
-//       const file = imageInput.files[0];
-//       if (file) {
-//         pImage && (pImage.src = URL.createObjectURL(file));
-//       }
-//     }
-//   }
-
-//   return (
-//     <div className=''>
-//       <Form {...form}>
-//         <form
-//           onSubmit={form.handleSubmit(onEditSubmit)}
-//           className='space-y-4 w-full'
-//         >
-//           <FormField
-//             control={form.control}
-//             name='bio'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Aithor Bio</FormLabel>
-//                 <FormControl>
-//                   <Textarea
-//                     aria-label={'author bio'}
-//                     placeholder='Tell us a little bit about yourself'
-//                     className='resize-none'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+export { TitleForm, TitleEditForm };
 
 //           <FormField
 //             control={form.control}
@@ -548,7 +625,6 @@ function TitleForm(props: TitleFormProps) {
 //                     onJsDateChange={field.onChange}
 //                     onNull={() => {
 //                       form.setValue('birthDate', null);
-
 //                       console.log('on null function call');
 //                       console.log('form state is...', form.getValues());
 //                     }}
@@ -558,7 +634,6 @@ function TitleForm(props: TitleFormProps) {
 //               </FormItem>
 //             )}
 //           />
-
 //           <FormField
 //             control={form.control}
 //             name='deathDate'
@@ -572,7 +647,6 @@ function TitleForm(props: TitleFormProps) {
 //                     showClearButton={true}
 //                     onNull={() => {
 //                       form.setValue('deathDate', null);
-
 //                       console.log('on null function call');
 //                       console.log('form state is...', form.getValues());
 //                     }}
@@ -582,7 +656,6 @@ function TitleForm(props: TitleFormProps) {
 //               </FormItem>
 //             )}
 //           />
-
 //           <FormField
 //             control={form.control}
 //             name='city'
@@ -600,7 +673,6 @@ function TitleForm(props: TitleFormProps) {
 //               </FormItem>
 //             )}
 //           />
-
 //           <FormField
 //             control={form.control}
 //             name='photo'
@@ -631,7 +703,6 @@ function TitleForm(props: TitleFormProps) {
 //               </FormItem>
 //             )}
 //           />
-
 //           <FormField
 //             control={form.control}
 //             name='phrase'
@@ -649,22 +720,3 @@ function TitleForm(props: TitleFormProps) {
 //               </FormItem>
 //             )}
 //           />
-
-//           <Button
-//             type='submit'
-//             variant={'outline'}
-//             size={'default'}
-//             className='w-full max-w-48'
-//           >
-//             Обновить
-//           </Button>
-//         </form>
-//       </Form>
-//     </div>
-//   );
-// }
-
-export {
-  TitleForm,
-  // AuthorEditForm
-};
