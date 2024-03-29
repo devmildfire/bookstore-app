@@ -11,6 +11,7 @@ import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
 import ModalProvider from '@/components/Modal';
 import { setOrGetCartCookie } from '@/utils/cardID';
+import { AnimatePresence } from 'framer-motion';
 
 function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -67,21 +68,21 @@ const MyApp: NextPage<AppProps> = (props) => {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          <Header
+          {/* <Header
             backgroundColor={
               isSliderOnScreen && router.pathname === '/books'
                 ? '#050505'
                 : 'var(--main-black)'
             }
-          />
+          /> */}
           <>
-            {value && <PageLoading />}
+            <PageLoading show={value} />
             <Component {...pageProps} forwardedRef={intersectionRef} />
           </>
-          <Footer />
+          {/* <Footer /> */}
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );
 };
-export default wrapper.withRedux(MyApp);
+export default MyApp;

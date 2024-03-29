@@ -38,12 +38,10 @@ const SubscribeForm = (): React.ReactElement => {
 
   // const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
   // const onSubmit: SubmitHandler<FormSchemaType> = () => {
-  //   console.log(data);
   //   setWipe(false);
   // };
 
   // const onError: SubmitErrorHandler<FormSchemaType> = () => {
-  //   console.log(errors);
   //   setWipe(false);
   // };
 

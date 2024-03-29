@@ -63,11 +63,9 @@ class PromoStore {
     const cartItemsNames = this.cartStore.cart.map((item) => {
       return item.name + item.category;
     });
-    console.log('cartItemsNames are ... ', cartItemsNames);
 
     const promoItemName =
       this.promoCode.product_name! + this.promoCode.product_type!;
-    console.log(promoItemName);
 
     const promoItemInCartIndex = cartItemsNames.findIndex((x) => {
       return x === promoItemName;
@@ -106,8 +104,6 @@ class PromoStore {
   }
 
   get codeDatesAreValid() {
-    console.log('Computing promo dates validity...');
-
     if (!this.promoCode) {
       return false;
     }
@@ -120,8 +116,6 @@ class PromoStore {
   }
 
   get codeItemIsValid() {
-    console.log('Computing promo item validity...');
-
     if (!this.promoCode) {
       return false;
     }
@@ -136,8 +130,6 @@ class PromoStore {
   }
 
   get codeDiscountIsValid() {
-    console.log('Computing promo discount amount validity...');
-
     if (!this.promoCode) {
       return false;
     }
@@ -159,14 +151,11 @@ class PromoStore {
         (this.cartFullPrice * (100 - this.promoCode.discount!)) / 100
       );
 
-      console.log('cart price with promo code is ...', cartPriceWithPromo);
       return cartPriceWithPromo! < this.cartDiscountPrice!;
     }
   }
 
   get codeIsValid() {
-    console.log('Computing promo validity...');
-
     return (
       this.codeDatesAreValid && this.codeItemIsValid && this.codeDiscountIsValid
     );

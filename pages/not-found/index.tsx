@@ -4,6 +4,7 @@ import Text from '@/components/Common/Text';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
 import BookWorm from '@/components/Common/BookWormLoader';
+import PageLayout from '@/layouts/PageLayout';
 
 const PageContainer = styled.div`
   display: flex;
@@ -69,15 +70,17 @@ const StyledBookWorm = styled(BookWorm)`
 
 function NotFoundPage() {
   return (
-    <PageContainer>
-      <Title variant='h1_Inv' align='center'>
-        Любопытство — это хорошо, но придётся ещё немного подождать
-      </Title>
-      <StyledBookWorm className='worm' variant='red' />
-      <Button href='/' variant='wide'>
-        Вернуться на главную
-      </Button>
-    </PageContainer>
+    <PageLayout headTitle='Страница не найдена'>
+      <PageContainer>
+        <Title variant='h1_Inv' align='center'>
+          Любопытство — это хорошо, но придётся ещё немного подождать
+        </Title>
+        <StyledBookWorm className='worm' variant='red' />
+        <Button href='/' variant='wide'>
+          Вернуться на главную
+        </Button>
+      </PageContainer>
+    </PageLayout>
   );
 }
 export default NotFoundPage;

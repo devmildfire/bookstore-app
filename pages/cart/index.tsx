@@ -16,6 +16,7 @@ import { Shipment } from '@/components/CartPage/Shipment/Shipment';
 import { StyledPromoMessage } from '@/components/CartPage/PromoMessage/Message';
 import { StyledButton } from '@/components/CartPage/styles';
 import { useRouter } from 'next/router';
+import PageLayout from '@/layouts/PageLayout';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -53,7 +54,6 @@ async function updateItemInDB(item: CartItemType, cartID: string) {
     oper: 'update',
     item: item,
   });
-  console.log('updated item ... ', JSON.stringify(updatedItem, null, 2));
   cartID && cartStore.setCart(cartID);
 }
 
@@ -62,10 +62,7 @@ async function removeItemFromDB(item: CartItemType, cartID: string) {
     oper: 'remove',
     item: item,
   });
-  console.log(
-    'removed item from list ... ',
-    JSON.stringify(removedItem, null, 2)
-  );
+
   cartID && cartStore.setCart(cartID);
 }
 
@@ -197,26 +194,28 @@ const Cart = observer((): React.ReactElement => {
   ) as number;
 
   return (
-    <Styled.Main className='max-width'>
-      <StyledText textColor='white' variant='h2_1_Cart'>
-        {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
-      </StyledText>
+    <PageLayout headTitle='Корзина'>
+      <Styled.Main className='max-width'>
+        <StyledText textColor='white' variant='h2_1_Cart'>
+          {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
+        </StyledText>
 
-      {stage === 'cartStage' &&
-        (cartStore.cart.length ? (
-          <FullCart productQuantity={productQuantity} setStage={setStage} />
-        ) : (
-          <StyledEmptyCart className='emptyCart' />
-        ))}
+        {stage === 'cartStage' &&
+          (cartStore.cart.length ? (
+            <FullCart productQuantity={productQuantity} setStage={setStage} />
+          ) : (
+            <StyledEmptyCart className='emptyCart' />
+          ))}
 
-      {stage === 'shipmentStage' && (
-        <Shipment
-          setStage={setStage}
-          cartID={cartStore.cartID!}
-          totalPrice={cartStore.price}
-        />
-      )}
-    </Styled.Main>
+        {stage === 'shipmentStage' && (
+          <Shipment
+            setStage={setStage}
+            cartID={cartStore.cartID!}
+            totalPrice={cartStore.price}
+          />
+        )}
+      </Styled.Main>
+    </PageLayout>
   );
 });
 

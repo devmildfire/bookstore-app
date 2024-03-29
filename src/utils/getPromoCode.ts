@@ -10,10 +10,6 @@ export const getPromoCodeFromDB = async (code: string) => {
       code: code,
     }
   );
-  console.log(
-    'got back promo code data... ',
-    JSON.stringify(promoCode, null, 2)
-  );
 
   if (!('message' in promoCode)) {
     return promoCode;

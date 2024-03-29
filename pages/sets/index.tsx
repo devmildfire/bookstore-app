@@ -6,27 +6,14 @@ import { getBoxSets } from '@/models/boxSets';
 import { wrapper } from '@/models';
 import Sets from '@/components/SetsPage/Sets';
 import { getPopularBooks } from '@/models/books';
+import PageLayout from '@/layouts/PageLayout';
 
 const SetsPage: NextPage = () => (
-  <HomeLayout title='БОКС-СЕТЫ'>
-    <Sets />
-  </HomeLayout>
-);
-
-export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch }) =>
-    async () => {
-      const requests: Promise<unknown>[] = [
-        dispatch(getBoxSets.initiate({ page: 1 })),
-        dispatch(getPopularBooks.initiate(undefined)),
-      ];
-
-      await Promise.all(requests);
-      return {
-        props: {},
-        revalidate: 1,
-      };
-    }
+  <PageLayout headTitle='Бокс-сеты'>
+    <HomeLayout title='БОКС-СЕТЫ'>
+      <Sets />
+    </HomeLayout>
+  </PageLayout>
 );
 
 export default SetsPage;

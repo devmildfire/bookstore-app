@@ -6,9 +6,6 @@ export const getCart = async (cartID: string) => {
     oper: 'fetch',
     id: cartID,
   });
-  console.log(
-    'fetched cart items list to store... ',
-    JSON.stringify(cartItems, null, 2)
-  );
+
   return cartItems;
 };

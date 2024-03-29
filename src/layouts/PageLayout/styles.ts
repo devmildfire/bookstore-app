@@ -3,8 +3,12 @@ import breakPoints from '@/utils/breakPoints';
 // import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
-  display: grid;
+  /* display: grid; */
   /* gap: 100px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
   width: 100%;
   position: relative;
   background-color: var(--main-black);

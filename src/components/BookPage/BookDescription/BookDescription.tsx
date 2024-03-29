@@ -58,9 +58,9 @@ const StyledCloseIcon = styled(CloseIcon)`
 const BookDescription = (props: Title): React.ReactElement => {
   const {
     name,
-    // publishDate,
+    first_release,
     // genre,
-    ageRestriction,
+    age_restriction,
     cover,
     description,
     authors,
@@ -110,10 +110,10 @@ const BookDescription = (props: Title): React.ReactElement => {
       <DescriptionLayout>
         <StyledTitle variant='h2_1'>{name}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
-          {/* {authors.map((author) => author.name)} */}
+          {authors.map((author) => author.name)}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
-          {/* {`${year} | ${genre} | ${ageRestriction}`} */}
+          {`${first_release} | +${age_restriction}`}
         </StyledInfo>
         <StyledThesis
           variant='h3_3'
@@ -124,17 +124,14 @@ const BookDescription = (props: Title): React.ReactElement => {
           {thesis}
         </StyledThesis>
         <StyledDescription>
-          {/* {description.map((paragraph: string) => (
-            <Text
-              key={paragraph}
-              variant='text'
-              component='p'
-              fontWeight={400}
-              textTransform='none'
-            >
-              {paragraph}
-            </Text>
-          ))} */}
+          <Text
+            variant='text'
+            component='p'
+            fontWeight={400}
+            textTransform='none'
+          >
+            {description}
+          </Text>
         </StyledDescription>
       </DescriptionLayout>
     </StyledWrapper>

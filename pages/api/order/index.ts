@@ -56,10 +56,8 @@ async function getOrder(
   // .eq('cart_id', cartID)
 
   if (error) {
-    console.error(error);
     return error;
   } else {
-    data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -76,7 +74,6 @@ async function addOrder(
     console.error(error);
     return error;
   } else {
-    // data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -93,7 +90,6 @@ async function addOrderItems(
     console.error(error);
     return error;
   } else {
-    // data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -112,8 +108,6 @@ async function makeOrderPaid(
     console.error(error);
     return error;
   } else {
-    data && console.log('data is ...', JSON.stringify(data, null, 2));
-
     if (data.length > 0) {
       const paidOrderData = await supabaseService
         .from('Orders')
@@ -125,7 +119,6 @@ async function makeOrderPaid(
         console.error(paidOrderData.error);
         return paidOrderData.error;
       } else {
-        console.log(JSON.stringify(paidOrderData.data, null, 2));
         return paidOrderData.data;
       }
     } else {
@@ -140,10 +133,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const body = req.body;
-  console.log('body is', body);
 
   // const cartID: string = body.id ? body.id : '';
-  // console.log('id is', cartID);
 
   let order: OrdersType[] | PostgrestError;
   let singleOrder: OrdersType | PostgrestError;
@@ -182,12 +173,6 @@ export default async function handler(
   body.oper == 'success' &&
     ((orderID = body.orderID),
     (sum = body.sum),
-    console.log(
-      ' ... successful payment ... orderID:',
-      orderID,
-      ', summ: ',
-      sum
-    ),
     makeOrderPaid(orderID),
     res.status(200).json({ order: orderID, sum: sum }));
 }

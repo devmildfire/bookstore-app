@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { ClassNameProps } from '@/types/className';
-import { useGetGiftsQuery } from '@/models/gifts';
+import gifts from '@/mocks/gifts';
 import GiftCard from './GiftCard';
 import { StyledList } from './styles';
 
 const GiftsList: React.FC<ClassNameProps> = (props) => {
-  const { className, } = props;
-  const { data: gifts = [], } = useGetGiftsQuery(undefined);
+  const { className } = props;
 
   return (
     <StyledList className={className}>

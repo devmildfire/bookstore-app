@@ -25,8 +25,6 @@ export class CartStore {
   }
 
   get price() {
-    console.log('Computing cart price from store...');
-
     let price = 0;
 
     this.cart.forEach((item) => {
@@ -40,29 +38,23 @@ export class CartStore {
 
   setCartID = () => {
     this.cartID = setOrGetCartCookie()!.toString();
-    console.log('getting cartID from coockie')
-  } 
+  };
 
   setCart = async (cartID: string) => {
     this.cart = await getCart(cartID);
-    console.log('setting new cart in MobX store');
   };
 
   get hasPhysicalGoods() {
-    console.log('Computing if cart has physical goods from store...');
-
     let hasPhysicalGoods = false;
 
     this.cart.forEach((item) => {
       if (item.category === 'Book2.0' || item.category === 'PrintBook') {
-        hasPhysicalGoods = true 
+        hasPhysicalGoods = true;
       }
     });
 
     return hasPhysicalGoods;
   }
-
-
 }
 
 export const cartStore = new CartStore();

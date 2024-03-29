@@ -18,7 +18,7 @@ import BookIcon from '@/assets/icons/book.svg';
 import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
 import breakPoints from '@/utils/breakPoints';
-import { BookTableTypesTuple } from '@/models/books/types';
+import { BookTableTypesEnum } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
@@ -27,7 +27,7 @@ import { setOrGetCartCookie } from '@/utils/cardID';
 import { postData } from '@/utils/postData';
 import { CartItemType } from 'pages/api/cart';
 
-const modalIconLookup: Record<BookTableTypesTuple[number], ReactNode> = {
+const modalIconLookup: Record<BookTableTypesEnum[number], ReactNode> = {
   Audiobooks: <AudioIcon />,
   CardBooks: <BookTwoIcon />,
   PrintedBooks: <BookIcon />,
@@ -40,7 +40,7 @@ interface BookModalState {
   price: number[];
   discount: number[];
   author: string;
-  types: BookTableTypesTuple[number][];
+  types: BookTableTypesEnum[number][];
 }
 
 interface BookModalProps extends BookModalState {
@@ -439,8 +439,6 @@ function BookModal(props: BookModalProps) {
   initialCopiesArray[0] = 1;
   const [copies, setCopies] = useState<number[]>(initialCopiesArray);
 
-  console.log(props);
-
   const createCartObjects = ({
     cover,
     name,
@@ -485,8 +483,6 @@ function BookModal(props: BookModalProps) {
       </ModalTitleWrapper>
       <Buttons>
         {types.map((type, index) => {
-          console.log(type, index);
-
           if (type !== null) {
             return (
               <Edition key={type}>
@@ -522,7 +518,6 @@ function BookModal(props: BookModalProps) {
         <AddToCartButton
           variant='outlined'
           onClick={() => {
-            // console.log('added to the cart', createCartObjects(props));
             addMultipleItemsToCart();
             closeFunc();
           }}

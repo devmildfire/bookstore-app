@@ -26,7 +26,7 @@ export const API = {
       .returns<Title[]>();
   },
 
-  getTitlebySlug: (slug: string) => {
+  getTitleBySlug: (slug: string) => {
     return supabase
       .from('Titles')
       .select(
@@ -47,6 +47,6 @@ export const API = {
       `
       )
       .eq('slug', slug)
-      .returns<Title>();
+      .returns<Title[]>();
   },
 };

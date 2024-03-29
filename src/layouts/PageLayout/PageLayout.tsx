@@ -8,12 +8,16 @@ import { PropsWithChildren } from 'react';
 
 export interface PageLayoutProps {
   readonly headTitle?: string;
+  readonly withHeader?: boolean;
+  readonly withFooter?: boolean;
 }
 
 const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
   const {
     children,
     headTitle = 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
+    withHeader = true,
+    withFooter = true,
   } = props;
   return (
     <>
@@ -21,9 +25,11 @@ const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
         <title>{headTitle}</title>
       </Head>
       <StyledWrapper>
-        <Header />
-        <StyledContent>{children}</StyledContent>
-        <Footer />
+        {withHeader && <Header />}
+        {/* <StyledContent> */}
+        {children}
+        {/* </StyledContent> */}
+        {withFooter && <Footer />}
       </StyledWrapper>
     </>
   );

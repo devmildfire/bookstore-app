@@ -30,7 +30,6 @@ const DonateForm = (): React.ReactElement => {
   const [wipe, setWipe] = useState(false);
 
   const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
-    console.log(data);
     setWipe(false);
   };
 

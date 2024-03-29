@@ -3,6 +3,7 @@ import HallIcon from '@/assets/images/HAL9000_iconic_eye.svg';
 import HalLogo from '@/assets/images/HALLOGO.svg';
 import Button from '@/components/Common/Button';
 import { Text } from '@/components/Common/Text/Text';
+import PageLayout from '@/layouts/PageLayout';
 import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 
@@ -80,23 +81,25 @@ const StyledButton = styled(Button)`
 
 const Hall = () => {
   return (
-    <HallDiv>
-      {/* <HallIcon as={Hal9000} /> */}
-      <HallIconStyled />
-      <HalLogoStyled />
-      <Text variant='h2_1_HAL' align='center'>
-        «Прости, Дэйв, боюсь,
-        {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
-      </Text>
-      <Text variant='h2_1_HAL' align='center'>
-        я не могу этого сделать»
-        {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
-      </Text>
-      <StyledButton className='backButton' href='/' variant='wide'>
-        {' '}
-        Вернуться на главную{' '}
-      </StyledButton>
-    </HallDiv>
+    <PageLayout headTitle='Страница не найдена'>
+      <HallDiv>
+        {/* <HallIcon as={Hal9000} /> */}
+        <HallIconStyled />
+        <HalLogoStyled />
+        <Text variant='h2_1_HAL' align='center'>
+          «Прости, Дэйв, боюсь,
+          {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
+        </Text>
+        <Text variant='h2_1_HAL' align='center'>
+          я не могу этого сделать»
+          {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
+        </Text>
+        <StyledButton className='backButton' href='/' variant='wide'>
+          {' '}
+          Вернуться на главную{' '}
+        </StyledButton>
+      </HallDiv>
+    </PageLayout>
   );
 };
 

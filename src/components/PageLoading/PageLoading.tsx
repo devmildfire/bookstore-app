@@ -1,13 +1,17 @@
 import * as React from 'react';
 import useScrollLock from '@/hooks/useScrollLock';
-import LoadingIndicator from '../Common/LoadingIndicator';
+import BookWorm from '../Common/BookWormLoader';
 import Overlay from '../Common/Overlay';
 
-const PageLoading: React.FC = () => {
+type Props = {
+  show: boolean;
+};
+
+const PageLoading: React.FC<Props> = ({ show }) => {
   useScrollLock(true);
   return (
-    <Overlay>
-      <LoadingIndicator />
+    <Overlay show={show}>
+      <BookWorm variant='red' size='180px' />
     </Overlay>
   );
 };
