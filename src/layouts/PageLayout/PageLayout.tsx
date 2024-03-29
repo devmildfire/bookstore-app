@@ -3,13 +3,15 @@ import * as React from 'react';
 import Head from 'next/head';
 import Header from '@/components/PageLayout/Header';
 import Footer from '@/components/PageLayout/Footer';
-import { StyledContent, StyledWrapper } from './styles';
+import { StyledWrapper } from './styles';
 import { PropsWithChildren } from 'react';
+import { useRouter } from 'next/router';
 
 export interface PageLayoutProps {
   readonly headTitle?: string;
   readonly withHeader?: boolean;
   readonly withFooter?: boolean;
+  readonly shouldBlacken?: boolean;
 }
 
 const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
@@ -18,17 +20,25 @@ const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
     headTitle = 'ЧТИВО | Независимое издательство современной художественной литературы — официальный сайт',
     withHeader = true,
     withFooter = true,
+    shouldBlacken = false,
   } = props;
+  const router = useRouter();
   return (
     <>
       <Head>
         <title>{headTitle}</title>
       </Head>
       <StyledWrapper>
-        {withHeader && <Header />}
-        {/* <StyledContent> */}
+        {withHeader && (
+          <Header
+            backgroundColor={
+              shouldBlacken && router.pathname === '/books'
+                ? '#050505'
+                : 'var(--main-black)'
+            }
+          />
+        )}
         {children}
-        {/* </StyledContent> */}
         {withFooter && <Footer />}
       </StyledWrapper>
     </>

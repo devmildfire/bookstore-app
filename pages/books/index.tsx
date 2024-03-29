@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { InferGetStaticPropsType } from 'next';
 import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
@@ -14,6 +14,29 @@ const Oferta = styled.div`
   white-space: pre-wrap;
   text-align: left;
 `;
+
+function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
+  const [isIntersecting, setIntersecting] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const element = ref.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIntersecting(entry.isIntersecting);
+      },
+      {
+        rootMargin,
+      }
+    );
+    observer.observe(element);
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [isIntersecting, ref, ref.current, rootMargin]);
+
+  return isIntersecting;
+}
 
 export const getServerSideProps = async () => {
   const { data, error } = await API.getTitles();
@@ -52,10 +75,13 @@ type BooksPageProps = {
 } & InferGetStaticPropsType<typeof getServerSideProps>;
 
 function BooksPage({ forwardedRef, titles }: BooksPageProps) {
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const isSliderOnScreen = useOnScreen(carouselRef);
+
   return (
-    <PageLayout headTitle='Главная'>
+    <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
       <Carousel
-        forwardedRef={forwardedRef}
+        forwardedRef={carouselRef}
         slides={[0, 1, 2]}
         options={{ dragThreshold: 1, duration: 25 }}
       />

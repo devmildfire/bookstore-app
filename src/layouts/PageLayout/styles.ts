@@ -5,6 +5,7 @@ import breakPoints from '@/utils/breakPoints';
 export const StyledWrapper = styled.div`
   /* display: grid; */
   /* gap: 100px; */
+  padding-top: var(--header-height);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,12 +18,4 @@ export const StyledWrapper = styled.div`
   @media ${breakPoints.sm} {
     gap: 0px;
   }
-`;
-
-export const StyledContent = styled.div`
-  display: grid;
-  gap: 120px;
-
-  width: 100%;
-  min-height: 100vh;
 `;
