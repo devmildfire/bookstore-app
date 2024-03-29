@@ -489,9 +489,9 @@ export interface Database {
           cart_id: string | null
           created_at: string
           email: string | null
-          phone: string | null
-          name: string | null
           id: number
+          name: string | null
+          phone: string | null
           status: string | null
           summ: number | null
         }
@@ -500,9 +500,9 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
-          phone?: string | null
-          name?: string | null
           id?: number
+          name?: string | null
+          phone?: string | null
           status?: string | null
           summ?: number | null
         }
@@ -511,9 +511,9 @@ export interface Database {
           cart_id?: string | null
           created_at?: string
           email?: string | null
-          phone?: string | null
-          name?: string | null
           id?: number
+          name?: string | null
+          phone?: string | null
           status?: string | null
           summ?: number | null
         }
@@ -765,6 +765,7 @@ export interface Database {
           age_restriction: number | null
           cover: string | null
           description: string | null
+          first_release: string | null
           id: number
           is_featured: boolean | null
           name: string
@@ -776,6 +777,7 @@ export interface Database {
           age_restriction?: number | null
           cover?: string | null
           description?: string | null
+          first_release?: string | null
           id?: number
           is_featured?: boolean | null
           name?: string
@@ -787,6 +789,7 @@ export interface Database {
           age_restriction?: number | null
           cover?: string | null
           description?: string | null
+          first_release?: string | null
           id?: number
           is_featured?: boolean | null
           name?: string

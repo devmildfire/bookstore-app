@@ -1,4 +1,7 @@
 'use server';
+import { revalidatePath } from "next/cache";
+
+
 //  use this file for storing server actions
 
 //  this was a server action to check if a user has admin status
@@ -12,4 +15,9 @@
 //   return id === adminID;
 // };
 
-export {};
+
+export default async function revalidateLink(path: string) {
+    revalidatePath(path);
+}
+
+export {revalidateLink};
