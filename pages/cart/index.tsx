@@ -163,17 +163,17 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
 
       <StyledPromoMessage className='sdfsdfsdf' />
 
-      <ReturnButton onClick={handleClick}>
-        <BackIcon />
-        Вернуться назад
-      </ReturnButton>
-
       <Payment
         setStage={setStage}
         quantity={productQuantity}
         price={cartStore.price}
         cart={cartStore.cart}
       />
+
+      <ReturnButton onClick={handleClick}>
+        <BackIcon />
+        Вернуться назад
+      </ReturnButton>
     </>
   );
 }

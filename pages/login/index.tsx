@@ -1,0 +1,39 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { supabase } from 'api/supabase-client';
+import { Session } from '@supabase/gotrue-js/src/lib/types';
+import { useRouter } from 'next/router';
+import { LogOut } from '@/components/LoginPage/Logout';
+import { LoginForm } from '@/components/LoginPage/LoginForm';
+
+const Login = (): React.ReactElement => {
+  const [session, setSession] = useState<Session>();
+  const router = useRouter();
+
+  const get_session = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error(error);
+      } else {
+        data.session && setSession(data.session);
+        data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    get_session();
+  }, []);
+
+  return (
+    <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center'>
+      {session ? <LogOut session={session} /> : <LoginForm />}
+    </div>
+  );
+};
+
+export default Login;

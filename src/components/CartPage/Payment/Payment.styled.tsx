@@ -67,7 +67,7 @@ export const Container = styled.div`
   width: 100%;
   font-size: 16px;
   display: flex;
-  margin: 2vw 0px;
+  margin: 0 0 1vw 0px;
   justify-content: space-between;
 
   > div {
@@ -116,6 +116,10 @@ export const Subtitle = styled.h2`
   @media (min-width: 768px) {
     font-size: 20px;
     margin-bottom: 20px;
+  }
+
+  @media (max-width: 744px) {
+    text-align: center;
   }
 `;
 
