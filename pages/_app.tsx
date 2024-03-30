@@ -10,11 +10,22 @@ import '@/styles/globals.css';
 
 import ModalProvider from '@/components/Modal';
 import { setOrGetCartCookie } from '@/utils/cardID';
+import { ThemeProvider } from '@/components/providers';
+import { Toaster } from '@/components/ui/toast';
 
-const MyApp: NextPage<AppProps> = (props) => {
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
   const { value, toggleOff, toggleOn } = useToggle();
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -37,10 +48,11 @@ const MyApp: NextPage<AppProps> = (props) => {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          <>
+          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
             <PageLoading show={value} />
-            <Component {...pageProps} />
-          </>
+            {getLayout(<Component {...pageProps} />)}
+            <Toaster />
+          </ThemeProvider>
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>

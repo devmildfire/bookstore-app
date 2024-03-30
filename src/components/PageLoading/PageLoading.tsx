@@ -8,7 +8,7 @@ type Props = {
 };
 
 const PageLoading: React.FC<Props> = ({ show }) => {
-  useScrollLock(true);
+  useScrollLock(show);
   return (
     <Overlay show={show}>
       <BookWorm variant='red' size='180px' />
