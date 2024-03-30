@@ -109,6 +109,8 @@ const formSchema = z.object({
 });
 
 const formEditSchema = z.object({
+  authors: z.array(authorsOptionSchema).min(1),
+
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -164,18 +166,6 @@ function TitleForm(props: TitleFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    form.reset({
-      description: '',
-      thesis: '',
-      age_restriction: 0,
-      cover: undefined,
-      name: '',
-      authors: [],
-      trailer: undefined,
-      first_release: undefined,
-      is_featured: false,
-    });
-
     emptyVideoInput();
     emptyCoverInput();
 
@@ -223,6 +213,9 @@ function TitleForm(props: TitleFormProps) {
         age_restriction: values.age_restriction,
         cover: publicUrl,
         description: values.description,
+        first_release: values.first_release
+          ? values.first_release.toUTCString()
+          : null,
         is_featured: values.is_featured,
         name: values.name,
         slug: slugify(values.name),
@@ -254,6 +247,18 @@ function TitleForm(props: TitleFormProps) {
       authorsData.data &&
         window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
     }
+
+    form.reset({
+      description: '',
+      thesis: '',
+      age_restriction: 0,
+      cover: undefined,
+      name: '',
+      authors: [],
+      trailer: undefined,
+      first_release: undefined,
+      is_featured: false,
+    });
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -517,9 +522,21 @@ function TitleForm(props: TitleFormProps) {
   );
 }
 
-function TitleEditForm(title: TitleType) {
-  //   const [newPhoto, setNewPhoto] = useState<string>();
-  //   const photoImage = useRef<HTMLImageElement | null>(null);
+type TitleEditFormProps = {
+  title: TitleType;
+  authors: AuthorsType[];
+};
+
+function TitleEditForm({ title, authors }: TitleEditFormProps) {
+  const [newPhoto, setNewPhoto] = useState<string>();
+  const photoImage = useRef<HTMLImageElement | null>(null);
+
+  const OPTIONS: Option[] = authors.map((author) => ({
+    label: author.name,
+    value: author.id.toString(),
+    disable: false,
+  }));
+
   async function getDataFromReq() {
     const { data } = await supabase
       .from('Titles')
@@ -527,15 +544,35 @@ function TitleEditForm(title: TitleType) {
       .eq('id', title.id)
       .single();
     data && console.log('data from req is...', data);
+
     data &&
       (data.description && form.setValue('description', data.description),
-      data.thesis && form.setValue('thesis', data.thesis));
-    //   data.photo && setNewPhoto(data.photo),
-    // data.bio && form.setValue('bio', data.bio),
-    // data.city && form.setValue('city', data.city),
-    // data.phrase && form.setValue('phrase', data.phrase),
-    // data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
-    // data.death_date && form.setValue('deathDate', new Date(data.death_date))
+      data.thesis && form.setValue('thesis', data.thesis),
+      data.age_restriction
+        ? form.setValue('age_restriction', data.age_restriction)
+        : form.setValue('age_restriction', 0),
+      // data.cover && setNewPhoto(data.cover),
+      console.log('first release at...', data.first_release),
+      data.first_release &&
+        form.setValue('first_release', new Date(data.first_release)),
+      data.is_featured !== null &&
+        form.setValue('is_featured', data.is_featured));
+
+    const authorsData = await supabase
+      .from('Titles_Authors')
+      .select('*, Authors(*)')
+      .eq('title_id', title.id);
+
+    if (authorsData.data) {
+      console.log('authors data from reference table... ', authorsData.data);
+
+      const authorsArray = authorsData.data.map((author) => ({
+        label: author.Authors ? author.Authors.name : 'emptyLabel',
+        value: author.Authors ? author.Authors.id.toString() : 'emptyLabel',
+      }));
+
+      form.setValue('authors', authorsArray);
+    }
   }
   useEffect(() => {
     getDataFromReq();
@@ -550,6 +587,7 @@ function TitleEditForm(title: TitleType) {
         ? new Date(title.first_release)
         : undefined,
       is_featured: title.is_featured !== null ? title.is_featured : undefined,
+      age_restriction: title.age_restriction || 0,
     },
   });
 
@@ -626,16 +664,16 @@ function TitleEditForm(title: TitleType) {
     //     data && router.reload();
   }
 
-  //   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-  //     const imageInput = event.target;
-  //     const pImage = photoImage.current;
-  //     if (imageInput.files) {
-  //       const file = imageInput.files[0];
-  //       if (file) {
-  //         pImage && (pImage.src = URL.createObjectURL(file));
-  //       }
-  //     }
-  //   }
+  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const imageInput = event.target;
+    const pImage = photoImage.current;
+    if (imageInput.files) {
+      const file = imageInput.files[0];
+      if (file) {
+        pImage && (pImage.src = URL.createObjectURL(file));
+      }
+    }
+  }
 
   return (
     <div className=''>
@@ -644,6 +682,30 @@ function TitleEditForm(title: TitleType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='authors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Authors</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='description'
@@ -682,6 +744,81 @@ function TitleEditForm(title: TitleType) {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name='first_release'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>first release</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('first_release', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='age_restriction'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Age Restriction</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='cover'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Author Photo</FormLabel>
+                <FormControl>
+                  <Input
+                    aria-label={'author photo'}
+                    id='photo'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onImageInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <img
+                  className='max-w-72'
+                  ref={photoImage}
+                  src={newPhoto || title.cover || ''}
+                  alt='photo image'
+                />
+              </FormItem>
+            )}
+          />
+
           <Button
             type='submit'
             variant={'outline'}
@@ -697,111 +834,3 @@ function TitleEditForm(title: TitleType) {
 }
 
 export { TitleForm, TitleEditForm };
-
-//           <FormField
-//             control={form.control}
-//             name='birthDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>birth date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     onNull={() => {
-//                       form.setValue('birthDate', null);
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='deathDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>death date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     showClearButton={true}
-//                     onNull={() => {
-//                       form.setValue('deathDate', null);
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='city'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author City</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author city'}
-//                     placeholder='default city'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='photo'
-//             render={({ field: { value, onChange, ...fieldProps } }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Photo</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author photo'}
-//                     id='photo'
-//                     type='file'
-//                     {...fieldProps}
-//                     onChange={(event) => {
-//                       onImageInputChange(event);
-//                       return onChange(
-//                         event.target.files && event.target.files[0]
-//                       );
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//                 <img
-//                   className='max-w-72'
-//                   ref={photoImage}
-//                   src={newPhoto || author.photo || ''}
-//                   alt='photo image'
-//                 />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='phrase'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Phrase</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author phrase'}
-//                     placeholder='some profound saying'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />

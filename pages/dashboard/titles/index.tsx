@@ -62,7 +62,7 @@ const Titleslist = () => {
           >
             <AccordionTrigger> {title.name} </AccordionTrigger>
             <AccordionContent>
-              <TitleEditForm {...title} {...authors} />
+              <TitleEditForm title={title} authors={[...authors!]} />
             </AccordionContent>
           </AccordionItem>
         ))}
