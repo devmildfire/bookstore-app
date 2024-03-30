@@ -17,9 +17,12 @@ import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { TitleType } from 'pages/dashboard/titles';
+import { AuthorsType } from 'pages/dashboard/authors';
+
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 
 const MAX_VIDEO_FILE_SIZE = 8 * 1024 * 1024; //  8MB
 const ACCEPTED_VIDEO_TYPES = [
@@ -40,6 +43,12 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/png',
   'image/webp',
 ];
+
+const authorsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 const videoSchema = z
   .instanceof(File, { message: 'Image is required.' })
@@ -77,6 +86,7 @@ const formSchema = z.object({
   name: z.string().min(3, {
     message: 'Title name must be at least 3 characters long.',
   }),
+  authors: z.array(authorsOptionSchema).min(1),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -120,6 +130,7 @@ const formEditSchema = z.object({
 });
 
 type TitleFormProps = {
+  authors: AuthorsType[];
   defaultName: string;
   defaultThesis: string;
   defaultDescription: string;
@@ -131,6 +142,12 @@ type TitleFormProps = {
 function TitleForm(props: TitleFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
+
+  const OPTIONS: Option[] = props.authors.map((author) => ({
+    label: author.name,
+    value: author.id.toString(),
+    disable: false,
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -146,6 +163,21 @@ function TitleForm(props: TitleFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+
+    form.reset({
+      description: '',
+      thesis: '',
+      age_restriction: 0,
+      cover: undefined,
+      name: '',
+      authors: [],
+      trailer: undefined,
+      first_release: undefined,
+      is_featured: false,
+    });
+
+    emptyVideoInput();
+    emptyCoverInput();
 
     const coverExtention = values.cover.name.split('.').pop();
 
@@ -202,6 +234,26 @@ function TitleForm(props: TitleFormProps) {
 
     error && window.alert(error.message);
     data && window.alert(`${data.name} успешно добавлен к тайтлам`);
+
+    if (data) {
+      const titlesAuthorsArray = values.authors.map((author) => {
+        const authorID = parseInt(author.value);
+        const titleID = data?.id;
+
+        return {
+          author_id: authorID,
+          title_id: titleID,
+        };
+      });
+
+      const authorsData = await supabase
+        .from('Titles_Authors')
+        .insert(titlesAuthorsArray)
+        .select('*');
+      authorsData.error && window.alert(authorsData.error.message);
+      authorsData.data &&
+        window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
+    }
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -228,6 +280,19 @@ function TitleForm(props: TitleFormProps) {
     }
   }
 
+  const emptyVideoInput = () => {
+    form.resetField('trailer');
+    const videoInput = document.getElementById('video') as HTMLInputElement;
+    videoInput.value = '';
+  };
+
+  const emptyCoverInput = () => {
+    form.resetField('cover');
+    const coverInput = document.getElementById('photo') as HTMLInputElement;
+    coverInput.value = '';
+    photoImage.current && (photoImage.current.src = '');
+  };
+
   return (
     <div className=''>
       <Form {...form}>
@@ -243,6 +308,30 @@ function TitleForm(props: TitleFormProps) {
                 <FormLabel>Title Name</FormLabel>
                 <FormControl>
                   <Input placeholder='someTitle' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='authors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Authors</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -375,11 +464,7 @@ function TitleForm(props: TitleFormProps) {
                     type='button'
                     variant={'outline'}
                     onClick={() => {
-                      form.resetField('trailer');
-                      const videoInput = document.getElementById(
-                        'video'
-                      ) as HTMLInputElement;
-                      videoInput.value = '';
+                      emptyVideoInput();
                     }}
                   >
                     clear

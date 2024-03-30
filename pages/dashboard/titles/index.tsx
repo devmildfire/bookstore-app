@@ -14,11 +14,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { TitleEditForm, TitleForm } from '@/components/DashBoardPage/TitleForm';
+import { AuthorsType } from '../authors';
 
 export type TitleType = Database['public']['Tables']['Titles']['Row'];
 
 const Titleslist = () => {
   const [titles, setTitles] = useState<TitleType[]>();
+  const [authors, setAuthors] = useState<AuthorsType[]>();
 
   async function getTitles() {
     const { data, error } = await supabase.from('Titles').select('*');
@@ -29,8 +31,18 @@ const Titleslist = () => {
     data && setTitles(data);
   }
 
+  async function getAuthors() {
+    const { data, error } = await supabase.from('Authors').select('*');
+
+    data && console.log('Authors data ... ', data);
+    error && alert(error);
+
+    data && setAuthors(data);
+  }
+
   useEffect(() => {
     getTitles();
+    getAuthors();
   }, []);
 
   if (!titles) {
@@ -50,7 +62,7 @@ const Titleslist = () => {
           >
             <AccordionTrigger> {title.name} </AccordionTrigger>
             <AccordionContent>
-              <TitleEditForm {...title} />
+              <TitleEditForm {...title} {...authors} />
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -69,6 +81,8 @@ const Titleslist = () => {
           </AccordionTrigger>
           <AccordionContent>
             <TitleForm
+              authors={[...authors!]}
+              // {...authors}
               defaultName='Default Title'
               defaultThesis='Default Thesis'
               defaultDescription='Default Description'
