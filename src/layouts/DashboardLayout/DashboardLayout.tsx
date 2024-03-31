@@ -35,6 +35,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { Sidebar } from './components';
+import { NextPageWithLayout } from '@/types/page';
+import { withLayout } from '../with-layout';
 
 type Props = {
   children: React.ReactNode;
@@ -158,5 +160,7 @@ const DashboardLayout: React.FC<Props> = ({ children }) => {
     </div>
   );
 };
+
+export const withDashboardLayout = withLayout(DashboardLayout);
 
 export default React.memo(DashboardLayout);

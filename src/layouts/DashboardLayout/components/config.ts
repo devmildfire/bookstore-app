@@ -5,7 +5,6 @@ import {
   Settings,
   ShoppingCart,
   Users2,
-  LogOut,
 } from 'lucide-react';
 
 export const sidebarConfig = [

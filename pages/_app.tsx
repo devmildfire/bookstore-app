@@ -12,14 +12,7 @@ import ModalProvider from '@/components/Modal';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { ThemeProvider } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
-
-export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: React.ReactElement) => React.ReactNode;
-};
-
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
+import { AppPropsWithLayout } from '@/types/page';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());

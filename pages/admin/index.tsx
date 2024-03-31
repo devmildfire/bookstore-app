@@ -2,16 +2,11 @@ import * as React from 'react';
 
 import { Products } from '@/components/Dashboard';
 
-import { DashboardLayout } from '@/layouts';
-
-import type { NextPageWithLayout } from '../_app';
+import { withDashboardLayout } from '@/layouts';
+import { NextPageWithLayout } from '@/types/page';
 
 const Admin: NextPageWithLayout = () => {
   return <Products />;
 };
 
-Admin.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
-
-export default Admin;
+export default withDashboardLayout(Admin);

@@ -1,14 +1,10 @@
 import * as React from 'react';
 import { AddProduct } from '@/components/Dashboard';
-import { DashboardLayout } from '@/layouts';
-import type { NextPageWithLayout } from '../../_app';
+import { withDashboardLayout } from '@/layouts';
+import { NextPageWithLayout } from '@/types/page';
 
 const Products: NextPageWithLayout = () => {
   return <AddProduct />;
 };
 
-Products.getLayout = function getLayout(page) {
-  return <DashboardLayout>{page}</DashboardLayout>;
-};
-
-export default Products;
+export default withDashboardLayout(Products);
