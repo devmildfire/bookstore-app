@@ -631,75 +631,126 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
-    //     let imagePath = null;
-    //     let publicUrl = null;
-    //     if (author.photo && values.photo) {
-    //       console.log('current author photo ... ', author.photo);
-    //       const imageNameString = author.photo.split('/');
-    //       console.log('image Name String ... ', imageNameString);
-    //       console.log('selected photo file ... ', values.photo);
-    //       const photoRemove = await supabase.storage
-    //         .from('authors')
-    //         .remove([imageNameString.slice(-1)[0]]);
-    //       photoRemove.error &&
-    //         console.log('photo Remove error ... ', photoRemove.error.message);
-    //       photoRemove.data &&
-    //         console.log('photo Remove data... ', photoRemove.data);
-    //       const fileName = values.photo?.name
-    //         ? values.photo?.name
-    //         : 'failNameString';
-    //       console.log('photo is...', values.photo);
-    //       console.log('photo name is...', values.photo?.name);
-    //       const photoUdate = await supabase.storage
-    //         .from('authors')
-    //         .upload(`author_${fileName}`, values.photo, {
-    //           cacheControl: '3600',
-    //           upsert: true,
-    //         });
-    //       photoUdate.error &&
-    //         console.log('photo update error ... ', photoUdate.error.message);
-    //       imagePath = photoUdate.data?.path;
-    //       console.log('image path ... ', imagePath);
-    //     }
-    //     if (!author.photo && values.photo) {
-    //       const photoUpload = await supabase.storage
-    //         .from('authors')
-    //         .upload(`author_${values.photo.name}`, values.photo, {
-    //           cacheControl: '3600',
-    //           upsert: true,
-    //         });
-    //       imagePath = photoUpload.data?.path;
-    //     }
-    //     if (author.photo && !values.photo) {
-    //       imagePath = author.photo;
-    //       publicUrl = author.photo;
-    //     }
-    //     !publicUrl &&
-    //       imagePath &&
-    //       (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-    //         .data.publicUrl);
-    //     console.log('public URL is ...', publicUrl);
-    //     console.log('birth date is ...', values.birthDate);
-    //     console.log(
-    //       'birth date to base is ...',
-    //       values.birthDate ? values.birthDate.toUTCString() : null
-    //     );
-    //     const { data, error } = await supabase
-    //       .from('Authors')
-    //       .update({
-    //         birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-    //         death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-    //         phrase: values.phrase,
-    //         photo: publicUrl,
-    //         city: values.city,
-    //         bio: values.bio,
-    //       })
-    //       .eq('id', author.id)
-    //       .select('*')
-    //       .single();
-    //     error && window.alert(error.message);
-    //     data && window.alert(`автор ${data.name} успешно обновлён`);
-    //     data && router.reload();
+    let imagePath = null;
+    let publicUrl = null;
+
+    let videoPath = null;
+    let publicVideoUrl = null;
+
+    if (title.cover && values.cover) {
+      console.log('current title cover ... ', title.cover);
+      const imageNameString = title.cover.split('/');
+      console.log('image Name String ... ', imageNameString);
+      console.log('selected cover file ... ', values.cover);
+      const photoRemove = await supabase.storage
+        .from('titles')
+        .remove([imageNameString.slice(-1)[0]]);
+      photoRemove.error &&
+        console.log('photo Remove error ... ', photoRemove.error.message);
+      photoRemove.data &&
+        console.log('photo Remove data... ', photoRemove.data);
+      const fileName = values.cover?.name
+        ? values.cover?.name
+        : 'failNameString';
+      console.log('photo is...', values.cover);
+      console.log('photo name is...', values.cover?.name);
+      const photoUdate = await supabase.storage
+        .from('titles')
+        .upload(`title_${fileName}`, values.cover, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      photoUdate.error &&
+        console.log('photo update error ... ', photoUdate.error.message);
+      imagePath = photoUdate.data?.path;
+      console.log('image path ... ', imagePath);
+    }
+
+    if (title.cover && !values.cover) {
+      imagePath = title.cover;
+      publicUrl = title.cover;
+    }
+    !publicUrl &&
+      imagePath &&
+      (publicUrl = supabase.storage.from('titles').getPublicUrl(imagePath)
+        .data.publicUrl);
+    console.log('public URL is ...', publicUrl);
+
+    if (title.trailer && values.trailer) {
+      console.log('current title trailer ... ', title.trailer);
+      const videoNameString = title.trailer.split('/');
+      console.log('video Name String ... ', videoNameString);
+      console.log('selected trailer file ... ', values.trailer);
+      const videoRemove = await supabase.storage
+        .from('trailers')
+        .remove([videoNameString.slice(-1)[0]]);
+      videoRemove.error &&
+        console.log('video Remove error ... ', videoRemove.error.message);
+      videoRemove.data &&
+        console.log('video Remove data... ', videoRemove.data);
+      const fileName = values.trailer?.name
+        ? values.trailer?.name
+        : 'failNameString';
+      console.log('video is...', values.trailer);
+      console.log('video name is...', values.trailer?.name);
+      const videoUdate = await supabase.storage
+        .from('trailers')
+        .upload(`trailer_${fileName}`, values.trailer, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      videoPath = videoUdate.data?.path;
+      console.log('video path ... ', videoPath);
+    }
+
+    if (!title.trailer && values.trailer) {
+      const fileName = values.trailer?.name
+        ? values.trailer?.name
+        : 'failNameString';
+      console.log('video is...', values.trailer);
+      console.log('video name is...', values.trailer?.name);
+      const videoUdate = await supabase.storage
+        .from('trailers')
+        .upload(`trailer_${fileName}`, values.trailer, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      videoPath = videoUdate.data?.path;
+      console.log('video path ... ', videoPath);
+    }
+
+    if (title.trailer && !values.trailer) {
+      videoPath = title.trailer;
+      publicVideoUrl = title.trailer;
+    }
+
+    !publicVideoUrl &&
+      videoPath &&
+      (publicVideoUrl = supabase.storage
+        .from('trailers')
+        .getPublicUrl(videoPath).data.publicUrl);
+    console.log('public video URL is ...', publicVideoUrl);
+
+    const { data, error } = await supabase
+      .from('Titles')
+      .update({
+        age_restriction:
+          values.age_restriction !== null ? values.age_restriction : 0,
+        description: values.description && values.description,
+        thesis: values.thesis && values.thesis,
+        is_featured: values.is_featured !== null && values.is_featured,
+        first_release: values.first_release
+          ? values.first_release.toUTCString()
+          : null,
+        cover: publicUrl,
+        trailer: publicVideoUrl,
+      })
+      .eq('id', title.id)
+      .select('*')
+      .single();
+    error && window.alert(error.message);
+    data && window.alert(`тайтл ${data.name} успешно обновлён`);
+    data && router.reload();
   }
 
   return (
@@ -839,7 +890,6 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                 <img
                   className='max-w-72'
                   ref={photoImage}
-                  // src={newPhoto || title.cover || ''}
                   src={title.cover || ''}
                   alt='photo image'
                 />
@@ -887,11 +937,6 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                 <VideoContainer hasVideo={hasVideo}>
                   <video
                     className='max-w-72'
-                    // className={
-                    //   trailerVideo.current && trailerVideo.current.src !== ''
-                    //     ? 'max-w-72'
-                    //     : 'max-w-72 hidden'
-                    // }
                     ref={trailerVideo}
                     controls
                     // src=''
