@@ -9,13 +9,21 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
+import { UseFormReturn, useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  Children,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from 'react';
 import { TitleType } from 'pages/dashboard/titles';
 import { AuthorsType } from 'pages/dashboard/authors';
 
@@ -141,9 +149,62 @@ type TitleFormProps = {
   defaultIsFeatured: boolean;
 };
 
+async function onVideoInputChange(
+  event: ChangeEvent<HTMLInputElement>,
+  videoRef: RefObject<HTMLVideoElement>
+) {
+  const videoInput = event.target;
+  const tVideo = videoRef.current;
+
+  if (videoInput.files) {
+    const file = videoInput.files[0];
+    if (file) {
+      tVideo && (tVideo.src = URL.createObjectURL(file));
+    }
+  }
+}
+
+const emptyVideoInput = (
+  videoInputRef: RefObject<HTMLInputElement>,
+  videoRef: RefObject<HTMLVideoElement>
+) => {
+  const videoInput = videoInputRef.current;
+  videoInput && (videoInput.value = '');
+
+  const video = videoRef.current;
+  video && (video.src = '');
+};
+
+async function onImageInputChange(
+  event: ChangeEvent<HTMLInputElement>,
+  photoRef: RefObject<HTMLImageElement>
+) {
+  const imageInput = event.target;
+  const pImage = photoRef.current;
+
+  if (imageInput.files) {
+    const file = imageInput.files[0];
+    if (file) {
+      pImage && (pImage.src = URL.createObjectURL(file));
+    }
+  }
+}
+
+const emptyCoverInput = (
+  photoInputRef: RefObject<HTMLInputElement>,
+  photoImageRef: RefObject<HTMLImageElement>
+) => {
+  const coverInput = photoInputRef.current;
+  coverInput && (coverInput.value = '');
+  photoImageRef.current && (photoImageRef.current.src = '');
+};
+
 function TitleForm(props: TitleFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
+
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const OPTIONS: Option[] = props.authors.map((author) => ({
     label: author.name,
@@ -166,8 +227,8 @@ function TitleForm(props: TitleFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    emptyVideoInput();
-    emptyCoverInput();
+    emptyVideoInput(videoInputRef, trailerVideo);
+    emptyCoverInput(photoInputRef, photoImage);
 
     const coverExtention = values.cover.name.split('.').pop();
 
@@ -260,43 +321,6 @@ function TitleForm(props: TitleFormProps) {
       is_featured: false,
     });
   }
-
-  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const imageInput = event.target;
-    const pImage = photoImage.current;
-
-    if (imageInput.files) {
-      const file = imageInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
-      }
-    }
-  }
-
-  async function onVideoInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const videoInput = event.target;
-    const tVideo = trailerVideo.current;
-
-    if (videoInput.files) {
-      const file = videoInput.files[0];
-      if (file) {
-        tVideo && (tVideo.src = URL.createObjectURL(file));
-      }
-    }
-  }
-
-  const emptyVideoInput = () => {
-    form.resetField('trailer');
-    const videoInput = document.getElementById('video') as HTMLInputElement;
-    videoInput.value = '';
-  };
-
-  const emptyCoverInput = () => {
-    form.resetField('cover');
-    const coverInput = document.getElementById('photo') as HTMLInputElement;
-    coverInput.value = '';
-    photoImage.current && (photoImage.current.src = '');
-  };
 
   return (
     <div className=''>
@@ -427,7 +451,7 @@ function TitleForm(props: TitleFormProps) {
                     type='file'
                     {...fieldProps}
                     onChange={(event) => {
-                      onImageInputChange(event);
+                      onImageInputChange(event, photoImage);
                       return onChange(
                         event.target.files && event.target.files[0]
                       );
@@ -458,26 +482,26 @@ function TitleForm(props: TitleFormProps) {
                       type='file'
                       {...fieldProps}
                       onChange={(event) => {
-                        onVideoInputChange(event);
+                        onVideoInputChange(event, trailerVideo);
                         return onChange(
                           event.target.files && event.target.files[0]
                         );
                       }}
+                      ref={videoInputRef}
                     />
                   </FormControl>
                   <Button
                     type='button'
                     variant={'outline'}
                     onClick={() => {
-                      emptyVideoInput();
+                      emptyVideoInput(videoInputRef, trailerVideo);
+                      form.setValue('trailer', undefined);
                     }}
                   >
                     clear
                   </Button>
                 </div>
                 <FormMessage />
-
-                {/* `max-w-72  ${value &&}` */}
 
                 <video
                   className={value ? 'max-w-72' : 'max-w-72 hidden'}
@@ -522,14 +546,27 @@ function TitleForm(props: TitleFormProps) {
   );
 }
 
+interface VideoContainerProps {
+  children?: ReactNode;
+  hasVideo: boolean;
+}
+
+function VideoContainer({ children, hasVideo }: VideoContainerProps) {
+  return <div className={hasVideo ? '' : 'hidden'}>{children}</div>;
+}
+
 type TitleEditFormProps = {
   title: TitleType;
   authors: AuthorsType[];
 };
 
 function TitleEditForm({ title, authors }: TitleEditFormProps) {
-  const [newPhoto, setNewPhoto] = useState<string>();
+  // const [newPhoto, setNewPhoto] = useState<string>();
+  const [hasVideo, setHasVideo] = useState(false);
+
   const photoImage = useRef<HTMLImageElement | null>(null);
+  const trailerVideo = useRef<HTMLVideoElement | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const OPTIONS: Option[] = authors.map((author) => ({
     label: author.name,
@@ -556,7 +593,8 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
       data.first_release &&
         form.setValue('first_release', new Date(data.first_release)),
       data.is_featured !== null &&
-        form.setValue('is_featured', data.is_featured));
+        form.setValue('is_featured', data.is_featured),
+      data.trailer && setHasVideo(true));
 
     const authorsData = await supabase
       .from('Titles_Authors')
@@ -662,17 +700,6 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
     //     error && window.alert(error.message);
     //     data && window.alert(`автор ${data.name} успешно обновлён`);
     //     data && router.reload();
-  }
-
-  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const imageInput = event.target;
-    const pImage = photoImage.current;
-    if (imageInput.files) {
-      const file = imageInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
-      }
-    }
   }
 
   return (
@@ -801,7 +828,7 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                     type='file'
                     {...fieldProps}
                     onChange={(event) => {
-                      onImageInputChange(event);
+                      onImageInputChange(event, photoImage);
                       return onChange(
                         event.target.files && event.target.files[0]
                       );
@@ -812,9 +839,84 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                 <img
                   className='max-w-72'
                   ref={photoImage}
-                  src={newPhoto || title.cover || ''}
+                  // src={newPhoto || title.cover || ''}
+                  src={title.cover || ''}
                   alt='photo image'
                 />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='trailer'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Title Trailer</FormLabel>
+                <div className='flex flex-row items-start p-1'>
+                  <FormControl>
+                    <Input
+                      id='video'
+                      type='file'
+                      {...fieldProps}
+                      onChange={(event) => {
+                        onVideoInputChange(event, trailerVideo);
+                        setHasVideo(true);
+
+                        return onChange(
+                          event.target.files && event.target.files[0]
+                        );
+                      }}
+                      ref={videoInputRef}
+                    />
+                  </FormControl>
+                  <Button
+                    type='button'
+                    variant={'outline'}
+                    onClick={() => {
+                      emptyVideoInput(videoInputRef, trailerVideo);
+                      form.setValue('trailer', undefined);
+                      setHasVideo(false);
+                    }}
+                  >
+                    clear
+                  </Button>
+                </div>
+                <FormMessage />
+
+                <VideoContainer hasVideo={hasVideo}>
+                  <video
+                    className='max-w-72'
+                    // className={
+                    //   trailerVideo.current && trailerVideo.current.src !== ''
+                    //     ? 'max-w-72'
+                    //     : 'max-w-72 hidden'
+                    // }
+                    ref={trailerVideo}
+                    controls
+                    // src=''
+                    src={title.trailer || ''}
+                  />
+                </VideoContainer>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_featured'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is featured</FormLabel>
+                </div>
               </FormItem>
             )}
           />
