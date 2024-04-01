@@ -31,6 +31,7 @@ import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { AwardsType } from 'pages/dashboard/awards';
 
 const MAX_VIDEO_FILE_SIZE = 8 * 1024 * 1024; //  8MB
 const ACCEPTED_VIDEO_TYPES = [
@@ -53,6 +54,12 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const authorsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
+
+const awardsOptionSchema = z.object({
   label: z.string(),
   value: z.string(),
   disable: z.boolean().optional(),
@@ -94,6 +101,7 @@ const formSchema = z.object({
   name: z.string().min(3, {
     message: 'Title name must be at least 3 characters long.',
   }),
+  awards: z.array(awardsOptionSchema).optional(),
   authors: z.array(authorsOptionSchema).min(1),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
@@ -118,7 +126,7 @@ const formSchema = z.object({
 
 const formEditSchema = z.object({
   authors: z.array(authorsOptionSchema).min(1),
-
+  awards: z.array(awardsOptionSchema).optional(),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -141,6 +149,7 @@ const formEditSchema = z.object({
 
 type TitleFormProps = {
   authors: AuthorsType[];
+  awards: AwardsType[];
   defaultName: string;
   defaultThesis: string;
   defaultDescription: string;
@@ -209,6 +218,12 @@ function TitleForm(props: TitleFormProps) {
   const OPTIONS: Option[] = props.authors.map((author) => ({
     label: author.name,
     value: author.id.toString(),
+    disable: false,
+  }));
+
+  const AWARDSOPTIONS: Option[] = props.awards.map((award) => ({
+    label: award.title || 'default award title',
+    value: award.id.toString(),
     disable: false,
   }));
 
@@ -300,6 +315,26 @@ function TitleForm(props: TitleFormProps) {
         };
       });
 
+      if (values.awards) {
+        const titlesAwardsArray = values.awards.map((award) => {
+          const awardID = parseInt(award.value);
+          const titleID = data?.id;
+
+          return {
+            award_id: awardID,
+            title_id: titleID,
+          };
+        });
+
+        const awardsData = await supabase
+          .from('Titles_Awards')
+          .insert(titlesAwardsArray)
+          .select('*');
+        awardsData.error && window.alert(awardsData.error.message);
+        awardsData.data &&
+          window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
+      }
+
       const authorsData = await supabase
         .from('Titles_Authors')
         .insert(titlesAuthorsArray)
@@ -316,6 +351,7 @@ function TitleForm(props: TitleFormProps) {
       cover: undefined,
       name: '',
       authors: [],
+      awards: [],
       trailer: undefined,
       first_release: undefined,
       is_featured: false,
@@ -354,6 +390,30 @@ function TitleForm(props: TitleFormProps) {
                     value={field.value}
                     onChange={field.onChange}
                     defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='awards'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Awards</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={AWARDSOPTIONS}
                     placeholder='Select authors for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
@@ -558,9 +618,10 @@ function VideoContainer({ children, hasVideo }: VideoContainerProps) {
 type TitleEditFormProps = {
   title: TitleType;
   authors: AuthorsType[];
+  awards: AwardsType[];
 };
 
-function TitleEditForm({ title, authors }: TitleEditFormProps) {
+function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
   // const [newPhoto, setNewPhoto] = useState<string>();
   const [hasVideo, setHasVideo] = useState(false);
 
@@ -570,12 +631,15 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
 
   const isVideoCleared = useRef(false);
 
-
-
-
   const OPTIONS: Option[] = authors.map((author) => ({
     label: author.name,
     value: author.id.toString(),
+    disable: false,
+  }));
+
+  const AWARDSOPTIONS: Option[] = awards.map((award) => ({
+    label: award.title || 'default award title',
+    value: award.id.toString(),
     disable: false,
   }));
 
@@ -615,6 +679,22 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
       }));
 
       form.setValue('authors', authorsArray);
+    }
+
+    const awardsData = await supabase
+      .from('TitlesAwards')
+      .select('*, Awards(*)')
+      .eq('title_id', title.id);
+
+    if (awardsData.data) {
+      console.log('awards data from reference table... ', awardsData.data);
+
+      const awardsArray = awardsData.data.map((award) => ({
+        label: award.Awards?.title ? award.Awards.title : 'emptyLabel',
+        value: award.Awards ? award.Awards.id.toString() : 'emptyLabel',
+      }));
+
+      form.setValue('awards', awardsArray);
     }
   }
   useEffect(() => {
@@ -681,8 +761,6 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
         .data.publicUrl);
     console.log('public URL is ...', publicUrl);
 
-
-
     const deleteOldVideo = async (oldTrailer: string) => {
       console.log('current title trailer ... ', title.trailer);
       const videoNameString = oldTrailer.split('/');
@@ -695,45 +773,43 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
         console.log('video Remove error ... ', videoRemove.error.message);
       videoRemove.data &&
         console.log('video Remove data... ', videoRemove.data);
-    }
+    };
 
     const uploadNewVideo = async (newVideo: File) => {
-      const fileName = newVideo.name
-      ? newVideo.name
-      : 'failNameString';
-    console.log('video is...', values.trailer);
-    console.log('video name is...', values.trailer?.name);
-    const videoUpdate = await supabase.storage
-      .from('trailers')
-      .upload(`trailer_${fileName}`, newVideo, {
-        cacheControl: '3600',
-        upsert: true,
-      });
-    const videoError = videoUpdate.error?.message;
-    console.log('video error is ... ', videoError)
-    videoPath = videoUpdate.data?.path;
-    console.log('video path ... ', videoPath);
+      const fileName = newVideo.name ? newVideo.name : 'failNameString';
+      console.log('video is...', values.trailer);
+      console.log('video name is...', values.trailer?.name);
+      const videoUpdate = await supabase.storage
+        .from('trailers')
+        .upload(`trailer_${fileName}`, newVideo, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      const videoError = videoUpdate.error?.message;
+      console.log('video error is ... ', videoError);
+      videoPath = videoUpdate.data?.path;
+      console.log('video path ... ', videoPath);
 
-    return videoPath;
-    }
- 
+      return videoPath;
+    };
+
     if (title.trailer && (values.trailer || isVideoCleared.current)) {
-      console.log('deleting old video .... ')
-      await deleteOldVideo(title.trailer)
+      console.log('deleting old video .... ');
+      await deleteOldVideo(title.trailer);
     }
 
-    console.log('V & !C .... ', values.trailer && !isVideoCleared.current)
+    console.log('V & !C .... ', values.trailer && !isVideoCleared.current);
 
     if (values.trailer && !isVideoCleared.current) {
-      console.log('uploading new video .... ')
-      await uploadNewVideo(values.trailer)
+      console.log('uploading new video .... ');
+      await uploadNewVideo(values.trailer);
     }
 
     if (isVideoCleared.current) {
-      publicVideoUrl = null
+      publicVideoUrl = null;
     }
 
-    if (title.trailer && (!values.trailer && !isVideoCleared.current)) {
+    if (title.trailer && !values.trailer && !isVideoCleared.current) {
       videoPath = title.trailer;
       publicVideoUrl = title.trailer;
     }
@@ -765,35 +841,32 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
     error && window.alert(error.message);
     data && window.alert(`тайтл ${data.name} успешно обновлён`);
 
+    const purgeAuthors = await supabase
+      .from('Titles_Authors')
+      .delete()
+      .eq('title_id', title.id);
 
-      const purgeAuthors = await supabase
+    !purgeAuthors.error && console.log('old authors deleted');
+
+    if (data) {
+      const titlesAuthorsArray = values.authors.map((author) => {
+        const authorID = parseInt(author.value);
+        const titleID = data?.id;
+
+        return {
+          author_id: authorID,
+          title_id: titleID,
+        };
+      });
+
+      const authorsData = await supabase
         .from('Titles_Authors')
-        .delete()
-        .eq('title_id', title.id)
-
-      !purgeAuthors.error && console.log('old authors deleted')
-
-      if (data) {
-        const titlesAuthorsArray = values.authors.map((author) => {
-          const authorID = parseInt(author.value);
-          const titleID = data?.id;
-  
-          return {
-            author_id: authorID,
-            title_id: titleID,
-          };
-        });
-  
-        const authorsData = await supabase
-          .from('Titles_Authors')
-          .insert(titlesAuthorsArray)
-          .select('*');
-        authorsData.error && window.alert(authorsData.error.message);
-        authorsData.data &&
-          window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
-      }
-
-
+        .insert(titlesAuthorsArray)
+        .select('*');
+      authorsData.error && window.alert(authorsData.error.message);
+      authorsData.data &&
+        window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
+    }
 
     data && router.reload();
   }
@@ -816,6 +889,30 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                     value={field.value}
                     onChange={field.onChange}
                     defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='awards'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Awards</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={AWARDSOPTIONS}
                     placeholder='Select authors for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
@@ -974,10 +1071,10 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                       form.setValue('trailer', undefined);
                       setHasVideo(false);
                       isVideoCleared.current = true;
-
                     }}
                   >
-                    clear ( {isVideoCleared.current ? 'IS CLEARED' : 'NOT CLEARED'} )
+                    clear ({' '}
+                    {isVideoCleared.current ? 'IS CLEARED' : 'NOT CLEARED'} )
                   </Button>
                 </div>
                 <FormMessage />
