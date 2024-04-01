@@ -62,7 +62,14 @@ const Titleslist = () => {
           >
             <AccordionTrigger> {title.name} </AccordionTrigger>
             <AccordionContent>
-              <TitleEditForm title={title} authors={[...authors!]} />
+
+              
+              {authors && 
+                <TitleEditForm title={title} authors={ [...authors]} />
+              }
+
+
+
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -80,8 +87,10 @@ const Titleslist = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
+
+          {authors && 
             <TitleForm
-              authors={[...authors!]}
+              authors={[...authors]}
               // {...authors}
               defaultName='Default Title'
               defaultThesis='Default Thesis'
@@ -90,6 +99,7 @@ const Titleslist = () => {
               defaultFirstRelease={new Date('2022-03-25')}
               defaultIsFeatured={true}
             />
+            }
           </AccordionContent>
         </AccordionItem>
       </Accordion>

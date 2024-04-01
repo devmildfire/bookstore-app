@@ -568,6 +568,11 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
 
+  const isVideoCleared = useRef(false);
+
+
+
+
   const OPTIONS: Option[] = authors.map((author) => ({
     label: author.name,
     value: author.id.toString(),
@@ -676,9 +681,11 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
         .data.publicUrl);
     console.log('public URL is ...', publicUrl);
 
-    if (title.trailer && values.trailer) {
+
+
+    const deleteOldVideo = async (oldTrailer: string) => {
       console.log('current title trailer ... ', title.trailer);
-      const videoNameString = title.trailer.split('/');
+      const videoNameString = oldTrailer.split('/');
       console.log('video Name String ... ', videoNameString);
       console.log('selected trailer file ... ', values.trailer);
       const videoRemove = await supabase.storage
@@ -688,38 +695,45 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
         console.log('video Remove error ... ', videoRemove.error.message);
       videoRemove.data &&
         console.log('video Remove data... ', videoRemove.data);
-      const fileName = values.trailer?.name
-        ? values.trailer?.name
-        : 'failNameString';
-      console.log('video is...', values.trailer);
-      console.log('video name is...', values.trailer?.name);
-      const videoUdate = await supabase.storage
-        .from('trailers')
-        .upload(`trailer_${fileName}`, values.trailer, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-      videoPath = videoUdate.data?.path;
-      console.log('video path ... ', videoPath);
     }
 
-    if (!title.trailer && values.trailer) {
-      const fileName = values.trailer?.name
-        ? values.trailer?.name
-        : 'failNameString';
-      console.log('video is...', values.trailer);
-      console.log('video name is...', values.trailer?.name);
-      const videoUdate = await supabase.storage
-        .from('trailers')
-        .upload(`trailer_${fileName}`, values.trailer, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-      videoPath = videoUdate.data?.path;
-      console.log('video path ... ', videoPath);
+    const uploadNewVideo = async (newVideo: File) => {
+      const fileName = newVideo.name
+      ? newVideo.name
+      : 'failNameString';
+    console.log('video is...', values.trailer);
+    console.log('video name is...', values.trailer?.name);
+    const videoUpdate = await supabase.storage
+      .from('trailers')
+      .upload(`trailer_${fileName}`, newVideo, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+    const videoError = videoUpdate.error?.message;
+    console.log('video error is ... ', videoError)
+    videoPath = videoUpdate.data?.path;
+    console.log('video path ... ', videoPath);
+
+    return videoPath;
+    }
+ 
+    if (title.trailer && (values.trailer || isVideoCleared.current)) {
+      console.log('deleting old video .... ')
+      await deleteOldVideo(title.trailer)
     }
 
-    if (title.trailer && !values.trailer) {
+    console.log('V & !C .... ', values.trailer && !isVideoCleared.current)
+
+    if (values.trailer && !isVideoCleared.current) {
+      console.log('uploading new video .... ')
+      await uploadNewVideo(values.trailer)
+    }
+
+    if (isVideoCleared.current) {
+      publicVideoUrl = null
+    }
+
+    if (title.trailer && (!values.trailer && !isVideoCleared.current)) {
       videoPath = title.trailer;
       publicVideoUrl = title.trailer;
     }
@@ -750,6 +764,37 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
       .single();
     error && window.alert(error.message);
     data && window.alert(`тайтл ${data.name} успешно обновлён`);
+
+
+      const purgeAuthors = await supabase
+        .from('Titles_Authors')
+        .delete()
+        .eq('title_id', title.id)
+
+      !purgeAuthors.error && console.log('old authors deleted')
+
+      if (data) {
+        const titlesAuthorsArray = values.authors.map((author) => {
+          const authorID = parseInt(author.value);
+          const titleID = data?.id;
+  
+          return {
+            author_id: authorID,
+            title_id: titleID,
+          };
+        });
+  
+        const authorsData = await supabase
+          .from('Titles_Authors')
+          .insert(titlesAuthorsArray)
+          .select('*');
+        authorsData.error && window.alert(authorsData.error.message);
+        authorsData.data &&
+          window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
+      }
+
+
+
     data && router.reload();
   }
 
@@ -912,6 +957,7 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                       onChange={(event) => {
                         onVideoInputChange(event, trailerVideo);
                         setHasVideo(true);
+                        isVideoCleared.current = false;
 
                         return onChange(
                           event.target.files && event.target.files[0]
@@ -927,9 +973,11 @@ function TitleEditForm({ title, authors }: TitleEditFormProps) {
                       emptyVideoInput(videoInputRef, trailerVideo);
                       form.setValue('trailer', undefined);
                       setHasVideo(false);
+                      isVideoCleared.current = true;
+
                     }}
                   >
-                    clear
+                    clear ( {isVideoCleared.current ? 'IS CLEARED' : 'NOT CLEARED'} )
                   </Button>
                 </div>
                 <FormMessage />
