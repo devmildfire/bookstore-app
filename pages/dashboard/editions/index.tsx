@@ -1,17 +1,98 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "api/supabase-client";
-import DashMain from "@/components/DashBoardPage/DashMain";
-import DashNav from "@/components/DashBoardPage/DashNav";
-import { LogOut } from "@/components/LoginPage/Logout";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TitleType } from "../titles";
+import { Session } from '@supabase/supabase-js';
+import { supabase } from 'api/supabase-client';
+import DashMain from '@/components/DashBoardPage/DashMain';
+import DashNav from '@/components/DashBoardPage/DashNav';
+import { LogOut } from '@/components/LoginPage/Logout';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { TitleType } from '../titles';
+import { Database } from 'api/books/types';
 
+export type PrintedBookType =
+  Database['public']['Tables']['PrintedBooks']['Row'];
+export type AudiobookType = Database['public']['Tables']['Audiobooks']['Row'];
+export type EbookType = Database['public']['Tables']['Ebooks']['Row'];
+export type CardBookType = Database['public']['Tables']['CardBooks']['Row'];
 
-const TitleEditions = () => {
+export type EditionsType = {
+  printedBook?: PrintedBookType;
+  audioBook?: AudiobookType;
+  eBook?: EbookType;
+  cardBook?: CardBookType;
+};
 
+const TitleEditions = ({ titleID }: { titleID: number }) => {
+  const [editions, setEditions] = useState<EditionsType>();
+
+  async function getEditions() {
+    const { data, error } = await supabase
+      .from('Titles')
+      .select(
+        `
+        *,
+        AuthorsList: Titles_Authors ( Author : Authors(*)),
+        Photos( * ),
+        CardBooks ( * ),
+        Audiobooks ( * ),
+        Ebooks ( * ),
+        PrintedBooks ( *,
+          options:PrintOptions ( *,
+            size:PrintSize( * )
+          ),
+          cover:PrintedCover( * )
+        ),
+        TitlesAwards ( *,  awards: Awards(*) )
+      `
+      )
+      .eq('id', titleID)
+      .single();
+
+    if (data) {
+      console.log('got some data');
+
+      console.log('Printed Books', data.PrintedBooks);
+      console.log('Audio Books', data.Audiobooks);
+      console.log('eBooks', data.Ebooks);
+      console.log('Card Books', data.CardBooks);
+
+      const audioBook: AudiobookType | null = data.Audiobooks;
+      const printedBook: PrintedBookType | null = data.PrintedBooks;
+      const eBook: EbookType | null = data.Ebooks;
+      const cardBook: CardBookType | null = data.CardBooks;
+
+      setEditions({
+        printedBook: printedBook || undefined,
+        audioBook: audioBook || undefined,
+        eBook: eBook || undefined,
+        cardBook: cardBook || undefined,
+      });
+    }
+  }
+
+  useEffect(() => {
+    getEditions();
+  }, [titleID]);
+
+  return (
+    <div>
+      {titleID}
+      <pre>{JSON.stringify(editions, null, 2)}</pre>
+    </div>
+  );
+};
+
+const TitleSelect = () => {
   const [titles, setTitles] = useState<TitleType[]>();
+  const selectedTitle = useRef<number>();
 
   async function getTitles() {
     const { data, error } = await supabase.from('Titles').select('*');
@@ -30,60 +111,69 @@ const TitleEditions = () => {
     return <div>zero titles found in database</div>;
   }
 
-  return(
+  return (
     <div className='w-full'>
       <h3> Editions </h3>
       <div>
-      <Select>
-      <SelectTrigger className="w-[280px]">
-        <SelectValue placeholder="Select a Title" />
-      </SelectTrigger>
-      <SelectContent>
-
-        {titles.map((title) => (
-          <SelectItem value={`item-${title.id}`} key={title.id}> {title.name} </SelectItem>
-        ))}
-
-      </SelectContent>
-    </Select>  
+        <Select
+          onValueChange={(value) => {
+            selectedTitle.current = parseInt(value);
+            console.log('set new ref ... ', selectedTitle.current);
+          }}
+        >
+          {/* <SelectTrigger className='w-[280px]'> */}
+          <SelectTrigger className='w-full'>
+            <SelectValue placeholder='Select a Title' />
+          </SelectTrigger>
+          <SelectContent>
+            {titles.map((title) => (
+              <SelectItem value={title.id.toString()} key={title.id}>
+                {' '}
+                {title.name}{' '}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-    
+
+      {selectedTitle.current && (
+        <TitleEditions titleID={selectedTitle.current} />
+      )}
     </div>
-  )
-}
+  );
+};
 
 function Editions(): React.ReactElement {
-    const [session, setSession] = useState<Session>();
-    const router = useRouter();
-  
-    const check_session = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error(error);
-        } else {
-          data.session && setSession(data.session);
-          !data.session?.user.user_metadata.isAdmin && router.push('/login');
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    useEffect(() => {
-      check_session();
-    });
-  
-    return (
-      <DashMain>
-        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-          <DashNav />
-          <TitleEditions />
-          {session && <LogOut session={session} />}
-        </div>
-      </DashMain>
-    );
-  }
+  const [session, setSession] = useState<Session>();
+  const router = useRouter();
 
+  const check_session = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error(error);
+      } else {
+        data.session && setSession(data.session);
+        !data.session?.user.user_metadata.isAdmin && router.push('/login');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    check_session();
+  });
+
+  return (
+    <DashMain>
+      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+        <DashNav />
+        <TitleSelect />
+        {session && <LogOut session={session} />}
+      </div>
+    </DashMain>
+  );
+}
 
 export default Editions;
