@@ -327,7 +327,7 @@ function TitleForm(props: TitleFormProps) {
         });
 
         const awardsData = await supabase
-          .from('Titles_Awards')
+          .from('TitlesAwards')
           .insert(titlesAwardsArray)
           .select('*');
         awardsData.error && window.alert(awardsData.error.message);
@@ -867,6 +867,38 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
       authorsData.data &&
         window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
     }
+
+
+    const purgeAwards = await supabase
+      .from('TitlesAwards')
+      .delete()
+      .eq('title_id', title.id);
+
+    !purgeAwards.error && console.log('old awards deleted');
+
+
+    if (data && values.awards) {
+      const titlesAwardsArray = values.awards.map((award) => {
+        const awardID = parseInt(award.value);
+        const titleID = data?.id;
+
+        return {
+          award_id: awardID,
+          title_id: titleID,
+        };
+      });
+
+      const awardsData = await supabase
+        .from('TitlesAwards')
+        .insert(titlesAwardsArray)
+        .select('*');
+        awardsData.error && window.alert(awardsData.error.message);
+        awardsData.data &&
+        window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
+    }
+
+
+
 
     data && router.reload();
   }
