@@ -54,6 +54,22 @@ jobs:
               tags: ${{ steps.meta.outputs.tags }}
               labels: ${{ steps.meta.outputs.labels }}
 
+          - name: executing remote ssh commands using ssh key
+            uses: appleboy/ssh-action@v1.0.3
+            with:
+              host: ${{ secrets.SSH_HOST }}
+              username: ${{ secrets.SSH_USER }}
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              # port: ${{ secrets.PORT }}
+              port: 22
+              script: |
+                cd ${{ secrets.WORK_DIR }}
+                cd chtivo-next
+                echo "${{ env.IMAGE_NAME }}"
+                echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                echo "tags ${{ steps.meta.outputs.tags }}"
+                echo "labels ${{ steps.meta.outputs.labels }}"
+
 
 
 
@@ -76,28 +92,28 @@ jobs:
            
 
 
-    deploy:
-        needs: publish
-        name: run a script on remote
-        runs-on: ubuntu-latest
+    # deploy:
+    #     needs: publish
+    #     name: run a script on remote
+    #     runs-on: ubuntu-latest
 
-        steps:
+    #     steps:
 
-        - name: executing remote ssh commands using ssh key
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USER }}
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            # port: ${{ secrets.PORT }}
-            port: 22
-            script: |
-              cd ${{ secrets.WORK_DIR }}
-              cd chtivo-next
-              echo "${{ env.IMAGE_NAME }}"
-              echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-              echo "tags ${{ publish.steps.meta.outputs.tags }}"
-              echo "labels ${{ publish.steps.meta.outputs.labels }}"
+    #     - name: executing remote ssh commands using ssh key
+    #       uses: appleboy/ssh-action@v1.0.3
+    #       with:
+    #         host: ${{ secrets.SSH_HOST }}
+    #         username: ${{ secrets.SSH_USER }}
+    #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #         # port: ${{ secrets.PORT }}
+    #         port: 22
+    #         script: |
+    #           cd ${{ secrets.WORK_DIR }}
+    #           cd chtivo-next
+    #           echo "${{ env.IMAGE_NAME }}"
+    #           echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+    #           echo "tags ${{ publish.steps.meta.outputs.tags }}"
+    #           echo "labels ${{ publish.steps.meta.outputs.labels }}"
 
 
     
