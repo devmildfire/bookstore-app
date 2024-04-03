@@ -42,8 +42,8 @@ jobs:
             NEXT_PUBLIC_ROBOPASS_ONE: ${{secrets.NEXT_PUBLIC_ROBOPASS_ONE}}
             NEXT_PUBLIC_ROBOPASS_TWO: ${{secrets.NEXT_PUBLIC_ROBOPASS_TWO}}
           run: |
-            docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
            
 
 
