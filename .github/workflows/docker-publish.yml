@@ -96,8 +96,8 @@ jobs:
               cd chtivo-next
               echo "${{ env.IMAGE_NAME }}"
               echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-              echo "tags ${{ steps.meta.outputs.tags }}"
-              echo "labels ${{ steps.meta.outputs.labels }}"
+              echo "tags ${{ publish.steps.meta.outputs.tags }}"
+              echo "labels ${{ publish.steps.meta.outputs.labels }}"
 
 
     
