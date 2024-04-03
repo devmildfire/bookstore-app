@@ -1,5 +1,5 @@
 name: publish
-run-name: ${{ github.actor }} action test login
+run-name: ${{ github.actor }} - publish image and pull it on server
 
 on:
   push:
@@ -68,7 +68,7 @@ jobs:
                 echo "${{ env.IMAGE_NAME }}"
                 echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
                 echo "tags ${{ steps.meta.outputs.tags }}"
-                echo "labels ${{ steps.meta.outputs.labels }}"
+                docker pull ${{ steps.meta.outputs.tags }}
 
 
 
