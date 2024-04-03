@@ -77,7 +77,7 @@ jobs:
 
 
     deploy:
-        # needs: publish
+        needs: publish
         name: run a script on remote
         runs-on: ubuntu-latest
 
