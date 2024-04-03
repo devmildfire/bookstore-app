@@ -70,6 +70,9 @@ jobs:
                 echo "tags ${{ steps.meta.outputs.tags }}"
                 echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
                 docker pull ${{ steps.meta.outputs.tags }}
+                docker stop chtivo-next
+                docker rmi ghcr.io/russiandino/chtivo-next:feature-dashboard
+                docker run --rm -d --name chtivo-next -p 3000:3000 --network supabase_default ${{ steps.meta.outputs.tags }}
 
 
 
