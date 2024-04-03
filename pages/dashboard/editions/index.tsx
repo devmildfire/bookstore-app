@@ -16,6 +16,12 @@ import {
 } from '@/components/ui/select';
 import { TitleType } from '../titles';
 import { Database } from 'api/books/types';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 export type PrintedBookType =
   Database['public']['Tables']['PrintedBooks']['Row'];
@@ -84,8 +90,119 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
   return (
     <div>
-      {titleID}
-      <pre>{JSON.stringify(editions, null, 2)}</pre>
+      <Accordion type='single' collapsible>
+        {editions?.printedBook && (
+          <AccordionItem
+            value={`item-${editions?.printedBook.id}`}
+            key={editions?.printedBook.ISBN}
+            className='w-full'
+          >
+            <AccordionTrigger> Printed Book </AccordionTrigger>
+            <AccordionContent>
+              <p> ISBN: {editions?.printedBook.ISBN}</p>
+              <p> Количество страниц: {editions?.printedBook.pages}</p>
+              <p> extra: {editions?.printedBook.extra}</p>
+              <p> форма: {editions?.printedBook.lit_form}</p>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {editions?.audioBook && (
+          <AccordionItem
+            value={`item-${editions?.audioBook.id}`}
+            key={editions?.audioBook.id}
+            className='w-full'
+          >
+            <AccordionTrigger> Audio Book </AccordionTrigger>
+            <AccordionContent>
+              <p> длительность: {editions?.audioBook.duration}</p>
+              <p> extra: {editions?.audioBook.extra}</p>
+              <p> скидка: {editions?.audioBook.discount}</p>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {editions?.eBook && (
+          <AccordionItem
+            value={`item-${editions?.eBook.id}`}
+            key={editions?.eBook.id}
+            className='w-full'
+          >
+            <AccordionTrigger> eBook </AccordionTrigger>
+            <AccordionContent>
+              <p> ISBN: {editions?.eBook.ISBN}</p>
+              <p> extra: {editions?.eBook.extra}</p>
+              <p> скидка: {editions?.eBook.discount}</p>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {editions?.cardBook && (
+          <AccordionItem
+            value={`item-${editions?.cardBook.id}`}
+            key={editions?.cardBook.id}
+            className='w-full'
+          >
+            <AccordionTrigger> eBook </AccordionTrigger>
+            <AccordionContent>
+              <p> extra: {editions?.cardBook.extra}</p>
+              <p> скидка: {editions?.cardBook.discount}</p>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {!editions?.printedBook && (
+          <AccordionItem
+            value={`item-addPrintedBook`}
+            key={`item-addPrintedBook`}
+            className='w-full'
+          >
+            <AccordionTrigger className='w-full text-red-800'>
+              Add Printed Book
+            </AccordionTrigger>
+            <AccordionContent>add some book</AccordionContent>
+          </AccordionItem>
+        )}
+
+        {!editions?.audioBook && (
+          <AccordionItem
+            value={`item-addAudioBook`}
+            key={`item-addAudioBook`}
+            className='w-full'
+          >
+            <AccordionTrigger className='w-full text-red-800'>
+              Add Audiobook
+            </AccordionTrigger>
+            <AccordionContent>add some Audiobook</AccordionContent>
+          </AccordionItem>
+        )}
+
+        {!editions?.eBook && (
+          <AccordionItem
+            value={`item-addEBook`}
+            key={`item-addEBook`}
+            className='w-full'
+          >
+            <AccordionTrigger className='w-full text-red-800'>
+              Add eBook{' '}
+            </AccordionTrigger>
+            <AccordionContent>add some eBook</AccordionContent>
+          </AccordionItem>
+        )}
+
+        {!editions?.cardBook && (
+          <AccordionItem
+            value={`item-addCardBook`}
+            key={`item-addCardBook`}
+            className='w-full'
+          >
+            <AccordionTrigger className='w-full text-red-800'>
+              Add Card Book
+            </AccordionTrigger>
+            <AccordionContent>add some Card Book</AccordionContent>
+          </AccordionItem>
+        )}
+      </Accordion>
     </div>
   );
 };
