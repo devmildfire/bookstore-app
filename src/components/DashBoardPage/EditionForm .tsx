@@ -18,6 +18,18 @@ import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
+import { PrintedBookType } from 'pages/dashboard/editions';
+import { Database } from 'api/books/types';
+import { Checkbox } from '../ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+
+type coverShadeType = Database['public']['Enums']['covershade'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -28,38 +40,60 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
-  name: z.string().min(3, {
-    message: 'Author name must be at least 3 characters long.',
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his book counter.',
   }),
-  bio: z.string().min(6, {
-    message: 'Author bio must be at least 3 characters long.',
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
   }),
-  birthDate: z
-    .date({
-      description: 'Author birth date',
-    })
-    .nullable()
-    .optional(),
-  deathDate: z
-    .date({
-      description: 'Author death date',
-    })
-    .nullable()
-    .optional(),
-  city: z.string().min(3, {
-    message: 'Author city must be at least 3 characters long.',
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
   }),
-  photo: z
+  ISBN: z.string().min(3, {
+    message: 'ISBN must be at least 3 characters long.',
+  }),
+  lit_form: z.string().min(3, {
+    message: 'Literature dorm must be at least 3 characters long.',
+  }),
+  cover: z
     .instanceof(File, { message: 'Image is required.' })
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
+  pages: z.number().positive('must be positive'),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
 
-  phrase: z.string().min(3, {
-    message: 'phrase must be least 3 characters.',
+  shade: z.literal('light').or(z.literal('dark')),
+
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
+  bindings: z.string().min(3, {
+    message: 'bindings info must be at least 3 characters long.',
   }),
+  coverType: z.string().min(3, {
+    message: 'cover info must be at least 3 characters long.',
+  }),
+  illustrations: z.string().min(3, {
+    message: 'illustrations info must be at least 3 characters long.',
+  }),
+  paper: z.string().min(3, {
+    message: 'paper info must be at least 3 characters long.',
+  }),
+  height: z.number().positive('must be positive'),
+  width: z.number().positive('must be positive'),
 });
 
 // const formEditSchema = z.object({
@@ -87,25 +121,29 @@ const formSchema = z.object({
 //   }),
 // });
 
-type PrintBookFormProps = {
-  // defaultName: string;
-  // defaultBio: string;
-  // defaultBirthDate: Date;
-  // defaultDeathDate: Date;
-  // defaultCity: string;
-  // defaultPhrase: string;
-};
-
-function PrintedBookForm(props: PrintBookFormProps) {
+function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // name: props.defaultName,
-      // bio: props.defaultBio,
-      // city: props.defaultCity,
-      // phrase: props.defaultPhrase,
+      counter_color: '#FFFFF',
+      extra: 'some text',
+      is_published: false,
+      ISBN: '1-234-54789-0',
+      lit_form: 'Роман',
+      pages: 123,
+      discount: 0,
+      shade: 'light',
+      price: 100,
+      publish_date: new Date(),
+      release_date: new Date(),
+      bindings: 'HardCore!',
+      coverType: 'DisCover!',
+      illustrations: 'Dazzling!',
+      paper: 'Two Ply',
+      height: 42,
+      width: 42,
     },
   });
 
@@ -113,32 +151,37 @@ function PrintedBookForm(props: PrintBookFormProps) {
     console.log(values);
 
     const photoUpload = await supabase.storage
-      .from('authors')
-      .upload(`author_${values.photo.name}`, values.photo, {
+      .from('covers')
+      .upload(`public/cover_${values.cover.name}`, values.cover, {
         cacheControl: '3600',
         upsert: true,
       });
 
     const publicUrl = supabase.storage
-      .from('authors')
+      .from('covers')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
 
     const { data, error } = await supabase
-      .from('Authors')
+      .from('PrintedBooks')
       .insert({
-        name: values.name,
-        birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-        death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-        phrase: values.phrase,
-        photo: publicUrl,
-        city: values.city,
-        bio: values.bio,
+        title_id: titleID,
+        counter_color: values.counter_color,
+        extra: values.extra,
+        is_published: values.is_published,
+        ISBN: values.ISBN,
+        lit_form: values.lit_form,
+        pages: values.pages,
+        price: values.price,
+        discount: values.discount,
+        publish_date: values.publish_date?.toISOString(),
+        release_date: values.release_date?.toISOString(),
+        sold: 0,
       })
       .select('*')
       .single();
 
     error && window.alert(error.message);
-    data && window.alert(`${data.name} успешно добавлен к авторам`);
+    data && window.alert(`${data.id} успешно добавлен к печатным книгам`);
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -162,28 +205,27 @@ function PrintedBookForm(props: PrintBookFormProps) {
         >
           <FormField
             control={form.control}
-            name='name'
+            name='counter_color'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Name</FormLabel>
+                <FormLabel>Counter Color</FormLabel>
                 <FormControl>
-                  <Input placeholder='somebody' {...field} />
+                  <Input type='color' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='bio'
+            name='ISBN'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Aithor Bio</FormLabel>
+                <FormLabel>ISBN</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder='Tell us a little bit about yourself'
-                    className='resize-none'
+                    // placeholder='Tell us a little bit about yourself'
+                    // className='resize-none'
                     {...field}
                   />
                 </FormControl>
@@ -191,19 +233,18 @@ function PrintedBookForm(props: PrintBookFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='birthDate'
+            name='publish_date'
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor='datetime'>birth date</FormLabel>
+                <FormLabel htmlFor='datetime'>publish date</FormLabel>
                 <FormControl>
                   <DateTimePicker
                     jsDate={field.value}
                     onJsDateChange={field.onChange}
                     onNull={() => {
-                      form.setValue('birthDate', null);
+                      form.setValue('publish_date', null);
 
                       console.log('on null function call');
                       console.log('form state is...', form.getValues());
@@ -214,20 +255,19 @@ function PrintedBookForm(props: PrintBookFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='deathDate'
+            name='release_date'
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor='datetime'>death date</FormLabel>
+                <FormLabel htmlFor='datetime'>release date</FormLabel>
                 <FormControl>
                   <DateTimePicker
                     jsDate={field.value}
                     onJsDateChange={field.onChange}
                     showClearButton={true}
                     onNull={() => {
-                      form.setValue('deathDate', null);
+                      form.setValue('release_date', null);
 
                       console.log('on null function call');
                       console.log('form state is...', form.getValues());
@@ -238,30 +278,48 @@ function PrintedBookForm(props: PrintBookFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='city'
+            name='lit_form'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author City</FormLabel>
+                <FormLabel>Literature Form</FormLabel>
                 <FormControl>
-                  <Input placeholder='default city' {...field} />
+                  <Input placeholder='Повесть' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name='photo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
+            name='pages'
+            render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Photo</FormLabel>
+                <FormLabel>Pages Number</FormLabel>
                 <FormControl>
                   <Input
-                    id='photo'
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='cover'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>book cover</FormLabel>
+                <FormControl>
+                  <Input
+                    id='cover'
                     type='file'
                     {...fieldProps}
                     onChange={(event) => {
@@ -282,15 +340,177 @@ function PrintedBookForm(props: PrintBookFormProps) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name='shade'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Shade</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select cover shade ' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value='light'>light</SelectItem>
+                    <SelectItem value='dark'>dark</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='bindings'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Bindings</FormLabel>
+                <FormControl>
+                  <Input placeholder='HardCore!' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='coverType'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Cover Type</FormLabel>
+                <FormControl>
+                  <Input placeholder='DisCover!' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='illustrations'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Illustrations Type</FormLabel>
+                <FormControl>
+                  <Input placeholder='Dazzling!' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='paper'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Paper Type</FormLabel>
+                <FormControl>
+                  <Input placeholder='Two Ply' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='height'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Height</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
-            name='phrase'
+            name='width'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Phrase</FormLabel>
+                <FormLabel>Width</FormLabel>
                 <FormControl>
-                  <Input placeholder='some profound saying' {...field} />
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -301,9 +521,9 @@ function PrintedBookForm(props: PrintBookFormProps) {
             type='submit'
             variant={'outline'}
             size={'default'}
-            className='w-full max-w-48'
+            className='w-full max-w-64'
           >
-            Добавить
+            Добавить Печатную Книгу
           </Button>
         </form>
       </Form>

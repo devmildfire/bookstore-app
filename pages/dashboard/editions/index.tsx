@@ -22,6 +22,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { PrintedBookForm } from '@/components/DashBoardPage/EditionForm ';
 
 export type PrintedBookType =
   Database['public']['Tables']['PrintedBooks']['Row'];
@@ -160,7 +161,9 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             <AccordionTrigger className='w-full text-red-800'>
               Add Printed Book
             </AccordionTrigger>
-            <AccordionContent>add some book</AccordionContent>
+            <AccordionContent>
+              <PrintedBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
 
