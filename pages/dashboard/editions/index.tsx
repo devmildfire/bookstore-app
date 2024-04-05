@@ -22,7 +22,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PrintedBookForm } from '@/components/DashBoardPage/EditionForm ';
+import {
+  PrintedBookForm,
+  PrintedBookEditForm,
+} from '@/components/DashBoardPage/EditionForm';
 
 export type PrintedBookType =
   Database['public']['Tables']['PrintedBooks']['Row'];
@@ -100,10 +103,7 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
           >
             <AccordionTrigger> Printed Book </AccordionTrigger>
             <AccordionContent>
-              <p> ISBN: {editions?.printedBook.ISBN}</p>
-              <p> Количество страниц: {editions?.printedBook.pages}</p>
-              <p> extra: {editions?.printedBook.extra}</p>
-              <p> форма: {editions?.printedBook.lit_form}</p>
+              <PrintedBookEditForm {...editions.printedBook} />
             </AccordionContent>
           </AccordionItem>
         )}
