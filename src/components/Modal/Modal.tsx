@@ -405,10 +405,10 @@ const editions: EditionsMap = {
 };
 
 const bookTypes: EditionsMap = {
-  PrintedBooks: 'PrintBook',
-  Ebooks: 'EBook',
-  Audiobooks: 'AudioBook',
-  CardBooks: 'Book2.0',
+  PrintedBooks: 'Печатное издание',
+  Ebooks: 'Электронная книга',
+  Audiobooks: 'Аудиокнига',
+  CardBooks: 'Книга 2.0',
 };
 
 function Edition({ children }: PropsWithChildren) {
@@ -484,7 +484,7 @@ function BookModal(props: BookModalProps) {
             return (
               <Edition key={type}>
                 <IconWrapper>{modalIconLookup[type]}</IconWrapper>
-                <EditionName variant='text'>{editions[type]}</EditionName>
+                <EditionName variant='text'>{bookTypes[type]}</EditionName>
                 <ProductCopies
                   setSum={setSum}
                   setCopies={setCopies}
