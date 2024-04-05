@@ -19,6 +19,10 @@ const dashlist: DashItem[] = [
     link: '/dashboard/editions',
   },
   {
+    title: 'Awards',
+    link: '/dashboard/awards',
+  },
+  {
     title: 'Articles',
     link: '/dashboard/articles',
   },
