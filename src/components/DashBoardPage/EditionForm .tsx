@@ -64,6 +64,7 @@ const formSchema = z.object({
     ),
   pages: z.number().positive('must be positive'),
   discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
 
   shade: z.literal('light').or(z.literal('dark')),
 
@@ -144,6 +145,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       paper: 'Two Ply',
       height: 42,
       width: 42,
+      sold: 0,
     },
   });
 
@@ -161,7 +163,34 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       .from('covers')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
 
-    const { data, error } = await supabase
+    async function setCoverData(coverUrl: string, printedBookID: number) {
+        // const cover = filePath;
+    
+        const { data, error } = await supabase
+          .from("PrintedCover")
+          .insert({
+            PrintedBookID: printedBookID,
+            source: coverUrl,
+            shade: "light",
+            blurHash: "NoHash",
+          })
+          .select("*")
+          .single();
+    
+        console.log("cover data ... ", data);
+        console.log("cover data ... ", JSON.stringify(data, null, 2));
+        console.log("cover error ... ", error);
+    
+        const cover_ID = data ? data.id : null;
+    
+        console.log("printed Book ID ... ", cover_ID);
+    
+        return cover_ID;
+      }
+
+    const setPrintedData = async () => {
+
+      const newPrintedBook = await supabase
       .from('PrintedBooks')
       .insert({
         title_id: titleID,
@@ -175,13 +204,97 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
         discount: values.discount,
         publish_date: values.publish_date?.toISOString(),
         release_date: values.release_date?.toISOString(),
-        sold: 0,
+        sold: values.sold,
       })
       .select('*')
       .single();
 
-    error && window.alert(error.message);
-    data && window.alert(`${data.id} успешно добавлен к печатным книгам`);
+      newPrintedBook.error && window.alert(newPrintedBook.error.message);
+      newPrintedBook.data && window.alert(`${newPrintedBook.data.id} успешно добавлен к печатным книгам`);
+
+      if (newPrintedBook.data) {
+
+        return newPrintedBook.data.id
+
+      } else {
+        return null
+      }
+ 
+    }
+
+    async function setPrintOptionsData( printedBookID: number) {
+      const bindings = values.bindings;
+      const coverType = values.coverType;
+      const paper = values.paper;
+      const illustrations = values.illustrations;
+  
+      const { data, error } = await supabase
+        .from("PrintOptions")
+        .insert({
+          bindings: bindings,
+          cover: coverType,
+          paper: paper,
+          illustrations: illustrations,
+          PrintedBookID: printedBookID,
+        })
+        .select("*")
+        .single();
+  
+      console.log("print options data ... ", data);
+      console.log("print options data ... ", JSON.stringify(data, null, 2));
+      console.log("print options error ... ", error);
+  
+      const printOptionsID = data ? data.id : null;
+  
+      console.log("print Options ID ... ", printOptionsID);
+  
+      return printOptionsID;
+    }
+
+    async function setPrintSizeData( printOptionsID: number) {
+      const width = values.width;
+      const height = values.height;
+  
+      const { data, error } = await supabase
+        .from("PrintSize")
+        .insert({
+          width: width,
+          height: height,
+          PrintOptionsID: printOptionsID,
+        })
+        .select("*")
+        .single();
+  
+      console.log("print size data ... ", data);
+      console.log("print size data ... ", JSON.stringify(data, null, 2));
+      console.log("print size error ... ", error);
+  
+      const printSizeID = data ? data.id : "no ID for me";
+  
+      console.log("print Size ID ... ", printSizeID);
+  
+      return printSizeID;
+    }
+
+    // let printOptionsID = null
+
+
+    const bookID = await setPrintedData();
+    console.log('new book ID is ...', bookID)
+
+
+    if (bookID) {
+      const printOptionsID = await setPrintOptionsData(bookID);
+      console.log('new printed book options ID is ...', printOptionsID);
+      const coverID = await setCoverData(publicUrl, bookID);
+      console.log('new book COVER options ID is ...', coverID);
+
+      if (printOptionsID) {
+        const printSizeOptionsID = await setPrintSizeData(printOptionsID)
+        console.log('new printed book SIZE options ID is ...', printSizeOptionsID)
+      }
+    } 
+
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -255,6 +368,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name='release_date'
@@ -278,6 +392,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name='lit_form'
@@ -405,6 +520,30 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
+
+
+<FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+
           <FormField
             control={form.control}
             name='is_published'
