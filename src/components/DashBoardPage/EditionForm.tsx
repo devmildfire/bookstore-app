@@ -18,7 +18,7 @@ import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
-import { PrintedBookType } from 'pages/dashboard/editions';
+import { FullPrintedBookType, PrintedBookType } from 'pages/dashboard/editions';
 import { Database } from 'api/books/types';
 import { Checkbox } from '../ui/checkbox';
 import {
@@ -28,8 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import { Switch } from '../ui/switch';
 
+// type coverShadeType = Database['public']['Enums']['covershade'];
 type coverShadeType = Database['public']['Enums']['covershade'];
+type PrintOptionsDataType =
+  Database['public']['Tables']['PrintOptions']['Insert'];
+type PrintSizeDataType = Database['public']['Tables']['PrintSize']['Insert'];
+type PrintedBookInsertType =
+  Database['public']['Tables']['PrintedBooks']['Insert'];
+type coverDataType = Database['public']['Tables']['PrintedCover']['Insert'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -151,6 +159,170 @@ const formEditSchema = z.object({
   width: z.number().positive('must be positive'),
 });
 
+async function setCoverData(coverUrl: string, printedBookID: number) {
+  const { data, error } = await supabase
+    .from('PrintedCover')
+    .insert({
+      PrintedBookID: printedBookID,
+      source: coverUrl,
+      shade: 'light',
+      blurHash: 'NoHash',
+    })
+    .select('*')
+    .single();
+
+  console.log('cover data ... ', data);
+  console.log('cover data ... ', JSON.stringify(data, null, 2));
+  console.log('cover error ... ', error);
+
+  const cover_ID = data ? data.id : null;
+
+  console.log('printed Book ID ... ', cover_ID);
+
+  return cover_ID;
+}
+
+async function updateCoverData(id: number, coverData: coverDataType) {
+  const { data, error } = await supabase
+    .from('PrintedCover')
+    .update(coverData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  console.log('cover data ... ', data);
+  console.log('cover data ... ', JSON.stringify(data, null, 2));
+  console.log('cover error ... ', error);
+
+  const cover_ID = data ? data.id : null;
+
+  console.log('printed Book ID ... ', cover_ID);
+
+  return cover_ID;
+}
+
+const setPrintedData = async (printedData: PrintedBookInsertType) => {
+  const newPrintedBook = await supabase
+    .from('PrintedBooks')
+    .insert(printedData)
+    .select('*')
+    .single();
+
+  newPrintedBook.error && window.alert(newPrintedBook.error.message);
+  newPrintedBook.data &&
+    window.alert(
+      `${newPrintedBook.data.id} успешно добавлен к печатным книгам`
+    );
+
+  if (newPrintedBook.data) {
+    return newPrintedBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+const updatePrintedData = async (
+  id: number,
+  printedData: PrintedBookInsertType
+) => {
+  const printedBook = await supabase
+    .from('PrintedBooks')
+    .update(printedData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  printedBook.error && window.alert(printedBook.error.message);
+  printedBook.data &&
+    window.alert(`${printedBook.data.id} успешно добавлен к печатным книгам`);
+
+  if (printedBook.data) {
+    return printedBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+async function setPrintOptionsData(printOptionsData: PrintOptionsDataType) {
+  const { data, error } = await supabase
+    .from('PrintOptions')
+    .insert(printOptionsData)
+    .select('*')
+    .single();
+
+  console.log('print options data ... ', data);
+  console.log('print options data ... ', JSON.stringify(data, null, 2));
+  console.log('print options error ... ', error);
+
+  const printOptionsID = data ? data.id : null;
+
+  console.log('print Options ID ... ', printOptionsID);
+
+  return printOptionsID;
+}
+
+async function updatePrintOptionsData(
+  optID: number,
+  printOptionsData: PrintOptionsDataType
+) {
+  const { data, error } = await supabase
+    .from('PrintOptions')
+    .update(printOptionsData)
+    .eq('id', optID)
+    .select('*')
+    .single();
+
+  console.log('print options data ... ', data);
+  console.log('print options data ... ', JSON.stringify(data, null, 2));
+  console.log('print options error ... ', error);
+
+  const printOptionsID = data ? data.id : null;
+
+  console.log('print Options ID ... ', printOptionsID);
+
+  return printOptionsID;
+}
+
+async function setPrintSizeData(printSizeData: PrintSizeDataType) {
+  const { data, error } = await supabase
+    .from('PrintSize')
+    .insert(printSizeData)
+    .select('*')
+    .single();
+
+  console.log('print size data ... ', data);
+  console.log('print size data ... ', JSON.stringify(data, null, 2));
+  console.log('print size error ... ', error);
+
+  const printSizeID = data ? data.id : 'no ID for me';
+
+  console.log('print Size ID ... ', printSizeID);
+
+  return printSizeID;
+}
+
+async function updatePrintSizeData(
+  id: number,
+  printSizeData: PrintSizeDataType
+) {
+  const { data, error } = await supabase
+    .from('PrintSize')
+    .update(printSizeData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  console.log('print size data ... ', data);
+  console.log('print size data ... ', JSON.stringify(data, null, 2));
+  console.log('print size error ... ', error);
+
+  const printSizeID = data ? data.id : 'no ID for me';
+
+  console.log('print Size ID ... ', printSizeID);
+
+  return printSizeID;
+}
+
 function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
@@ -193,129 +365,46 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       .from('covers')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
 
-    async function setCoverData(coverUrl: string, printedBookID: number) {
-      // const cover = filePath;
-
-      const { data, error } = await supabase
-        .from('PrintedCover')
-        .insert({
-          PrintedBookID: printedBookID,
-          source: coverUrl,
-          shade: 'light',
-          blurHash: 'NoHash',
-        })
-        .select('*')
-        .single();
-
-      console.log('cover data ... ', data);
-      console.log('cover data ... ', JSON.stringify(data, null, 2));
-      console.log('cover error ... ', error);
-
-      const cover_ID = data ? data.id : null;
-
-      console.log('printed Book ID ... ', cover_ID);
-
-      return cover_ID;
-    }
-
-    const setPrintedData = async () => {
-      const newPrintedBook = await supabase
-        .from('PrintedBooks')
-        .insert({
-          title_id: titleID,
-          counter_color: values.counter_color,
-          extra: values.extra,
-          is_published: values.is_published,
-          ISBN: values.ISBN,
-          lit_form: values.lit_form,
-          pages: values.pages,
-          price: values.price,
-          discount: values.discount,
-          publish_date: values.publish_date?.toISOString(),
-          release_date: values.release_date?.toISOString(),
-          sold: values.sold,
-        })
-        .select('*')
-        .single();
-
-      newPrintedBook.error && window.alert(newPrintedBook.error.message);
-      newPrintedBook.data &&
-        window.alert(
-          `${newPrintedBook.data.id} успешно добавлен к печатным книгам`
-        );
-
-      if (newPrintedBook.data) {
-        return newPrintedBook.data.id;
-      } else {
-        return null;
-      }
+    const printedData = {
+      title_id: titleID,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      ISBN: values.ISBN,
+      lit_form: values.lit_form,
+      pages: values.pages,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
     };
 
-    async function setPrintOptionsData(printedBookID: number) {
-      const bindings = values.bindings;
-      const coverType = values.coverType;
-      const paper = values.paper;
-      const illustrations = values.illustrations;
-
-      const { data, error } = await supabase
-        .from('PrintOptions')
-        .insert({
-          bindings: bindings,
-          cover: coverType,
-          paper: paper,
-          illustrations: illustrations,
-          PrintedBookID: printedBookID,
-        })
-        .select('*')
-        .single();
-
-      console.log('print options data ... ', data);
-      console.log('print options data ... ', JSON.stringify(data, null, 2));
-      console.log('print options error ... ', error);
-
-      const printOptionsID = data ? data.id : null;
-
-      console.log('print Options ID ... ', printOptionsID);
-
-      return printOptionsID;
-    }
-
-    async function setPrintSizeData(printOptionsID: number) {
-      const width = values.width;
-      const height = values.height;
-
-      const { data, error } = await supabase
-        .from('PrintSize')
-        .insert({
-          width: width,
-          height: height,
-          PrintOptionsID: printOptionsID,
-        })
-        .select('*')
-        .single();
-
-      console.log('print size data ... ', data);
-      console.log('print size data ... ', JSON.stringify(data, null, 2));
-      console.log('print size error ... ', error);
-
-      const printSizeID = data ? data.id : 'no ID for me';
-
-      console.log('print Size ID ... ', printSizeID);
-
-      return printSizeID;
-    }
-
-    const bookID = await setPrintedData();
+    const bookID = await setPrintedData(printedData);
     console.log('new book ID is ...', bookID);
 
+    const printOptionsData = {
+      bindings: values.bindings,
+      cover: values.coverType,
+      paper: values.paper,
+      illustrations: values.illustrations,
+      PrintedBookID: bookID,
+    };
+
     if (bookID) {
-      const printOptionsID = await setPrintOptionsData(bookID);
+      const printOptionsID = await setPrintOptionsData(printOptionsData);
       console.log('new printed book options ID is ...', printOptionsID);
       const coverID = await setCoverData(publicUrl, bookID);
       console.log('new book COVER options ID is ...', coverID);
 
       if (printOptionsID) {
-        const printSizeOptionsID = await setPrintSizeData(printOptionsID);
+        const printSizeData = {
+          width: values.width,
+          height: values.height,
+          PrintOptionsID: printOptionsID,
+        };
+
+        const printSizeOptionsID = await setPrintSizeData(printSizeData);
         console.log(
           'new printed book SIZE options ID is ...',
           printSizeOptionsID
@@ -483,7 +572,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name='shade'
             render={({ field }) => (
@@ -506,7 +595,33 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                 <FormMessage />
               </FormItem>
             )}
+          /> */}
+
+          <FormField
+            control={form.control}
+            name='shade'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                <div className='space-y-0.5'>
+                  <FormLabel className='text-base'>
+                    shade = {field.value}
+                  </FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value === 'light'}
+                    onCheckedChange={() => {
+                      field.onChange();
+                      field.value === 'light'
+                        ? form.setValue('shade', 'dark')
+                        : form.setValue('shade', 'light');
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
           />
+
           <FormField
             control={form.control}
             name='price'
@@ -696,7 +811,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
   );
 }
 
-function PrintedBookEditForm(book: PrintedBookType) {
+function PrintedBookEditForm(book: FullPrintedBookType) {
   const [newPhoto, setNewPhoto] = useState<string>();
 
   const photoImage = useRef<HTMLImageElement | null>(null);
@@ -761,7 +876,7 @@ function PrintedBookEditForm(book: PrintedBookType) {
       publish_date: book.publish_date ? new Date(book.publish_date) : undefined,
       release_date: book.release_date ? new Date(book.release_date) : undefined,
       shade: 'light',
-      counter_color: '#FFFFF',
+      counter_color: '#ff2a00',
       // deathDate: author.death_date ? new Date(author.death_date) : undefined,
       // city: author.city ? author.city : undefined,
       // photo: undefined,
@@ -772,47 +887,47 @@ function PrintedBookEditForm(book: PrintedBookType) {
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
 
-    // let imagePath = null;
-    // let publicUrl = null;
+    let imagePath = null;
+    let publicUrl = null;
 
-    // if (author.photo && values.photo) {
-    //   console.log('current author photo ... ', author.photo);
+    if (values.cover) {
+      console.log('current book cover ... ', photoImage.current?.src);
 
-    //   const imageNameString = author.photo.split('/');
+      const imageNameString = photoImage.current?.src.split('/') || 'no image';
 
-    //   console.log('image Name String ... ', imageNameString);
+      console.log('image Name String ... ', imageNameString);
 
-    //   console.log('selected photo file ... ', values.photo);
+      console.log('selected cover file ... ', values.cover);
 
-    //   const photoRemove = await supabase.storage
-    //     .from('authors')
-    //     .remove([imageNameString.slice(-1)[0]]);
+      const photoRemove = await supabase.storage
+        .from('covers')
+        .remove([`public/` + imageNameString.slice(-1)[0]]);
 
-    //   photoRemove.error &&
-    //     console.log('photo Remove error ... ', photoRemove.error.message);
+      photoRemove.error &&
+        console.log('cover Remove error ... ', photoRemove.error.message);
 
-    //   photoRemove.data &&
-    //     console.log('photo Remove data... ', photoRemove.data);
+      photoRemove.data &&
+        console.log('cover Remove data... ', photoRemove.data);
 
-    //   const fileName = values.photo?.name
-    //     ? values.photo?.name
-    //     : 'failNameString';
-    //   console.log('photo is...', values.photo);
-    //   console.log('photo name is...', values.photo?.name);
+      const fileName = values.cover?.name
+        ? values.cover?.name
+        : 'failNameString';
+      console.log('photo is...', values.cover);
+      console.log('photo name is...', values.cover?.name);
 
-    //   const photoUdate = await supabase.storage
-    //     .from('authors')
-    //     .upload(`author_${fileName}`, values.photo, {
-    //       cacheControl: '3600',
-    //       upsert: true,
-    //     });
+      const photoUdate = await supabase.storage
+        .from('covers')
+        .upload(`public/cover_${fileName}`, values.cover, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
-    //   photoUdate.error &&
-    //     console.log('photo update error ... ', photoUdate.error.message);
+      photoUdate.error &&
+        console.log('photo update error ... ', photoUdate.error.message);
 
-    //   imagePath = photoUdate.data?.path;
-    //   console.log('image path ... ', imagePath);
-    // }
+      imagePath = photoUdate.data?.path;
+      console.log('image path ... ', imagePath);
+    }
 
     // if (!author.photo && values.photo) {
     //   const photoUpload = await supabase.storage
@@ -824,41 +939,84 @@ function PrintedBookEditForm(book: PrintedBookType) {
     //   imagePath = photoUpload.data?.path;
     // }
 
-    // if (author.photo && !values.photo) {
-    //   imagePath = author.photo;
-    //   publicUrl = author.photo;
-    // }
+    if (!values.cover) {
+      imagePath = photoImage.current?.src;
+      publicUrl = photoImage.current?.src;
+    }
 
-    // !publicUrl &&
-    //   imagePath &&
-    //   (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-    //     .data.publicUrl);
+    !publicUrl &&
+      imagePath &&
+      (publicUrl = supabase.storage.from('covers').getPublicUrl(imagePath)
+        .data.publicUrl);
 
-    // console.log('public URL is ...', publicUrl);
+    console.log('public URL is ...', publicUrl);
 
-    // console.log('birth date is ...', values.birthDate);
-    // console.log(
-    //   'birth date to base is ...',
-    //   values.birthDate ? values.birthDate.toUTCString() : null
-    // );
+    const printedData = {
+      title_id: book.title_id,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      ISBN: values.ISBN,
+      lit_form: values.lit_form,
+      pages: values.pages,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+    };
 
-    // const { data, error } = await supabase
-    //   .from('Authors')
-    //   .update({
-    //     birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-    //     death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-    //     phrase: values.phrase,
-    //     photo: publicUrl,
-    //     city: values.city,
-    //     bio: values.bio,
-    //   })
-    //   .eq('id', author.id)
-    //   .select('*')
-    //   .single();
+    const bookID = await updatePrintedData(book.id, printedData);
+    console.log('new book ID is ...', bookID);
 
-    // error && window.alert(error.message);
-    // data && window.alert(`автор ${data.name} успешно обновлён`);
-    // data && router.reload();
+    const printOptionsData = {
+      bindings: values.bindings,
+      cover: values.coverType,
+      paper: values.paper,
+      illustrations: values.illustrations,
+      PrintedBookID: bookID,
+    };
+
+    const optionsID = book.options[0].id;
+
+    const coverOptionsData = {
+      PrintedBookID: bookID,
+      source: publicUrl!,
+      shade: values.shade,
+      blurHash: 'NoHash',
+    };
+
+    const coverPropsID = book.cover[0].id;
+
+    if (bookID) {
+      const printOptionsID = await updatePrintOptionsData(
+        optionsID,
+        printOptionsData
+      );
+      console.log('new printed book options ID is ...', printOptionsID);
+      const coverID = await updateCoverData(coverPropsID, coverOptionsData);
+      console.log('new book COVER options ID is ...', coverID);
+
+      if (printOptionsID) {
+        const printSizeData = {
+          width: values.width,
+          height: values.height,
+          PrintOptionsID: printOptionsID,
+        };
+
+        const printSizeOptionsPropsID = book.options[0].size[0].id;
+
+        const printSizeOptionsID = await updatePrintSizeData(
+          printSizeOptionsPropsID,
+          printSizeData
+        );
+        console.log(
+          'new printed book SIZE options ID is ...',
+          printSizeOptionsID
+        );
+        router.reload();
+      }
+    }
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -1020,7 +1178,7 @@ function PrintedBookEditForm(book: PrintedBookType) {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name='shade'
             render={({ field }) => (
@@ -1043,7 +1201,33 @@ function PrintedBookEditForm(book: PrintedBookType) {
                 <FormMessage />
               </FormItem>
             )}
+          /> */}
+
+          <FormField
+            control={form.control}
+            name='shade'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                <div className='space-y-0.5'>
+                  <FormLabel className='text-base'>
+                    shade = {field.value}
+                  </FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value === 'light'}
+                    onCheckedChange={() => {
+                      field.onChange();
+                      field.value === 'light'
+                        ? form.setValue('shade', 'dark')
+                        : form.setValue('shade', 'light');
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
           />
+
           <FormField
             control={form.control}
             name='price'
