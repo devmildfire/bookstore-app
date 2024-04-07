@@ -77,9 +77,7 @@ const EditAuthor: React.FC<Props> = ({ id }) => {
               </Card>
             </div>
             <div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
-              {authorStore.author.photo && (
-                <AuthorPhoto src={authorStore.author.photo} />
-              )}
+              {authorStore.author.photo && <AuthorPhoto />}
               <Card>
                 <CardHeader>
                   <CardTitle>Удалить автора</CardTitle>
