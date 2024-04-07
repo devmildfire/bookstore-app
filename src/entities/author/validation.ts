@@ -30,6 +30,13 @@ export const authorFormSchema = z.object({
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
+
+  phrase: z.string().min(3, {
+    message: 'phrase must be least 3 characters.',
+  }),
+});
+
+export const authorPhotoSchema = z.object({
   photo: z
     .instanceof(File, { message: 'Image is required.' })
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
@@ -37,10 +44,8 @@ export const authorFormSchema = z.object({
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
-
-  phrase: z.string().min(3, {
-    message: 'phrase must be least 3 characters.',
-  }),
 });
 
 export type AuthorFormFields = z.infer<typeof authorFormSchema>;
+
+export type AuthorPhotoField = z.infer<typeof authorPhotoSchema>;

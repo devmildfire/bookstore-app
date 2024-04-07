@@ -1,7 +1,7 @@
 import { supabase } from 'api/supabase-client/client';
 import {
   action,
-  makeAutoObservable,
+  computed,
   makeObservable,
   observable,
   runInAction,
@@ -47,9 +47,13 @@ export default class AuthorPhotoModel {
       return;
     }
 
+    const { data } = supabase.storage
+      .from('authors')
+      .getPublicUrl(photo.data.path);
+
     runInAction(() => {
       this.prevSrc = this.src;
-      this.src = photo.data.path;
+      this.src = data.publicUrl;
     });
   };
 

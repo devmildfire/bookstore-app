@@ -22,7 +22,7 @@ import { AuthorModel } from '@/store/models/author';
 
 type Props = {
   author: AuthorModel;
-  save: () => Promise<void>;
+  save: (payload: AuthorFormFields) => Promise<void>;
 };
 
 const EditAuthor: React.FC<Props> = ({ author, save }) => {
@@ -32,9 +32,12 @@ const EditAuthor: React.FC<Props> = ({ author, save }) => {
     resolver: zodResolver(authorFormSchema),
     defaultValues: {
       ...author.formData,
-      photo: undefined,
     },
   });
+
+  const onSave = React.useCallback(() => {
+    save(form.getValues());
+  }, [form, save]);
 
   const discard = React.useCallback(() => {
     form.reset();
@@ -58,10 +61,19 @@ const EditAuthor: React.FC<Props> = ({ author, save }) => {
             {author.name}
           </h1>
           <div className='hidden items-center gap-2 md:ml-auto md:flex'>
-            <Button variant='outline' size='sm' onClick={discard}>
+            <Button
+              disabled={!form.formState.isDirty}
+              variant='outline'
+              size='sm'
+              onClick={discard}
+            >
               Отменить
             </Button>
-            <Button size='sm' onClick={save}>
+            <Button
+              disabled={!form.formState.isDirty}
+              size='sm'
+              onClick={onSave}
+            >
               Сохранить
             </Button>
           </div>

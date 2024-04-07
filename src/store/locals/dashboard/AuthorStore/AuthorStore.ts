@@ -1,7 +1,10 @@
+import { AuthorFormFields } from '@/entities/author';
 import { ILocalStore } from '@/store/interfaces';
 import { AuthorModel } from '@/store/models/author';
+import { createSlug } from '@/utils/createSlug';
 import { adminAPI } from 'api/admin';
 import { makeObservable, observable, runInAction } from 'mobx';
+import { toast } from 'sonner';
 
 type InitialData = {
   id: string;
@@ -41,64 +44,35 @@ class AuthorStore implements ILocalStore {
     });
   };
 
-  update = async () => {
-    let imagePath = null;
-    let publicUrl = null;
-
-    if (author.photo && values.photo) {
-      const imageNameString = author.photo.split('/');
-
-      const photoRemove = await supabase.storage
-        .from('authors')
-        .remove([imageNameString.slice(-1)[0]]);
-
-      const fileName = values.photo?.name
-        ? values.photo?.name
-        : 'failNameString';
-
-      const photoUdate = await supabase.storage
-        .from('authors')
-        .upload(`author_${fileName}`, values.photo, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      imagePath = photoUdate.data?.path;
+  update = async (payload: AuthorFormFields) => {
+    if (!this._author) {
+      return;
     }
 
-    if (!author.photo && values.photo) {
-      const photoUpload = await supabase.storage
-        .from('authors')
-        .upload(`author_${values.photo.name}`, values.photo, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-      imagePath = photoUpload.data?.path;
+    await this._author.photo.upload(createSlug(this._author.name));
+
+    const { data, error } = await adminAPI.updateAuthor({
+      id: this._author.id,
+      bio: payload.bio,
+      city: payload.city,
+      name: payload.name,
+      phrase: payload.phrase,
+      photo: this._author.photo.src,
+      birth_date: payload.birthDate ? payload.birthDate.toISOString() : null,
+      death_date: payload.deathDate ? payload.deathDate.toISOString() : null,
+    });
+
+    if (error?.code) {
+      toast.error('Не удалось обновить автора. Попытайтесь снова.');
     }
 
-    if (author.photo && !values.photo) {
-      imagePath = author.photo;
-      publicUrl = author.photo;
+    if (!data) {
+      return;
     }
 
-    !publicUrl &&
-      imagePath &&
-      (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-        .data.publicUrl);
-
-    const { data, error } = await supabase
-      .from('Authors')
-      .update({
-        birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-        death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-        phrase: values.phrase,
-        photo: publicUrl,
-        city: values.city,
-        bio: values.bio,
-      })
-      .eq('id', author.id)
-      .select('*')
-      .single();
+    runInAction(() => {
+      this._author = AuthorModel.fromJson(data);
+    });
   };
 
   destroy(): void {

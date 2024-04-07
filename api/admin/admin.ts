@@ -1,3 +1,4 @@
+import { AuthorServer, IAuthor } from '@/entities/author';
 import { supabase } from 'api/supabase-client';
 
 export const adminAPI = {
@@ -22,5 +23,13 @@ export const adminAPI = {
     }
 
     return { ...response, data: response.data[0] };
+  },
+  updateAuthor: async (author: AuthorServer) => {
+    return await supabase
+      .from('Authors')
+      .update(author)
+      .eq('id', author.id)
+      .select('*')
+      .single();
   },
 };
