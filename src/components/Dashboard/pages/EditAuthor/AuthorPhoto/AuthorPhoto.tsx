@@ -8,13 +8,14 @@ import {
 } from '@/components/ui/card';
 import { Upload } from 'lucide-react';
 import Image from 'next/image';
-import { useAuthorStore } from '@/store/locals';
 import { observer } from 'mobx-react-lite';
+import { AuthorPhotoModel } from '@/store/models/author/AuthorPhotoModel';
 
-const AuthorPhoto: React.FC = () => {
-  const authorStore = useAuthorStore();
-  const photo = authorStore.author?.photo;
+type Props = {
+  photo: AuthorPhotoModel;
+};
 
+const AuthorPhoto: React.FC<Props> = ({ photo }) => {
   return (
     <Card className='overflow-hidden'>
       <CardHeader>

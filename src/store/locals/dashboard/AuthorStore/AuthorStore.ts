@@ -1,6 +1,5 @@
 import { ILocalStore } from '@/store/interfaces';
 import { AuthorModel } from '@/store/models/author';
-import { AuthorPhotoModel } from '@/store/models/author/AuthorPhotoModel';
 import { adminAPI } from 'api/admin';
 import { makeObservable, observable, runInAction } from 'mobx';
 

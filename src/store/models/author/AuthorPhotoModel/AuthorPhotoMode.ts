@@ -1,15 +1,30 @@
 import { supabase } from 'api/supabase-client/client';
-import { makeAutoObservable, runInAction } from 'mobx';
+import {
+  action,
+  makeAutoObservable,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import { toast } from 'sonner';
 
 export default class AuthorPhotoModel {
+  prevSrc: string | null;
   src: string | null = null;
   file: File | null = null;
 
   constructor(src: string | null) {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      prevSrc: observable,
+      src: observable,
+      file: observable,
+      upload: action,
+      select: action,
+      reset: action,
+    });
 
     this.src = src;
+    this.prevSrc = src;
   }
 
   upload = async (pathname: string) => {
@@ -33,6 +48,7 @@ export default class AuthorPhotoModel {
     }
 
     runInAction(() => {
+      this.prevSrc = this.src;
       this.src = photo.data.path;
     });
   };
@@ -44,6 +60,13 @@ export default class AuthorPhotoModel {
       return;
     }
 
-    this.file = files[0];
+    runInAction(() => {
+      this.file = files[0];
+    });
+  };
+
+  reset = () => {
+    this.file = null;
+    this.src = this.prevSrc;
   };
 }

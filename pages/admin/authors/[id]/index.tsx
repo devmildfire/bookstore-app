@@ -4,7 +4,9 @@ import { EditAuthor } from '@/components/Dashboard';
 import { withDashboardLayout } from '@/layouts';
 import { NextPageWithLayout } from '@/types/page';
 import { GetServerSideProps } from 'next/types';
-import { usePathname } from 'next/navigation';
+import { useLocalStore } from '@/store/hooks';
+import { AuthorStore, AuthorStoreProvider } from '@/store/locals';
+import { observer } from 'mobx-react-lite';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
@@ -15,9 +17,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const AddAuthorPage: NextPageWithLayout<{ id: string }> = ({ id }) => {
-  const pathname = usePathname();
-  console.log(pathname);
-  return <EditAuthor id={id} />;
+  const authorStore = useLocalStore(() => new AuthorStore({ id }));
+
+  React.useEffect(() => {
+    authorStore.load();
+  }, [authorStore]);
+
+  if (!authorStore.author) {
+    return <h1>Загрузка...</h1>;
+  }
+
+  return (
+    <AuthorStoreProvider value={{ store: authorStore }}>
+      <EditAuthor author={authorStore.author} save={authorStore.update} />
+    </AuthorStoreProvider>
+  );
 };
 
-export default withDashboardLayout(AddAuthorPage);
+export default withDashboardLayout(observer(AddAuthorPage));
