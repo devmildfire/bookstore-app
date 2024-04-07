@@ -11,40 +11,44 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
-
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
-import { FullPrintedBookType, PrintedBookType } from 'pages/dashboard/editions';
+import {
+  AudiobookType,
+  FullPrintedBookType,
+  PrintedBookType,
+} from 'pages/dashboard/editions';
 import { Database } from 'api/books/types';
 import { Checkbox } from '../ui/checkbox';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 import { Switch } from '../ui/switch';
+import slugify from 'slugify';
 
-// type coverShadeType = Database['public']['Enums']['covershade'];
-type coverShadeType = Database['public']['Enums']['covershade'];
 type PrintOptionsDataType =
   Database['public']['Tables']['PrintOptions']['Insert'];
 type PrintSizeDataType = Database['public']['Tables']['PrintSize']['Insert'];
 type PrintedBookInsertType =
   Database['public']['Tables']['PrintedBooks']['Insert'];
 type coverDataType = Database['public']['Tables']['PrintedCover']['Insert'];
+type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
+const MAX_AUDIO_FILE_SIZE = 20 * 1024 * 1024; //  20MB
+
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
   'image/png',
   'image/webp',
+];
+
+const ACCEPTED_AUDIO_TYPES = [
+  'audio/mpeg',
+  'audio/ogg',
+  'audio/vnd.wav',
+  'application/zip',
 ];
 
 const formSchema = z.object({
@@ -105,8 +109,6 @@ const formSchema = z.object({
   width: z.number().positive('must be positive'),
 });
 
-// const formEditSchema = { ...formSchema, cover: z.any().optional() };
-
 const formEditSchema = z.object({
   counter_color: z.string({
     required_error: 'Author must pick a color for his book counter.',
@@ -129,7 +131,6 @@ const formEditSchema = z.object({
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
 
   shade: z.literal('light').or(z.literal('dark')),
-
   price: z.number().positive('must be positive'),
   publish_date: z
     .date({
@@ -157,6 +158,73 @@ const formEditSchema = z.object({
   }),
   height: z.number().positive('must be positive'),
   width: z.number().positive('must be positive'),
+});
+
+const audioFormSchema = z.object({
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his audiobook counter.',
+  }),
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
+  }),
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
+  }),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
+  duration: z.number().positive('must be positive'),
+  audio: z
+    .instanceof(File, { message: 'Audio file is required.' })
+    .refine(
+      (file) => file?.size <= MAX_AUDIO_FILE_SIZE,
+      `Max file size is 20MB.`
+    )
+    .refine(
+      (file) => ACCEPTED_AUDIO_TYPES.includes(file?.type),
+      '.mp3, .wav, .ogg and .zip files are accepted.'
+    ),
+});
+
+const audioFormEditSchema = z.object({
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his audiobook counter.',
+  }),
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
+  }),
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
+  }),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
+  duration: z.number().positive('must be positive'),
+  audio: z.any().optional(),
 });
 
 async function setCoverData(coverUrl: string, printedBookID: number) {
@@ -323,6 +391,708 @@ async function updatePrintSizeData(
   return printSizeID;
 }
 
+const setAudioData = async (audioData: AudioBookInsertType) => {
+  const newAudioBook = await supabase
+    .from('Audiobooks')
+    .insert(audioData)
+    .select('*')
+    .single();
+
+  newAudioBook.error && window.alert(newAudioBook.error.message);
+  newAudioBook.data &&
+    window.alert(`${newAudioBook.data.id} успешно добавлен к аудио книгам`);
+
+  if (newAudioBook.data) {
+    return newAudioBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+const updateAudioData = async (id: number, audioData: AudioBookInsertType) => {
+  const audioBook = await supabase
+    .from('Audiobooks')
+    .update(audioData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  audioBook.error && window.alert(audioBook.error.message);
+  audioBook.data &&
+    window.alert(`аудио книга ${audioBook.data.id} успешно изменена`);
+
+  if (audioBook.data) {
+    return audioBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+async function getTitleName(id: number) {
+  const { data } = await supabase
+    .from('Titles')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  return data ? data.name : '';
+}
+
+function AudioBookForm({ titleID }: { titleID: number }) {
+  const audioPlayer = useRef<HTMLAudioElement | null>(null);
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof audioFormSchema>>({
+    resolver: zodResolver(audioFormSchema),
+    defaultValues: {
+      counter_color: '#0800ffF',
+      extra: 'some text',
+      is_published: false,
+      discount: 0,
+      price: 100,
+      publish_date: new Date(),
+      release_date: new Date(),
+      sold: 0,
+      duration: 3600,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof audioFormSchema>) {
+    console.log(values);
+
+    const titleName = await getTitleName(titleID);
+    console.log('title name is... ', titleName);
+
+    const fileExtention = values.audio.name.split('.').pop();
+
+    const audioUpload = await supabase.storage
+      .from('audiobooks')
+      .upload(`audio_${slugify(titleName)}.${fileExtention}`, values.audio, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    const publicUrl = supabase.storage
+      .from('audiobooks')
+      .getPublicUrl(`${audioUpload.data?.path}`).data.publicUrl;
+
+    console.log('URL is... ', publicUrl);
+
+    const audioData = {
+      title_id: titleID,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+      src: publicUrl,
+      file_volume: values.audio.size,
+      duration: values.duration,
+    };
+
+    const audiobookID = await setAudioData(audioData);
+    console.log('new audiobook ID is ...', audiobookID);
+    audiobookID && router.reload();
+  }
+
+  async function onAudioInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const audioInput = event.target;
+    const aPlayer = audioPlayer.current;
+
+    if (audioInput.files) {
+      const file = audioInput.files[0];
+      if (file) {
+        aPlayer && (aPlayer.src = URL.createObjectURL(file));
+      }
+    }
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='audio'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>audio file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='cover'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onAudioInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <audio
+                  className={value ? 'max-w-72' : 'max-w-72 hidden'}
+                  ref={audioPlayer}
+                  controls
+                  src=''
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='duration'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Duration, s</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-64'
+          >
+            Добавить Аудиокнигу
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
+function AudioBookEditForm(audiobook: AudiobookType) {
+  const audioPlayer = useRef<HTMLAudioElement | null>(null);
+
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof audioFormEditSchema>>({
+    resolver: zodResolver(audioFormEditSchema),
+    defaultValues: {
+      is_published:
+        audiobook.is_published !== null ? audiobook.is_published : undefined,
+      publish_date: audiobook.publish_date
+        ? new Date(audiobook.publish_date)
+        : undefined,
+      release_date: audiobook.release_date
+        ? new Date(audiobook.release_date)
+        : undefined,
+      counter_color: audiobook.counter_color || '#ff2a00',
+      duration: audiobook.duration || 0,
+      extra: audiobook.extra || '',
+      discount: audiobook.discount !== null ? audiobook.discount : undefined,
+      sold: audiobook.sold !== null ? audiobook.sold : undefined,
+      price: audiobook.price !== null ? audiobook.price : undefined,
+    },
+  });
+
+  async function onEditSubmit(values: z.infer<typeof audioFormEditSchema>) {
+    console.log('values ... ', values);
+
+    let audioPath = null;
+    let publicUrl = null;
+
+    if (values.audio) {
+      console.log('current book audio ... ', audiobook.src);
+
+      const audioNameString = audiobook.src?.split('/') || 'no audio';
+
+      console.log('audio Name String ... ', audioNameString);
+
+      console.log('selected audio file ... ', values.audio);
+
+      const audioRemove = await supabase.storage
+        .from('audiobooks')
+        .remove([audioNameString.slice(-1)[0]]);
+
+      audioRemove.error &&
+        console.log('audio Remove error ... ', audioRemove.error.message);
+
+      audioRemove.data &&
+        console.log('audio Remove data... ', audioRemove.data);
+
+      const fileName = values.audio.name ? values.audio.name : 'failNameString';
+      console.log('audio is...', values.audio);
+      console.log('audio name is...', values.audio.name);
+
+      const fileExtention = fileName.split('.').pop();
+
+      const titleName = await getTitleName(audiobook.title_id);
+      console.log('title name is... ', titleName);
+
+      const audioUdate = await supabase.storage
+        .from('audiobooks')
+        .upload(`audio_${slugify(titleName)}.${fileExtention}`, values.audio, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      audioUdate.error &&
+        console.log('audio update error ... ', audioUdate.error.message);
+
+      audioPath = audioUdate.data?.path;
+      console.log('audio path ... ', audioPath);
+    }
+
+    if (!values.audio) {
+      audioPath = audiobook.src;
+      publicUrl = audiobook.src;
+    }
+
+    !publicUrl &&
+      audioPath &&
+      (publicUrl = supabase.storage.from('audiobooks').getPublicUrl(audioPath)
+        .data.publicUrl);
+
+    console.log('public URL is ...', publicUrl);
+
+    const audioData = {
+      title_id: audiobook.title_id,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+      src: publicUrl,
+      file_volume: values.audio?.size || audiobook.file_volume,
+      duration: values.duration,
+    };
+
+    const bookID = await updateAudioData(audiobook.id, audioData);
+
+    router.reload();
+  }
+
+  async function onAudioInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const audioInput = event.target;
+    const aPlayer = audioPlayer.current;
+
+    if (audioInput.files) {
+      const file = audioInput.files[0];
+      if (file) {
+        aPlayer && (aPlayer.src = URL.createObjectURL(file));
+      }
+    }
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onEditSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='audio'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>audio file</FormLabel>
+
+                <p>{audiobook.src}</p>
+
+                <a href={audiobook.src!} download target='_blank'>
+                  download file
+                </a>
+
+                <FormControl>
+                  <Input
+                    id='cover'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onAudioInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <audio
+                  // className={value ? 'max-w-72' : 'max-w-72 hidden'}
+                  ref={audioPlayer}
+                  controls
+                  src={audiobook.src!}
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='duration'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Duration, s</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-48'
+          >
+            Обновить
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
 function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
@@ -453,11 +1223,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               <FormItem className='flex flex-col items-start p-1'>
                 <FormLabel>ISBN</FormLabel>
                 <FormControl>
-                  <Textarea
-                    // placeholder='Tell us a little bit about yourself'
-                    // className='resize-none'
-                    {...field}
-                  />
+                  <Textarea {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -572,30 +1338,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name='shade'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Shade</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select cover shade ' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='light'>light</SelectItem>
-                    <SelectItem value='dark'>dark</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
 
           <FormField
             control={form.control}
@@ -812,8 +1554,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
 }
 
 function PrintedBookEditForm(book: FullPrintedBookType) {
-  const [newPhoto, setNewPhoto] = useState<string>();
-
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   function setImage(path: string) {
@@ -872,15 +1612,10 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   const form = useForm<z.infer<typeof formEditSchema>>({
     resolver: zodResolver(formEditSchema),
     defaultValues: {
-      // bio: author.bio ? author.bio : undefined,
       publish_date: book.publish_date ? new Date(book.publish_date) : undefined,
       release_date: book.release_date ? new Date(book.release_date) : undefined,
       shade: 'light',
       counter_color: '#ff2a00',
-      // deathDate: author.death_date ? new Date(author.death_date) : undefined,
-      // city: author.city ? author.city : undefined,
-      // photo: undefined,
-      // phrase: author.phrase ? author.phrase : undefined,
     },
   });
 
@@ -928,16 +1663,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       imagePath = photoUdate.data?.path;
       console.log('image path ... ', imagePath);
     }
-
-    // if (!author.photo && values.photo) {
-    //   const photoUpload = await supabase.storage
-    //     .from('authors')
-    //     .upload(`author_${values.photo.name}`, values.photo, {
-    //       cacheControl: '3600',
-    //       upsert: true,
-    //     });
-    //   imagePath = photoUpload.data?.path;
-    // }
 
     if (!values.cover) {
       imagePath = photoImage.current?.src;
@@ -1178,30 +1903,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name='shade'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Shade</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select cover shade ' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='light'>light</SelectItem>
-                    <SelectItem value='dark'>dark</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
 
           <FormField
             control={form.control}
@@ -1417,4 +2118,9 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   );
 }
 
-export { PrintedBookForm, PrintedBookEditForm };
+export {
+  PrintedBookForm,
+  PrintedBookEditForm,
+  AudioBookForm,
+  AudioBookEditForm,
+};

@@ -25,6 +25,8 @@ import {
 import {
   PrintedBookForm,
   PrintedBookEditForm,
+  AudioBookForm,
+  AudioBookEditForm,
 } from '@/components/DashBoardPage/EditionForm';
 
 export type PrintedBookType =
@@ -52,54 +54,9 @@ type CoverType = {
   cover: CoverRowType[];
 };
 
-// type FullPrintOptionsType = PrintOptionsType & PrintSizeType
-
 export type FullPrintedBookType = PrintedBookType &
   PrintOptionsType &
   CoverType;
-
-const fpbt: FullPrintedBookType = {
-  id: 1,
-  counter_color: '21341324234',
-  discount: 0,
-  title_id: 1,
-  extra: '234234234',
-  is_published: true,
-  ISBN: 'sdfsdfsdf',
-  lit_form: 'sdfsdfsdf',
-  pages: 9,
-  price: 9999,
-  publish_date: 'sdfdsfsdf',
-  release_date: 'sfsdfsdf',
-  sold: 987987,
-  cover: [
-    {
-      blurHash: 'sdfdsfsdf',
-      id: 111,
-      PrintedBookID: 111,
-      shade: 'light',
-      source: 'sdfdsfsdf',
-    },
-  ],
-  options: [
-    {
-      bindings: 'sdfsdfsdf',
-      illustrations: 'sdfsdf',
-      cover: 'sdfsdfsdfsdf',
-      id: 1,
-      paper: 'sfdsfsdfsdf',
-      PrintedBookID: 1,
-      size: [
-        {
-          id: 1,
-          PrintOptionsID: 1,
-          height: 23,
-          width: 243,
-        },
-      ],
-    },
-  ],
-};
 
 export type EditionsType = {
   printedBook?: FullPrintedBookType;
@@ -185,9 +142,7 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
           >
             <AccordionTrigger> Audio Book </AccordionTrigger>
             <AccordionContent>
-              <p> длительность: {editions?.audioBook.duration}</p>
-              <p> extra: {editions?.audioBook.extra}</p>
-              <p> скидка: {editions?.audioBook.discount}</p>
+              <AudioBookEditForm {...editions.audioBook} />
             </AccordionContent>
           </AccordionItem>
         )}
@@ -245,7 +200,9 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             <AccordionTrigger className='w-full text-red-800'>
               Add Audiobook
             </AccordionTrigger>
-            <AccordionContent>add some Audiobook</AccordionContent>
+            <AccordionContent>
+              <AudioBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
 
