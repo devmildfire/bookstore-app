@@ -8,4 +8,19 @@ export const adminAPI = {
     });
     return { data, error };
   },
+  getAuthors: async () => {
+    const response = await supabase
+      .from('Authors')
+      .select('id, bio, photo, name');
+    return response;
+  },
+  getAuthorById: async (id: string) => {
+    const response = await supabase.from('Authors').select('*').eq('id', id);
+
+    if (!response.data) {
+      return response;
+    }
+
+    return { ...response, data: response.data[0] };
+  },
 };

@@ -8,21 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { AdminStore } from '@/store/locals';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@/components/ui/form';
+import { Form, FormField } from '@/components/ui/form';
 import { useLocalStore } from '@/store/hooks';
 import { observer } from 'mobx-react-lite';
+import { FormInput } from '@/components/Dashboard/pages/components/form';
 
 const formSchema = z.object({
   email: z.string().email().min(3, {
@@ -45,7 +38,7 @@ const AdminLogin = () => {
   });
 
   return (
-    <DashboardLayout>
+    <div className='flex min-h-screen w-full items-center justify-center bg-muted/5'>
       <Card className='w-full max-w-sm'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(adminStore.login)}>
@@ -59,27 +52,19 @@ const AdminLogin = () => {
               <FormField
                 name='email'
                 control={form.control}
-                render={({ field }) => {
-                  return (
-                    <FormItem className='grid gap-2'>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder='email@example.com' {...field} />
-                      </FormControl>
-                    </FormItem>
-                  );
-                }}
+                render={({ field }) => (
+                  <FormInput
+                    label='Email'
+                    placeholder='email@example.com'
+                    {...field}
+                  />
+                )}
               />
               <FormField
                 name='password'
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem className='grid gap-2'>
-                    <FormLabel>Пароль</FormLabel>
-                    <FormControl>
-                      <Input type='password' {...field} />
-                    </FormControl>
-                  </FormItem>
+                  <FormInput label='Пароль' type='password' {...field} />
                 )}
               />
             </CardContent>
@@ -95,7 +80,7 @@ const AdminLogin = () => {
           </form>
         </Form>
       </Card>
-    </DashboardLayout>
+    </div>
   );
 };
 

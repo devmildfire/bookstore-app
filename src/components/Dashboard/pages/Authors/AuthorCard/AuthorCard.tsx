@@ -14,16 +14,10 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import Link from 'next/link';
-
-type Author = {
-  id: string;
-  name: string;
-  photo: string;
-  bio: string;
-};
+import { AuthorPreview } from '@/entities/author';
 
 interface AuthorCard extends React.HTMLAttributes<HTMLDivElement> {
-  author: Author;
+  author: AuthorPreview;
   navigateTo: string;
   aspectRatio?: 'portrait' | 'square';
   width?: number;
@@ -51,7 +45,7 @@ const AuthorCard: React.FC<AuthorCard> = ({
                 width={width}
                 height={height}
                 className={cn(
-                  'h-auto w-auto object-cover transition-all hover:scale-105',
+                  'h-full w-full object-cover transition-all hover:scale-105',
                   aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'
                 )}
               />

@@ -1,20 +1,7 @@
 import * as React from 'react';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import {
-  ChevronLeft,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  ShoppingCart,
-  Upload,
-  Users2,
-} from 'lucide-react';
+import { ChevronLeft, PlusCircle, Upload } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 

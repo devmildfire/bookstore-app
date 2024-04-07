@@ -1,1 +1,1 @@
-export * from './AdminStore';
+export * from './dashboard';

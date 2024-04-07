@@ -1,11 +1,14 @@
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout<
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  P extends Record<any, any> = {},
+  IP = P
+> = NextPage<P, IP> & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
 
-export type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+export type AppPropsWithLayout = {
+  Component: NextPageWithLayout<AppProps>;
 };

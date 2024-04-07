@@ -8,33 +8,39 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { usePagination } from '@/hooks/usePagination';
 
 type Props = {
   className?: string;
 };
 
 const Pagination: React.FC<Props> = ({ className }) => {
+  const pagination = usePagination({
+    total: 30,
+  });
+
+  console.log(pagination.range);
+
   return (
     <PaginationRoot className={className}>
       <PaginationContent>
-        <PaginationItem>
+        <PaginationItem onClick={pagination.previous}>
           <PaginationPrevious href='#' />
         </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href='#'>1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href='#' isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href='#'>3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
+        {pagination.range.map((page, idx) => {
+          if (page === 'dots') {
+            return <PaginationItem key={idx}>...</PaginationItem>;
+          }
+
+          return (
+            <PaginationItem onClick={() => pagination.setPage(page)} key={idx}>
+              <PaginationLink href='#' isActive={page === pagination.active}>
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        })}
+        <PaginationItem onClick={pagination.next}>
           <PaginationNext href='#' />
         </PaginationItem>
       </PaginationContent>
