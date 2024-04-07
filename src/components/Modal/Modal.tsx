@@ -499,11 +499,15 @@ function BookModal(props: BookModalProps) {
                 <PriceContainer>
                   <Price>
                     {`${
-                      discount[index] > 0 &&
-                      Math.floor(price[index] * (1 - discount[index] / 100))
+                      discount[index] > 0
+                        ? Math.floor(price[index] * (1 - discount[index] / 100))
+                        : price[index]
                     }₽`}{' '}
                   </Price>
-                  <DiscountPrice>{`${price[index]}₽`}</DiscountPrice>
+
+                  {discount[index] > 0 ? (
+                    <DiscountPrice>{`${price[index]}₽`}</DiscountPrice>
+                  ) : null}
                 </PriceContainer>
               </Edition>
             );

@@ -9,17 +9,29 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
+import { UseFormReturn, useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  Children,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from 'react';
 import { TitleType } from 'pages/dashboard/titles';
+import { AuthorsType } from 'pages/dashboard/authors';
+
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { AwardsType } from 'pages/dashboard/awards';
 
 const MAX_VIDEO_FILE_SIZE = 8 * 1024 * 1024; //  8MB
 const ACCEPTED_VIDEO_TYPES = [
@@ -40,6 +52,18 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/png',
   'image/webp',
 ];
+
+const authorsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
+
+const awardsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 const videoSchema = z
   .instanceof(File, { message: 'Image is required.' })
@@ -77,6 +101,8 @@ const formSchema = z.object({
   name: z.string().min(3, {
     message: 'Title name must be at least 3 characters long.',
   }),
+  awards: z.array(awardsOptionSchema).optional(),
+  authors: z.array(authorsOptionSchema).min(1),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -99,6 +125,8 @@ const formSchema = z.object({
 });
 
 const formEditSchema = z.object({
+  authors: z.array(authorsOptionSchema).min(1),
+  awards: z.array(awardsOptionSchema).optional(),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -120,6 +148,8 @@ const formEditSchema = z.object({
 });
 
 type TitleFormProps = {
+  authors: AuthorsType[];
+  awards: AwardsType[];
   defaultName: string;
   defaultThesis: string;
   defaultDescription: string;
@@ -128,9 +158,74 @@ type TitleFormProps = {
   defaultIsFeatured: boolean;
 };
 
+async function onVideoInputChange(
+  event: ChangeEvent<HTMLInputElement>,
+  videoRef: RefObject<HTMLVideoElement>
+) {
+  const videoInput = event.target;
+  const tVideo = videoRef.current;
+
+  if (videoInput.files) {
+    const file = videoInput.files[0];
+    if (file) {
+      tVideo && (tVideo.src = URL.createObjectURL(file));
+    }
+  }
+}
+
+const emptyVideoInput = (
+  videoInputRef: RefObject<HTMLInputElement>,
+  videoRef: RefObject<HTMLVideoElement>
+) => {
+  const videoInput = videoInputRef.current;
+  videoInput && (videoInput.value = '');
+
+  const video = videoRef.current;
+  video && (video.src = '');
+};
+
+async function onImageInputChange(
+  event: ChangeEvent<HTMLInputElement>,
+  photoRef: RefObject<HTMLImageElement>
+) {
+  const imageInput = event.target;
+  const pImage = photoRef.current;
+
+  if (imageInput.files) {
+    const file = imageInput.files[0];
+    if (file) {
+      pImage && (pImage.src = URL.createObjectURL(file));
+    }
+  }
+}
+
+const emptyCoverInput = (
+  photoInputRef: RefObject<HTMLInputElement>,
+  photoImageRef: RefObject<HTMLImageElement>
+) => {
+  const coverInput = photoInputRef.current;
+  coverInput && (coverInput.value = '');
+  photoImageRef.current && (photoImageRef.current.src = '');
+};
+
 function TitleForm(props: TitleFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
+
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const OPTIONS: Option[] = props.authors.map((author) => ({
+    label: author.name,
+    value: author.id.toString(),
+    disable: false,
+  }));
+
+  const AWARDSOPTIONS: Option[] = props.awards.map((award) => ({
+    label: award.title || 'default award title',
+    value: award.id.toString(),
+    disable: false,
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -146,6 +241,9 @@ function TitleForm(props: TitleFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+
+    emptyVideoInput(videoInputRef, trailerVideo);
+    emptyCoverInput(photoInputRef, photoImage);
 
     const coverExtention = values.cover.name.split('.').pop();
 
@@ -191,6 +289,9 @@ function TitleForm(props: TitleFormProps) {
         age_restriction: values.age_restriction,
         cover: publicUrl,
         description: values.description,
+        first_release: values.first_release
+          ? values.first_release.toUTCString()
+          : null,
         is_featured: values.is_featured,
         name: values.name,
         slug: slugify(values.name),
@@ -202,30 +303,59 @@ function TitleForm(props: TitleFormProps) {
 
     error && window.alert(error.message);
     data && window.alert(`${data.name} успешно добавлен к тайтлам`);
-  }
 
-  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const imageInput = event.target;
-    const pImage = photoImage.current;
+    if (data) {
+      const titlesAuthorsArray = values.authors.map((author) => {
+        const authorID = parseInt(author.value);
+        const titleID = data?.id;
 
-    if (imageInput.files) {
-      const file = imageInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
+        return {
+          author_id: authorID,
+          title_id: titleID,
+        };
+      });
+
+      if (values.awards) {
+        const titlesAwardsArray = values.awards.map((award) => {
+          const awardID = parseInt(award.value);
+          const titleID = data?.id;
+
+          return {
+            award_id: awardID,
+            title_id: titleID,
+          };
+        });
+
+        const awardsData = await supabase
+          .from('TitlesAwards')
+          .insert(titlesAwardsArray)
+          .select('*');
+        awardsData.error && window.alert(awardsData.error.message);
+        awardsData.data &&
+          window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
       }
-    }
-  }
 
-  async function onVideoInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const videoInput = event.target;
-    const tVideo = trailerVideo.current;
-
-    if (videoInput.files) {
-      const file = videoInput.files[0];
-      if (file) {
-        tVideo && (tVideo.src = URL.createObjectURL(file));
-      }
+      const authorsData = await supabase
+        .from('Titles_Authors')
+        .insert(titlesAuthorsArray)
+        .select('*');
+      authorsData.error && window.alert(authorsData.error.message);
+      authorsData.data &&
+        window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
     }
+
+    form.reset({
+      description: '',
+      thesis: '',
+      age_restriction: 0,
+      cover: undefined,
+      name: '',
+      authors: [],
+      awards: [],
+      trailer: undefined,
+      first_release: undefined,
+      is_featured: false,
+    });
   }
 
   return (
@@ -243,6 +373,54 @@ function TitleForm(props: TitleFormProps) {
                 <FormLabel>Title Name</FormLabel>
                 <FormControl>
                   <Input placeholder='someTitle' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='authors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Authors</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='awards'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Awards</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={AWARDSOPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -333,7 +511,7 @@ function TitleForm(props: TitleFormProps) {
                     type='file'
                     {...fieldProps}
                     onChange={(event) => {
-                      onImageInputChange(event);
+                      onImageInputChange(event, photoImage);
                       return onChange(
                         event.target.files && event.target.files[0]
                       );
@@ -364,30 +542,26 @@ function TitleForm(props: TitleFormProps) {
                       type='file'
                       {...fieldProps}
                       onChange={(event) => {
-                        onVideoInputChange(event);
+                        onVideoInputChange(event, trailerVideo);
                         return onChange(
                           event.target.files && event.target.files[0]
                         );
                       }}
+                      ref={videoInputRef}
                     />
                   </FormControl>
                   <Button
                     type='button'
                     variant={'outline'}
                     onClick={() => {
-                      form.resetField('trailer');
-                      const videoInput = document.getElementById(
-                        'video'
-                      ) as HTMLInputElement;
-                      videoInput.value = '';
+                      emptyVideoInput(videoInputRef, trailerVideo);
+                      form.setValue('trailer', undefined);
                     }}
                   >
                     clear
                   </Button>
                 </div>
                 <FormMessage />
-
-                {/* `max-w-72  ${value &&}` */}
 
                 <video
                   className={value ? 'max-w-72' : 'max-w-72 hidden'}
@@ -432,9 +606,43 @@ function TitleForm(props: TitleFormProps) {
   );
 }
 
-function TitleEditForm(title: TitleType) {
-  //   const [newPhoto, setNewPhoto] = useState<string>();
-  //   const photoImage = useRef<HTMLImageElement | null>(null);
+interface VideoContainerProps {
+  children?: ReactNode;
+  hasVideo: boolean;
+}
+
+function VideoContainer({ children, hasVideo }: VideoContainerProps) {
+  return <div className={hasVideo ? '' : 'hidden'}>{children}</div>;
+}
+
+type TitleEditFormProps = {
+  title: TitleType;
+  authors: AuthorsType[];
+  awards: AwardsType[];
+};
+
+function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
+  // const [newPhoto, setNewPhoto] = useState<string>();
+  const [hasVideo, setHasVideo] = useState(false);
+
+  const photoImage = useRef<HTMLImageElement | null>(null);
+  const trailerVideo = useRef<HTMLVideoElement | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const isVideoCleared = useRef(false);
+
+  const OPTIONS: Option[] = authors.map((author) => ({
+    label: author.name,
+    value: author.id.toString(),
+    disable: false,
+  }));
+
+  const AWARDSOPTIONS: Option[] = awards.map((award) => ({
+    label: award.title || 'default award title',
+    value: award.id.toString(),
+    disable: false,
+  }));
+
   async function getDataFromReq() {
     const { data } = await supabase
       .from('Titles')
@@ -442,15 +650,52 @@ function TitleEditForm(title: TitleType) {
       .eq('id', title.id)
       .single();
     data && console.log('data from req is...', data);
+
     data &&
       (data.description && form.setValue('description', data.description),
-      data.thesis && form.setValue('thesis', data.thesis));
-    //   data.photo && setNewPhoto(data.photo),
-    // data.bio && form.setValue('bio', data.bio),
-    // data.city && form.setValue('city', data.city),
-    // data.phrase && form.setValue('phrase', data.phrase),
-    // data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
-    // data.death_date && form.setValue('deathDate', new Date(data.death_date))
+      data.thesis && form.setValue('thesis', data.thesis),
+      data.age_restriction
+        ? form.setValue('age_restriction', data.age_restriction)
+        : form.setValue('age_restriction', 0),
+      // data.cover && setNewPhoto(data.cover),
+      console.log('first release at...', data.first_release),
+      data.first_release &&
+        form.setValue('first_release', new Date(data.first_release)),
+      data.is_featured !== null &&
+        form.setValue('is_featured', data.is_featured),
+      data.trailer && setHasVideo(true));
+
+    const authorsData = await supabase
+      .from('Titles_Authors')
+      .select('*, Authors(*)')
+      .eq('title_id', title.id);
+
+    if (authorsData.data) {
+      console.log('authors data from reference table... ', authorsData.data);
+
+      const authorsArray = authorsData.data.map((author) => ({
+        label: author.Authors ? author.Authors.name : 'emptyLabel',
+        value: author.Authors ? author.Authors.id.toString() : 'emptyLabel',
+      }));
+
+      form.setValue('authors', authorsArray);
+    }
+
+    const awardsData = await supabase
+      .from('TitlesAwards')
+      .select('*, Awards(*)')
+      .eq('title_id', title.id);
+
+    if (awardsData.data) {
+      console.log('awards data from reference table... ', awardsData.data);
+
+      const awardsArray = awardsData.data.map((award) => ({
+        label: award.Awards?.title ? award.Awards.title : 'emptyLabel',
+        value: award.Awards ? award.Awards.id.toString() : 'emptyLabel',
+      }));
+
+      form.setValue('awards', awardsArray);
+    }
   }
   useEffect(() => {
     getDataFromReq();
@@ -465,92 +710,198 @@ function TitleEditForm(title: TitleType) {
         ? new Date(title.first_release)
         : undefined,
       is_featured: title.is_featured !== null ? title.is_featured : undefined,
+      age_restriction: title.age_restriction || 0,
     },
   });
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
-    //     let imagePath = null;
-    //     let publicUrl = null;
-    //     if (author.photo && values.photo) {
-    //       console.log('current author photo ... ', author.photo);
-    //       const imageNameString = author.photo.split('/');
-    //       console.log('image Name String ... ', imageNameString);
-    //       console.log('selected photo file ... ', values.photo);
-    //       const photoRemove = await supabase.storage
-    //         .from('authors')
-    //         .remove([imageNameString.slice(-1)[0]]);
-    //       photoRemove.error &&
-    //         console.log('photo Remove error ... ', photoRemove.error.message);
-    //       photoRemove.data &&
-    //         console.log('photo Remove data... ', photoRemove.data);
-    //       const fileName = values.photo?.name
-    //         ? values.photo?.name
-    //         : 'failNameString';
-    //       console.log('photo is...', values.photo);
-    //       console.log('photo name is...', values.photo?.name);
-    //       const photoUdate = await supabase.storage
-    //         .from('authors')
-    //         .upload(`author_${fileName}`, values.photo, {
-    //           cacheControl: '3600',
-    //           upsert: true,
-    //         });
-    //       photoUdate.error &&
-    //         console.log('photo update error ... ', photoUdate.error.message);
-    //       imagePath = photoUdate.data?.path;
-    //       console.log('image path ... ', imagePath);
-    //     }
-    //     if (!author.photo && values.photo) {
-    //       const photoUpload = await supabase.storage
-    //         .from('authors')
-    //         .upload(`author_${values.photo.name}`, values.photo, {
-    //           cacheControl: '3600',
-    //           upsert: true,
-    //         });
-    //       imagePath = photoUpload.data?.path;
-    //     }
-    //     if (author.photo && !values.photo) {
-    //       imagePath = author.photo;
-    //       publicUrl = author.photo;
-    //     }
-    //     !publicUrl &&
-    //       imagePath &&
-    //       (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-    //         .data.publicUrl);
-    //     console.log('public URL is ...', publicUrl);
-    //     console.log('birth date is ...', values.birthDate);
-    //     console.log(
-    //       'birth date to base is ...',
-    //       values.birthDate ? values.birthDate.toUTCString() : null
-    //     );
-    //     const { data, error } = await supabase
-    //       .from('Authors')
-    //       .update({
-    //         birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-    //         death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-    //         phrase: values.phrase,
-    //         photo: publicUrl,
-    //         city: values.city,
-    //         bio: values.bio,
-    //       })
-    //       .eq('id', author.id)
-    //       .select('*')
-    //       .single();
-    //     error && window.alert(error.message);
-    //     data && window.alert(`автор ${data.name} успешно обновлён`);
-    //     data && router.reload();
-  }
+    let imagePath = null;
+    let publicUrl = null;
 
-  //   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-  //     const imageInput = event.target;
-  //     const pImage = photoImage.current;
-  //     if (imageInput.files) {
-  //       const file = imageInput.files[0];
-  //       if (file) {
-  //         pImage && (pImage.src = URL.createObjectURL(file));
-  //       }
-  //     }
-  //   }
+    let videoPath = null;
+    let publicVideoUrl = null;
+
+    if (title.cover && values.cover) {
+      console.log('current title cover ... ', title.cover);
+      const imageNameString = title.cover.split('/');
+      console.log('image Name String ... ', imageNameString);
+      console.log('selected cover file ... ', values.cover);
+      const photoRemove = await supabase.storage
+        .from('titles')
+        .remove([imageNameString.slice(-1)[0]]);
+      photoRemove.error &&
+        console.log('photo Remove error ... ', photoRemove.error.message);
+      photoRemove.data &&
+        console.log('photo Remove data... ', photoRemove.data);
+      const fileName = values.cover?.name
+        ? values.cover?.name
+        : 'failNameString';
+      console.log('photo is...', values.cover);
+      console.log('photo name is...', values.cover?.name);
+      const photoUdate = await supabase.storage
+        .from('titles')
+        .upload(`title_${fileName}`, values.cover, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      photoUdate.error &&
+        console.log('photo update error ... ', photoUdate.error.message);
+      imagePath = photoUdate.data?.path;
+      console.log('image path ... ', imagePath);
+    }
+
+    if (title.cover && !values.cover) {
+      imagePath = title.cover;
+      publicUrl = title.cover;
+    }
+    !publicUrl &&
+      imagePath &&
+      (publicUrl = supabase.storage.from('titles').getPublicUrl(imagePath)
+        .data.publicUrl);
+    console.log('public URL is ...', publicUrl);
+
+    const deleteOldVideo = async (oldTrailer: string) => {
+      console.log('current title trailer ... ', title.trailer);
+      const videoNameString = oldTrailer.split('/');
+      console.log('video Name String ... ', videoNameString);
+      console.log('selected trailer file ... ', values.trailer);
+      const videoRemove = await supabase.storage
+        .from('trailers')
+        .remove([videoNameString.slice(-1)[0]]);
+      videoRemove.error &&
+        console.log('video Remove error ... ', videoRemove.error.message);
+      videoRemove.data &&
+        console.log('video Remove data... ', videoRemove.data);
+    };
+
+    const uploadNewVideo = async (newVideo: File) => {
+      const fileName = newVideo.name ? newVideo.name : 'failNameString';
+      console.log('video is...', values.trailer);
+      console.log('video name is...', values.trailer?.name);
+      const videoUpdate = await supabase.storage
+        .from('trailers')
+        .upload(`trailer_${fileName}`, newVideo, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      const videoError = videoUpdate.error?.message;
+      console.log('video error is ... ', videoError);
+      videoPath = videoUpdate.data?.path;
+      console.log('video path ... ', videoPath);
+
+      return videoPath;
+    };
+
+    if (title.trailer && (values.trailer || isVideoCleared.current)) {
+      console.log('deleting old video .... ');
+      await deleteOldVideo(title.trailer);
+    }
+
+    console.log('V & !C .... ', values.trailer && !isVideoCleared.current);
+
+    if (values.trailer && !isVideoCleared.current) {
+      console.log('uploading new video .... ');
+      await uploadNewVideo(values.trailer);
+    }
+
+    if (isVideoCleared.current) {
+      publicVideoUrl = null;
+    }
+
+    if (title.trailer && !values.trailer && !isVideoCleared.current) {
+      videoPath = title.trailer;
+      publicVideoUrl = title.trailer;
+    }
+
+    !publicVideoUrl &&
+      videoPath &&
+      (publicVideoUrl = supabase.storage
+        .from('trailers')
+        .getPublicUrl(videoPath).data.publicUrl);
+    console.log('public video URL is ...', publicVideoUrl);
+
+    const { data, error } = await supabase
+      .from('Titles')
+      .update({
+        age_restriction:
+          values.age_restriction !== null ? values.age_restriction : 0,
+        description: values.description && values.description,
+        thesis: values.thesis && values.thesis,
+        is_featured: values.is_featured !== null && values.is_featured,
+        first_release: values.first_release
+          ? values.first_release.toUTCString()
+          : null,
+        cover: publicUrl,
+        trailer: publicVideoUrl,
+      })
+      .eq('id', title.id)
+      .select('*')
+      .single();
+    error && window.alert(error.message);
+    data && window.alert(`тайтл ${data.name} успешно обновлён`);
+
+    const purgeAuthors = await supabase
+      .from('Titles_Authors')
+      .delete()
+      .eq('title_id', title.id);
+
+    !purgeAuthors.error && console.log('old authors deleted');
+
+    if (data) {
+      const titlesAuthorsArray = values.authors.map((author) => {
+        const authorID = parseInt(author.value);
+        const titleID = data?.id;
+
+        return {
+          author_id: authorID,
+          title_id: titleID,
+        };
+      });
+
+      const authorsData = await supabase
+        .from('Titles_Authors')
+        .insert(titlesAuthorsArray)
+        .select('*');
+      authorsData.error && window.alert(authorsData.error.message);
+      authorsData.data &&
+        window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
+    }
+
+
+    const purgeAwards = await supabase
+      .from('TitlesAwards')
+      .delete()
+      .eq('title_id', title.id);
+
+    !purgeAwards.error && console.log('old awards deleted');
+
+
+    if (data && values.awards) {
+      const titlesAwardsArray = values.awards.map((award) => {
+        const awardID = parseInt(award.value);
+        const titleID = data?.id;
+
+        return {
+          award_id: awardID,
+          title_id: titleID,
+        };
+      });
+
+      const awardsData = await supabase
+        .from('TitlesAwards')
+        .insert(titlesAwardsArray)
+        .select('*');
+        awardsData.error && window.alert(awardsData.error.message);
+        awardsData.data &&
+        window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
+    }
+
+
+
+
+    data && router.reload();
+  }
 
   return (
     <div className=''>
@@ -559,6 +910,54 @@ function TitleEditForm(title: TitleType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='authors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Authors</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='awards'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Awards</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={AWARDSOPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='description'
@@ -597,6 +996,153 @@ function TitleEditForm(title: TitleType) {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name='first_release'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>first release</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('first_release', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='age_restriction'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Age Restriction</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='cover'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Author Photo</FormLabel>
+                <FormControl>
+                  <Input
+                    aria-label={'author photo'}
+                    id='photo'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onImageInputChange(event, photoImage);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <img
+                  className='max-w-72'
+                  ref={photoImage}
+                  src={title.cover || ''}
+                  alt='photo image'
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='trailer'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Title Trailer</FormLabel>
+                <div className='flex flex-row items-start p-1'>
+                  <FormControl>
+                    <Input
+                      id='video'
+                      type='file'
+                      {...fieldProps}
+                      onChange={(event) => {
+                        onVideoInputChange(event, trailerVideo);
+                        setHasVideo(true);
+                        isVideoCleared.current = false;
+
+                        return onChange(
+                          event.target.files && event.target.files[0]
+                        );
+                      }}
+                      ref={videoInputRef}
+                    />
+                  </FormControl>
+                  <Button
+                    type='button'
+                    variant={'outline'}
+                    onClick={() => {
+                      emptyVideoInput(videoInputRef, trailerVideo);
+                      form.setValue('trailer', undefined);
+                      setHasVideo(false);
+                      isVideoCleared.current = true;
+                    }}
+                  >
+                    clear ({' '}
+                    {isVideoCleared.current ? 'IS CLEARED' : 'NOT CLEARED'} )
+                  </Button>
+                </div>
+                <FormMessage />
+
+                <VideoContainer hasVideo={hasVideo}>
+                  <video
+                    className='max-w-72'
+                    ref={trailerVideo}
+                    controls
+                    // src=''
+                    src={title.trailer || ''}
+                  />
+                </VideoContainer>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_featured'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is featured</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
           <Button
             type='submit'
             variant={'outline'}
@@ -612,111 +1158,3 @@ function TitleEditForm(title: TitleType) {
 }
 
 export { TitleForm, TitleEditForm };
-
-//           <FormField
-//             control={form.control}
-//             name='birthDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>birth date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     onNull={() => {
-//                       form.setValue('birthDate', null);
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='deathDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>death date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     showClearButton={true}
-//                     onNull={() => {
-//                       form.setValue('deathDate', null);
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='city'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author City</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author city'}
-//                     placeholder='default city'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='photo'
-//             render={({ field: { value, onChange, ...fieldProps } }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Photo</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author photo'}
-//                     id='photo'
-//                     type='file'
-//                     {...fieldProps}
-//                     onChange={(event) => {
-//                       onImageInputChange(event);
-//                       return onChange(
-//                         event.target.files && event.target.files[0]
-//                       );
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//                 <img
-//                   className='max-w-72'
-//                   ref={photoImage}
-//                   src={newPhoto || author.photo || ''}
-//                   alt='photo image'
-//                 />
-//               </FormItem>
-//             )}
-//           />
-//           <FormField
-//             control={form.control}
-//             name='phrase'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Phrase</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author phrase'}
-//                     placeholder='some profound saying'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />

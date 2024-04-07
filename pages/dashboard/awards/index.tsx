@@ -13,74 +13,48 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { TitleEditForm, TitleForm } from '@/components/DashBoardPage/TitleForm';
-import { AuthorsType } from '../authors';
-import { AwardsType } from '../awards';
+import {
+  AuthorEditForm,
+  AuthorForm,
+} from '@/components/DashBoardPage/AuthorForm';
+import { AwardEditForm, AwardForm } from '@/components/DashBoardPage/AwardForm';
 
-export type TitleType = Database['public']['Tables']['Titles']['Row'];
+export type AwardsType = Database['public']['Tables']['Awards']['Row'];
 
-const Titleslist = () => {
-  const [titles, setTitles] = useState<TitleType[]>();
-  const [authors, setAuthors] = useState<AuthorsType[]>();
+const AwardsList = () => {
   const [awards, setAwards] = useState<AwardsType[]>();
-
-  async function getTitles() {
-    const { data, error } = await supabase.from('Titles').select('*');
-
-    data && console.log('Titles data ... ', data);
-    error && alert(error);
-
-    data && setTitles(data);
-  }
-
-  async function getAuthors() {
-    const { data, error } = await supabase.from('Authors').select('*');
-
-    data && console.log('Authors data ... ', data);
-    error && alert(error);
-
-    data && setAuthors(data);
-  }
 
   async function getAwards() {
     const { data, error } = await supabase.from('Awards').select('*');
 
-    data && console.log('Awards data ... ', data);
+    data && console.log('awards data ... ', data);
     error && alert(error);
 
     data && setAwards(data);
   }
 
   useEffect(() => {
-    getTitles();
-    getAuthors();
     getAwards();
   }, []);
 
-  if (!titles) {
-    return <div>zero titles found in database</div>;
+  if (!awards) {
+    return <div>zero awards found in database</div>;
   }
 
   return (
     <div className='w-full'>
-      <Text variant='h3c'> Titles </Text>
+      <Text variant='h3c'> Награды </Text>
 
       <Accordion type='single' collapsible className='w-full'>
-        {titles.map((title) => (
+        {awards.map((award) => (
           <AccordionItem
-            value={`item-${title.id}`}
-            key={title.id}
+            value={`item-${award.id}`}
+            key={award.id}
             className='w-full'
           >
-            <AccordionTrigger> {title.name} </AccordionTrigger>
+            <AccordionTrigger> {award.title} </AccordionTrigger>
             <AccordionContent>
-              {authors && awards && (
-                <TitleEditForm
-                  title={title}
-                  authors={[...authors]}
-                  awards={[...awards]}
-                />
-              )}
+              <AwardEditForm {...award} />
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -93,24 +67,12 @@ const Titleslist = () => {
           <AccordionTrigger>
             <div className='flex flex-grow items-center'>
               <div className='flex-grow items-center text-red-800 hover:underline'>
-                Добавить новый
+                Добавить новую награду
               </div>
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            {authors && awards && (
-              <TitleForm
-                authors={[...authors]}
-                awards={[...awards]}
-                // {...authors}
-                defaultName='Default Title'
-                defaultThesis='Default Thesis'
-                defaultDescription='Default Description'
-                defaultAgeRestriction={0}
-                defaultFirstRelease={new Date('2022-03-25')}
-                defaultIsFeatured={true}
-              />
-            )}
+            <AwardForm defaultTitle='some award' />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -118,7 +80,7 @@ const Titleslist = () => {
   );
 };
 
-function Titles(): React.ReactElement {
+function Awards(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
 
@@ -144,7 +106,7 @@ function Titles(): React.ReactElement {
     <DashMain>
       <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
         <DashNav />
-        <Titleslist />
+        <AwardsList />
         {session && <LogOut session={session} />}
       </div>
     </DashMain>
@@ -152,4 +114,4 @@ function Titles(): React.ReactElement {
 }
 
 // export { Authors };
-export default Titles;
+export default Awards;
