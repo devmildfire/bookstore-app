@@ -24,6 +24,7 @@ const AddAuthorPage: NextPageWithLayout<{ id: string }> = ({ id }) => {
   }, [authorStore]);
 
   if (!authorStore.author) {
+    // TODO: добавить лоудер или скелетон
     return <h1>Загрузка...</h1>;
   }
 

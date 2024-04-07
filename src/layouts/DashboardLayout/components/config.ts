@@ -7,9 +7,15 @@ import {
   Users2,
 } from 'lucide-react';
 
+// TODO: вынести в общий конфиг для мобильной и десктопной навигации
 export const sidebarConfig = [
-  { href: '#', text: 'Dashboard', tooltipText: 'Dashboard', Icon: Home },
-  { href: '#', text: 'Orders', tooltipText: 'Orders', Icon: ShoppingCart },
+  {
+    href: '/admin',
+    text: 'Dashboard',
+    tooltipText: 'Панель управления',
+    Icon: Home,
+  },
+  // { href: '#', text: 'Orders', tooltipText: 'Orders', Icon: ShoppingCart },
   {
     href: '/admin/products',
     text: 'Товары',
@@ -22,6 +28,6 @@ export const sidebarConfig = [
     tooltipText: 'Авторы',
     Icon: Users2,
   },
-  { href: '#', text: 'Analytics', tooltipText: 'Analytics', Icon: LineChart },
-  { href: '#', text: 'Settings', tooltipText: 'Settings', Icon: Settings },
+  // { href: '#', text: 'Analytics', tooltipText: 'Analytics', Icon: LineChart },
+  // { href: '#', text: 'Settings', tooltipText: 'Settings', Icon: Settings },
 ];

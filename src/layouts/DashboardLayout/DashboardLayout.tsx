@@ -62,47 +62,47 @@ const DashboardLayout: React.FC<Props> = ({ children }) => {
                   className='group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base'
                 >
                   <Package2 className='h-5 w-5 transition-all group-hover:scale-110' />
-                  <span className='sr-only'>Acme Inc</span>
+                  <span className='sr-only'>Чтиво</span>
                 </Link>
                 <Link
                   href='#'
                   className='flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground'
                 >
                   <Home className='h-5 w-5' />
-                  Dashboard
+                  Панель управления
                 </Link>
-                <Link
+                {/* <Link
                   href='#'
                   className='flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground'
                 >
                   <ShoppingCart className='h-5 w-5' />
                   Orders
-                </Link>
+                </Link> */}
                 <Link
                   href='#'
                   className='flex items-center gap-4 px-2.5 text-foreground'
                 >
                   <Package className='h-5 w-5' />
-                  Products
+                  Товары
                 </Link>
                 <Link
                   href='#'
                   className='flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground'
                 >
                   <Users2 className='h-5 w-5' />
-                  Customers
+                  Авторы
                 </Link>
-                <Link
+                {/* <Link
                   href='#'
                   className='flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground'
                 >
                   <LineChart className='h-5 w-5' />
                   Settings
-                </Link>
+                </Link> */}
               </nav>
             </SheetContent>
           </Sheet>
-          <Breadcrumb className='hidden md:flex'>
+          {/* <Breadcrumb className='hidden md:flex'>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -120,7 +120,7 @@ const DashboardLayout: React.FC<Props> = ({ children }) => {
                 <BreadcrumbPage>Edit Product</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <div className='relative ml-auto flex-1 md:grow-0'>
             <Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
             <Input
