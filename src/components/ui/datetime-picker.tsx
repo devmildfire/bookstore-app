@@ -1,6 +1,11 @@
 'use client';
 
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, X } from 'lucide-react';
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  X,
+} from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -38,7 +43,11 @@ import {
 } from 'react-stately';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   CalendarDate,
   createCalendar,
@@ -68,28 +77,38 @@ function Calendar(props: CalendarProps<DateValue>) {
     nextButtonProps: _nextButtonProps,
     title,
   } = useCalendar(props, state);
-  const { buttonProps: prevButtonProps } = useButton(_prevButtonProps, prevButtonRef);
-  const { buttonProps: nextButtonProps } = useButton(_nextButtonProps, nextButtonRef);
+  const { buttonProps: prevButtonProps } = useButton(
+    _prevButtonProps,
+    prevButtonRef
+  );
+  const { buttonProps: nextButtonProps } = useButton(
+    _nextButtonProps,
+    nextButtonRef
+  );
 
   return (
-    <div {...calendarProps} className="space-y-4">
-      <div className="relative flex items-center justify-center pt-1">
+    <div {...calendarProps} className='space-y-4'>
+      <div className='relative flex items-center justify-center pt-1'>
         <Button
           {...prevButtonProps}
           ref={prevButtonRef}
-          variant="outline"
-          className={cn('absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')}
+          variant='outline'
+          className={cn(
+            'absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+          )}
         >
-          <ChevronLeftIcon className="h-4 w-4" />
+          <ChevronLeftIcon className='h-4 w-4' />
         </Button>
-        <div className="text-sm font-medium">{title}</div>
+        <div className='text-sm font-medium'>{title}</div>
         <Button
           {...nextButtonProps}
           ref={nextButtonRef}
-          variant="outline"
-          className={cn('absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')}
+          variant='outline'
+          className={cn(
+            'absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+          )}
         >
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRightIcon className='h-4 w-4' />
         </Button>
       </div>
       <CalendarGrid state={state} />
@@ -109,12 +128,15 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
   const weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
-    <table {...gridProps} className={cn(gridProps.className, 'w-full border-collapse space-y-1')}>
+    <table
+      {...gridProps}
+      className={cn(gridProps.className, 'w-full border-collapse space-y-1')}
+    >
       <thead {...headerProps}>
-        <tr className="flex">
+        <tr className='flex'>
           {weekDays.map((day, index) => (
             <th
-              className="w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground"
+              className='w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground'
               key={index}
             >
               {day}
@@ -124,11 +146,15 @@ function CalendarGrid({ state, ...props }: CalendarGridProps) {
       </thead>
       <tbody>
         {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
-          <tr className="mt-2 flex w-full" key={weekIndex}>
+          <tr className='mt-2 flex w-full' key={weekIndex}>
             {state
               .getDatesInWeek(weekIndex)
               .map((date, i) =>
-                date ? <CalendarCell key={i} state={state} date={date} /> : <td key={i} />,
+                date ? (
+                  <CalendarCell key={i} state={state} date={date} />
+                ) : (
+                  <td key={i} />
+                )
               )}
           </tr>
         ))}
@@ -144,8 +170,14 @@ interface CalendarCellProps {
 
 function CalendarCell({ state, date }: CalendarCellProps) {
   const ref = React.useRef<HTMLButtonElement | null>(null);
-  const { cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate } =
-    useCalendarCell({ date }, state, ref);
+  const {
+    cellProps,
+    buttonProps,
+    isSelected,
+    isOutsideVisibleRange,
+    isDisabled,
+    formattedDate,
+  } = useCalendarCell({ date }, state, ref);
 
   const isToday = useMemo(() => {
     const timezone = getLocalTimeZone();
@@ -157,13 +189,13 @@ function CalendarCell({ state, date }: CalendarCellProps) {
       {...cellProps}
       className={cn(
         cellProps.className,
-        'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md',
+        'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
       )}
     >
       <Button
         {...buttonProps}
-        type="button"
-        variant="ghost"
+        type='button'
+        variant='ghost'
         ref={ref}
         className={cn(
           buttonProps.className,
@@ -172,7 +204,7 @@ function CalendarCell({ state, date }: CalendarCellProps) {
           isSelected &&
             'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
           isOutsideVisibleRange && 'text-muted-foreground opacity-50',
-          isDisabled && 'text-muted-foreground opacity-50',
+          isDisabled && 'text-muted-foreground opacity-50'
         )}
       >
         {formattedDate}
@@ -200,7 +232,7 @@ function DateSegment({ segment, state }: DateSegmentProps) {
       className={cn(
         'focus:rounded-[2px] focus:bg-accent focus:text-accent-foreground focus:outline-none',
         segment.type !== 'literal' && 'px-[1px]',
-        segment.isPlaceholder && 'text-muted-foreground',
+        segment.isPlaceholder && 'text-muted-foreground'
       )}
     >
       {segment.text}
@@ -225,13 +257,13 @@ function DateField(props: AriaDatePickerProps<DateValue>) {
       ref={ref}
       className={cn(
         'inline-flex h-10 flex-1 items-center rounded-l-md border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        props.isDisabled && 'cursor-not-allowed opacity-50',
+        props.isDisabled && 'cursor-not-allowed opacity-50'
       )}
     >
       {state.segments.map((segment, i) => (
         <DateSegment key={i} segment={segment} state={state} />
       ))}
-      {state.isInvalid && <span aria-hidden="true">🚫</span>}
+      {state.isInvalid && <span aria-hidden='true'>🚫</span>}
     </div>
   );
 }
@@ -255,7 +287,7 @@ function TimeField(props: AriaTimeFieldProps<TimeValue>) {
       ref={ref}
       className={cn(
         'inline-flex h-10 w-full flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        props.isDisabled && 'cursor-not-allowed opacity-50',
+        props.isDisabled && 'cursor-not-allowed opacity-50'
       )}
     >
       {state.segments.map((segment, i) => (
@@ -282,106 +314,120 @@ export type DateTimePickerRef = {
   state: DatePickerState;
 };
 
-const DateTimePicker = React.forwardRef<
-  DateTimePickerRef,
-  DatePickerStateOptions<DateValue> & {
-    jsDate?: Date | null;
-    onJsDateChange?: (date: Date) => void;
-    showClearButton?: boolean;
-    onNull?: ()=>void;
-  }
->(({ jsDate, onJsDateChange, onNull, showClearButton = true, ...props }, ref) => {
-  const divRef = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const [jsDatetime, setJsDatetime] = useState(jsDate || null);
+export type DatePickerProps = DatePickerStateOptions<DateValue> & {
+  jsDate?: Date | null;
+  onJsDateChange?: (date: Date) => void;
+  showClearButton?: boolean;
+  onNull?: () => void;
+};
 
-  const state = useDatePickerState(props);
+const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
+  (
+    { jsDate, onJsDateChange, onNull, showClearButton = true, ...props },
+    ref
+  ) => {
+    const divRef = useRef<HTMLDivElement | null>(null);
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
+    const [jsDatetime, setJsDatetime] = useState(jsDate || null);
 
-  useImperativeHandle(ref, () => ({
-    divRef: divRef.current,
-    buttonRef: buttonRef.current,
-    contentRef: contentRef.current,
-    jsDate: jsDatetime,
-    state,
-  }));
-  const {
-    groupProps,
-    fieldProps,
-    buttonProps: _buttonProps,
-    dialogProps,
-    calendarProps,
-  } = useDatePicker(props, state, divRef);
-  const { buttonProps } = useButton(_buttonProps, buttonRef);
+    const state = useDatePickerState(props);
 
-  const currentValue = useCallback(() => {
-    if (!jsDatetime) {
-      return null;
-    }
+    useImperativeHandle(ref, () => ({
+      divRef: divRef.current,
+      buttonRef: buttonRef.current,
+      contentRef: contentRef.current,
+      jsDate: jsDatetime,
+      state,
+    }));
+    const {
+      groupProps,
+      fieldProps,
+      buttonProps: _buttonProps,
+      dialogProps,
+      calendarProps,
+    } = useDatePicker(props, state, divRef);
+    const { buttonProps } = useButton(_buttonProps, buttonRef);
 
-    const parsed = fromDate(jsDatetime, getLocalTimeZone());
+    const currentValue = useCallback(() => {
+      if (!jsDatetime) {
+        return null;
+      }
 
-    if (state.hasTime) {
-      return toCalendarDateTime(parsed);
-    }
+      const parsed = fromDate(jsDatetime, getLocalTimeZone());
 
-    return toCalendarDate(parsed);
-  }, [jsDatetime, state.hasTime]);
+      if (state.hasTime) {
+        return toCalendarDateTime(parsed);
+      }
 
-  useEffect(() => {
-    /**
-     * If user types datetime, it will be a null value until we get the correct datetime.
-     * This is controlled by react-aria.
-     **/
-    if (state.value) {
-      const date = parseDateTime(state.value.toString()).toDate(getLocalTimeZone());
-      setJsDatetime(date);
-      onJsDateChange?.(date);
-    }
-  }, [state.value, onJsDateChange]);
-  return (
-    <div
-      {...groupProps}
-      ref={divRef}
-      className={cn(
-        groupProps.className,
-        'flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
-      )}
-    >
-      <Popover open={props.isOpen} onOpenChange={props.onOpenChange}>
-        <PopoverTrigger asChild>
-          <Button
-            {...buttonProps}
-            variant="ghost"
-            className="border-r"
-            disabled={props.isDisabled}
+      return toCalendarDate(parsed);
+    }, [jsDatetime, state.hasTime]);
+
+    useEffect(() => {
+      /**
+       * If user types datetime, it will be a null value until we get the correct datetime.
+       * This is controlled by react-aria.
+       **/
+      if (state.value) {
+        const date = parseDateTime(state.value.toString()).toDate(
+          getLocalTimeZone()
+        );
+        setJsDatetime(date);
+        onJsDateChange?.(date);
+      }
+    }, [state.value, onJsDateChange]);
+    return (
+      <div
+        {...groupProps}
+        ref={divRef}
+        className={cn(
+          groupProps.className,
+          'flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'
+        )}
+      >
+        <Popover open={props.isOpen} onOpenChange={props.onOpenChange}>
+          <PopoverTrigger asChild>
+            <Button
+              {...buttonProps}
+              variant='ghost'
+              className='border-r'
+              disabled={props.isDisabled}
+              onClick={() => {
+                state.setOpen(true);
+              }}
+            >
+              <CalendarIcon className='h-5 w-5' />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent ref={contentRef} className='w-full'>
+            <div {...dialogProps} className='space-y-3'>
+              <Calendar {...calendarProps} />
+              {state.hasTime && (
+                <TimeField
+                  value={state.timeValue}
+                  onChange={state.setTimeValue}
+                />
+              )}
+            </div>
+          </PopoverContent>
+        </Popover>
+        <DateField {...fieldProps} value={currentValue()} />
+        <div className={cn('-ml-2 mr-2 h-5 w-5', !showClearButton && 'hidden')}>
+          <X
+            className={cn(
+              'h-5 w-5 cursor-pointer text-primary/30',
+              !jsDatetime && 'hidden'
+            )}
             onClick={() => {
-              state.setOpen(true);
+              setJsDatetime(null);
+              onNull && onNull();
             }}
-          >
-            <CalendarIcon className="h-5 w-5" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent ref={contentRef} className="w-full">
-          <div {...dialogProps} className="space-y-3">
-            <Calendar {...calendarProps} />
-            {state.hasTime && <TimeField value={state.timeValue} onChange={state.setTimeValue} />}
-          </div>
-        </PopoverContent>
-      </Popover>
-      <DateField {...fieldProps} value={currentValue()} />
-      <div className={cn('-ml-2 mr-2 h-5 w-5', !showClearButton && 'hidden')}>
-        <X
-          className={cn('h-5 w-5 cursor-pointer text-primary/30', !jsDatetime && 'hidden')}
-          onClick={() => {
-            setJsDatetime(null);
-            onNull && onNull();         
-          }}
-        />
+          />
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 DateTimePicker.displayName = 'DateTimePicker';
 

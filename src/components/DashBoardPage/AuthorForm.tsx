@@ -15,12 +15,7 @@ import { z } from 'zod';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
-import {
-  ChangeEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
 
@@ -42,12 +37,14 @@ const formSchema = z.object({
   birthDate: z
     .date({
       description: 'Author birth date',
-    }).nullable()
+    })
+    .nullable()
     .optional(),
   deathDate: z
     .date({
       description: 'Author death date',
-    }).nullable()
+    })
+    .nullable()
     .optional(),
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
@@ -72,15 +69,15 @@ const formEditSchema = z.object({
   birthDate: z
     .date({
       description: 'Author birth date',
-    }).nullable()
-    .optional()
-    ,
+    })
+    .nullable()
+    .optional(),
   deathDate: z
     .date({
       description: 'Author death date',
-    }).nullable()
-    .optional()
-    ,
+    })
+    .nullable()
+    .optional(),
   city: z.string().min(3, {
     message: 'Author city must be at least 3 characters long.',
   }),
@@ -195,55 +192,52 @@ function AuthorForm(props: AuthorFormProps) {
             )}
           />
 
-<FormField
-          control={form.control}
-          name="birthDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="datetime">birth date</FormLabel>
-              <FormControl>
-                <DateTimePicker
-                  jsDate={field.value}
-                  onJsDateChange={field.onChange}
-                  onNull={ () => {
-                    form.setValue('birthDate', null)
+          <FormField
+            control={form.control}
+            name='birthDate'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>birth date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('birthDate', null);
 
-                    console.log('on null function call')
-                    console.log('form state is...', form.getValues())
-                    }
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="deathDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="datetime">death date</FormLabel>
-              <FormControl>
-                <DateTimePicker
-                  jsDate={field.value}
-                  onJsDateChange={field.onChange}
-                  showClearButton={true}
-                  onNull={ () => {
-                    form.setValue('deathDate', null)
+          <FormField
+            control={form.control}
+            name='deathDate'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>death date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('deathDate', null);
 
-                    console.log('on null function call')
-                    console.log('form state is...', form.getValues())
-
-                  }
-                }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -426,9 +420,10 @@ function AuthorEditForm(author: AuthorsType) {
     console.log('public URL is ...', publicUrl);
 
     console.log('birth date is ...', values.birthDate);
-    console.log('birth date to base is ...', values.birthDate ? values.birthDate.toUTCString() : null,);
-
-
+    console.log(
+      'birth date to base is ...',
+      values.birthDate ? values.birthDate.toUTCString() : null
+    );
 
     const { data, error } = await supabase
       .from('Authors')
@@ -487,55 +482,52 @@ function AuthorEditForm(author: AuthorsType) {
             )}
           />
 
-        <FormField
-          control={form.control}
-          name="birthDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="datetime">birth date</FormLabel>
-              <FormControl>
-                <DateTimePicker
-                  jsDate={field.value}
-                  onJsDateChange={field.onChange}
-                  onNull={ () => {
-                    form.setValue('birthDate', null)
+          <FormField
+            control={form.control}
+            name='birthDate'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>birth date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('birthDate', null);
 
-                    console.log('on null function call')
-                    console.log('form state is...', form.getValues())
-                    }
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="deathDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="datetime">death date</FormLabel>
-              <FormControl>
-                <DateTimePicker
-                  jsDate={field.value}
-                  onJsDateChange={field.onChange}
-                  showClearButton={true}
-                  onNull={ () => {
-                    form.setValue('deathDate', null)
+          <FormField
+            control={form.control}
+            name='deathDate'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='datetime'>death date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('deathDate', null);
 
-                    console.log('on null function call')
-                    console.log('form state is...', form.getValues())
-
-                  }
-                }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}

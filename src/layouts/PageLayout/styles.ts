@@ -3,8 +3,13 @@ import breakPoints from '@/utils/breakPoints';
 // import breakPoints from '@/utils/breakPoints';
 
 export const StyledWrapper = styled.div`
-  display: grid;
+  /* display: grid; */
   /* gap: 100px; */
+  padding-top: var(--header-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
   width: 100%;
   position: relative;
   background-color: var(--main-black);
@@ -13,12 +18,4 @@ export const StyledWrapper = styled.div`
   @media ${breakPoints.sm} {
     gap: 0px;
   }
-`;
-
-export const StyledContent = styled.div`
-  display: grid;
-  gap: 120px;
-
-  width: 100%;
-  min-height: 100vh;
 `;

@@ -34,7 +34,6 @@ async function getCart(id: string): Promise<CartItemType[] | PostgrestError> {
     console.error(error);
     return error;
   } else {
-    // data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -51,7 +50,6 @@ async function addItemToCart(
     console.error(error);
     return error;
   } else {
-    // data && console.log('data is ...', JSON.stringify(data, null, 2));
     return data;
   }
 }
@@ -64,14 +62,6 @@ async function removeItemFromCart(item: CartItemType): Promise<string> {
     .eq('name', item.name)
     .eq('category', item.category);
 
-  !error &&
-    console.log('DB item delete success ... ', JSON.stringify(error, null, 2));
-  error &&
-    console.log(
-      'DB item delete update FAILED ... ',
-      JSON.stringify(error, null, 2)
-    );
-
   return JSON.stringify(error, null, 2);
 }
 
@@ -80,11 +70,6 @@ async function emptyCart(cartID: string): Promise<string> {
     .from('Cart')
     .delete()
     .eq('id', cartID);
-
-  !error &&
-    console.log('empty cart success ... ', JSON.stringify(error, null, 2));
-  error &&
-    console.log('empty cart FAILED ... ', JSON.stringify(error, null, 2));
 
   return JSON.stringify(error, null, 2);
 }
@@ -110,10 +95,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const body = req.body;
-  console.log('body is', body);
 
   const cartID: string = body.id ? body.id : '';
-  console.log('id is', cartID);
 
   let cart: CartItemType[] | PostgrestError;
   let item: CartItemType;

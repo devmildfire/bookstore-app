@@ -4,6 +4,7 @@ import React, {
   useCallback,
   ReactElement,
   PropsWithChildren,
+  RefObject,
 } from 'react';
 import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
@@ -19,7 +20,7 @@ import texture from '@/assets/images/mockups/mockup-var-2.png';
 type PropType = {
   slides: number[];
   options?: EmblaOptionsType;
-  forwardedRef: null;
+  forwardedRef: RefObject<HTMLDivElement>;
 };
 
 const StyledInfo = styled.div`

@@ -158,14 +158,15 @@ const BurgerIconStyled = styled(BurgerIcon)`
 `;
 
 const HeaderWrapper = styled.header`
-  position: sticky;
-  top: -2px;
+  position: fixed;
+  top: 0;
   left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   width: 100%;
   transition: all 0.2s ease-in-out 0s;
-  z-index: 99999;
+  z-index: 99;
 `;
 
 const HeaderContainer = styled.div`

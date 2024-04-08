@@ -157,7 +157,10 @@ const wrapperLookup = {
   left: WrapperLeft,
 };
 
-function Wrapper({ position, children }: PropsWithChildren<WrapperProps>) {
+function Wrapper({
+  position = 'left',
+  children,
+}: PropsWithChildren<WrapperProps>) {
   const transform = {
     bottom: {
       initial: 'translate(-50%, 50%)',
@@ -219,13 +222,13 @@ const authorsData = [
 ];
 
 export function Drawer({ children }: PropsWithChildren) {
-  const config = useControls('Фильтры', {
-    position: {
-      value: 'left',
-      label: 'Позиция',
-      options: { Слева: 'left', Внизу: 'bottom' },
-    } as const,
-  });
+  // const config = useControls('Фильтры', {
+  //   position: {
+  //     value: 'left',
+  //     label: 'Позиция',
+  //     options: { Слева: 'left', Внизу: 'bottom' },
+  //   } as const,
+  // });
   const [open, setOpen] = useState(false);
 
   return (
@@ -239,7 +242,7 @@ export function Drawer({ children }: PropsWithChildren) {
             <>
               <Overlay forceMount />
               <Content forceMount>
-                <Wrapper position={config.position}>
+                <Wrapper>
                   <Title variant='h3_3'>Фильтры</Title>
                   <Container>
                     <Multiselect

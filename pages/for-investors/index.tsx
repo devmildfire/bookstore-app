@@ -5,18 +5,21 @@ import MoneyPlanes from '@/assets/images/Money_Planes.svg';
 import Text from '@/components/Common/Text';
 import Content from '@/components/ForInvestorsPage/Content';
 import breakPoints from '@/utils/breakPoints';
+import PageLayout from '@/layouts/PageLayout';
 
 const title = 'Уважаемые Социнвесторы';
 
 const ForInvestors: NextPage = () => {
   return (
-    <StyledWrapper className='max-width'>
-      <StyledMoneyPlanes />
-      <ContentWrapper>
-        <ToInvestors variant='h1c'>{title}</ToInvestors>
-        <Content />
-      </ContentWrapper>
-    </StyledWrapper>
+    <PageLayout headTitle='Инвесторам'>
+      <StyledWrapper className='max-width'>
+        <StyledMoneyPlanes />
+        <ContentWrapper>
+          <ToInvestors variant='h1c'>{title}</ToInvestors>
+          <Content />
+        </ContentWrapper>
+      </StyledWrapper>
+    </PageLayout>
   );
 };
 
@@ -43,12 +46,11 @@ const ContentWrapper = styled.div`
   align-self: flex-start;
   padding-left: calc(40vw - 720px);
 
-  
   display: flex;
   flex-direction: column;
 
   /* gap: 96px; */
-  
+
   @media ${breakPoints.xl} {
     /* padding: 90px 3.5vw 0; */
     /* padding: 90px 0 0; */

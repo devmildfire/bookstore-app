@@ -31,6 +31,14 @@ const options = {
         protocol: 'https',
         hostname: 'chtivo.spb.ru',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.rsl.ru',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.chtivo.duckdns.org',
+      },
     ],
   },
 };

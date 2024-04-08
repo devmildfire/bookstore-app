@@ -11,7 +11,7 @@ const BookStyled = styled(Book)<{ variant?: 'up' | 'down' }>`
 `;
 
 interface BookWormProps {
-  readonly className: string;
+  readonly className?: string;
 }
 
 const BookWormUnstyled = (props: BookWormProps): React.ReactElement => (
@@ -44,11 +44,14 @@ const BookWormUnstyled = (props: BookWormProps): React.ReactElement => (
  *
  */
 
-const BookWorm = styled(BookWormUnstyled)<{ variant?: 'red' | 'black' }>`
+const BookWorm = styled(BookWormUnstyled)<{
+  variant?: 'red' | 'black';
+  size?: string;
+}>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 80vw;
+  width: ${(props) => (props.size ? props.size : '80vw')};
   aspect-ratio: calc(5 * sqrt(3) / 2);
   max-width: 620px;
   gap: 1%;

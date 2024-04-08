@@ -10,6 +10,8 @@ export const StyledWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
+  background-color: #0505057a;
+
   height: 100%;
   width: 100%;
 `;
@@ -22,7 +24,6 @@ export const StyledBackdrop = styled.div<StyledBackdropProps>`
   position: absolute;
   inset: 0;
 
-  background-color: rgba(0, 0, 0, 0.5);
   z-index: var(--low-z-index);
 
   cursor: ${(props) => (props.isClickable ? 'pointer' : 'default')};

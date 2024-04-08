@@ -61,8 +61,6 @@ const StyledButton = styled(Button)`
   }
 `;
 
-
-
 const Hall = (): React.ReactElement => {
   const [cartID, setCartID] = useState('');
 
@@ -71,10 +69,6 @@ const Hall = (): React.ReactElement => {
   const params = useSearchParams();
 
   const invID = params.get('invid');
-
-  console.log('order id is ...', invID);
-  console.log('sum is ...', order?.summ);
-
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
@@ -88,8 +82,6 @@ const Hall = (): React.ReactElement => {
     cartID && invID && getOrder(cartID, invID);
   }, [invID]);
 
-
-
   const getOrder = useCallback(
     async (cartID: string, orderID: string) => {
       const OrderResponse: OrdersType = await postData(`/api/order`, {
@@ -97,7 +89,7 @@ const Hall = (): React.ReactElement => {
         cartID: cartID,
         orderID: orderID,
       });
-      console.log('got order ... ', OrderResponse);
+
       setOrder(OrderResponse);
     },
     [cartID]
