@@ -47,8 +47,12 @@ class AdminStore {
       }
 
       if (data) {
-        this._admin = data;
+        this._admin = data.user?.email ? { email: data.user?.email } : null;
         this.state.setLoadedSuccessfully();
+
+        toast.success('Удалось войти!', {
+          description: 'вы всё сделали правильно',
+        });
       }
     });
   };
