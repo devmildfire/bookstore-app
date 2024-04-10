@@ -9,7 +9,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from 'react-hook-form';
 import { z } from 'zod';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
@@ -36,6 +41,8 @@ type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const MIN_PHOTOSET_LENGTH = 1;
+const MAX_PHOTOSET_LENGTH = 10;
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -50,6 +57,29 @@ const ACCEPTED_AUDIO_TYPES = [
   'audio/vnd.wav',
   'application/zip',
 ];
+
+const photoSchema = z.object({
+  photo: z
+    .instanceof(File, { message: 'Image is required.' })
+    .optional()
+    .refine(
+      (file) => !file || file?.size <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      '.jpg, .jpeg, .png and .webp files are accepted.'
+    ),
+});
+
+const photoSetSchema = z
+  .array(photoSchema)
+  .min(MIN_PHOTOSET_LENGTH, {
+    message: `You need to add at least ${MIN_PHOTOSET_LENGTH} student`,
+  })
+  .max(MAX_PHOTOSET_LENGTH, {
+    message: `You can add at most ${MAX_PHOTOSET_LENGTH} students`,
+  });
 
 const formSchema = z.object({
   counter_color: z.string({
@@ -81,6 +111,7 @@ const formSchema = z.object({
   shade: z.literal('light').or(z.literal('dark')),
 
   price: z.number().positive('must be positive'),
+  photos: photoSetSchema,
   publish_date: z
     .date({
       description: 'publist date',
@@ -1118,7 +1149,25 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       height: 42,
       width: 42,
       sold: 0,
+      photos: [
+        {
+          photo: undefined,
+        },
+      ],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+    // formState: { errors },
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'photos',
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -1190,6 +1239,21 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
 
     if (imageInput.files) {
       const file = imageInput.files[0];
+      if (file) {
+        pImage && (pImage.src = URL.createObjectURL(file));
+      }
+    }
+  }
+
+  async function onPhotoInputChange(
+    event: ChangeEvent<HTMLInputElement>,
+    id: string
+  ) {
+    const photoInput = event.target;
+    const pImage = document.getElementById(id) as HTMLImageElement;
+
+    if (photoInput.files) {
+      const file = photoInput.files[0];
       if (file) {
         pImage && (pImage.src = URL.createObjectURL(file));
       }
@@ -1538,6 +1602,56 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
+
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${index}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>book photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`photos.${index}`}
+                        type='file'
+                        {...fieldProps}
+                        onChange={(event) => {
+                          onPhotoInputChange(event, `photosImage.${index}`);
+                          append({ photo: undefined });
+                          return onChange(
+                            event.target.files && event.target.files[0]
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${index}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+              <Button
+                color='failure'
+                type='button'
+                onClick={() => remove(index)}
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
+
+          {/* <Button
+            disabled={fields.length >= MAX_PHOTOSET_LENGTH}
+            type='button'
+            onClick={() => append({ photo: undefined })}
+          >
+            Append
+          </Button> */}
 
           <Button
             type='submit'
