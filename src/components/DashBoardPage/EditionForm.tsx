@@ -35,7 +35,7 @@ type coverDataType = Database['public']['Tables']['PrintedCover']['Insert'];
 type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
-const MAX_AUDIO_FILE_SIZE = 20 * 1024 * 1024; //  20MB
+const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
