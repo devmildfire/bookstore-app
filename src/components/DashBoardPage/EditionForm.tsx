@@ -1124,9 +1124,42 @@ function AudioBookEditForm(audiobook: AudiobookType) {
   );
 }
 
+
+
 function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
+
+  async function setFileInput() {
+    const testLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/a7/20220125121206%21React-icon.svg/120px-React-icon.svg.png'
+  
+    const testFile = await fetch(testLink).then(r => r.blob()).then(blobFile => new File([blobFile], 'testFileName', {type: blobFile.type}))
+  
+    console.log('test file is ...', testFile)
+  
+    testFile && form.setValue('cover', testFile)
+    console.log('set Value is ...', form.getValues('cover'))
+
+    const coverInput = document.getElementById('cover') as HTMLInputElement
+    console.log('cover input files is ...', coverInput.files)
+
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(testFile)
+
+    coverInput.files && (coverInput.files = dataTransfer.files);
+
+
+    const pImage = photoImage.current;
+  
+    pImage && (pImage.src = URL.createObjectURL(testFile));
+
+  }
+
+  useEffect(()=> {
+    setFileInput();
+  }, [])
+
+  // console.log('init file is ...', initFile)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -1149,6 +1182,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       height: 42,
       width: 42,
       sold: 0,
+      // cover: initFile,
       photos: [
         {
           photo: undefined,
@@ -1383,6 +1417,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                   <Input
                     id='cover'
                     type='file'
+                    
                     {...fieldProps}
                     onChange={(event) => {
                       onImageInputChange(event);
@@ -1604,10 +1639,10 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
           />
 
           {fields.map((item, index) => (
-            <div className='block' key={`photosKey.${index}`}>
+            <div className='block' key={`photosKey.${item.id}`}>
               <FormField
                 control={form.control}
-                name={`photos.${index}`}
+                name={`photos.${index}.photo`}
                 render={({ field: { value, onChange, ...fieldProps } }) => (
                   <FormItem className='flex flex-col items-start p-1'>
                     <FormLabel>book photo {`${index + 1}`} </FormLabel>
@@ -1617,7 +1652,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                         type='file'
                         {...fieldProps}
                         onChange={(event) => {
-                          onPhotoInputChange(event, `photosImage.${index}`);
+                          onPhotoInputChange(event, `photosImage.${item.id}`);
                           append({ photo: undefined });
                           return onChange(
                             event.target.files && event.target.files[0]
@@ -1627,7 +1662,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                     </FormControl>
                     <FormMessage />
                     <img
-                      id={`photosImage.${index}`}
+                      id={`photosImage.${item.id}`}
                       className='max-w-72'
                       src=''
                       alt='photo image'
@@ -1638,7 +1673,11 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               <Button
                 color='failure'
                 type='button'
-                onClick={() => remove(index)}
+                onClick={() => {
+                  console.log('removing inout index ... ', index)
+                  remove(index)
+                
+                }}
               >
                 Delete
               </Button>
