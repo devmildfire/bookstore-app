@@ -38,6 +38,7 @@ type PrintedBookInsertType =
   Database['public']['Tables']['PrintedBooks']['Insert'];
 type coverDataType = Database['public']['Tables']['PrintedCover']['Insert'];
 type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
+type PhotosRowInsert = Database['public']['Tables']['Photos']['Insert'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -189,6 +190,7 @@ const formEditSchema = z.object({
   }),
   height: z.number().positive('must be positive'),
   width: z.number().positive('must be positive'),
+  photos: photoSetSchema,
 });
 
 const audioFormSchema = z.object({
@@ -257,6 +259,62 @@ const audioFormEditSchema = z.object({
   duration: z.number().positive('must be positive'),
   audio: z.any().optional(),
 });
+
+type photoObject = z.infer<typeof photoSchema>;
+
+async function setPhotoData(
+  titleID: number,
+  titleName: string,
+  photoSet: photoObject[]
+) {
+  const PhotosRowArray: PhotosRowInsert[] = [];
+  let publicUrl = '';
+  let photosRow: PhotosRowInsert;
+
+  if (photoSet) {
+    photoSet.forEach(async (item, index) => {
+      const file = item.photo || null;
+      console.log('current photoSet file is...', file);
+      if (file) {
+        const fileExt = file.name.split('.').pop();
+
+        const photoUpload = await supabase.storage
+          .from('photos')
+          .upload(`photo_${slugify(titleName)}_${index}.${fileExt}`, file, {
+            cacheControl: '3600',
+            upsert: true,
+          });
+
+        photoUpload.data &&
+          (console.log('photoUpload data is...', photoUpload.data),
+          (publicUrl = supabase.storage
+            .from('photos')
+            .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl),
+          console.log('publicUrl is...', publicUrl),
+          (photosRow = {
+            category: 'PrintBook',
+            source: publicUrl,
+            title_id: titleID,
+          }),
+          console.log('photosRow is...', photosRow),
+          PhotosRowArray.push(photosRow));
+
+        const { data, error } = await supabase
+          .from('Photos')
+          .insert({
+            category: 'PrintBook',
+            source: publicUrl,
+            title_id: titleID,
+          })
+          .select('*');
+        console.log('photo data is...', data);
+      }
+    });
+    return PhotosRowArray;
+  }
+
+  return null;
+}
 
 async function setCoverData(coverUrl: string, printedBookID: number) {
   const { data, error } = await supabase
@@ -1124,40 +1182,42 @@ function AudioBookEditForm(audiobook: AudiobookType) {
   );
 }
 
-
-
 function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
 
   async function setFileInput() {
-    const testLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/a7/20220125121206%21React-icon.svg/120px-React-icon.svg.png'
-  
-    const testFile = await fetch(testLink).then(r => r.blob()).then(blobFile => new File([blobFile], 'testFileName', {type: blobFile.type}))
-  
-    console.log('test file is ...', testFile)
-  
-    testFile && form.setValue('cover', testFile)
-    console.log('set Value is ...', form.getValues('cover'))
+    const testLink =
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/a7/20220125121206%21React-icon.svg/120px-React-icon.svg.png';
 
-    const coverInput = document.getElementById('cover') as HTMLInputElement
-    console.log('cover input files is ...', coverInput.files)
+    const testFile = await fetch(testLink)
+      .then((r) => r.blob())
+      .then(
+        (blobFile) =>
+          new File([blobFile], 'testFileName', { type: blobFile.type })
+      );
 
-    const dataTransfer = new DataTransfer()
-    dataTransfer.items.add(testFile)
+    console.log('test file is ...', testFile);
+
+    testFile && form.setValue('cover', testFile);
+    console.log('set Value is ...', form.getValues('cover'));
+
+    const coverInput = document.getElementById('cover') as HTMLInputElement;
+    console.log('cover input files is ...', coverInput.files);
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(testFile);
 
     coverInput.files && (coverInput.files = dataTransfer.files);
 
-
     const pImage = photoImage.current;
-  
-    pImage && (pImage.src = URL.createObjectURL(testFile));
 
+    pImage && (pImage.src = URL.createObjectURL(testFile));
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     setFileInput();
-  }, [])
+  }, []);
 
   // console.log('init file is ...', initFile)
 
@@ -1206,6 +1266,15 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+
+    const titleName = await getTitleName(titleID);
+
+    const PhotosRowArray = await setPhotoData(
+      titleID,
+      titleName,
+      values.photos
+    );
+    console.log('photosRowArray is...', PhotosRowArray);
 
     const photoUpload = await supabase.storage
       .from('covers')
@@ -1417,7 +1486,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                   <Input
                     id='cover'
                     type='file'
-                    
                     {...fieldProps}
                     onChange={(event) => {
                       onImageInputChange(event);
@@ -1674,9 +1742,8 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                 color='failure'
                 type='button'
                 onClick={() => {
-                  console.log('removing inout index ... ', index)
-                  remove(index)
-                
+                  console.log('removing inout index ... ', index);
+                  remove(index);
                 }}
               >
                 Delete
@@ -1706,8 +1773,31 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
   );
 }
 
+const getInitPhotosArray = async (titleID: number) => {
+  const photosData = await supabase
+    .from('Photos')
+    .select('*')
+    .eq('title_id', titleID)
+    .eq('category', 'PrintBook');
+
+  photosData && console.log('initial photos data', photosData.data);
+  const photosNumber = photosData.data?.length || 1;
+
+  const photosInitArray = [];
+
+  for (let i = 0; i < photosNumber; i++) {
+    photosInitArray.push({
+      photo: undefined,
+    });
+  }
+
+  return photosInitArray;
+};
+
 function PrintedBookEditForm(book: FullPrintedBookType) {
   const photoImage = useRef<HTMLImageElement | null>(null);
+  // const photosNumber = useRef(0);
+  // const [photosArray, setPhotosArray] = useState<{ photo: undefined }[]>();
 
   function setImage(path: string) {
     if (photoImage.current) {
@@ -1716,6 +1806,13 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   }
 
   async function getDataFromReq() {
+    const photosInitArray = await getInitPhotosArray(book.title_id);
+
+    photosInitArray.forEach((item, index) => {
+      console.log(`appending item ${index}`);
+      append({ photo: undefined });
+    });
+
     const { data } = await supabase
       .from('PrintedBooks')
       .select(
@@ -1769,7 +1866,21 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       release_date: book.release_date ? new Date(book.release_date) : undefined,
       shade: 'light',
       counter_color: '#ff2a00',
+      photos: [{ photo: undefined }],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+    // formState: { errors },
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'photos',
   });
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
@@ -2256,6 +2367,51 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
               </FormItem>
             )}
           />
+
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}.photo`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>book photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`photos.${index}`}
+                        type='file'
+                        {...fieldProps}
+                        onChange={(event) => {
+                          // onPhotoInputChange(event, `photosImage.${item.id}`);
+                          append({ photo: undefined });
+                          return onChange(
+                            event.target.files && event.target.files[0]
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${item.id}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+              <Button
+                color='failure'
+                type='button'
+                onClick={() => {
+                  console.log('removing inout index ... ', index);
+                  remove(index);
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
 
           <Button
             type='submit'

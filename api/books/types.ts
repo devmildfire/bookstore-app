@@ -12,6 +12,7 @@ export interface Database {
       Audiobooks: {
         Row: {
           counter_color: string | null
+          demo: string | null
           discount: number | null
           duration: number | null
           extra: string | null
@@ -27,6 +28,7 @@ export interface Database {
         }
         Insert: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           duration?: number | null
           extra?: string | null
@@ -42,6 +44,7 @@ export interface Database {
         }
         Update: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           duration?: number | null
           extra?: string | null
@@ -204,6 +207,7 @@ export interface Database {
       }
       CardBooks: {
         Row: {
+          demo: string | null
           discount: number | null
           extra: string | null
           id: number
@@ -215,6 +219,7 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -226,6 +231,7 @@ export interface Database {
           title_id: number
         }
         Update: {
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -316,6 +322,7 @@ export interface Database {
         Row: {
           characters: number | null
           counter_color: string | null
+          demo: string | null
           discount: number | null
           extra: string | null
           file_volume: number | null
@@ -332,6 +339,7 @@ export interface Database {
         Insert: {
           characters?: number | null
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           file_volume?: number | null
@@ -348,6 +356,7 @@ export interface Database {
         Update: {
           characters?: number | null
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           file_volume?: number | null
@@ -523,6 +532,7 @@ export interface Database {
         Row: {
           blurHash: string | null
           caption: string | null
+          category: Database["public"]["Enums"]["category"] | null
           id: number
           source: string
           title_id: number
@@ -530,6 +540,7 @@ export interface Database {
         Insert: {
           blurHash?: string | null
           caption?: string | null
+          category?: Database["public"]["Enums"]["category"] | null
           id?: number
           source: string
           title_id: number
@@ -537,13 +548,14 @@ export interface Database {
         Update: {
           blurHash?: string | null
           caption?: string | null
+          category?: Database["public"]["Enums"]["category"] | null
           id?: number
           source?: string
           title_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "photos_title_id_fkey"
+            foreignKeyName: "Photos_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "Titles"
@@ -554,6 +566,7 @@ export interface Database {
       PrintedBooks: {
         Row: {
           counter_color: string | null
+          demo: string | null
           discount: number | null
           extra: string | null
           id: number
@@ -569,6 +582,7 @@ export interface Database {
         }
         Insert: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -584,6 +598,7 @@ export interface Database {
         }
         Update: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
