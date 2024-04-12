@@ -30,6 +30,7 @@ import { Database } from 'api/books/types';
 import { Checkbox } from '../ui/checkbox';
 import { Switch } from '../ui/switch';
 import slugify from 'slugify';
+import { equal } from 'assert';
 
 type PrintOptionsDataType =
   Database['public']['Tables']['PrintOptions']['Insert'];
@@ -1803,7 +1804,7 @@ const getInitPhotosArray = async (titleID: number) => {
 
   for (let i = 0; i < photosNumber; i++) {
 
-    photosData.data && photosData.data[i].source && (
+    photosData.data && photosData.data.length && photosData.data[i].source && (
       photosInitArray.push({
         photo: photosData.data[i].source,
       })
@@ -1813,6 +1814,38 @@ const getInitPhotosArray = async (titleID: number) => {
 
   return photosInitArray;
 };
+
+const deleteStoredPhotos = async (titleID: number) => {
+  const photosArray = await getInitPhotosArray(titleID)
+
+  photosArray.forEach(
+    async (item) => {
+      const photoName = item.photo.split('/').pop() || ''
+      console.log('file name to delete ...', photoName)
+
+      const deletePhoto = await supabase.storage
+      .from('photos')
+      .remove([photoName])
+    }
+  )
+
+}
+
+const deleteDBPhotoLinks = async (titleID: number) => {
+  const photoLinksDelete = await supabase
+    .from('Photos')
+    .delete()
+    .eq('title_id', titleID)
+    .eq('category', 'PrintBook')
+
+  if (photoLinksDelete.error) {
+    return false
+  } else {
+    return true
+  }
+
+
+}
 
 const getFileByURL = async (url: string) => {
 
@@ -1957,7 +1990,9 @@ const setPhotoInputValue = (file: File, index: number) => {
 
 
     if (values.photos) {
-
+      deleteStoredPhotos(book.title_id);
+      const deleted = await deleteDBPhotoLinks(book.title_id)
+      console.log('links deleted...', deleted)
     }
 
 
@@ -2472,19 +2507,23 @@ const setPhotoInputValue = (file: File, index: number) => {
                       src=''
                       alt='photo image'
                     />
+                     { value && 
+                  <Button
+                  color='failure'
+                  type='button'
+                  onClick={() => {
+                    console.log('removing inout index ... ', index);
+                    remove(index);
+                  }}
+                >
+                  Delete
+                </Button>
+    }
                   </FormItem>
                 )}
+               
               />
-              <Button
-                color='failure'
-                type='button'
-                onClick={() => {
-                  console.log('removing inout index ... ', index);
-                  remove(index);
-                }}
-              >
-                Delete
-              </Button>
+
             </div>
           ))}
 
