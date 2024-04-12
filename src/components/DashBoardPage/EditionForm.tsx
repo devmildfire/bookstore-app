@@ -282,7 +282,7 @@ async function setPhotoData(
 
         const photoUpload = await supabase.storage
           .from('photos')
-          .upload(`photo_${slugify(titleName)}_${index}.${fileExt}`, file, {
+          .upload(`photo_${slugify(titleName)}_${bookType}_${index}.${fileExt}`, file, {
             cacheControl: '3600',
             upsert: true,
           });
