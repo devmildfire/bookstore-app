@@ -266,6 +266,7 @@ type photoObject = z.infer<typeof photoSchema>;
 async function setPhotoData(
   titleID: number,
   titleName: string,
+  bookType = 'PrintedBook',
   photoSet: photoObject[]
 ) {
   const PhotosRowArray: PhotosRowInsert[] = [];
@@ -1288,6 +1289,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
     const PhotosRowArray = await setPhotoData(
       titleID,
       titleName,
+      'PrintedBook',
       values.photos
     );
     console.log('photosRowArray is...', PhotosRowArray);
@@ -1989,10 +1991,14 @@ const setPhotoInputValue = (file: File, index: number) => {
     console.log('values ... ', values);
 
 
+    const titleName = await getTitleName(book.title_id);
+
     if (values.photos) {
       deleteStoredPhotos(book.title_id);
-      const deleted = await deleteDBPhotoLinks(book.title_id)
-      console.log('links deleted...', deleted)
+      const deleted = await deleteDBPhotoLinks(book.title_id);
+      console.log('links deleted...', deleted);
+
+      const uploadedPhotos = await setPhotoData(book.title_id, titleName, 'PrintedBook', values.photos);
     }
 
 
