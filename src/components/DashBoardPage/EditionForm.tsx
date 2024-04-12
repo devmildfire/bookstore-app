@@ -1182,6 +1182,21 @@ function AudioBookEditForm(audiobook: AudiobookType) {
   );
 }
 
+async function onPhotoInputChange(
+  event: ChangeEvent<HTMLInputElement>,
+  id: string
+) {
+  const photoInput = event.target;
+  const pImage = document.getElementById(id) as HTMLImageElement;
+
+  if (photoInput.files) {
+    const file = photoInput.files[0];
+    if (file) {
+      pImage && (pImage.src = URL.createObjectURL(file));
+    }
+  }
+}
+
 function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
@@ -1348,20 +1363,20 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
     }
   }
 
-  async function onPhotoInputChange(
-    event: ChangeEvent<HTMLInputElement>,
-    id: string
-  ) {
-    const photoInput = event.target;
-    const pImage = document.getElementById(id) as HTMLImageElement;
+  // async function onPhotoInputChange(
+  //   event: ChangeEvent<HTMLInputElement>,
+  //   id: string
+  // ) {
+  //   const photoInput = event.target;
+  //   const pImage = document.getElementById(id) as HTMLImageElement;
 
-    if (photoInput.files) {
-      const file = photoInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
-      }
-    }
-  }
+  //   if (photoInput.files) {
+  //     const file = photoInput.files[0];
+  //     if (file) {
+  //       pImage && (pImage.src = URL.createObjectURL(file));
+  //     }
+  //   }
+  // }
 
   return (
     <div className=''>
@@ -1778,7 +1793,8 @@ const getInitPhotosArray = async (titleID: number) => {
     .from('Photos')
     .select('*')
     .eq('title_id', titleID)
-    .eq('category', 'PrintBook');
+    .eq('category', 'PrintBook')
+    .order('source', {ascending: true});
 
   photosData && console.log('initial photos data', photosData.data);
   const photosNumber = photosData.data?.length || 1;
@@ -1786,18 +1802,38 @@ const getInitPhotosArray = async (titleID: number) => {
   const photosInitArray = [];
 
   for (let i = 0; i < photosNumber; i++) {
-    photosInitArray.push({
-      photo: undefined,
-    });
+
+    photosData.data && photosData.data[i].source && (
+      photosInitArray.push({
+        photo: photosData.data[i].source,
+      })
+    );
+
   }
 
   return photosInitArray;
 };
 
+const getFileByURL = async (url: string) => {
+
+  const urlFileName = url.split('/').pop() || 'testFileName'
+  console.log('url filename ...', urlFileName)
+
+  const file = await fetch(url)
+      .then((r) => r.blob())
+      .then(
+        (blobFile) =>
+          new File([blobFile], urlFileName, { type: blobFile.type })
+      );
+  console.log('url file is ...', file);
+
+  return file
+}
+
+
 function PrintedBookEditForm(book: FullPrintedBookType) {
   const photoImage = useRef<HTMLImageElement | null>(null);
-  // const photosNumber = useRef(0);
-  // const [photosArray, setPhotosArray] = useState<{ photo: undefined }[]>();
+  const effectRan = useRef(false);
 
   function setImage(path: string) {
     if (photoImage.current) {
@@ -1805,13 +1841,42 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
     }
   }
 
+
+const setPhotoImageSRC = (source: string, index: number) => {
+  const imageTag = document.getElementById(`photosImage.${index}`) as HTMLImageElement     
+  console.log('image element', imageTag)
+  imageTag.src = source
+}
+
+const setPhotoInputValue = (file: File, index: number) => {
+  const inputTag = document.getElementById(`photos.${index}`) as HTMLInputElement     
+  console.log('image element', inputTag)
+
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+
+  inputTag.files && (inputTag.files = dataTransfer.files);
+
+  form.setValue(`photos.${index}.photo`, file)
+
+}
+
   async function getDataFromReq() {
     const photosInitArray = await getInitPhotosArray(book.title_id);
 
-    photosInitArray.forEach((item, index) => {
-      console.log(`appending item ${index}`);
-      append({ photo: undefined });
-    });
+    console.log('new photosInitArray', photosInitArray)
+
+    const photoNumber = photosInitArray.length
+
+    for (let i = 0; i < photoNumber; i++) {
+      const photoFile = await getFileByURL(photosInitArray[i].photo)
+      
+      setPhotoInputValue(photoFile, i)
+      
+      setPhotoImageSRC(photosInitArray[i].photo, i)
+      console.log(`prepending item ${i+1}`);
+      append({ photo:  undefined});
+    }
 
     const { data } = await supabase
       .from('PrintedBooks')
@@ -1854,7 +1919,11 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   }
 
   useEffect(() => {
-    getDataFromReq();
+    if (!effectRan.current) {
+      getDataFromReq();
+
+    }
+    return () => {effectRan.current = true}
   }, []);
 
   const router = useRouter();
@@ -1878,13 +1947,19 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   } = form;
 
   // Create dynamic forms
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, prepend, remove } = useFieldArray({
     control,
     name: 'photos',
   });
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+
+
+    if (values.photos) {
+
+    }
+
 
     let imagePath = null;
     let publicUrl = null;
@@ -2382,7 +2457,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
                         type='file'
                         {...fieldProps}
                         onChange={(event) => {
-                          // onPhotoInputChange(event, `photosImage.${item.id}`);
+                          onPhotoInputChange(event, `photosImage.${index}`);
                           append({ photo: undefined });
                           return onChange(
                             event.target.files && event.target.files[0]
@@ -2392,7 +2467,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
                     </FormControl>
                     <FormMessage />
                     <img
-                      id={`photosImage.${item.id}`}
+                      id={`photosImage.${index}`}
                       className='max-w-72'
                       src=''
                       alt='photo image'
