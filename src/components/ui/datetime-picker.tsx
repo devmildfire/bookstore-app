@@ -395,8 +395,8 @@ const DateTimePicker = React.forwardRef<
           groupProps.className,
           'flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'
         )}
-        // aria-label='date-timelabel'
-        aria-label={ariaLabel}
+        aria-label='date-label'
+        // aria-label={ariaLabel}
       >
         <Popover open={props.isOpen} onOpenChange={props.onOpenChange}>
           <PopoverTrigger asChild>

@@ -69,6 +69,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
   const [editions, setEditions] = useState<EditionsType>();
 
   async function getEditions() {
+    console.log('getting some data');
+
     const { data, error } = await supabase
       .from('Titles')
       .select(
@@ -114,9 +116,13 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
     }
   }
 
+  // useEffect(() => {
+  //   getEditions();
+  // }, [titleID]);
+
   useEffect(() => {
     getEditions();
-  }, [titleID]);
+  }, []);
 
   return (
     <div>
@@ -238,7 +244,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
 const TitleSelect = () => {
   const [titles, setTitles] = useState<TitleType[]>();
-  const selectedTitle = useRef<number>();
+  // const selectedTitle = useRef<number>();
+  const [selectedTitle, setSelectedTitle] = useState<number>();
 
   async function getTitles() {
     const { data, error } = await supabase.from('Titles').select('*');
@@ -263,8 +270,10 @@ const TitleSelect = () => {
       <div>
         <Select
           onValueChange={(value) => {
-            selectedTitle.current = parseInt(value);
-            console.log('set new ref ... ', selectedTitle.current);
+            // selectedTitle.current = parseInt(value);
+            setSelectedTitle(parseInt(value));
+
+            console.log('set new ref ... ', selectedTitle);
           }}
         >
           {/* <SelectTrigger className='w-[280px]'> */}
@@ -282,9 +291,11 @@ const TitleSelect = () => {
         </Select>
       </div>
 
-      {selectedTitle.current && (
+      {/* {selectedTitle.current && (
         <TitleEditions titleID={selectedTitle.current} />
-      )}
+      )} */}
+
+      {selectedTitle && <TitleEditions titleID={selectedTitle} />}
     </div>
   );
 };
@@ -309,7 +320,7 @@ function Editions(): React.ReactElement {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
     <DashMain>

@@ -13,7 +13,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import {AuthorEditForm, AuthorForm} from '@/components/DashBoardPage/AuthorForm';
+import {
+  AuthorEditForm,
+  AuthorForm,
+} from '@/components/DashBoardPage/AuthorForm';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -50,9 +53,7 @@ const Authorslist = () => {
           >
             <AccordionTrigger> {author.name} </AccordionTrigger>
             <AccordionContent>
-
-              <AuthorEditForm  {...author} />
-
+              <AuthorEditForm {...author} />
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -106,7 +107,7 @@ function Authors(): React.ReactElement {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
     <DashMain>
