@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Controller,
+  UseFormReturn,
   useFieldArray,
   useForm,
   useFormContext,
@@ -20,10 +21,17 @@ import { z } from 'zod';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { DateTimePicker } from '../ui/datetime-picker';
 import {
   AudiobookType,
+  EbookType,
   FullPrintedBookType,
   PrintedBookType,
 } from 'pages/dashboard/editions';
@@ -42,8 +50,13 @@ type coverDataType = Database['public']['Tables']['PrintedCover']['Insert'];
 type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
 type PhotosRowInsert = Database['public']['Tables']['Photos']['Insert'];
 
+type eBookInsertType = Database['public']['Tables']['Ebooks']['Insert'];
+
+type CategoryType = Database['public']['Enums']['category'];
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_EBOOK_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 const MIN_PHOTOSET_LENGTH = 1;
 const MAX_PHOTOSET_LENGTH = 10;
 
@@ -59,6 +72,12 @@ const ACCEPTED_AUDIO_TYPES = [
   'audio/ogg',
   'audio/vnd.wav',
   'application/zip',
+];
+
+const ACCEPTED_EBOOK_TYPES = [
+  'text/fb2+xml',
+  'application/epub+zip',
+  'application/x-mobipocket-ebook',
 ];
 
 const photoSchema = z.object({
@@ -83,6 +102,8 @@ const photoSetSchema = z
   .max(MAX_PHOTOSET_LENGTH, {
     message: `You can add at most ${MAX_PHOTOSET_LENGTH} students`,
   });
+
+type photoObject = z.infer<typeof photoSchema>;
 
 const formSchema = z.object({
   counter_color: z.string({
@@ -163,7 +184,6 @@ const formEditSchema = z.object({
   pages: z.number().positive('must be positive'),
   discount: z.number().gte(0, 'discount must be 0 or greater'),
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
-
   shade: z.literal('light').or(z.literal('dark')),
   price: z.number().positive('must be positive'),
   publish_date: z
@@ -192,6 +212,81 @@ const formEditSchema = z.object({
   }),
   height: z.number().positive('must be positive'),
   width: z.number().positive('must be positive'),
+  photos: photoSetSchema,
+});
+
+const ebookFormSchema = z.object({
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his audiobook counter.',
+  }),
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
+  }),
+  ISBN: z.string().min(3, {
+    message: 'ISBN must be at least 3 characters long.',
+  }),
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
+  }),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
+  characters: z.number().positive('must be positive'),
+  src: z
+    .instanceof(File, { message: 'EBook file is required.' })
+    .refine(
+      (file) => file?.size <= MAX_EBOOK_FILE_SIZE,
+      `Max file size is ${MAX_EBOOK_FILE_SIZE}MB.`
+    )
+    .refine(
+      (file) => ACCEPTED_EBOOK_TYPES.includes(file?.type),
+      '.fb2, .epub, and .mobi files are accepted.'
+    ),
+  photos: photoSetSchema,
+});
+
+const eBookFormEditSchema = z.object({
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his audiobook counter.',
+  }),
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
+  }),
+  ISBN: z.string().min(3, {
+    message: 'ISBN must be at least 3 characters long.',
+  }),
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
+  }),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
+  characters: z.number().positive('must be positive'),
+  src: z.any().optional(),
   photos: photoSetSchema,
 });
 
@@ -262,12 +357,10 @@ const audioFormEditSchema = z.object({
   audio: z.any().optional(),
 });
 
-type photoObject = z.infer<typeof photoSchema>;
-
 async function setPhotoData(
   titleID: number,
   titleName: string,
-  bookType = 'PrintedBook',
+  bookType: CategoryType,
   photoSet: photoObject[]
 ) {
   const PhotosRowArray: PhotosRowInsert[] = [];
@@ -299,7 +392,7 @@ async function setPhotoData(
             .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl),
           console.log('publicUrl is...', publicUrl),
           (photosRow = {
-            category: 'PrintBook',
+            category: bookType,
             source: publicUrl,
             title_id: titleID,
           }),
@@ -309,7 +402,7 @@ async function setPhotoData(
         const { data, error } = await supabase
           .from('Photos')
           .insert({
-            category: 'PrintBook',
+            category: bookType,
             source: publicUrl,
             title_id: titleID,
           })
@@ -524,6 +617,43 @@ const updateAudioData = async (id: number, audioData: AudioBookInsertType) => {
   }
 };
 
+const setEBookData = async (eBookData: eBookInsertType) => {
+  const newEBook = await supabase
+    .from('Ebooks')
+    .insert(eBookData)
+    .select('*')
+    .single();
+
+  newEBook.error && window.alert(newEBook.error.message);
+  newEBook.data &&
+    window.alert(`${newEBook.data.id} успешно добавлен к электронным книгам`);
+
+  if (newEBook.data) {
+    return newEBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+const updateEBookData = async (id: number, eBookData: eBookInsertType) => {
+  const eBook = await supabase
+    .from('Ebooks')
+    .update(eBookData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  eBook.error && window.alert(eBook.error.message);
+  eBook.data &&
+    window.alert(`электронная книга ${eBook.data.id} успешно изменена`);
+
+  if (eBook.data) {
+    return eBook.data.id;
+  } else {
+    return null;
+  }
+};
+
 async function getTitleName(id: number) {
   const { data } = await supabase
     .from('Titles')
@@ -532,6 +662,847 @@ async function getTitleName(id: number) {
     .single();
 
   return data ? data.name : '';
+}
+
+function EBookForm({ titleID }: { titleID: number }) {
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof ebookFormSchema>>({
+    resolver: zodResolver(ebookFormSchema),
+    defaultValues: {
+      counter_color: '#0800ffF',
+      extra: 'some text',
+      is_published: false,
+      discount: 0,
+      price: 100,
+      publish_date: new Date(),
+      release_date: new Date(),
+      characters: 9001,
+      sold: 0,
+      photos: [
+        {
+          photo: undefined,
+        },
+      ],
+    },
+  });
+
+  const { control } = form;
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'photos',
+  });
+
+  async function onSubmit(values: z.infer<typeof ebookFormSchema>) {
+    console.log(values);
+
+    const titleName = await getTitleName(titleID);
+    console.log('title name is... ', titleName);
+
+    const PhotosRowArray = await setPhotoData(
+      titleID,
+      titleName,
+      'EBook',
+      values.photos
+    );
+    console.log('photosRowArray is...', PhotosRowArray);
+
+    const fileExtention = values.src.name.split('.').pop();
+
+    const eBookUpload = await supabase.storage
+      .from('ebooks')
+      .upload(`ebook_${slugify(titleName)}.${fileExtention}`, values.src, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    const publicUrl = supabase.storage
+      .from('ebooks')
+      .getPublicUrl(`${eBookUpload.data?.path}`).data.publicUrl;
+
+    console.log('URL is... ', publicUrl);
+
+    const eBookData = {
+      title_id: titleID,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+      src: publicUrl,
+      file_volume: values.src.size,
+      characters: values.characters,
+      ISBN: values.ISBN,
+    };
+
+    const eBookID = await setEBookData(eBookData);
+    console.log('new eBook ID is ...', eBookID);
+    eBookID && router.reload();
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                    ariaLabel='publish-date'
+                  />
+                </FormControl>
+                <FormDescription>editions publish date.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+            aria-label='publish_date'
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='ISBN'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>ISBN</FormLabel>
+                <FormControl>
+                  <Textarea
+                    // placeholder='Tell us a little bit about yourself'
+                    // className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='src'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>eBook file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='src'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='characters'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Characters</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}.photo`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>eBook photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`photos.${index}`}
+                        type='file'
+                        {...fieldProps}
+                        onChange={(event) => {
+                          onPhotoInputChange(event, `photosImage.${item.id}`);
+                          append({ photo: undefined });
+                          return onChange(
+                            event.target.files && event.target.files[0]
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${item.id}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+              <Button
+                color='failure'
+                type='button'
+                onClick={() => {
+                  console.log('removing inout index ... ', index);
+                  remove(index);
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-64'
+          >
+            Добавить Электронную Книгу
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
+function EBookEditForm(ebook: EbookType) {
+  const router = useRouter();
+  const effectRan = useRef(false);
+  const oldVal = useRef<File | undefined>();
+
+  const setPhotoInputValue = (file: File, index: number) => {
+    const inputTag = document.getElementById(
+      `photos.${index}`
+    ) as HTMLInputElement;
+    console.log('image element', inputTag);
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    inputTag.files && (inputTag.files = dataTransfer.files);
+
+    form.setValue(`photos.${index}.photo`, file);
+  };
+
+  async function getDataFromReq() {
+    const photosInitArray = await getInitPhotosArray(ebook.title_id, 'EBook');
+
+    console.log('new photosInitArray', photosInitArray);
+
+    const photoNumber = photosInitArray.length;
+
+    for (let i = 0; i < photoNumber; i++) {
+      const photoFile = await getFileByURL(photosInitArray[i].photo);
+      setPhotoInputValue(photoFile, i);
+      setPhotoImageSRC(photosInitArray[i].photo, i);
+      append({ photo: undefined });
+    }
+  }
+
+  useEffect(() => {
+    if (!effectRan.current) {
+      getDataFromReq();
+    }
+    return () => {
+      effectRan.current = true;
+    };
+  }, []);
+
+  const form = useForm<z.infer<typeof eBookFormEditSchema>>({
+    resolver: zodResolver(eBookFormEditSchema),
+    defaultValues: {
+      is_published:
+        ebook.is_published !== null ? ebook.is_published : undefined,
+      publish_date: ebook.publish_date
+        ? new Date(ebook.publish_date)
+        : undefined,
+      release_date: ebook.release_date
+        ? new Date(ebook.release_date)
+        : undefined,
+      counter_color: ebook.counter_color || '#ff2a00',
+      characters: ebook.characters || 0,
+      extra: ebook.extra || '',
+      discount: ebook.discount !== null ? ebook.discount : undefined,
+      sold: ebook.sold !== null ? ebook.sold : undefined,
+      price: ebook.price !== null ? ebook.price : undefined,
+      ISBN: ebook.ISBN || '',
+      photos: [{ photo: undefined }],
+    },
+  });
+
+  const { control } = form;
+
+  // Create dynamic forms
+  const { fields, append, prepend, remove } = useFieldArray({
+    control,
+    name: 'photos',
+  });
+
+  async function onEditSubmit(values: z.infer<typeof eBookFormEditSchema>) {
+    console.log('values ... ', values);
+
+    const titleName = await getTitleName(ebook.title_id);
+
+    if (values.photos) {
+      deleteStoredPhotos(ebook.title_id, 'EBook');
+      const deleted = await deleteDBPhotoLinks(ebook.title_id, 'EBook');
+      console.log('links deleted...', deleted);
+
+      const uploadedPhotos = await setPhotoData(
+        ebook.title_id,
+        titleName,
+        'EBook',
+        values.photos
+      );
+    }
+
+    let eBookPath = null;
+    let publicUrl = null;
+
+    if (values.src) {
+      console.log('current ebook file ... ', ebook.src);
+
+      const fileNameString = ebook.src?.split('/').pop() || 'no file';
+
+      console.log('ebook Name String ... ', fileNameString);
+
+      console.log('selected eBook file ... ', values.src);
+
+      const eBookRemove = await supabase.storage
+        .from('ebooks')
+        .remove([fileNameString]);
+
+      eBookRemove.error &&
+        console.log('eBook Remove error ... ', eBookRemove.error.message);
+
+      eBookRemove.data &&
+        console.log('eBook Remove data... ', eBookRemove.data);
+
+      const fileName = values.src.name ? values.src.name : 'failNameString';
+      console.log('eBook file is...', values.src);
+      console.log('eBook file name is...', values.src.name);
+
+      const fileExtention = fileName.split('.').pop();
+
+      const titleName = await getTitleName(ebook.title_id);
+      console.log('title name is... ', titleName);
+
+      const eBookUpdate = await supabase.storage
+        .from('ebooks')
+        .upload(`ebook_${slugify(titleName)}.${fileExtention}`, values.src, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      eBookUpdate.error &&
+        console.log('eBook update error ... ', eBookUpdate.error.message);
+
+      eBookPath = eBookUpdate.data?.path;
+      console.log('eBook path ... ', eBookPath);
+    }
+
+    if (!values.src) {
+      eBookPath = ebook.src;
+      publicUrl = ebook.src;
+    }
+
+    !publicUrl &&
+      eBookPath &&
+      (publicUrl = supabase.storage.from('ebooks').getPublicUrl(eBookPath)
+        .data.publicUrl);
+
+    console.log('public URL is ...', publicUrl);
+
+    const eBookData = {
+      title_id: ebook.title_id,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+      src: publicUrl,
+      file_volume: values.src?.size || ebook.file_volume,
+      characters: values.characters,
+      ISBN: values.ISBN,
+    };
+
+    const eBookID = await updateEBookData(ebook.id, eBookData);
+
+    router.reload();
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onEditSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='ISBN'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>ISBN</FormLabel>
+                <FormControl>
+                  <Textarea
+                    // placeholder='Tell us a little bit about yourself'
+                    // className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='src'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>eBook file</FormLabel>
+
+                <p>{ebook.src}</p>
+
+                <a href={ebook.src!} download target='_blank'>
+                  download file
+                </a>
+
+                <FormControl>
+                  <Input
+                    id='cover'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='characters'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Characters</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}.photo`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>eBook photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <div className='flex flex-row'>
+                        <Input
+                          id={`photos.${index}`}
+                          type='file'
+                          {...fieldProps}
+                          onFocus={() => {
+                            oldVal.current = value;
+                            console.log('old value is... ', oldVal.current);
+                          }}
+                          onChange={(event) => {
+                            onPhotoInputChange(event, `photosImage.${index}`);
+
+                            oldVal.current === undefined &&
+                              append({ photo: undefined });
+
+                            return onChange(
+                              event.target.files && event.target.files[0]
+                            );
+                          }}
+                        />
+                        {value && (
+                          <Button
+                            color='failure'
+                            type='button'
+                            onClick={() => {
+                              console.log('removing inout index ... ', index);
+                              remove(index);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${index}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-48'
+          >
+            Обновить
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
 }
 
 function AudioBookForm({ titleID }: { titleID: number }) {
@@ -1211,41 +2182,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
 
-  async function setFileInput() {
-    const testLink =
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/archive/a/a7/20220125121206%21React-icon.svg/120px-React-icon.svg.png';
-
-    const testFile = await fetch(testLink)
-      .then((r) => r.blob())
-      .then(
-        (blobFile) =>
-          new File([blobFile], 'testFileName', { type: blobFile.type })
-      );
-
-    console.log('test file is ...', testFile);
-
-    testFile && form.setValue('cover', testFile);
-    console.log('set Value is ...', form.getValues('cover'));
-
-    const coverInput = document.getElementById('cover') as HTMLInputElement;
-    console.log('cover input files is ...', coverInput.files);
-
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(testFile);
-
-    coverInput.files && (coverInput.files = dataTransfer.files);
-
-    const pImage = photoImage.current;
-
-    pImage && (pImage.src = URL.createObjectURL(testFile));
-  }
-
-  useEffect(() => {
-    setFileInput();
-  }, []);
-
-  // console.log('init file is ...', initFile)
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -1297,7 +2233,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
     const PhotosRowArray = await setPhotoData(
       titleID,
       titleName,
-      'PrintedBook',
+      'PrintBook',
       values.photos
     );
     console.log('photosRowArray is...', PhotosRowArray);
@@ -1373,21 +2309,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       }
     }
   }
-
-  // async function onPhotoInputChange(
-  //   event: ChangeEvent<HTMLInputElement>,
-  //   id: string
-  // ) {
-  //   const photoInput = event.target;
-  //   const pImage = document.getElementById(id) as HTMLImageElement;
-
-  //   if (photoInput.files) {
-  //     const file = photoInput.files[0];
-  //     if (file) {
-  //       pImage && (pImage.src = URL.createObjectURL(file));
-  //     }
-  //   }
-  // }
 
   return (
     <div className=''>
@@ -1777,14 +2698,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
             </div>
           ))}
 
-          {/* <Button
-            disabled={fields.length >= MAX_PHOTOSET_LENGTH}
-            type='button'
-            onClick={() => append({ photo: undefined })}
-          >
-            Append
-          </Button> */}
-
           <Button
             type='submit'
             variant={'outline'}
@@ -1799,12 +2712,12 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
   );
 }
 
-const getInitPhotosArray = async (titleID: number) => {
+const getInitPhotosArray = async (titleID: number, category: CategoryType) => {
   const photosData = await supabase
     .from('Photos')
     .select('*')
     .eq('title_id', titleID)
-    .eq('category', 'PrintBook')
+    .eq('category', category)
     .order('source', { ascending: true });
 
   photosData && console.log('initial photos data', photosData.data);
@@ -1824,8 +2737,8 @@ const getInitPhotosArray = async (titleID: number) => {
   return photosInitArray;
 };
 
-const deleteStoredPhotos = async (titleID: number) => {
-  const photosArray = await getInitPhotosArray(titleID);
+const deleteStoredPhotos = async (titleID: number, category: CategoryType) => {
+  const photosArray = await getInitPhotosArray(titleID, category);
 
   photosArray.forEach(async (item) => {
     const photoName = item.photo.split('/').pop() || '';
@@ -1837,12 +2750,12 @@ const deleteStoredPhotos = async (titleID: number) => {
   });
 };
 
-const deleteDBPhotoLinks = async (titleID: number) => {
+const deleteDBPhotoLinks = async (titleID: number, category: CategoryType) => {
   const photoLinksDelete = await supabase
     .from('Photos')
     .delete()
     .eq('title_id', titleID)
-    .eq('category', 'PrintBook');
+    .eq('category', category);
 
   if (photoLinksDelete.error) {
     return false;
@@ -1865,23 +2778,24 @@ const getFileByURL = async (url: string) => {
   return file;
 };
 
+const setPhotoImageSRC = (source: string, index: number) => {
+  const imageTag = document.getElementById(
+    `photosImage.${index}`
+  ) as HTMLImageElement;
+  console.log('image element', imageTag);
+  imageTag.src = source;
+};
+
 function PrintedBookEditForm(book: FullPrintedBookType) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const effectRan = useRef(false);
+  const oldVal = useRef<File | undefined>();
 
   function setImage(path: string) {
     if (photoImage.current) {
       photoImage.current.src = path;
     }
   }
-
-  const setPhotoImageSRC = (source: string, index: number) => {
-    const imageTag = document.getElementById(
-      `photosImage.${index}`
-    ) as HTMLImageElement;
-    console.log('image element', imageTag);
-    imageTag.src = source;
-  };
 
   const setPhotoInputValue = (file: File, index: number) => {
     const inputTag = document.getElementById(
@@ -1898,7 +2812,10 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
   };
 
   async function getDataFromReq() {
-    const photosInitArray = await getInitPhotosArray(book.title_id);
+    const photosInitArray = await getInitPhotosArray(
+      book.title_id,
+      'PrintBook'
+    );
 
     console.log('new photosInitArray', photosInitArray);
 
@@ -1995,14 +2912,14 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
     const titleName = await getTitleName(book.title_id);
 
     if (values.photos) {
-      deleteStoredPhotos(book.title_id);
-      const deleted = await deleteDBPhotoLinks(book.title_id);
+      deleteStoredPhotos(book.title_id, 'PrintBook');
+      const deleted = await deleteDBPhotoLinks(book.title_id, 'PrintBook');
       console.log('links deleted...', deleted);
 
       const uploadedPhotos = await setPhotoData(
         book.title_id,
         titleName,
-        'PrintedBook',
+        'PrintBook',
         values.photos
       );
     }
@@ -2502,18 +3419,39 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
                   <FormItem className='flex flex-col items-start p-1'>
                     <FormLabel>book photo {`${index + 1}`} </FormLabel>
                     <FormControl>
-                      <Input
-                        id={`photos.${index}`}
-                        type='file'
-                        {...fieldProps}
-                        onChange={(event) => {
-                          onPhotoInputChange(event, `photosImage.${index}`);
-                          append({ photo: undefined });
-                          return onChange(
-                            event.target.files && event.target.files[0]
-                          );
-                        }}
-                      />
+                      <div className='flex flex-row'>
+                        <Input
+                          id={`photos.${index}`}
+                          type='file'
+                          {...fieldProps}
+                          onFocus={() => {
+                            oldVal.current = value;
+                            console.log('old value is... ', oldVal.current);
+                          }}
+                          onChange={(event) => {
+                            onPhotoInputChange(event, `photosImage.${index}`);
+
+                            oldVal.current === undefined &&
+                              append({ photo: undefined });
+
+                            return onChange(
+                              event.target.files && event.target.files[0]
+                            );
+                          }}
+                        />
+                        {value && (
+                          <Button
+                            color='failure'
+                            type='button'
+                            onClick={() => {
+                              console.log('removing inout index ... ', index);
+                              remove(index);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                     <img
@@ -2522,18 +3460,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
                       src=''
                       alt='photo image'
                     />
-                    {value && (
-                      <Button
-                        color='failure'
-                        type='button'
-                        onClick={() => {
-                          console.log('removing inout index ... ', index);
-                          remove(index);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
                   </FormItem>
                 )}
               />
@@ -2559,4 +3485,6 @@ export {
   PrintedBookEditForm,
   AudioBookForm,
   AudioBookEditForm,
+  EBookForm,
+  EBookEditForm,
 };

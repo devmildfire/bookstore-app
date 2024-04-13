@@ -27,6 +27,8 @@ import {
   PrintedBookEditForm,
   AudioBookForm,
   AudioBookEditForm,
+  EBookForm,
+  EBookEditForm,
 } from '@/components/DashBoardPage/EditionForm';
 
 export type PrintedBookType =
@@ -161,9 +163,7 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
           >
             <AccordionTrigger> eBook </AccordionTrigger>
             <AccordionContent>
-              <p> ISBN: {editions?.eBook.ISBN}</p>
-              <p> extra: {editions?.eBook.extra}</p>
-              <p> скидка: {editions?.eBook.discount}</p>
+              <EBookEditForm {...editions.eBook} />
             </AccordionContent>
           </AccordionItem>
         )}
@@ -219,9 +219,11 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             className='w-full'
           >
             <AccordionTrigger className='w-full text-red-800'>
-              Add eBook{' '}
+              Add eBook
             </AccordionTrigger>
-            <AccordionContent>add some eBook</AccordionContent>
+            <AccordionContent>
+              <EBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
 
