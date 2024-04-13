@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -282,10 +283,14 @@ async function setPhotoData(
 
         const photoUpload = await supabase.storage
           .from('photos')
-          .upload(`photo_${slugify(titleName)}_${bookType}_${index}.${fileExt}`, file, {
-            cacheControl: '3600',
-            upsert: true,
-          });
+          .upload(
+            `photo_${slugify(titleName)}_${bookType}_${index}.${fileExt}`,
+            file,
+            {
+              cacheControl: '3600',
+              upsert: true,
+            }
+          );
 
         photoUpload.data &&
           (console.log('photoUpload data is...', photoUpload.data),
@@ -627,7 +632,7 @@ function AudioBookForm({ titleID }: { titleID: number }) {
             name='publish_date'
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor='datetime'>publish date</FormLabel>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
                 <FormControl>
                   <DateTimePicker
                     jsDate={field.value}
@@ -638,11 +643,14 @@ function AudioBookForm({ titleID }: { titleID: number }) {
                       console.log('on null function call');
                       console.log('form state is...', form.getValues());
                     }}
+                    ariaLabel='publish-date'
                   />
                 </FormControl>
+                <FormDescription>editions publish date.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
+            aria-label='publish_date'
           />
 
           <FormField
@@ -650,7 +658,7 @@ function AudioBookForm({ titleID }: { titleID: number }) {
             name='release_date'
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor='datetime'>release date</FormLabel>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
                 <FormControl>
                   <DateTimePicker
                     jsDate={field.value}
@@ -1797,7 +1805,7 @@ const getInitPhotosArray = async (titleID: number) => {
     .select('*')
     .eq('title_id', titleID)
     .eq('category', 'PrintBook')
-    .order('source', {ascending: true});
+    .order('source', { ascending: true });
 
   photosData && console.log('initial photos data', photosData.data);
   const photosNumber = photosData.data?.length || 1;
@@ -1805,66 +1813,57 @@ const getInitPhotosArray = async (titleID: number) => {
   const photosInitArray = [];
 
   for (let i = 0; i < photosNumber; i++) {
-
-    photosData.data && photosData.data.length && photosData.data[i].source && (
+    photosData.data &&
+      photosData.data.length &&
+      photosData.data[i].source &&
       photosInitArray.push({
         photo: photosData.data[i].source,
-      })
-    );
-
+      });
   }
 
   return photosInitArray;
 };
 
 const deleteStoredPhotos = async (titleID: number) => {
-  const photosArray = await getInitPhotosArray(titleID)
+  const photosArray = await getInitPhotosArray(titleID);
 
-  photosArray.forEach(
-    async (item) => {
-      const photoName = item.photo.split('/').pop() || ''
-      console.log('file name to delete ...', photoName)
+  photosArray.forEach(async (item) => {
+    const photoName = item.photo.split('/').pop() || '';
+    console.log('file name to delete ...', photoName);
 
-      const deletePhoto = await supabase.storage
+    const deletePhoto = await supabase.storage
       .from('photos')
-      .remove([photoName])
-    }
-  )
-
-}
+      .remove([photoName]);
+  });
+};
 
 const deleteDBPhotoLinks = async (titleID: number) => {
   const photoLinksDelete = await supabase
     .from('Photos')
     .delete()
     .eq('title_id', titleID)
-    .eq('category', 'PrintBook')
+    .eq('category', 'PrintBook');
 
   if (photoLinksDelete.error) {
-    return false
+    return false;
   } else {
-    return true
+    return true;
   }
-
-
-}
+};
 
 const getFileByURL = async (url: string) => {
-
-  const urlFileName = url.split('/').pop() || 'testFileName'
-  console.log('url filename ...', urlFileName)
+  const urlFileName = url.split('/').pop() || 'testFileName';
+  console.log('url filename ...', urlFileName);
 
   const file = await fetch(url)
-      .then((r) => r.blob())
-      .then(
-        (blobFile) =>
-          new File([blobFile], urlFileName, { type: blobFile.type })
-      );
+    .then((r) => r.blob())
+    .then(
+      (blobFile) => new File([blobFile], urlFileName, { type: blobFile.type })
+    );
   console.log('url file is ...', file);
 
-  return file
-}
-
+  return file;
+};
 
 function PrintedBookEditForm(book: FullPrintedBookType) {
   const photoImage = useRef<HTMLImageElement | null>(null);
@@ -1876,41 +1875,43 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
     }
   }
 
+  const setPhotoImageSRC = (source: string, index: number) => {
+    const imageTag = document.getElementById(
+      `photosImage.${index}`
+    ) as HTMLImageElement;
+    console.log('image element', imageTag);
+    imageTag.src = source;
+  };
 
-const setPhotoImageSRC = (source: string, index: number) => {
-  const imageTag = document.getElementById(`photosImage.${index}`) as HTMLImageElement     
-  console.log('image element', imageTag)
-  imageTag.src = source
-}
+  const setPhotoInputValue = (file: File, index: number) => {
+    const inputTag = document.getElementById(
+      `photos.${index}`
+    ) as HTMLInputElement;
+    console.log('image element', inputTag);
 
-const setPhotoInputValue = (file: File, index: number) => {
-  const inputTag = document.getElementById(`photos.${index}`) as HTMLInputElement     
-  console.log('image element', inputTag)
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
 
-  const dataTransfer = new DataTransfer();
-  dataTransfer.items.add(file);
+    inputTag.files && (inputTag.files = dataTransfer.files);
 
-  inputTag.files && (inputTag.files = dataTransfer.files);
-
-  form.setValue(`photos.${index}.photo`, file)
-
-}
+    form.setValue(`photos.${index}.photo`, file);
+  };
 
   async function getDataFromReq() {
     const photosInitArray = await getInitPhotosArray(book.title_id);
 
-    console.log('new photosInitArray', photosInitArray)
+    console.log('new photosInitArray', photosInitArray);
 
-    const photoNumber = photosInitArray.length
+    const photoNumber = photosInitArray.length;
 
     for (let i = 0; i < photoNumber; i++) {
-      const photoFile = await getFileByURL(photosInitArray[i].photo)
-      
-      setPhotoInputValue(photoFile, i)
-      
-      setPhotoImageSRC(photosInitArray[i].photo, i)
-      console.log(`prepending item ${i+1}`);
-      append({ photo:  undefined});
+      const photoFile = await getFileByURL(photosInitArray[i].photo);
+
+      setPhotoInputValue(photoFile, i);
+
+      setPhotoImageSRC(photosInitArray[i].photo, i);
+      console.log(`prepending item ${i + 1}`);
+      append({ photo: undefined });
     }
 
     const { data } = await supabase
@@ -1956,9 +1957,10 @@ const setPhotoInputValue = (file: File, index: number) => {
   useEffect(() => {
     if (!effectRan.current) {
       getDataFromReq();
-
     }
-    return () => {effectRan.current = true}
+    return () => {
+      effectRan.current = true;
+    };
   }, []);
 
   const router = useRouter();
@@ -1990,7 +1992,6 @@ const setPhotoInputValue = (file: File, index: number) => {
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
 
-
     const titleName = await getTitleName(book.title_id);
 
     if (values.photos) {
@@ -1998,9 +1999,13 @@ const setPhotoInputValue = (file: File, index: number) => {
       const deleted = await deleteDBPhotoLinks(book.title_id);
       console.log('links deleted...', deleted);
 
-      const uploadedPhotos = await setPhotoData(book.title_id, titleName, 'PrintedBook', values.photos);
+      const uploadedPhotos = await setPhotoData(
+        book.title_id,
+        titleName,
+        'PrintedBook',
+        values.photos
+      );
     }
-
 
     let imagePath = null;
     let publicUrl = null;
@@ -2189,8 +2194,10 @@ const setPhotoInputValue = (file: File, index: number) => {
                       console.log('on null function call');
                       console.log('form state is...', form.getValues());
                     }}
+                    ariaLabel='publish-date'
                   />
                 </FormControl>
+                <FormDescription>editions publish date.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -2213,8 +2220,10 @@ const setPhotoInputValue = (file: File, index: number) => {
                       console.log('on null function call');
                       console.log('form state is...', form.getValues());
                     }}
+                    ariaLabel='release_date'
                   />
                 </FormControl>
+                <FormDescription>editions release date.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -2513,23 +2522,21 @@ const setPhotoInputValue = (file: File, index: number) => {
                       src=''
                       alt='photo image'
                     />
-                     { value && 
-                  <Button
-                  color='failure'
-                  type='button'
-                  onClick={() => {
-                    console.log('removing inout index ... ', index);
-                    remove(index);
-                  }}
-                >
-                  Delete
-                </Button>
-    }
+                    {value && (
+                      <Button
+                        color='failure'
+                        type='button'
+                        onClick={() => {
+                          console.log('removing inout index ... ', index);
+                          remove(index);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </FormItem>
                 )}
-               
               />
-
             </div>
           ))}
 
