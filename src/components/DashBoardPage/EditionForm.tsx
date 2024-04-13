@@ -716,6 +716,18 @@ const updateCardBookData = async (
   }
 };
 
+const deleteCardBook = async (cardBookID: number) => {
+  const { error } = await supabase
+    .from('CardBooks')
+    .delete()
+    .eq('id', cardBookID);
+
+  error && window.alert(error.message);
+  !error && window.alert(`Книга 2.0 номер ${cardBookID} успешно удалена`);
+
+  return !error ? true : false;
+};
+
 async function getTitleName(id: number) {
   const { data } = await supabase
     .from('Titles')
@@ -1992,14 +2004,28 @@ function CardBookEditForm(cardBook: CardBookType) {
             )}
           />
 
-          <Button
-            type='submit'
-            variant={'outline'}
-            size={'default'}
-            className='w-full max-w-48'
-          >
-            Обновить
-          </Button>
+          <div className='flex flex-row justify-center gap-4'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
+
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={async () => {
+                const bookDeleted = await deleteCardBook(cardBook.id);
+                bookDeleted && router.reload();
+              }}
+            >
+              Удалить
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
