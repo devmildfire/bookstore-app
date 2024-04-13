@@ -32,6 +32,7 @@ import { DateTimePicker } from '../ui/datetime-picker';
 import {
   AudiobookType,
   EbookType,
+  CardBookType,
   FullPrintedBookType,
   PrintedBookType,
 } from 'pages/dashboard/editions';
@@ -51,6 +52,7 @@ type AudioBookInsertType = Database['public']['Tables']['Audiobooks']['Insert'];
 type PhotosRowInsert = Database['public']['Tables']['Photos']['Insert'];
 
 type eBookInsertType = Database['public']['Tables']['Ebooks']['Insert'];
+type CardBookInsertType = Database['public']['Tables']['CardBooks']['Insert'];
 
 type CategoryType = Database['public']['Enums']['category'];
 
@@ -288,6 +290,33 @@ const eBookFormEditSchema = z.object({
   characters: z.number().positive('must be positive'),
   src: z.any().optional(),
   photos: photoSetSchema,
+});
+
+const cardBookFormSchema = z.object({
+  counter_color: z.string({
+    required_error: 'Author must pick a color for his audiobook counter.',
+  }),
+  extra: z.string().min(6, {
+    message: 'Extra info must be at least 6 characters long.',
+  }),
+  is_published: z.boolean({
+    required_error: 'Publication status must be stated.',
+  }),
+  discount: z.number().gte(0, 'discount must be 0 or greater'),
+  sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  price: z.number().positive('must be positive'),
+  publish_date: z
+    .date({
+      description: 'publist date',
+    })
+    .nullable()
+    .optional(),
+  release_date: z
+    .date({
+      description: 'release date',
+    })
+    .nullable()
+    .optional(),
 });
 
 const audioFormSchema = z.object({
@@ -649,6 +678,24 @@ const updateEBookData = async (id: number, eBookData: eBookInsertType) => {
 
   if (eBook.data) {
     return eBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+const setCardBookData = async (cardBookData: CardBookInsertType) => {
+  const newCardBook = await supabase
+    .from('CardBooks')
+    .insert(cardBookData)
+    .select('*')
+    .single();
+
+  newCardBook.error && window.alert(newCardBook.error.message);
+  newCardBook.data &&
+    window.alert(`${newCardBook.data.id} успешно добавлен к книгам 2.0`);
+
+  if (newCardBook.data) {
+    return newCardBook.data.id;
   } else {
     return null;
   }
@@ -1498,6 +1545,225 @@ function EBookEditForm(ebook: EbookType) {
             className='w-full max-w-48'
           >
             Обновить
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
+function CardBookForm({ titleID }: { titleID: number }) {
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof cardBookFormSchema>>({
+    resolver: zodResolver(cardBookFormSchema),
+    defaultValues: {
+      counter_color: '#0800ffF',
+      extra: 'some text',
+      is_published: false,
+      discount: 0,
+      price: 100,
+      publish_date: new Date(),
+      release_date: new Date(),
+      sold: 0,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof cardBookFormSchema>) {
+    console.log(values);
+
+    const cardBookData = {
+      title_id: titleID,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+    };
+
+    const cardBookID = await setCardBookData(cardBookData);
+    console.log('new cardBook ID is ...', cardBookID);
+    cardBookID && router.reload();
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                    ariaLabel='publish-date'
+                  />
+                </FormControl>
+                <FormDescription>editions publish date.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+            aria-label='publish_date'
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-64'
+          >
+            Добавить Книгу 2.0
           </Button>
         </form>
       </Form>
@@ -3487,4 +3753,5 @@ export {
   AudioBookEditForm,
   EBookForm,
   EBookEditForm,
+  CardBookForm,
 };

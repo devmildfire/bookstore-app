@@ -207,6 +207,7 @@ export interface Database {
       }
       CardBooks: {
         Row: {
+          counter_color: string | null
           demo: string | null
           discount: number | null
           extra: string | null
@@ -219,6 +220,7 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          counter_color?: string | null
           demo?: string | null
           discount?: number | null
           extra?: string | null
@@ -231,6 +233,7 @@ export interface Database {
           title_id: number
         }
         Update: {
+          counter_color?: string | null
           demo?: string | null
           discount?: number | null
           extra?: string | null
