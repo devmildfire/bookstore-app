@@ -30,6 +30,7 @@ import {
   EBookForm,
   EBookEditForm,
   CardBookForm,
+  CardBookEditForm,
 } from '@/components/DashBoardPage/EditionForm';
 
 export type PrintedBookType =
@@ -177,8 +178,7 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
           >
             <AccordionTrigger> Book 2.0 </AccordionTrigger>
             <AccordionContent>
-              <p> extra: {editions?.cardBook.extra}</p>
-              <p> скидка: {editions?.cardBook.discount}</p>
+              <CardBookEditForm {...editions.cardBook} />
             </AccordionContent>
           </AccordionItem>
         )}

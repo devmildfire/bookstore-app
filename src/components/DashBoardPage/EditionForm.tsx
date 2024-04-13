@@ -21,13 +21,7 @@ import { z } from 'zod';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
-import {
-  ChangeEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { DateTimePicker } from '../ui/datetime-picker';
 import {
   AudiobookType,
@@ -40,7 +34,6 @@ import { Database } from 'api/books/types';
 import { Checkbox } from '../ui/checkbox';
 import { Switch } from '../ui/switch';
 import slugify from 'slugify';
-import { equal } from 'assert';
 
 type PrintOptionsDataType =
   Database['public']['Tables']['PrintOptions']['Insert'];
@@ -696,6 +689,28 @@ const setCardBookData = async (cardBookData: CardBookInsertType) => {
 
   if (newCardBook.data) {
     return newCardBook.data.id;
+  } else {
+    return null;
+  }
+};
+
+const updateCardBookData = async (
+  id: number,
+  cardBookData: CardBookInsertType
+) => {
+  const cardBook = await supabase
+    .from('CardBooks')
+    .update(cardBookData)
+    .eq('id', id)
+    .select('*')
+    .single();
+
+  cardBook.error && window.alert(cardBook.error.message);
+  cardBook.data &&
+    window.alert(`Книга 2.0 ${cardBook.data.id} успешно изменена`);
+
+  if (cardBook.data) {
+    return cardBook.data.id;
   } else {
     return null;
   }
@@ -1764,6 +1779,226 @@ function CardBookForm({ titleID }: { titleID: number }) {
             className='w-full max-w-64'
           >
             Добавить Книгу 2.0
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
+function CardBookEditForm(cardBook: CardBookType) {
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof cardBookFormSchema>>({
+    resolver: zodResolver(cardBookFormSchema),
+    defaultValues: {
+      is_published:
+        cardBook.is_published !== null ? cardBook.is_published : undefined,
+      publish_date: cardBook.publish_date
+        ? new Date(cardBook.publish_date)
+        : undefined,
+      release_date: cardBook.release_date
+        ? new Date(cardBook.release_date)
+        : undefined,
+      counter_color: cardBook.counter_color || '#ff2a00',
+      extra: cardBook.extra || '',
+      discount: cardBook.discount !== null ? cardBook.discount : undefined,
+      sold: cardBook.sold !== null ? cardBook.sold : undefined,
+      price: cardBook.price !== null ? cardBook.price : undefined,
+    },
+  });
+
+  async function onEditSubmit(values: z.infer<typeof cardBookFormSchema>) {
+    console.log('values ... ', values);
+
+    const cardBookData = {
+      title_id: cardBook.title_id,
+      counter_color: values.counter_color,
+      extra: values.extra,
+      is_published: values.is_published,
+      price: values.price,
+      discount: values.discount,
+      publish_date: values.publish_date?.toISOString(),
+      release_date: values.release_date?.toISOString(),
+      sold: values.sold,
+    };
+
+    const cardBookID = await updateCardBookData(cardBook.id, cardBookData);
+
+    router.reload();
+  }
+
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onEditSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='counter_color'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Counter Color</FormLabel>
+                <FormControl>
+                  <Input type='color' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='publish_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='publish_date'>publish date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    onNull={() => {
+                      form.setValue('publish_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='release_date'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor='release_date'>release date</FormLabel>
+                <FormControl>
+                  <DateTimePicker
+                    jsDate={field.value}
+                    onJsDateChange={field.onChange}
+                    showClearButton={true}
+                    onNull={() => {
+                      form.setValue('release_date', null);
+
+                      console.log('on null function call');
+                      console.log('form state is...', form.getValues());
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='sold'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Number of sold copies</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_published'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is published</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type='submit'
+            variant={'outline'}
+            size={'default'}
+            className='w-full max-w-48'
+          >
+            Обновить
           </Button>
         </form>
       </Form>
@@ -3754,4 +3989,5 @@ export {
   EBookForm,
   EBookEditForm,
   CardBookForm,
+  CardBookEditForm,
 };
