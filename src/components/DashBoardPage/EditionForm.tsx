@@ -350,6 +350,16 @@ const audioFormSchema = z.object({
       (file) => ACCEPTED_AUDIO_TYPES.includes(file?.type),
       '.mp3, .wav, .ogg and .zip files are accepted.'
     ),
+  demo: z
+    .instanceof(File, { message: 'Demo Audio file is required.' })
+    .refine(
+      (file) => file?.size <= MAX_AUDIO_FILE_SIZE,
+      `Max file size is 20MB.`
+    )
+    .refine(
+      (file) => ACCEPTED_AUDIO_TYPES.includes(file?.type),
+      '.mp3, .wav, .ogg and .zip files are accepted.'
+    ),
 });
 
 const audioFormEditSchema = z.object({
@@ -378,7 +388,28 @@ const audioFormEditSchema = z.object({
     .nullable()
     .optional(),
   duration: z.number().positive('must be positive'),
-  audio: z.any().optional(),
+  audio: z
+    .instanceof(File, { message: 'Audio file is required.' })
+    .optional()
+    .refine(
+      (file) => !file || file?.size <= MAX_AUDIO_FILE_SIZE,
+      `Max file size is ${MAX_AUDIO_FILE_SIZE}.`
+    )
+    .refine(
+      (file) => !file || ACCEPTED_AUDIO_TYPES.includes(file?.type),
+      '.mp3, .wav, .ogg and .zip files are accepted.'
+    ),
+  demo: z
+    .instanceof(File, { message: 'Audio Demo file is required.' })
+    .optional()
+    .refine(
+      (file) => !file || file?.size <= MAX_AUDIO_FILE_SIZE,
+      `Max file size is ${MAX_AUDIO_FILE_SIZE}.`
+    )
+    .refine(
+      (file) => !file || ACCEPTED_AUDIO_TYPES.includes(file?.type),
+      '.mp3, .wav, .ogg and .zip files are accepted.'
+    ),
 });
 
 async function setPhotoData(
@@ -866,6 +897,12 @@ const deleteAudioBook = async (audioBookID: number) => {
   const audioBookRemove = await supabase.storage
     .from('audiobooks')
     .remove([fileNameString]);
+
+  const demoFileNameString =
+    (audioBook && audioBook.demo?.split('/').pop()) || 'no file';
+  const demoAudioBookRemove = await supabase.storage
+    .from('demos')
+    .remove([demoFileNameString]);
 
   if (audioBook) {
     const { error } = await supabase
@@ -2185,6 +2222,8 @@ function CardBookEditForm(cardBook: CardBookType) {
 
 function AudioBookForm({ titleID }: { titleID: number }) {
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
+  const demoAudioPlayer = useRef<HTMLAudioElement | null>(null);
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof audioFormSchema>>({
@@ -2205,6 +2244,8 @@ function AudioBookForm({ titleID }: { titleID: number }) {
   async function onSubmit(values: z.infer<typeof audioFormSchema>) {
     console.log(values);
 
+    const time = Date.now();
+
     const titleName = await getTitleName(titleID);
     console.log('title name is... ', titleName);
 
@@ -2212,16 +2253,39 @@ function AudioBookForm({ titleID }: { titleID: number }) {
 
     const audioUpload = await supabase.storage
       .from('audiobooks')
-      .upload(`audio_${slugify(titleName)}.${fileExtention}`, values.audio, {
-        cacheControl: '3600',
-        upsert: true,
-      });
+      .upload(
+        `audio_${slugify(titleName)}_${time}.${fileExtention}`,
+        values.audio,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
 
     const publicUrl = supabase.storage
       .from('audiobooks')
       .getPublicUrl(`${audioUpload.data?.path}`).data.publicUrl;
 
     console.log('URL is... ', publicUrl);
+
+    const demoFileExtention = values.demo.name.split('.').pop();
+
+    const demoAudioUpload = await supabase.storage
+      .from('demos')
+      .upload(
+        `demo_audio_${slugify(titleName)}_${time + 1000}.${demoFileExtention}`,
+        values.demo,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
+
+    const demoPublicUrl = supabase.storage
+      .from('demos')
+      .getPublicUrl(`${demoAudioUpload.data?.path}`).data.publicUrl;
+
+    console.log('demo URL is... ', demoPublicUrl);
 
     const audioData = {
       title_id: titleID,
@@ -2234,6 +2298,7 @@ function AudioBookForm({ titleID }: { titleID: number }) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       src: publicUrl,
+      demo: demoPublicUrl,
       file_volume: values.audio.size,
       duration: values.duration,
     };
@@ -2246,11 +2311,14 @@ function AudioBookForm({ titleID }: { titleID: number }) {
   async function onAudioInputChange(event: ChangeEvent<HTMLInputElement>) {
     const audioInput = event.target;
     const aPlayer = audioPlayer.current;
+    const demoPlayer = demoAudioPlayer.current;
 
     if (audioInput.files) {
       const file = audioInput.files[0];
       if (file) {
-        aPlayer && (aPlayer.src = URL.createObjectURL(file));
+        audioInput.id === 'audio'
+          ? aPlayer && (aPlayer.src = URL.createObjectURL(file))
+          : demoPlayer && (demoPlayer.src = URL.createObjectURL(file));
       }
     }
   }
@@ -2334,7 +2402,7 @@ function AudioBookForm({ titleID }: { titleID: number }) {
                 <FormLabel>audio file</FormLabel>
                 <FormControl>
                   <Input
-                    id='cover'
+                    id='audio'
                     type='file'
                     {...fieldProps}
                     onChange={(event) => {
@@ -2349,6 +2417,36 @@ function AudioBookForm({ titleID }: { titleID: number }) {
                 <audio
                   className={value ? 'max-w-72' : 'max-w-72 hidden'}
                   ref={audioPlayer}
+                  controls
+                  src=''
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo audio file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='demo'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onAudioInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <audio
+                  className={value ? 'max-w-72' : 'max-w-72 hidden'}
+                  ref={demoAudioPlayer}
                   controls
                   src=''
                 />
@@ -2490,6 +2588,7 @@ function AudioBookForm({ titleID }: { titleID: number }) {
 
 function AudioBookEditForm(audiobook: AudiobookType) {
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
+  const demoAudioPlayer = useRef<HTMLAudioElement | null>(null);
 
   const router = useRouter();
 
@@ -2515,6 +2614,8 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
   async function onEditSubmit(values: z.infer<typeof audioFormEditSchema>) {
     console.log('values ... ', values);
+
+    const time = Date.now();
 
     let audioPath = null;
     let publicUrl = null;
@@ -2549,10 +2650,14 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
       const audioUdate = await supabase.storage
         .from('audiobooks')
-        .upload(`audio_${slugify(titleName)}.${fileExtention}`, values.audio, {
-          cacheControl: '3600',
-          upsert: true,
-        });
+        .upload(
+          `audio_${slugify(titleName)}_${time}.${fileExtention}`,
+          values.audio,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
 
       audioUdate.error &&
         console.log('audio update error ... ', audioUdate.error.message);
@@ -2573,6 +2678,78 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
     console.log('public URL is ...', publicUrl);
 
+    let demoAudioPath = null;
+    let demoPublicUrl = null;
+
+    if (values.demo) {
+      console.log('current book demo audio ... ', audiobook.demo);
+
+      const demoAudioNameString = audiobook.demo?.split('/') || 'no audio';
+
+      console.log('demo audio Name String ... ', demoAudioNameString);
+
+      console.log('selected demo audio file ... ', values.demo);
+
+      const demoAudioRemove = await supabase.storage
+        .from('demos')
+        .remove([demoAudioNameString.slice(-1)[0]]);
+
+      demoAudioRemove.error &&
+        console.log(
+          'demo audio Remove error ... ',
+          demoAudioRemove.error.message
+        );
+
+      demoAudioRemove.data &&
+        console.log('demo audio Remove data... ', demoAudioRemove.data);
+
+      const demoFileName = values.demo.name
+        ? values.demo.name
+        : 'failNameString';
+      console.log('demo audio is...', values.demo);
+      console.log('demo audio name is...', values.demo.name);
+
+      const demoFileExtention = demoFileName.split('.').pop();
+
+      const demoTitleName = await getTitleName(audiobook.title_id);
+      console.log('title name is... ', demoTitleName);
+
+      const demoAudioUdate = await supabase.storage
+        .from('demos')
+        .upload(
+          `demo_audio_${slugify(demoTitleName)}_${
+            time - 1000
+          }.${demoFileExtention}`,
+          values.demo,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      demoAudioUdate.error &&
+        console.log(
+          'demo audio update error ... ',
+          demoAudioUdate.error.message
+        );
+
+      demoAudioPath = demoAudioUdate.data?.path;
+      console.log('demo audio path ... ', demoAudioPath);
+    }
+
+    if (!values.demo) {
+      demoAudioPath = audiobook.demo;
+      demoPublicUrl = audiobook.demo;
+    }
+
+    !demoPublicUrl &&
+      demoAudioPath &&
+      (demoPublicUrl = supabase.storage
+        .from('demos')
+        .getPublicUrl(demoAudioPath).data.publicUrl);
+
+    console.log('demo public URL is ...', demoPublicUrl);
+
     const audioData = {
       title_id: audiobook.title_id,
       counter_color: values.counter_color,
@@ -2584,6 +2761,7 @@ function AudioBookEditForm(audiobook: AudiobookType) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       src: publicUrl,
+      demo: demoPublicUrl,
       file_volume: values.audio?.size || audiobook.file_volume,
       duration: values.duration,
     };
@@ -2596,11 +2774,14 @@ function AudioBookEditForm(audiobook: AudiobookType) {
   async function onAudioInputChange(event: ChangeEvent<HTMLInputElement>) {
     const audioInput = event.target;
     const aPlayer = audioPlayer.current;
+    const demoPlayer = demoAudioPlayer.current;
 
     if (audioInput.files) {
       const file = audioInput.files[0];
       if (file) {
-        aPlayer && (aPlayer.src = URL.createObjectURL(file));
+        audioInput.id === 'audio'
+          ? aPlayer && (aPlayer.src = URL.createObjectURL(file))
+          : demoPlayer && (demoPlayer.src = URL.createObjectURL(file));
       }
     }
   }
@@ -2705,6 +2886,43 @@ function AudioBookEditForm(audiobook: AudiobookType) {
                   ref={audioPlayer}
                   controls
                   src={audiobook.src!}
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo audio file</FormLabel>
+
+                <p>{audiobook.demo}</p>
+
+                <a href={audiobook.demo!} download target='_blank'>
+                  download file
+                </a>
+
+                <FormControl>
+                  <Input
+                    id='demo'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onAudioInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <audio
+                  // className={value ? 'max-w-72' : 'max-w-72 hidden'}
+                  ref={demoAudioPlayer}
+                  controls
+                  src={audiobook.demo!}
                 />
               </FormItem>
             )}
