@@ -56,6 +56,7 @@ const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_EBOOK_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 const MIN_PHOTOSET_LENGTH = 1;
 const MAX_PHOTOSET_LENGTH = 10;
+const MAX_DEMO_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -76,6 +77,8 @@ const ACCEPTED_EBOOK_TYPES = [
   'application/epub+zip',
   'application/x-mobipocket-ebook',
 ];
+
+const ACCEPTED_DEMO_TYPES = ['application/zip'];
 
 const photoSchema = z.object({
   photo: z
@@ -128,9 +131,18 @@ const formSchema = z.object({
   pages: z.number().positive('must be positive'),
   discount: z.number().gte(0, 'discount must be 0 or greater'),
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
-
+  sold_out: z.boolean({ required_error: 'sold out condition is required' }),
+  demo: z
+    .instanceof(File, { message: 'demo zip file is required.' })
+    .refine(
+      (file) => file?.size <= MAX_DEMO_FILE_SIZE,
+      `Max file size is 30MB.`
+    )
+    .refine(
+      (file) => ACCEPTED_DEMO_TYPES.includes(file?.type),
+      'only .zip files are accepted.'
+    ),
   shade: z.literal('light').or(z.literal('dark')),
-
   price: z.number().positive('must be positive'),
   photos: photoSetSchema,
   publish_date: z
@@ -181,6 +193,18 @@ const formEditSchema = z.object({
   pages: z.number().positive('must be positive'),
   discount: z.number().gte(0, 'discount must be 0 or greater'),
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
+  sold_out: z.boolean({ required_error: 'sold out condition is required' }),
+  demo: z
+    .instanceof(File, { message: 'demo zip file is required.' })
+    .optional()
+    .refine(
+      (file) => !file || file?.size <= MAX_DEMO_FILE_SIZE,
+      `Max file size is 30MB.`
+    )
+    .refine(
+      (file) => !file || ACCEPTED_DEMO_TYPES.includes(file?.type),
+      'only .zip files are accepted.'
+    ),
   shade: z.literal('light').or(z.literal('dark')),
   price: z.number().positive('must be positive'),
   publish_date: z
@@ -860,6 +884,11 @@ const deletePrintedBook = async (bookID: number) => {
     .from('covers')
     .remove([fileNameString]);
 
+  const demoNameString = (book && book.demo?.split('/').pop()) || 'no demo';
+  const demoRemove = await supabase.storage
+    .from('demos')
+    .remove([demoNameString]);
+
   if (book) {
     const { error } = await supabase
       .from('PrintedBooks')
@@ -871,6 +900,7 @@ const deletePrintedBook = async (bookID: number) => {
       deletedPhotos &&
       deletedLinks &&
       !coverRemove.error &&
+      !demoRemove.error &&
       (success = true) &&
       window.alert(`Печатная книга номер ${book.id} успешно удалена`);
   }
@@ -3088,7 +3118,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      counter_color: '#FFFFF',
+      counter_color: '#ff0000F',
       extra: 'some text',
       is_published: false,
       ISBN: '1-234-54789-0',
@@ -3106,7 +3136,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       height: 42,
       width: 42,
       sold: 0,
-      // cover: initFile,
+      sold_out: false,
       photos: [
         {
           photo: undefined,
@@ -3130,6 +3160,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    const time = Date.now();
 
     const titleName = await getTitleName(titleID);
 
@@ -3141,16 +3172,39 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
     );
     console.log('photosRowArray is...', PhotosRowArray);
 
+    const coverFileExtention = values.cover.name.split('.').pop();
+
     const photoUpload = await supabase.storage
       .from('covers')
-      .upload(`cover_printBook_${slugify(titleName)}`, values.cover, {
-        cacheControl: '3600',
-        upsert: true,
-      });
+      .upload(
+        `cover_printBook_${slugify(titleName)}_${time}.${coverFileExtention}`,
+        values.cover,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
 
     const publicUrl = supabase.storage
       .from('covers')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
+
+    const demoFileExtention = values.demo.name.split('.').pop();
+
+    const demoUpload = await supabase.storage
+      .from('demos')
+      .upload(
+        `demo_print_${slugify(titleName)}_${time}.${demoFileExtention}`,
+        values.demo,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
+
+    const demoPublicUrl = supabase.storage
+      .from('demos')
+      .getPublicUrl(`${demoUpload.data?.path}`).data.publicUrl;
 
     const printedData = {
       title_id: titleID,
@@ -3165,6 +3219,8 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       publish_date: values.publish_date?.toISOString(),
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
+      sold_out: values.sold_out,
+      demo: demoPublicUrl,
     };
 
     const bookID = await setPrintedData(printedData);
@@ -3220,6 +3276,48 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
           onSubmit={form.handleSubmit(onSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='sold_out'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>Нет в наличии</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='counter_color'
@@ -3775,8 +3873,8 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
         form.setValue('is_published', data.is_published),
       data.lit_form && form.setValue('lit_form', data.lit_form),
       data.pages && form.setValue('pages', data.pages),
-      data.price && form.setValue('price', data.price),
-      data.sold && form.setValue('sold', data.sold));
+      data.price && form.setValue('price', data.price));
+    // data.sold && form.setValue('sold', data.sold));
   }
 
   useEffect(() => {
@@ -3798,6 +3896,8 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       shade: 'light',
       counter_color: '#ff2a00',
       photos: [{ photo: undefined }],
+      sold_out: book.sold_out !== null && book.sold_out,
+      sold: book.sold !== null ? book.sold : 0,
     },
   });
 
@@ -3816,6 +3916,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+    const time = Date.now();
 
     const titleName = await getTitleName(book.title_id);
 
@@ -3836,9 +3937,10 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
     let publicUrl = null;
 
     if (values.cover) {
-      console.log('current book cover ... ', photoImage.current?.src);
+      console.log('current book cover ... ', book.cover[0].source);
 
-      const imageNameString = photoImage.current?.src.split('/') || 'no image';
+      const imageNameString =
+        book.cover[0]?.source?.split('/').pop() || 'no image';
 
       console.log('image Name String ... ', imageNameString);
 
@@ -3846,7 +3948,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
       const photoRemove = await supabase.storage
         .from('covers')
-        .remove([imageNameString.slice(-1)[0]]);
+        .remove([imageNameString]);
 
       photoRemove.error &&
         console.log('cover Remove error ... ', photoRemove.error.message);
@@ -3854,18 +3956,20 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       photoRemove.data &&
         console.log('cover Remove data... ', photoRemove.data);
 
-      const fileName = values.cover?.name
-        ? values.cover?.name
-        : 'failNameString';
-      console.log('photo is...', values.cover);
-      console.log('photo name is...', values.cover?.name);
+      const coverFileExtention = values.cover.name.split('.').pop();
 
       const photoUdate = await supabase.storage
         .from('covers')
-        .upload(`cover_printBook_${slugify(titleName)}`, values.cover, {
-          cacheControl: '3600',
-          upsert: true,
-        });
+        .upload(
+          `cover_printBook_${slugify(titleName)}_${
+            time + 321
+          }.${coverFileExtention}`,
+          values.cover,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
 
       photoUdate.error &&
         console.log('photo update error ... ', photoUdate.error.message);
@@ -3886,6 +3990,61 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
     console.log('public URL is ...', publicUrl);
 
+    let demoPath = null;
+    let demoPublicUrl = null;
+
+    if (values.demo) {
+      console.log('current book demo ... ', book.demo);
+
+      const demoNameString = book.demo?.split('/').pop() || 'no demo';
+
+      console.log('demo Name String ... ', demoNameString);
+
+      console.log('selected demo file ... ', values.demo);
+
+      const demoRemove = await supabase.storage
+        .from('demos')
+        .remove([demoNameString]);
+
+      demoRemove.error &&
+        console.log('demo Remove error ... ', demoRemove.error.message);
+
+      demoRemove.data && console.log('demo Remove data... ', demoRemove.data);
+
+      const demoFileExtention = demoNameString.split('.').pop();
+
+      const demoUdate = await supabase.storage
+        .from('demos')
+        .upload(
+          `demo_print_${slugify(titleName)}_${
+            time + 1234
+          }.${demoFileExtention}`,
+          values.demo,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      demoUdate.error &&
+        console.log('demo update error ... ', demoUdate.error.message);
+
+      demoPath = demoUdate.data?.path;
+      console.log('demo path ... ', demoPath);
+    }
+
+    if (!values.demo) {
+      demoPath = book.demo;
+      demoPublicUrl = book.demo;
+    }
+
+    !demoPublicUrl &&
+      demoPath &&
+      (demoPublicUrl = supabase.storage.from('demos').getPublicUrl(demoPath)
+        .data.publicUrl);
+
+    console.log('public demo URL is ...', demoPublicUrl);
+
     const printedData = {
       title_id: book.title_id,
       counter_color: values.counter_color,
@@ -3899,6 +4058,8 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       publish_date: values.publish_date?.toISOString(),
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
+      sold_out: values.sold_out,
+      demo: demoPublicUrl,
     };
 
     const bookID = await updatePrintedData(book.id, printedData);
@@ -3973,6 +4134,55 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='sold_out'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>Нет в наличии</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo file</FormLabel>
+
+                <p>{book.demo}</p>
+
+                <a href={book.demo!} download target='_blank'>
+                  download file
+                </a>
+
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='counter_color'

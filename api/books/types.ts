@@ -217,6 +217,7 @@ export interface Database {
           publish_date: string | null
           release_date: string | null
           sold: number | null
+          sold_out: boolean | null
           title_id: number
         }
         Insert: {
@@ -230,6 +231,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id: number
         }
         Update: {
@@ -243,6 +245,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id?: number
         }
         Relationships: [
@@ -581,6 +584,7 @@ export interface Database {
           publish_date: string | null
           release_date: string | null
           sold: number | null
+          sold_out: boolean | null
           title_id: number
         }
         Insert: {
@@ -597,6 +601,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id: number
         }
         Update: {
@@ -613,6 +618,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id?: number
         }
         Relationships: [
