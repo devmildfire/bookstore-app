@@ -133,8 +133,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
       <Accordion type='single' collapsible>
         {editions?.printedBook && (
           <AccordionItem
-            value={`item-${editions?.printedBook.id}`}
-            key={editions?.printedBook.ISBN}
+            value={`item-printedBook-${editions?.printedBook.id}`}
+            key={`printedBook-${editions?.printedBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> Printed Book </AccordionTrigger>
@@ -146,8 +146,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
         {editions?.audioBook && (
           <AccordionItem
-            value={`item-${editions?.audioBook.id}`}
-            key={editions?.audioBook.id}
+            value={`item-audioBook-${editions?.audioBook.id}`}
+            key={`audioBook-${editions?.audioBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> Audio Book </AccordionTrigger>
@@ -159,8 +159,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
         {editions?.eBook && (
           <AccordionItem
-            value={`item-${editions?.eBook.id}`}
-            key={editions?.eBook.id}
+            value={`item-eBook-${editions?.eBook.id}`}
+            key={`eBook-${editions?.eBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> eBook </AccordionTrigger>
@@ -172,8 +172,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
         {editions?.cardBook && (
           <AccordionItem
-            value={`item-${editions?.cardBook.id}`}
-            key={editions?.cardBook.id}
+            value={`item-cardBook-${editions?.cardBook.id}`}
+            key={`cardBook-${editions?.cardBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> Book 2.0 </AccordionTrigger>

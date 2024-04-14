@@ -30,10 +30,12 @@ import {
   FullPrintedBookType,
   PrintedBookType,
 } from 'pages/dashboard/editions';
+
 import { Database } from 'api/books/types';
 import { Checkbox } from '../ui/checkbox';
 import { Switch } from '../ui/switch';
 import slugify from 'slugify';
+import DeleteDialog from './DeleteDialog';
 
 type PrintOptionsDataType =
   Database['public']['Tables']['PrintOptions']['Insert'];
@@ -726,6 +728,159 @@ const deleteCardBook = async (cardBookID: number) => {
   !error && window.alert(`Книга 2.0 номер ${cardBookID} успешно удалена`);
 
   return !error ? true : false;
+};
+
+const getTitleByEBookID = async (eBookID: number) => {
+  let titleName: string;
+  const titleID = await supabase
+    .from('Ebooks')
+    .select('title_id')
+    .eq('id', eBookID)
+    .single();
+
+  if (titleID.data && titleID.data.title_id) {
+    titleName = await getTitleName(titleID.data.title_id);
+    return { title: titleName, titleID: titleID.data.title_id };
+  } else {
+    return null;
+  }
+};
+
+const getEBookByID = async (eBookID: number) => {
+  const eBook = await supabase
+    .from('Ebooks')
+    .select('*')
+    .eq('id', eBookID)
+    .single();
+
+  return eBook.data ? eBook.data : null;
+};
+
+const deleteEBook = async (eBookID: number) => {
+  let success = false;
+  const eBook = await getEBookByID(eBookID);
+
+  const titleObj = eBook && (await getTitleByEBookID(eBook.id));
+  let deletedPhotos;
+  let deletedLinks;
+  if (titleObj) {
+    deletedPhotos = await deleteStoredPhotos(titleObj.titleID, 'EBook');
+    console.log('deleted photos of EBook from storage...', deletedPhotos);
+    deletedLinks = await deleteDBPhotoLinks(titleObj.titleID, 'EBook');
+    console.log(
+      'deleted photo links for EBook from Photos table...',
+      deletedLinks
+    );
+  }
+
+  const fileNameString = (eBook && eBook.src?.split('/').pop()) || 'no file';
+  const eBookRemove = await supabase.storage
+    .from('ebooks')
+    .remove([fileNameString]);
+
+  if (eBook) {
+    const { error } = await supabase.from('Ebooks').delete().eq('id', eBook.id);
+
+    error && window.alert(error.message);
+    !error &&
+      deletedPhotos &&
+      deletedLinks &&
+      !eBookRemove.error &&
+      (success = true) &&
+      window.alert(`Электронная книга номер ${eBook.id} успешно удалена`);
+  }
+
+  return success;
+};
+
+const getPrintedBookByID = async (bookID: number) => {
+  const book = await supabase
+    .from('PrintedBooks')
+    .select('*, cover: PrintedCover(*)')
+    .eq('id', bookID)
+    .single();
+
+  return book.data ? book.data : null;
+};
+
+const deletePrintedBook = async (bookID: number) => {
+  let success = false;
+  const book = await getPrintedBookByID(bookID);
+
+  // const titleObj = book && (await getTitleByPrintedBookID(book.id));
+  let deletedPhotos;
+  let deletedLinks;
+  if (book) {
+    deletedPhotos = await deleteStoredPhotos(book.title_id, 'PrintBook');
+    console.log(
+      'deleted photos of Printed Book from storage...',
+      deletedPhotos
+    );
+    deletedLinks = await deleteDBPhotoLinks(book.title_id, 'PrintBook');
+    console.log(
+      'deleted photo links for Printed Book from Photos table...',
+      deletedLinks
+    );
+  }
+
+  const fileNameString =
+    (book && book.cover[0].source?.split('/').pop()) || 'no file';
+  const coverRemove = await supabase.storage
+    .from('covers')
+    .remove([fileNameString]);
+
+  if (book) {
+    const { error } = await supabase
+      .from('PrintedBooks')
+      .delete()
+      .eq('id', book.id);
+
+    error && window.alert(error.message);
+    !error &&
+      deletedPhotos &&
+      deletedLinks &&
+      !coverRemove.error &&
+      (success = true) &&
+      window.alert(`Печатная книга номер ${book.id} успешно удалена`);
+  }
+
+  return success;
+};
+
+const getAudioBookByID = async (audioBookID: number) => {
+  const audioBook = await supabase
+    .from('Audiobooks')
+    .select('*')
+    .eq('id', audioBookID)
+    .single();
+
+  return audioBook.data ? audioBook.data : null;
+};
+
+const deleteAudioBook = async (audioBookID: number) => {
+  let success = false;
+  const audioBook = await getAudioBookByID(audioBookID);
+
+  const fileNameString =
+    (audioBook && audioBook.src?.split('/').pop()) || 'no file';
+  const audioBookRemove = await supabase.storage
+    .from('audiobooks')
+    .remove([fileNameString]);
+
+  if (audioBook) {
+    const { error } = await supabase
+      .from('Audiobooks')
+      .delete()
+      .eq('id', audioBook.id);
+
+    error && window.alert(error.message);
+    !error &&
+      !audioBookRemove.error &&
+      (success = true) &&
+      window.alert(`Аудиокнига номер ${audioBook.id} успешно удалена`);
+  }
+
+  return success;
 };
 
 async function getTitleName(id: number) {
@@ -1564,15 +1719,18 @@ function EBookEditForm(ebook: EbookType) {
               />
             </div>
           ))}
+          <div className='flex flex-row gap-4 justify-between'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
 
-          <Button
-            type='submit'
-            variant={'outline'}
-            size={'default'}
-            className='w-full max-w-48'
-          >
-            Обновить
-          </Button>
+            <DeleteDialog deleteFunction={deleteEBook} itemID={ebook.id} />
+          </div>
         </form>
       </Form>
     </div>
@@ -2004,7 +2162,7 @@ function CardBookEditForm(cardBook: CardBookType) {
             )}
           />
 
-          <div className='flex flex-row justify-center gap-4'>
+          <div className='flex flex-row gap-4 justify-between'>
             <Button
               type='submit'
               variant={'outline'}
@@ -2014,17 +2172,10 @@ function CardBookEditForm(cardBook: CardBookType) {
               Обновить
             </Button>
 
-            <Button
-              type='button'
-              size={'default'}
-              className='w-full max-w-48'
-              onClick={async () => {
-                const bookDeleted = await deleteCardBook(cardBook.id);
-                bookDeleted && router.reload();
-              }}
-            >
-              Удалить
-            </Button>
+            <DeleteDialog
+              deleteFunction={deleteCardBook}
+              itemID={cardBook.id}
+            />
           </div>
         </form>
       </Form>
@@ -2676,14 +2827,21 @@ function AudioBookEditForm(audiobook: AudiobookType) {
             )}
           />
 
-          <Button
-            type='submit'
-            variant={'outline'}
-            size={'default'}
-            className='w-full max-w-48'
-          >
-            Обновить
-          </Button>
+          <div className='flex flex-row gap-4 justify-between'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
+
+            <DeleteDialog
+              deleteFunction={deleteAudioBook}
+              itemID={audiobook.id}
+            />
+          </div>
         </form>
       </Form>
     </div>
@@ -2767,7 +2925,7 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
 
     const photoUpload = await supabase.storage
       .from('covers')
-      .upload(`public/cover_${values.cover.name}`, values.cover, {
+      .upload(`cover_printBook_${slugify(titleName)}`, values.cover, {
         cacheControl: '3600',
         upsert: true,
       });
@@ -3266,6 +3424,7 @@ const getInitPhotosArray = async (titleID: number, category: CategoryType) => {
 
 const deleteStoredPhotos = async (titleID: number, category: CategoryType) => {
   const photosArray = await getInitPhotosArray(titleID, category);
+  let succes = true;
 
   photosArray.forEach(async (item) => {
     const photoName = item.photo.split('/').pop() || '';
@@ -3274,7 +3433,11 @@ const deleteStoredPhotos = async (titleID: number, category: CategoryType) => {
     const deletePhoto = await supabase.storage
       .from('photos')
       .remove([photoName]);
+
+    deletePhoto.error && (succes = false);
   });
+
+  return succes;
 };
 
 const deleteDBPhotoLinks = async (titleID: number, category: CategoryType) => {
@@ -3465,7 +3628,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
       const photoRemove = await supabase.storage
         .from('covers')
-        .remove([`public/` + imageNameString.slice(-1)[0]]);
+        .remove([imageNameString.slice(-1)[0]]);
 
       photoRemove.error &&
         console.log('cover Remove error ... ', photoRemove.error.message);
@@ -3481,7 +3644,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
       const photoUdate = await supabase.storage
         .from('covers')
-        .upload(`public/cover_${fileName}`, values.cover, {
+        .upload(`cover_printBook_${slugify(titleName)}`, values.cover, {
           cacheControl: '3600',
           upsert: true,
         });
@@ -3993,14 +4156,18 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
             </div>
           ))}
 
-          <Button
-            type='submit'
-            variant={'outline'}
-            size={'default'}
-            className='w-full max-w-48'
-          >
-            Обновить
-          </Button>
+          <div className='flex flex-row gap-4 justify-between'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
+
+            <DeleteDialog deleteFunction={deletePrintedBook} itemID={book.id} />
+          </div>
         </form>
       </Form>
     </div>
