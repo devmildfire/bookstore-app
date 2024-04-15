@@ -951,7 +951,12 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_types: {
+        Args: {
+          enum_type: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       audiobookext:
