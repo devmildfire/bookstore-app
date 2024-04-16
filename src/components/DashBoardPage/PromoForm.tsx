@@ -93,7 +93,7 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
     defaultValues: {
       code: 'AAA',
       discount: 5,
-      product_name: prods[0].name,
+      product_name: undefined,
       product_type: undefined,
       type: 'cart',
       start_date: new Date(),
@@ -104,7 +104,6 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
   const { register, handleSubmit, formState, watch } = form;
   const promoTypeValue = watch('type');
   const prodNameValue = watch('product_name');
-  // const prodNameValue = 'Default Title';
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -251,11 +250,9 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
+                        {/* {prods.findIndex((val) => val.name === prodNameValue)} */}
                         {prods[
-                          prods.findIndex((val) => {
-                            console.log('product name is...', prodNameValue);
-                            return val.name === prodNameValue;
-                          })
+                          prods.findIndex((val) => val.name === prodNameValue)
                         ].types.map((type) => (
                           <SelectItem key={type} value={type || 'i'}>
                             {type}
