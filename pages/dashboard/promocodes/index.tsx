@@ -14,6 +14,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { PromoForm } from '@/components/DashBoardPage/PromoForm';
+import { Title } from '@/models/books';
 // import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 
 // export type AwardsType = Database['public']['Tables']['Awards']['Row'];
@@ -22,9 +23,10 @@ export type PromosType = Database['public']['Tables']['Promocodes']['Row'];
 type promoListProps = {
   categories: string[];
   types: string[];
+  prods: ProductArrayType;
 };
 
-const PromoList = ({ categories, types }: promoListProps) => {
+const PromoList = ({ categories, types, prods }: promoListProps) => {
   const [promos, setPromos] = useState<PromosType[]>();
 
   async function getPromos() {
@@ -75,7 +77,7 @@ const PromoList = ({ categories, types }: promoListProps) => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <PromoForm categories={categories} types={types} />
+            <PromoForm categories={categories} types={types} prods={prods} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -83,10 +85,24 @@ const PromoList = ({ categories, types }: promoListProps) => {
   );
 };
 
+export type ProductArrayType = {
+  name: string;
+  types: (string | null)[];
+}[];
+
+export interface TitlesDB {
+  readonly name: string;
+  PrintedBooks: { id: number };
+  Audiobooks: { id: number };
+  Ebooks: { id: number };
+  CardBooks: { id: number };
+}
+
 function Promos(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const [categoryArray, setCategoryArray] = useState<string[]>();
   const [typeArray, setTypeArray] = useState<string[]>();
+  const [prods, setProds] = useState<ProductArrayType>();
 
   const router = useRouter();
 
@@ -101,6 +117,45 @@ function Promos(): React.ReactElement {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const getTitlesFromDB = async () => {
+    console.log('getting titles ... ');
+    const dbTitles = await supabase
+      .from('Titles')
+      .select(
+        `
+    name,
+    CardBooks ( id ),
+    Audiobooks ( id ),
+    Ebooks ( id ),
+    PrintedBooks ( id )
+    `
+      )
+      .returns<TitlesDB[]>();
+
+    // .returns<Title[]>();
+
+    dbTitles.error &&
+      console.log('titles error return', dbTitles.error.message);
+
+    if (dbTitles.data) {
+      console.log('dbTitles from DB are ... ', dbTitles.data);
+
+      const products: ProductArrayType = dbTitles.data.map((title) => {
+        return {
+          name: title.name && title.name,
+          types: [
+            title.PrintedBooks ? 'PrintBook' : null,
+            title.Audiobooks ? 'AudioBook' : null,
+            title.Ebooks ? 'EBook' : null,
+            title.CardBooks ? 'Book2.0' : null,
+          ].filter((val) => val !== null),
+        };
+      });
+      console.log('products from DB are ... ', products);
+      setProds(products);
     }
   };
 
@@ -129,13 +184,18 @@ function Promos(): React.ReactElement {
   useEffect(() => {
     check_session();
     getTypesFromDB();
+    getTitlesFromDB();
   }, []);
 
   return (
     <DashMain>
       <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
         <DashNav />
-        <PromoList categories={categoryArray || []} types={typeArray || []} />
+        <PromoList
+          categories={categoryArray || []}
+          types={typeArray || []}
+          prods={prods || []}
+        />
         {session && <LogOut session={session} />}
       </div>
     </DashMain>

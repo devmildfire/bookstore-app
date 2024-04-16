@@ -15,7 +15,7 @@ import { z } from 'zod';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { PromosType } from 'pages/dashboard/promocodes';
+import { ProductArrayType, PromosType } from 'pages/dashboard/promocodes';
 import slugify from 'slugify';
 import { Database } from 'api/books/types';
 import { DateTimePicker } from '../ui/datetime-picker';
@@ -57,9 +57,10 @@ type promoTypeType = Database['public']['Enums']['promotype'];
 type PromoFormProps = {
   categories: string[];
   types: string[];
+  prods: ProductArrayType;
 };
 
-function PromoForm({ categories, types }: PromoFormProps) {
+function PromoForm({ categories, types, prods }: PromoFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   const typeSchema = z.enum(types as [string, ...string[]]);
@@ -92,9 +93,9 @@ function PromoForm({ categories, types }: PromoFormProps) {
     defaultValues: {
       code: 'AAA',
       discount: 5,
-      product_name: 'Default Title',
-      product_type: 'PrintBook',
-      type: 'item',
+      product_name: undefined,
+      product_type: undefined,
+      type: 'cart',
       start_date: new Date(),
       end_date: new Date(),
     },
@@ -102,6 +103,7 @@ function PromoForm({ categories, types }: PromoFormProps) {
 
   const { register, handleSubmit, formState, watch } = form;
   const promoTypeValue = watch('type');
+  const prodNameValue = watch('product_name');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -177,7 +179,7 @@ function PromoForm({ categories, types }: PromoFormProps) {
             name='type'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Promo Type</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -193,10 +195,6 @@ function PromoForm({ categories, types }: PromoFormProps) {
                         {type}
                       </SelectItem>
                     ))}
-                    {/* 
-                    <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                    <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                    <SelectItem value='m@support.com'>m@support.com</SelectItem> */}
                   </SelectContent>
                 </Select>
 
@@ -211,11 +209,26 @@ function PromoForm({ categories, types }: PromoFormProps) {
                 control={form.control}
                 name='product_name'
                 render={({ field }) => (
-                  <FormItem className='flex flex-col items-start p-1'>
-                    <FormLabel>Product Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Default Title' {...field} />
-                    </FormControl>
+                  <FormItem>
+                    <FormLabel>product name</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select promo type' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {prods.map((prod) => (
+                          <SelectItem key={prod.name} value={prod.name}>
+                            {prod.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -226,10 +239,27 @@ function PromoForm({ categories, types }: PromoFormProps) {
                 name='product_type'
                 render={({ field }) => (
                   <FormItem className='flex flex-col items-start p-1'>
-                    <FormLabel>Product Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder='PrintBook' {...field} />
-                    </FormControl>
+                    <FormLabel>Product type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select product type' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* {prods.findIndex((val) => val.name === prodNameValue)} */}
+                        {prods[
+                          prods.findIndex((val) => val.name === prodNameValue)
+                        ].types.map((type) => (
+                          <SelectItem key={type} value={type || 'i'}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
