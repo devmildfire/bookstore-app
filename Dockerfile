@@ -68,7 +68,9 @@ COPY package.json pnpm-lock.yaml* ./
 # Enable corepack for pnpm
 RUN corepack enable pnpm
 # Install dependencies using pnpm
-RUN pnpm i --frozen-lockfile
+# RUN pnpm i --frozen-lockfile
+RUN pnpm i
+
 
 
 
