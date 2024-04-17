@@ -313,6 +313,7 @@ const cardBookFormSchema = z.object({
     .nullable()
     .optional(),
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
+  photos: photoSetSchema,
 });
 
 const cardBookEditFormSchema = z.object({
@@ -341,6 +342,7 @@ const cardBookEditFormSchema = z.object({
     .nullable()
     .optional(),
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
+  photos: photoSetSchema,
 });
 
 const audioFormSchema = z.object({
@@ -791,12 +793,24 @@ const getCardBookByID = async (cardBookID: number) => {
 const deleteCardBook = async (cardBookID: number) => {
   const cardBook = await getCardBookByID(cardBookID);
 
+  let deletedPhotos;
+  let deletedLinks;
+  if (cardBook) {
+    deletedPhotos = await deleteStoredPhotos(cardBook.title_id, 'Book2.0');
+    console.log('deleted photos of Book2.0 from storage...', deletedPhotos);
+    deletedLinks = await deleteDBPhotoLinks(cardBook.title_id, 'Book2.0');
+    console.log(
+      'deleted photo links for Book2.0 from Photos table...',
+      deletedLinks
+    );
+  }
+
   const { error } = await supabase
     .from('CardBooks')
     .delete()
     .eq('id', cardBookID);
 
-  error && window.alert(error.message);
+  error && deletedPhotos && deletedLinks && window.alert(error.message);
   !error && window.alert(`Книга 2.0 номер ${cardBookID} успешно удалена`);
 
   return !error ? true : false;
@@ -1832,7 +1846,25 @@ function CardBookForm({ titleID }: { titleID: number }) {
       release_date: new Date(),
       sold: 0,
       sold_out: false,
+      photos: [
+        {
+          photo: undefined,
+        },
+      ],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+    // formState: { errors },
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'photos',
   });
 
   async function onSubmit(values: z.infer<typeof cardBookFormSchema>) {
@@ -1840,6 +1872,15 @@ function CardBookForm({ titleID }: { titleID: number }) {
     const time = Date.now();
 
     const titleName = await getTitleName(titleID);
+
+    const PhotosRowArray = await setPhotoData(
+      titleID,
+      titleName,
+      'Book2.0',
+      values.photos
+    );
+
+    console.log('photosRowArray is...', PhotosRowArray);
 
     const cardBookData = {
       title_id: titleID,
@@ -2046,6 +2087,51 @@ function CardBookForm({ titleID }: { titleID: number }) {
             )}
           />
 
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}.photo`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>book photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <Input
+                        id={`photos.${index}`}
+                        type='file'
+                        {...fieldProps}
+                        onChange={(event) => {
+                          onPhotoInputChange(event, `photosImage.${item.id}`);
+                          append({ photo: undefined });
+                          return onChange(
+                            event.target.files && event.target.files[0]
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${item.id}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+              <Button
+                color='failure'
+                type='button'
+                onClick={() => {
+                  console.log('removing inout index ... ', index);
+                  remove(index);
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
+
           <Button
             type='submit'
             variant={'outline'}
@@ -2062,6 +2148,91 @@ function CardBookForm({ titleID }: { titleID: number }) {
 
 function CardBookEditForm(cardBook: CardBookType) {
   const router = useRouter();
+  const effectRan = useRef(false);
+  const oldVal = useRef<File | undefined>();
+
+  const setPhotoInputValue = (file: File, index: number) => {
+    const inputTag = document.getElementById(
+      `photos.${index}`
+    ) as HTMLInputElement;
+    console.log('image element', inputTag);
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    inputTag.files && (inputTag.files = dataTransfer.files);
+
+    form.setValue(`photos.${index}.photo`, file);
+  };
+
+  async function getDataFromReq() {
+    const photosInitArray = await getInitPhotosArray(
+      cardBook.title_id,
+      'Book2.0'
+    );
+
+    console.log('new photosInitArray', photosInitArray);
+
+    const photoNumber = photosInitArray.length;
+
+    for (let i = 0; i < photoNumber; i++) {
+      const photoFile = await getFileByURL(photosInitArray[i].photo);
+
+      setPhotoInputValue(photoFile, i);
+
+      setPhotoImageSRC(photosInitArray[i].photo, i);
+      console.log(`prepending item ${i + 1}`);
+      append({ photo: undefined });
+    }
+
+    // const { data } = await supabase
+    //   .from('PrintedBooks')
+    //   .select(
+    //     ` *,
+    //             cover: PrintedCover(*),
+    //             options:PrintOptions ( *,
+    //               size:PrintSize( * )
+    //           )`
+    //   )
+    //   .eq('id', book.id)
+    //   .single();
+
+    // data && console.log('combined data from req is...', data);
+
+    // data &&
+    //   (data.cover[0].source && setImage(data.cover[0].source),
+    //   data.cover[0].shade && form.setValue('shade', data.cover[0].shade),
+    //   data.options[0].bindings &&
+    //     form.setValue('bindings', data.options[0].bindings),
+    //   data.options[0].cover &&
+    //     form.setValue('coverType', data.options[0].cover),
+    //   data.options[0].illustrations &&
+    //     form.setValue('illustrations', data.options[0].illustrations),
+    //   data.options[0].paper && form.setValue('paper', data.options[0].paper),
+    //   data.options[0].size[0].height &&
+    //     form.setValue('height', data.options[0].size[0].height),
+    //   data.options[0].size[0].width &&
+    //     form.setValue('width', data.options[0].size[0].width),
+    //   data.counter_color && form.setValue('counter_color', data.counter_color),
+    //   data.ISBN && form.setValue('ISBN', data.ISBN),
+    //   data.discount !== null && form.setValue('discount', data.discount),
+    //   data.extra && form.setValue('extra', data.extra),
+    //   data.is_published !== null &&
+    //     form.setValue('is_published', data.is_published),
+    //   data.lit_form && form.setValue('lit_form', data.lit_form),
+    //   data.pages && form.setValue('pages', data.pages),
+    //   data.price && form.setValue('price', data.price));
+    // // data.sold && form.setValue('sold', data.sold));
+  }
+
+  useEffect(() => {
+    if (!effectRan.current) {
+      getDataFromReq();
+    }
+    return () => {
+      effectRan.current = true;
+    };
+  }, []);
 
   const form = useForm<z.infer<typeof cardBookEditFormSchema>>({
     resolver: zodResolver(cardBookEditFormSchema),
@@ -2080,7 +2251,21 @@ function CardBookEditForm(cardBook: CardBookType) {
       sold: cardBook.sold !== null ? cardBook.sold : undefined,
       sold_out: cardBook.sold_out !== null ? cardBook.sold_out : undefined,
       price: cardBook.price !== null ? cardBook.price : undefined,
+      photos: [{ photo: undefined }],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+    // formState: { errors },
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, prepend, remove } = useFieldArray({
+    control,
+    name: 'photos',
   });
 
   async function onEditSubmit(values: z.infer<typeof cardBookEditFormSchema>) {
@@ -2088,6 +2273,19 @@ function CardBookEditForm(cardBook: CardBookType) {
     const time = Date.now();
 
     const titleName = await getTitleName(cardBook.title_id);
+
+    if (values.photos) {
+      deleteStoredPhotos(cardBook.title_id, 'Book2.0');
+      const deleted = await deleteDBPhotoLinks(cardBook.title_id, 'Book2.0');
+      console.log('links deleted...', deleted);
+
+      const uploadedPhotos = await setPhotoData(
+        cardBook.title_id,
+        titleName,
+        'Book2.0',
+        values.photos
+      );
+    }
 
     const cardBookData = {
       title_id: cardBook.title_id,
@@ -2289,6 +2487,62 @@ function CardBookEditForm(cardBook: CardBookType) {
               </FormItem>
             )}
           />
+
+          {fields.map((item, index) => (
+            <div className='block' key={`photosKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`photos.${index}.photo`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>book photo {`${index + 1}`} </FormLabel>
+                    <FormControl>
+                      <div className='flex flex-row'>
+                        <Input
+                          id={`photos.${index}`}
+                          type='file'
+                          {...fieldProps}
+                          onFocus={() => {
+                            oldVal.current = value;
+                            console.log('old value is... ', oldVal.current);
+                          }}
+                          onChange={(event) => {
+                            onPhotoInputChange(event, `photosImage.${index}`);
+
+                            oldVal.current === undefined &&
+                              append({ photo: undefined });
+
+                            return onChange(
+                              event.target.files && event.target.files[0]
+                            );
+                          }}
+                        />
+                        {value && (
+                          <Button
+                            color='failure'
+                            type='button'
+                            onClick={() => {
+                              console.log('removing inout index ... ', index);
+                              remove(index);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                    <img
+                      id={`photosImage.${index}`}
+                      className='max-w-72'
+                      src=''
+                      alt='photo image'
+                    />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
 
           <div className='flex flex-row gap-4 justify-between'>
             <Button
