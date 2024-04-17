@@ -53,6 +53,29 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp',
 ];
 
+const MAX_DEMO_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+const ACCEPTED_DEMO_TYPES = ['application/zip'];
+
+const demoEditSchema = z
+  .instanceof(File, { message: 'demo zip file is required.' })
+  .optional()
+  .refine(
+    (file) => !file || file?.size <= MAX_DEMO_FILE_SIZE,
+    `Max file size is 30MB.`
+  )
+  .refine(
+    (file) => !file || ACCEPTED_DEMO_TYPES.includes(file?.type),
+    'only .zip files are accepted.'
+  );
+
+const demoSchema = z
+  .instanceof(File, { message: 'demo zip file is required.' })
+  .refine((file) => file?.size <= MAX_DEMO_FILE_SIZE, `Max file size is 30MB.`)
+  .refine(
+    (file) => ACCEPTED_DEMO_TYPES.includes(file?.type),
+    'only .zip files are accepted.'
+  );
+
 const authorsOptionSchema = z.object({
   label: z.string(),
   value: z.string(),
@@ -120,8 +143,8 @@ const formSchema = z.object({
     message: 'Age restriction must be 0 or more',
   }),
   cover: imageSchema,
-
   is_featured: z.boolean().default(false).optional(),
+  demo: demoSchema,
 });
 
 const formEditSchema = z.object({
@@ -145,6 +168,7 @@ const formEditSchema = z.object({
   }),
   cover: imageOptionalSchema,
   is_featured: z.boolean().default(false).optional(),
+  demo: demoEditSchema,
 });
 
 type TitleFormProps = {
@@ -241,6 +265,7 @@ function TitleForm(props: TitleFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    const time = Date.now();
 
     emptyVideoInput(videoInputRef, trailerVideo);
     emptyCoverInput(photoInputRef, photoImage);
@@ -283,6 +308,23 @@ function TitleForm(props: TitleFormProps) {
         .getPublicUrl(`${videoUpload.data?.path}`).data.publicUrl;
     }
 
+    const demoFileExtention = values.demo.name.split('.').pop();
+
+    const demoUpload = await supabase.storage
+      .from('demos')
+      .upload(
+        `demo_title_${slugify(values.name)}_${time}.${demoFileExtention}`,
+        values.demo,
+        {
+          cacheControl: '3600',
+          upsert: true,
+        }
+      );
+
+    const demoPublicUrl = supabase.storage
+      .from('demos')
+      .getPublicUrl(`${demoUpload.data?.path}`).data.publicUrl;
+
     const { data, error } = await supabase
       .from('Titles')
       .insert({
@@ -297,6 +339,7 @@ function TitleForm(props: TitleFormProps) {
         slug: slugify(values.name),
         thesis: values.thesis,
         trailer: values.trailer ? videoPublicUrl : null,
+        demo: demoPublicUrl,
       })
       .select('*')
       .single();
@@ -373,6 +416,29 @@ function TitleForm(props: TitleFormProps) {
                 <FormLabel>Title Name</FormLabel>
                 <FormControl>
                   <Input placeholder='someTitle' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -711,11 +777,14 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         : undefined,
       is_featured: title.is_featured !== null ? title.is_featured : undefined,
       age_restriction: title.age_restriction || 0,
+      // demo: title.demo || undefined,
     },
   });
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+    const time = Date.now();
+
     let imagePath = null;
     let publicUrl = null;
 
@@ -821,6 +890,61 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         .getPublicUrl(videoPath).data.publicUrl);
     console.log('public video URL is ...', publicVideoUrl);
 
+    let demoPath = null;
+    let demoPublicUrl = null;
+
+    if (values.demo) {
+      console.log('current title demo ... ', title.demo);
+
+      const demoNameString = title.demo?.split('/').pop() || 'no demo';
+
+      console.log('demo Name String ... ', demoNameString);
+
+      console.log('selected demo file ... ', values.demo);
+
+      const demoRemove = await supabase.storage
+        .from('demos')
+        .remove([demoNameString]);
+
+      demoRemove.error &&
+        console.log('demo Remove error ... ', demoRemove.error.message);
+
+      demoRemove.data && console.log('demo Remove data... ', demoRemove.data);
+
+      const demoFileExtention = values.demo.name.split('.').pop();
+
+      const demoUdate = await supabase.storage
+        .from('demos')
+        .upload(
+          `demo_title_${slugify(title.name)}_${
+            time + 3425
+          }.${demoFileExtention}`,
+          values.demo,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      demoUdate.error &&
+        console.log('demo update error ... ', demoUdate.error.message);
+
+      demoPath = demoUdate.data?.path;
+      console.log('demo path ... ', demoPath);
+    }
+
+    if (!values.demo) {
+      demoPath = title.demo;
+      demoPublicUrl = title.demo;
+    }
+
+    !demoPublicUrl &&
+      demoPath &&
+      (demoPublicUrl = supabase.storage.from('demos').getPublicUrl(demoPath)
+        .data.publicUrl);
+
+    console.log('public demo URL is ...', demoPublicUrl);
+
     const { data, error } = await supabase
       .from('Titles')
       .update({
@@ -834,6 +958,7 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
           : null,
         cover: publicUrl,
         trailer: publicVideoUrl,
+        demo: demoPublicUrl,
       })
       .eq('id', title.id)
       .select('*')
@@ -868,14 +993,12 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
     }
 
-
     const purgeAwards = await supabase
       .from('TitlesAwards')
       .delete()
       .eq('title_id', title.id);
 
     !purgeAwards.error && console.log('old awards deleted');
-
 
     if (data && values.awards) {
       const titlesAwardsArray = values.awards.map((award) => {
@@ -892,13 +1015,10 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         .from('TitlesAwards')
         .insert(titlesAwardsArray)
         .select('*');
-        awardsData.error && window.alert(awardsData.error.message);
-        awardsData.data &&
+      awardsData.error && window.alert(awardsData.error.message);
+      awardsData.data &&
         window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
     }
-
-
-
 
     data && router.reload();
   }
@@ -910,6 +1030,35 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='demo'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>demo file</FormLabel>
+
+                <p>{title.demo}</p>
+
+                <a href={title.demo!} download target='_blank'>
+                  download file
+                </a>
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='authors'

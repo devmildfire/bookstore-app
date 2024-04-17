@@ -56,7 +56,6 @@ const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_EBOOK_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 const MIN_PHOTOSET_LENGTH = 1;
 const MAX_PHOTOSET_LENGTH = 10;
-const MAX_DEMO_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -77,28 +76,6 @@ const ACCEPTED_EBOOK_TYPES = [
   'application/epub+zip',
   'application/x-mobipocket-ebook',
 ];
-
-const ACCEPTED_DEMO_TYPES = ['application/zip'];
-
-const demoEditSchema = z
-  .instanceof(File, { message: 'demo zip file is required.' })
-  .optional()
-  .refine(
-    (file) => !file || file?.size <= MAX_DEMO_FILE_SIZE,
-    `Max file size is 30MB.`
-  )
-  .refine(
-    (file) => !file || ACCEPTED_DEMO_TYPES.includes(file?.type),
-    'only .zip files are accepted.'
-  );
-
-const demoSchema = z
-  .instanceof(File, { message: 'demo zip file is required.' })
-  .refine((file) => file?.size <= MAX_DEMO_FILE_SIZE, `Max file size is 30MB.`)
-  .refine(
-    (file) => ACCEPTED_DEMO_TYPES.includes(file?.type),
-    'only .zip files are accepted.'
-  );
 
 const photoSchema = z.object({
   photo: z
@@ -152,7 +129,6 @@ const formSchema = z.object({
   discount: z.number().gte(0, 'discount must be 0 or greater'),
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
-  demo: demoSchema,
   shade: z.literal('light').or(z.literal('dark')),
   price: z.number().positive('must be positive'),
   photos: photoSetSchema,
@@ -205,7 +181,6 @@ const formEditSchema = z.object({
   discount: z.number().gte(0, 'discount must be 0 or greater'),
   sold: z.number().gte(0, 'sold copies number must be 0 or greater'),
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
-  demo: demoEditSchema,
   shade: z.literal('light').or(z.literal('dark')),
   price: z.number().positive('must be positive'),
   publish_date: z
@@ -276,16 +251,6 @@ const ebookFormSchema = z.object({
       (file) => ACCEPTED_EBOOK_TYPES.includes(file?.type),
       '.fb2, .epub, and .mobi files are accepted.'
     ),
-  demo: z
-    .instanceof(File, { message: 'demo zip file is required.' })
-    .refine(
-      (file) => file?.size <= MAX_DEMO_FILE_SIZE,
-      `Max file size is 30MB.`
-    )
-    .refine(
-      (file) => ACCEPTED_DEMO_TYPES.includes(file?.type),
-      'only .zip files are accepted.'
-    ),
   photos: photoSetSchema,
 });
 
@@ -319,17 +284,6 @@ const eBookFormEditSchema = z.object({
     .optional(),
   characters: z.number().positive('must be positive'),
   src: z.any().optional(),
-  demo: z
-    .instanceof(File, { message: 'demo zip file is required.' })
-    .optional()
-    .refine(
-      (file) => !file || file?.size <= MAX_DEMO_FILE_SIZE,
-      `Max file size is 30MB.`
-    )
-    .refine(
-      (file) => !file || ACCEPTED_DEMO_TYPES.includes(file?.type),
-      'only .zip files are accepted.'
-    ),
   photos: photoSetSchema,
 });
 
@@ -358,7 +312,6 @@ const cardBookFormSchema = z.object({
     })
     .nullable()
     .optional(),
-  demo: demoSchema,
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
 });
 
@@ -387,7 +340,6 @@ const cardBookEditFormSchema = z.object({
     })
     .nullable()
     .optional(),
-  demo: demoEditSchema,
   sold_out: z.boolean({ required_error: 'sold out condition is required' }),
 });
 
@@ -839,21 +791,13 @@ const getCardBookByID = async (cardBookID: number) => {
 const deleteCardBook = async (cardBookID: number) => {
   const cardBook = await getCardBookByID(cardBookID);
 
-  const demoFileNameString =
-    (cardBook && cardBook.demo?.split('/').pop()) || 'no file';
-  const demoRemove = await supabase.storage
-    .from('demos')
-    .remove([demoFileNameString]);
-
   const { error } = await supabase
     .from('CardBooks')
     .delete()
     .eq('id', cardBookID);
 
   error && window.alert(error.message);
-  !error &&
-    !demoRemove.error &&
-    window.alert(`Книга 2.0 номер ${cardBookID} успешно удалена`);
+  !error && window.alert(`Книга 2.0 номер ${cardBookID} успешно удалена`);
 
   return !error ? true : false;
 };
@@ -906,12 +850,6 @@ const deleteEBook = async (eBookID: number) => {
     .from('ebooks')
     .remove([fileNameString]);
 
-  const demoFileNameString =
-    (eBook && eBook.demo?.split('/').pop()) || 'no file';
-  const demoRemove = await supabase.storage
-    .from('demos')
-    .remove([demoFileNameString]);
-
   if (eBook) {
     const { error } = await supabase.from('Ebooks').delete().eq('id', eBook.id);
 
@@ -920,7 +858,6 @@ const deleteEBook = async (eBookID: number) => {
       deletedPhotos &&
       deletedLinks &&
       !eBookRemove.error &&
-      !demoRemove.error &&
       (success = true) &&
       window.alert(`Электронная книга номер ${eBook.id} успешно удалена`);
   }
@@ -964,11 +901,6 @@ const deletePrintedBook = async (bookID: number) => {
     .from('covers')
     .remove([fileNameString]);
 
-  const demoNameString = (book && book.demo?.split('/').pop()) || 'no demo';
-  const demoRemove = await supabase.storage
-    .from('demos')
-    .remove([demoNameString]);
-
   if (book) {
     const { error } = await supabase
       .from('PrintedBooks')
@@ -980,7 +912,6 @@ const deletePrintedBook = async (bookID: number) => {
       deletedPhotos &&
       deletedLinks &&
       !coverRemove.error &&
-      !demoRemove.error &&
       (success = true) &&
       window.alert(`Печатная книга номер ${book.id} успешно удалена`);
   }
@@ -1100,23 +1031,6 @@ function EBookForm({ titleID }: { titleID: number }) {
 
     console.log('URL is... ', publicUrl);
 
-    const demoFileExtention = values.demo.name.split('.').pop();
-
-    const demoUpload = await supabase.storage
-      .from('demos')
-      .upload(
-        `demo_ebook_${slugify(titleName)}_${time}.${demoFileExtention}`,
-        values.demo,
-        {
-          cacheControl: '3600',
-          upsert: true,
-        }
-      );
-
-    const demoPublicUrl = supabase.storage
-      .from('demos')
-      .getPublicUrl(`${demoUpload.data?.path}`).data.publicUrl;
-
     const eBookData = {
       title_id: titleID,
       counter_color: values.counter_color,
@@ -1131,7 +1045,6 @@ function EBookForm({ titleID }: { titleID: number }) {
       file_volume: values.src.size,
       characters: values.characters,
       ISBN: values.ISBN,
-      demo: demoPublicUrl,
     };
 
     const eBookID = await setEBookData(eBookData);
@@ -1146,29 +1059,6 @@ function EBookForm({ titleID }: { titleID: number }) {
           onSubmit={form.handleSubmit(onSubmit)}
           className='space-y-4 w-full'
         >
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name='counter_color'
@@ -1600,61 +1490,6 @@ function EBookEditForm(ebook: EbookType) {
 
     console.log('public URL is ...', publicUrl);
 
-    let demoPath = null;
-    let demoPublicUrl = null;
-
-    if (values.demo) {
-      console.log('current book demo ... ', ebook.demo);
-
-      const demoNameString = ebook.demo?.split('/').pop() || 'no demo';
-
-      console.log('demo Name String ... ', demoNameString);
-
-      console.log('selected demo file ... ', values.demo);
-
-      const demoRemove = await supabase.storage
-        .from('demos')
-        .remove([demoNameString]);
-
-      demoRemove.error &&
-        console.log('demo Remove error ... ', demoRemove.error.message);
-
-      demoRemove.data && console.log('demo Remove data... ', demoRemove.data);
-
-      const demoFileExtention = demoNameString.split('.').pop();
-
-      const demoUdate = await supabase.storage
-        .from('demos')
-        .upload(
-          `demo_ebook_${slugify(titleName)}_${
-            time + 1234
-          }.${demoFileExtention}`,
-          values.demo,
-          {
-            cacheControl: '3600',
-            upsert: true,
-          }
-        );
-
-      demoUdate.error &&
-        console.log('demo update error ... ', demoUdate.error.message);
-
-      demoPath = demoUdate.data?.path;
-      console.log('demo path ... ', demoPath);
-    }
-
-    if (!values.demo) {
-      demoPath = ebook.demo;
-      demoPublicUrl = ebook.demo;
-    }
-
-    !demoPublicUrl &&
-      demoPath &&
-      (demoPublicUrl = supabase.storage.from('demos').getPublicUrl(demoPath)
-        .data.publicUrl);
-
-    console.log('public demo URL is ...', demoPublicUrl);
-
     const eBookData = {
       title_id: ebook.title_id,
       counter_color: values.counter_color,
@@ -1669,7 +1504,6 @@ function EBookEditForm(ebook: EbookType) {
       file_volume: values.src?.size || ebook.file_volume,
       characters: values.characters,
       ISBN: values.ISBN,
-      demo: demoPublicUrl,
     };
 
     const eBookID = await updateEBookData(ebook.id, eBookData);
@@ -1684,36 +1518,6 @@ function EBookEditForm(ebook: EbookType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-
-                <p>{ebook.demo}</p>
-
-                <a href={ebook.demo!} download target='_blank'>
-                  download file
-                </a>
-
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name='counter_color'
@@ -2037,23 +1841,6 @@ function CardBookForm({ titleID }: { titleID: number }) {
 
     const titleName = await getTitleName(titleID);
 
-    const demoFileExtention = values.demo.name.split('.').pop();
-
-    const demoUpload = await supabase.storage
-      .from('demos')
-      .upload(
-        `demo_card_${slugify(titleName)}_${time}.${demoFileExtention}`,
-        values.demo,
-        {
-          cacheControl: '3600',
-          upsert: true,
-        }
-      );
-
-    const demoPublicUrl = supabase.storage
-      .from('demos')
-      .getPublicUrl(`${demoUpload.data?.path}`).data.publicUrl;
-
     const cardBookData = {
       title_id: titleID,
       counter_color: values.counter_color,
@@ -2065,7 +1852,6 @@ function CardBookForm({ titleID }: { titleID: number }) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       sold_out: values.sold_out,
-      demo: demoPublicUrl,
     };
 
     const cardBookID = await setCardBookData(cardBookData);
@@ -2095,29 +1881,6 @@ function CardBookForm({ titleID }: { titleID: number }) {
                 <div className='space-y-1 leading-none'>
                   <FormLabel>Нет в наличии</FormLabel>
                 </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -2326,59 +2089,6 @@ function CardBookEditForm(cardBook: CardBookType) {
 
     const titleName = await getTitleName(cardBook.title_id);
 
-    let demoPath = null;
-    let demoPublicUrl = null;
-
-    if (values.demo) {
-      console.log('current book demo ... ', cardBook.demo);
-
-      const demoNameString = cardBook.demo?.split('/').pop() || 'no demo';
-
-      console.log('demo Name String ... ', demoNameString);
-
-      console.log('selected demo file ... ', values.demo);
-
-      const demoRemove = await supabase.storage
-        .from('demos')
-        .remove([demoNameString]);
-
-      demoRemove.error &&
-        console.log('demo Remove error ... ', demoRemove.error.message);
-
-      demoRemove.data && console.log('demo Remove data... ', demoRemove.data);
-
-      const demoFileExtention = demoNameString.split('.').pop();
-
-      const demoUdate = await supabase.storage
-        .from('demos')
-        .upload(
-          `demo_card_${slugify(titleName)}_${time + 3521}.${demoFileExtention}`,
-          values.demo,
-          {
-            cacheControl: '3600',
-            upsert: true,
-          }
-        );
-
-      demoUdate.error &&
-        console.log('demo update error ... ', demoUdate.error.message);
-
-      demoPath = demoUdate.data?.path;
-      console.log('demo path ... ', demoPath);
-    }
-
-    if (!values.demo) {
-      demoPath = cardBook.demo;
-      demoPublicUrl = cardBook.demo;
-    }
-
-    !demoPublicUrl &&
-      demoPath &&
-      (demoPublicUrl = supabase.storage.from('demos').getPublicUrl(demoPath)
-        .data.publicUrl);
-
-    console.log('public demo URL is ...', demoPublicUrl);
-
     const cardBookData = {
       title_id: cardBook.title_id,
       counter_color: values.counter_color,
@@ -2390,7 +2100,6 @@ function CardBookEditForm(cardBook: CardBookType) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       sold_out: values.sold_out,
-      demo: demoPublicUrl,
     };
 
     const cardBookID = await updateCardBookData(cardBook.id, cardBookData);
@@ -2420,36 +2129,6 @@ function CardBookEditForm(cardBook: CardBookType) {
                 <div className='space-y-1 leading-none'>
                   <FormLabel>Нет в наличии</FormLabel>
                 </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-
-                <p>{cardBook.demo}</p>
-
-                <a href={cardBook.demo!} download target='_blank'>
-                  download file
-                </a>
-
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -3571,23 +3250,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       .from('covers')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
 
-    const demoFileExtention = values.demo.name.split('.').pop();
-
-    const demoUpload = await supabase.storage
-      .from('demos')
-      .upload(
-        `demo_print_${slugify(titleName)}_${time}.${demoFileExtention}`,
-        values.demo,
-        {
-          cacheControl: '3600',
-          upsert: true,
-        }
-      );
-
-    const demoPublicUrl = supabase.storage
-      .from('demos')
-      .getPublicUrl(`${demoUpload.data?.path}`).data.publicUrl;
-
     const printedData = {
       title_id: titleID,
       counter_color: values.counter_color,
@@ -3602,7 +3264,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       sold_out: values.sold_out,
-      demo: demoPublicUrl,
     };
 
     const bookID = await setPrintedData(printedData);
@@ -3673,29 +3334,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                 <div className='space-y-1 leading-none'>
                   <FormLabel>Нет в наличии</FormLabel>
                 </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -4372,61 +4010,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
 
     console.log('public URL is ...', publicUrl);
 
-    let demoPath = null;
-    let demoPublicUrl = null;
-
-    if (values.demo) {
-      console.log('current book demo ... ', book.demo);
-
-      const demoNameString = book.demo?.split('/').pop() || 'no demo';
-
-      console.log('demo Name String ... ', demoNameString);
-
-      console.log('selected demo file ... ', values.demo);
-
-      const demoRemove = await supabase.storage
-        .from('demos')
-        .remove([demoNameString]);
-
-      demoRemove.error &&
-        console.log('demo Remove error ... ', demoRemove.error.message);
-
-      demoRemove.data && console.log('demo Remove data... ', demoRemove.data);
-
-      const demoFileExtention = demoNameString.split('.').pop();
-
-      const demoUdate = await supabase.storage
-        .from('demos')
-        .upload(
-          `demo_print_${slugify(titleName)}_${
-            time + 1234
-          }.${demoFileExtention}`,
-          values.demo,
-          {
-            cacheControl: '3600',
-            upsert: true,
-          }
-        );
-
-      demoUdate.error &&
-        console.log('demo update error ... ', demoUdate.error.message);
-
-      demoPath = demoUdate.data?.path;
-      console.log('demo path ... ', demoPath);
-    }
-
-    if (!values.demo) {
-      demoPath = book.demo;
-      demoPublicUrl = book.demo;
-    }
-
-    !demoPublicUrl &&
-      demoPath &&
-      (demoPublicUrl = supabase.storage.from('demos').getPublicUrl(demoPath)
-        .data.publicUrl);
-
-    console.log('public demo URL is ...', demoPublicUrl);
-
     const printedData = {
       title_id: book.title_id,
       counter_color: values.counter_color,
@@ -4441,7 +4024,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       release_date: values.release_date?.toISOString(),
       sold: values.sold,
       sold_out: values.sold_out,
-      demo: demoPublicUrl,
     };
 
     const bookID = await updatePrintedData(book.id, printedData);
@@ -4531,36 +4113,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
                 <div className='space-y-1 leading-none'>
                   <FormLabel>Нет в наличии</FormLabel>
                 </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='demo'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>demo file</FormLabel>
-
-                <p>{book.demo}</p>
-
-                <a href={book.demo!} download target='_blank'>
-                  download file
-                </a>
-
-                <FormControl>
-                  <Input
-                    id='demoInput'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
