@@ -33,6 +33,9 @@ const options = {
       },
     ],
   },
+     experimental: {
+       outputStandalone: true,
+   }
 };
 
 module.exports = options;
