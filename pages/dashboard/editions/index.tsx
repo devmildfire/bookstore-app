@@ -120,13 +120,9 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
     }
   }
 
-  // useEffect(() => {
-  //   getEditions();
-  // }, [titleID]);
-
   useEffect(() => {
     getEditions();
-  }, []);
+  }, [titleID]);
 
   return (
     <div>
@@ -278,7 +274,7 @@ const TitleSelect = () => {
             // selectedTitle.current = parseInt(value);
             setSelectedTitle(parseInt(value));
 
-            console.log('set new ref ... ', selectedTitle);
+            console.log('set new title id ... ', selectedTitle);
           }}
         >
           {/* <SelectTrigger className='w-[280px]'> */}
