@@ -64,7 +64,8 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Copy dependency lists
-COPY package.json pnpm-lock.yaml* ./
+# COPY package.json pnpm-lock.yaml* ./
+COPY package*.json  pnpm-lock.yaml* ./
 # Enable corepack for pnpm
 RUN corepack enable pnpm
 # Install dependencies using pnpm
