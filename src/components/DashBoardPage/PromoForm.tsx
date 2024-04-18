@@ -251,13 +251,25 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
                       </FormControl>
                       <SelectContent>
                         {/* {prods.findIndex((val) => val.name === prodNameValue)} */}
-                        {prods[
+                        {/* {prods[
                           prods.findIndex((val) => val.name === prodNameValue)
                         ].types.map((type) => (
                           <SelectItem key={type} value={type || 'i'}>
                             {type}
                           </SelectItem>
-                        ))}
+                        ))} */}
+                        {prods.map((prod) => {
+                          if (prod.name === prodNameValue) {
+                            const pTypes = prod.types.map((type) => {
+                              return (
+                                <SelectItem key={type} value={type || 'i'}>
+                                  {type}
+                                </SelectItem>
+                              );
+                            });
+                            return pTypes;
+                          }
+                        })}
                       </SelectContent>
                     </Select>
                     <FormMessage />
