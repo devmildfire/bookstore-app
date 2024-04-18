@@ -121,6 +121,12 @@ export const Icon = styled.svg`
 
 export const ContactIcon = styled.svg`
   stroke: var(--main-white-100);
+  transition: all 0.3s ease-in-out;
+
+  :hover {
+    color: var(--main-red-100);
+    stroke: var(--main-red-100);
+  }
 `;
 
 export const FooterLogoLink = styled.a`
