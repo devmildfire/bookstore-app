@@ -13,7 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PromoForm } from '@/components/DashBoardPage/PromoForm';
+import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 import { Title } from '@/models/books';
 // import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 
@@ -48,7 +48,7 @@ const PromoList = ({ categories, types, prods }: promoListProps) => {
 
   return (
     <div className='w-full'>
-      <Text variant='h3c'> Награды </Text>
+      <Text variant='h3c'> Промокоды </Text>
 
       <Accordion type='single' collapsible className='w-full'>
         {promos.map((promo) => (
@@ -59,7 +59,12 @@ const PromoList = ({ categories, types, prods }: promoListProps) => {
           >
             <AccordionTrigger> {promo.code} </AccordionTrigger>
             <AccordionContent>
-              {/* <PromoEditForm {...promo} /> */}
+              <PromoEditForm
+                categories={categories}
+                types={types}
+                prods={prods}
+                promo={promo}
+              />
             </AccordionContent>
           </AccordionItem>
         ))}
