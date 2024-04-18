@@ -34,29 +34,6 @@ type promoTypeType = Database['public']['Enums']['promotype'];
 type promoInsertType = Database['public']['Tables']['Promocodes']['Insert'];
 type promoRowType = Database['public']['Tables']['Promocodes']['Row'];
 
-// export const categorySchema = z.union([z.any(), z.string()]);
-
-// export const typeSchema = z.union([z.any(), z.string()]);
-
-// const formSchema = z.object({
-//   code: z.string().min(3, {
-//     message: 'Code must be at least 3 characters long.',
-//   }),
-//   discount: z.number().gte(1, 'promo discount must be at least 1%'),
-//   product_name: z.string().min(3, {
-//     message: 'Product name must be at least 3 characters long',
-//   }),
-//   product_type: categorySchema,
-//   type: typeSchema,
-// });
-
-// const formEditSchema = z.object({
-//   picture: z.any().optional(),
-//   title: z.string().min(3, {
-//     message: 'Award must be least 3 characters.',
-//   }),
-// });
-
 type PromoFormProps = {
   categories: string[];
   types: string[];
@@ -75,6 +52,8 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
 
   const typeSchema = z.enum(types as [string, ...string[]]);
   const categorySchema = z.enum(categories as [string, ...string[]]).optional();
+
+  const router = useRouter();
 
   const formSchema = z
     .object({
@@ -160,6 +139,7 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
     data && console.log('promo code added data...', data);
 
     error && console.log('promo code add error...', error.message);
+    router.reload();
   }
 
   return (
@@ -363,171 +343,6 @@ function PromoForm({ categories, types, prods }: PromoFormProps) {
   );
 }
 
-// function AwardEditForm(award: AwardsType) {
-//   const [newPhoto, setNewPhoto] = useState<string>();
-
-//   const photoImage = useRef<HTMLImageElement | null>(null);
-
-//   async function getDataFromReq() {
-//     const { data } = await supabase
-//       .from('Awards')
-//       .select('*')
-//       .eq('id', award.id)
-//       .single();
-
-//     data && console.log('data from req is...', data);
-
-//     data &&
-//       (data.source && setNewPhoto(data.source),
-//       data.title && form.setValue('title', data.title));
-//   }
-
-//   useEffect(() => {
-//     getDataFromReq();
-//   }, []);
-
-//   const router = useRouter();
-
-//   const form = useForm<z.infer<typeof formEditSchema>>({
-//     resolver: zodResolver(formEditSchema),
-//     defaultValues: {
-//       title: award.title ? award.title : undefined,
-//     },
-//   });
-
-//   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
-//     console.log('values ... ', values);
-
-//     let imagePath = null;
-//     let publicUrl = null;
-
-//     if (award.source && values.picture) {
-//       console.log('current award picture ... ', award.source);
-
-//       const imageNameString = award.source.split('/');
-
-//       console.log('image Name String ... ', imageNameString);
-
-//       console.log('selected photo file ... ', values.picture);
-
-//       const photoRemove = await supabase.storage
-//         .from('awards')
-//         .remove([imageNameString.slice(-1)[0]]);
-
-//       photoRemove.error &&
-//         console.log('photo Remove error ... ', photoRemove.error.message);
-
-//       photoRemove.data &&
-//         console.log('photo Remove data... ', photoRemove.data);
-
-//       const fileName = values.title ? slugify(values.title) : 'failNameString';
-//       console.log('photo is...', values.picture);
-//       console.log('photo name is...', values.picture?.name);
-
-//       const photoUdate = await supabase.storage
-//         .from('awards')
-//         .upload(`award_${fileName}`, values.picture, {
-//           cacheControl: '3600',
-//           upsert: true,
-//         });
-
-//       photoUdate.error &&
-//         console.log('photo update error ... ', photoUdate.error.message);
-
-//       imagePath = photoUdate.data?.path;
-//       console.log('image path ... ', imagePath);
-//     }
-
-//     if (award.source && !values.picture) {
-//       imagePath = award.source;
-//       publicUrl = award.source;
-//     }
-
-//     !publicUrl &&
-//       imagePath &&
-//       (publicUrl = supabase.storage.from('awards').getPublicUrl(imagePath)
-//         .data.publicUrl);
-
-//     console.log('public URL is ...', publicUrl);
-
-//     const { data, error } = await supabase
-//       .from('Awards')
-//       .update({
-//         source: publicUrl,
-//       })
-//       .eq('id', award.id)
-//       .select('*')
-//       .single();
-
-//     error && window.alert(error.message);
-//     data && window.alert(`награда ${data.title} успешно обновлена`);
-//     data && router.reload();
-//   }
-
-//   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-//     const imageInput = event.target;
-//     const pImage = photoImage.current;
-
-//     if (imageInput.files) {
-//       const file = imageInput.files[0];
-//       if (file) {
-//         pImage && (pImage.src = URL.createObjectURL(file));
-//       }
-//     }
-//   }
-
-//   return (
-//     <div className=''>
-//       <Form {...form}>
-//         <form
-//           onSubmit={form.handleSubmit(onEditSubmit)}
-//           className='space-y-4 w-full'
-//         >
-//           <FormField
-//             control={form.control}
-//             name='picture'
-//             render={({ field: { value, onChange, ...fieldProps } }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Award Picture</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author photo'}
-//                     id='photo'
-//                     type='file'
-//                     {...fieldProps}
-//                     onChange={(event) => {
-//                       onImageInputChange(event);
-//                       return onChange(
-//                         event.target.files && event.target.files[0]
-//                       );
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//                 <img
-//                   className='max-w-72'
-//                   ref={photoImage}
-//                   src={newPhoto || award.source || ''}
-//                   alt='photo image'
-//                 />
-//               </FormItem>
-//             )}
-//           />
-
-//           <Button
-//             type='submit'
-//             variant={'outline'}
-//             size={'default'}
-//             className='w-full max-w-48'
-//           >
-//             Обновить
-//           </Button>
-//         </form>
-//       </Form>
-//     </div>
-//   );
-// }
-
 function PromoEditForm({
   categories,
   types,
@@ -538,6 +353,8 @@ function PromoEditForm({
 
   const typeSchema = z.enum(types as [string, ...string[]]);
   const categorySchema = z.enum(categories as [string, ...string[]]).optional();
+
+  const router = useRouter();
 
   async function getDataFromReq() {
     const { data } = await supabase
@@ -642,6 +459,7 @@ function PromoEditForm({
     data && window.alert(`Промокод ${data.code} успешно изменён`);
 
     error && console.log('promo code edit error...', error.message);
+    router.reload();
   }
 
   return (
