@@ -1,6 +1,7 @@
 import DashMain from '@/components/DashBoardPage/DashMain';
 import DashNav from '@/components/DashBoardPage/DashNav';
 import { LogOut } from '@/components/LoginPage/Logout';
+import PageLayout from '@/layouts/PageLayout';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
@@ -29,12 +30,14 @@ const Dashboard = (): React.ReactElement => {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 };
 
