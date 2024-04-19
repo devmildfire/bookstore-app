@@ -16,10 +16,11 @@ import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { AuthorsType } from 'pages/dashboard/authors';
-import { DateTimePicker } from '../ui/datetime-picker';
 import DeleteDialog from './DeleteDialog';
 import slugify from 'slugify';
+import { Database } from 'api/books/types';
+
+export type LectorsType = Database['public']['Tables']['Lectors']['Row'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -28,13 +29,6 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/png',
   'image/webp',
 ];
-
-export type LectorsType = {
-  id: number;
-  name: string;
-  bio: string;
-  photo: string;
-};
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -326,7 +320,7 @@ function LectorEditForm(lector: LectorsType) {
     const { data, error } = await supabase
       .from('Lectors')
       .update({
-        photo: publicUrl,
+        photo: publicUrl || undefined,
         name: values.name,
         bio: values.bio,
       })
