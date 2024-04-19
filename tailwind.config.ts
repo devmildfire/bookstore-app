@@ -6,6 +6,7 @@ const config = {
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
+    './layouts/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
@@ -98,6 +99,7 @@ const config = {
 
         // Complex site-specific column configuration
         authors: 'min-content 1fr',
+        'author-cards': 'repeat(auto-fill, minmax(150px, 1fr))',
       },
     },
   },

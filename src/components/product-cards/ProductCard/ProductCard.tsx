@@ -28,7 +28,6 @@ function ProductCard(props: ProductCardProps) {
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
-    console.log('Product card onclick - onAddToCartClick');
     handleModalState({
       cover,
       name,

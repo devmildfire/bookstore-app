@@ -4,11 +4,18 @@ import { Tables } from 'api/books/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
 
-export type BookTableTypesTuple = [
-  'PrintedBooks',
-  'Ebooks',
-  'Audiobooks',
-  'CardBooks'
+export enum BookTableTypesEnum {
+  PrintedBooks = 'PrintedBooks',
+  Ebooks = 'Ebooks',
+  Audiobooks = 'Audiobooks',
+  CardBooks = 'CardBooks',
+}
+
+export const bookTypes: BookTableTypesEnum[] = [
+  BookTableTypesEnum.PrintedBooks,
+  BookTableTypesEnum.Ebooks,
+  BookTableTypesEnum.Audiobooks,
+  BookTableTypesEnum.CardBooks,
 ];
 
 type AudioBook = Tables<'Audiobooks'>;
@@ -33,14 +40,15 @@ export interface Title {
   readonly description: string;
   readonly thesis: string;
   readonly trailer: string;
-  readonly ageRestriction: number;
+  readonly age_restriction: number;
   readonly cover: string;
   readonly slug: string;
   readonly isFeatured: boolean;
-  readonly price: number[];
+  readonly prices: Record<BookTableTypesEnum[number], number>[];
   readonly discount: number[];
-  readonly types: BookTableTypesTuple;
+  readonly types: BookTableTypesEnum[];
   readonly PrintedBooks: PrintedBookType;
+  readonly first_release: Date;
   Audiobooks: AudioBook;
   Ebooks: Ebook;
   CardBooks: CardBook;

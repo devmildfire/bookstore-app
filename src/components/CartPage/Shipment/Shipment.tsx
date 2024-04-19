@@ -175,8 +175,6 @@ export function Shipment({
   const onSubmit = async (data: ShipmentFormData) => {
     const price = promoStore.cartPromoPrice || totalPrice;
 
-    console.log('submitting');
-
     const order: OrdersInsertType = {
       adress: data.adress || null,
       phone: data.phone || null,

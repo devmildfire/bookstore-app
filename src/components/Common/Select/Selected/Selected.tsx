@@ -13,7 +13,6 @@ const Selected: React.FC<SelectedProps> = (props) => {
   const { value, onDelete } = props;
 
   const onClick = React.useCallback(() => {
-    console.log('delete');
     onDelete(value);
   }, [value, onDelete]);
 

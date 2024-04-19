@@ -13,23 +13,26 @@ import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
 import rorshah from '@/assets/images/rorshah_whole_2.png';
 import Text from '@/components/Common/Text';
+import PageLayout from '@/layouts/PageLayout';
 
 const About: NextPage = () => (
-  <StyledWrapper>
-    <VideoContainer>
-      <PageTitle />
-      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
-    </VideoContainer>
-    <AboutUs />
-    <AboutList />
-    <RD />
-    <StyledStarsBlock>
-      <We />
-      <Partners />
-      <Donate />
-      <BeWithUs />
-    </StyledStarsBlock>
-  </StyledWrapper>
+  <PageLayout headTitle='О Чтиве'>
+    <StyledWrapper>
+      <VideoContainer>
+        <PageTitle />
+        <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
+      </VideoContainer>
+      <AboutUs />
+      <AboutList />
+      <RD />
+      <StyledStarsBlock>
+        <We />
+        <Partners />
+        <Donate />
+        <BeWithUs />
+      </StyledStarsBlock>
+    </StyledWrapper>
+  </PageLayout>
 );
 
 export default About;

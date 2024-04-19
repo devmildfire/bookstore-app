@@ -2,7 +2,7 @@ import { supabase } from 'api/supabase-client';
 import { Title } from '@/models/books';
 import { PostgrestError } from '@supabase/supabase-js';
 
-export const API = {
+export const booksAPI = {
   getTitles: () => {
     return supabase
       .from('Titles')
@@ -26,7 +26,7 @@ export const API = {
       .returns<Title[]>();
   },
 
-  getTitlebySlug: (slug: string) => {
+  getTitleBySlug: (slug: string) => {
     return supabase
       .from('Titles')
       .select(
@@ -47,6 +47,6 @@ export const API = {
       `
       )
       .eq('slug', slug)
-      .returns<Title>();
+      .returns<Title[]>();
   },
 };

@@ -1,1 +1,1 @@
-export { API } from './books';
+export { booksAPI as API } from './books';

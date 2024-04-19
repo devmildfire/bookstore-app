@@ -1,51 +1,25 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
-import { Router, useRouter } from 'next/router';
+import { Router } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
-import { wrapper } from '@/models';
+
 import useToggle from '@/hooks/useToggle';
 import PageLoading from '@/components/PageLoading';
 import '@/styles/globals.css';
-import Header from '@/components/PageLayout/Header';
-import Footer from '@/components/PageLayout/Footer';
+
 import ModalProvider from '@/components/Modal';
 import { setOrGetCartCookie } from '@/utils/cardID';
+import { ThemeProvider } from '@/components/providers';
+import { Toaster } from '@/components/ui/toast';
+import { AppPropsWithLayout } from '@/types/page';
 
-function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
-  const [isIntersecting, setIntersecting] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const element = ref.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIntersecting(entry.isIntersecting);
-      },
-      {
-        rootMargin,
-      }
-    );
-    observer.observe(element);
-    return () => {
-      observer.unobserve(element);
-    };
-  }, [isIntersecting, ref, ref.current, rootMargin]);
-
-  return isIntersecting;
-}
-
-const MyApp: NextPage<AppProps> = (props) => {
+const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
   const { value, toggleOff, toggleOn } = useToggle();
-  const intersectionRef = useRef<HTMLElement>(null);
-  // FIXME(@sergromm): что-то не так с отслеживанием баннера.
-  // при переключении пути через Link не сбрасывается состояние
-  // isSliderOnScreen из-за чего фон хедера остаётся чёрным.
-  // Временный фикс: проверять чтобы текущий путь был !'/books'.
-  const isSliderOnScreen = useOnScreen(intersectionRef);
-  const router = useRouter();
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
     Router.events.on('routeChangeError', toggleOff);
@@ -55,7 +29,7 @@ const MyApp: NextPage<AppProps> = (props) => {
       Router.events.off('routeChangeError', toggleOff);
       Router.events.off('routeChangeComplete', toggleOff);
     };
-  }, [toggleOff, toggleOn, isSliderOnScreen]);
+  }, [toggleOff, toggleOn]);
 
   //  при старте работы приложения всем пользователям раздаётся
   //  принудительное cookie с номером их корзины покупок
@@ -67,21 +41,14 @@ const MyApp: NextPage<AppProps> = (props) => {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
-          <Header
-            backgroundColor={
-              isSliderOnScreen && router.pathname === '/books'
-                ? '#050505'
-                : 'var(--main-black)'
-            }
-          />
-          <>
-            {value && <PageLoading />}
-            <Component {...pageProps} forwardedRef={intersectionRef} />
-          </>
-          <Footer />
+          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
+            <PageLoading show={value} />
+            {getLayout(<Component {...pageProps} />)}
+            <Toaster />
+          </ThemeProvider>
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );
 };
-export default wrapper.withRedux(MyApp);
+export default MyApp;

@@ -6,27 +6,14 @@ import { wrapper } from '@/models';
 import { getPopularBooks } from '@/models/books';
 import { getSubscriptions } from '@/models/subscriptions';
 import Subscriptions from '@/components/SubscriptionsPage/Subscriptions';
+import PageLayout from '@/layouts/PageLayout';
 
 const SubscriptionPage: NextPage = () => (
-  <HomePage title='Чудеса подписки'>
-    <Subscriptions />
-  </HomePage>
-);
-
-export const getStaticProps = wrapper.getStaticProps(
-  ({ dispatch, }) =>
-    async () => {
-      const requests:Promise<unknown>[] = [
-        dispatch(getPopularBooks.initiate(undefined)),
-        dispatch(getSubscriptions.initiate(undefined))
-      ];
-
-      await Promise.all(requests);
-      return {
-        props: {},
-        revalidate: 1,
-      };
-    }
+  <PageLayout headTitle='Карты даров'>
+    <HomePage title='Карты даров'>
+      <Subscriptions />
+    </HomePage>
+  </PageLayout>
 );
 
 export default SubscriptionPage;

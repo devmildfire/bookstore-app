@@ -4,30 +4,19 @@ import styled from 'styled-components';
 // import dayjs from 'dayjs';
 import Button from '@/components/Common/Button';
 import { StyledWrapper } from './styles';
-import { BookType, Reader, Worker } from '@/models/books';
+import { BookTableTypesEnum, BookType, Worker } from '@/models/books';
 import Tabs from '@/components/Common/Tabs';
 import breakPoints from '@/utils/breakPoints';
 
 interface BookPropertiesProps {
-  readonly price: number;
-  readonly publishDate: string;
-  readonly workers: Worker[];
-  readonly symbolCount: number;
-  readonly formats: string[];
-  readonly readers: Reader[];
-  readonly types: BookType[];
+  readonly prices: Record<BookTableTypesEnum, number>[];
+  readonly first_release: Date;
+  readonly types: Record<string, unknown | BookTableTypesEnum>[];
 }
 
 export interface EditionProps {
   releaseDate: string;
   price: number;
-}
-
-export interface editionTypes {
-  [key: string]: (props: {
-    releaseDate: string;
-    price: number;
-  }) => ReactElement;
 }
 
 const TabContent = styled.div``;
@@ -358,17 +347,30 @@ const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
   );
 };
 
-const editions: editionTypes = {
-  digital: DigitalEdition,
-  book2: Book2Edition,
-  audio: AudioEdition,
-  write: PrintEdition,
+type EditionComponent = (props: {
+  releaseDate: string;
+  price: number;
+}) => ReactElement;
+
+export type EditionType = Record<BookTableTypesEnum[number], EditionComponent>;
+
+const editions: EditionType = {
+  Ebooks: DigitalEdition,
+  CardBooks: Book2Edition,
+  Audiobooks: AudioEdition,
+  PrintedBooks: PrintEdition,
 };
 
 const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
+  console.log(props);
   return (
     <StyledWrapper>
-      {/* <Tabs {...props} editions={editions} /> */}
+      <Tabs
+        types={props.types}
+        first_release={props.first_release}
+        prices={props.prices}
+        editions={editions}
+      />
     </StyledWrapper>
   );
 };

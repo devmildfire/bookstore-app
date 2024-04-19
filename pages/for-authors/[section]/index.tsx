@@ -13,6 +13,7 @@ import SendNovel from '@/components/forAuthorsPage/SendNovel';
 import Navigation from '@/components/Navigation';
 import navItems from '@/mocks/navItems';
 import NotFoundPage from 'pages/not-found';
+import PageLayout from '@/layouts/PageLayout';
 
 type TRoutes = 'send-novel' | 'send-manuscript' | 'abzac';
 type TQuery = { section: TRoutes };
@@ -39,14 +40,16 @@ const ForAuthors: NextPage = () => {
   }
 
   return (
-    <StyledWrapper>
-      <Navigation navigationItems={navItems} />
-      {/* <TwoPaneGrid>
+    <PageLayout headTitle='Авторам'>
+      <StyledWrapper>
+        <Navigation navigationItems={navItems} />
+        {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />
       </TwoPaneGrid> */}
-      <StyledSection>{content}</StyledSection>
-    </StyledWrapper>
+        <StyledSection>{content}</StyledSection>
+      </StyledWrapper>
+    </PageLayout>
   );
 };
 

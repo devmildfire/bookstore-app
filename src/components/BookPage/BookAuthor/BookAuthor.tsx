@@ -18,7 +18,6 @@ interface BookAuthorProps {
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
   const { authors } = props;
-  console.log(authors);
   // const author = authors[0];
   return (
     <StyleWrapper>

@@ -6,6 +6,12 @@ import {
   ChevronRightIcon,
   X,
 } from 'lucide-react';
+import {
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  X,
+} from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
