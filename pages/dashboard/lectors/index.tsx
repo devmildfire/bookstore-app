@@ -13,31 +13,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-
-import { AwardEditForm, AwardForm } from '@/components/DashBoardPage/AwardForm';
 import {
-  CourseEditForm,
-  CourseForm,
-} from '@/components/DashBoardPage/CourseForm';
+  LectorEditForm,
+  LectorForm,
+  LectorsType,
+} from '@/components/DashBoardPage/LectorForm';
 
-export type CoursesType = Database['public']['Tables']['Courses']['Row'];
-export type LectorsType = {
-  id: number;
-  name: string;
-};
-
-const CoursesList = () => {
-  const [courses, setCourses] = useState<CoursesType[]>();
+const Lectorslist = () => {
   const [lectors, setLectors] = useState<LectorsType[]>();
-
-  async function getCourses() {
-    const { data, error } = await supabase.from('Courses').select('*');
-
-    data && console.log('courses data ... ', data);
-    error && alert(error);
-
-    data && setCourses(data);
-  }
 
   async function getLectors() {
     const { data, error } = await supabase.from('Lectors').select('*');
@@ -45,34 +28,31 @@ const CoursesList = () => {
     data && console.log('lectors data ... ', data);
     error && alert(error);
 
-    data && setLectors(data as LectorsType[]);
+    data && setLectors(data);
   }
 
   useEffect(() => {
-    getCourses();
     getLectors();
   }, []);
 
-  if (!courses) {
-    return <div>zero courses found in database</div>;
+  if (!lectors) {
+    return <div>zero lectors found in database</div>;
   }
 
   return (
     <div className='w-full'>
-      <Text variant='h3c'> Курсы </Text>
+      <Text variant='h3c'> Lectors </Text>
 
       <Accordion type='single' collapsible className='w-full'>
-        {courses.map((course) => (
+        {lectors.map((lector) => (
           <AccordionItem
-            value={`item-${course.id}`}
-            key={course.id}
+            value={`item-${lector.id}`}
+            key={lector.id}
             className='w-full'
           >
-            <AccordionTrigger> {course.name} </AccordionTrigger>
+            <AccordionTrigger> {lector.name} </AccordionTrigger>
             <AccordionContent>
-              {lectors && (
-                <CourseEditForm course={course} lectors={[...lectors]} />
-              )}
+              {lector && <LectorEditForm {...lector} />}
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -85,12 +65,12 @@ const CoursesList = () => {
           <AccordionTrigger>
             <div className='flex flex-grow items-center'>
               <div className='flex-grow items-center text-red-800 hover:underline'>
-                Добавить новый курс
+                Добавить нового
               </div>
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            {lectors && <CourseForm lectors={[...lectors]} />}
+            <LectorForm />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -98,7 +78,7 @@ const CoursesList = () => {
   );
 };
 
-function Courses(): React.ReactElement {
+function Lectors(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
 
@@ -124,11 +104,11 @@ function Courses(): React.ReactElement {
     <DashMain>
       <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
         <DashNav />
-        <CoursesList />
+        <Lectorslist />
         {session && <LogOut session={session} />}
       </div>
     </DashMain>
   );
 }
 
-export default Courses;
+export default Lectors;

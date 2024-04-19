@@ -294,30 +294,27 @@ export interface Database {
       Courses: {
         Row: {
           description: string | null;
-          duration: number | null;
+          duration: string | null;
           format: string | null;
           id: number;
-          lecctor: string | null;
           name: string;
           price: number | null;
           thesis: string | null;
         };
         Insert: {
           description?: string | null;
-          duration?: number | null;
+          duration?: string | null;
           format?: string | null;
           id?: number;
-          lecctor?: string | null;
           name: string;
           price?: number | null;
           thesis?: string | null;
         };
         Update: {
           description?: string | null;
-          duration?: number | null;
+          duration?: string | null;
           format?: string | null;
           id?: number;
-          lecctor?: string | null;
           name?: string;
           price?: number | null;
           thesis?: string | null;

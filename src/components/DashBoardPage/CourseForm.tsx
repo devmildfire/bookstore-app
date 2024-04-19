@@ -11,92 +11,114 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { AwardsType } from 'pages/dashboard/awards';
 import slugify from 'slugify';
+import { CoursesType, LectorsType } from 'pages/dashboard/courses';
+import DeleteDialog from './DeleteDialog';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'image/svg+xml',
-];
+const lectorsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 const formSchema = z.object({
-  title: z.string().min(3, {
-    message: 'Award name must be at least 3 characters long.',
+  lectors: z.array(lectorsOptionSchema).min(1),
+  name: z.string().min(3, {
+    message: 'Course name must be at least 3 characters long.',
   }),
-  picture: z
-    .instanceof(File, { message: 'Image is required.' })
-    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      '.jpg, .jpeg, .png and .webp and .svg files are accepted.'
-    ),
+  description: z.string().min(3, {
+    message: 'description  must be at least 3 characters long.',
+  }),
+  duration: z.string().min(3, {
+    message: 'duration  must be at least 3 characters long.',
+  }),
+  format: z.string().min(3, {
+    message: 'format  must be at least 3 characters long.',
+  }),
+  thesis: z.string().min(3, {
+    message: 'thesis  must be at least 3 characters long.',
+  }),
+  price: z.number().positive('must be positive'),
 });
 
-const formEditSchema = z.object({
-  picture: z.any().optional(),
-  title: z.string().min(3, {
-    message: 'Award must be least 3 characters.',
-  }),
-});
-
-type AwardFormProps = {
-  defaultTitle: string;
+type CourseFormProps = {
+  lectors: LectorsType[];
 };
 
-function AwardForm(props: AwardFormProps) {
-  const photoImage = useRef<HTMLImageElement | null>(null);
+function CourseForm({ lectors }: CourseFormProps) {
+  const router = useRouter();
+
+  const OPTIONS: Option[] = lectors.map((lector) => ({
+    label: lector.name,
+    value: lector.id.toString(),
+    disable: false,
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: props.defaultTitle,
+      name: 'Some course',
+      description: 'some course description',
+      duration: 'шестнадцать часовых и три двухчасовых занятия',
+      format: 'видеолекции',
+      thesis: 'some thesis',
+      price: 1234,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    const photoUpload = await supabase.storage
-      .from('awards')
-      .upload(`award_${values.title}`, values.picture, {
-        cacheControl: '3600',
-        upsert: true,
-      });
-
-    const publicUrl = supabase.storage
-      .from('awards')
-      .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
-
     const { data, error } = await supabase
-      .from('Awards')
+      .from('Courses')
       .insert({
-        title: values.title,
-        source: publicUrl,
+        name: values.name,
+        description: values.description,
+        duration: values.duration,
+        format: values.format,
+        thesis: values.thesis,
+        price: values.price,
       })
       .select('*')
       .single();
 
     error && window.alert(error.message);
-    data && window.alert(`${data.title} успешно добавлена к наградам`);
-  }
+    data && window.alert(`${data.name} успешно добавлен курсам`);
 
-  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const imageInput = event.target;
-    const pImage = photoImage.current;
+    if (data) {
+      const coursesLectorsArray = values.lectors.map((lector) => {
+        const lectorID = parseInt(lector.value);
+        const courseID = data?.id;
 
-    if (imageInput.files) {
-      const file = imageInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
-      }
+        return {
+          lector_id: lectorID,
+          course_id: courseID,
+        };
+      });
+
+      const lectorsData = await supabase
+        .from('Lectors_Courses')
+        .insert(coursesLectorsArray)
+        .select('*');
+      lectorsData.error && window.alert(lectorsData.error.message);
+      lectorsData.data &&
+        window.alert(`Лекторы успешно добавлен к курсу ${data.name} `);
+
+      form.reset({
+        description: undefined,
+        thesis: undefined,
+        name: undefined,
+        lectors: [],
+        price: 0,
+        duration: undefined,
+      });
+
+      router.reload();
     }
   }
 
@@ -109,12 +131,12 @@ function AwardForm(props: AwardFormProps) {
         >
           <FormField
             control={form.control}
-            name='title'
+            name='name'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Award Name</FormLabel>
+                <FormLabel>Course Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='some award' {...field} />
+                  <Input placeholder='some Name' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,30 +145,101 @@ function AwardForm(props: AwardFormProps) {
 
           <FormField
             control={form.control}
-            name='picture'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Award picture</FormLabel>
+            name='lectors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lectors</FormLabel>
                 <FormControl>
-                  <Input
-                    id='photo'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      onImageInputChange(event);
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
                   />
                 </FormControl>
                 <FormMessage />
-                <img
-                  className='max-w-72'
-                  ref={photoImage}
-                  src=''
-                  alt='photo image'
-                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course description</FormLabel>
+                <FormControl>
+                  <Input placeholder='some description' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='duration'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course duration</FormLabel>
+                <FormControl>
+                  <Input placeholder='some duration' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='format'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course format</FormLabel>
+                <FormControl>
+                  <Input placeholder='some format' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='thesis'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course thesis</FormLabel>
+                <FormControl>
+                  <Input placeholder='some thesis' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -165,23 +258,42 @@ function AwardForm(props: AwardFormProps) {
   );
 }
 
-function AwardEditForm(award: AwardsType) {
-  const [newPhoto, setNewPhoto] = useState<string>();
+type CourseEditFormProps = {
+  course: CoursesType;
+  lectors: LectorsType[];
+};
 
-  const photoImage = useRef<HTMLImageElement | null>(null);
+function CourseEditForm({ course, lectors }: CourseEditFormProps) {
+  const OPTIONS: Option[] = lectors.map((lector) => ({
+    label: lector.name,
+    value: lector.id.toString(),
+    disable: false,
+  }));
 
   async function getDataFromReq() {
     const { data } = await supabase
-      .from('Awards')
+      .from('Courses')
       .select('*')
-      .eq('id', award.id)
+      .eq('id', course.id)
       .single();
 
     data && console.log('data from req is...', data);
 
-    data &&
-      (data.source && setNewPhoto(data.source),
-      data.title && form.setValue('title', data.title));
+    const lectorsData = await supabase
+      .from('Lectors_Courses')
+      .select('*, Lectors(*)')
+      .eq('course_id', course.id);
+
+    if (lectorsData.data) {
+      console.log('lectors data from reference table... ', lectorsData.data);
+
+      const lectorsArray = lectorsData.data.map((lector) => ({
+        label: lector.Lectors ? lector.Lectors.name : 'emptyLabel',
+        value: lector.Lectors ? lector.Lectors.id.toString() : 'emptyValue',
+      }));
+
+      form.setValue('lectors', lectorsArray);
+    }
   }
 
   useEffect(() => {
@@ -190,92 +302,66 @@ function AwardEditForm(award: AwardsType) {
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formEditSchema>>({
-    resolver: zodResolver(formEditSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      title: award.title ? award.title : undefined,
+      name: course.name,
+      description: course.description || undefined,
+      duration: course.duration || undefined,
+      thesis: course.thesis || undefined,
+      format: course.format || undefined,
+      price: course.price || undefined,
     },
   });
 
-  async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
+  async function onEditSubmit(values: z.infer<typeof formSchema>) {
     console.log('values ... ', values);
 
-    let imagePath = null;
-    let publicUrl = null;
-
-    if (award.source && values.picture) {
-      console.log('current award picture ... ', award.source);
-
-      const imageNameString = award.source.split('/');
-
-      console.log('image Name String ... ', imageNameString);
-
-      console.log('selected photo file ... ', values.picture);
-
-      const photoRemove = await supabase.storage
-        .from('awards')
-        .remove([imageNameString.slice(-1)[0]]);
-
-      photoRemove.error &&
-        console.log('photo Remove error ... ', photoRemove.error.message);
-
-      photoRemove.data &&
-        console.log('photo Remove data... ', photoRemove.data);
-
-      const fileName = values.title ? slugify(values.title) : 'failNameString';
-      console.log('photo is...', values.picture);
-      console.log('photo name is...', values.picture?.name);
-
-      const photoUdate = await supabase.storage
-        .from('awards')
-        .upload(`award_${fileName}`, values.picture, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      photoUdate.error &&
-        console.log('photo update error ... ', photoUdate.error.message);
-
-      imagePath = photoUdate.data?.path;
-      console.log('image path ... ', imagePath);
-    }
-
-    if (award.source && !values.picture) {
-      imagePath = award.source;
-      publicUrl = award.source;
-    }
-
-    !publicUrl &&
-      imagePath &&
-      (publicUrl = supabase.storage.from('awards').getPublicUrl(imagePath)
-        .data.publicUrl);
-
-    console.log('public URL is ...', publicUrl);
-
     const { data, error } = await supabase
-      .from('Awards')
+      .from('Courses')
       .update({
-        source: publicUrl,
+        name: values.name,
+        description: values.description,
+        duration: values.duration,
+        format: values.format,
+        thesis: values.thesis,
+        price: values.price,
       })
-      .eq('id', award.id)
+      .eq('id', course.id)
       .select('*')
       .single();
 
     error && window.alert(error.message);
-    data && window.alert(`награда ${data.title} успешно обновлена`);
-    data && router.reload();
-  }
+    data && window.alert(`Курс ${data.name} успешно обновлён`);
 
-  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const imageInput = event.target;
-    const pImage = photoImage.current;
+    const purgeLectors = await supabase
+      .from('Lectors_Courses')
+      .delete()
+      .eq('course_id', course.id);
 
-    if (imageInput.files) {
-      const file = imageInput.files[0];
-      if (file) {
-        pImage && (pImage.src = URL.createObjectURL(file));
-      }
+    !purgeLectors.error && console.log('old lectors deleted');
+
+    if (data) {
+      const coursesLectorsArray = values.lectors.map((lector) => {
+        const lectorID = parseInt(lector.value);
+        const courseID = data?.id;
+
+        return {
+          lector_id: lectorID,
+          course_id: courseID,
+        };
+      });
+
+      const lectorsData = await supabase
+        .from('Lectors_Courses')
+        .insert(coursesLectorsArray)
+        .select('*');
+      lectorsData.error && window.alert(lectorsData.error.message);
+      lectorsData.data &&
+        window.alert(`Лекторы успешно добавлены к тайтлу ${data.name} `);
     }
+
+    data && router.reload();
   }
 
   return (
@@ -287,47 +373,154 @@ function AwardEditForm(award: AwardsType) {
         >
           <FormField
             control={form.control}
-            name='picture'
-            render={({ field: { value, onChange, ...fieldProps } }) => (
+            name='name'
+            render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Award Picture</FormLabel>
+                <FormLabel>Course Name</FormLabel>
                 <FormControl>
-                  <Input
-                    aria-label={'author photo'}
-                    id='photo'
-                    type='file'
-                    {...fieldProps}
-                    onChange={(event) => {
-                      onImageInputChange(event);
-                      return onChange(
-                        event.target.files && event.target.files[0]
-                      );
-                    }}
-                  />
+                  <Input placeholder='some Name' {...field} />
                 </FormControl>
                 <FormMessage />
-                <img
-                  className='max-w-72'
-                  ref={photoImage}
-                  src={newPhoto || award.source || ''}
-                  alt='photo image'
-                />
               </FormItem>
             )}
           />
 
-          <Button
-            type='submit'
-            variant={'outline'}
-            size={'default'}
-            className='w-full max-w-48'
-          >
-            Обновить
-          </Button>
+          <FormField
+            control={form.control}
+            name='lectors'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lectors</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course description</FormLabel>
+                <FormControl>
+                  <Input placeholder='some description' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='duration'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course duration</FormLabel>
+                <FormControl>
+                  <Input placeholder='some duration' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='format'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course format</FormLabel>
+                <FormControl>
+                  <Input placeholder='some format' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='thesis'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course thesis</FormLabel>
+                <FormControl>
+                  <Input placeholder='some thesis' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className='flex flex-row gap-4 justify-between'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
+
+            <DeleteDialog deleteFunction={deleteCourse} itemID={course.id} />
+          </div>
         </form>
       </Form>
     </div>
   );
 }
 
-export { AwardForm, AwardEditForm };
+const deleteCourse = async (courseID: number) => {
+  let success = false;
+
+  const lectorsDelete = await supabase
+    .from('Lectors_Courses')
+    .delete()
+    .eq('course_id', courseID);
+
+  const { error } = await supabase.from('Courses').delete().eq('id', courseID);
+
+  error && window.alert(error.message);
+  !error &&
+    !lectorsDelete.error &&
+    (success = true) &&
+    window.alert(`Курс номер ${courseID} успешно удалён`);
+
+  return success;
+};
+
+export { CourseForm, CourseEditForm };
