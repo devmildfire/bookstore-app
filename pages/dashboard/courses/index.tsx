@@ -14,13 +14,17 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
+import { AwardEditForm, AwardForm } from '@/components/DashBoardPage/AwardForm';
 import {
   CourseEditForm,
   CourseForm,
 } from '@/components/DashBoardPage/CourseForm';
-import { LectorsType } from '@/components/DashBoardPage/LectorForm';
 
 export type CoursesType = Database['public']['Tables']['Courses']['Row'];
+export type LectorsType = {
+  id: number;
+  name: string;
+};
 
 const CoursesList = () => {
   const [courses, setCourses] = useState<CoursesType[]>();
@@ -41,7 +45,7 @@ const CoursesList = () => {
     data && console.log('lectors data ... ', data);
     error && alert(error);
 
-    data && setLectors(data);
+    data && setLectors(data as LectorsType[]);
   }
 
   useEffect(() => {

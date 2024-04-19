@@ -17,9 +17,8 @@ import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import slugify from 'slugify';
-import { CoursesType } from 'pages/dashboard/courses';
+import { CoursesType, LectorsType } from 'pages/dashboard/courses';
 import DeleteDialog from './DeleteDialog';
-import { LectorsType } from './LectorForm';
 
 const lectorsOptionSchema = z.object({
   label: z.string(),
