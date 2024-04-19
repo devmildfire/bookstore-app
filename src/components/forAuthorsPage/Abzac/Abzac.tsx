@@ -60,12 +60,12 @@ const Abzac = (): React.ReactElement => {
 
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
+      <Trailer />
+      <Curriculum />
       <StaffEnrollDiv>
         <Staff />
         <Enrollment />
       </StaffEnrollDiv>
-      <Trailer />
-      <Curriculum />
     </AbzacDiv>
   );
 };
@@ -122,6 +122,7 @@ const Curriculum = (): React.ReactElement => {
                 about={course.about ? course.about : ''}
                 teacher={course.lector}
                 key={'title' + course.key}
+                price={course.price}
               />
             </Accordion.Trigger>
             {/* <AnimatedAccordionContent className='AccordionContent'> */}
@@ -154,16 +155,31 @@ interface CourseCardProps {
   price?: number;
 }
 
+// const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
+//   const { teacher, title, about } = props;
+//   return (
+//     <CourseCardTitleDiv>
+//       <Text variant='courseBig'>{teacher?.name}</Text>
+//       <CourseTextTitleDiv>
+//         <Text variant='courseBig'>{title}</Text>
+
+//         {about && <Text variant='abzacCardText'>{about}</Text>}
+//       </CourseTextTitleDiv>
+//       <ArrowDown />
+//     </CourseCardTitleDiv>
+//   );
+// };
+
 const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
-  const { teacher, title, about } = props;
+  const { price, title, about } = props;
   return (
     <CourseCardTitleDiv>
-      <Text variant='courseBig'>{teacher?.name}</Text>
       <CourseTextTitleDiv>
         <Text variant='courseBig'>{title}</Text>
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
       </CourseTextTitleDiv>
+      <Text variant='courseBig'>{price + ' \u20BD'}</Text>
       <ArrowDown />
     </CourseCardTitleDiv>
   );

@@ -12,6 +12,7 @@ export interface Database {
       Audiobooks: {
         Row: {
           counter_color: string | null
+          demo: string | null
           discount: number | null
           duration: number | null
           extra: string | null
@@ -27,6 +28,7 @@ export interface Database {
         }
         Insert: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           duration?: number | null
           extra?: string | null
@@ -42,6 +44,7 @@ export interface Database {
         }
         Update: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           duration?: number | null
           extra?: string | null
@@ -204,6 +207,8 @@ export interface Database {
       }
       CardBooks: {
         Row: {
+          counter_color: string | null
+          demo: string | null
           discount: number | null
           extra: string | null
           id: number
@@ -212,9 +217,12 @@ export interface Database {
           publish_date: string | null
           release_date: string | null
           sold: number | null
+          sold_out: boolean | null
           title_id: number
         }
         Insert: {
+          counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -223,9 +231,12 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id: number
         }
         Update: {
+          counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -234,6 +245,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id?: number
         }
         Relationships: [
@@ -282,30 +294,27 @@ export interface Database {
       Courses: {
         Row: {
           description: string | null
-          duration: number | null
+          duration: string | null
           format: string | null
           id: number
-          lecctor: string | null
           name: string
           price: number | null
           thesis: string | null
         }
         Insert: {
           description?: string | null
-          duration?: number | null
+          duration?: string | null
           format?: string | null
           id?: number
-          lecctor?: string | null
           name: string
           price?: number | null
           thesis?: string | null
         }
         Update: {
           description?: string | null
-          duration?: number | null
+          duration?: string | null
           format?: string | null
           id?: number
-          lecctor?: string | null
           name?: string
           price?: number | null
           thesis?: string | null
@@ -316,6 +325,7 @@ export interface Database {
         Row: {
           characters: number | null
           counter_color: string | null
+          demo: string | null
           discount: number | null
           extra: string | null
           file_volume: number | null
@@ -332,6 +342,7 @@ export interface Database {
         Insert: {
           characters?: number | null
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           file_volume?: number | null
@@ -348,6 +359,7 @@ export interface Database {
         Update: {
           characters?: number | null
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           file_volume?: number | null
@@ -410,31 +422,85 @@ export interface Database {
         }
         Relationships: []
       }
-      MagazineArticles: {
+      Lectors: {
         Row: {
-          author_id: number | null
+          bio: string
           id: number
-          picture: string | null
-          title: string | null
-          url: string | null
+          name: string
+          photo: string
         }
         Insert: {
-          author_id?: number | null
+          bio?: string
           id?: number
-          picture?: string | null
-          title?: string | null
-          url?: string | null
+          name?: string
+          photo?: string
         }
         Update: {
-          author_id?: number | null
+          bio?: string
           id?: number
-          picture?: string | null
-          title?: string | null
-          url?: string | null
+          name?: string
+          photo?: string
+        }
+        Relationships: []
+      }
+      Lectors_Courses: {
+        Row: {
+          course_id: number
+          lector_id: number
+        }
+        Insert: {
+          course_id: number
+          lector_id: number
+        }
+        Update: {
+          course_id?: number
+          lector_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "magazinearticles_author_id_fkey"
+            foreignKeyName: "Lectors_Courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "Courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Lectors_Courses_lector_id_fkey"
+            columns: ["lector_id"]
+            isOneToOne: false
+            referencedRelation: "Lectors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      MagazineArticles: {
+        Row: {
+          author_id: number | null
+          date: string | null
+          id: number
+          picture: string | null
+          text: string | null
+          title: string | null
+        }
+        Insert: {
+          author_id?: number | null
+          date?: string | null
+          id?: number
+          picture?: string | null
+          text?: string | null
+          title?: string | null
+        }
+        Update: {
+          author_id?: number | null
+          date?: string | null
+          id?: number
+          picture?: string | null
+          text?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "MagazineArticles_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "Authors"
@@ -523,6 +589,7 @@ export interface Database {
         Row: {
           blurHash: string | null
           caption: string | null
+          category: Database["public"]["Enums"]["category"] | null
           id: number
           source: string
           title_id: number
@@ -530,6 +597,7 @@ export interface Database {
         Insert: {
           blurHash?: string | null
           caption?: string | null
+          category?: Database["public"]["Enums"]["category"] | null
           id?: number
           source: string
           title_id: number
@@ -537,13 +605,14 @@ export interface Database {
         Update: {
           blurHash?: string | null
           caption?: string | null
+          category?: Database["public"]["Enums"]["category"] | null
           id?: number
           source?: string
           title_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "photos_title_id_fkey"
+            foreignKeyName: "Photos_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "Titles"
@@ -554,6 +623,7 @@ export interface Database {
       PrintedBooks: {
         Row: {
           counter_color: string | null
+          demo: string | null
           discount: number | null
           extra: string | null
           id: number
@@ -565,10 +635,12 @@ export interface Database {
           publish_date: string | null
           release_date: string | null
           sold: number | null
+          sold_out: boolean | null
           title_id: number
         }
         Insert: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -580,10 +652,12 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id: number
         }
         Update: {
           counter_color?: string | null
+          demo?: string | null
           discount?: number | null
           extra?: string | null
           id?: number
@@ -595,6 +669,7 @@ export interface Database {
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
+          sold_out?: boolean | null
           title_id?: number
         }
         Relationships: [
@@ -764,6 +839,7 @@ export interface Database {
         Row: {
           age_restriction: number | null
           cover: string | null
+          demo: string | null
           description: string | null
           first_release: string | null
           id: number
@@ -776,6 +852,7 @@ export interface Database {
         Insert: {
           age_restriction?: number | null
           cover?: string | null
+          demo?: string | null
           description?: string | null
           first_release?: string | null
           id?: number
@@ -788,6 +865,7 @@ export interface Database {
         Update: {
           age_restriction?: number | null
           cover?: string | null
+          demo?: string | null
           description?: string | null
           first_release?: string | null
           id?: number
@@ -927,7 +1005,12 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_types: {
+        Args: {
+          enum_type: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       audiobookext:

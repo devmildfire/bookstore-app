@@ -47,7 +47,9 @@ const AbzacDiv = styled.div`
   flex-direction: column;
   gap: 150px;
 
-  --padding-top: 100px;
+  /* --padding-top: 100px; */
+  --padding-top: 0px;
+
   // --padding-sides: 96px;
   --padding-sides: 0px;
   --padding-bottom: 200px;
@@ -55,21 +57,24 @@ const AbzacDiv = styled.div`
   padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
 
   @media ${breakPoints.xl} {
-    --padding-top: 100px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 96px;
     --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media screen and (max-width: 1200px) {
-    --padding-top: 80px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 58px;
     --padding-sides: 0px;
     --padding-bottom: 120px;
   }
 
   @media ${breakPoints.lg} {
-    --padding-top: 80px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 52px;
     --padding-sides: 0px;
     --padding-bottom: 120px;
@@ -78,7 +83,8 @@ const AbzacDiv = styled.div`
   }
 
   @media ${breakPoints.md} {
-    --padding-top: 39px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 36px;
     --padding-sides: 0px;
     --padding-bottom: 50px;
@@ -133,6 +139,8 @@ const TeacherPic = styled.img`
   height: var(--size);
 
   filter: grayscale(100);
+  transition: all 0.3s;
+
   :hover {
     filter: grayscale(0);
   }
@@ -417,10 +425,10 @@ const CourseTextTitleDiv = styled.div`
   justify-content: space-around;
   flex-direction: column;
   gap: 8px;
-  align-items: end;
-  text-align: right;
+  align-items: start;
+  text-align: left;
 
-  flex-grow: 1;
+  /* flex-grow: 1; */
 
   @media ${breakPoints.xl} {
   }
