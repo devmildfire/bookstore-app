@@ -110,7 +110,7 @@ const EditAuthor: React.FC<Props> = ({ author, save }) => {
           <Button variant='outline' size='sm' onClick={discard}>
             Отменить
           </Button>
-          <Button size='sm' onClick={save}>
+          <Button size='sm' onClick={onSave}>
             Сохранить
           </Button>
         </div>

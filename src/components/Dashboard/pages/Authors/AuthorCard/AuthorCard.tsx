@@ -39,7 +39,7 @@ const AuthorCard: React.FC<AuthorCard> = ({
         <ContextMenuTrigger>
           <div className='overflow-hidden rounded-md'>
             <Link href={navigateTo}>
-              <Image
+              {author.photo && <Image
                 src={author.photo}
                 alt={author.name}
                 width={width}
@@ -48,7 +48,7 @@ const AuthorCard: React.FC<AuthorCard> = ({
                   'h-full w-full object-cover transition-all hover:scale-105',
                   aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'
                 )}
-              />
+              />}
             </Link>
           </div>
         </ContextMenuTrigger>

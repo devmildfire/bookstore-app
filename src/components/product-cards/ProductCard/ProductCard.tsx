@@ -23,7 +23,7 @@ export interface ProductCardProps extends Title {
 }
 
 function ProductCard(props: ProductCardProps) {
-  const { price, discount, cover, name, onClick, onEnterKey, authors, types } =
+  const { prices, discount, cover, name, onClick, onEnterKey, authors, types } =
     props;
   const { handleModalState, handleOpenModal } = useModal();
 
@@ -31,8 +31,8 @@ function ProductCard(props: ProductCardProps) {
     handleModalState({
       cover,
       name,
-      // price: Math.min(...price),
-      price,
+      // FIXME: цены сломались
+      price: [300],
       discount,
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
@@ -55,7 +55,8 @@ function ProductCard(props: ProductCardProps) {
       />
       <Footer>
         <PriceContainer>
-          <Price>{`${Math.min(...price)}₽`}</Price>
+        {/* FIXME: цены сломались */}
+          <Price>{`300₽`}</Price>
           {/* <OldPrice discount>{newPrice && `${price}₽`}</OldPrice> */}
         </PriceContainer>
         <ButtonsContainer>
