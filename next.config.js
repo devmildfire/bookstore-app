@@ -41,6 +41,7 @@ const options = {
       },
     ],
   },
+output: 'standalone',
 };
 
 module.exports = options;

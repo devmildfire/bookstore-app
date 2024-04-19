@@ -14,46 +14,45 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import {
-  AuthorEditForm,
-  AuthorForm,
-} from '@/components/DashBoardPage/AuthorForm';
+  LectorEditForm,
+  LectorForm,
+  LectorsType,
+} from '@/components/DashBoardPage/LectorForm';
 
-export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
+const Lectorslist = () => {
+  const [lectors, setLectors] = useState<LectorsType[]>();
 
-const Authorslist = () => {
-  const [authors, setAuthors] = useState<AuthorsType[]>();
+  async function getLectors() {
+    const { data, error } = await supabase.from('Lectors').select('*');
 
-  async function getAuthors() {
-    const { data, error } = await supabase.from('Authors').select('*');
-
-    data && console.log('authors data ... ', data);
+    data && console.log('lectors data ... ', data);
     error && alert(error);
 
-    data && setAuthors(data);
+    data && setLectors(data);
   }
 
   useEffect(() => {
-    getAuthors();
+    getLectors();
   }, []);
 
-  if (!authors) {
-    return <div>zero authors found in database</div>;
+  if (!lectors) {
+    return <div>zero lectors found in database</div>;
   }
 
   return (
     <div className='w-full'>
-      <Text variant='h3c'> Authors </Text>
+      <Text variant='h3c'> Lectors </Text>
 
       <Accordion type='single' collapsible className='w-full'>
-        {authors.map((author) => (
+        {lectors.map((lector) => (
           <AccordionItem
-            value={`item-${author.id}`}
-            key={author.id}
+            value={`item-${lector.id}`}
+            key={lector.id}
             className='w-full'
           >
-            <AccordionTrigger> {author.name} </AccordionTrigger>
+            <AccordionTrigger> {lector.name} </AccordionTrigger>
             <AccordionContent>
-              <AuthorEditForm {...author} />
+              {lector && <LectorEditForm {...lector} />}
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -71,15 +70,7 @@ const Authorslist = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <AuthorForm
-              defaultName='sdfdsfsdf'
-              defaultBio='sdfdsfsdf'
-              defaultBirthDate={new Date('2022-03-25')}
-              defaultDeathDate={new Date('2022-03-25')}
-              defaultCity='sdfdsfsdfsd'
-              // defaultPhoto='sdfsdfdsf'
-              defaultPhrase='sdfsdfsdf'
-            />
+            <LectorForm />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -87,7 +78,7 @@ const Authorslist = () => {
   );
 };
 
-function Authors(): React.ReactElement {
+function Lectors(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
 
@@ -113,12 +104,11 @@ function Authors(): React.ReactElement {
     <DashMain>
       <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
         <DashNav />
-        <Authorslist />
+        <Lectorslist />
         {session && <LogOut session={session} />}
       </div>
     </DashMain>
   );
 }
 
-// export { Authors };
-export default Authors;
+export default Lectors;

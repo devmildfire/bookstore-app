@@ -314,16 +314,25 @@ export type DateTimePickerRef = {
   state: DatePickerState;
 };
 
-export type DatePickerProps = DatePickerStateOptions<DateValue> & {
-  jsDate?: Date | null;
-  onJsDateChange?: (date: Date) => void;
-  showClearButton?: boolean;
-  onNull?: () => void;
-};
-
-const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
+const DateTimePicker = React.forwardRef<
+  DateTimePickerRef,
+  DatePickerStateOptions<DateValue> & {
+    jsDate?: Date | null;
+    onJsDateChange?: (date: Date) => void;
+    showClearButton?: boolean;
+    onNull?: () => void;
+    ariaLabel?: string;
+  }
+>(
   (
-    { jsDate, onJsDateChange, onNull, showClearButton = true, ...props },
+    {
+      jsDate,
+      onJsDateChange,
+      onNull,
+      ariaLabel,
+      showClearButton = true,
+      ...props
+    },
     ref
   ) => {
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -340,6 +349,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
       jsDate: jsDatetime,
       state,
     }));
+
     const {
       groupProps,
       fieldProps,
@@ -376,6 +386,7 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
         onJsDateChange?.(date);
       }
     }, [state.value, onJsDateChange]);
+
     return (
       <div
         {...groupProps}
@@ -384,6 +395,8 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
           groupProps.className,
           'flex items-center rounded-md border ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'
         )}
+        // aria-label='date-label'
+        aria-label={ariaLabel}
       >
         <Popover open={props.isOpen} onOpenChange={props.onOpenChange}>
           <PopoverTrigger asChild>
@@ -406,12 +419,17 @@ const DateTimePicker = React.forwardRef<DateTimePickerRef, DatePickerProps>(
                 <TimeField
                   value={state.timeValue}
                   onChange={state.setTimeValue}
+                  aria-label='date-timelabel'
                 />
               )}
             </div>
           </PopoverContent>
         </Popover>
-        <DateField {...fieldProps} value={currentValue()} />
+        <DateField
+          {...fieldProps}
+          value={currentValue()}
+          aria-label='date-fieldlabel'
+        />
         <div className={cn('-ml-2 mr-2 h-5 w-5', !showClearButton && 'hidden')}>
           <X
             className={cn(

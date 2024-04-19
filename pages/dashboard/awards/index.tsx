@@ -100,7 +100,7 @@ function Awards(): React.ReactElement {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
     <DashMain>

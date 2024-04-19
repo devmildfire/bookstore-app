@@ -138,7 +138,7 @@ function Titles(): React.ReactElement {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
     <DashMain>

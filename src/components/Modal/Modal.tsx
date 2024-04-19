@@ -404,9 +404,9 @@ type EditionsShownMap = {
 
 const editions: EditionsShownMap = {
   PrintedBooks: 'Печатное издание',
-  Ebooks: 'Книга 2.0',
-  Audiobooks: 'Цифровое издание',
-  CardBooks: 'Аудиокнига',
+  Ebooks: 'Цифровое издание',
+  Audiobooks: 'Аудиокнига',
+  CardBooks: 'Книга 2.0',
 };
 
 const bookTypes: EditionsMap = {
