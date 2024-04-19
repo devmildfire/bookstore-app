@@ -15,7 +15,7 @@ const Oferta = styled.div`
   text-align: left;
 `;
 
-function useOnScreen(ref: RefObject<Element>, rootMargin = '0px') {
+function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
 
   useEffect(() => {

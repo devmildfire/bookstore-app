@@ -61,7 +61,7 @@ const BookPage = ({ book }: BookPageProps): React.ReactElement => {
     <PageLayout headTitle={book.name}>
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
-        <BookProperties {...book} />
+        {/* <BookProperties {...book} /> */}
         <BookTrailer src={book.trailer} title={book.name} />
         <BookAuthor authors={book.authors} />
         {/* <SimilarBooks /> */}
