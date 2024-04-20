@@ -133,12 +133,18 @@ const StyledContDiv = styled(ContactsDiv)`
     justify-content: start;
     align-items: center;
     gap: 1.2vw;
-    /* transition: all 0.6s ease-in-out; */
+    transition: all 0.3s ease-in-out;
+
+    svg {
+      color: var(--main-white-100);
+      stroke: var(--main-white-100);
+    }
 
     :hover {
       p,
       svg {
         color: var(--main-red-100);
+        stroke: var(--main-red-100);
         transition: all 0.3s ease-in-out;
       }
     }
