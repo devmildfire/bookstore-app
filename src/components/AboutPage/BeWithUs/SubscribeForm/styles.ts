@@ -64,8 +64,9 @@ export const StyledButton = styled(Button)`
   }
 
   @media ${breakPoints.sm} {
-    width: 150px;
-    max-width: var(--width);
+    /* max-width: var(--width); */
+    max-width: 240px;
+    width: 100%;
     min-width: 150px;
     height: 40px;
     min-height: 32px;

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
-import { Router } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 import useToggle from '@/hooks/useToggle';
@@ -17,7 +17,7 @@ import { AppPropsWithLayout } from '@/types/page';
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
-  console.log(pageProps)
+  console.log(pageProps);
   const { value, toggleOff, toggleOn } = useToggle();
   const getLayout = Component.getLayout ?? ((page) => page);
 

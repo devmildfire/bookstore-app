@@ -80,10 +80,10 @@ const menu: MenuItem[] = [
   //   title: 'Партнёрам',
   //   link: '/for-partners',
   // },
-  // {
-  //   title: 'Контакты',
-  //   link: '/not-found',
-  // },
+  {
+    title: 'Контакты',
+    link: '/contacts',
+  },
 ];
 
 const subMenu: MenuItem[] = [

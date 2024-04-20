@@ -285,9 +285,10 @@ const StyledInput = styled(Input)`
   }
 
   @media ${breakPoints.sm} {
-    width: 150px;
+    /* width: 150px; */
     height: 32px;
-    max-width: var(--width);
+    /* max-width: var(--width); */
+    max-width: 240px;
     padding: 0px 6px;
     margin: 0 auto;
     font-size: 10px;
