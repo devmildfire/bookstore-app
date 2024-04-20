@@ -36,6 +36,9 @@ import { supabase } from 'api/supabase-client';
 import { LectorsType } from '@/components/DashBoardPage/LectorForm';
 import { CoursesType } from 'pages/dashboard/courses';
 import { QueryData } from '@supabase/supabase-js';
+import { CartItemType } from 'pages/api/cart';
+import { postData } from '@/utils/postData';
+import { setOrGetCartCookie } from '@/utils/cardID';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -43,6 +46,36 @@ import { QueryData } from '@supabase/supabase-js';
  * применения с динамическим роутингом
  *
  */
+
+type CourseAddProps = {
+  name: string;
+  lector: string;
+  price: number;
+  discount: number;
+};
+
+async function addCourseToCart({
+  name,
+  lector,
+  price,
+  discount,
+}: CourseAddProps) {
+  const item: CartItemType = {
+    id: setOrGetCartCookie()!.toString(),
+    name: name,
+    category: 'Course',
+    quantity: 1,
+    price: price,
+    discount: discount,
+    subtitle: lector,
+    picture: abzacLogo320.src,
+  };
+
+  const addedItem: CartItemType = await postData(`/api/cart`, {
+    oper: 'update',
+    item: item,
+  });
+}
 
 const CoursesWithLectorsQuery = supabase
   .from('Courses')
@@ -219,21 +252,33 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
       </CourseTextTitleDiv>
-      <Text variant='courseBig'>
-        {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
-      </Text>
-      {discount > 0 && (
-        <DiscountPrice className='discPrice' variant='courseBig'>
-          {price + ' \u20BD'}
-        </DiscountPrice>
-      )}
-      <ArrowDown />
+      <div className='flex flex-row gap-7'>
+        <Text variant='courseBig'>
+          {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
+        </Text>
+        {discount > 0 && (
+          <DiscountPrice className='discPrice' variant='courseBig'>
+            {price + ' \u20BD'}
+          </DiscountPrice>
+        )}
+        <ArrowDown />
+      </div>
     </CourseCardTitleDiv>
   );
 };
 
 const CourseCard = (props: CourseCardProps): React.ReactElement => {
-  const { format, teachers, duration, price, discount } = props;
+  const { title, format, teachers, duration, price, discount } = props;
+
+  const letorsString =
+    teachers && teachers.length > 1
+      ? teachers
+          .map((teacher) => {
+            return teacher?.name || '';
+          })
+          .join(', ')
+      : teachers[0]?.name || '';
+
   return (
     <CourseCardDiv>
       <CourseTextDiv>
@@ -267,7 +312,18 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
           </Text>
         )} */}
         <ButtonsDiv>
-          <StyledButton className='cartButton' type='button'>
+          <StyledButton
+            className='cartButton'
+            type='button'
+            onClick={() => {
+              addCourseToCart({
+                name: title,
+                lector: letorsString,
+                price: price,
+                discount: discount,
+              });
+            }}
+          >
             Добавить в корзину
           </StyledButton>
           <CartPlusOne />

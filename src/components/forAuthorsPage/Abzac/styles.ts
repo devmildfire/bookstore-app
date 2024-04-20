@@ -268,7 +268,7 @@ const CourseCardTitleDiv = styled.div`
   }
 
   > h4 {
-    flex-grow: 1;
+    /* flex-grow: 1; */
     text-align: right;
 
     @media ${breakPoints.sm} {
@@ -533,9 +533,7 @@ const CoursePriceDiv = styled.div`
 
 const DiscountPrice = styled(Text)`
   color: var(--main-red-100);
-  font-size: clamp(10px, 2vw, 20px);
   position: relative;
-  /* text-decoration: line-through; */
 
   ::before {
     content: '';
@@ -544,8 +542,8 @@ const DiscountPrice = styled(Text)`
     top: 50%;
     left: 0;
     background-color: var(--main-red-100);
-    transform: translate(5%, 30%) rotate(-15deg);
-    width: 90%;
+    transform: translate(0%, -100%) rotate(-15deg);
+    width: 100%;
     height: 2px;
   }
   @media ${breakPoints.sm} {
