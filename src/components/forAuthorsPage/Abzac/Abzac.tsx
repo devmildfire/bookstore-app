@@ -39,6 +39,7 @@ import { QueryData } from '@supabase/supabase-js';
 import { CartItemType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 import { setOrGetCartCookie } from '@/utils/cardID';
+import Link from 'next/link';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -270,6 +271,27 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
 const CourseCard = (props: CourseCardProps): React.ReactElement => {
   const { title, format, teachers, duration, price, discount } = props;
 
+  const [courseIsInTheCart, setCourseIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (courseName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', courseName);
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setCourseIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    checkTheCart(title);
+  }, [buttonClicked]);
+
   const letorsString =
     teachers && teachers.length > 1
       ? teachers
@@ -312,20 +334,30 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
           </Text>
         )} */}
         <ButtonsDiv>
-          <StyledButton
-            className='cartButton'
-            type='button'
-            onClick={() => {
-              addCourseToCart({
-                name: title,
-                lector: letorsString,
-                price: price,
-                discount: discount,
-              });
-            }}
-          >
-            Добавить в корзину
-          </StyledButton>
+          {!courseIsInTheCart && !buttonClicked && (
+            <StyledButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addCourseToCart({
+                  name: title,
+                  lector: letorsString,
+                  price: price,
+                  discount: discount,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </StyledButton>
+          )}
+
+          {(courseIsInTheCart || buttonClicked) && (
+            <Link href={'/cart'} className='hover:underline text-red-800'>
+              курс уже в корзине
+            </Link>
+          )}
+
           <CartPlusOne />
         </ButtonsDiv>
       </CoursePriceDiv>
