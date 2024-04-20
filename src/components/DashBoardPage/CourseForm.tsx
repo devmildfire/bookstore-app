@@ -44,6 +44,10 @@ const formSchema = z.object({
     message: 'thesis  must be at least 3 characters long.',
   }),
   price: z.number().positive('must be positive'),
+  discount: z
+    .number()
+    .gte(0, 'discount must be 0% or more')
+    .max(100, 'maximum discount is 100%'),
 });
 
 type CourseFormProps = {
@@ -62,12 +66,13 @@ function CourseForm({ lectors }: CourseFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: 'Some course',
-      description: 'some course description',
-      duration: 'шестнадцать часовых и три двухчасовых занятия',
-      format: 'видеолекции',
-      thesis: 'some thesis',
-      price: 1234,
+      name: '',
+      description: '',
+      duration: '',
+      format: '',
+      thesis: '',
+      price: 1000,
+      discount: 0,
     },
   });
 
@@ -83,6 +88,7 @@ function CourseForm({ lectors }: CourseFormProps) {
         format: values.format,
         thesis: values.thesis,
         price: values.price,
+        discount: values.discount,
       })
       .select('*')
       .single();
@@ -116,6 +122,7 @@ function CourseForm({ lectors }: CourseFormProps) {
         lectors: [],
         price: 0,
         duration: undefined,
+        discount: 0,
       });
 
       router.reload();
@@ -244,6 +251,28 @@ function CourseForm({ lectors }: CourseFormProps) {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    max={100}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             type='submit'
             variant={'outline'}
@@ -311,6 +340,7 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
       thesis: course.thesis || undefined,
       format: course.format || undefined,
       price: course.price || undefined,
+      discount: course.discount,
     },
   });
 
@@ -326,6 +356,7 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
         format: values.format,
         thesis: values.thesis,
         price: values.price,
+        discount: values.discount,
       })
       .eq('id', course.id)
       .select('*')
@@ -475,6 +506,28 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
                   <Input
                     type='number'
                     min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    max={100}
                     {...field}
                     onChange={(value) =>
                       field.onChange(value.target.valueAsNumber)

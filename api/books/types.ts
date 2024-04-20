@@ -294,6 +294,7 @@ export interface Database {
       Courses: {
         Row: {
           description: string | null
+          discount: number
           duration: string | null
           format: string | null
           id: number
@@ -303,6 +304,7 @@ export interface Database {
         }
         Insert: {
           description?: string | null
+          discount?: number
           duration?: string | null
           format?: string | null
           id?: number
@@ -312,6 +314,7 @@ export interface Database {
         }
         Update: {
           description?: string | null
+          discount?: number
           duration?: string | null
           format?: string | null
           id?: number
