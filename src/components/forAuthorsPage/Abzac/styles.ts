@@ -534,6 +534,7 @@ const CoursePriceDiv = styled.div`
 
 const DiscountPrice = styled(Text)`
   color: var(--main-red-100);
+  height: max-content;
   position: relative;
 
   ::before {
@@ -543,9 +544,9 @@ const DiscountPrice = styled(Text)`
     top: 50%;
     left: 0;
     background-color: var(--main-red-100);
-    transform: translate(0%, -100%) rotate(-15deg);
+    transform: translate(0%, 0%) rotate(-15deg);
     width: 100%;
-    height: 2px;
+    height: 3px;
   }
   @media ${breakPoints.sm} {
     order: 1;

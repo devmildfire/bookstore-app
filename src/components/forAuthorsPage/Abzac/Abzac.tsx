@@ -253,15 +253,17 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
       </CourseTextTitleDiv>
-      <div className='flex flex-row gap-7'>
-        <Text variant='courseBig'>
-          {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
-        </Text>
-        {discount > 0 && (
-          <DiscountPrice className='discPrice' variant='courseBig'>
-            {price + ' \u20BD'}
-          </DiscountPrice>
-        )}
+      <div className='flex flex-row gap-5'>
+        <div className='flex flex-col md:flex-row md:gap-5'>
+          <Text variant='courseBig'>
+            {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
+          </Text>
+          {discount > 0 && (
+            <DiscountPrice className='discPrice' variant='courseBig'>
+              {price + ' \u20BD'}
+            </DiscountPrice>
+          )}
+        </div>
         <ArrowDown className='hover:text-red-800 duration-300' />
       </div>
     </CourseCardTitleDiv>
