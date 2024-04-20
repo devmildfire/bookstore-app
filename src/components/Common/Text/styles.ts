@@ -732,7 +732,7 @@ const sideNavTitleStyle = css<StyledTextProps>`
 const courseTitleStyle = css<StyledTextProps>`
   ${h41Style}
   font-weight: ${(props) => props.fontWeight || 700};
-  font-size: 30px;
+  font-size: 24px;
 
   @media ${breakPoints.xl} {
     font-size: 24px;

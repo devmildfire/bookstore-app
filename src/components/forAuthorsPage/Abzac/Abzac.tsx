@@ -1,14 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
 import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
-import { staff, Teacher } from './Staf';
 import Text from '@/components/Common/Text';
-import { curriculum } from './Curriculum';
-import setUUIDField from '@/utils/setUUIDField';
 import {
   AbzacDiv,
   AnimatedAccordionItem,
@@ -20,6 +17,7 @@ import {
   CoursesDiv,
   CourseTextDiv,
   CourseTextTitleDiv,
+  DiscountPrice,
   EnrollDiv,
   HeroDiv,
   ItemsDiv,
@@ -34,6 +32,14 @@ import {
 } from './styles';
 import Video from '@/components/Common/Video/Video';
 import * as Accordion from '@radix-ui/react-accordion';
+import { supabase } from 'api/supabase-client';
+import { LectorsType } from '@/components/DashBoardPage/LectorForm';
+import { CoursesType } from 'pages/dashboard/courses';
+import { QueryData } from '@supabase/supabase-js';
+import { CartItemType } from 'pages/api/cart';
+import { postData } from '@/utils/postData';
+import { setOrGetCartCookie } from '@/utils/cardID';
+import Link from 'next/link';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -42,10 +48,72 @@ import * as Accordion from '@radix-ui/react-accordion';
  *
  */
 
+type CourseAddProps = {
+  name: string;
+  lector: string;
+  price: number;
+  discount: number;
+};
+
+async function addCourseToCart({
+  name,
+  lector,
+  price,
+  discount,
+}: CourseAddProps) {
+  const item: CartItemType = {
+    id: setOrGetCartCookie()!.toString(),
+    name: name,
+    category: 'Course',
+    quantity: 1,
+    price: price,
+    discount: discount,
+    subtitle: lector,
+    picture: abzacLogo320.src,
+  };
+
+  const addedItem: CartItemType = await postData(`/api/cart`, {
+    oper: 'update',
+    item: item,
+  });
+}
+
+const CoursesWithLectorsQuery = supabase
+  .from('Courses')
+  .select(` *, lectors: Lectors_Courses( Lectors(*)) `);
+
+type CoursesWithLectorsType = QueryData<typeof CoursesWithLectorsQuery>;
+
+const getLectors = async () => {
+  const { data } = await supabase.from('Lectors').select('*');
+
+  return data || [];
+};
+
+const getCourses = async (): Promise<CoursesWithLectorsType> => {
+  const { data } = await CoursesWithLectorsQuery;
+
+  return data || [];
+};
+
 const firstPar =
   'Огромная литературная семья, включающая в себя писателей, читателей, редакторов, корректоров, верстальщиков, издателей, критиков, иллюстраторов и многих других, продолжает существовать несмотря ни на что. Сколько бы ни применяли к ней цензурных кнутов, какими бы ни закармливали пряниками поп-культуры — задушить её пока не удалось никому. А чтобы этого никому не удалось и впредь, мы открываем мастерскую Абзац, призванную объединять любителей литературы и давать им новые знания, навыки, возможности, и, что важнее прочего, — друг друга.';
 
 const Abzac = (): React.ReactElement => {
+  const [lectors, setLectors] = useState<LectorsType[]>();
+  const [courses, setCourses] = useState<CoursesWithLectorsType>();
+
+  const getData = async () => {
+    const lectors = await getLectors();
+    const courses = await getCourses();
+    lectors && setLectors(lectors);
+    courses && setCourses(courses);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <AbzacDiv>
       <HeroDiv>
@@ -60,31 +128,35 @@ const Abzac = (): React.ReactElement => {
 
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
+      <Trailer />
+      {courses && <Curriculum courses={courses} />}
       <StaffEnrollDiv>
-        <Staff />
+        {lectors && <Staff lectors={lectors} />}
         <Enrollment />
       </StaffEnrollDiv>
-      <Trailer />
-      <Curriculum />
     </AbzacDiv>
   );
 };
 
-const Staff = (): React.ReactElement => {
+type StaffProps = {
+  lectors: LectorsType[];
+};
+
+const Staff = ({ lectors }: StaffProps): React.ReactElement => {
   return (
     <TeachersDiv>
       <Text variant='h3_Abzac' align='start'>
         Преподаватели
       </Text>
-      {staff.map((item) => (
-        <TeachersCard teacher={item} key={item.name} />
+      {lectors.map((lector) => (
+        <TeachersCard teacher={lector} key={lector.name} />
       ))}
     </TeachersDiv>
   );
 };
 
 interface TeachersCardProps {
-  teacher: Teacher;
+  teacher: LectorsType;
 }
 
 const TeachersCard = (props: TeachersCardProps): React.ReactElement => {
@@ -94,15 +166,17 @@ const TeachersCard = (props: TeachersCardProps): React.ReactElement => {
       <TeacherPic src={teacher.photo} />
       <TextDiv>
         <Text variant='h4_Abzac'>{teacher.name}</Text>
-        <Text variant='abzacCardText'>{teacher.text}</Text>
+        <Text variant='abzacCardText'>{teacher.bio}</Text>
       </TextDiv>
     </CardDiv>
   );
 };
 
-const curriculumWID = setUUIDField(curriculum);
-
-const Curriculum = (): React.ReactElement => {
+const Curriculum = ({
+  courses,
+}: {
+  courses: CoursesWithLectorsType;
+}): React.ReactElement => {
   return (
     <CoursesDiv>
       <Text variant='h3_Abzac' align='start'>
@@ -110,113 +184,178 @@ const Curriculum = (): React.ReactElement => {
       </Text>
 
       <Accordion.Root type='single' defaultValue='item-value-0' collapsible>
-        {curriculumWID.map((course, index) => (
-          //  <Accordion.Item>
-          <AnimatedAccordionItem
-            value={'item-value-' + index}
-            key={'item-key-' + course.key}
-          >
-            <Accordion.Trigger className='AccordionTrigger'>
-              <CourseCardTitle
-                title={course.title}
-                about={course.about ? course.about : ''}
-                teacher={course.lector}
-                key={'title' + course.key}
-              />
-            </Accordion.Trigger>
-            {/* <AnimatedAccordionContent className='AccordionContent'> */}
-            <Accordion.Content className='AccordionContent'>
-              <CourseCard
-                format={course.format}
-                duration={course.duration}
-                price={course.price}
-                title={course.title}
-                teacher={course.lector}
-                key={course.key}
-              />
-            </Accordion.Content>
-            {/* </AnimatedAccordionContent> */}
-            <hr />
-            {/* </Accordion.Item> */}
-          </AnimatedAccordionItem>
-        ))}
+        {courses &&
+          courses.map((course, index) => (
+            //  <Accordion.Item>
+            <AnimatedAccordionItem
+              value={'item-value-' + index}
+              key={'item-key-' + course.id}
+            >
+              <Accordion.Trigger className='AccordionTrigger'>
+                <CourseCardTitle
+                  format={course.format || ''}
+                  duration={course.duration || ''}
+                  title={course.name}
+                  about={course.description ? course.description : ''}
+                  teachers={course.lectors.map((item) => {
+                    if (item.Lectors !== null) {
+                      return item.Lectors;
+                    }
+                  })}
+                  key={'title' + course.id}
+                  price={course.price || 0}
+                  discount={course.discount}
+                />
+              </Accordion.Trigger>
+              {/* <AnimatedAccordionContent className='AccordionContent'> */}
+              <Accordion.Content className='AccordionContent'>
+                <CourseCard
+                  format={course.format || ''}
+                  about={course.description || ''}
+                  duration={course.duration || ''}
+                  price={course.price || 0}
+                  title={course.name || ''}
+                  teachers={course.lectors.map((item) => {
+                    if (item.Lectors !== null) {
+                      return item.Lectors;
+                    }
+                  })}
+                  key={course.id}
+                  discount={course.discount}
+                />
+              </Accordion.Content>
+              {/* </AnimatedAccordionContent> */}
+              <hr />
+              {/* </Accordion.Item> */}
+            </AnimatedAccordionItem>
+          ))}
       </Accordion.Root>
     </CoursesDiv>
   );
 };
 
 interface CourseCardProps {
-  teacher: Teacher | undefined;
+  teachers: (LectorsType | undefined)[];
   title: string;
-  about?: string | undefined;
-  format?: string | undefined;
-  duration?: string | undefined;
-  price?: number;
+  about: string;
+  format: string;
+  duration: string;
+  price: number;
+  discount: number;
 }
 
 const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
-  const { teacher, title, about } = props;
+  const { price, title, about, discount } = props;
   return (
     <CourseCardTitleDiv>
-      <Text variant='courseBig'>{teacher?.name}</Text>
       <CourseTextTitleDiv>
         <Text variant='courseBig'>{title}</Text>
 
         {about && <Text variant='abzacCardText'>{about}</Text>}
       </CourseTextTitleDiv>
-      <ArrowDown />
+      <div className='flex flex-row gap-7'>
+        <Text variant='courseBig'>
+          {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
+        </Text>
+        {discount > 0 && (
+          <DiscountPrice className='discPrice' variant='courseBig'>
+            {price + ' \u20BD'}
+          </DiscountPrice>
+        )}
+        <ArrowDown className='hover:text-red-800 duration-300' />
+      </div>
     </CourseCardTitleDiv>
   );
 };
 
 const CourseCard = (props: CourseCardProps): React.ReactElement => {
-  const { format, teacher, duration, price } = props;
+  const { title, format, teachers, duration, price, discount } = props;
+
+  const [courseIsInTheCart, setCourseIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (courseName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', courseName);
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setCourseIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    checkTheCart(title);
+  }, [buttonClicked]);
+
+  const letorsString =
+    teachers && teachers.length > 1
+      ? teachers
+          .map((teacher) => {
+            return teacher?.name || '';
+          })
+          .join(', ')
+      : teachers[0]?.name || '';
+
   return (
     <CourseCardDiv>
       <CourseTextDiv>
         <ItemsDiv>
           <Text variant='abzacCardText'>Формат: </Text>
-          <Text variant='abzacCardText'>Лектор: </Text>
+          <Text variant='abzacCardText'>
+            {teachers && teachers.length > 1 ? 'Лекторы: ' : 'Лектор: '}
+          </Text>
           <Text variant='abzacCardText'>Длительность: </Text>
         </ItemsDiv>
         <ValuesDiv>
           <Text variant='abzacCardText'>{format}</Text>
-          <Text variant='abzacCardText'>{teacher?.name}</Text>
+          <Text variant='abzacCardText'>
+            {teachers && teachers.length > 1
+              ? teachers
+                  .map((teacher) => {
+                    return teacher?.name || '';
+                  })
+                  .join(', ')
+              : teachers.map((teacher) => {
+                  return teacher?.name || '';
+                })}
+          </Text>
           <Text variant='abzacCardText'>{duration}</Text>
         </ValuesDiv>
-        <ItemsValuesDiv>
-          <div>
-            <Text variant='buttonText' textColor='white80'>
-              Формат:
-            </Text>
-            <Text variant='buttonText' textColor='white'>
-              {format}
-            </Text>
-          </div>
-          <div>
-            <Text variant='buttonText' textColor='white80'>
-              Лектор:{' '}
-            </Text>
-            <Text variant='buttonText'>{teacher?.name}</Text>
-          </div>
-          <div>
-            <Text variant='buttonText' textColor='white80'>
-              Длительность:{' '}
-            </Text>
-            <Text variant='buttonText'>{duration}</Text>
-          </div>
-        </ItemsValuesDiv>
       </CourseTextDiv>
       <CoursePriceDiv>
-        {price && (
-          <Text variant='courseBig' align='right'>
-            {price + ' \u20BD'}
-          </Text>
-        )}
         <ButtonsDiv>
-          <StyledButton className='cartButton' type='button'>
-            Добавить в корзину
-          </StyledButton>
+          {!courseIsInTheCart && !buttonClicked && (
+            <StyledButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addCourseToCart({
+                  name: title,
+                  lector: letorsString,
+                  price: price,
+                  discount: discount,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </StyledButton>
+          )}
+
+          {(courseIsInTheCart || buttonClicked) && (
+            <Link
+              href={'/cart'}
+              className='hover:underline hover:text-red-600 text-red-800 duration-300'
+            >
+              курс уже в корзине
+            </Link>
+          )}
+
           <CartPlusOne />
         </ButtonsDiv>
       </CoursePriceDiv>

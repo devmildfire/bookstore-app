@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
 import * as Accordion from '@radix-ui/react-accordion';
+import Text from '@/components/Common/Text';
 
 const AnimatedAccordionItem = styled(Accordion.Item)`
   .AccordionContent {
@@ -47,7 +48,9 @@ const AbzacDiv = styled.div`
   flex-direction: column;
   gap: 150px;
 
-  --padding-top: 100px;
+  /* --padding-top: 100px; */
+  --padding-top: 0px;
+
   // --padding-sides: 96px;
   --padding-sides: 0px;
   --padding-bottom: 200px;
@@ -55,21 +58,24 @@ const AbzacDiv = styled.div`
   padding: var(--padding-top) var(--padding-sides) var(--padding-bottom);
 
   @media ${breakPoints.xl} {
-    --padding-top: 100px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 96px;
     --padding-sides: 0px;
     --padding-bottom: 200px;
   }
 
   @media screen and (max-width: 1200px) {
-    --padding-top: 80px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 58px;
     --padding-sides: 0px;
     --padding-bottom: 120px;
   }
 
   @media ${breakPoints.lg} {
-    --padding-top: 80px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 52px;
     --padding-sides: 0px;
     --padding-bottom: 120px;
@@ -78,7 +84,8 @@ const AbzacDiv = styled.div`
   }
 
   @media ${breakPoints.md} {
-    --padding-top: 39px;
+    /* --padding-top: 100px; */
+    --padding-top: 0px;
     // --padding-sides: 36px;
     --padding-sides: 0px;
     --padding-bottom: 50px;
@@ -133,6 +140,8 @@ const TeacherPic = styled.img`
   height: var(--size);
 
   filter: grayscale(100);
+  transition: all 0.3s;
+
   :hover {
     filter: grayscale(0);
   }
@@ -250,7 +259,7 @@ const CourseCardTitleDiv = styled.div`
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  gap: 50px;
+  gap: 25px;
 
   padding-bottom: 24px;
 
@@ -259,8 +268,8 @@ const CourseCardTitleDiv = styled.div`
   }
 
   > h4 {
-    flex-grow: 1;
-    text-align: left;
+    /* flex-grow: 1; */
+    text-align: right;
 
     @media ${breakPoints.sm} {
       display: none;
@@ -270,11 +279,11 @@ const CourseCardTitleDiv = styled.div`
   /* var(--main-white-80) */
 
   @media ${breakPoints.xl} {
-    gap: 50px;
+    gap: 25px;
   }
 
   @media ${breakPoints.lg} {
-    gap: 30px;
+    gap: 20px;
   }
 
   @media ${breakPoints.md} {
@@ -417,10 +426,10 @@ const CourseTextTitleDiv = styled.div`
   justify-content: space-around;
   flex-direction: column;
   gap: 8px;
-  align-items: end;
-  text-align: right;
+  align-items: start;
+  text-align: left;
 
-  flex-grow: 1;
+  /* flex-grow: 1; */
 
   @media ${breakPoints.xl} {
   }
@@ -450,6 +459,7 @@ const EnrollDiv = styled.div`
 
   a {
     color: var(--main-red-100);
+    transition: 300ms;
 
     :hover {
       color: red;
@@ -520,6 +530,26 @@ const CoursePriceDiv = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 35px;
+`;
+
+const DiscountPrice = styled(Text)`
+  color: var(--main-red-100);
+  position: relative;
+
+  ::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: var(--main-red-100);
+    transform: translate(0%, -100%) rotate(-15deg);
+    width: 100%;
+    height: 2px;
+  }
+  @media ${breakPoints.sm} {
+    order: 1;
+  }
 `;
 
 const StyledButton = styled(Button)<{ className?: string }>`
@@ -595,4 +625,5 @@ export {
   ItemsDiv,
   ItemsValuesDiv,
   ButtonsDiv,
+  DiscountPrice,
 };
