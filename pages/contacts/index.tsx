@@ -10,6 +10,7 @@ import contacts from '@/mocks/contacts';
 import breakPoints from '@/utils/breakPoints';
 // import Hands from '@/assets/images/handshake.svg';
 import Hands from '@/assets/images/handshake_2.svg';
+import PageLayout from '@/layouts/PageLayout';
 
 const PageContainer = styled.div`
   // * {
@@ -28,10 +29,18 @@ const PageContainer = styled.div`
 
   margin: auto 0;
 
-  padding: 0 10vw;
+  padding: 100px 10vw 0;
+
+  @media ${breakPoints.xl} {
+    padding: 100px 10vw 0;
+  }
 
   @media ${breakPoints.lg} {
-    padding: 0 5vw;
+    padding: 80px 5vw 0;
+  }
+
+  @media ${breakPoints.md} {
+    padding: 50px 5vw 0;
   }
 `;
 
@@ -247,22 +256,28 @@ const StyledHands = styled(Hands)<{ className: string }>`
 
 function ContactsPage() {
   return (
-    <PageContainer>
-      <Title variant='h2_1' align='left'>
-        Будьте с нами
-      </Title>
-      <InfoDiv>
-        <StyledContDiv className='SCDName' />
-        <SubscribeDiv>
-          <SubscribeCTA>
-            <Text variant='h4_Abzac'> Подписка на рассылку </Text>
-            <Text variant='manText'> Знайте о Чтиве больше, чем кто-либо </Text>
-          </SubscribeCTA>
-          <SubscribeForm />
-          <StyledHands className='hands_svg' />
-        </SubscribeDiv>
-      </InfoDiv>
-    </PageContainer>
+    // <PageLayout headTitle='Контакты' shouldBlacken={isSliderOnScreen}>
+    <PageLayout headTitle='Контакты'>
+      <PageContainer>
+        <Title variant='h2_1' align='left'>
+          Будьте с нами
+        </Title>
+        <InfoDiv>
+          <StyledContDiv className='SCDName' />
+          <SubscribeDiv>
+            <SubscribeCTA>
+              <Text variant='h4_Abzac'> Подписка на рассылку </Text>
+              <Text variant='manText'>
+                {' '}
+                Знайте о Чтиве больше, чем кто-либо{' '}
+              </Text>
+            </SubscribeCTA>
+            <SubscribeForm />
+            <StyledHands className='hands_svg' />
+          </SubscribeDiv>
+        </InfoDiv>
+      </PageContainer>
+    </PageLayout>
   );
 }
 export default ContactsPage;
