@@ -262,7 +262,7 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
             {price + ' \u20BD'}
           </DiscountPrice>
         )}
-        <ArrowDown />
+        <ArrowDown className='hover:text-red-800 duration-300' />
       </div>
     </CourseCardTitleDiv>
   );
@@ -328,11 +328,6 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
         </ValuesDiv>
       </CourseTextDiv>
       <CoursePriceDiv>
-        {/* {price && (
-          <Text variant='courseBig'>
-            {Math.floor((price * (100 - discount)) / 100) + ' \u20BD'}
-          </Text>
-        )} */}
         <ButtonsDiv>
           {!courseIsInTheCart && !buttonClicked && (
             <StyledButton
@@ -353,7 +348,10 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
           )}
 
           {(courseIsInTheCart || buttonClicked) && (
-            <Link href={'/cart'} className='hover:underline text-red-800'>
+            <Link
+              href={'/cart'}
+              className='hover:underline hover:text-red-600 text-red-800 duration-300'
+            >
               курс уже в корзине
             </Link>
           )}
