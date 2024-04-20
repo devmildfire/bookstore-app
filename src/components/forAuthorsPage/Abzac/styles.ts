@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 import Button from '@/components/Common/Button';
 import * as Accordion from '@radix-ui/react-accordion';
+import Text from '@/components/Common/Text';
 
 const AnimatedAccordionItem = styled(Accordion.Item)`
   .AccordionContent {
@@ -258,7 +259,7 @@ const CourseCardTitleDiv = styled.div`
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  gap: 50px;
+  gap: 25px;
 
   padding-bottom: 24px;
 
@@ -268,7 +269,7 @@ const CourseCardTitleDiv = styled.div`
 
   > h4 {
     flex-grow: 1;
-    text-align: left;
+    text-align: right;
 
     @media ${breakPoints.sm} {
       display: none;
@@ -278,11 +279,11 @@ const CourseCardTitleDiv = styled.div`
   /* var(--main-white-80) */
 
   @media ${breakPoints.xl} {
-    gap: 50px;
+    gap: 25px;
   }
 
   @media ${breakPoints.lg} {
-    gap: 30px;
+    gap: 20px;
   }
 
   @media ${breakPoints.md} {
@@ -530,6 +531,28 @@ const CoursePriceDiv = styled.div`
   gap: 35px;
 `;
 
+const DiscountPrice = styled(Text)`
+  color: var(--main-red-100);
+  font-size: clamp(10px, 2vw, 20px);
+  position: relative;
+  /* text-decoration: line-through; */
+
+  ::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: var(--main-red-100);
+    transform: translate(5%, 30%) rotate(-15deg);
+    width: 90%;
+    height: 2px;
+  }
+  @media ${breakPoints.sm} {
+    order: 1;
+  }
+`;
+
 const StyledButton = styled(Button)<{ className?: string }>`
   max-width: 900px;
 
@@ -603,4 +626,5 @@ export {
   ItemsDiv,
   ItemsValuesDiv,
   ButtonsDiv,
+  DiscountPrice,
 };
