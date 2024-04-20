@@ -326,7 +326,7 @@ function LectorEditForm(lector: LectorsType) {
     const { data, error } = await supabase
       .from('Lectors')
       .update({
-        photo: publicUrl,
+        photo: publicUrl || undefined,
         name: values.name,
         bio: values.bio,
       })
