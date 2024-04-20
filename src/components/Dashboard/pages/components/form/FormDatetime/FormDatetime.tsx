@@ -1,22 +1,22 @@
-import {
-  DatePickerProps,
-  DateTimePicker,
-} from '@/components/ui/datetime-picker';
+import { DateTimePicker } from '@/components/ui/datetime-picker';
 
 import * as React from 'react';
 import { BaseFormItem } from '../BaseFormItem';
 
-interface Props extends DatePickerProps {
+// interface Props extends DatePickerProps {
+//   label: string;
+// }
+
+interface Props {
   label: string;
+  jsDate: Date | null | undefined;
+  onJsDateChange: () => void;
 }
 
-const FormDatetime: React.FC<Props> = ({ label, ...datetimeProps }) => {
+const FormDatetime: React.FC<Props> = ({ label, jsDate, onJsDateChange }) => {
   return (
     <BaseFormItem label={label}>
-      <DateTimePicker
-        jsDate={datetimeProps.jsDate}
-        onJsDateChange={datetimeProps.onJsDateChange}
-      />
+      <DateTimePicker jsDate={jsDate} onJsDateChange={onJsDateChange} />
     </BaseFormItem>
   );
 };

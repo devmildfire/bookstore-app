@@ -323,10 +323,10 @@ export default function Tabs(
         ))}
       </Labels>
       <TabContent direction={direction}>
-        <ActiveTabContent
+        {/* <ActiveTabContent
           releaseDate={formatDate}
           price={types.filter((type) => type.type === active)[0].info.price}
-        />
+        /> */}
       </TabContent>
     </StyledTabs>
   );

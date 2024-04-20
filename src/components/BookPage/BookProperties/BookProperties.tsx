@@ -365,12 +365,12 @@ const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
   console.log(props);
   return (
     <StyledWrapper>
-      <Tabs
+      {/* <Tabs
         types={props.types}
         first_release={props.first_release}
         prices={props.prices}
         editions={editions}
-      />
+      /> */}
     </StyledWrapper>
   );
 };

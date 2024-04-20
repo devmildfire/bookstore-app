@@ -17,7 +17,7 @@ import { useModal } from '@/components/Modal/Modal';
 import { ProductCardProps } from '../ProductCard/ProductCard';
 
 function ProductCard3d(props: ProductCardProps) {
-  const { price, discount, cover, name, onClick, onEnterKey, authors, types } =
+  const { prices, discount, cover, name, onClick, onEnterKey, authors, types } =
     props;
 
   const { handleModalState, handleOpenModal } = useModal();
@@ -26,7 +26,8 @@ function ProductCard3d(props: ProductCardProps) {
     handleModalState({
       cover,
       name,
-      price,
+      // FIXME: цены сломались
+      price: [300],
       discount,
       // price: Math.min(...price),
       // newPrice,
@@ -52,7 +53,8 @@ function ProductCard3d(props: ProductCardProps) {
       </Book>
       <Footer>
         <PriceContainer>
-          <Price>от {`${Math.min(...price)}₽`}</Price>
+          {/* FIXME: цены сломались */}
+          <Price>от {`300₽`}</Price>
           {/* <OldPrice discount>{newPrice `${price}₽`}</OldPrice> */}
         </PriceContainer>
         <ButtonsContainer>

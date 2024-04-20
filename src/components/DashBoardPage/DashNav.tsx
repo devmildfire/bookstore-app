@@ -30,6 +30,14 @@ const dashlist: DashItem[] = [
     title: 'Promocodes',
     link: '/dashboard/promocodes',
   },
+  {
+    title: 'Lectors',
+    link: '/dashboard/lectors',
+  },
+  {
+    title: 'Courses',
+    link: '/dashboard/courses',
+  },
 ];
 
 export default function DashNav() {

@@ -22,7 +22,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PrintedBookForm } from '@/components/DashBoardPage/EditionForm ';
+import {
+  PrintedBookForm,
+  PrintedBookEditForm,
+  AudioBookForm,
+  AudioBookEditForm,
+  EBookForm,
+  EBookEditForm,
+  CardBookForm,
+  CardBookEditForm,
+} from '@/components/DashBoardPage/EditionForm';
 
 export type PrintedBookType =
   Database['public']['Tables']['PrintedBooks']['Row'];
@@ -30,8 +39,31 @@ export type AudiobookType = Database['public']['Tables']['Audiobooks']['Row'];
 export type EbookType = Database['public']['Tables']['Ebooks']['Row'];
 export type CardBookType = Database['public']['Tables']['CardBooks']['Row'];
 
+type sizeRowType = Database['public']['Tables']['PrintSize']['Row'];
+
+type PrintSizeType = {
+  size: sizeRowType[];
+};
+
+type PrintOptionsRowType = Database['public']['Tables']['PrintOptions']['Row'] &
+  PrintSizeType;
+
+type PrintOptionsType = {
+  options: PrintOptionsRowType[];
+};
+
+type CoverRowType = Database['public']['Tables']['PrintedCover']['Row'];
+
+type CoverType = {
+  cover: CoverRowType[];
+};
+
+export type FullPrintedBookType = PrintedBookType &
+  PrintOptionsType &
+  CoverType;
+
 export type EditionsType = {
-  printedBook?: PrintedBookType;
+  printedBook?: FullPrintedBookType;
   audioBook?: AudiobookType;
   eBook?: EbookType;
   cardBook?: CardBookType;
@@ -41,6 +73,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
   const [editions, setEditions] = useState<EditionsType>();
 
   async function getEditions() {
+    console.log('getting some data');
+
     const { data, error } = await supabase
       .from('Titles')
       .select(
@@ -72,7 +106,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
       console.log('Card Books', data.CardBooks);
 
       const audioBook: AudiobookType | null = data.Audiobooks;
-      const printedBook: PrintedBookType | null = data.PrintedBooks;
+      // const printedBook: PrintedBookType | null = data.PrintedBooks;
+      const printedBook: FullPrintedBookType | null = data.PrintedBooks;
       const eBook: EbookType | null = data.Ebooks;
       const cardBook: CardBookType | null = data.CardBooks;
 
@@ -94,60 +129,52 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
       <Accordion type='single' collapsible>
         {editions?.printedBook && (
           <AccordionItem
-            value={`item-${editions?.printedBook.id}`}
-            key={editions?.printedBook.ISBN}
+            value={`item-printedBook-${editions?.printedBook.id}`}
+            key={`printedBook-${editions?.printedBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> Printed Book </AccordionTrigger>
             <AccordionContent>
-              <p> ISBN: {editions?.printedBook.ISBN}</p>
-              <p> Количество страниц: {editions?.printedBook.pages}</p>
-              <p> extra: {editions?.printedBook.extra}</p>
-              <p> форма: {editions?.printedBook.lit_form}</p>
+              <PrintedBookEditForm {...editions.printedBook} />
             </AccordionContent>
           </AccordionItem>
         )}
 
         {editions?.audioBook && (
           <AccordionItem
-            value={`item-${editions?.audioBook.id}`}
-            key={editions?.audioBook.id}
+            value={`item-audioBook-${editions?.audioBook.id}`}
+            key={`audioBook-${editions?.audioBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> Audio Book </AccordionTrigger>
             <AccordionContent>
-              <p> длительность: {editions?.audioBook.duration}</p>
-              <p> extra: {editions?.audioBook.extra}</p>
-              <p> скидка: {editions?.audioBook.discount}</p>
+              <AudioBookEditForm {...editions.audioBook} />
             </AccordionContent>
           </AccordionItem>
         )}
 
         {editions?.eBook && (
           <AccordionItem
-            value={`item-${editions?.eBook.id}`}
-            key={editions?.eBook.id}
+            value={`item-eBook-${editions?.eBook.id}`}
+            key={`eBook-${editions?.eBook.id}`}
             className='w-full'
           >
             <AccordionTrigger> eBook </AccordionTrigger>
             <AccordionContent>
-              <p> ISBN: {editions?.eBook.ISBN}</p>
-              <p> extra: {editions?.eBook.extra}</p>
-              <p> скидка: {editions?.eBook.discount}</p>
+              <EBookEditForm {...editions.eBook} />
             </AccordionContent>
           </AccordionItem>
         )}
 
         {editions?.cardBook && (
           <AccordionItem
-            value={`item-${editions?.cardBook.id}`}
-            key={editions?.cardBook.id}
+            value={`item-cardBook-${editions?.cardBook.id}`}
+            key={`cardBook-${editions?.cardBook.id}`}
             className='w-full'
           >
-            <AccordionTrigger> eBook </AccordionTrigger>
+            <AccordionTrigger> Book 2.0 </AccordionTrigger>
             <AccordionContent>
-              <p> extra: {editions?.cardBook.extra}</p>
-              <p> скидка: {editions?.cardBook.discount}</p>
+              <CardBookEditForm {...editions.cardBook} />
             </AccordionContent>
           </AccordionItem>
         )}
@@ -176,7 +203,9 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             <AccordionTrigger className='w-full text-red-800'>
               Add Audiobook
             </AccordionTrigger>
-            <AccordionContent>add some Audiobook</AccordionContent>
+            <AccordionContent>
+              <AudioBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
 
@@ -187,9 +216,11 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             className='w-full'
           >
             <AccordionTrigger className='w-full text-red-800'>
-              Add eBook{' '}
+              Add eBook
             </AccordionTrigger>
-            <AccordionContent>add some eBook</AccordionContent>
+            <AccordionContent>
+              <EBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
 
@@ -200,9 +231,11 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
             className='w-full'
           >
             <AccordionTrigger className='w-full text-red-800'>
-              Add Card Book
+              Add Book 2.0
             </AccordionTrigger>
-            <AccordionContent>add some Card Book</AccordionContent>
+            <AccordionContent>
+              <CardBookForm titleID={titleID} />
+            </AccordionContent>
           </AccordionItem>
         )}
       </Accordion>
@@ -212,7 +245,8 @@ const TitleEditions = ({ titleID }: { titleID: number }) => {
 
 const TitleSelect = () => {
   const [titles, setTitles] = useState<TitleType[]>();
-  const selectedTitle = useRef<number>();
+  // const selectedTitle = useRef<number>();
+  const [selectedTitle, setSelectedTitle] = useState<number>();
 
   async function getTitles() {
     const { data, error } = await supabase.from('Titles').select('*');
@@ -237,8 +271,10 @@ const TitleSelect = () => {
       <div>
         <Select
           onValueChange={(value) => {
-            selectedTitle.current = parseInt(value);
-            console.log('set new ref ... ', selectedTitle.current);
+            // selectedTitle.current = parseInt(value);
+            setSelectedTitle(parseInt(value));
+
+            console.log('set new title id ... ', selectedTitle);
           }}
         >
           {/* <SelectTrigger className='w-[280px]'> */}
@@ -256,9 +292,11 @@ const TitleSelect = () => {
         </Select>
       </div>
 
-      {selectedTitle.current && (
+      {/* {selectedTitle.current && (
         <TitleEditions titleID={selectedTitle.current} />
-      )}
+      )} */}
+
+      {selectedTitle && <TitleEditions titleID={selectedTitle} />}
     </div>
   );
 };
@@ -283,7 +321,7 @@ function Editions(): React.ReactElement {
 
   useEffect(() => {
     check_session();
-  });
+  }, []);
 
   return (
     <DashMain>

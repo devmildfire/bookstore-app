@@ -242,7 +242,7 @@ export function Drawer({ children }: PropsWithChildren) {
             <>
               <Overlay forceMount />
               <Content forceMount>
-                <Wrapper>
+                <Wrapper position='left'>
                   <Title variant='h3_3'>Фильтры</Title>
                   <Container>
                     <Multiselect
