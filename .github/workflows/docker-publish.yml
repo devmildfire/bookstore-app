@@ -1,9 +1,9 @@
 name: publish
-run-name: ${{ github.actor }} - publish - pull - deploy feature/dashboard
+run-name: ${{ github.actor }} - publish - pull - deploy frvrlop
 
 on:
   push:
-    branches: [ "feature/dashboard" ]
+    branches: [ "develop" ]
 
 env:
   # Use docker.io for Docker Hub if empty
