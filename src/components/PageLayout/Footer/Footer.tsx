@@ -20,57 +20,60 @@ import {
   Icon,
   ContactIcon,
   StyleWrapper,
+  FooterWrapper,
 } from './styles';
 
 const Footer = (): React.ReactElement => (
-  <StyleWrapper className='max-width'>
-    <FooterContent>
-      <FooterContacts>
-        {contacts.map((contact) => (
-          <FooterContact key={contact.href}>
-            <FooterContactLink href={contact.href}>
-              <ContactIcon as={contact.icon as any} />
-              &nbsp;
-              {contact.hightLightContent}
-            </FooterContactLink>
-          </FooterContact>
-        ))}
-      </FooterContacts>
-      <FooterInfo>
-        <FooterTitle fontFamily='sans'>
-          <FooterTitle component='span' textColor='red' fontFamily='sans'>
-            Чти
-          </FooterTitle>
-          во
-        </FooterTitle>
-        <FooterSocials>
-          {socials.map((social) => (
-            <li key={social.href}>
-              <a href={social.href}>
-                <Icon as={social.icon} />
-              </a>
-            </li>
+  <StyleWrapper>
+    <FooterContent className='max-width'>
+      <FooterWrapper>
+        <FooterContacts>
+          {contacts.map((contact) => (
+            <FooterContact key={contact.href}>
+              <FooterContactLink href={contact.href}>
+                <ContactIcon as={contact.icon as any} />
+                &nbsp;
+                {contact.hightLightContent}
+              </FooterContactLink>
+            </FooterContact>
           ))}
-        </FooterSocials>
-      </FooterInfo>
-      <FooterLogoLink
-        href='https://russiandino.ru/'
-        target='_blank'
-        rel='noreferrer'
-      >
-        <FooterLogo />
-        <FooterLogoText>
-          <Text component='span' variant='h4_1'>
-            Made by
-          </Text>
-          <Text component='span' variant='h4_1'>
-            Russkiy
-          </Text>
-          <Text component='span' variant='h4_1'>
-            Dinozavr
-          </Text>
-        </FooterLogoText>
-      </FooterLogoLink>
+        </FooterContacts>
+        <FooterInfo>
+          <FooterTitle fontFamily='sans'>
+            <FooterTitle component='span' textColor='red' fontFamily='sans'>
+              Чти
+            </FooterTitle>
+            во
+          </FooterTitle>
+          <FooterSocials>
+            {socials.map((social) => (
+              <li key={social.href}>
+                <a href={social.href}>
+                  <Icon as={social.icon} />
+                </a>
+              </li>
+            ))}
+          </FooterSocials>
+        </FooterInfo>
+        <FooterLogoLink
+          href='https://russiandino.ru/'
+          target='_blank'
+          rel='noreferrer'
+        >
+          <FooterLogo />
+          <FooterLogoText>
+            <Text component='span' variant='h4_1'>
+              Made by
+            </Text>
+            <Text component='span' variant='h4_1'>
+              Russkiy
+            </Text>
+            <Text component='span' variant='h4_1'>
+              Dinozavr
+            </Text>
+          </FooterLogoText>
+        </FooterLogoLink>
+      </FooterWrapper>
     </FooterContent>
     <FooterCopyright>
       <CopyrightContainer>

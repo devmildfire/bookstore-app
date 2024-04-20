@@ -13,6 +13,7 @@ import SendNovel from '@/components/forAuthorsPage/SendNovel';
 import Navigation from '@/components/Navigation';
 import navItems from '@/mocks/navItems';
 import NotFoundPage from 'pages/not-found';
+import PageLayout from '@/layouts/PageLayout';
 
 type TRoutes = 'send-novel' | 'send-manuscript' | 'abzac';
 type TQuery = { section: TRoutes };
@@ -39,14 +40,16 @@ const ForAuthors: NextPage = () => {
   }
 
   return (
-    <StyledWrapper>
-      <Navigation navigationItems={navItems} />
-      {/* <TwoPaneGrid>
+    <PageLayout headTitle='Авторам'>
+      <StyledWrapper>
+        <Navigation navigationItems={navItems} />
+        {/* <TwoPaneGrid>
         <SidebarNav header='Авторам' navItems={sidebarItems} />
         <UnderSection />
       </TwoPaneGrid> */}
-      <StyledSection>{content}</StyledSection>
-    </StyledWrapper>
+        <StyledSection>{content}</StyledSection>
+      </StyledWrapper>
+    </PageLayout>
   );
 };
 
@@ -58,65 +61,18 @@ const StyledWrapper = styled.main`
 `;
 
 const StyledSection = styled.div`
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-around; */
   height: 100%;
-  /* outline: 1px solid white; */
-`;
+  padding: 0 calc((100vw - 1440px) / 2);
+  padding-top: var(--header-gap);
 
-const UnderSection = styled.div`
-  /* outline: 1px solid white; */
-  --navWidth: 450px;
-  /* --navHeigh: 366px; */
-  --navHeigh: 100%;
-  width: var(--navWidth);
-  height: var(--navHeigh);
-
-  background: linear-gradient(
-      346.55deg,
-      rgba(147, 0, 0, 0.1) 1.08%,
-      rgba(0, 0, 0, 0.1) 41.58%
-    ),
-    linear-gradient(
-      163.22deg,
-      rgba(202, 0, 0, 0.1) 0%,
-      rgba(19, 19, 19, 0.1) 31.8%,
-      rgba(0, 0, 0, 0.1) 55.09%
-    ),
-    var(--main-black);
-
-  @media screen and (max-width: 1600px) {
-    --navWidth: 338px;
-  }
-
-  @media ${breakPoints.xl} {
-    --navWidth: 338px;
-  }
-
-  @media screen and (max-width: 1200px) {
-    --navWidth: 314px;
+  @media ${breakPoints.xxl} {
+    padding: var(--header-gap) 10vw 0;
   }
 
   @media ${breakPoints.lg} {
-    --navWidth: 314px;
-  }
-
-  @media ${breakPoints.md} {
-  }
-
-  @media ${breakPoints.smd} {
-    //  это свойство убирает меню навигации в мобильной версии
-    display: none;
-
-    --navHeigh: 366px;
-    --navWidth: 100%;
-  }
-
-  @media ${breakPoints.sm} {
-    --navHeigh: 272px;
-    --navWidth: 100%;
+    padding: var(--header-gap) 5vw 0;
   }
 `;
 
+// comment added
 export default ForAuthors;

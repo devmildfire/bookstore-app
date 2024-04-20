@@ -1,0 +1,1 @@
+export { supabaseService } from './client';

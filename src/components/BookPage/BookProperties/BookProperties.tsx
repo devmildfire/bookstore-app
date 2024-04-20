@@ -4,30 +4,19 @@ import styled from 'styled-components';
 // import dayjs from 'dayjs';
 import Button from '@/components/Common/Button';
 import { StyledWrapper } from './styles';
-import { BookType, Reader, Worker } from '@/models/books';
+import { BookTableTypesEnum, BookType, Worker } from '@/models/books';
 import Tabs from '@/components/Common/Tabs';
 import breakPoints from '@/utils/breakPoints';
 
 interface BookPropertiesProps {
-  readonly price: number;
-  readonly publishDate: string;
-  readonly workers: Worker[];
-  readonly symbolCount: number;
-  readonly formats: string[];
-  readonly readers: Reader[];
-  readonly types: BookType[];
+  readonly prices: Record<BookTableTypesEnum, number>[];
+  readonly first_release: Date;
+  readonly types: Record<string, unknown | BookTableTypesEnum>[];
 }
 
 export interface EditionProps {
   releaseDate: string;
   price: number;
-}
-
-export interface editionTypes {
-  [key: string]: (props: {
-    releaseDate: string;
-    price: number;
-  }) => ReactElement;
 }
 
 const TabContent = styled.div``;
@@ -91,7 +80,7 @@ const Text = styled.p`
 `;
 const ButtonsText = styled(Text)`
   font-size: 12px;
-
+  text-align: end;
   @media ${breakPoints.lg} {
     font-size: 10px;
   }
@@ -101,6 +90,7 @@ const Descrption = styled.div`
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
+  gap: 16px;
   @media ${breakPoints.lg} {
     font-size: 12px;
   }
@@ -158,13 +148,14 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 223px;
+  align-items: flex-end;
+  /* max-width: 223px; */
   @media ${breakPoints.lg} {
-    max-width: 160px;
+    /* max-width: 160px; */
   }
   @media screen and (max-width: 576px) {
     gap: 0px;
-    max-width: 223px;
+    /* max-width: 223px; */
     padding-bottom: 22px;
     justify-content: center;
     align-items: right;
@@ -356,17 +347,30 @@ const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
   );
 };
 
-const editions: editionTypes = {
-  digital: DigitalEdition,
-  book2: Book2Edition,
-  audio: AudioEdition,
-  write: PrintEdition,
+type EditionComponent = (props: {
+  releaseDate: string;
+  price: number;
+}) => ReactElement;
+
+export type EditionType = Record<BookTableTypesEnum[number], EditionComponent>;
+
+const editions: EditionType = {
+  Ebooks: DigitalEdition,
+  CardBooks: Book2Edition,
+  Audiobooks: AudioEdition,
+  PrintedBooks: PrintEdition,
 };
 
 const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
+  console.log(props);
   return (
     <StyledWrapper>
-      <Tabs {...props} editions={editions} />
+      {/* <Tabs
+        types={props.types}
+        first_release={props.first_release}
+        prices={props.prices}
+        editions={editions}
+      /> */}
     </StyledWrapper>
   );
 };

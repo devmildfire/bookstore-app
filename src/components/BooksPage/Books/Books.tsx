@@ -18,9 +18,9 @@ const Books: React.FC = () => (
     {/* <Container> */}
     {/* <Filters /> */}
     {/* <Multiselect /> */}
-    <Filters />
+    {/* <Filters /> */}
     {/* </Container> */}
-    <Products data={data} />
+    {/* <Products /> */}
     {/* <BooksList /> */}
   </>
 );

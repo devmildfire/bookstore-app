@@ -15,8 +15,12 @@ type EmblaPropType = {
   className: string;
 };
 
-const emblaOptions = { loop: true, speed: 0.0025 };
-const autoplayOptions = { delay: 0, jump: false, stopOnInteraction: false };
+const emblaOptions = { loop: true, duration: 50000 };
+const autoplayOptions = {
+  delay: 0,
+  jump: false,
+  stopOnInteraction: false,
+};
 
 const EmblaCarousel: React.FC<EmblaPropType> = ({ options, className }) => {
   const [emblaRef] = useEmblaCarousel(options, [Autoplay(autoplayOptions)]);
@@ -51,11 +55,6 @@ const StyledCarousel = styled(EmblaCarousel)`
 const Members = (): React.ReactElement => {
   return (
     <>
-      {/* <Marquee speed={25} gap={0} direction='normal' delay={0}>
-        {MembersWID.map((member) => (
-          <MemberCard {...member} key={member.key} />
-        ))}
-      </Marquee> */}
       <StyledCarousel className='emblaWrapper' options={emblaOptions} />
     </>
   );

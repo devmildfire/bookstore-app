@@ -38,12 +38,10 @@ const SubscribeForm = (): React.ReactElement => {
 
   // const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
   // const onSubmit: SubmitHandler<FormSchemaType> = () => {
-  //   console.log(data);
   //   setWipe(false);
   // };
 
   // const onError: SubmitErrorHandler<FormSchemaType> = () => {
-  //   console.log(errors);
   //   setWipe(false);
   // };
 
@@ -272,6 +270,7 @@ const StyledInput = styled(Input)`
     height: 45px;
     max-width: 415px;
     padding: 0px 6px;
+    /* padding: 0px 0px; */
     margin: 0 auto;
     font-size: 14px;
   }

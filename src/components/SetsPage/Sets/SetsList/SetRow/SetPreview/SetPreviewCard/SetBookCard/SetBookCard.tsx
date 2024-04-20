@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 import {
   StyledIcon,
   StyledIconsList,
@@ -10,7 +10,7 @@ import {
 import getAuthorNames from '@/utils/getAuthorNames';
 import Text from '@/components/Common/Text';
 import { ClassNameProps } from '@/types/className';
-import IconButton from '@/components/Common/IconButton';
+import IconButton from '@/components/Common/IconButton(deprecated)';
 import { bookTypeIconMap } from '@/consts/products';
 
 interface SetBookCardProps

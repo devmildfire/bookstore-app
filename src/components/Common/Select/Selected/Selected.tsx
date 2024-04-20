@@ -2,7 +2,7 @@ import * as React from 'react';
 import Text from '@/components/Common/Text';
 import { Handler, Option, SelectValue } from '../types';
 import { StyledCross, StyledWrapper } from './styles';
-import IconButton from '@/components/Common/IconButton';
+import IconButton from '@/components/Common/IconButton(deprecated)';
 
 export interface SelectedProps {
   readonly value: Option<SelectValue>;
@@ -13,7 +13,6 @@ const Selected: React.FC<SelectedProps> = (props) => {
   const { value, onDelete } = props;
 
   const onClick = React.useCallback(() => {
-    console.log('delete');
     onDelete(value);
   }, [value, onDelete]);
 

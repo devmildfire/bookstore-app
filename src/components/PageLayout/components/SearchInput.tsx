@@ -4,7 +4,7 @@ import Glass from '../../../assets/icons/search.svg';
 import colors from '@/utils/colors';
 import breakPoints from '@/utils/breakPoints';
 import books from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 const StyledGlass = styled(Glass)`
   position: absolute;
@@ -31,7 +31,7 @@ const StyledGlass = styled(Glass)`
     height: 14px;
     left: 6px;
     top: calc(50% - calc(var(--glass-height) / 2));
-  } ;
+  }
 `;
 
 const StyledInput = styled.input`
@@ -131,45 +131,6 @@ const StyledMatches = styled.ul`
     background: #555;
   }
 `;
-const StyledMatch = styled.li`
-  padding: 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  &:hover {
-    background-color: #232323;
-  }
-  @media ${breakPoints.sm} {
-    padding: 12px 0;
-  }
-`;
-
-const StyledMatchInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-`;
-
-const StyledBookCover = styled.img`
-  display: block;
-  height: 90px;
-  width: 70px;
-`;
-
-const StyledMatchLink = styled.a`
-  display: flex;
-  gap: 16px;
-  @media ${breakPoints.sm} {
-    gap: 8px;
-  }
-`;
-
-const StyledMatchText = styled.p`
-  font-size: 14px;
-  @media ${breakPoints.sm} {
-    font-size: 10px;
-  }
-`;
 
 type OuterClickCallback = (e: MouseEvent) => void;
 
@@ -241,21 +202,7 @@ function SearchInput({
         ref={dropdownRef}
         className={`${isInputActive && matches.length > 0 && 'active'}`}
       >
-        <StyledMatches>
-          {matches.map((book) => (
-            <StyledMatch key={book.id}>
-              <StyledMatchLink href={`/books/${book.transliteratedTitle}`}>
-                <StyledBookCover src={book.cover} alt={book.title} />
-                <StyledMatchInfoContainer>
-                  <StyledMatchText>{book.title}</StyledMatchText>
-                  <StyledMatchText>
-                    {book.authors.map((author) => author.name).join(', ')}
-                  </StyledMatchText>
-                </StyledMatchInfoContainer>
-              </StyledMatchLink>
-            </StyledMatch>
-          ))}
-        </StyledMatches>
+        <StyledMatches></StyledMatches>
       </StyledDropdown>
     </StyledDiv>
   );

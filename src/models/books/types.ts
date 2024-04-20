@@ -1,7 +1,58 @@
 import { Author } from '@/types/author';
 import { Product } from '@/types/product';
+import { Tables } from 'api/books/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
+
+export enum BookTableTypesEnum {
+  PrintedBooks = 'PrintedBooks',
+  Ebooks = 'Ebooks',
+  Audiobooks = 'Audiobooks',
+  CardBooks = 'CardBooks',
+}
+
+export const bookTypes: BookTableTypesEnum[] = [
+  BookTableTypesEnum.PrintedBooks,
+  BookTableTypesEnum.Ebooks,
+  BookTableTypesEnum.Audiobooks,
+  BookTableTypesEnum.CardBooks,
+];
+
+type AudioBook = Tables<'Audiobooks'>;
+type Ebook = Tables<'Ebooks'>;
+type CardBook = Tables<'CardBooks'>;
+type PrintBookCover = Tables<'PrintedCover'>;
+type PrintedBookPrintSize = Tables<'PrintSize'>;
+
+type PrintedBookOptions = Tables<'PrintOptions'> & {
+  size: PrintedBookPrintSize[];
+};
+
+type PrintedBookType = Tables<'PrintedBooks'> & {
+  options: PrintedBookOptions[];
+  cover: PrintBookCover[];
+};
+
+export interface Title {
+  readonly authors: Author[];
+  readonly id: number;
+  readonly name: string;
+  readonly description: string;
+  readonly thesis: string;
+  readonly trailer: string;
+  readonly age_restriction: number;
+  readonly cover: string;
+  readonly slug: string;
+  readonly isFeatured: boolean;
+  readonly prices: Record<BookTableTypesEnum[number], number>[];
+  readonly discount: number[];
+  readonly types: BookTableTypesEnum[];
+  readonly PrintedBooks: PrintedBookType;
+  readonly first_release: Date;
+  Audiobooks: AudioBook;
+  Ebooks: Ebook;
+  CardBooks: CardBook;
+}
 
 export interface Book extends Product {
   readonly authors: Author[];
@@ -43,7 +94,7 @@ export interface ReaderMarket {
 }
 
 export interface BooksState {
-  readonly list: Book[];
+  readonly list: Title[];
   readonly isLoading: boolean;
   readonly error: string | null;
 }

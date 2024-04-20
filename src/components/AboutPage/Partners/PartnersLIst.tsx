@@ -15,7 +15,10 @@ type EmblaPropType = {
 
 const emblaOptions: EmblaOptionsType = {
   loop: true,
-  speed: 0.00575,
+  // FIXME: закомментировал из-за ошибки типа. Нужно вернуть опцию скорости(?)
+  // speed: 0.00575,
+  duration: 15000,
+
   direction: 'rtl',
 };
 const autoplayOptions = { delay: 0, jump: false, stopOnInteraction: false };

@@ -1,0 +1,60 @@
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { getCart } from '@/utils/getCart';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
+import { CartItemType } from 'pages/api/cart';
+
+export class CartStore {
+  cart: CartItemType[] = [];
+  cartID: string | undefined = '';
+  // hasPhysicalGoods: boolean;
+
+  constructor() {
+    makeObservable(this, {
+      cartID: observable,
+      cart: observable,
+      setCart: action,
+      price: computed,
+      hasPhysicalGoods: computed,
+    });
+  }
+
+  get price() {
+    let price = 0;
+
+    this.cart.forEach((item) => {
+      price +=
+        Math.floor((item.price! * (100 - item.discount!)) / 100) *
+        item.quantity!;
+    });
+
+    return price;
+  }
+
+  setCartID = () => {
+    this.cartID = setOrGetCartCookie()!.toString();
+  };
+
+  setCart = async (cartID: string) => {
+    this.cart = await getCart(cartID);
+  };
+
+  get hasPhysicalGoods() {
+    let hasPhysicalGoods = false;
+
+    this.cart.forEach((item) => {
+      if (item.category === 'Book2.0' || item.category === 'PrintBook') {
+        hasPhysicalGoods = true;
+      }
+    });
+
+    return hasPhysicalGoods;
+  }
+}
+
+export const cartStore = new CartStore();

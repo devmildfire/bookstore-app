@@ -5,6 +5,8 @@ import React, {
   SetStateAction,
   ReactNode,
   useContext,
+  PropsWithChildren,
+  useCallback,
 } from 'react';
 import styled from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -15,36 +17,43 @@ import BookTwoIcon from '@/assets/icons/book2.svg';
 import BookIcon from '@/assets/icons/book.svg';
 import DigitalIcon from '@/assets/icons/digital.svg';
 import CloseIcon from '@/assets/icons/cross.svg';
-import Button from '../Common/Button';
 import breakPoints from '@/utils/breakPoints';
-import { unknown } from 'zod';
+import { BookTableTypesEnum } from '@/models/books/types';
+import { AnimatePresence } from 'framer-motion';
+import { Trigger } from '../Common/Trigger';
+import { SearchModal } from './SearchModal';
+// import { CartItem } from '@/types/api';
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { postData } from '@/utils/postData';
+import { CartItemType } from 'pages/api/cart';
 
-interface LookupPros {
-  [key: string]: ReactNode;
-}
-
-const modalIconLookup: LookupPros = {
-  audio: <AudioIcon />,
-  book2: <BookTwoIcon />,
-  write: <BookIcon />,
-  digital: <DigitalIcon />,
+const modalIconLookup: Record<BookTableTypesEnum[number], ReactNode> = {
+  Audiobooks: <AudioIcon />,
+  CardBooks: <BookTwoIcon />,
+  PrintedBooks: <BookIcon />,
+  Ebooks: <DigitalIcon />,
 };
 
 interface BookModalState {
-  title: string;
-  price: number;
-  // newPrice?: number;
+  cover: string;
+  name: string;
+  price: number[];
+  discount: number[];
   author: string;
-  types: string[];
+  types: BookTableTypesEnum[number][];
+}
+
+interface BookModalProps extends BookModalState {
+  closeFunc: () => void;
 }
 
 interface ModalContextProps {
-  handleOpenModal: Dispatch<SetStateAction<boolean>>;
+  handleOpenModal: (open: boolean, type?: string) => void;
   handleModalState: Dispatch<SetStateAction<BookModalState>>;
 }
 
 export const ModalContext = createContext<ModalContextProps>({
-  handleOpenModal: () => undefined,
+  handleOpenModal: () => () => undefined,
   handleModalState: () => undefined,
 });
 
@@ -65,81 +74,141 @@ function makeMap<V = unknown>(obj: Record<string, V>) {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  gap: 12px;
   width: 100%;
-  max-width: 768px;
-  @media ${breakPoints.sm} {
-    max-width: 280px;
-    gap: 4px;
+  z-index: 99;
+  gap: 12px;
+  @media ${breakPoints.lg} {
+    gap: 0;
   }
+`;
+const ModalTitleWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `;
 
 const ModalTitle = styled(Text)`
   font-size: 24px;
   opacity: 0.5;
-  font-size: clamp(14px, 3vw, 24px);
+  text-align: left;
+  width: 100%;
+  padding-top: clamp(16px, 10vh, 35px);
+  font-size: clamp(14px, 2vw, 18px);
+  @media ${breakPoints.md} {
+    padding-top: 16px;
+  }
 `;
-const Title = styled(Text)``;
+const Title = styled(Text)`
+  font-size: clamp(18px, 2vw, 30px);
+  font-weight: bold;
+`;
 const Author = styled(Text)`
-  font-size: clamp(14px, 3vw, 24px);
+  font-size: clamp(14px, 2vw, 24px);
 `;
-const Price = styled(Text)`
-  font-size: clamp(14px, 3vw, 24px);
+const Price = styled.span`
+  font-size: clamp(14px, 2vw, 24px);
   font-weight: 700;
+  @media ${breakPoints.sm} {
+    order: -1;
+  }
+`;
+
+const DiscountPrice = styled(Price)`
+  color: var(--main-red-100);
+  font-size: clamp(10px, 2vw, 20px);
+  position: relative;
+  /* text-decoration: line-through; */
+
+  ::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: var(--main-red-100);
+    transform: translate(5%, 30%) rotate(-15deg);
+    width: 90%;
+    height: 2px;
+  }
+  @media ${breakPoints.sm} {
+    order: 1;
+  }
 `;
 
 const Buttons = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 24px;
-  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
+  transition: 0.2s;
+  width: 100%;
+`;
 
-  @media ${breakPoints.sm} {
-    gap: 8px;
+const IconButtonWrapper = styled.div<{ selected: boolean }>`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+  font-variant-numeric: tabular-nums;
+  /* background: ${(props) => (props.selected ? 'var(--main-red-30);' : '')}; */
+  /* &:hover {
+    background: var(--main-red-20);
+  } */
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    padding: 4px 5vw;
+  }
+  @media screen and (orientation: landscape) and (max-width: 700px) {
+    padding: 2px 5vw;
   }
 `;
 
 const IconButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 48px;
   align-items: center;
-  gap: 12px;
-  margin: 32px 0 64px;
-  @media ${breakPoints.sm} {
-    margin: 0;
-    margin: 24px 0;
+  justify-items: start;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  @media ${breakPoints.md} {
+    gap: 6px;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    grid-template-columns: 1fr 1fr auto;
   }
 `;
 
-const IconButton = styled.button`
+const IconWrapper = styled.div`
   background-color: transparent;
-  width: clamp(48px, 10vw, 150px);
-  height: clamp(48px, 10vw, 150px);
-  padding: min(2vw, 24px);
+  width: clamp(20px, 10vw, 55px);
+  height: clamp(20px, 10vw, 55px);
   color: var(--main-white-100);
-  border: thin solid var(--main-white-100);
-  border-radius: 4px;
   transition: 0.15s;
-  cursor: pointer;
+  padding: 0;
 
-  &:hover {
-    color: var(--main-red-100);
-    border-color: var(--main-red-100);
+  & path {
+    stroke-width: 2px;
+  }
+
+  & circle {
+    stroke-width: 2px;
   }
 
   @media ${breakPoints.md} {
-    & circle {
-      stroke-width: 0px;
-    }
-
-    & path {
-      stroke-width: 2px;
-    }
+    place-self: flex-end;
   }
 
   @media ${breakPoints.sm} {
-    padding: 8px;
+    display: none;
+  }
+
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    display: none;
   }
 `;
 
@@ -147,9 +216,14 @@ const TotalPrice = styled(Text)`
   display: flex;
   gap: 55px;
   align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-top: thin solid var(--main-white-30);
+  width: 100%;
 
   @media ${breakPoints.sm} {
     gap: 8px;
+    flex-direction: row-reverse;
   }
 `;
 
@@ -157,107 +231,404 @@ const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  flex-direction: column;
+  width: 100%;
   @media ${breakPoints.sm} {
-    flex-direction: column-reverse;
     gap: 12px;
   }
 `;
 
-const ToCartButton = styled(Button)`
-  @media ${breakPoints.sm} {
-    min-height: 48px;
+const AddToCartButton = styled(Trigger)`
+  padding: clamp(14px, 3vw, 24px) clamp(24px, 7vw, 80px);
+  font-size: clamp(12px, 3vw, 16px);
+  max-width: 340px;
+
+  @media ${breakPoints.md} {
     min-width: 100%;
+  }
+  @media ${breakPoints.sm} {
+  }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
   }
 `;
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 5%;
-  right: 3%;
-  width: 30px;
+  top: 20px;
+  right: 20px;
+  width: 20px;
   color: white;
   background: transparent;
+  padding: 0;
   cursor: pointer;
   transition: 0.1s;
+  z-index: 999999;
+  display: flex;
   &:hover {
     opacity: 0.5;
   }
 
   @media ${breakPoints.md} {
-    width: 24px;
+    width: 16px;
+    right: 24px;
+    top: 24px;
+  }
+
+  @media ${breakPoints.sm} {
+    right: 16px;
+    top: 16px;
   }
 `;
 
-function BookModal(props: BookModalState) {
-  const { title, types, author, price } = props;
-  const [sum, setSum] = useState(0);
-  const { handleOpenModal } = useModal();
+const EditionName = styled(Text)`
+  font-size: clamp(10px, 3vw, 16px);
+  text-transform: uppercase;
+
+  @media ${breakPoints.md} {
+    order: -1;
+  }
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    font-size: clamp(10px, 2vw, 16px);
+  }
+`;
+
+const ProductCopiesContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px;
+  background-color: var(--main-white-10);
+  border-radius: 50px;
+
+  @media screen and (orientation: landscape) and (max-width: 883px) {
+    place-self: center;
+  }
+`;
+
+const ChangeCopiesButton = styled.button`
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+  position: relative;
+  background: transparent;
+  color: var(--main-white-100);
+  cursor: pointer;
+  :before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+`;
+
+const PriceContainer = styled.div`
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+
+  @media ${breakPoints.sm} {
+  }
+`;
+
+const CopiesCount = styled.span`
+  font-size: 14px;
+`;
+
+const Separator = styled.hr`
+  border: thin solid var(--main-black);
+  height: 10px;
+`;
+
+type ProductCopiesType = {
+  setSum: Dispatch<SetStateAction<number>>;
+  setCopies: Dispatch<SetStateAction<number[]>>;
+  price: number;
+  index: number;
+  copies: number[];
+  discount: number;
+};
+
+function ProductCopies({
+  setSum,
+  setCopies,
+  price,
+  discount,
+  index,
+  copies,
+}: ProductCopiesType) {
+  const discountedPrice =
+    discount > 0 ? Math.floor(price * (1 - discount / 100)) : price;
+
+  function increment() {
+    setCopies((prev) => {
+      const newArr = [...prev];
+      newArr[index] = newArr[index] + 1;
+      return newArr;
+    });
+
+    setSum((prev) => prev + discountedPrice);
+  }
+
+  function decrement() {
+    if (copies[index] > 0) {
+      setCopies((prev) => {
+        const newArr = [...prev];
+        newArr[index] = newArr[index] - 1;
+        return newArr;
+      });
+      setSum((prev) => prev - discountedPrice);
+    }
+  }
+
+  return (
+    <ProductCopiesContainer>
+      <ChangeCopiesButton onClick={decrement}>-</ChangeCopiesButton>
+      <Separator />
+      <CopiesCount>{copies[index]}</CopiesCount>
+      <Separator />
+      <ChangeCopiesButton onClick={increment}>+</ChangeCopiesButton>
+    </ProductCopiesContainer>
+  );
+}
+
+type EditionsMap = {
+  [key: string]: CartItemType['category'];
+};
+
+type EditionsShownMap = {
+  [key: string]: string;
+};
+
+const editions: EditionsShownMap = {
+  PrintedBooks: 'Печатное издание',
+  Ebooks: 'Цифровое издание',
+  Audiobooks: 'Аудиокнига',
+  CardBooks: 'Книга 2.0',
+};
+
+const bookTypes: EditionsMap = {
+  PrintedBooks: 'PrintBook',
+  Ebooks: 'EBook',
+  Audiobooks: 'AudioBook',
+  CardBooks: 'Book2.0',
+};
+
+function Edition({ children }: PropsWithChildren) {
+  const [isSelected, setIsSelected] = useState(false);
+  return (
+    <IconButtonWrapper
+      selected={isSelected}
+      onClick={() => setIsSelected((prev) => !prev)}
+    >
+      <IconButtonContainer>{children}</IconButtonContainer>
+    </IconButtonWrapper>
+  );
+}
+
+function BookModal(props: BookModalProps) {
+  const { cover, name, types, author, price, discount, closeFunc } = props;
+  // const [sum, setSum] = useState(0);
+  const firstPrice = Math.floor((price[0] * (100 - discount[0])) / 100);
+
+  const [sum, setSum] = useState(firstPrice);
+  const typesNumber = types.length;
+  const initialCopiesArray = new Array(typesNumber).fill(0);
+  initialCopiesArray[0] = 1;
+  const [copies, setCopies] = useState<number[]>(initialCopiesArray);
+
+  const createCartObjects = ({
+    cover,
+    name,
+    types,
+    author,
+    price,
+  }: typeof props): CartItemType[] => {
+    const items: CartItemType[] = [];
+    types.forEach((type, index) => {
+      copies[index] &&
+        items.push({
+          id: setOrGetCartCookie()!.toString(),
+          name: name,
+          category: bookTypes[type],
+          quantity: copies[index],
+          price: price[index],
+          discount: discount[index],
+          subtitle: author,
+          picture: cover,
+        });
+    });
+    return items;
+  };
+
+  async function addMultipleItemsToCart() {
+    const items = createCartObjects(props);
+
+    items.forEach(async (item) => {
+      const addedItem: CartItemType = await postData(`/api/cart`, {
+        oper: 'update',
+        item: item,
+      });
+    });
+  }
 
   return (
     <Container>
-      <CloseButton type='button' onClick={() => handleOpenModal(false)}>
-        <CloseIcon />
-      </CloseButton>
-      <ModalTitle>Выберите тип издания</ModalTitle>
-      <Title variant='h2_2'>{title}</Title>
+      <Title variant='text'>{name}</Title>
       <Author>{author}</Author>
-
+      <ModalTitleWrapper>
+        <ModalTitle>Типы издания</ModalTitle>
+      </ModalTitleWrapper>
       <Buttons>
-        {types.map((type: string) => {
-          return (
-            <IconButtonContainer key={type}>
-              <IconButton
-                onClick={() => setSum((prev) => prev + price)}
-                type='button'
-              >
-                {modalIconLookup[type]}
-              </IconButton>
-              <Price>{`${price}₽`}</Price>
-            </IconButtonContainer>
-          );
+        {types.map((type, index) => {
+          if (type !== null) {
+            return (
+              <Edition key={type}>
+                <IconWrapper>{modalIconLookup[type]}</IconWrapper>
+                <EditionName variant='text'>{editions[type]}</EditionName>
+                <ProductCopies
+                  setSum={setSum}
+                  setCopies={setCopies}
+                  index={index}
+                  price={price[index]}
+                  discount={discount[index]}
+                  copies={copies}
+                />
+                <PriceContainer>
+                  <Price>
+                    {`${
+                      discount[index] > 0
+                        ? Math.floor(price[index] * (1 - discount[index] / 100))
+                        : price[index]
+                    }₽`}{' '}
+                  </Price>
+
+                  {discount[index] > 0 ? (
+                    <DiscountPrice>{`${price[index]}₽`}</DiscountPrice>
+                  ) : null}
+                </PriceContainer>
+              </Edition>
+            );
+          }
         })}
       </Buttons>
       <Footer>
         <TotalPrice>
-          Сумма:
+          <span>Сумма:</span>
           <Price>{`${sum}₽`}</Price>
         </TotalPrice>
-        <ToCartButton>В корзину</ToCartButton>
+        <AddToCartButton
+          variant='outlined'
+          onClick={() => {
+            addMultipleItemsToCart();
+            closeFunc();
+          }}
+        >
+          Добавить в корзину
+        </AddToCartButton>
       </Footer>
     </Container>
   );
 }
 
-const modalLookup = makeMap({ book: BookModal });
+const modalLookup = makeMap({ book: BookModal, search: SearchModal });
 
 function ModalContentFallback() {
   return <div>Не удалось загрузить модальное окно</div>;
 }
 
 export default function ModalProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const [modalState, setModalState] = useState({
-    title: '',
-    price: 0,
-    author: '',
-    types: [''],
+  const [{ open, modalType }, setOpen] = useState({
+    open: false,
+    modalType: '',
   });
-  const type = 'book';
-  const ModalContent = modalLookup.get(type) ?? ModalContentFallback;
+  const [modalState, setModalState] = useState<BookModalState>({
+    name: '',
+    cover: '',
+    price: [],
+    discount: [],
+    author: '',
+    types: [],
+  });
+
+  const ModalContent = modalLookup.get(modalType) ?? ModalContentFallback;
+
+  const handleOpenModal = useCallback(
+    (open: boolean, type: string = modalType) => {
+      return setOpen({ open, modalType: type });
+    },
+    [modalType]
+  );
+
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if ((e.key === 'k' || e.key === 'л') && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleOpenModal(true, 'search');
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, [handleOpenModal]);
 
   return (
     <ModalContext.Provider
-      value={{ handleOpenModal: setOpen, handleModalState: setModalState }}
+      value={{
+        handleOpenModal,
+        handleModalState: setModalState,
+      }}
     >
       {children}
-      <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Portal>
-          <DialogOverlay />
-          <DialogContent>
-            <ModalContent {...modalState} />
-          </DialogContent>
-        </Dialog.Portal>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(open: boolean) => setOpen({ open, modalType })}
+      >
+        <AnimatePresence>
+          {open ? (
+            <>
+              <DialogOverlay open={open} forceMount />
+              <Dialog.Content forceMount>
+                <DialogContent
+                  layout
+                  initial={{
+                    opacity: 0,
+                    transform: 'translate(-50%, -50%) scale(0.7)',
+                  }}
+                  animate={{
+                    opacity: 1,
+                    transform: 'translate(-50%, -50%) scale(1)',
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transform: 'translate(-50%, -50%) scale(0.9)',
+                  }}
+                  transition={{
+                    duration: 0.2,
+                    ease: 'easeInOut',
+                    opacity: { duration: 0.2 },
+                  }}
+                >
+                  <ModalContent
+                    {...modalState}
+                    closeFunc={() => handleOpenModal(false)}
+                  />
+                  <Dialog.Close asChild>
+                    <CloseButton
+                      type='button'
+                      onClick={() => handleOpenModal(false)}
+                      aria-label='Закрыть'
+                    >
+                      <CloseIcon />
+                    </CloseButton>
+                  </Dialog.Close>
+                </DialogContent>
+              </Dialog.Content>
+            </>
+          ) : null}
+        </AnimatePresence>
       </Dialog.Root>
     </ModalContext.Provider>
   );

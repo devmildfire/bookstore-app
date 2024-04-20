@@ -11,9 +11,14 @@ const StyledTitle = styled(Text)`
   background: linear-gradient(
     180deg,
     rgba(5, 5, 5, 1) 0%,
-    rgba(0, 0, 0, 0.1) 100%
+    var(--main-black) 100%
   );
   width: 100%;
+  /* TODO Исправить:
+    max-width здесь не должно быть, но в https://github.com/russiandino/chtivo-next/pull/35/files 
+    была добавлена максимальная ширина для глобального стиля h21Style. Нужно убрать и переместить в локальные стили.  
+  */
+  max-width: 100%;
   padding: 2rem 0;
 `;
 

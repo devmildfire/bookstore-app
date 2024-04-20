@@ -1,8 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('./fonts.css');
 @import url('./normalize.css');
 
 :root {
-  --main-red-100: rgba(147, 0, 0, 1);
+  --main-red-100: rgb(147, 0, 0);
   --main-red-90: rgba(147, 0, 0, 0.9);
   --main-red-80: rgba(147, 0, 0, 0.8);
   --main-red-70: rgba(147, 0, 0, 0.7);
@@ -39,8 +43,14 @@
   --width: 1440px;
   --searchBarWidth: 335px;
   --max-width: 1920px;
+
+  --text-max-width: 1000px;
+
   --main-margin: calc((100vw - var(--width)) / 2);
   --header-height: 80px;
+  --header-gap: clamp(30px, 3.1vw + 20px, 80px);
+  --first-title-gap: clamp(20px, 0.625vw + 18px, 30px);
+  --block-gap: clamp(50px, 6.25vw + 30px, 150px);
 
   --font-heading-xl: 50px;
 
@@ -50,19 +60,38 @@
   --font-s: 12px;
   /* --heading-xl */
   --top-div-gap: 100px;
+  --scrollbar-width: 0;
 }
 
-/* добавлено чтобы убрать полосу прокрутки страницы в Chrome */
-/* ::-webkit-scrollbar {
-  display: none;
-} */
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
+}
 
-@media screen and (max-width: 830px) {
-  :root {
-    /* --width: 580px; */
-    --width: 722px;
-    --top-div-gap: 40px;
-  }
+/* Track */
+::-webkit-scrollbar-track {
+  background: #232323;
+  border-radius: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--grey);
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+html {
+  /* 
+    Временно оставляю скролл даже при открытых модальных окнах.
+    Так же заставляет исчезнуть хедер.
+  */
+  overflow-y: scroll;
+  color-scheme: dark;
 }
 
 html,
@@ -124,6 +153,8 @@ body {
     --width: 1024px;
     --searchBarWidth: 256px;
     --top-div-gap: 70px;
+
+    --header-height: 70px;
   }
 }
 
@@ -132,6 +163,8 @@ body {
     --width: 830px;
     --searchBarWidth: 186px;
     --top-div-gap: 50px;
+
+    --header-height: 60px;
   }
 
   .max-width {
@@ -148,6 +181,8 @@ body {
     /* --width: 580px; */
     --width: 722px;
     --top-div-gap: 40px;
+
+    --header-height: 58px;
   }
 }
 
@@ -176,5 +211,95 @@ body {
   :root {
     --searchBarWidth: 99px;
     --top-div-gap: 30px;
+  }
+}
+
+@keyframes overlay-appear {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(16px);
+  }
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+/*  next is tailwind styles */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

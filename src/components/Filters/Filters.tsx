@@ -1,33 +1,31 @@
 import React, { PropsWithChildren, ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import * as Accordion from '@radix-ui/react-accordion';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Popover from '@radix-ui/react-popover';
 import {
-  TriangleDownIcon,
   MixerVerticalIcon,
   Cross1Icon,
-  MagnifyingGlassIcon,
-  // CaretSortIcon,
+  ReloadIcon,
 } from '@radix-ui/react-icons';
-import { Command } from 'cmdk';
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
+import { Multiselect } from '../Common/Multiselect';
+import breakPoints from '@/utils/breakPoints';
 
-const DropdownContent = styled(DropdownMenu.Content)`
+const PopoverContent = styled(Popover.Content)`
   position: relative;
   background-color: rgba(30, 30, 30, 0.6);
-  padding: 15px 12px 20px;
+  padding: clamp(12px, 5vw, 35px) clamp(12px, 5vw, 50px);
   border-radius: 8px;
   backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: clamp(256px, 30vw, 512px);
+  gap: clamp(12px, 5vw, 35px);
+  width: clamp(256px, 90vw, 755px);
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
 `;
 
-const DropdownTrigger = styled(DropdownMenu.Trigger)`
+const PopoverTrigger = styled(Popover.Trigger)`
   background: transparent;
-  color: #dcdcdc;
+  color: var(--main-white-80);
   padding: 16px;
   min-width: 64px;
   width: 100%;
@@ -39,108 +37,27 @@ const DropdownTrigger = styled(DropdownMenu.Trigger)`
   }
 `;
 
-const DropdownLabel = styled(DropdownMenu.Label)`
+const PopoverLabel = styled.span`
   text-align: center;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   padding-bottom: 7px;
-`;
-
-const AccordionTrigger = styled(Accordion.Trigger)`
-  width: 100%;
-  text-align: left;
-  margin: 0;
-  padding: 6px 12px;
-  font-size: clamp(12px, 1vw, 16px);
-  font-weight: 400;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #121212;
-  color: #dcdcdc;
-  border-radius: ${(props: { open: boolean }) => {
-    return props.open ? '4px 4px 0 0' : '4px';
-  }}; ;
-`;
-
-const AccordionRoot = styled(Accordion.Root)`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const StyledCommand = styled(Command)`
-  background-color: #121212;
-  border-radius: 0 0 4px 4px;
-  display: flex;
-  width: 100%;
-`;
-
-const CommandList = styled(Command.List)`
-  width: 100%;
-  padding: 0px 12px 6px 12px;
-  color: #dcdcdc;
-  font-size: clamp(10px, 1vw, 14px); ;
-`;
-
-const FiltersContainer = styled.div`
-  max-height: 256px;
-  overflow-y: auto;
-  scroll-padding-block: 8px;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
-
-  &::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
+  opacity: 0.5;
 `;
 
 const CloseIcon = styled(Cross1Icon)`
-  position: absolute;
-  top: 18px;
-  right: 12px;
   cursor: pointer;
 `;
 
-const SearchContainer = styled.div`
-  position: relative;
-`;
-
-const CommandInput = styled(Command.Input)`
-  background-color: #555;
-  border: none;
-  border-radius: 4px;
-  font-size: clamp(12px, 1vw, 16px);
-  padding: 4px 8px;
-  color: #dcdcdc;
-  width: -content;
-  width: 100%;
-  box-sizing: border-box;
-`;
-
-const SearchIcon = styled(MagnifyingGlassIcon)`
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  color: #dcdcdc;
-`;
-
-const CommandSeparator = styled(Command.Separator)`
-  width: 100%;
-  height: 1px;
-  background-color: #555;
-  margin-bottom: 6px;
-`;
-
 const Triggers = styled.div`
-  background-color: rgba(30, 30, 30, 0.4);
+  background-color: #171717;
   border-radius: 60px;
   display: flex;
   justify-content: space-evenly;
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(4px);
   width: 100%;
   max-width: 755px;
   height: auto;
+  max-height: 66px;
   margin: 62px 0;
 `;
 
@@ -157,124 +74,161 @@ const SortList = styled.ul`
   background-color: #121212;
   margin: 0;
   list-style: none;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 2vw, 16px);
   padding: 12px 12px 18px;
 `;
 
-function Multiselect({ withSearch }: { withSearch?: boolean }) {
-  return (
-    <StyledCommand>
-      <CommandList>
-        <CommandSeparator />
-        <Command.Empty>No results found.</Command.Empty>
-        {withSearch && (
-          <SearchContainer>
-            <CommandInput />
-            <SearchIcon />
-          </SearchContainer>
-        )}
-        <Command.Item>a</Command.Item>
-        <Command.Item>b</Command.Item>
-        <Command.Item>c</Command.Item>
-      </CommandList>
-    </StyledCommand>
-  );
+const HeaderConainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+type IconButtonProps = {
+  icon: ReactElement;
+  handleClick: (...args: any) => void;
+};
+
+const StyledIconButton = styled.button`
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  color: var(--main-white-100);
+  transition: 0.15s;
+  position: relative;
+  opacity: 0.5;
+  & > svg {
+    width: 22px;
+    height: 22px;
+  }
+  :hover {
+    opacity: 1;
+  }
+  :before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+  @media ${breakPoints.sm} {
+    & > svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+`;
+
+export const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scroll-padding-block: 8px;
+  gap: 9px;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+`;
+
+function IconButton({ icon, handleClick }: IconButtonProps) {
+  return <StyledIconButton onClick={handleClick}>{icon}</StyledIconButton>;
 }
 
-interface FilterProps {
-  opened: string[];
-  value: string;
-  title: string;
-}
-
-function Filter(props: PropsWithChildren<FilterProps>) {
-  const { opened, value, title, children } = props;
-  return (
-    <Accordion.Item value={value}>
-      <Accordion.Header>
-        <AccordionTrigger open={opened.includes(value)}>
-          {title}
-          <TriangleDownIcon />
-        </AccordionTrigger>
-      </Accordion.Header>
-      <Accordion.Content>{children}</Accordion.Content>
-    </Accordion.Item>
-  );
-}
-
-function Filters() {
-  const [opened, setOpened] = useState(['']);
-  return (
-    <AccordionRoot type='multiple' value={opened} onValueChange={setOpened}>
-      <Filter value='author' title='Автор' opened={opened}>
-        <Multiselect withSearch />
-      </Filter>
-      <Filter value='type' title='Тип издания' opened={opened}>
-        <Multiselect />
-      </Filter>
-      <Filter value='year' title='Год издания' opened={opened}>
-        <Multiselect />
-      </Filter>
-    </AccordionRoot>
-  );
-}
-
-function FilterDropdown({
-  title,
-  icon,
-  align,
-  children,
-}: PropsWithChildren<{
+type FilterPopoverProps = PropsWithChildren<{
   title: string;
   icon: ReactElement;
   align: 'start' | 'center' | 'end';
-}>) {
+}>;
+
+function FilterPopover(props: FilterPopoverProps) {
+  const { title, icon, align, children } = props;
   const [visible, setVisible] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  function reset() {
+    setResetKey((prev) => (prev += 1));
+  }
+
   return (
-    <DropdownMenu.Root modal={false} open={visible} onOpenChange={setVisible}>
-      <DropdownTrigger>{icon}</DropdownTrigger>
-      <DropdownMenu.Portal>
-        <DropdownContent
+    <Popover.Root modal={false} open={visible} onOpenChange={setVisible}>
+      <PopoverTrigger>{icon}</PopoverTrigger>
+      <Popover.Portal>
+        <PopoverContent
           align={align}
           avoidCollisions={false}
           sticky='always'
           sideOffset={12}
         >
-          <DropdownLabel>{title}</DropdownLabel>
-          <CloseIcon onClick={() => setVisible(false)} />
-          <FiltersContainer>{children}</FiltersContainer>
-        </DropdownContent>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+          <HeaderConainer>
+            <IconButton icon={<ReloadIcon />} handleClick={reset} />
+
+            <PopoverLabel>{title}</PopoverLabel>
+            <IconButton
+              icon={<CloseIcon />}
+              handleClick={() => setVisible(false)}
+            />
+          </HeaderConainer>
+
+          <FiltersContainer key={resetKey}>{children}</FiltersContainer>
+        </PopoverContent>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 
 const FilterIcon = styled(MixerVerticalIcon)`
-  width: clamp(1rem, 3vw, 2rem);
+  width: clamp(1rem, 3vw, 30px);
   height: auto;
 `;
 
 const SortIcon = styled(SortIconSvg)`
-  width: clamp(1rem, 3vw, 2rem);
+  width: clamp(1rem, 3vw, 28px);
   height: auto;
 `;
 
-function App() {
+function Filters() {
+  const yearsData = ['2020', '2021', '2022', '2023'];
+  const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
+  const authorsData = [
+    'Оганес Мартиросян',
+    'Алексей Михайлов',
+    'Анна Пашкова',
+    'Александ Гаврилов',
+    'Николай Старообрядцев',
+    'Андрей Янкус',
+    'Джек Керуак',
+    'Эдуард Диа Диникин',
+    'Андрей Платонов',
+    'Вячеслав Немиров',
+    'Фёдор Достоевский',
+    'Сергей Иннер',
+    'Эрих фон Нефф',
+    'Артём Северский',
+    'Владислав Несветаев',
+  ];
+
   return (
     <Triggers>
-      <FilterDropdown align='start' title='Фильтры' icon={<FilterIcon />}>
-        <Filters />
-      </FilterDropdown>
+      <FilterPopover align='start' title='Фильтры' icon={<FilterIcon />}>
+        <Multiselect data={authorsData} twoColumn title='Автор' withSearch />
+        <Multiselect data={editionsData} title='Издания ' />
+        <Multiselect data={yearsData} title='Год издания' />
+      </FilterPopover>
       <Separator />
-      <FilterDropdown align='end' title='Сортировка' icon={<SortIcon />}>
+      <FilterPopover align='end' title='Сортировка' icon={<SortIcon />}>
         <SortList>
           <li>По дате издания</li>
           <li>По автору</li>
           <li>По цене</li>
         </SortList>
-      </FilterDropdown>
+      </FilterPopover>
     </Triggers>
   );
 }
 
-export default App;
+export default Filters;

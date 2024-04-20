@@ -13,28 +13,32 @@ import Donate from '@/components/AboutPage/Donate';
 import breakPoints from '@/utils/breakPoints';
 import rorshah from '@/assets/images/rorshah_whole_2.png';
 import Text from '@/components/Common/Text';
+import PageLayout from '@/layouts/PageLayout';
 
 const About: NextPage = () => (
-  <StyledWrapper>
-    <VideoContainer>
-      <PageTitle />
-      <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
-    </VideoContainer>
-    <AboutUs />
-    <AboutList />
-    <RD />
-    <StyledStarsBlock>
-      <We />
-      <Partners />
-      <Donate />
-      <BeWithUs />
-    </StyledStarsBlock>
-  </StyledWrapper>
+  <PageLayout headTitle='О Чтиве'>
+    <StyledWrapper>
+      <VideoContainer>
+        <PageTitle />
+        <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
+      </VideoContainer>
+      <AboutUs />
+      <AboutList />
+      <RD />
+      <StyledStarsBlock>
+        <We />
+        <Partners />
+        <Donate />
+        <BeWithUs />
+      </StyledStarsBlock>
+    </StyledWrapper>
+  </PageLayout>
 );
 
 export default About;
 
 const StyledText = styled(Text)<{ classname: string }>`
+  padding-top: 100px;
   padding-bottom: 60px;
 
   @media ${breakPoints.xl} {
@@ -42,14 +46,17 @@ const StyledText = styled(Text)<{ classname: string }>`
   }
 
   @media ${breakPoints.lg} {
+    padding-top: 65px;
     padding-bottom: 50px;
   }
 
   @media ${breakPoints.smd} {
+    padding-top: 40px;
     padding-bottom: 30px;
   }
 
   @media ${breakPoints.sm} {
+    padding-top: 20px;
     padding-bottom: 10px;
   }
 `;
@@ -71,7 +78,8 @@ const VideoContainer = styled(Container)`
 const StyledWrapper = styled.main`
   --marginBottom: 170px;
   --lastMarginBottom: 600px;
-  --rowGap: 150px;
+  /* --rowGap: 150px; */
+  --rowGap: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,21 +89,23 @@ const StyledWrapper = styled.main`
   @media ${breakPoints.xl} {
     --marginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 150px;
+    --rowGap: 100px;
   }
 
   @media ${breakPoints.lg} {
     --marginBottom: 100px;
     --lastMarginBottom: 200px;
     padding-top: 0px;
-    --rowGap: 100px;
+    /* --rowGap: 100px; */
+    --rowGap: 60px;
   }
 
   @media ${breakPoints.md} {
     --marginBottom: 85px;
     --lastMarginBottom: 175px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 
   @media ${breakPoints.smd} {
@@ -103,7 +113,8 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 
   @media ${breakPoints.sm} {
@@ -111,7 +122,8 @@ const StyledWrapper = styled.main`
     --marginBottom: 70px;
     --lastMarginBottom: 150px;
     padding-top: 0px;
-    --rowGap: 70px;
+    /* --rowGap: 70px; */
+    --rowGap: 40px;
   }
 `;
 

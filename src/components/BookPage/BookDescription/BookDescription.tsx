@@ -16,13 +16,14 @@ import CloseIcon from '@/assets/icons/close.svg';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
 import breakPoints from '@/utils/breakPoints';
+import { Title } from '@/models/books';
 
 interface BookDescriptionProps {
   readonly title: string;
   readonly publishDate: string;
   readonly genre: string;
   readonly ageRestriction: string;
-  readonly image?: string;
+  readonly cover?: string;
   readonly description: string[];
   readonly authors: Author[];
   readonly thesis?: string;
@@ -54,20 +55,20 @@ const StyledCloseIcon = styled(CloseIcon)`
   }
 `;
 
-const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
+const BookDescription = (props: Title): React.ReactElement => {
   const {
-    title,
-    publishDate,
-    genre,
-    ageRestriction,
-    image,
+    name,
+    first_release,
+    // genre,
+    age_restriction,
+    cover,
     description,
     authors,
     thesis,
   } = props;
 
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const year = new Date(publishDate).getFullYear();
+  // const year = new Date(publishDate).getFullYear();
 
   const handleClosePopup = () => {
     // document.body.style.overflow = 'unset';
@@ -100,19 +101,19 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
         </CloseButton>
         <FullscreenCover
           className={isImageOpen ? 'active' : ''}
-          src={image}
-          alt={title}
+          src={cover}
+          alt={name}
         />
       </CoverPopup>
 
-      <StyledImage onClick={handleOpenPopup} src={image} alt={title} />
+      <StyledImage onClick={handleOpenPopup} src={cover} alt={name} />
       <DescriptionLayout>
-        <StyledTitle variant='h2_1'>{title}</StyledTitle>
+        <StyledTitle variant='h2_1'>{name}</StyledTitle>
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {authors.map((author) => author.name)}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
-          {`${year} | ${genre} | ${ageRestriction}`}
+          {`${first_release} | +${age_restriction}`}
         </StyledInfo>
         <StyledThesis
           variant='h3_3'
@@ -123,17 +124,14 @@ const BookDescription = (props: BookDescriptionProps): React.ReactElement => {
           {thesis}
         </StyledThesis>
         <StyledDescription>
-          {description.map((paragraph: string) => (
-            <Text
-              key={paragraph}
-              variant='text'
-              component='p'
-              fontWeight={400}
-              textTransform='none'
-            >
-              {paragraph}
-            </Text>
-          ))}
+          <Text
+            variant='text'
+            component='p'
+            fontWeight={400}
+            textTransform='none'
+          >
+            {description}
+          </Text>
         </StyledDescription>
       </DescriptionLayout>
     </StyledWrapper>

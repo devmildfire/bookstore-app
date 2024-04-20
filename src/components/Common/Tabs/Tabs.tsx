@@ -11,13 +11,14 @@ import Book2 from '../Icons/Book2';
 import Digital from '../Icons/Digital';
 import BookIcon from '../Icons/Book';
 import Audio from '../Icons/Audio';
-import { editionTypes } from '@/components/BookPage/BookProperties/BookProperties';
+import { EditionType } from '@/components/BookPage/BookProperties/BookProperties';
 import breakPoints from '@/utils/breakPoints';
+import { BookTableTypesEnum, Title } from '@/models/books';
 
 interface TabProps {
   active: string;
-  handleTabClick: (tab: string, index: number) => void;
-  item: string;
+  handleTabClick: (tab: BookTableTypesEnum, index: number) => void;
+  item: BookTableTypesEnum;
   index: number;
 }
 
@@ -30,11 +31,16 @@ interface TabContentProps {
 }
 
 interface TabsProps {
-  types: string[];
-  publishDate: string;
-  price: number;
-  editions: editionTypes;
+  types: {
+    type: BookTableTypesEnum;
+    info: Title[BookTableTypesEnum];
+  }[];
+  first_release: Date;
+  prices: Record<BookTableTypesEnum[number], number>[];
+  editions: EditionType;
 }
+
+// type TabsProps = Title & { editions: EditionType };
 
 const StyledTab = styled.li`
   position: relative;
@@ -219,19 +225,16 @@ const StyledAudioIcon = styled(Audio)`
   }
 `;
 
-interface Icons {
-  [key: string]: StyledComponent<any, any>;
-}
-
-const icons: Icons = {
-  digital: StyledDigitalIcon,
-  audio: StyledAudioIcon,
-  book2: StyledBook2Icon,
-  write: StyledBookIcon,
+const icons: Record<BookTableTypesEnum[number], any> = {
+  Ebooks: StyledDigitalIcon,
+  Audiobooks: StyledAudioIcon,
+  CardBooks: StyledBook2Icon,
+  PrintedBooks: StyledBookIcon,
 };
 
 function Tab(props: TabProps) {
   const { active, handleTabClick, item, index } = props;
+
   const Icon = icons[item];
   return (
     <StyledTab className={active === item ? 'active' : ''}>
@@ -292,18 +295,17 @@ function TabContent({
 export default function Tabs(
   props: PropsWithChildren<TabsProps>
 ): ReactElement {
-  const { types, publishDate, price, editions } = props;
-  const [active, setActive] = useState(types[0]);
+  const { types, first_release, prices, editions } = props;
+  const [active, setActive] = useState<BookTableTypesEnum>(types[0].type);
   const [[page, direction], setPage] = useState([0, 0]);
 
-  function onTabClick(tab: string, index: number) {
+  function onTabClick(tab: BookTableTypesEnum, index: number) {
     setActive(tab);
     setPage([index, index - page]);
   }
 
-  // const [year, month, day] = publishDate.split('-').map((item) => Number(item));
   // const date = new Date(year, month, day).toLocaleDateString('ru-RU');
-  const formatedDate = dayjs(publishDate).format('DD.MM.YYYY');
+  const formatDate = dayjs(first_release).format('DD.MM.YYYY');
   const handleTabClick = useCallback(onTabClick, [setActive, setPage]);
   const ActiveTabContent = editions[active];
 
@@ -312,16 +314,19 @@ export default function Tabs(
       <Labels>
         {types.map((item, idx) => (
           <Tab
-            key={item}
+            key={item.type}
             active={active}
             handleTabClick={handleTabClick}
             index={idx}
-            item={item}
+            item={item.type}
           />
         ))}
       </Labels>
       <TabContent direction={direction}>
-        <ActiveTabContent releaseDate={formatedDate} price={price} />
+        {/* <ActiveTabContent
+          releaseDate={formatDate}
+          price={types.filter((type) => type.type === active)[0].info.price}
+        /> */}
       </TabContent>
     </StyledTabs>
   );

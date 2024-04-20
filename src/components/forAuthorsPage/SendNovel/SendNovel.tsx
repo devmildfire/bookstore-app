@@ -19,19 +19,25 @@ const title = 'Отправить материал в литжурнал РД'
 const SendNovel = (): React.ReactElement => {
   return (
     <NovelDiv>
-      <Text variant='h3_1Man' className='title'>
-        {title}
-      </Text>
-      {/* <TextDiv > */}
-      <Text className='text' variant='manText'>
-        {firstPar}
-      </Text>
-      <Text className='link' variant='h3_1SendMan' align='start'>
-        {'Отправляйте ваши произведения на почту: '}
-        <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
-      </Text>
-      {/* </TextDiv> */}
-      <DinoPawsBook as={dinoPaws} className='picture' />
+      <div>
+        <Text variant='h1c' className='title'>
+          {title}
+        </Text>
+
+        <div className='content'>
+          <Text className='ctext' variant='ctext'>
+            {firstPar}
+          </Text>
+
+          <Text className='link' variant='h3c' align='start'>
+            {'Отправляйте ваши произведения на почту: '}
+            <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+          </Text>
+        </div>
+      </div>
+      <div className='PawsDiv'>
+        <DinoPawsBook as={dinoPaws} className='picture' />
+      </div>
     </NovelDiv>
   );
 };

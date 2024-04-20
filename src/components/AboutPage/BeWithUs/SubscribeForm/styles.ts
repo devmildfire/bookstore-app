@@ -68,7 +68,7 @@ export const StyledButton = styled(Button)`
     max-width: 240px;
     width: 100%;
     min-width: 150px;
-    height: 32px;
+    height: 40px;
     min-height: 32px;
     margin: 0 auto;
   }

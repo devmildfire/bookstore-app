@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { generateBook } from '@/mocks/books';
-import { Book } from '@/models/books';
+import { Book, Title } from '@/models/books';
 
 export default function handler(
   req: NextApiRequest,

@@ -1,7 +1,7 @@
 import { HYDRATE } from 'next-redux-wrapper';
 /* eslint-disable import/no-cycle */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
-import { Book, BookType } from './types';
+import { Title, BookType } from './types';
 import { ID } from '@/types/common';
 import { BASE_API_URL, TAGS } from '@/consts/api';
 import { Pagination } from '@/types/api';
@@ -19,18 +19,18 @@ export const booksApi = createApi({
     baseUrl: `${BASE_API_URL}/books`,
   }),
   endpoints: (builder) => ({
-    getBooks: builder.query<Book[], GetBooksQuery>({
+    getBooks: builder.query<Title[], GetBooksQuery>({
       query: (params) => ({
         url: '/',
         params,
       }),
       providesTags: [TAGS.BOOKS],
     }),
-    getBook: builder.query<Book, ID>({
+    getBook: builder.query<Title, ID>({
       query: (id) => ({ url: `/${id}` }),
       providesTags: [TAGS.BOOK],
     }),
-    getPopularBooks: builder.query<Book[], undefined>({
+    getPopularBooks: builder.query<Title[], undefined>({
       query: () => ({ url: '/popular' }),
     }),
     getYearFilter: builder.query<string[], undefined>({
