@@ -13,6 +13,7 @@ const NovelDiv = styled.div`
 
     a {
       color: var(--main-red-100);
+      transition: 0.3s;
     }
 
     a:hover {
