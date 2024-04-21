@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import styled, { keyframes } from 'styled-components';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { z } from 'zod';
 import {
   useForm,
@@ -25,31 +25,21 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 const SubscribeForm = (): React.ReactElement => {
   const [error, setError] = useState('');
   const [isValid, setIsvalid] = useState(false);
+  const formRef = useRef() as React.MutableRefObject<HTMLFormElement>;
+  const inputRef = useRef() as React.MutableRefObject<React.ReactNode>;
 
-  const {
-    // handleSubmit,
-    control,
-    // formState: { errors, isSubmitSuccessful },
-  } = useForm<FormSchemaType>({
+  const { control } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
 
   const [wipe, setWipe] = useState(false);
-
-  // const onSubmit: SubmitHandler<FormSchemaType> = (data?) => {
-  // const onSubmit: SubmitHandler<FormSchemaType> = () => {
-  //   setWipe(false);
-  // };
-
-  // const onError: SubmitErrorHandler<FormSchemaType> = () => {
-  //   setWipe(false);
-  // };
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
     const { value } = input;
     const valid = input.validity.valid;
     // не показываем сообщение об ошибке если поле пустое
+
     if (value !== '') {
       setWipe(false);
       setIsvalid(valid);
@@ -69,10 +59,12 @@ const SubscribeForm = (): React.ReactElement => {
   return (
     <div>
       <StyledForm
+        ref={formRef}
         // onSubmit={handleSubmit(onSubmit, onError)}
         action={actionString}
         target='_blank'
         method='POST'
+        id='styledForm'
       >
         <Controller
           control={control}
@@ -104,11 +96,28 @@ const SubscribeForm = (): React.ReactElement => {
         />
 
         <StyledButton
-          type='submit'
+          type='button'
           onClick={() => {
-            setWipe(true);
+            const input = document.getElementById(
+              'recipient_email'
+            ) as HTMLInputElement;
+
+            // const input = inputRef.current;
+
+            const styledForm = formRef.current;
+
+            // setWipe(true);
+            console.log('form valid...', isValid);
+
+            if (input.value === '') {
+              setWipe(false);
+              setError('адрес электронной почты требуется для подписки');
+            }
+
+            if (isValid) {
+              styledForm.requestSubmit();
+            }
           }}
-          disabled={!isValid}
         >
           Подписаться
         </StyledButton>
@@ -125,13 +134,7 @@ const SubscribeForm = (): React.ReactElement => {
           </StyledOutput>
         )} */}
       </StyledForm>
-      {!isValid && !wipe && error && (
-        <ErrorOutput>
-          {/* Русский Динозар может писать только на валидные адреса электронной
-          почты */}
-          {error}
-        </ErrorOutput>
-      )}
+      {!isValid && !wipe && error && <ErrorOutput>{error}</ErrorOutput>}
     </div>
   );
 };
@@ -155,57 +158,6 @@ const slideDown = keyframes`
   /* пока мы пользуемся рассылкой через сторонний сервис ru.msndr.net, мы не выдаём сразу подтверждения о подписке */
 }
 
-// interface StyledOutputProps {
-//   passed?: number;
-// }
-
-// const StyledOutput = styled.div<StyledOutputProps>`
-//   animation: ${slideDown} 0.2s linear;
-//   top: 0px;
-//   background-color: var(--main-white-60);
-//   color: var(--main-black);
-//   border: none;
-//   border-radius: 4px;
-//   padding: 60px 20px 20px 20px;
-//   max-width: 270px;
-//   margin: auto;
-//   width: 100%;
-//   height: 120px;
-//   text-transform: uppercase;
-//   text-align: left;
-//   background-repeat: no-repeat;
-//   background-position: calc(100% - 15px) calc(100% - 2px);
-//   background-image: url(${goat.src});
-
-//   @media ${breakPoints.lg} {
-//     background-size: 35%;
-//     background-position: calc(100% - 15px) calc(100% - 0px);
-//     padding: 45px 10px 10px 10px;
-//     height: 83px;
-//     font-size: 12px;
-//     width: 185px;
-//   }
-
-//   @media ${breakPoints.smd} {
-//     background-size: 28%;
-//     background-position: calc(100% - 17px) calc(100% - 0px);
-//     padding: 25px 10px 10px 10px;
-
-//     width: 150px;
-//     height: 51px;
-//     max-width: var(--width);
-//     margin: 0 auto;
-//     font-size: 8px;
-//   }
-
-//   @media ${breakPoints.sm} {
-//     width: 150px;
-//     max-width: var(--width);
-//     margin: 0 auto;
-//     font-size: 8px;
-//   }
-// `;
-
 const ErrorOutput = styled.div`
   background-color: var(--main-red-20);
   color: var(--main-white-100);
@@ -218,7 +170,10 @@ const ErrorOutput = styled.div`
   animation: ${slideDown} 0.2s linear;
   max-width: var(--width);
   border-radius: 2px;
-  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media ${breakPoints.xl} {
     width: 879px;
