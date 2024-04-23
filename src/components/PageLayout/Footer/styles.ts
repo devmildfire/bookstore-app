@@ -15,10 +15,13 @@ export const StyleWrapper = styled.footer`
 export const FooterWrapper = styled.div`
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, 200px);
+
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr;
   justify-content: space-between;
   align-items: center;
-  @media screen and (max-width: 668px) {
+
+  @media ${breakPoints.ssm} {
     grid-template-columns: 200px;
     grid-template-rows: repeat(3, 1fr);
     justify-content: center;
@@ -32,7 +35,7 @@ export const FooterContent = styled.div`
   display: flex;
   justify-content: center;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.ssm} {
     flex-wrap: wrap;
     align-items: center;
   }
@@ -81,7 +84,7 @@ export const FooterInfo = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media ${breakPoints.md} {
+  @media ${breakPoints.ssm} {
     width: 100%;
     order: -1;
     margin-bottom: 20px;
@@ -132,7 +135,7 @@ export const ContactIcon = styled.svg`
 export const FooterLogoLink = styled.a`
   display: flex;
   justify-self: flex-end;
-  @media screen and (max-width: 668px) {
+  @media ${breakPoints.ssm} {
     justify-self: center;
   }
 `;

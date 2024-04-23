@@ -115,7 +115,7 @@ const FormField: React.FC<FormFieldProps> = ({
   <div className={className}>
     <label htmlFor={name}>{label}</label>
     <StyledInput type={type} placeholder={placeholder} {...register} />
-    {error && <p className='text-[10px]'>{error.message}</p>}
+    {error && <p>{error.message}</p>}
   </div>
 );
 
