@@ -44,7 +44,9 @@ export interface Title {
   readonly cover: string;
   readonly slug: string;
   readonly isFeatured: boolean;
-  readonly prices: Record<BookTableTypesEnum[number], number>[];
+  // readonly prices: Record<BookTableTypesEnum[number], number>[];
+  readonly prices: number[];
+
   readonly discount: number[];
   readonly types: BookTableTypesEnum[];
   readonly PrintedBooks: PrintedBookType;
