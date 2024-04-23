@@ -72,4 +72,11 @@ export const StyledButton = styled.button<StyledButtonProps>`
     --button-border-color: var(--main-red-100);
     --button-bg-color: var(--main-red-100);
   }
+
+  &:disabled {
+    &:hover {
+      --button-text-color: var(--main-white-100);
+      --button-bg-color: var(--button-bg-color);
+    }
+  }
 `;
