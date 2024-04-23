@@ -115,7 +115,7 @@ const FormField: React.FC<FormFieldProps> = ({
   <div className={className}>
     <label htmlFor={name}>{label}</label>
     <StyledInput type={type} placeholder={placeholder} {...register} />
-    {error && <p>{error.message}</p>}
+    {error && <p className='text-[10px]'>{error.message}</p>}
   </div>
 );
 
@@ -129,6 +129,7 @@ const StyledFormField = styled(FormField)`
 
   p {
     color: var(--main-red-100);
+    font-size: 20px;
   }
 
   label {
@@ -144,12 +145,20 @@ const StyledFormField = styled(FormField)`
     label {
       font-size: 14px;
     }
+
+    p {
+      font-size: 14px;
+    }
   }
 
   @media ${breakPoints.sm} {
     gap: 6px;
 
     label {
+      font-size: 10px;
+    }
+
+    p {
       font-size: 10px;
     }
   }
