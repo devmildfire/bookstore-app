@@ -22,6 +22,7 @@ import {
   StyleWrapper,
   FooterWrapper,
 } from './styles';
+import Link from 'next/link';
 
 const Footer = (): React.ReactElement => (
   <StyleWrapper>
@@ -80,14 +81,24 @@ const Footer = (): React.ReactElement => (
         <Text
           variant='h4_3'
           component='p'
-          style={{ display: 'flex', justifyContent: 'space-between' }}
+          // style={{ display: 'flex', justifyContent: 'space-between' }}
+          className='flex flex-col justify-center text-center gap-3 sm:flex-row sm:justify-between'
         >
-          <span>
+          <span className='text-center sm:text-left'>
             © 2017-
             {getCurrentYear()}
             &nbsp; Чтиво. Санкт-Петербург. Все права защищены.
           </span>
-          <span> #хбдщдбдщ</span>
+          <Link
+            href={`/docs/oferta.pdf`}
+            target='_blank'
+            rel='noreferrer'
+            className='text-center text-red-800 sm:text-left hover:underline hover:text-red-600 duration-300'
+          >
+            Оферта
+          </Link>
+
+          <span className='text-center sm:text-left'>#хбдщдбдщ</span>
         </Text>
       </CopyrightContainer>
     </FooterCopyright>

@@ -10,11 +10,6 @@ import { API } from 'api/books/';
 import styled from 'styled-components';
 import PageLayout from '@/layouts/PageLayout';
 
-const Oferta = styled.div`
-  white-space: pre-wrap;
-  text-align: left;
-`;
-
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
 
@@ -89,19 +84,6 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
         <section className='max-width'>
           <Drawer />
           <Products data={titles} />
-          <Oferta>
-            {`ИП Дедович Сергей Сергеевич
-ОГРН (ОГРНИП) 315615400001147
-ИНН 615423213890
-ОКПО 0194667189
-ОКТМО 40377000000
-ОКВЭД основной 62.09
-ОКВЭД дополнительный: 63.11.162.0162.0282.9994.9960.1060.2094.12
-Электронная почта hello@russiandino.ru
-Телефон 8 (812) 915 83 67
-Юридический адрес: 196158, г. Санкт-Петербург, ул. Среднерогатская, д. 9, лит А, кв. 881.
-Почтовый адрес: 191180, Санкт-Петербург, Дедович Сергей Сергеевич, до востребования`}
-          </Oferta>
         </section>
       </HomeLayout>
     </PageLayout>

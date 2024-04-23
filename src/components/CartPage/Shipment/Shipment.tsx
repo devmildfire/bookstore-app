@@ -23,6 +23,10 @@ import { promoStore } from '@/store/PromoStore';
 import { cartStore } from '@/store/CartStore';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
+import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import Link from 'next/link';
 
 async function emptyCartFromDB(cartID: string) {
   const emptyCartResponse: string = await postData(`/api/cart`, {
@@ -164,6 +168,8 @@ export function Shipment({
   cartID,
   totalPrice,
 }: shipmentProps): React.ReactElement {
+  const [ofertaAccepted, setOfertaAccepted] = useState<CheckedState>();
+
   const {
     register,
     handleSubmit,
@@ -278,8 +284,34 @@ export function Shipment({
             error={errors.email}
           />
 
-          <StyledButton type='submit'>Перейти к оплате</StyledButton>
+          <div className={`flex flex-col gap-3 align-center`}>
+            <StyledButton type='submit' disabled={!ofertaAccepted}>
+              Перейти к оплате
+            </StyledButton>
 
+            <div className='flex items-center space-x-2'>
+              <Checkbox
+                id='terms'
+                onCheckedChange={(checked) => {
+                  setOfertaAccepted(checked);
+                }}
+              />
+              <label
+                htmlFor='terms'
+                className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+              >
+                согласен с{' '}
+                <Link
+                  href={`/docs/oferta.pdf`}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='text-center text-red-800 sm:text-left hover:underline hover:text-red-600 duration-300'
+                >
+                  условиями
+                </Link>{' '}
+              </label>
+            </div>
+          </div>
           <StyledBackButton
             onClick={() => {
               setStage('cartStage');
