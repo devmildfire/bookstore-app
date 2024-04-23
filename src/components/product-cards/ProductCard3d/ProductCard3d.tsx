@@ -22,20 +22,33 @@ function ProductCard3d(props: ProductCardProps) {
 
   const { handleModalState, handleOpenModal } = useModal();
 
+  // console.log('productCard3D props are ', props);
+
+  // console.log('productCard3D prices are ... ', prices);
+
   const onAddToCartClick = () => {
     handleModalState({
       cover,
       name,
       // FIXME: цены сломались
-      price: [300],
+      // price: [300],
       discount,
-      // price: Math.min(...price),
+      price: prices,
+      // price: Math.min(...prices),
       // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
     });
     handleOpenModal(true, 'book');
   };
+
+  const disPrices = prices.map((price, index) =>
+    Math.floor((price * (100 - discount[index])) / 100)
+  );
+
+  const minPrice = Math.min(...disPrices);
+
+  const minIndex = disPrices.findIndex((x) => x === minPrice);
 
   return (
     <BookWrapper tabIndex={0}>
@@ -53,9 +66,12 @@ function ProductCard3d(props: ProductCardProps) {
       </Book>
       <Footer>
         <PriceContainer>
-          {/* FIXME: цены сломались */}
-          <Price>от {`300₽`}</Price>
-          {/* <OldPrice discount>{newPrice `${price}₽`}</OldPrice> */}
+          {/* FIXME: цены починены, но засчёт упрощения ключа prices в типе Title. Теперь там просто массив чисел*/}
+
+          <Price>от {minPrice}</Price>
+          <OldPrice
+            discount={!!discount[minIndex]}
+          >{`${prices[minIndex]}₽`}</OldPrice>
         </PriceContainer>
         <ButtonsContainer>
           <IconButton

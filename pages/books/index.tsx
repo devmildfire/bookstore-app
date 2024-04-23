@@ -42,18 +42,25 @@ export const getServerSideProps = async () => {
   }
 
   if (data) {
-    const titles = data.map((title) => ({
-      ...title,
-      price: bookTypes
-        .map((type) => (title[type] ? title[type].price : null))
-        .filter((price) => price !== null) as number[],
-      discount: bookTypes
-        .map((type) => (title[type] ? title[type].discount : null))
-        .filter((discount) => discount !== null) as number[],
-      types: bookTypes
-        .map((type) => (title[type] ? type : null))
-        .filter((type) => type !== null) as BookTableTypesEnum[],
-    }));
+    const titles = data.map((title) => {
+      // const logPrice = bookTypes
+      //   .map((type) => (title[type] ? title[type].price : null))
+      //   .filter((price) => price !== null) as number[];
+      // console.log('log price is ... ', logPrice);
+
+      return {
+        ...title,
+        prices: bookTypes
+          .map((type) => (title[type] ? title[type].price : null))
+          .filter((price) => price !== null) as number[],
+        discount: bookTypes
+          .map((type) => (title[type] ? title[type].discount : null))
+          .filter((discount) => discount !== null) as number[],
+        types: bookTypes
+          .map((type) => (title[type] ? type : null))
+          .filter((type) => type !== null) as BookTableTypesEnum[],
+      };
+    });
 
     return {
       props: {

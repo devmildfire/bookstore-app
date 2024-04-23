@@ -3678,6 +3678,25 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea
+                    // placeholder='Tell us a little bit about yourself'
+                    className='h-full'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='pages'
@@ -4485,6 +4504,25 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name='extra'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>extra info</FormLabel>
+                <FormControl>
+                  <Textarea
+                    // placeholder='Tell us a little bit about yourself'
+                    className='h-fit'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='cover'
