@@ -8,6 +8,7 @@ const breakPoints = {
   // xl: 'screen  and (max-width: 1440px)',
   // xxl: 'screen  and (max-width: 1920px)',
   sm: 'screen  and (max-width: 575px)',
+  ssm: 'screen  and (max-width: 700px)',
   smd: 'screen  and (max-width: 743px)',
   md: 'screen  and (max-width: 829px)',
   lg: 'screen  and (max-width: 1023px)',
