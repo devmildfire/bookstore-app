@@ -157,7 +157,10 @@ const Open = (): React.ReactElement => {
     <EnrollDiv>
       <Text variant='abzacText' align='start'>
         {openPar}{' '}
-        <a className='font-bold' href={`mailto:${openAdress}`}>
+        <a
+          className='font-bold text-mainred hover:text-red'
+          href={`mailto:${openAdress}`}
+        >
           {openAdress}
         </a>{' '}
         {openPar2}

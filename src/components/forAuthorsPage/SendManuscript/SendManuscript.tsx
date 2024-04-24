@@ -39,7 +39,7 @@ const SendManuscript = (): React.ReactElement => {
             <Text variant='ctext'>
               {firstString}{' '}
               <a
-                className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+                className='underline text-mainred font-bold hover:text-red duration-300'
                 href='mailto:info@chtivo.spb.ru'
               >
                 info@chtivo.spb.ru
@@ -106,7 +106,7 @@ const Conditions = (): React.ReactElement => {
       <Text variant='ctext'>
         Подробно о том, как мы работаем с рукописями, узнайте в{' '}
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
         >
           статье{' '}
@@ -118,7 +118,7 @@ const Conditions = (): React.ReactElement => {
         символов с пробелами для публикации в литжурнале Русского Динозавра с
         тиражированием на:
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://dzen.ru/russiandino?share_to=link'
         >
           {' '}
@@ -126,7 +126,7 @@ const Conditions = (): React.ReactElement => {
         </a>
         ,
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://vk.com/russiantrex'
         >
           {' '}
@@ -134,7 +134,7 @@ const Conditions = (): React.ReactElement => {
         </a>
         ,
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://t.me/russiandino'
         >
           {' '}
@@ -142,7 +142,7 @@ const Conditions = (): React.ReactElement => {
         </a>
         ,{' '}
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'
         >
           {' '}
@@ -150,7 +150,7 @@ const Conditions = (): React.ReactElement => {
         </a>
         ,{' '}
         <a
-          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          className='underline text-mainred font-bold hover:text-red duration-300'
           href='https://pikabu.ru/@russiandino'
         >
           {' '}

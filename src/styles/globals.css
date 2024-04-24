@@ -6,6 +6,7 @@
 @import url('./normalize.css');
 
 :root {
+  --super-red: rgb(255, 0, 0);
   --main-red-100: rgb(147, 0, 0);
   --main-red-90: rgba(147, 0, 0, 0.9);
   --main-red-80: rgba(147, 0, 0, 0.8);

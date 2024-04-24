@@ -37,6 +37,9 @@ const config = {
     },
     extend: {
       colors: {
+        red: 'var(--super-red)',
+        mainred: 'var(--main-red-100)',
+        subred: 'var(--main-red-80)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
