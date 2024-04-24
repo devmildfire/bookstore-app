@@ -103,6 +103,8 @@ const HeroDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 48px;
+
+  text-align: justify;
 `;
 
 const CardDiv = styled.div`

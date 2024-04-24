@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
-import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+// import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+import abzacLogo320 from '@/assets/images/AbzacLogo_oldsite.png';
+
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
 import Text from '@/components/Common/Text';
