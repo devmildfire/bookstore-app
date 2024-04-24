@@ -16,7 +16,7 @@ const FAQ = (): React.ReactElement => {
         {'FAQ'}{' '}
         <span
           className={`text-lg align-middle  ${
-            open ? 'text-red-800' : 'text-white'
+            open ? 'text-mainred' : 'text-white'
           }`}
         >
           {' '}
@@ -42,7 +42,7 @@ const FAQ = (): React.ReactElement => {
             Мы рассматриваем для издания только поэмы. Но вы можете отправить
             стихотворения в 
             <a
-              className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+              className='underline text-mainred font-bold hover:text-red duration-300'
               href='https://t.me/ahulitera'
             >
               АХУЛИ
@@ -140,7 +140,7 @@ const FAQ = (): React.ReactElement => {
             произведение, если оно соответствует требованиям и одобрено ведущим
             редактором. С изданиями Чтива можно ознакомиться{' '}
             <a
-              className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+              className='underline text-mainred font-bold hover:text-red duration-300'
               href='https://chtivo.spb.ru/all-books.html'
             >
               здесь
@@ -169,7 +169,7 @@ const FAQ = (): React.ReactElement => {
           <Text variant='ctext'>
             Мы рассматриваем первую книгу цикла (об этапах отбора читайте в 
             <a
-              className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+              className='underline text-mainred font-bold hover:text-red duration-300'
               href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
             >
               статье
