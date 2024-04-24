@@ -260,7 +260,7 @@ const CourseCardTitleDiv = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 25px;
 
   padding-bottom: 24px;

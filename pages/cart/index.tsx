@@ -69,6 +69,7 @@ async function removeItemFromDB(item: CartItemType, cartID: string) {
 const StyledEmptyCart = styled(EmptyCart)`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 
   button {
     margin-left: 0;
@@ -84,9 +85,7 @@ const StyledEmptyCart = styled(EmptyCart)`
   }
 
   @media ${breakPoints.sm} {
-    button {
-      margin-left: auto;
-    }
+    align-items: center;
 
     h2,
     p {
