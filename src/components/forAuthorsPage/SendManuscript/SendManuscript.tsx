@@ -91,7 +91,7 @@ const Requirements = (): React.ReactElement => {
       {requirements.map((requirement) => {
         return (
           <TextReqDiv key={requirement}>
-            <span className='text-red-800'>●</span>
+            <span className='text-mainred'>●</span>
             <Text variant='ctext'>{requirement}</Text>
           </TextReqDiv>
         );

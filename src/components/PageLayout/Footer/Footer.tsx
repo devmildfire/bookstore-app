@@ -93,7 +93,7 @@ const Footer = (): React.ReactElement => (
             href={`/docs/oferta.pdf`}
             target='_blank'
             rel='noreferrer'
-            className='text-center text-red-800 sm:text-left hover:underline hover:text-red-600 duration-300'
+            className='text-center text-mainred sm:text-left hover:underline hover:text-red duration-300'
           >
             Оферта
           </Link>
