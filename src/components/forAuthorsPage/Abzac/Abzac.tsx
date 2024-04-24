@@ -132,6 +132,7 @@ const Abzac = (): React.ReactElement => {
         <Text variant='abzacText'>{firstPar}</Text>
       </HeroDiv>
       <Trailer />
+      <Open />
       {courses && <Curriculum courses={courses} />}
       <StaffEnrollDiv>
         {lectors && <Staff lectors={lectors} />}
@@ -143,6 +144,26 @@ const Abzac = (): React.ReactElement => {
 
 type StaffProps = {
   lectors: LectorsType[];
+};
+
+const openPar =
+  'Открыта запись на участие в курсах в режиме разовых факультативных занятий — от вас требуется только обозначить свой интерес. Ждём вас, пишите нам на ';
+const openAdress = 'hello@russiandino.ru';
+const openPar2 =
+  ' с рассказом о себе и обозначением интересующих вас направлений обучения. ';
+
+const Open = (): React.ReactElement => {
+  return (
+    <EnrollDiv>
+      <Text variant='abzacText' align='start'>
+        {openPar}{' '}
+        <a className='font-bold' href={`mailto:${openAdress}`}>
+          {openAdress}
+        </a>{' '}
+        {openPar2}
+      </Text>
+    </EnrollDiv>
+  );
 };
 
 const Staff = ({ lectors }: StaffProps): React.ReactElement => {

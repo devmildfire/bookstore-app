@@ -91,7 +91,7 @@ const Requirements = (): React.ReactElement => {
       {requirements.map((requirement) => {
         return (
           <TextReqDiv key={requirement}>
-            <span>●</span>
+            <span className='text-red-800'>●</span>
             <Text variant='ctext'>{requirement}</Text>
           </TextReqDiv>
         );
@@ -143,7 +143,7 @@ const Conditions = (): React.ReactElement => {
         ,{' '}
         <a
           className='underline text-red-800 font-bold hover:text-red-600 duration-300'
-          href='https://instagram.com/russiandino_ru'
+          href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'
         >
           {' '}
           Инстаграм*

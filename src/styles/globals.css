@@ -51,6 +51,7 @@
   --header-gap: clamp(30px, 3.1vw + 20px, 80px);
   --first-title-gap: clamp(20px, 0.625vw + 18px, 30px);
   --block-gap: clamp(50px, 6.25vw + 30px, 150px);
+  --man-block-gap: clamp(30px, 1.25vw + 26px, 50px);
 
   --font-heading-xl: 50px;
 

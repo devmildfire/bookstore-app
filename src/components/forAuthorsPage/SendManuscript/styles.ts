@@ -50,7 +50,8 @@ const BugDiv = styled.div`
 const ManuscriptDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--block-gap);
+  /* gap: var(--block-gap); */
+  gap: var(--man-block-gap);
 
   --padding-top: 100px;
   // --padding-sides: 235px;
@@ -243,7 +244,6 @@ const ReqDiv = styled.div`
 
   gap: 16px;
 
-  span,
   a {
     color: var(--main-red-100);
   }
@@ -272,6 +272,12 @@ const ReqDiv = styled.div`
   }
 `;
 
+const FaqItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 const TextForMobile = styled(Text)`
   display: none;
 
@@ -291,4 +297,5 @@ export {
   TextForMobile,
   ContentDiv,
   BugDiv,
+  FaqItem,
 };
