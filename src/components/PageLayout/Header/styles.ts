@@ -90,7 +90,7 @@ const CartIconStyled = styled(CartIcon)`
 
 const MenuButton = styled.div`
   display: none;
-  @media ${breakPoints.lg} {
+  @media ${breakPoints.headerNavCutoff} {
     display: block;
   }
 `;
@@ -206,7 +206,7 @@ const NavList = styled.ul<HeaderList>`
   position: relative;
   width: 55%;
   min-width: 480px;
-  @media ${breakPoints.lg} {
+  @media ${breakPoints.headerNavCutoff} {
     background-color: ${(props) => props.backgroundColor};
     width: 50vw;
     min-width: 260px;
