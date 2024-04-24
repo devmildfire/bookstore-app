@@ -264,6 +264,7 @@ const CourseCardTitleDiv = styled.div`
   gap: 25px;
 
   padding-bottom: 24px;
+  padding-top: 24px;
 
   svg {
     color: var(--main-white-80);
@@ -294,6 +295,7 @@ const CourseCardTitleDiv = styled.div`
   @media ${breakPoints.smd} {
     gap: 7px;
     padding-bottom: 12px;
+    padding-top: 12px;
     /* align-items: flex-end; */
   }
 
@@ -405,7 +407,6 @@ const ButtonsDiv = styled.div`
   justify-content: space-around;
   flex-direction: row;
   align-items: end;
-  }
 `;
 
 const CourseTextTitleDiv = styled.div`
@@ -544,7 +545,7 @@ const DiscountPrice = styled(Text)`
 `;
 
 const StyledButton = styled(Button)<{ className?: string }>`
-  max-width: 900px;
+  width: 100%;
 
   height: 70px;
   padding: 0 20px;
@@ -559,7 +560,7 @@ const StyledButton = styled(Button)<{ className?: string }>`
   }
 
   @media ${breakPoints.xl} {
-    max-width: 720px;
+    /* max-width: 720px; */
     height: 47px;
     min-height: unset;
     padding: 0 0;
@@ -580,14 +581,14 @@ const StyledButton = styled(Button)<{ className?: string }>`
   }
 
   @media ${breakPoints.lg} {
-    max-width: 570px;
+    /* max-width: 570px; */
     height: 45px;
     min-height: 45px;
     min-width: 185px;
   }
 
   @media ${breakPoints.md} {
-    width: 100%;
+    /* width: 100%; */
   }
 
   @media ${breakPoints.smd} {

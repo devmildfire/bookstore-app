@@ -23,7 +23,7 @@ export const FooterWrapper = styled.div`
 
   @media ${breakPoints.ssm} {
     grid-template-columns: 200px;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: 1fr 0.8fr 0.8fr;
     justify-content: center;
     gap: 16px;
   }
@@ -42,7 +42,7 @@ export const FooterContent = styled.div`
 
   @media ${breakPoints.sm} {
     flex-direction: column;
-    padding: 10px 0px 25px;
+    padding: 100px 0px 25px;
   }
 `;
 
@@ -53,7 +53,7 @@ export const FooterContacts = styled.div`
 
   @media ${breakPoints.sm} {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 0;
   }
 `;
 

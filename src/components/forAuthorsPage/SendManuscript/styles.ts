@@ -44,14 +44,14 @@ const BugDiv = styled.div`
       position: unset;
       max-width: 100%;
     }
-
   }
 `;
 
 const ManuscriptDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: var(--block-gap);
+  /* gap: var(--block-gap); */
+  gap: var(--man-block-gap);
 
   --padding-top: 100px;
   // --padding-sides: 235px;
@@ -107,7 +107,7 @@ const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  
+
   /* @media ${breakPoints.xl} {
     gap: 50px;
   }
@@ -238,9 +238,12 @@ const ReqDiv = styled.div`
   flex-direction: column;
   /* align-items: center; */
 
+  .smalltext {
+    font-size: 14px;
+  }
+
   gap: 16px;
 
-  span,
   a {
     color: var(--main-red-100);
   }
@@ -269,6 +272,12 @@ const ReqDiv = styled.div`
   }
 `;
 
+const FaqItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 const TextForMobile = styled(Text)`
   display: none;
 
@@ -288,4 +297,5 @@ export {
   TextForMobile,
   ContentDiv,
   BugDiv,
+  FaqItem,
 };

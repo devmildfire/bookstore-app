@@ -16,6 +16,13 @@ import { mediaTypes } from './MediaTypes';
 import { requirements } from './Requirements';
 import BugTypeWriter from '@/assets/images/BugTypeWriter.png';
 import Image from 'next/image';
+import FAQ from './faq';
+
+const firstString =
+  'Убедитесь, что ваша рукопись соответствует требованиям ниже, и присылайте её и синопсис на ';
+
+const secondString =
+  'Заключаем только эксклюзивные контракты. Мы предлагаем роялти 50% от всех чистых доходов с продаж всех изданий авторского текста:';
 
 const firstPar =
   'Здесь вы можете узнать, как отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
@@ -29,8 +36,16 @@ const SendManuscript = (): React.ReactElement => {
         <div>
           <Text variant='h1c'>Уважаемые авторы</Text>
           <TextDiv>
-            <Text variant='ctext'>{firstPar}</Text>
-            <Text variant='ctext'>{secondPar}</Text>
+            <Text variant='ctext'>
+              {firstString}{' '}
+              <a
+                className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+                href='mailto:info@chtivo.spb.ru'
+              >
+                info@chtivo.spb.ru
+              </a>{' '}
+            </Text>
+            <Text variant='ctext'>{secondString}</Text>
           </TextDiv>
         </div>
         <MediaIcons />
@@ -76,7 +91,7 @@ const Requirements = (): React.ReactElement => {
       {requirements.map((requirement) => {
         return (
           <TextReqDiv key={requirement}>
-            <span>●</span>
+            <span className='text-red-800'>●</span>
             <Text variant='ctext'>{requirement}</Text>
           </TextReqDiv>
         );
@@ -88,25 +103,85 @@ const Requirements = (): React.ReactElement => {
 const Conditions = (): React.ReactElement => {
   return (
     <ReqDiv>
+      <Text variant='ctext'>
+        Подробно о том, как мы работаем с рукописями, узнайте в{' '}
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
+        >
+          статье{' '}
+        </a>
+        .
+      </Text>
+      <Text variant='ctext'>
+        Также рассматриваем отдельные рассказы (статьи, эссе, пьесы) до 30 тысяч
+        символов с пробелами для публикации в литжурнале Русского Динозавра с
+        тиражированием на:
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://dzen.ru/russiandino?share_to=link'
+        >
+          {' '}
+          Дзен
+        </a>
+        ,
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://vk.com/russiantrex'
+        >
+          {' '}
+          ВКонтакте
+        </a>
+        ,
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://t.me/russiandino'
+        >
+          {' '}
+          Телеграм
+        </a>
+        ,{' '}
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'
+        >
+          {' '}
+          Инстаграм*
+        </a>
+        ,{' '}
+        <a
+          className='underline text-red-800 font-bold hover:text-red-600 duration-300'
+          href='https://pikabu.ru/@russiandino'
+        >
+          {' '}
+          Пикабу
+        </a>
+        . Важно: материал не должен быть ранее опубликован на Дзене.
+      </Text>
       <Text variant='ctext'>Рукописи не рецензируются.</Text>
       <Text variant='ctext'>
         Посетителей без предварительной записи в редакции не принимаем.
       </Text>
-      <Text variant='h4c' align='start'>
+      {/* <Text variant='h4c' align='start'>
         {'Отправляйте ваши рукопись на имейл '}
         <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
-      </Text>
+      </Text> */}
       <Text variant='h4c' align='start'>
         {'Верим в вас. '}
       </Text>
-      <TextForMobile variant='ctext' align='start'>
+      <p className='smalltext'>
+        *Правительственные органы страны Россия признали Инстаграм
+        экстремистской организацией, будьте бдительны.
+      </p>
+      {/* <TextForMobile variant='ctext' align='start'>
         {
           'Также рассматриваем отдельные рассказы (в том числе статьи и эссе) для публикации в '
         }
         <a href='https://t.me/russiandino' target='_blank'>
           литжурнале Русского Динозавра
         </a>
-      </TextForMobile>
+      </TextForMobile> */}
+      <FAQ />
     </ReqDiv>
   );
 };
