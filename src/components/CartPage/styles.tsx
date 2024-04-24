@@ -17,7 +17,7 @@ export const ButtonDiv = styled.div`
 export const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   /* grid-template-columns: auto min-content; */
   /* grid-template-columns: auto; */
 
@@ -57,6 +57,8 @@ export const StyledForm = styled.form`
   }
 
   @media ${breakPoints.sm} {
+    align-items: center;
+
     /* flex-direction: column; */
 
     /* grid-template-columns: 1fr; */
@@ -66,7 +68,7 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledButton = styled(Button)`
-  margin: 30px auto 0px;
+  margin: 30px 0 0px;
 
   @media ${breakPoints.lg} {
     /* width: 100%; */
@@ -76,7 +78,7 @@ export const StyledButton = styled(Button)`
 
     height: 45px;
     min-height: 45px;
-    margin: 18px auto 0px;
+    margin: 18px 0 0px;
   }
 
   @media ${breakPoints.smd} {
@@ -88,7 +90,7 @@ export const StyledButton = styled(Button)`
     height: 32px;
     min-height: 32px;
     /* margin: 0 auto; */
-    margin: 10px auto 0px;
+    margin: 10px 0 0px;
   }
 
   @media ${breakPoints.sm} {
@@ -98,7 +100,7 @@ export const StyledButton = styled(Button)`
     height: 40px;
     min-height: 32px;
     /* margin: 0 auto; */
-    margin: 16px auto 0px;
+    margin: 16px 0 0px;
   }
 `;
 
@@ -106,20 +108,20 @@ export const StyledBackButton = styled.button`
   padding: 5px 10px;
   font-size: 16px;
 
-  margin: 0 auto;
+  margin: 0 0;
 
   @media ${breakPoints.lg} {
-    margin: 0 auto;
+    margin: 0 0;
     font-size: 12px;
   }
 
   @media ${breakPoints.smd} {
-    margin: 0 auto;
+    margin: 0 0;
     font-size: 10px;
   }
 
   @media ${breakPoints.sm} {
-    margin: 0 auto;
+    margin: 0 0;
   }
 `;
 

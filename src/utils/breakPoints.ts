@@ -12,6 +12,7 @@ const breakPoints = {
   smd: 'screen  and (max-width: 743px)',
   md: 'screen  and (max-width: 829px)',
   lg: 'screen  and (max-width: 1023px)',
+  headerNavCutoff: 'screen  and (max-width: 1230px)',
   xl: 'screen  and (max-width: 1439px)',
   xxl: 'screen  and (max-width: 1919px)',
   co2: `screen  and (max-width: ${cutoff - 2}px)`,

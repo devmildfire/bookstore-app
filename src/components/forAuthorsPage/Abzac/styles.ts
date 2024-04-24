@@ -103,6 +103,8 @@ const HeroDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 48px;
+
+  text-align: justify;
 `;
 
 const CardDiv = styled.div`
@@ -302,9 +304,9 @@ const CourseCardTitleDiv = styled.div`
 
 const CourseCardDiv = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-direction: row;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 50px;
 
   /* border-bottom: 1px solid var(--main-white-100); */
@@ -326,17 +328,18 @@ const CourseCardDiv = styled.div`
   @media ${breakPoints.smd} {
     gap: 7px;
     padding-bottom: 12px;
-    align-items: flex-end;
+    align-items: flex-start;
   }
 
   @media ${breakPoints.sm} {
+    flex-direction: column;
   }
 `;
 
 const CourseTextDiv = styled.div`
   display: flex;
   justify-content: start;
-  flex-direction: row;
+  flex-direction: column;
   gap: 40px;
   align-items: start;
   text-align: left;
@@ -369,7 +372,7 @@ const ItemsDiv = styled.div`
   align-items: start;
 
   @media ${breakPoints.sm} {
-    display: none;
+    // display: none;
   }
 `;
 
@@ -381,7 +384,7 @@ const ValuesDiv = styled.div`
   align-items: start;
 
   @media ${breakPoints.sm} {
-    display: none;
+    // display: none;
   }
 `;
 
@@ -402,22 +405,6 @@ const ButtonsDiv = styled.div`
   justify-content: space-around;
   flex-direction: row;
   align-items: end;
-
-  > svg {
-    display: none;
-    @media ${breakPoints.sm} {
-      display: block;
-
-      :hover {
-        color: var(--main-red-100);
-      }
-    }
-  }
-
-  > button {
-    @media ${breakPoints.sm} {
-      display: none;
-    }
   }
 `;
 
@@ -428,8 +415,6 @@ const CourseTextTitleDiv = styled.div`
   gap: 8px;
   align-items: start;
   text-align: left;
-
-  /* flex-grow: 1; */
 
   @media ${breakPoints.xl} {
   }
@@ -529,7 +514,12 @@ const CoursePriceDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 35px;
+  gap: 16px;
+  width: fit-content;
+
+  @media ${breakPoints.sm} {
+    width: 100%;
+  }
 `;
 
 const DiscountPrice = styled(Text)`

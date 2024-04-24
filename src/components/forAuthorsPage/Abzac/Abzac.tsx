@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import logoPic1920 from '@/assets/images/AbzacLogo.png';
 import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
 import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
-import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+// import abzacLogo320 from '@/assets/images/AbzacLogo_320.png';
+import abzacLogo320 from '@/assets/images/AbzacLogo_oldsite.png';
+
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
 import Text from '@/components/Common/Text';
@@ -80,7 +82,8 @@ async function addCourseToCart({
 
 const CoursesWithLectorsQuery = supabase
   .from('Courses')
-  .select(` *, lectors: Lectors_Courses( Lectors(*)) `);
+  .select(` *, lectors: Lectors_Courses( Lectors(*)) `)
+  .order('id');
 
 type CoursesWithLectorsType = QueryData<typeof CoursesWithLectorsQuery>;
 
@@ -182,54 +185,43 @@ const Curriculum = ({
       <Text variant='h3_Abzac' align='start'>
         Направления обучения
       </Text>
-
-      <Accordion.Root type='single' defaultValue='item-value-0' collapsible>
+      <div>
         {courses &&
           courses.map((course, index) => (
-            //  <Accordion.Item>
-            <AnimatedAccordionItem
-              value={'item-value-' + index}
-              key={'item-key-' + course.id}
-            >
-              <Accordion.Trigger className='AccordionTrigger'>
-                <CourseCardTitle
-                  format={course.format || ''}
-                  duration={course.duration || ''}
-                  title={course.name}
-                  about={course.description ? course.description : ''}
-                  teachers={course.lectors.map((item) => {
-                    if (item.Lectors !== null) {
-                      return item.Lectors;
-                    }
-                  })}
-                  key={'title' + course.id}
-                  price={course.price || 0}
-                  discount={course.discount}
-                />
-              </Accordion.Trigger>
-              {/* <AnimatedAccordionContent className='AccordionContent'> */}
-              <Accordion.Content className='AccordionContent'>
-                <CourseCard
-                  format={course.format || ''}
-                  about={course.description || ''}
-                  duration={course.duration || ''}
-                  price={course.price || 0}
-                  title={course.name || ''}
-                  teachers={course.lectors.map((item) => {
-                    if (item.Lectors !== null) {
-                      return item.Lectors;
-                    }
-                  })}
-                  key={course.id}
-                  discount={course.discount}
-                />
-              </Accordion.Content>
-              {/* </AnimatedAccordionContent> */}
+            <div key={course.id}>
+              <CourseCardTitle
+                format={course.format || ''}
+                duration={course.duration || ''}
+                title={course.name}
+                about={course.description ? course.description : ''}
+                teachers={course.lectors.map((item) => {
+                  if (item.Lectors !== null) {
+                    return item.Lectors;
+                  }
+                })}
+                key={'title' + course.id}
+                price={course.price || 0}
+                discount={course.discount}
+              />
+
+              <CourseCard
+                format={course.format || ''}
+                about={course.description || ''}
+                duration={course.duration || ''}
+                price={course.price || 0}
+                title={course.name || ''}
+                teachers={course.lectors.map((item) => {
+                  if (item.Lectors !== null) {
+                    return item.Lectors;
+                  }
+                })}
+                key={course.id}
+                discount={course.discount}
+              />
               <hr />
-              {/* </Accordion.Item> */}
-            </AnimatedAccordionItem>
+            </div>
           ))}
-      </Accordion.Root>
+      </div>
     </CoursesDiv>
   );
 };
@@ -264,7 +256,6 @@ const CourseCardTitle = (props: CourseCardProps): React.ReactElement => {
             </DiscountPrice>
           )}
         </div>
-        <ArrowDown className='hover:text-red-800 duration-300' />
       </div>
     </CourseCardTitleDiv>
   );
@@ -306,30 +297,31 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
   return (
     <CourseCardDiv>
       <CourseTextDiv>
-        <ItemsDiv>
-          <Text variant='abzacCardText'>Формат: </Text>
-          <Text variant='abzacCardText'>
-            {teachers && teachers.length > 1 ? 'Лекторы: ' : 'Лектор: '}
-          </Text>
-          <Text variant='abzacCardText'>Длительность: </Text>
-        </ItemsDiv>
-        <ValuesDiv>
-          <Text variant='abzacCardText'>{format}</Text>
-          <Text variant='abzacCardText'>
-            {teachers && teachers.length > 1
-              ? teachers
-                  .map((teacher) => {
-                    return teacher?.name || '';
-                  })
-                  .join(', ')
-              : teachers.map((teacher) => {
+        <p className='uppercase text-[#808080]'>
+          {teachers && teachers.length > 1
+            ? teachers
+                .map((teacher) => {
                   return teacher?.name || '';
-                })}
-          </Text>
-          <Text variant='abzacCardText'>{duration}</Text>
-        </ValuesDiv>
+                })
+                .join(', ')
+            : teachers.map((teacher) => {
+                return teacher?.name || '';
+              })}
+        </p>
       </CourseTextDiv>
+
       <CoursePriceDiv>
+        <div className='flex flex-row gap-4'>
+          <ItemsDiv>
+            <Text variant='abzacCardText'>Формат: </Text>
+            <Text variant='abzacCardText'>Длительность: </Text>
+          </ItemsDiv>
+          <ValuesDiv>
+            <Text variant='abzacCardText'>{format}</Text>
+            <Text variant='abzacCardText'>{duration}</Text>
+          </ValuesDiv>
+        </div>
+
         <ButtonsDiv>
           {!courseIsInTheCart && !buttonClicked && (
             <StyledButton
@@ -358,7 +350,7 @@ const CourseCard = (props: CourseCardProps): React.ReactElement => {
             </Link>
           )}
 
-          <CartPlusOne />
+          {/* <CartPlusOne /> */}
         </ButtonsDiv>
       </CoursePriceDiv>
     </CourseCardDiv>
