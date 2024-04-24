@@ -303,7 +303,7 @@ export function Shipment({
                   href={`/docs/oferta.pdf`}
                   target='_blank'
                   rel='noreferrer'
-                  className='text-center text-red-800 sm:text-left hover:underline hover:text-red-600 duration-300'
+                  className='font-bold text-center text-mainred sm:text-left hover:underline hover:text-red duration-300'
                 >
                   условиями
                 </Link>{' '}
