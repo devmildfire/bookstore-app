@@ -48,14 +48,22 @@ const Content = (): React.ReactElement => {
         <Text variant='ctext'>{fourthPar}</Text>
         <Text variant='ctext'>
           {fifthPar}
-          <a href='mailto:info@chtivo.spb.ru' target='_blank'>
+          <a
+            className='font-bold text-mainred underline hover:text-red duration-300'
+            href='mailto:info@chtivo.spb.ru'
+            target='_blank'
+          >
             info@chtivo.spb.ru
           </a>
         </Text>
         <Text variant='ctext'>{sixthPar}</Text>
         <Text variant='ctext' fontWeight={400}>
           {seventhPar}
-          <a href='https://boosty.to/russiandino' target='_blank'>
+          <a
+            className='font-bold text-mainred underline hover:text-red duration-300'
+            href='https://boosty.to/russiandino'
+            target='_blank'
+          >
             на нашу страницу Бусти.
           </a>
         </Text>
