@@ -177,8 +177,6 @@ export function Shipment({
   cartID,
   totalPrice,
 }: shipmentProps): React.ReactElement {
-  const [ofertaAccepted, setOfertaAccepted] = useState<CheckedState>();
-
   const {
     register,
     handleSubmit,
@@ -293,23 +291,14 @@ export function Shipment({
             error={errors.email}
           />
 
-          <div className={`flex flex-col gap-3 align-center`}>
-            <StyledButton type='submit' disabled={!ofertaAccepted}>
-              Перейти к оплате
-            </StyledButton>
+          <div
+            className={`flex flex-col gap-3 align-center items-center sm:items-start`}
+          >
+            <StyledButton type='submit'>Перейти к оплате</StyledButton>
 
-            <div className='flex items-center space-x-2'>
-              <Checkbox
-                id='terms'
-                onCheckedChange={(checked) => {
-                  setOfertaAccepted(checked);
-                }}
-              />
-              <label
-                htmlFor='terms'
-                className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-              >
-                согласен с{' '}
+            <div className='flex items-center sm:items-start space-x-2'>
+              <p className='text-center sm:text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+                переходя к оплате, Вы соглашаетесь с{' '}
                 <Link
                   href={`/docs/oferta.pdf`}
                   target='_blank'
@@ -318,7 +307,7 @@ export function Shipment({
                 >
                   условиями
                 </Link>{' '}
-              </label>
+              </p>
             </div>
           </div>
           <StyledBackButton
