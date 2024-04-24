@@ -44,7 +44,6 @@ const BugDiv = styled.div`
       position: unset;
       max-width: 100%;
     }
-
   }
 `;
 
@@ -107,7 +106,7 @@ const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  
+
   /* @media ${breakPoints.xl} {
     gap: 50px;
   }
@@ -237,6 +236,10 @@ const ReqDiv = styled.div`
   display: flex;
   flex-direction: column;
   /* align-items: center; */
+
+  .smalltext {
+    font-size: 14px;
+  }
 
   gap: 16px;
 
