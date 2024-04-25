@@ -53,7 +53,7 @@ type CategoryType = Database['public']['Enums']['category'];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
-const MAX_EBOOK_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+const MAX_EBOOK_FILE_SIZE = 250 * 1024 * 1024; // 250MB
 const MIN_PHOTOSET_LENGTH = 1;
 const MAX_PHOTOSET_LENGTH = 10;
 
@@ -75,6 +75,7 @@ const ACCEPTED_EBOOK_TYPES = [
   'text/fb2+xml',
   'application/epub+zip',
   'application/x-mobipocket-ebook',
+  'application/zip',
 ];
 
 const photoSchema = z.object({
@@ -249,7 +250,7 @@ const ebookFormSchema = z.object({
     )
     .refine(
       (file) => ACCEPTED_EBOOK_TYPES.includes(file?.type),
-      '.fb2, .epub, and .mobi files are accepted.'
+      '.fb2, .epub, .mobi and .zip files are accepted.'
     ),
   photos: photoSetSchema,
 });
