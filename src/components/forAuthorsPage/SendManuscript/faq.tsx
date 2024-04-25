@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Text from '@/components/Common/Text';
 import { FaqItem } from './styles';
+import RedLink from '@/components/Common/Link/RedLink';
 
 const FAQ = (): React.ReactElement => {
   const [open, setOpen] = useState(false);
@@ -41,13 +42,8 @@ const FAQ = (): React.ReactElement => {
           <Text variant='ctext'>
             Мы рассматриваем для издания только поэмы. Но вы можете отправить
             стихотворения в 
-            <a
-              className='underline text-mainred font-bold hover:text-red duration-300'
-              href='https://t.me/ahulitera'
-            >
-              АХУЛИ
-            </a>
-            , чтобы попасть в сборник прозы и поэзии «Худшее».
+            <RedLink href='https://t.me/ahulitera'>АХУЛИ</RedLink>,
+            чтобы попасть в сборник прозы и поэзии «Худшее».
           </Text>
         </FaqItem>
         <FaqItem>
@@ -139,12 +135,7 @@ const FAQ = (): React.ReactElement => {
             Попасть в лонг-лист Чтива может и самое «нестандартное»
             произведение, если оно соответствует требованиям и одобрено ведущим
             редактором. С изданиями Чтива можно ознакомиться{' '}
-            <a
-              className='underline text-mainred font-bold hover:text-red duration-300'
-              href='https://chtivo.spb.ru/all-books.html'
-            >
-              здесь
-            </a>{' '}
+            <RedLink href='https://chtivo.spb.ru/all-books.html'>здесь</RedLink>{' '}
             и оценить их «нестандартность».
           </Text>
         </FaqItem>
@@ -168,12 +159,9 @@ const FAQ = (): React.ReactElement => {
           </Text>
           <Text variant='ctext'>
             Мы рассматриваем первую книгу цикла (об этапах отбора читайте в 
-            <a
-              className='underline text-mainred font-bold hover:text-red duration-300'
-              href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
-            >
+            <RedLink href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'>
               статье
-            </a>
+            </RedLink>
             ); если мы издаём её, то последующие книги цикла проходят
             аналогичные этапы отбора. Если первая книга цикла опубликована
             в другом издательстве или самиздатом, Чтиво не сможет рассмотреть

@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import logoPic1920 from '@/assets/images/AbzacLogo.png';
-import logoPic1440 from '@/assets/images/AbzacLogo_1440.png';
-import abzacLogo1024 from '@/assets/images/AbzacLogo_1024.png';
-import abzacLogo from '@/assets/images/AbzacLogo_320.png';
-import abzacLogo320 from '@/assets/images/AbzacLogo_oldsite.png';
+import abzacLogo from '@/assets/images/AbzacLogo_oldsite.png';
 
-import ArrowDown from '@/assets/icons/arrow_down.svg';
-import CartPlusOne from '@/assets/icons/CartPlusOne.svg';
 import Text from '@/components/Common/Text';
 import {
   AbzacDiv,
@@ -33,15 +27,15 @@ import {
   ValuesDiv,
 } from './styles';
 import Video from '@/components/Common/Video/Video';
-import * as Accordion from '@radix-ui/react-accordion';
+// import * as Accordion from '@radix-ui/react-accordion';
 import { supabase } from 'api/supabase-client';
 import { LectorsType } from '@/components/DashBoardPage/LectorForm';
-import { CoursesType } from 'pages/dashboard/courses';
 import { QueryData } from '@supabase/supabase-js';
 import { CartItemType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import Link from 'next/link';
+import RedLink from '@/components/Common/Link/RedLink';
 
 /**
  * компонент мастерской Абзац для страницы "Авторам"
@@ -122,11 +116,7 @@ const Abzac = (): React.ReactElement => {
       <HeroDiv>
         {/* //  может стоит выделить этот picture в отдельный common компонент */}
         <picture>
-          <source srcSet={logoPic1920.src} media='(min-width: 1920px)' />
-          <source srcSet={logoPic1440.src} media='(min-width: 1440px)' />
-          <source srcSet={abzacLogo1024.src} media='(min-width: 1024px)' />
-          <source srcSet={abzacLogo1024.src} media='(min-width: 540px)' />
-          <img src={abzacLogo320.src} alt='Мастерская Абзац' />
+          <img src={abzacLogo.src} alt='Мастерская Абзац' />
         </picture>
 
         <Text variant='abzacText'>{firstPar}</Text>
@@ -156,13 +146,7 @@ const Open = (): React.ReactElement => {
   return (
     <EnrollDiv>
       <Text variant='abzacText' align='start'>
-        {openPar}{' '}
-        <a
-          className='font-bold text-mainred hover:text-red'
-          href={`mailto:${openAdress}`}
-        >
-          {openAdress}
-        </a>{' '}
+        {openPar} <RedLink href={`mailto:${openAdress}`}>{openAdress}</RedLink>
         {openPar2}
       </Text>
     </EnrollDiv>
@@ -410,7 +394,7 @@ const Trailer = (): React.ReactElement => {
       <Text variant='h3_Abzac' align='start'>
         Трейлер
       </Text>
-      <Video src='/videos/abzac.mp4' poster='/images/poster_abzac.png' />
+      <Video src='/videos/abzac.mp4' poster='/images/poster_abzac.jpeg' />
     </TrailerDiv>
   );
 };
