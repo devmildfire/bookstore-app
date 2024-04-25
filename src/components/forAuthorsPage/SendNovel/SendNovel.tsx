@@ -10,6 +10,7 @@ import {
   // TextReqDiv,
 } from './styles';
 import dinoPaws from '@/assets/images/dinoPaws.svg';
+import RedLink from '@/components/Common/Link/RedLink';
 
 const firstPar =
   'Мы редактируем, иллюстрируем и публикуем ваши рассказы (эссе, статьи, пьесы etc.) в литературном журнале арт\u2011конгрегации Русский Динозавр — нашего творческого объединения мастеров арт-контента. Публикации тиражируются в соцсетях и на партнёрских инфоресурсах. Двенадцать избранных рассказов года попадают в ежегодник «Могучий Русский Динозавр».';
@@ -29,9 +30,11 @@ const SendNovel = (): React.ReactElement => {
             {firstPar}
           </Text>
 
-          <Text className='link' variant='h3c' align='start'>
+          <Text variant='h3c' align='start'>
             {'Отправляйте ваши произведения на почту: '}
-            <a href='mailto:info@chtivo.spb.ru'>info@chtivo.spb.ru</a>
+            <RedLink href='mailto:info@chtivo.spb.ru'>
+              info@chtivo.spb.ru
+            </RedLink>
           </Text>
         </div>
       </div>

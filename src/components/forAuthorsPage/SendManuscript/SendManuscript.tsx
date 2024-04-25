@@ -17,6 +17,7 @@ import { requirements } from './Requirements';
 import BugTypeWriter from '@/assets/images/BugTypeWriter.png';
 import Image from 'next/image';
 import FAQ from './faq';
+import RedLink from '@/components/Common/Link/RedLink';
 
 const firstString =
   'Убедитесь, что ваша рукопись соответствует требованиям ниже, и присылайте её и синопсис на ';
@@ -38,12 +39,9 @@ const SendManuscript = (): React.ReactElement => {
           <TextDiv>
             <Text variant='ctext'>
               {firstString}{' '}
-              <a
-                className='underline text-mainred font-bold hover:text-red duration-300'
-                href='mailto:info@chtivo.spb.ru'
-              >
+              <RedLink href='mailto:info@chtivo.spb.ru'>
                 info@chtivo.spb.ru
-              </a>{' '}
+              </RedLink>{' '}
             </Text>
             <Text variant='ctext'>{secondString}</Text>
           </TextDiv>
@@ -105,58 +103,23 @@ const Conditions = (): React.ReactElement => {
     <ReqDiv>
       <Text variant='ctext'>
         Подробно о том, как мы работаем с рукописями, узнайте в{' '}
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
-        >
-          статье{' '}
-        </a>
+        <RedLink href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'>
+          статье
+        </RedLink>
         .
       </Text>
       <Text variant='ctext'>
         Также рассматриваем отдельные рассказы (статьи, эссе, пьесы) до 30 тысяч
         символов с пробелами для публикации в литжурнале Русского Динозавра с
-        тиражированием на:
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://dzen.ru/russiandino?share_to=link'
-        >
-          {' '}
-          Дзен
-        </a>
-        ,
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://vk.com/russiantrex'
-        >
-          {' '}
-          ВКонтакте
-        </a>
-        ,
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://t.me/russiandino'
-        >
-          {' '}
-          Телеграм
-        </a>
-        ,{' '}
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'
-        >
-          {' '}
+        тиражированием на:{' '}
+        <RedLink href='https://dzen.ru/russiandino?share_to=link'>Дзен</RedLink>
+        , <RedLink href='https://vk.com/russiantrex'>ВКонтакте</RedLink>,{' '}
+        <RedLink href='https://t.me/russiandino'>Телеграм</RedLink>,{' '}
+        <RedLink href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'>
           Инстаграм*
-        </a>
-        ,{' '}
-        <a
-          className='underline text-mainred font-bold hover:text-red duration-300'
-          href='https://pikabu.ru/@russiandino'
-        >
-          {' '}
-          Пикабу
-        </a>
-        . Важно: материал не должен быть ранее опубликован на Дзене.
+        </RedLink>
+        , <RedLink href='https://pikabu.ru/@russiandino'>Пикабу</RedLink>.
+        Важно: материал не должен быть ранее опубликован на Дзене.
       </Text>
       <Text variant='ctext'>Рукописи не рецензируются.</Text>
       <Text variant='ctext'>
