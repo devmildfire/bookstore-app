@@ -298,7 +298,7 @@ export function Shipment({
 
             <div className='flex items-center sm:items-start space-x-2'>
               <p className='text-center sm:text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-                переходя к оплате, Вы соглашаетесь с{' '}
+                переходя к оплате, Вы соглашаетесь с 
                 <Link
                   href={`/docs/oferta.pdf`}
                   target='_blank'

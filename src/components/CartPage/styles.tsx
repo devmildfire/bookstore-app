@@ -105,8 +105,9 @@ export const StyledButton = styled(Button)`
 `;
 
 export const StyledBackButton = styled.button`
-  padding: 5px 10px;
+  // padding: 5px 10px;
   font-size: 16px;
+  // border: 1px solid white;
 
   margin: 0 0;
 
