@@ -20,7 +20,7 @@ const forReaders: SubmenuItem[] = [
   },
   {
     subtitle: 'Литжурнал РД',
-    link: '/soon',
+    link: '/not-found',
   },
   // {
   //   subtitle: 'Мейнстрим',
