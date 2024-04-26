@@ -169,6 +169,8 @@ const Success = (): React.ReactElement => {
         console.log(`downloading ... ${link} `);
         const fileName = link.split('/').pop();
         getFile(link, fileName!);
+
+        setItemsLinks(allLinks);
       }),
       console.log('all links gotten are ... ', allLinks));
 
