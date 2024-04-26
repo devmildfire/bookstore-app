@@ -105,17 +105,20 @@ const Success = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    cartID && invID && getOrder(cartID, invID);
-    invID && getOrderItems(invID);
+    // cartID && invID && getOrder(cartID, invID);
+    // invID && getOrderItems(invID);
+    invID && getAllLinks(invID);
   }, [invID]);
 
   const getOrder = useCallback(
     async (cartID: string, orderID: string) => {
       const OrderResponse: OrdersType = await postData(`/api/order`, {
         oper: 'fetch',
-        cartID: cartID,
+        // cartID: cartID,
         orderID: orderID,
       });
+
+      console.log('settring order');
 
       setOrder(OrderResponse);
     },
@@ -154,20 +157,35 @@ const Success = (): React.ReactElement => {
     }
   };
 
-  useEffect(() => {
-    console.log('getting links');
-    orderItems && getItemsLinks();
-  }, [orderItems]);
+  const getAllLinks = async (orderID: string) => {
+    const allLinks: string[] = await postData(`/api/order`, {
+      oper: 'fetchAllLinks',
+      orderID: orderID,
+    });
 
-  useEffect(() => {
-    console.log('downloading links');
-    itemsLinks &&
-      itemsLinks.forEach((link) => {
-        console.log(`downloading ... ${link} `);
-        const fileName = link.split('/').pop();
-        getFile(link, fileName!);
-      });
-  }, [itemsLinks]);
+    allLinks.forEach((link) => {
+      console.log(`downloading ... ${link} `);
+      const fileName = link.split('/').pop();
+      getFile(link, fileName!);
+    });
+
+    console.log('all links gotten are ... ', allLinks);
+  };
+
+  // useEffect(() => {
+  //   console.log('getting links');
+  //   orderItems && getItemsLinks();
+  // }, [orderItems]);
+
+  // useEffect(() => {
+  //   console.log('downloading links');
+  //   itemsLinks &&
+  //     itemsLinks.forEach((link) => {
+  //       console.log(`downloading ... ${link} `);
+  //       const fileName = link.split('/').pop();
+  //       getFile(link, fileName!);
+  //     });
+  // }, [itemsLinks]);
 
   return (
     <PageLayout>
