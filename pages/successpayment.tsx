@@ -1,0 +1,204 @@
+'use client';
+
+import Button from '@/components/Common/Button';
+import { Text } from '@/components/Common/Text/Text';
+import breakPoints from '@/utils/breakPoints';
+import { useSearchParams } from 'next/navigation';
+import styled from 'styled-components';
+import { OrderItemType, OrdersType } from './api/order';
+import { postData } from '@/utils/postData';
+import { useCallback, useEffect, useState } from 'react';
+import { setOrGetCartCookie } from '@/utils/cardID';
+
+import Checkmark from '@/assets/images/checkmark.svg';
+import PageLayout from '@/layouts/PageLayout';
+
+const SuccessDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 0 10vw;
+
+  @media ${breakPoints.lg} {
+    padding: 0 5vw;
+  }
+
+  @media ${breakPoints.sm} {
+    align-items: center;
+
+    h3,
+    p {
+      text-align: center;
+    }
+  }
+`;
+
+const StyledCheckMark = styled(Checkmark)`
+  @media ${breakPoints.sm} {
+    order: -1;
+  }
+`;
+
+const CheckDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  gap: clamp(10px, 1.25vw + 9.6px, 30px);
+
+  @media ${breakPoints.lg} {
+  }
+
+  @media ${breakPoints.sm} {
+    flex-direction: column;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  padding-top: 5px;
+
+  @media ${breakPoints.md} {
+    > button {
+      max-width: 217px;
+      min-width: 217px;
+
+      > p {
+        font-size: 10px;
+      }
+    }
+  }
+`;
+
+const Success = (): React.ReactElement => {
+  const [cartID, setCartID] = useState('');
+
+  const [order, setOrder] = useState<OrdersType | null>(null);
+  const [orderItems, setOrderItems] = useState<OrderItemType[] | []>();
+  const [itemsLinks, setItemsLinks] = useState<string[]>();
+
+  const textUrl =
+    'https://api.chtivo.duckdns.org/storage/v1/object/public/demos/demo_title_Overdrajv_1714053868305.zip';
+
+  const getFile = async (url: string) => {
+    fetch(url).then((response) => {
+      response.blob().then((blob) => {
+        const fileUrl = window.URL.createObjectURL(blob);
+        const alink = document.createElement('a');
+        alink.href = fileUrl;
+        alink.download = 'demo.zip';
+        alink.click();
+      });
+    });
+  };
+
+  const params = useSearchParams();
+
+  const invID = params.get('invid');
+
+  useEffect(() => {
+    const newCartID = setOrGetCartCookie()?.toString();
+
+    if (newCartID) {
+      setCartID(newCartID);
+    }
+  }, []);
+
+  useEffect(() => {
+    cartID && invID && getOrder(cartID, invID);
+    invID && getOrderItems(invID);
+  }, [invID]);
+
+  const getOrder = useCallback(
+    async (cartID: string, orderID: string) => {
+      const OrderResponse: OrdersType = await postData(`/api/order`, {
+        oper: 'fetch',
+        cartID: cartID,
+        orderID: orderID,
+      });
+
+      setOrder(OrderResponse);
+    },
+    [cartID]
+  );
+
+  const getOrderItems = useCallback(
+    async (orderID: string) => {
+      const OrderItemsResponse: OrderItemType[] = await postData(`/api/order`, {
+        oper: 'fetchitems',
+        orderID: orderID,
+      });
+
+      setOrderItems(OrderItemsResponse);
+    },
+    [cartID]
+  );
+
+  const getItemsLinks = async () => {
+    if (orderItems && orderItems.length) {
+      console.log('order items ...', orderItems);
+
+      const itemslinks: string[] = await Promise.all(
+        orderItems.map(async (item) => {
+          const link: string = await postData(`/api/order`, {
+            oper: 'fetchlink',
+            titleName: item.name,
+            productType: item.type,
+          });
+          console.log('link is ...', link);
+          return link;
+        })
+      );
+
+      setItemsLinks(itemslinks);
+    }
+  };
+
+  useEffect(() => {
+    console.log('getting links');
+    orderItems && getItemsLinks();
+  }, [orderItems]);
+
+  useEffect(() => {
+    console.log('downloading links');
+    itemsLinks &&
+      itemsLinks.forEach((link) => {
+        console.log(`downloading ... ${link} `);
+        getFile(link);
+      });
+  }, [itemsLinks]);
+
+  return (
+    <PageLayout>
+      <SuccessDiv>
+        <CheckDiv>
+          <Text variant='h2c' style={{ paddingBottom: '0px' }}>
+            Успех!
+          </Text>
+          <StyledCheckMark />
+        </CheckDiv>
+        <Text variant='h3c'>
+          Мы свяжемся с Вами для отправки печатного издания
+        </Text>
+        <Text variant='buttonText'>
+          Скачивание цифрового издания должно начаться автоматически
+        </Text>
+        <Text variant='buttonText'>
+          Вернитесь на главную или воспользуйтесь поиском, чтобы выбрать что-то
+          ещё
+        </Text>
+        <StyledButton className='backButton' href='/' variant='wide'>
+          Перейти на главную
+        </StyledButton>
+        order
+        <pre>{JSON.stringify(order, null, 2)}</pre>
+        items
+        <pre>{JSON.stringify(orderItems, null, 2)}</pre>
+        links
+        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre>
+      </SuccessDiv>
+    </PageLayout>
+  );
+};
+
+export default Success;

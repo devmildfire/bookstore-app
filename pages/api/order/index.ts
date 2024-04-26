@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // import { Cart, CartItem } from '@/types/api';
 import { Tables } from 'api/books/types';
 import Robokaska from '@/utils/robokaska';
+import { Link2Icon } from 'lucide-react';
 
 export type OrdersType = Tables<'Orders'>;
 export type OrdersInsertType = Omit<OrdersType, 'id' | 'created_at'>;
@@ -45,7 +46,7 @@ function generateRoboURL({
 }
 
 async function getOrder(
-  cartID: string,
+  // cartID: string,
   orderID: string
 ): Promise<OrdersType | PostgrestError> {
   const { data, error } = await supabaseService
@@ -76,6 +77,50 @@ async function addOrder(
   } else {
     return data;
   }
+}
+
+async function getItems(
+  orderID: string
+): Promise<OrderItemType[] | PostgrestError> {
+  const { data, error } = await supabaseService
+    .from('OrderItems')
+    .select()
+    .eq('order_id', orderID);
+
+  if (error) {
+    console.error(error);
+    return error;
+  } else {
+    return data;
+  }
+}
+
+async function getLink(
+  titleName: string,
+  productType: string
+): Promise<string | PostgrestError> {
+  const title = await supabaseService
+    .from('Titles')
+    .select(
+      `*, 
+  CardBooks ( * ),
+  Audiobooks ( * ),
+  Ebooks ( * )  
+  `
+    )
+    .eq('name', titleName)
+    .single();
+
+  if (title.data) {
+    const link = title.data.Ebooks.src;
+    return link;
+  }
+
+  if (title.error) {
+    console.error(title.error);
+  }
+
+  return title.error || '';
 }
 
 async function addOrderItems(
@@ -145,6 +190,10 @@ export default async function handler(
   let urlProps: roboUrlProps;
   let returnUrl: string;
   let cartID: string;
+  let titleName: string;
+  let productType: string;
+
+  let itemLink: string | PostgrestError;
 
   let orderID: string;
   let sum: string;
@@ -152,8 +201,19 @@ export default async function handler(
   body.oper == 'fetch' &&
     ((cartID = body.cartID),
     (orderID = body.orderID),
-    (singleOrder = await getOrder(cartID, orderID)),
+    (singleOrder = await getOrder(orderID)),
     res.status(200).json(singleOrder));
+
+  body.oper == 'fetchitems' &&
+    ((orderID = body.orderID),
+    (itemsListReturn = await getItems(orderID)),
+    res.status(200).json(itemsListReturn));
+
+  body.oper == 'fetchlink' &&
+    ((titleName = body.titleName),
+    (productType = body.productType),
+    (itemLink = await getLink(titleName, productType)),
+    res.status(200).json(itemLink));
 
   body.oper == 'add' &&
     ((newOrder = body.order),
