@@ -45,10 +45,9 @@ function generateRoboURL({
   return payURL;
 }
 
-async function getOrder(
-  // cartID: string,
-  orderID: string
-): Promise<OrdersType | PostgrestError> {
+async function getOrder(orderID: string): Promise<OrdersType | PostgrestError> {
+  console.log('getting order id...', orderID);
+
   const { data, error } = await supabaseService
     .from('Orders')
     .select('*')

@@ -113,9 +113,11 @@ const Success = (): React.ReactElement => {
     async (cartID: string, orderID: string) => {
       const OrderResponse: OrdersType = await postData(`/api/order`, {
         oper: 'fetch',
-        cartID: cartID,
+        // cartID: cartID,
         orderID: orderID,
       });
+
+      console.log('settring order');
 
       setOrder(OrderResponse);
     },
