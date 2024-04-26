@@ -125,10 +125,12 @@ async function getLink(
 async function getAllLinks(
   orderID: string
 ): Promise<string[] | PostgrestError> {
+  const numOrder = parseInt(orderID);
+
   const orderItems = await supabaseService
     .from('OrderItems')
     .select()
-    .eq('order_id', orderID);
+    .eq('order_id', numOrder);
 
   if (!orderItems.data) {
     return orderItems.error;
