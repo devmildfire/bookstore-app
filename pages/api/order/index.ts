@@ -122,6 +122,50 @@ async function getLink(
   return title.error || '';
 }
 
+async function getAllLinks(
+  orderID: string
+): Promise<string[] | PostgrestError> {
+  const orderItems = await supabaseService
+    .from('OrderItems')
+    .select()
+    .eq('order_id', orderID);
+
+  if (!orderItems.data) {
+    return orderItems.error;
+  }
+
+  const itemslinks: string[] = await Promise.all(
+    orderItems.data.map(async (item) => {
+      const titleData = await supabaseService
+        .from('Titles')
+        .select(
+          `*, 
+          CardBooks ( * ),
+          Audiobooks ( * ),
+          Ebooks ( * )  
+        `
+        )
+        .eq('name', item.name)
+        .single();
+
+      if (titleData.data) {
+        console.log('Titles are ...', titleData.data);
+        const link = titleData.data.Ebooks.src;
+        console.log('link is ...', link);
+        return link;
+      }
+
+      if (titleData.error) {
+        console.log('Titles ERROR ...', titleData.error);
+      }
+    })
+  );
+
+  console.log('links are ...', itemslinks);
+
+  return itemslinks;
+}
+
 async function addOrderItems(
   itemsList: OrderItemInsertType[]
 ): Promise<OrderItemType[] | PostgrestError> {
@@ -193,6 +237,7 @@ export default async function handler(
   let productType: string;
 
   let itemLink: string | PostgrestError;
+  let itemsLinks: string[] | PostgrestError;
 
   let orderID: string;
   let sum: string;
@@ -213,6 +258,11 @@ export default async function handler(
     (productType = body.productType),
     (itemLink = await getLink(titleName, productType)),
     res.status(200).json(itemLink));
+
+  body.oper == 'fetchAllLinks' &&
+    ((orderID = body.orderID),
+    (itemsLinks = await getAllLinks(orderID)),
+    res.status(200).json(itemsLinks));
 
   body.oper == 'add' &&
     ((newOrder = body.order),
