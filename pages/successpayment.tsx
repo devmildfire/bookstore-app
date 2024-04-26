@@ -76,6 +76,7 @@ const Success = (): React.ReactElement => {
   const [order, setOrder] = useState<OrdersType | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItemType[] | []>();
   const [itemsLinks, setItemsLinks] = useState<string[]>();
+  const [retries, setRetries] = useState(0);
 
   const textUrl =
     'https://api.chtivo.duckdns.org/storage/v1/object/public/demos/demo_title_Overdrajv_1714053868305.zip';
@@ -108,7 +109,7 @@ const Success = (): React.ReactElement => {
     // cartID && invID && getOrder(cartID, invID);
     // invID && getOrderItems(invID);
     invID && getAllLinks(invID);
-  }, [invID]);
+  }, [invID, retries]);
 
   const getOrder = useCallback(
     async (cartID: string, orderID: string) => {
@@ -174,7 +175,8 @@ const Success = (): React.ReactElement => {
       }),
       console.log('all links gotten are ... ', allLinks));
 
-    !allLinks.length && console.log('NONE links gotten');
+    !allLinks.length &&
+      (console.log('NONE links gotten... retrying'), setRetries(retries + 1));
   };
 
   // useEffect(() => {
