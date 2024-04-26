@@ -163,13 +163,17 @@ const Success = (): React.ReactElement => {
       orderID: orderID,
     });
 
-    allLinks.forEach((link) => {
-      console.log(`downloading ... ${link} `);
-      const fileName = link.split('/').pop();
-      getFile(link, fileName!);
-    });
+    allLinks &&
+      (console.log('allLinks ', allLinks),
+      allLinks.forEach((link) => {
+        console.log(`downloading ... ${link} `);
+        const fileName = link.split('/').pop();
+        getFile(link, fileName!);
+      }));
 
     console.log('all links gotten are ... ', allLinks);
+
+    !allLinks && console.log('NONE links gotten');
   };
 
   // useEffect(() => {
