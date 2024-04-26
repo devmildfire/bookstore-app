@@ -12,20 +12,26 @@ import { setOrGetCartCookie } from '@/utils/cardID';
 
 import Checkmark from '@/assets/images/checkmark.svg';
 import PageLayout from '@/layouts/PageLayout';
+import RedLink from '@/components/Common/Link/RedLink';
 
 const SuccessDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 40px;
+  padding: 100px calc((100vw - 1440px) / 2);
 
-  padding: 0 10vw;
+  @media ${breakPoints.xxl} {
+    padding: 100px 10vw 0;
+  }
 
   @media ${breakPoints.lg} {
-    padding: 0 5vw;
+    padding: 80px 5vw;
   }
 
   @media ${breakPoints.sm} {
     align-items: center;
+    padding: 50px 5vw;
 
     h3,
     p {
@@ -197,31 +203,43 @@ const Success = (): React.ReactElement => {
   return (
     <PageLayout>
       <SuccessDiv>
-        <CheckDiv>
-          <Text variant='h2c' style={{ paddingBottom: '0px' }}>
-            Успех!
+        <div className='flex flex-col gap-5'>
+          <CheckDiv>
+            <Text variant='h2c' style={{ paddingBottom: '0px' }}>
+              Успех!
+            </Text>
+            <StyledCheckMark />
+          </CheckDiv>
+          <Text variant='h3_1Bel'>
+            Мы свяжемся с Вами для отправки печатного издания
           </Text>
-          <StyledCheckMark />
-        </CheckDiv>
-        <Text variant='h3c'>
-          Мы свяжемся с Вами для отправки печатного издания
-        </Text>
-        <Text variant='buttonText'>
-          Скачивание цифрового издания должно начаться автоматически
-        </Text>
-        <Text variant='buttonText'>
-          Вернитесь на главную или воспользуйтесь поиском, чтобы выбрать что-то
-          ещё
-        </Text>
-        <StyledButton className='backButton' href='/' variant='wide'>
-          Перейти на главную
-        </StyledButton>
-        order
+          <div>
+            <Text variant='h3c'>
+              Скачивание цифрового издания должно начаться автоматически.
+            </Text>
+            <Text variant='h3c'>
+              А если нет, то вот
+              {itemsLinks?.length && (
+                <RedLink href={itemsLinks[0]}> ссылка на скачивание </RedLink>
+              )}
+            </Text>
+          </div>
+        </div>
+        <div className='flex flex-col gap-4 items-center sm:items-start'>
+          <Text variant='ctext'>
+            Вернитесь на главную или воспользуйтесь поиском, чтобы выбрать
+            что-то ещё
+          </Text>
+          <StyledButton className='backButton' href='/' variant='wide'>
+            Перейти на главную
+          </StyledButton>
+        </div>
+        {/* order
         <pre>{JSON.stringify(order, null, 2)}</pre>
         items
         <pre>{JSON.stringify(orderItems, null, 2)}</pre>
         links
-        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre>
+        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre> */}
       </SuccessDiv>
     </PageLayout>
   );
