@@ -80,13 +80,13 @@ const Success = (): React.ReactElement => {
   const textUrl =
     'https://api.chtivo.duckdns.org/storage/v1/object/public/demos/demo_title_Overdrajv_1714053868305.zip';
 
-  const getFile = async (url: string) => {
+  const getFile = async (url: string, fileName: string) => {
     fetch(url).then((response) => {
       response.blob().then((blob) => {
         const fileUrl = window.URL.createObjectURL(blob);
         const alink = document.createElement('a');
         alink.href = fileUrl;
-        alink.download = 'demo.zip';
+        alink.download = fileName;
         alink.click();
       });
     });
@@ -164,7 +164,8 @@ const Success = (): React.ReactElement => {
     itemsLinks &&
       itemsLinks.forEach((link) => {
         console.log(`downloading ... ${link} `);
-        getFile(link);
+        const fileName = link.split('/').pop();
+        getFile(link, fileName!);
       });
   }, [itemsLinks]);
 
