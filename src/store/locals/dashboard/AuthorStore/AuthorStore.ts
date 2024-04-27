@@ -49,16 +49,16 @@ class AuthorStore implements ILocalStore {
       return;
     }
 
-
     //  имя автора может измениться. Это приведёт к тому, что this._author.name
     //  из предыдущего upload будет не таким как из текущего.
     //  то есть будут загружены два разных изображения с разными именами
     //  и предыдущее (уже не использующееся) будет висеть в storage.
     //  стоит скорее всего удалять предыдущее изображение
-    //  по строке photo из базы  прежде чем  загружать следующее    
+    //  по строке photo из базы  прежде чем  загружать следующее
     await this._author.photo.upload(createSlug(this._author.name));
 
     const { data, error } = await adminAPI.updateAuthor({
+      nonsalable: payload.nonsalable,
       id: this._author.id,
       bio: payload.bio,
       city: payload.city,
