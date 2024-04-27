@@ -84,9 +84,6 @@ const Success = (): React.ReactElement => {
   const [itemsLinks, setItemsLinks] = useState<string[]>();
   const [retries, setRetries] = useState(0);
 
-  const textUrl =
-    'https://api.chtivo.duckdns.org/storage/v1/object/public/demos/demo_title_Overdrajv_1714053868305.zip';
-
   const getFile = async (url: string, fileName: string) => {
     fetch(url).then((response) => {
       response.blob().then((blob) => {
@@ -165,6 +162,8 @@ const Success = (): React.ReactElement => {
   };
 
   const getAllLinks = async (orderID: string) => {
+    console.log('fetching links ...');
+
     const allLinks: string[] = await postData(`/api/order`, {
       oper: 'fetchAllLinks',
       orderID: orderID,
