@@ -34,6 +34,7 @@ export const authorFormSchema = z.object({
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
+  nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
 });
 
 export const authorPhotoSchema = z.object({
