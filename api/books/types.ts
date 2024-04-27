@@ -76,6 +76,7 @@ export interface Database {
           death_date: string | null;
           id: number;
           name: string;
+          nonsalable: boolean;
           photo: string | null;
           phrase: string | null;
         };
@@ -86,6 +87,7 @@ export interface Database {
           death_date?: string | null;
           id?: number;
           name: string;
+          nonsalable?: boolean;
           photo?: string | null;
           phrase?: string | null;
         };
@@ -96,6 +98,7 @@ export interface Database {
           death_date?: string | null;
           id?: number;
           name?: string;
+          nonsalable?: boolean;
           photo?: string | null;
           phrase?: string | null;
         };
@@ -300,8 +303,8 @@ export interface Database {
           id: number;
           name: string;
           price: number | null;
-          thesis: string | null;
           src: string | null;
+          thesis: string | null;
         };
         Insert: {
           description?: string | null;
@@ -311,8 +314,8 @@ export interface Database {
           id?: number;
           name: string;
           price?: number | null;
-          thesis?: string | null;
           src?: string | null;
+          thesis?: string | null;
         };
         Update: {
           description?: string | null;
@@ -322,8 +325,8 @@ export interface Database {
           id?: number;
           name?: string;
           price?: number | null;
-          thesis?: string | null;
           src?: string | null;
+          thesis?: string | null;
         };
         Relationships: [];
       };

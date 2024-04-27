@@ -18,6 +18,7 @@ import { Textarea } from '../ui/textarea';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
+import { Checkbox } from '../ui/checkbox';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -60,6 +61,7 @@ const formSchema = z.object({
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
+  nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
 });
 
 const formEditSchema = z.object({
@@ -85,6 +87,7 @@ const formEditSchema = z.object({
   phrase: z.string().min(3, {
     message: 'phrase must be least 3 characters.',
   }),
+  nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
 });
 
 type AuthorFormProps = {
@@ -106,6 +109,7 @@ function AuthorForm(props: AuthorFormProps) {
       bio: props.defaultBio,
       city: props.defaultCity,
       phrase: props.defaultPhrase,
+      nonsalable: false,
     },
   });
 
@@ -133,6 +137,7 @@ function AuthorForm(props: AuthorFormProps) {
         photo: publicUrl,
         city: values.city,
         bio: values.bio,
+        nonsalable: values.nonsalable,
       })
       .select('*')
       .single();
@@ -170,6 +175,25 @@ function AuthorForm(props: AuthorFormProps) {
                   <Input placeholder='somebody' {...field} />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='nonsalable'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>Непродаваемый автор</FormLabel>
+                </div>
               </FormItem>
             )}
           />
@@ -349,6 +373,7 @@ function AuthorEditForm(author: AuthorsType) {
       city: author.city ? author.city : undefined,
       // photo: undefined,
       phrase: author.phrase ? author.phrase : undefined,
+      nonsalable: author.nonsalable,
     },
   });
 
@@ -434,6 +459,7 @@ function AuthorEditForm(author: AuthorsType) {
         photo: publicUrl,
         city: values.city,
         bio: values.bio,
+        nonsalable: values.nonsalable,
       })
       .eq('id', author.id)
       .select('*')
@@ -463,6 +489,25 @@ function AuthorEditForm(author: AuthorsType) {
           onSubmit={form.handleSubmit(onEditSubmit)}
           className='space-y-4 w-full'
         >
+          <FormField
+            control={form.control}
+            name='nonsalable'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>Непродаваемый автор</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name='bio'
