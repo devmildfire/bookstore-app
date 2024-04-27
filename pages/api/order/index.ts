@@ -138,27 +138,32 @@ async function getAllLinks(
 
   const itemslinks: string[] = await Promise.all(
     orderItems.data.map(async (item) => {
-      const titleData = await supabaseService
-        .from('Titles')
-        .select(
-          `*, 
+      if (item.type === 'Course') {
+      }
+
+      if (item.type === 'EBook' || item.type === 'PrintBook') {
+        const titleData = await supabaseService
+          .from('Titles')
+          .select(
+            `*, 
           CardBooks ( * ),
           Audiobooks ( * ),
           Ebooks ( * )  
         `
-        )
-        .eq('name', item.name)
-        .single();
+          )
+          .eq('name', item.name)
+          .single();
 
-      if (titleData.data) {
-        console.log('Titles are ...', titleData.data);
-        const link = titleData.data.Ebooks.src;
-        console.log('link is ...', link);
-        return link;
-      }
+        if (titleData.data) {
+          console.log('Titles are ...', titleData.data);
+          const link = titleData.data.Ebooks.src;
+          console.log('link is ...', link);
+          return link;
+        }
 
-      if (titleData.error) {
-        console.log('Titles ERROR ...', titleData.error);
+        // if (titleData.error) {
+        //   console.log('Titles ERROR ...', titleData.error);
+        // }
       }
     })
   );
