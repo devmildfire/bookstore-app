@@ -132,33 +132,75 @@ async function getAllLinks(
     .select()
     .eq('order_id', numOrder);
 
+  console.log('order items data is ...', orderItems.data);
+
   if (!orderItems.data) {
     return orderItems.error;
   }
 
   const itemslinks: string[] = await Promise.all(
     orderItems.data.map(async (item) => {
-      const titleData = await supabaseService
-        .from('Titles')
-        .select(
-          `*, 
+      console.log('item type is...', item.type);
+
+      if (item.type === 'Course') {
+        const coursesData = await supabaseService
+          .from('Courses')
+          .select(`*`)
+          .eq('name', item.name)
+          .single();
+
+        if (coursesData.data) {
+          console.log('Courses are ...', coursesData.data);
+          const link = coursesData.data.src;
+          console.log(' course link is ...', link);
+          return link;
+        }
+      }
+
+      if (
+        item.type === 'EBook' ||
+        item.type === 'PrintBook' ||
+        item.type === 'Book2.0'
+        // ||
+        // item.type === 'AudioBook'
+      ) {
+        const titleData = await supabaseService
+          .from('Titles')
+          .select(
+            `*, 
           CardBooks ( * ),
           Audiobooks ( * ),
           Ebooks ( * )  
         `
-        )
-        .eq('name', item.name)
-        .single();
+          )
+          .eq('name', item.name)
+          .single();
 
-      if (titleData.data) {
-        console.log('Titles are ...', titleData.data);
-        const link = titleData.data.Ebooks.src;
-        console.log('link is ...', link);
-        return link;
+        if (titleData.data) {
+          console.log('Titles are ...', titleData.data);
+          const link = titleData.data.Ebooks.src;
+          console.log('link is ...', link);
+          return link;
+        }
       }
 
-      if (titleData.error) {
-        console.log('Titles ERROR ...', titleData.error);
+      if (item.type === 'AudioBook') {
+        const titleData = await supabaseService
+          .from('Titles')
+          .select(
+            `*, 
+          Audiobooks ( * )
+        `
+          )
+          .eq('name', item.name)
+          .single();
+
+        if (titleData.data) {
+          console.log('Audio data is ...', titleData.data.Audiobooks);
+          const link = titleData.data.Audiobooks.src;
+          console.log('audio link is ...', link);
+          return link;
+        }
       }
     })
   );
