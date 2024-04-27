@@ -20,6 +20,9 @@ import slugify from 'slugify';
 import { CoursesType, LectorsType } from 'pages/dashboard/courses';
 import DeleteDialog from './DeleteDialog';
 
+const MAX_COURSE_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+const ACCEPTED_COURSE_TYPES = ['application/zip'];
+
 const lectorsOptionSchema = z.object({
   label: z.string(),
   value: z.string(),
@@ -48,6 +51,51 @@ const formSchema = z.object({
     .number()
     .gte(0, 'discount must be 0% or more')
     .max(100, 'maximum discount is 100%'),
+  src: z
+    .instanceof(File, { message: 'course zip file is required.' })
+    .refine(
+      (file) => file?.size <= MAX_COURSE_FILE_SIZE,
+      `Max file size is 30MB.`
+    )
+    .refine(
+      (file) => ACCEPTED_COURSE_TYPES.includes(file?.type),
+      'only .zip files are accepted.'
+    ),
+});
+
+const formEditSchema = z.object({
+  lectors: z.array(lectorsOptionSchema).min(1),
+  name: z.string().min(3, {
+    message: 'Course name must be at least 3 characters long.',
+  }),
+  description: z.string().min(3, {
+    message: 'description  must be at least 3 characters long.',
+  }),
+  duration: z.string().min(3, {
+    message: 'duration  must be at least 3 characters long.',
+  }),
+  format: z.string().min(3, {
+    message: 'format  must be at least 3 characters long.',
+  }),
+  thesis: z.string().min(3, {
+    message: 'thesis  must be at least 3 characters long.',
+  }),
+  price: z.number().positive('must be positive'),
+  discount: z
+    .number()
+    .gte(0, 'discount must be 0% or more')
+    .max(100, 'maximum discount is 100%'),
+  src: z
+    .instanceof(File, { message: 'demo zip file is required.' })
+    .optional()
+    .refine(
+      (file) => !file || file?.size <= MAX_COURSE_FILE_SIZE,
+      `Max file size is 30MB.`
+    )
+    .refine(
+      (file) => !file || ACCEPTED_COURSE_TYPES.includes(file?.type),
+      'only .zip files are accepted.'
+    ),
 });
 
 type CourseFormProps = {
@@ -78,6 +126,18 @@ function CourseForm({ lectors }: CourseFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    const time = Date.now();
+
+    const courseUpload = await supabase.storage
+      .from('courses')
+      .upload(`course_${slugify(values.name)}_${time}.zip`, values.src, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    const coursePublicUrl = supabase.storage
+      .from('courses')
+      .getPublicUrl(`${courseUpload.data?.path}`).data.publicUrl;
 
     const { data, error } = await supabase
       .from('Courses')
@@ -89,6 +149,7 @@ function CourseForm({ lectors }: CourseFormProps) {
         thesis: values.thesis,
         price: values.price,
         discount: values.discount,
+        src: coursePublicUrl,
       })
       .select('*')
       .single();
@@ -123,6 +184,7 @@ function CourseForm({ lectors }: CourseFormProps) {
         price: 0,
         duration: undefined,
         discount: 0,
+        src: undefined,
       });
 
       router.reload();
@@ -144,6 +206,29 @@ function CourseForm({ lectors }: CourseFormProps) {
                 <FormLabel>Course Name</FormLabel>
                 <FormControl>
                   <Input placeholder='some Name' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='src'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course archive file</FormLabel>
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -331,8 +416,8 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof formEditSchema>>({
+    resolver: zodResolver(formEditSchema),
     defaultValues: {
       name: course.name,
       description: course.description || undefined,
@@ -344,8 +429,62 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
     },
   });
 
-  async function onEditSubmit(values: z.infer<typeof formSchema>) {
+  async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+    const time = Date.now();
+
+    let coursePath = null;
+    let coursePublicUrl = null;
+
+    if (values.src) {
+      console.log('current course src ... ', course.src);
+
+      const srcNameString = course.src?.split('/').pop() || 'no src';
+
+      console.log('src Name String ... ', srcNameString);
+
+      console.log('selected src file ... ', values.src);
+
+      const courseRemove = await supabase.storage
+        .from('courses')
+        .remove([srcNameString]);
+
+      courseRemove.error &&
+        console.log('src Remove error ... ', courseRemove.error.message);
+
+      courseRemove.data &&
+        console.log('src Remove data... ', courseRemove.data);
+
+      const courseUdate = await supabase.storage
+        .from('courses')
+        .upload(
+          `course_${slugify(course.name)}_${time + 3475}.zip`,
+          values.src,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      courseUdate.error &&
+        console.log('src update error ... ', courseUdate.error.message);
+
+      coursePath = courseUdate.data?.path;
+      console.log('src path ... ', coursePath);
+    }
+
+    if (!values.src) {
+      coursePath = course.src;
+      coursePublicUrl = course.src;
+    }
+
+    !coursePublicUrl &&
+      coursePath &&
+      (coursePublicUrl = supabase.storage
+        .from('courses')
+        .getPublicUrl(coursePath).data.publicUrl);
+
+    console.log('public src URL is ...', coursePublicUrl);
 
     const { data, error } = await supabase
       .from('Courses')
@@ -357,6 +496,7 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
         thesis: values.thesis,
         price: values.price,
         discount: values.discount,
+        src: coursePublicUrl,
       })
       .eq('id', course.id)
       .select('*')
@@ -410,6 +550,35 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
                 <FormLabel>Course Name</FormLabel>
                 <FormControl>
                   <Input placeholder='some Name' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='src'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Course archive file</FormLabel>
+
+                <p>{course.src}</p>
+
+                <a href={course.src!} download target='_blank'>
+                  download file
+                </a>
+                <FormControl>
+                  <Input
+                    id='demoInput'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
