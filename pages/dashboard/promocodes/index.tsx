@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/accordion';
 import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 import { Title } from '@/models/books';
+import PageLayout from '@/layouts/PageLayout';
 // import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 
 // export type AwardsType = Database['public']['Tables']['Awards']['Row'];
@@ -193,17 +194,19 @@ function Promos(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <PromoList
-          categories={categoryArray || []}
-          types={typeArray || []}
-          prods={prods || []}
-        />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <PromoList
+            categories={categoryArray || []}
+            types={typeArray || []}
+            prods={prods || []}
+          />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 

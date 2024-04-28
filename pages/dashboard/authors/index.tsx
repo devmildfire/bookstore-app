@@ -17,6 +17,7 @@ import {
   AuthorEditForm,
   AuthorForm,
 } from '@/components/DashBoardPage/AuthorForm';
+import PageLayout from '@/layouts/PageLayout';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -110,13 +111,15 @@ function Authors(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <Authorslist />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <Authorslist />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 

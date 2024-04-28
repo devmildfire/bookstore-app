@@ -16,6 +16,7 @@ import {
 import { TitleEditForm, TitleForm } from '@/components/DashBoardPage/TitleForm';
 import { AuthorsType } from '../authors';
 import { AwardsType } from '../awards';
+import PageLayout from '@/layouts/PageLayout';
 
 export type TitleType = Database['public']['Tables']['Titles']['Row'];
 
@@ -141,13 +142,15 @@ function Titles(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <Titleslist />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <Titleslist />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 

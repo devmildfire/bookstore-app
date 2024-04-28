@@ -18,6 +18,7 @@ import {
   AuthorForm,
 } from '@/components/DashBoardPage/AuthorForm';
 import { AwardEditForm, AwardForm } from '@/components/DashBoardPage/AwardForm';
+import PageLayout from '@/layouts/PageLayout';
 
 export type AwardsType = Database['public']['Tables']['Awards']['Row'];
 
@@ -103,13 +104,15 @@ function Awards(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <AwardsList />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <AwardsList />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 
