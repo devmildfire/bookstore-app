@@ -210,7 +210,7 @@ export function Shipment({
         ? ` C учётом промокода: ${price}₽`
         : '';
 
-    const orderDescription =
+    let orderDescription =
       orderItemsAr
         .map((item) => {
           return (
@@ -228,6 +228,13 @@ export function Shipment({
         })
         .toString() + promoNotice;
 
+    //  Робокасса в качестве описания принимает только строку в 150
+    //  символов или меньше. Поэтому если закупить кучу товаров,
+    //  нужно обрезать строку описания, иначе ползователь не сможет
+    //  перейти к оплате из-за слишком длинного url
+    orderDescription.length > 150 &&
+      (orderDescription = orderDescription.slice(0, 150));
+
     const payUrlProps: roboUrlProps = {
       invoiceID: orderID,
       email: data.email,
@@ -238,7 +245,8 @@ export function Shipment({
 
     emptyCartFromDB(cartID);
 
-    // window.open(payUrl, '_blank'); //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
+    // window.open(payUrl, '_blank');
+    //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
 
     window.location.assign(payUrl); // открытие оплаты через робокассу в том же окне
   };

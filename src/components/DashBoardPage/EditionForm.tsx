@@ -51,7 +51,7 @@ type CardBookInsertType = Database['public']['Tables']['CardBooks']['Insert'];
 
 type CategoryType = Database['public']['Enums']['category'];
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; //  50MB
 const MAX_AUDIO_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_EBOOK_FILE_SIZE = 250 * 1024 * 1024; // 250MB
 const MIN_PHOTOSET_LENGTH = 1;
