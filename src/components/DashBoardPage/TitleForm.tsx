@@ -33,7 +33,7 @@ import slugify from 'slugify';
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { AwardsType } from 'pages/dashboard/awards';
 
-const MAX_VIDEO_FILE_SIZE = 8 * 1024 * 1024; //  8MB
+const MAX_VIDEO_FILE_SIZE = 58 * 1024 * 1024; //  50MB
 const ACCEPTED_VIDEO_TYPES = [
   'video/x-msvideo',
   'video/mp4',

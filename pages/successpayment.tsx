@@ -5,7 +5,7 @@ import { Text } from '@/components/Common/Text/Text';
 import breakPoints from '@/utils/breakPoints';
 import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
-import { OrderItemType, OrdersType } from './api/order';
+import { LinkReturnType, OrderItemType, OrdersType } from './api/order';
 import { postData } from '@/utils/postData';
 import { useCallback, useEffect, useState } from 'react';
 import { setOrGetCartCookie } from '@/utils/cardID';
@@ -81,7 +81,7 @@ const Success = (): React.ReactElement => {
 
   const [order, setOrder] = useState<OrdersType | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItemType[] | []>();
-  const [itemsLinks, setItemsLinks] = useState<string[]>();
+  const [itemsLinks, setItemsLinks] = useState<LinkReturnType[]>();
   const [retries, setRetries] = useState(0);
 
   const getFile = async (url: string, fileName: string) => {
@@ -114,57 +114,60 @@ const Success = (): React.ReactElement => {
     invID && getAllLinks(invID);
   }, [invID, retries]);
 
-  const getOrder = useCallback(
-    async (cartID: string, orderID: string) => {
-      const OrderResponse: OrdersType = await postData(`/api/order`, {
-        oper: 'fetch',
-        // cartID: cartID,
-        orderID: orderID,
-      });
+  // const getOrder = useCallback(
+  //   async (cartID: string, orderID: string) => {
+  //     const OrderResponse: OrdersType = await postData(`/api/order`, {
+  //       oper: 'fetch',
+  //       // cartID: cartID,
+  //       orderID: orderID,
+  //     });
 
-      console.log('settring order');
+  //     console.log('settring order');
 
-      setOrder(OrderResponse);
-    },
-    [cartID]
-  );
+  //     setOrder(OrderResponse);
+  //   },
+  //   [cartID]
+  // );
 
-  const getOrderItems = useCallback(
-    async (orderID: string) => {
-      const OrderItemsResponse: OrderItemType[] = await postData(`/api/order`, {
-        oper: 'fetchitems',
-        orderID: orderID,
-      });
+  // const getOrderItems = useCallback(
+  //   async (orderID: string) => {
+  //     const OrderItemsResponse: OrderItemType[] = await postData(`/api/order`, {
+  //       oper: 'fetchitems',
+  //       orderID: orderID,
+  //     });
 
-      setOrderItems(OrderItemsResponse);
-    },
-    [cartID]
-  );
+  //     setOrderItems(OrderItemsResponse);
+  //   },
+  //   [cartID]
+  // );
 
-  const getItemsLinks = async () => {
-    if (orderItems && orderItems.length) {
-      console.log('order items ...', orderItems);
+  // const getItemsLinks = async () => {
+  //   if (orderItems && orderItems.length) {
+  //     console.log('order items ...', orderItems);
 
-      const itemslinks: string[] = await Promise.all(
-        orderItems.map(async (item) => {
-          const link: string = await postData(`/api/order`, {
-            oper: 'fetchlink',
-            titleName: item.name,
-            productType: item.type,
-          });
-          console.log('link is ...', link);
-          return link;
-        })
-      );
+  //     const itemslinks: LinkReturnType[] = await Promise.all(
+  //       orderItems.map(async (item) => {
+  //         const link: string = await postData(`/api/order`, {
+  //           oper: 'fetchlink',
+  //           titleName: item.name,
+  //           productType: item.type,
+  //         });
+  //         console.log('link is ...', link);
+  //         return {
+  //           name: link.name,
+  //           url: link.url,
+  //         }
+  //       })
+  //     );
 
-      setItemsLinks(itemslinks);
-    }
-  };
+  //     setItemsLinks(itemslinks);
+  //   }
+  // };
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
 
-    const allLinks: string[] = await postData(`/api/order`, {
+    const allLinks: LinkReturnType[] = await postData(`/api/order`, {
       oper: 'fetchAllLinks',
       orderID: orderID,
     });
@@ -172,9 +175,11 @@ const Success = (): React.ReactElement => {
     allLinks.length &&
       (console.log('allLinks ', allLinks),
       allLinks.forEach((link) => {
-        console.log(`downloading ... ${link} `);
-        const fileName = link.split('/').pop();
-        getFile(link, fileName!);
+        console.log(`downloading ... ${link.name} `);
+        // const fileName = link.split('/').pop();
+        const fileName = link.name;
+
+        getFile(link.url, fileName!);
 
         setItemsLinks(allLinks);
       }),
@@ -183,21 +188,6 @@ const Success = (): React.ReactElement => {
     !allLinks.length &&
       (console.log('NONE links gotten... retrying'), setRetries(retries + 1));
   };
-
-  // useEffect(() => {
-  //   console.log('getting links');
-  //   orderItems && getItemsLinks();
-  // }, [orderItems]);
-
-  // useEffect(() => {
-  //   console.log('downloading links');
-  //   itemsLinks &&
-  //     itemsLinks.forEach((link) => {
-  //       console.log(`downloading ... ${link} `);
-  //       const fileName = link.split('/').pop();
-  //       getFile(link, fileName!);
-  //     });
-  // }, [itemsLinks]);
 
   return (
     <PageLayout>
@@ -210,17 +200,27 @@ const Success = (): React.ReactElement => {
             <StyledCheckMark />
           </CheckDiv>
           <Text variant='h3_1Bel'>
-            Мы свяжемся с Вами для отправки печатного издания
+            Мы свяжемся с Вами для отправки печатного издания или книги 2.0
           </Text>
           <div>
             <Text variant='h3c'>
-              Скачивание цифрового издания должно начаться автоматически.
+              Скачивание цифрового, аудио издания или курса должно начаться
+              автоматически.
             </Text>
             <Text variant='h3c'>
-              А если нет, то вот
-              {itemsLinks?.length && (
-                <RedLink href={itemsLinks[0]}> ссылка на скачивание </RedLink>
-              )}
+              А если нет, то вот ссылки на скачивание
+              {
+                itemsLinks?.length &&
+                  itemsLinks.map((link, index) => {
+                    return (
+                      <div key={link.name + index.toString()}>
+                        <RedLink href={link.url}>{link.name}</RedLink>
+                      </div>
+                    );
+                  })
+
+                // <RedLink href={itemsLinks[0]}> ссылка  {} </RedLink>
+              }
             </Text>
           </div>
         </div>

@@ -19,6 +19,11 @@ export type roboUrlProps = {
   invoiceDescription: string;
 };
 
+export type LinkReturnType = {
+  url: string;
+  name: string;
+};
+
 function generateRoboURL({
   invoiceID,
   email,
@@ -124,7 +129,7 @@ async function getLink(
 
 async function getAllLinks(
   orderID: string
-): Promise<string[] | PostgrestError> {
+): Promise<(LinkReturnType | undefined)[] | PostgrestError> {
   const numOrder = parseInt(orderID);
 
   const orderItems = await supabaseService
@@ -138,7 +143,7 @@ async function getAllLinks(
     return orderItems.error;
   }
 
-  const itemslinks: string[] = await Promise.all(
+  const itemslinks: (LinkReturnType | undefined)[] = await Promise.all(
     orderItems.data.map(async (item) => {
       console.log('item type is...', item.type);
 
@@ -151,9 +156,15 @@ async function getAllLinks(
 
         if (coursesData.data) {
           console.log('Courses are ...', coursesData.data);
-          const link = coursesData.data.src;
+          const link = coursesData.data.src as string;
+          const courseName = (coursesData.data.name + ` - Курс`) as string;
+          console.log(' course name is ...', courseName);
           console.log(' course link is ...', link);
-          return link;
+
+          return {
+            url: link,
+            name: courseName,
+          };
         }
       }
 
@@ -178,9 +189,15 @@ async function getAllLinks(
 
         if (titleData.data) {
           console.log('Titles are ...', titleData.data);
-          const link = titleData.data.Ebooks.src;
+          const bookName = `${item.name} - ${item.type}` as string;
+          const link = titleData.data.Ebooks.src as string;
           console.log('link is ...', link);
-          return link;
+          // return link;
+
+          return {
+            url: link,
+            name: bookName,
+          };
         }
       }
 
@@ -197,9 +214,13 @@ async function getAllLinks(
 
         if (titleData.data) {
           console.log('Audio data is ...', titleData.data.Audiobooks);
-          const link = titleData.data.Audiobooks.src;
+          const link = titleData.data.Audiobooks.src as string;
+          const audioBookName = `${item.name} - ${item.type}` as string;
           console.log('audio link is ...', link);
-          return link;
+          return {
+            url: link,
+            name: audioBookName,
+          };
         }
       }
     })
@@ -281,7 +302,7 @@ export default async function handler(
   let productType: string;
 
   let itemLink: string | PostgrestError;
-  let itemsLinks: string[] | PostgrestError;
+  let itemsLinks: (LinkReturnType | undefined)[] | PostgrestError;
 
   let orderID: string;
   let sum: string;
