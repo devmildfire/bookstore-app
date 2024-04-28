@@ -19,6 +19,7 @@ import {
   CourseEditForm,
   CourseForm,
 } from '@/components/DashBoardPage/CourseForm';
+import PageLayout from '@/layouts/PageLayout';
 
 export type CoursesType = Database['public']['Tables']['Courses']['Row'];
 export type LectorsType = {
@@ -121,13 +122,15 @@ function Courses(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <CoursesList />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <CoursesList />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 

@@ -18,6 +18,7 @@ import {
   LectorForm,
   LectorsType,
 } from '@/components/DashBoardPage/LectorForm';
+import PageLayout from '@/layouts/PageLayout';
 
 const Lectorslist = () => {
   const [lectors, setLectors] = useState<LectorsType[]>();
@@ -101,13 +102,15 @@ function Lectors(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <Lectorslist />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <Lectorslist />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 

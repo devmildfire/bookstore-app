@@ -32,6 +32,7 @@ import {
   CardBookForm,
   CardBookEditForm,
 } from '@/components/DashBoardPage/EditionForm';
+import PageLayout from '@/layouts/PageLayout';
 
 export type PrintedBookType =
   Database['public']['Tables']['PrintedBooks']['Row'];
@@ -324,13 +325,15 @@ function Editions(): React.ReactElement {
   }, []);
 
   return (
-    <DashMain>
-      <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
-        <DashNav />
-        <TitleSelect />
-        {session && <LogOut session={session} />}
-      </div>
-    </DashMain>
+    <PageLayout>
+      <DashMain>
+        <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+          <DashNav />
+          <TitleSelect />
+          {session && <LogOut session={session} />}
+        </div>
+      </DashMain>
+    </PageLayout>
   );
 }
 
