@@ -9,12 +9,12 @@ import { observer } from 'mobx-react-lite';
 import { cartStore } from '@/store/CartStore';
 // import { CartItem } from '@/types/api';
 
-interface roboUrlProps {
-  invoiceID: number;
-  email: string;
-  outSum: string;
-  invoiceDescription: string;
-}
+// interface roboUrlProps {
+//   invoiceID: number;
+//   email: string;
+//   outSum: string;
+//   invoiceDescription: string;
+// }
 
 interface paymentProps {
   setStage: (stage: string) => void;
@@ -23,31 +23,31 @@ interface paymentProps {
   cart: CartItemType[];
 }
 
-function generateRoboURL({
-  invoiceID,
-  email,
-  outSum,
-  invoiceDescription,
-}: roboUrlProps) {
-  const config = {
-    shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
-    password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
-    password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
-    testMode: true, // Указываем true, если работаем в тестовом режиме
-  };
+// function generateRoboURL({
+//   invoiceID,
+//   email,
+//   outSum,
+//   invoiceDescription,
+// }: roboUrlProps) {
+//   const config = {
+//     shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
+//     password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
+//     password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
+//     testMode: true, // Указываем true, если работаем в тестовом режиме
+//   };
 
-  const roboKassa = new Robokaska(config);
+//   const roboKassa = new Robokaska(config);
 
-  // Вернёт строку с URL адресом, на который можно отправить пользователя
-  const payURL = roboKassa.generateUrl(
-    invoiceID,
-    email,
-    outSum,
-    invoiceDescription
-  );
+//   // Вернёт строку с URL адресом, на который можно отправить пользователя
+//   const payURL = roboKassa.generateUrl(
+//     invoiceID,
+//     email,
+//     outSum,
+//     invoiceDescription
+//   );
 
-  return payURL;
-}
+//   return payURL;
+// }
 
 const Payment = observer(
   ({ setStage, quantity, price, cart }: paymentProps): React.ReactElement => {
