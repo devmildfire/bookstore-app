@@ -100,6 +100,7 @@ const OrderPage = ({ id }: Props): React.ReactElement => {
                 <Text variant='ctext'> статус: {order.status} </Text>
                 <Text variant='ctext'> дата: {dateString} </Text>
                 <Text variant='ctext'> время UTC: {timeString} </Text>
+                <Text variant='ctext'> клиент: {order.name} </Text>
 
                 <Text variant='ctext'> email: {order.email} </Text>
                 <Text variant='ctext'> адрес: {order.adress} </Text>
