@@ -248,7 +248,7 @@ async function addOrderItems(
 }
 
 async function emailAlert(email: string, order: string, details: string) {
-  const apiKey = process.env.NEXT_PUBLIC_BREVO_APIKEY as string;
+  const apiKey = process.env.BREVO_APIKEY as string;
 
   const emailAlertResponse = await fetch(
     'https://api.brevo.com/v3/smtp/email',
