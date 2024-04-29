@@ -247,6 +247,38 @@ async function addOrderItems(
   }
 }
 
+async function emailAlert() {
+  const emailAlertResponse = await fetch(
+    'https://api.brevo.com/v3/smtp/email',
+    {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'api-key':
+          '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',
+        'content-type': 'application/json',
+      },
+      // body: '{  \n   "sender":{  \n      "name":"Tester Mildfire",\n      "email":"noreply@chtivo.spb.ru"\n   },\n   "to":[  \n      {  \n         "email":"mildfire@gmail.com",\n         "name":"Mildfire"\n      }\n   ],\n   "subject":"Hello Test",\n   "htmlContent":"Hello,This is my first transactional email sent from Brevo."\n}',
+      body: JSON.stringify({
+        sender: {
+          name: 'Tester Mildfire',
+          email: 'noreply@chtivo.spb.ru',
+        },
+        to: [
+          {
+            email: 'mildfire@gmail.com',
+            name: 'Mildfire',
+          },
+        ],
+        subject: 'Hello Test',
+        htmlContent:
+          'Hello,This is my SECOND transactional email sent from Brevo.',
+      }),
+    }
+  );
+  return emailAlertResponse;
+}
+
 async function makeOrderPaid(
   orderID: string
 ): Promise<OrdersType[] | PostgrestError> {
@@ -272,6 +304,9 @@ async function makeOrderPaid(
         console.error(paidOrderData.error);
         return paidOrderData.error;
       } else {
+        const response = await emailAlert();
+        console.log('email responce is ... ', response);
+
         return paidOrderData.data;
       }
     } else {

@@ -38,6 +38,10 @@ const dashlist: DashItem[] = [
     title: 'Courses',
     link: '/dashboard/courses',
   },
+  {
+    title: 'Orders',
+    link: '/dashboard/orders',
+  },
 ];
 
 export default function DashNav() {
