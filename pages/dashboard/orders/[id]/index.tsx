@@ -1,8 +1,5 @@
 import * as React from 'react';
 
-// import { EditAuthor } from '@/components/Dashboard';
-// import { withDashboardLayout } from '@/layouts';
-// import { NextPageWithLayout } from '@/types/page';
 import { GetServerSideProps } from 'next/types';
 import PageLayout from '@/layouts/PageLayout';
 import DashMain from '@/components/DashBoardPage/DashMain';
@@ -14,10 +11,6 @@ import { QueryData, Session } from '@supabase/supabase-js';
 import { supabase } from 'api/supabase-client';
 import { Button } from '@/components/ui/button';
 import Text from '@/components/Common/Text';
-
-// import { useLocalStore } from '@/store/hooks';
-// import { AuthorStore, AuthorStoreProvider } from '@/store/locals';
-// import { observer } from 'mobx-react-lite';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
