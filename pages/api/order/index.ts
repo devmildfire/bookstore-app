@@ -31,9 +31,9 @@ function generateRoboURL({
   invoiceDescription,
 }: roboUrlProps) {
   const config = {
-    shopIdentifier: process.env.NEXT_PUBLIC_SHOP_ID,
-    password1: process.env.NEXT_PUBLIC_ROBOPASS_ONE,
-    password2: process.env.NEXT_PUBLIC_ROBOPASS_TWO,
+    shopIdentifier: process.env.SHOP_ID,
+    password1: process.env.ROBOPASS_ONE,
+    password2: process.env.ROBOPASS_TWO,
     testMode: true, // Указываем true, если работаем в тестовом режиме
   };
 
