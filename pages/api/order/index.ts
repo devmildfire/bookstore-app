@@ -259,7 +259,6 @@ async function emailAlert(email: string, order: string, details: string) {
         'api-key': apiKey,
         'content-type': 'application/json',
       },
-      // body: '{  \n   "sender":{  \n      "name":"Tester Mildfire",\n      "email":"noreply@chtivo.spb.ru"\n   },\n   "to":[  \n      {  \n         "email":"mildfire@gmail.com",\n         "name":"Mildfire"\n      }\n   ],\n   "subject":"Hello Test",\n   "htmlContent":"Hello,This is my first transactional email sent from Brevo."\n}',
       body: JSON.stringify({
         sender: {
           name: 'Tester Mildfire',
@@ -310,7 +309,6 @@ async function makeOrderPaid(
           paidOrderData.data.id,
           `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
         );
-        console.log('email responce is ... ', response);
 
         return paidOrderData.data;
       }

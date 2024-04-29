@@ -243,7 +243,9 @@ export function Shipment({
     };
     const payUrl = await getPayUrl(payUrlProps);
 
-    emptyCartFromDB(cartID);
+    console.log('emptying cart id ....', cartID);
+
+    const emptyError = await emptyCartFromDB(cartID);
 
     // window.open(payUrl, '_blank');
     //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты

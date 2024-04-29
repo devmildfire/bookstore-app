@@ -66,6 +66,8 @@ async function removeItemFromCart(item: CartItemType): Promise<string> {
 }
 
 async function emptyCart(cartID: string): Promise<string> {
+  console.log('cart id for emptying in function is ... ', cartID);
+
   const { error } = await supabaseService
     .from('Cart')
     .delete()
@@ -96,7 +98,7 @@ export default async function handler(
 ) {
   const body = req.body;
 
-  const cartID: string = body.id ? body.id : '';
+  let cartID: string = body.id ? body.id : '';
 
   let cart: CartItemType[] | PostgrestError;
   let item: CartItemType;
@@ -132,6 +134,8 @@ export default async function handler(
     res.status(200).json(updatedItem));
 
   body.oper == 'emptycart' &&
-    ((errorMessage = await emptyCart(cartID)),
+    ((cartID = body.id),
+    console.log('cart id for empying is ... ', cartID),
+    (errorMessage = await emptyCart(cartID)),
     res.status(200).json(errorMessage));
 }
