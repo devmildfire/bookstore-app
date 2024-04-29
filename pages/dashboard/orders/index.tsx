@@ -46,7 +46,7 @@ function Orders(): React.ReactElement {
       <DashMain>
         <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
           <DashNav />
-          <OrdersList />
+          <OrdersList perPage={10} />
           {session && <LogOut session={session} />}
         </div>
       </DashMain>
