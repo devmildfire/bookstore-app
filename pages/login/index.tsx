@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from 'api/supabase-client';
-import { Session } from '@supabase/gotrue-js/src/lib/types';
+// import { Session } from '@supabase/gotrue-js/src/lib/types';
+import { Session } from '@supabase/supabase-js';
+
 import { useRouter } from 'next/router';
 import { LogOut } from '@/components/LoginPage/Logout';
 import { LoginForm } from '@/components/LoginPage/LoginForm';
@@ -19,6 +21,8 @@ const Login = (): React.ReactElement => {
         console.error(error);
       } else {
         data.session && setSession(data.session);
+        data.session && console.log('current session is ... ', data.session);
+
         data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
       }
     } catch (error) {

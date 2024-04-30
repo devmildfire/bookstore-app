@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { Router, useRouter } from 'next/router';
@@ -14,12 +14,67 @@ import { ThemeProvider } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
 import { AppPropsWithLayout } from '@/types/page';
 
+import { supabase } from 'api/supabase-client';
+import { Session, User } from '@supabase/supabase-js';
+
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
   console.log(pageProps);
   const { value, toggleOff, toggleOn } = useToggle();
   const getLayout = Component.getLayout ?? ((page) => page);
+  // const [session, setSession] = useState<Session>();
+  const [user, setUser] = useState<User>();
+
+  const get_user = async (): Promise<User | undefined> => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error(error);
+    } else {
+      // data.user && setUser(data.user);
+      data.user && console.log('current user is ... ', data.user);
+      // return data.session;
+      return data.user;
+      // data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
+    }
+  };
+
+  // const get_session = async () => {
+  //   try {
+  //     const { data, error } = await supabase.auth.getSession();
+  //     if (error) {
+  //       console.error(error);
+  //     } else {
+  //       data.session && setSession(data.session);
+  //       data.session && console.log('current session is ... ', data.session);
+  //       // return data.session;
+
+  //       // data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  const anonymousLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if (error) {
+        console.error(error);
+      } else {
+        data.session && console.log('session data is... ', data.session);
+        data.user && console.log('user data is... ', data.user);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUserData = async () => {
+    const user = await get_user();
+    user && setUser(user);
+    !user && anonymousLogin();
+  };
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -34,8 +89,12 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
 
   //  при старте работы приложения всем пользователям раздаётся
   //  принудительное cookie с номером их корзины покупок
+
+  //  также проверяется есть ли текущий пользователь
+  //  если нет, то происходит логин анонимного пользователя
   useEffect(() => {
     setOrGetCartCookie();
+    getUserData();
   }, []);
 
   return (
