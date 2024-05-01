@@ -37,7 +37,16 @@ const Login = (): React.ReactElement => {
   return (
     <PageLayout>
       <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center'>
-        {session ? <LogOut session={session} /> : <LoginForm />}
+        {/* {session ? <LogOut session={session} /> : <LoginForm />} */}
+
+        {session &&
+          (session.user.is_anonymous ? (
+            <LoginForm />
+          ) : (
+            <LogOut session={session} />
+          ))}
+
+        {!session && <LoginForm />}
       </div>
     </PageLayout>
   );

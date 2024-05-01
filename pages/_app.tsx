@@ -58,11 +58,18 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
 
   const anonymousLogin = async () => {
     try {
-      const { data, error } = await supabase.auth.signInAnonymously();
+      const { data, error } = await supabase.auth.signInAnonymously({
+        options: {
+          data: {
+            cartID: setOrGetCartCookie(),
+          },
+        },
+      });
       if (error) {
         console.error(error);
       } else {
         data.session && console.log('session data is... ', data.session);
+
         data.user && console.log('user data is... ', data.user);
       }
     } catch (error) {
