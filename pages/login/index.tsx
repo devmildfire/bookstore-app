@@ -22,6 +22,11 @@ const Login = (): React.ReactElement => {
       } else {
         data.session && setSession(data.session);
         data.session && console.log('current session is ... ', data.session);
+        data.session &&
+          console.log(
+            'current user app metadata is ... ',
+            data.session.user.app_metadata
+          );
 
         data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
       }
