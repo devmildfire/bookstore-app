@@ -1,4 +1,4 @@
-import { PostgrestError } from '@supabase/supabase-js';
+import { PostgrestError, Session, User } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
 import { Database } from 'api/books/types';
 import { NextApiRequest, NextApiResponse } from 'next';

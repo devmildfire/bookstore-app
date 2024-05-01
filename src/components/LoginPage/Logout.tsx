@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { UserMetadata } from '@supabase/supabase-js';
-import { Session } from '@supabase/gotrue-js/src/lib/types';
+// import { Session } from '@supabase/gotrue-js/src/lib/types';
+import { Session } from '@supabase/supabase-js';
+
 import { supabase } from 'api/supabase-client';
 import { Button } from '@/components/ui/button';
 
@@ -47,7 +49,10 @@ export function LogOut({ session }: { session: Session }) {
 
   return (
     <div className='space-y-1 w-full'>
-      <div>currently logged in as {session.user.email}</div>
+      <div>
+        currently logged in as{' '}
+        {session.user.is_anonymous ? 'anonymous user' : session.user.email}
+      </div>
 
       {/* {checkAdmin(session.user.id) && ( */}
       {metaData?.isAdmin && <div>you have admin access and can do stuff</div>}
