@@ -1,10 +1,8 @@
 import { PostgrestError } from '@supabase/supabase-js';
 import { supabaseService } from 'api';
 import { NextApiRequest, NextApiResponse } from 'next';
-// import { Cart, CartItem } from '@/types/api';
 import { Tables } from 'api/books/types';
 import Robokaska from '@/utils/robokaska';
-import { Link2Icon } from 'lucide-react';
 
 export type OrdersType = Tables<'Orders'>;
 export type OrdersInsertType = Omit<OrdersType, 'id' | 'created_at'>;
@@ -51,7 +49,7 @@ function generateRoboURL({
 }
 
 async function getOrder(orderID: string): Promise<OrdersType | PostgrestError> {
-  console.log('getting order id...', orderID);
+  // console.log('getting order id...', orderID);
 
   const { data, error } = await supabaseService
     .from('Orders')
@@ -137,7 +135,7 @@ async function getAllLinks(
     .select()
     .eq('order_id', numOrder);
 
-  console.log('order items data is ...', orderItems.data);
+  // console.log('order items data is ...', orderItems.data);
 
   if (!orderItems.data) {
     return orderItems.error;
@@ -145,7 +143,7 @@ async function getAllLinks(
 
   const itemslinks: (LinkReturnType | undefined)[] = await Promise.all(
     orderItems.data.map(async (item) => {
-      console.log('item type is...', item.type);
+      // console.log('item type is...', item.type);
 
       if (item.type === 'Course') {
         const coursesData = await supabaseService
@@ -155,11 +153,11 @@ async function getAllLinks(
           .single();
 
         if (coursesData.data) {
-          console.log('Courses are ...', coursesData.data);
+          // console.log('Courses are ...', coursesData.data);
           const link = coursesData.data.src as string;
           const courseName = (coursesData.data.name + ` - Курс`) as string;
-          console.log(' course name is ...', courseName);
-          console.log(' course link is ...', link);
+          // console.log(' course name is ...', courseName);
+          // console.log(' course link is ...', link);
 
           return {
             url: link,
@@ -188,10 +186,10 @@ async function getAllLinks(
           .single();
 
         if (titleData.data) {
-          console.log('Titles are ...', titleData.data);
+          // console.log('Titles are ...', titleData.data);
           const bookName = `${item.name} - ${item.type}` as string;
           const link = titleData.data.Ebooks.src as string;
-          console.log('link is ...', link);
+          // console.log('link is ...', link);
           // return link;
 
           return {
@@ -213,10 +211,10 @@ async function getAllLinks(
           .single();
 
         if (titleData.data) {
-          console.log('Audio data is ...', titleData.data.Audiobooks);
+          // console.log('Audio data is ...', titleData.data.Audiobooks);
           const link = titleData.data.Audiobooks.src as string;
           const audioBookName = `${item.name} - ${item.type}` as string;
-          console.log('audio link is ...', link);
+          // console.log('audio link is ...', link);
           return {
             url: link,
             name: audioBookName,
@@ -226,7 +224,7 @@ async function getAllLinks(
     })
   );
 
-  console.log('links are ...', itemslinks);
+  // console.log('links are ...', itemslinks);
 
   return itemslinks;
 }
@@ -254,9 +252,9 @@ async function telegramAlert(email: string, order: string, details: string) {
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
 
-  console.log('trying to send message with tokem: ', token);
-  console.log('url: ', url);
-  console.log('trying to send message to Telegram chat id: ', chatID);
+  // console.log('trying to send message with tokem: ', token);
+  // console.log('url: ', url);
+  // console.log('trying to send message to Telegram chat id: ', chatID);
 
   const obj = {
     chat_id: chatID, // Telegram chat id
