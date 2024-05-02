@@ -20,6 +20,9 @@ env:
   ROBOPASS_TWO: ${{secrets.ROBOPASS_TWO}}
   BREVO_APIKEY: ${{secrets.BREVO_APIKEY}}
 
+  TELEGRAM_BOT_APIKEY: ${{secrets.TELEGRAM_BOT_APIKEY}}
+  TELEGRAM_BOT_CHAT_ID: ${{secrets.TELEGRAM_BOT_CHAT_ID}}
+
 jobs:
   publish:
     name: publish image
