@@ -15,7 +15,7 @@ import { Toaster } from '@/components/ui/toast';
 import { AppPropsWithLayout } from '@/types/page';
 
 import { supabase } from 'api/supabase-client';
-import { Session, User } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -23,7 +23,6 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   console.log(pageProps);
   const { value, toggleOff, toggleOn } = useToggle();
   const getLayout = Component.getLayout ?? ((page) => page);
-  // const [session, setSession] = useState<Session>();
   const [user, setUser] = useState<User>();
 
   const get_user = async (): Promise<User | undefined> => {
@@ -31,30 +30,10 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     if (error) {
       console.error(error);
     } else {
-      // data.user && setUser(data.user);
       data.user && console.log('current user is ... ', data.user);
-      // return data.session;
       return data.user;
-      // data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
     }
   };
-
-  // const get_session = async () => {
-  //   try {
-  //     const { data, error } = await supabase.auth.getSession();
-  //     if (error) {
-  //       console.error(error);
-  //     } else {
-  //       data.session && setSession(data.session);
-  //       data.session && console.log('current session is ... ', data.session);
-  //       // return data.session;
-
-  //       // data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   const anonymousLogin = async () => {
     try {
