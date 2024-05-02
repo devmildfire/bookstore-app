@@ -247,6 +247,31 @@ async function addOrderItems(
   }
 }
 
+async function telegramAlert(email: string, order: string, details: string) {
+  const token = process.env.TELEGRAM_BOT_APIKEY as string;
+  const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
+
+  const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
+  const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
+
+  console.log('trying to send message with tokem: ', token);
+  console.log('url: ', url);
+  console.log('trying to send message to Telegram chat id: ', chatID);
+
+  const obj = {
+    chat_id: chatID, // Telegram chat id
+    text: text, // The text to send
+  };
+
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+}
+
 async function emailAlert(email: string, order: string, details: string) {
   const apiKey = process.env.BREVO_APIKEY as string;
 
@@ -305,6 +330,11 @@ async function makeOrderPaid(
         return paidOrderData.error;
       } else {
         const response = await emailAlert(
+          paidOrderData.data.email,
+          paidOrderData.data.id,
+          `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
+        );
+        telegramAlert(
           paidOrderData.data.email,
           paidOrderData.data.id,
           `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
