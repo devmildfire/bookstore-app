@@ -266,7 +266,7 @@ async function emailAlert(email: string, order: string, details: string) {
         },
         to: [
           {
-            email: 'mildfire@gmail.com',
+            email: 'info@chtivo.spb.ru',
             name: 'Mildfire',
           },
         ],
