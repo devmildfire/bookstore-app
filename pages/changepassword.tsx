@@ -123,11 +123,6 @@ const Hall = () => {
             вот такой{' '}
           </Button>
         </form>
-
-        <StyledButton className='backButton' href='/' variant='wide'>
-          {' '}
-          Вернуться на главную{' '}
-        </StyledButton>
       </HallDiv>
     </PageLayout>
   );
