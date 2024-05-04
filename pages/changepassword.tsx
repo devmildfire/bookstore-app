@@ -10,12 +10,31 @@ import { useRef } from 'react';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
 
-// const HallIcon = styled.svg`
-//   /* stroke: var(--main-white-100); */
-//   margin: 0 auto;
-//   /* height: 35vw; */
-//   width: auto;
-// `;
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
+import { z } from 'zod';
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+const passwordFormSchema = z
+  .object({
+    password: z.string().min(6, {
+      message: 'password name must be at least 6 characters long.',
+    }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'], // path of error
+  });
 
 const HallDiv = styled.div`
   display: flex;
@@ -86,16 +105,31 @@ const Hall = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
-  const changeUserPassword = async () => {
-    const input = inputRef.current;
-    let pass = '';
-    input?.value && (pass = input?.value);
+  const form = useForm<z.infer<typeof passwordFormSchema>>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      // title: props.defaultTitle,
+    },
+  });
 
+  async function onSubmit(values: z.infer<typeof passwordFormSchema>) {
+    console.log(values);
+
+    const success = await changeUserPassword(values.password);
+
+    success && router.push('/login');
+  }
+
+  const changeUserPassword = async (pass: string): Promise<boolean> => {
     const { data, error } = await supabase.auth.updateUser({
       password: pass,
     });
 
-    data && router.push('/login');
+    if (data) {
+      return true;
+    }
+
+    return false;
   };
 
   return (
@@ -113,7 +147,53 @@ const Hall = () => {
           {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
         </Text>
 
-        <form>
+        <div className='my-8 '>
+          <Form {...form}>
+            <form
+              className='space-y-4 w-full flex flex-col items-center align-middle'
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
+              <FormField
+                control={form.control}
+                name='password'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>password</FormLabel>
+                    <FormControl>
+                      <Input type='password' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='confirmPassword'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col items-start p-1'>
+                    <FormLabel>confirm password</FormLabel>
+                    <FormControl>
+                      <Input type='password' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type='submit'
+                variant={'outline'}
+                size={'default'}
+                className='w-full max-w-48'
+              >
+                задать пароль
+              </Button>
+            </form>
+          </Form>
+        </div>
+
+        {/* <form>
           <input ref={inputRef} type='text' />
           <Button
             onClick={() => {
@@ -123,7 +203,7 @@ const Hall = () => {
             {' '}
             вот такой{' '}
           </Button>
-        </form>
+        </form> */}
       </HallDiv>
     </PageLayout>
   );
