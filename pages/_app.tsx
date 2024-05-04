@@ -30,7 +30,7 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     if (error) {
       console.error(error);
     } else {
-      data.user && console.log('current user is ... ', data.user);
+      // data.user && console.log('current user is ... ', data.user);
       return data.user;
     }
   };
@@ -47,9 +47,8 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
       if (error) {
         console.error(error);
       } else {
-        data.session && console.log('session data is... ', data.session);
-
-        data.user && console.log('user data is... ', data.user);
+        // data.session && console.log('session data is... ', data.session);
+        // data.user && console.log('user data is... ', data.user);
       }
     } catch (error) {
       console.error(error);
