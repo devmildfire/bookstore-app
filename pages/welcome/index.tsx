@@ -1,18 +1,14 @@
 // import Hal9000 from '@/assets/images/HAL9000.svg';
 import HallIcon from '@/assets/images/HAL9000_iconic_eye.svg';
 import HalLogo from '@/assets/images/HALLOGO.svg';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/Common/Text/Text';
 import PageLayout from '@/layouts/PageLayout';
 import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
+import Button from '@/components/Common/Button';
 
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
 import { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +20,25 @@ const HallDiv = styled.div`
 
   @media ${breakPoints.lg} {
     padding: 0 5vw;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  /* padding-top: 50px; */
+  padding-top: 5px;
+
+  @media ${breakPoints.md} {
+    /* padding-top: 20px; */
+    /* padding-top: 12px; */
+
+    > button {
+      max-width: 217px;
+      min-width: 217px;
+
+      > p {
+        font-size: 10px;
+      }
+    }
   }
 `;
 
@@ -92,15 +107,10 @@ const Hall = () => {
           ты зарегистрировался с e-mail {user && user.email}
           {/* I&apos;m sorry Dave, I&apos;m afraid I can&apos;t do that */}
         </Text>
-
-        <Button
-          type='button'
-          variant={'outline'}
-          size={'default'}
-          className='w-full max-w-48'
-        >
-          Перейти на главную
-        </Button>
+        <StyledButton className='backButton' href='/' variant='wide'>
+          {' '}
+          Вернуться на главную{' '}
+        </StyledButton>
       </HallDiv>
     </PageLayout>
   );
