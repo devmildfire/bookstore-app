@@ -8,6 +8,7 @@ import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 import { useRef } from 'react';
 import { supabase } from 'api/supabase-client';
+import { useRouter } from 'next/router';
 
 // const HallIcon = styled.svg`
 //   /* stroke: var(--main-white-100); */
@@ -83,6 +84,7 @@ const StyledButton = styled(Button)`
 
 const Hall = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   const changeUserPassword = async () => {
     const input = inputRef.current;
@@ -93,8 +95,7 @@ const Hall = () => {
       password: pass,
     });
 
-    data && console.log('data from update user is ... ', data);
-    error && console.log('error from update user is ... ', error);
+    data && router.push('/login');
   };
 
   return (
