@@ -69,7 +69,11 @@ export const getServerSideProps = async () => {
     };
   }
 
-  return null;
+  return {
+    props: {
+      titles: null,
+    },
+  };
 };
 
 type BooksPageProps = {
@@ -90,7 +94,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
       <HomeLayout title='Издания'>
         <section className='max-width'>
           <Drawer />
-          <Products data={titles} />
+          {titles && <Products data={titles} />}
         </section>
       </HomeLayout>
     </PageLayout>
