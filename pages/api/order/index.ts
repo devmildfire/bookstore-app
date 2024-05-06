@@ -267,7 +267,9 @@ async function setAlertsSent(order: string) {
     .update({
       alerts_sent: true,
     })
-    .eq('id', order);
+    .eq('id', order)
+    .select()
+    .single();
 
   if (data) {
     console.log('alerts sent status changed to TRUE');
@@ -276,7 +278,11 @@ async function setAlertsSent(order: string) {
   console.log('alerts sent status NOT changed');
 }
 
-async function telegramAlert(email: string, order: string, details: string) {
+async function telegramAlert(
+  email: string,
+  order: string,
+  details: string
+): Promise<Response> {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
 
@@ -285,22 +291,24 @@ async function telegramAlert(email: string, order: string, details: string) {
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
 
-  // console.log('trying to send message with tokem: ', token);
-  // console.log('url: ', url);
-  // console.log('trying to send message to Telegram chat id: ', chatID);
+  console.log('trying to send message with tokem: ', token);
+  console.log('url: ', url);
+  console.log('trying to send message to Telegram chat id: ', chatID);
 
   const obj = {
     chat_id: chatID, // Telegram chat id
     text: text, // The text to send
   };
 
-  await fetch(url, {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(obj),
   });
+
+  return res;
 }
 
 async function emailAlert(email: string, order: string, details: string) {
@@ -374,11 +382,14 @@ async function makeOrderPaid(
             paidOrderData.data.id,
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
-          telegramAlert(
+          const teleResponse = await telegramAlert(
             paidOrderData.data.email,
             paidOrderData.data.id,
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
+
+          console.log('telegram response is ...', teleResponse);
+
           setAlertsSent(paidOrderData.data.id);
         } else {
           console.log('alerts ARE sent, doing nothing!');
