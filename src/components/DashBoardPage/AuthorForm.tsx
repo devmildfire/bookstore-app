@@ -19,6 +19,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
+import slugify from 'slugify';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -118,7 +119,7 @@ function AuthorForm(props: AuthorFormProps) {
 
     const photoUpload = await supabase.storage
       .from('authors')
-      .upload(`author_${values.photo.name}`, values.photo, {
+      .upload(`author_${slugify(values.name)}`, values.photo, {
         cacheControl: '3600',
         upsert: true,
       });
@@ -410,7 +411,7 @@ function AuthorEditForm(author: AuthorsType) {
 
       const photoUdate = await supabase.storage
         .from('authors')
-        .upload(`author_${fileName}`, values.photo, {
+        .upload(`author_${slugify(author.name)}`, values.photo, {
           cacheControl: '3600',
           upsert: true,
         });
