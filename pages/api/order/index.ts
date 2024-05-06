@@ -284,8 +284,8 @@ async function telegramAlert(
   details: string
 ): Promise<Response> {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
-  // const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
-  const chatID = '-1002136098997';
+  const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
+  // const chatID = '-1002136098997';
 
   console.log('sending alert to telegram chat ... ', chatID);
 
