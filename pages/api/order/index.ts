@@ -261,9 +261,26 @@ async function alertCheck(order: string): Promise<boolean> {
   return false;
 }
 
+async function setAlertsSent(order: string) {
+  const { data, error } = await supabaseService
+    .from('Orders')
+    .update({
+      alerts_sent: true,
+    })
+    .eq('id', order);
+
+  if (data) {
+    console.log('alerts sent status changed to TRUE');
+  }
+
+  console.log('alerts sent status NOT changed');
+}
+
 async function telegramAlert(email: string, order: string, details: string) {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
+
+  console.log('sending alert to telegram chat ... ', chatID);
 
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
@@ -287,6 +304,8 @@ async function telegramAlert(email: string, order: string, details: string) {
 }
 
 async function emailAlert(email: string, order: string, details: string) {
+  console.log('sending alert to email ... ', email);
+
   const apiKey = process.env.BREVO_APIKEY as string;
 
   const emailAlertResponse = await fetch(
@@ -345,7 +364,11 @@ async function makeOrderPaid(
       } else {
         const alertsSent = await alertCheck(paidOrderData.data.id);
 
-        if (!alertsSent) {
+        console.log('alerts sent status is ... ', alertsSent);
+
+        if (alertsSent === false) {
+          console.log('sending alerts');
+
           const response = await emailAlert(
             paidOrderData.data.email,
             paidOrderData.data.id,
@@ -356,6 +379,9 @@ async function makeOrderPaid(
             paidOrderData.data.id,
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
+          setAlertsSent(paidOrderData.data.id);
+        } else {
+          console.log('alerts ARE sent, doing nothing!');
         }
 
         return paidOrderData.data;
