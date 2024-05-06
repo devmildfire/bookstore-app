@@ -245,6 +245,22 @@ async function addOrderItems(
   }
 }
 
+async function alertCheck(order: string): Promise<boolean> {
+  const { data, error } = await supabaseService
+    .from('Orders')
+    .select('*')
+    .eq('id', order)
+    .single();
+
+  if (data.alerts_sent) {
+    console.log('alerts allready sent');
+    return true;
+  }
+
+  console.log('alerts NOT sent');
+  return false;
+}
+
 async function telegramAlert(email: string, order: string, details: string) {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
@@ -327,16 +343,20 @@ async function makeOrderPaid(
         console.error(paidOrderData.error);
         return paidOrderData.error;
       } else {
-        const response = await emailAlert(
-          paidOrderData.data.email,
-          paidOrderData.data.id,
-          `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
-        );
-        telegramAlert(
-          paidOrderData.data.email,
-          paidOrderData.data.id,
-          `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
-        );
+        const alertsSent = await alertCheck(paidOrderData.data.id);
+
+        if (!alertsSent) {
+          const response = await emailAlert(
+            paidOrderData.data.email,
+            paidOrderData.data.id,
+            `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
+          );
+          telegramAlert(
+            paidOrderData.data.email,
+            paidOrderData.data.id,
+            `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
+          );
+        }
 
         return paidOrderData.data;
       }
