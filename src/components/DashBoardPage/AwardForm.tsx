@@ -66,7 +66,7 @@ function AwardForm(props: AwardFormProps) {
 
     const photoUpload = await supabase.storage
       .from('awards')
-      .upload(`award_${values.title}`, values.picture, {
+      .upload(`award_${slugify(values.title)}`, values.picture, {
         cacheControl: '3600',
         upsert: true,
       });

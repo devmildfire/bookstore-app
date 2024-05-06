@@ -804,7 +804,7 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
       photoRemove.data &&
         console.log('photo Remove data... ', photoRemove.data);
       const fileName = values.cover?.name
-        ? values.cover?.name
+        ? slugify(values.cover?.name)
         : 'failNameString';
       console.log('photo is...', values.cover);
       console.log('photo name is...', values.cover?.name);
@@ -845,7 +845,9 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
     };
 
     const uploadNewVideo = async (newVideo: File) => {
-      const fileName = newVideo.name ? newVideo.name : 'failNameString';
+      const fileName = newVideo.name
+        ? slugify(newVideo.name)
+        : 'failNameString';
       console.log('video is...', values.trailer);
       console.log('video name is...', values.trailer?.name);
       const videoUpdate = await supabase.storage
