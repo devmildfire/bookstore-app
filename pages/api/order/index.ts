@@ -284,14 +284,15 @@ async function telegramAlert(
   details: string
 ): Promise<Response> {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
-  const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
+  // const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
+  const chatID = '-1002136098997';
 
   console.log('sending alert to telegram chat ... ', chatID);
 
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
 
-  console.log('trying to send message with tokem: ', token);
+  console.log('trying to send message with token: ', token);
   console.log('url: ', url);
   console.log('trying to send message to Telegram chat id: ', chatID);
 
