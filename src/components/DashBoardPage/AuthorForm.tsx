@@ -426,7 +426,7 @@ function AuthorEditForm(author: AuthorsType) {
     if (!author.photo && values.photo) {
       const photoUpload = await supabase.storage
         .from('authors')
-        .upload(`author_${values.photo.name}`, values.photo, {
+        .upload(`author_${slugify(author.name)}`, values.photo, {
           cacheControl: '3600',
           upsert: true,
         });
