@@ -261,6 +261,21 @@ async function alertCheck(order: string): Promise<boolean> {
   return false;
 }
 
+async function setAlertsSent(order: string) {
+  const { data, error } = await supabaseService
+    .from('Orders')
+    .update({
+      alerts_sent: true,
+    })
+    .eq('id', order);
+
+  if (data) {
+    console.log('alerts sent status changed to TRUE');
+  }
+
+  console.log('alerts sent status NOT changed');
+}
+
 async function telegramAlert(email: string, order: string, details: string) {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
@@ -364,6 +379,7 @@ async function makeOrderPaid(
             paidOrderData.data.id,
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
+          setAlertsSent(paidOrderData.data.id);
         } else {
           console.log('alerts ARE sent, doing nothing!');
         }
