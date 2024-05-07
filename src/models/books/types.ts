@@ -43,7 +43,7 @@ export interface Title {
   readonly age_restriction: number;
   readonly cover: string;
   readonly slug: string;
-  readonly isFeatured: boolean;
+  readonly is_featured: boolean;
   // readonly prices: Record<BookTableTypesEnum[number], number>[];
   readonly prices: number[];
 

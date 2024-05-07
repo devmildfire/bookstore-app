@@ -62,6 +62,8 @@ export const getServerSideProps = async () => {
       };
     });
 
+    console.log('titles log ... ', titles);
+
     return {
       props: {
         titles,
@@ -75,6 +77,12 @@ export const getServerSideProps = async () => {
     },
   };
 };
+
+export type TitlesFromProps = InferGetStaticPropsType<
+  typeof getServerSideProps
+>;
+
+export type Titles = TitlesFromProps['titles'];
 
 type BooksPageProps = {
   forwardedRef: null;
@@ -90,6 +98,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
         forwardedRef={carouselRef}
         slides={[0, 1, 2]}
         options={{ dragThreshold: 1, duration: 25 }}
+        titles={titles?.filter((title) => title.is_featured === true) || []}
       />
       <HomeLayout title='Издания'>
         <section className='max-width'>

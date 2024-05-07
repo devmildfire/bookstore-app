@@ -9,15 +9,16 @@ import React, {
 import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import styled, { StyledComponent } from 'styled-components';
-import books from '@/mocks/books';
 import { DotButton } from './DotButton';
 import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 import { useRouter } from 'next/router';
 import texture from '@/assets/images/mockups/mockup-var-2.png';
+import { Titles } from 'pages/books';
 
 type PropType = {
+  titles: Titles;
   slides: number[];
   options?: EmblaOptionsType;
   forwardedRef: RefObject<HTMLDivElement>;
@@ -258,7 +259,7 @@ const CoverLink = styled(Link)`
 `;
 
 function Carousel(props: PropType): ReactElement {
-  const { slides, options, forwardedRef } = props;
+  const { slides, options, forwardedRef, titles } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
@@ -290,37 +291,34 @@ function Carousel(props: PropType): ReactElement {
     <Wrapper ref={forwardedRef}>
       <Viewport ref={emblaRef}>
         <Container>
-          {slides.map((index) => (
-            <Slide key={index}>
-              <SlideContainer>
-                <CoverLink href={`/books/${books[index].transliteratedTitle}`}>
-                  <Texture /*src={texture.src} */ />
-                  <Cover src={books[index].cover} alt={books[index].title} />
-                </CoverLink>
-                <StyledInfo>
-                  <StyledTitle variant='heading' tag='h1'>
-                    {books[index].title}
-                  </StyledTitle>
-                  <StyledAuthor variant='heading' tag='h2'>
-                    {books[index].authors
-                      .map((author) => author.name)
-                      .join(', ')}
-                  </StyledAuthor>
-                  <StyledThesis variant='caption'>
-                    {books[index].thesis}
-                  </StyledThesis>
-                  <StyledButton
-                    variant='outlined'
-                    onClick={() =>
-                      router.push(`/books/${books[index].transliteratedTitle}`)
-                    }
-                  >
-                    Познать
-                  </StyledButton>
-                </StyledInfo>
-              </SlideContainer>
-            </Slide>
-          ))}
+          {titles &&
+            titles.map((title, index) => (
+              <Slide key={index}>
+                <SlideContainer>
+                  <CoverLink href={`/books/${title.slug}`}>
+                    <Texture /*src={texture.src} */ />
+                    <Cover src={title.cover} alt={title.name} />
+                  </CoverLink>
+                  <StyledInfo>
+                    <StyledTitle variant='heading' tag='h1'>
+                      {title.name}
+                    </StyledTitle>
+                    <StyledAuthor variant='heading' tag='h2'>
+                      {title.authors.map((author) => author.name).join(', ')}
+                    </StyledAuthor>
+                    <StyledThesis variant='caption'>
+                      {title.thesis}
+                    </StyledThesis>
+                    <StyledButton
+                      variant='outlined'
+                      onClick={() => router.push(`/books/${title.slug}`)}
+                    >
+                      Познать
+                    </StyledButton>
+                  </StyledInfo>
+                </SlideContainer>
+              </Slide>
+            ))}
         </Container>
       </Viewport>
       <Dots>
