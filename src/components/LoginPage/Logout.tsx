@@ -9,14 +9,14 @@ import { Button } from '@/components/ui/button';
 
 export function LogOut({ session }: { session: Session }) {
   const router = useRouter();
-  const [metaData, setMetaData] = useState<UserMetadata>();
+  const [appData, setAppData] = useState<UserMetadata>();
 
   async function userGet() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    setMetaData(user?.user_metadata);
+    setAppData(user?.app_metadata);
   }
 
   // async function userSet() {
@@ -55,7 +55,9 @@ export function LogOut({ session }: { session: Session }) {
       </div>
 
       {/* {checkAdmin(session.user.id) && ( */}
-      {metaData?.isAdmin && <div>you have admin access and can do stuff</div>}
+      {appData?.claims_admin && (
+        <div>you have admin access and can do stuff</div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <Button
