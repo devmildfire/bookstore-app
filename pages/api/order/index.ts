@@ -3,6 +3,7 @@ import { supabaseService } from 'api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Tables } from 'api/books/types';
 import Robokaska from '@/utils/robokaska';
+import { postData } from '@/utils/postData';
 
 export type OrdersType = Tables<'Orders'>;
 export type OrdersInsertType = Omit<OrdersType, 'id' | 'created_at'>;
@@ -46,6 +47,13 @@ function generateRoboURL({
   );
 
   return payURL;
+}
+
+async function emptyCartFromDB(cartID: string) {
+  const emptyCartResponse: string = await postData(`/api/cart`, {
+    oper: 'emptycart',
+    id: cartID,
+  });
 }
 
 async function getOrder(orderID: string): Promise<OrdersType | PostgrestError> {
@@ -371,6 +379,8 @@ async function makeOrderPaid(
         console.error(paidOrderData.error);
         return paidOrderData.error;
       } else {
+        const emptyError = await emptyCartFromDB(paidOrderData.data.cart_id);
+
         const alertsSent = await alertCheck(paidOrderData.data.id);
 
         console.log('alerts sent status is ... ', alertsSent);

@@ -28,12 +28,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import Link from 'next/link';
 
-async function emptyCartFromDB(cartID: string) {
-  const emptyCartResponse: string = await postData(`/api/cart`, {
-    oper: 'emptycart',
-    id: cartID,
-  });
-}
+// async function emptyCartFromDB(cartID: string) {
+//   const emptyCartResponse: string = await postData(`/api/cart`, {
+//     oper: 'emptycart',
+//     id: cartID,
+//   });
+// }
 
 async function createNewOrder(order: OrdersInsertType) {
   const newOrderResponse: OrdersType[] = await postData(`/api/order`, {
@@ -237,7 +237,8 @@ export function Shipment({
 
     const payUrlProps: roboUrlProps = {
       invoiceID: orderID,
-      email: data.email,
+      // email: data.email, // Робокасса проверяет емейл на валидность и у неё свои представления о прекрасном. Поэтому даём ей что она хочет
+      email: 'bigsecret@yandex.ru',
       outSum: price.toString(),
       invoiceDescription: orderDescription,
     };
@@ -245,7 +246,7 @@ export function Shipment({
 
     console.log('emptying cart id ....', cartID);
 
-    const emptyError = await emptyCartFromDB(cartID);
+    // const emptyError = await emptyCartFromDB(cartID);
 
     // window.open(payUrl, '_blank');
     //  изначально в сафари этот способ открыть новое окно блокируется, возможно есть другой лучший способ перенаправить пользователя в сервис оплаты
