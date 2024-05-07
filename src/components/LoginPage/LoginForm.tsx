@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+
 import {
   Form,
   FormControl,
@@ -15,6 +16,7 @@ import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
 import { useRouter } from 'next/router';
+import { RecoveryDialog } from './RecoveryDialog';
 
 const formSchema = z.object({
   email: z.string().email().min(3, {
@@ -25,13 +27,12 @@ const formSchema = z.object({
   }),
 });
 
+// email: 'mildfirey@yandex.ru',
+// password: '0892387639',
+
 export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: 'mildfirey@yandex.ru',
-      password: '0892387639',
-    },
   });
 
   const router = useRouter();
@@ -95,6 +96,7 @@ export function LoginForm() {
           Login
         </Button>
       </form>
+      <RecoveryDialog />
     </Form>
   );
 }
