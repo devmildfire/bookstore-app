@@ -28,7 +28,8 @@ const Login = (): React.ReactElement => {
             data.session.user.app_metadata
           );
 
-        data.session?.user.user_metadata.isAdmin && router.push('/dashboard');
+        data.session?.user.app_metadata.claims_admin &&
+          router.push('/dashboard');
       }
     } catch (error) {
       console.error(error);

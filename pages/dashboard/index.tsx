@@ -18,7 +18,10 @@ const Dashboard = (): React.ReactElement => {
         console.error(error);
       } else {
         data.session && setSession(data.session);
-        !data.session?.user.user_metadata.isAdmin && router.push('/login');
+        console.log('app metadata is ... ', data.session?.user.app_metadata);
+
+        // !data.session?.user.user_metadata.isAdmin && router.push('/login');
+        !data.session?.user.app_metadata.claims_admin && router.push('/login');
       }
     } catch (error) {
       console.error(error);
