@@ -49,11 +49,12 @@ function generateRoboURL({
   return payURL;
 }
 
-async function emptyCartFromDB(cartID: string) {
+async function emptyCartFromDB(cartID: string): Promise<string> {
   const emptyCartResponse: string = await postData(`/api/cart`, {
     oper: 'emptycart',
     id: cartID,
   });
+  return emptyCartResponse;
 }
 
 async function getOrder(orderID: string): Promise<OrdersType | PostgrestError> {
@@ -379,8 +380,6 @@ async function makeOrderPaid(
         console.error(paidOrderData.error);
         return paidOrderData.error;
       } else {
-        const emptyError = await emptyCartFromDB(paidOrderData.data.cart_id);
-
         const alertsSent = await alertCheck(paidOrderData.data.id);
 
         console.log('alerts sent status is ... ', alertsSent);
@@ -402,6 +401,8 @@ async function makeOrderPaid(
           console.log('telegram response is ...', teleResponse);
 
           setAlertsSent(paidOrderData.data.id);
+
+          emptyCartFromDB(paidOrderData.data.cart_id);
         } else {
           console.log('alerts ARE sent, doing nothing!');
         }
