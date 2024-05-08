@@ -10,7 +10,8 @@ export const StyledWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  background-color: #0505057a;
+  // background-color: #0505057a;
+  background-color: var(--main-black);
 
   height: 100%;
   width: 100%;
