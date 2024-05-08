@@ -164,7 +164,7 @@ async function getAllLinks(
         if (coursesData.data) {
           // console.log('Courses are ...', coursesData.data);
           const link = coursesData.data.src as string;
-          const courseName = (coursesData.data.name + ` - Курс`) as string;
+          const courseName = (coursesData.data.name + ` — Курс`) as string;
           // console.log(' course name is ...', courseName);
           // console.log(' course link is ...', link);
 
@@ -196,7 +196,7 @@ async function getAllLinks(
 
         if (titleData.data) {
           // console.log('Titles are ...', titleData.data);
-          const bookName = `${item.name} - ${item.type}` as string;
+          const bookName = `${item.name} — ${item.type}` as string;
           const link = titleData.data.Ebooks.src as string;
           // console.log('link is ...', link);
           // return link;
@@ -222,7 +222,7 @@ async function getAllLinks(
         if (titleData.data) {
           // console.log('Audio data is ...', titleData.data.Audiobooks);
           const link = titleData.data.Audiobooks.src as string;
-          const audioBookName = `${item.name} - ${item.type}` as string;
+          const audioBookName = `${item.name} — ${item.type}` as string;
           // console.log('audio link is ...', link);
           return {
             url: link,
@@ -294,7 +294,6 @@ async function telegramAlert(
 ): Promise<Response> {
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
-  // const chatID = '-1002136098997';
 
   console.log('sending alert to telegram chat ... ', chatID);
 

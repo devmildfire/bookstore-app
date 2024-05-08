@@ -200,7 +200,7 @@ const Success = (): React.ReactElement => {
             <StyledCheckMark />
           </CheckDiv>
           <Text variant='h3_1Bel'>
-            Мы свяжемся с Вами для отправки печатного издания или книги 2.0
+            Мы свяжемся с Вами для отправки материального издания.
           </Text>
           <div>
             <Text variant='h3c'>
@@ -208,7 +208,7 @@ const Success = (): React.ReactElement => {
               автоматически.
             </Text>
             <Text variant='h3c'>
-              А если нет, то вот ссылки на скачивание
+              Если не началось, то нажмите сюда:
               {
                 itemsLinks?.length &&
                   itemsLinks.map((link, index) => {
@@ -226,8 +226,8 @@ const Success = (): React.ReactElement => {
         </div>
         <div className='flex flex-col gap-4 items-center sm:items-start'>
           <Text variant='ctext'>
-            Вернитесь на главную или воспользуйтесь поиском, чтобы выбрать
-            что-то ещё
+            Спасибо за покупку. Вернитесь на главную страницу или воспользуйтесь
+            поиском, чтобы выбрать что-то ещё
           </Text>
           <StyledButton className='backButton' href='/' variant='wide'>
             Перейти на главную
