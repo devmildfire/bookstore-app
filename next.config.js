@@ -14,7 +14,7 @@ const options = {
       {
         source: '/',
         destination: '/books',
-        permanent: true,
+        permanent: false,
       },
     ];
   },
@@ -41,7 +41,7 @@ const options = {
       },
     ],
   },
-output: 'standalone',
+  output: 'standalone',
 };
 
 module.exports = options;
