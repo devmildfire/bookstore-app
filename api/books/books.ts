@@ -15,7 +15,7 @@ export const booksAPI = {
       Audiobooks ( * ),
       Ebooks ( * ),
       PrintedBooks ( *,
-        options:PrintOptions ( *,
+        options: PrintOptions ( *,
           size:PrintSize( * )
         ),
         cover:PrintedCover( * )
