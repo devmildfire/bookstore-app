@@ -3,6 +3,7 @@ import { getCart } from '@/utils/getCart';
 import {
   action,
   computed,
+  makeAutoObservable,
   makeObservable,
   observable,
   runInAction,
@@ -14,14 +15,21 @@ export class CartStore {
   cartID: string | undefined = '';
   // hasPhysicalGoods: boolean;
 
+  // constructor() {
+  //   makeObservable(this, {
+  //     cartID: observable,
+  //     cart: observable,
+  //     setCart: action,
+  //     setCartID: action,
+  //     incrementProduct: action,
+  //     decrementProduct: action,
+  //     price: computed,
+  //     hasPhysicalGoods: computed,
+  //   });
+  // }
+
   constructor() {
-    makeObservable(this, {
-      cartID: observable,
-      cart: observable,
-      setCart: action,
-      price: computed,
-      hasPhysicalGoods: computed,
-    });
+    makeAutoObservable(this);
   }
 
   get price() {
@@ -41,7 +49,19 @@ export class CartStore {
   };
 
   setCart = async (cartID: string) => {
-    this.cart = await getCart(cartID);
+    const gotCart = await getCart(cartID);
+
+    runInAction(() => {
+      this.cart = gotCart;
+    });
+  };
+
+  incrementProduct = (index: number) => {
+    this.cart[index].quantity = this.cart[index].quantity! + 1;
+  };
+
+  decrementProduct = (index: number) => {
+    this.cart[index].quantity = this.cart[index].quantity! - 1;
   };
 
   get hasPhysicalGoods() {

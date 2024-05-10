@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import * as Styled from '../../src/components/CartPage/CartPage.styled';
 import CartItem from '../../src/components/CartPage/CartItem/CartItem';
 import Payment from '../../src/components/CartPage/Payment/Payment';
 import backLinkArrow from '../../src/assets/icons/back-link-arrow.svg';
 import ColumnLabels from '../../src/components/CartPage/ColumnLabels/ColumnLabels';
-import { setOrGetCartCookie } from '@/utils/cardID';
 import { CartItemType } from 'pages/api/cart';
 import { postData } from '@/utils/postData';
 import Text from '@/components/Common/Text';
@@ -120,11 +119,6 @@ interface fullCartProps {
   setStage: (stage: string) => void;
 }
 
-type optiActionType = {
-  operation: string;
-  index: number;
-};
-
 function FullCart({ productQuantity, setStage }: fullCartProps) {
   const router = useRouter();
 
@@ -144,8 +138,8 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
               removeItemFromDB(product, cartStore.cartID!);
             }}
             incrementQuantity={() => {
-              cartStore.cart[index].quantity =
-                cartStore.cart[index].quantity! + 1;
+              cartStore.incrementProduct(index);
+
               updateItemInDB(
                 {
                   ...product,
@@ -155,8 +149,8 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
               );
             }}
             decrimentQuantity={() => {
-              cartStore.cart[index].quantity =
-                cartStore.cart[index].quantity! - 1;
+              cartStore.decrementProduct(index);
+
               updateItemInDB(
                 {
                   ...product,
@@ -190,7 +184,8 @@ const Cart = observer((): React.ReactElement => {
   const [stage, setStage] = useState('cartStage');
 
   useEffect(() => {
-    cartStore.cartID = setOrGetCartCookie()?.toString();
+    // cartStore.cartID = setOrGetCartCookie()?.toString();
+    cartStore.setCartID();
     if (cartStore.cartID) {
       cartStore.setCart(cartStore.cartID);
     }
