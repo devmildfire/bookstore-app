@@ -120,6 +120,11 @@ interface fullCartProps {
   setStage: (stage: string) => void;
 }
 
+type optiActionType = {
+  operation: string;
+  index: number;
+};
+
 function FullCart({ productQuantity, setStage }: fullCartProps) {
   const router = useRouter();
 
@@ -131,7 +136,7 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
     <>
       <ColumnLabels />
       <Styled.ProductsList>
-        {cartStore.cart.map((product) => (
+        {cartStore.cart.map((product, index) => (
           <CartItem
             key={product.name + product.category}
             {...product}
@@ -139,19 +144,23 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
               removeItemFromDB(product, cartStore.cartID!);
             }}
             incrementQuantity={() => {
+              cartStore.cart[index].quantity =
+                cartStore.cart[index].quantity! + 1;
               updateItemInDB(
                 {
                   ...product,
-                  quantity: product.quantity! + 1,
+                  quantity: product.quantity!,
                 },
                 cartStore.cartID!
               );
             }}
             decrimentQuantity={() => {
+              cartStore.cart[index].quantity =
+                cartStore.cart[index].quantity! - 1;
               updateItemInDB(
                 {
                   ...product,
-                  quantity: product.quantity! - 1,
+                  quantity: product.quantity!,
                 },
                 cartStore.cartID!
               );
@@ -160,7 +169,7 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
         ))}
       </Styled.ProductsList>
 
-      <StyledPromoMessage className='sdfsdfsdf' />
+      <StyledPromoMessage className='promo' />
 
       <Payment
         setStage={setStage}
