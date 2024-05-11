@@ -25,6 +25,8 @@ export const bookTypes: BookTableTypesEnum[] = [
   BookTableTypesEnum.CardBooks,
 ];
 
+// FIXME всё остальное здесь не используется. Это нужно или поудалять, либо заменить
+
 type AudioBook = Tables<'Audiobooks'>;
 type Ebook = Tables<'Ebooks'>;
 type CardBook = Tables<'CardBooks'>;
@@ -39,6 +41,8 @@ type PrintedBookType = Tables<'PrintedBooks'> & {
   options: PrintedBookOptions[];
   cover: PrintBookCover[];
 };
+
+// FIXME этот интерфейс заменён на ITitle из entities/title
 
 export interface Title {
   readonly authors: Author[];

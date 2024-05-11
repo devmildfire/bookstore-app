@@ -10,7 +10,6 @@ import { API } from 'api/books/';
 import styled from 'styled-components';
 import PageLayout from '@/layouts/PageLayout';
 import { normalizeTitle } from '@/entities/title/normalize';
-import { fullManyTitlesQuery } from '@/entities/title/server';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -90,13 +89,6 @@ type BooksPageProps = {
 function BooksPage({ forwardedRef, titles }: BooksPageProps) {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const isSliderOnScreen = useOnScreen(carouselRef);
-
-  if (titles) {
-    const firstTitle = titles[0];
-
-    console.log('first title normalized ...');
-    console.log(JSON.stringify(firstTitle, null, 2));
-  }
 
   return (
     <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
