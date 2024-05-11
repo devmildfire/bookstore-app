@@ -10,6 +10,7 @@ import { API } from 'api/books/';
 import styled from 'styled-components';
 import PageLayout from '@/layouts/PageLayout';
 import { normalizeTitle } from '@/entities/title/normalize';
+import { fullManyTitlesQuery } from '@/entities/title/server';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -43,19 +44,16 @@ export const getServerSideProps = async () => {
   }
 
   if (data) {
-    const titles = data.map((title) => {
-      // const logPrice = bookTypes
-      //   .map((type) => (title[type] ? title[type].price : null))
-      //   .filter((price) => price !== null) as number[];
-      // console.log('log price is ... ', logPrice);
+    const normalizedTitles = data.map((title) => normalizeTitle(title));
 
+    const titles = normalizedTitles.map((title) => {
       return {
         ...title,
         prices: bookTypes
-          .map((type) => (title[type] ? title[type].price : null))
+          .map((type) => (title[type] ? title[type]?.price : null))
           .filter((price) => price !== null) as number[],
         discount: bookTypes
-          .map((type) => (title[type] ? title[type].discount : null))
+          .map((type) => (title[type] ? title[type]?.discount : null))
           .filter((discount) => discount !== null) as number[],
         types: bookTypes
           .map((type) => (title[type] ? type : null))
@@ -96,10 +94,8 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
   if (titles) {
     const firstTitle = titles[0];
 
-    const normalizedFirstTitle = normalizeTitle(firstTitle);
-
     console.log('first title normalized ...');
-    console.log(JSON.stringify(normalizedFirstTitle, null, 2));
+    console.log(JSON.stringify(firstTitle, null, 2));
   }
 
   return (
@@ -108,7 +104,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
         forwardedRef={carouselRef}
         slides={[0, 1, 2]}
         options={{ dragThreshold: 1, duration: 25 }}
-        titles={titles?.filter((title) => title.is_featured === true) || []}
+        titles={titles?.filter((title) => title.isFeatured === true) || []}
       />
       <HomeLayout title='Издания'>
         <section className='max-width'>

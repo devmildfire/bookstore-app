@@ -4,9 +4,11 @@ import { Title } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import { Row } from './Row';
+import { ITitle } from '@/entities/title/client';
 
 interface GridProps {
-  data: Title[];
+  // data: Title[];
+  data: ITitle[];
 }
 
 const getColumns = (width: number) => {

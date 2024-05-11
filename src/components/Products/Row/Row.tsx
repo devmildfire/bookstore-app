@@ -7,6 +7,7 @@ import useScrollTo from '@/hooks/useScrollTo';
 import { RowContainer, RowItem } from './styles';
 import { ProductCard, ProductCard3d } from '@/components/product-cards';
 import { Preview } from './Preview';
+import { ITitle } from '@/entities/title/client';
 
 const Row = ({
   row,
@@ -17,7 +18,7 @@ const Row = ({
   openRowId,
   handleOpenRow,
 }: RowProps) => {
-  const [preview, setPreview] = React.useState<Title>();
+  const [preview, setPreview] = React.useState<ITitle>();
   const [titleSlug, setTitleSlug] = React.useState<string | null>(null);
 
   const [shouldClose, setShouldClose] = React.useState(false);

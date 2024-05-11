@@ -4,11 +4,18 @@ import { Tables } from 'api/books/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
 
+// export enum BookTableTypesEnum {
+//   PrintedBooks = 'PrintedBooks',
+//   Ebooks = 'Ebooks',
+//   Audiobooks = 'Audiobooks',
+//   CardBooks = 'CardBooks',
+// }
+
 export enum BookTableTypesEnum {
-  PrintedBooks = 'PrintedBooks',
-  Ebooks = 'Ebooks',
-  Audiobooks = 'Audiobooks',
-  CardBooks = 'CardBooks',
+  PrintedBooks = 'printedBook',
+  Ebooks = 'eBook',
+  Audiobooks = 'audioBook',
+  CardBooks = 'cardBook',
 }
 
 export const bookTypes: BookTableTypesEnum[] = [

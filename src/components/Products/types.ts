@@ -1,9 +1,10 @@
 import { Title } from '@/models/books/types';
 import { TriggerStyles } from '../Common/Trigger/types';
+import { ITitle } from '@/entities/title/client';
 
 export type RowProps = {
-  row: Title[];
-  data: Title[];
+  row: ITitle[];
+  data: ITitle[];
   buttonStyle: TriggerStyles;
   bookStyle: '3d' | 'flat';
   rowId: number;
@@ -14,7 +15,7 @@ export type RowProps = {
 export type PreviewProps = {
   isOpen: boolean;
   shouldClose: boolean;
-  preview?: Title;
+  preview?: ITitle;
   slug: string | null;
   width: number;
   handleClose: () => void;

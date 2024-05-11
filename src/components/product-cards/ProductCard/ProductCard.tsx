@@ -11,11 +11,12 @@ import {
   OldPrice,
 } from '../styles';
 import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
-import { Title } from '@/models/books';
+// import { Title } from '@/models/books';
 import { useModal } from '../../Modal/Modal';
 import { TriggerStyles } from '@/components/Common/Trigger/types';
+import { ITitle } from '@/entities/title/client';
 
-export interface ProductCardProps extends Title {
+export interface ProductCardProps extends ITitle {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
   buttonStyle: TriggerStyles;
@@ -55,7 +56,7 @@ function ProductCard(props: ProductCardProps) {
       />
       <Footer>
         <PriceContainer>
-        {/* FIXME: цены сломались */}
+          {/* FIXME: цены сломались */}
           <Price>{`300₽`}</Price>
           {/* <OldPrice discount>{newPrice && `${price}₽`}</OldPrice> */}
         </PriceContainer>

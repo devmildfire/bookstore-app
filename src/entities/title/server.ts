@@ -8,10 +8,10 @@ export const fullTitleQuery = supabase
         *,
         authors: Titles_Authors ( ...Authors(*)),
         Photos( * ),
-        CardBooks ( * ),
-        Audiobooks ( * ),
-        Ebooks ( * ),
-        PrintedBooks ( *,
+        cardBook: CardBooks ( * ),
+        audioBook: Audiobooks ( * ),
+        eBook: Ebooks ( * ),
+        printedBook: PrintedBooks ( *,
           options:PrintOptions ( *,
             size:PrintSize( * )
           ),
@@ -24,7 +24,55 @@ export const fullTitleQuery = supabase
   .limit(1)
   .single();
 
+export const fullManyTitlesQuery = supabase
+  .from('Titles')
+  .select(
+    `
+        *,
+        authors: Titles_Authors ( ...Authors(*)),
+        Photos( * ),
+        cardBook: CardBooks ( * ),
+        audioBook: Audiobooks ( * ),
+        eBook: Ebooks ( * ),
+        printedBook: PrintedBooks ( *,
+          options:PrintOptions ( *,
+            size: PrintSize( * )
+          ),
+          cover:PrintedCover( * )
+        ),
+        awards: TitlesAwards ( *,  ...Awards(*) )
+
+  `
+  )
+  .returns<FullTitleQueryType[]>();
+
+export const fullManyTitlesQueryBySlugFunction = (slug: string) => {
+  const fullManyTitlesQueryBySlug = supabase
+    .from('Titles')
+    .select(
+      `
+          *,
+          authors: Titles_Authors ( ...Authors(*)),
+          Photos( * ),
+          cardBook: CardBooks ( * ),
+          audioBook: Audiobooks ( * ),
+          eBook: Ebooks ( * ),
+          printedBook: PrintedBooks ( *,
+            options:PrintOptions ( *,
+              size: PrintSize( * )
+            ),
+            cover:PrintedCover( * )
+          ),
+          awards: TitlesAwards ( *,  ...Awards(*) )
+  
+    `
+    )
+    .eq('slug', slug)
+    .returns<FullTitleQueryType[]>();
+
+  return fullManyTitlesQueryBySlug;
+};
+
 type FullTitleQueryType = QueryData<typeof fullTitleQuery>;
 
 export type TitleServer = FullTitleQueryType;
-export type TitlesServer = TitleServer[];
