@@ -403,17 +403,17 @@ type EditionsShownMap = {
 };
 
 const editions: EditionsShownMap = {
-  PrintedBooks: 'Печатное издание',
-  Ebooks: 'Цифровое издание',
-  Audiobooks: 'Аудиокнига',
-  CardBooks: 'Книга 2.0',
+  printedBook: 'Печатное издание',
+  eBook: 'Цифровое издание',
+  audioBook: 'Аудиокнига',
+  cardBook: 'Книга 2.0',
 };
 
 const bookTypes: EditionsMap = {
-  PrintedBooks: 'PrintBook',
-  Ebooks: 'EBook',
-  Audiobooks: 'AudioBook',
-  CardBooks: 'Book2.0',
+  printedBook: 'PrintBook',
+  eBook: 'EBook',
+  audioBook: 'AudioBook',
+  cardBook: 'Book2.0',
 };
 
 function Edition({ children }: PropsWithChildren) {
