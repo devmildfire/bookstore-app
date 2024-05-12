@@ -1,18 +1,6 @@
 import { BookTableTypesEnum } from '@/models/books/types';
 import { IAuthor } from '../author/client';
 
-// export interface ITitleAuthor {
-//   id: number;
-//   name: string;
-//   city: string;
-//   birthDate: string | null;
-//   deathDate: string | null;
-//   bio: string;
-//   photo: string;
-//   phrase: string;
-//   nonsalable: boolean;
-// }
-
 export interface ITitlePhoto {
   id: number;
   source: string;
@@ -144,8 +132,4 @@ export interface ITitle {
   eBook: ITitleEbook | null;
   printedBook: ITitlePrintedBook | null;
   awards: ITitleAward[];
-
-  //   prices: number[];
-  //   discount: number[];
-  //   types: BookTableTypesEnum[];
 }

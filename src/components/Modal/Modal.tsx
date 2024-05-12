@@ -22,7 +22,6 @@ import { BookTableTypesEnum } from '@/models/books/types';
 import { AnimatePresence } from 'framer-motion';
 import { Trigger } from '../Common/Trigger';
 import { SearchModal } from './SearchModal';
-// import { CartItem } from '@/types/api';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { postData } from '@/utils/postData';
 import { CartItemType } from 'pages/api/cart';
