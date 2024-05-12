@@ -1,9 +1,13 @@
-import { Title } from '@/models/books/types';
+// import { Title } from '@/models/books/types';
 import { TriggerStyles } from '../Common/Trigger/types';
+// import { ITitle } from '@/entities/title/client';
+import { Title, Titles } from 'pages/books';
 
 export type RowProps = {
-  row: Title[];
-  data: Title[];
+  // row: ITitle[];
+  // data: ITitle[];
+  row: Titles;
+  data: Titles;
   buttonStyle: TriggerStyles;
   bookStyle: '3d' | 'flat';
   rowId: number;

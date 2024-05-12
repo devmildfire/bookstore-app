@@ -9,6 +9,7 @@ import { bookTypes, BookTableTypesEnum } from '@/models/books';
 import { API } from 'api/books/';
 import styled from 'styled-components';
 import PageLayout from '@/layouts/PageLayout';
+import { normalizeTitle } from '@/entities/title/normalize';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -42,19 +43,16 @@ export const getServerSideProps = async () => {
   }
 
   if (data) {
-    const titles = data.map((title) => {
-      // const logPrice = bookTypes
-      //   .map((type) => (title[type] ? title[type].price : null))
-      //   .filter((price) => price !== null) as number[];
-      // console.log('log price is ... ', logPrice);
+    const normalizedTitles = data.map((title) => normalizeTitle(title));
 
+    const titles = normalizedTitles.map((title) => {
       return {
         ...title,
         prices: bookTypes
-          .map((type) => (title[type] ? title[type].price : null))
+          .map((type) => (title[type] ? title[type]?.price : null))
           .filter((price) => price !== null) as number[],
         discount: bookTypes
-          .map((type) => (title[type] ? title[type].discount : null))
+          .map((type) => (title[type] ? title[type]?.discount : null))
           .filter((discount) => discount !== null) as number[],
         types: bookTypes
           .map((type) => (title[type] ? type : null))
@@ -71,18 +69,26 @@ export const getServerSideProps = async () => {
     };
   }
 
-  return {
-    props: {
-      titles: null,
-    },
-  };
+  // return {
+  //   props: {
+  //     titles: null,
+  //   },
+  // };
+
+  return;
 };
+
+// FIXME возвращает тип элемента массива из другого типа, который является массивом
+// FIXME возможно стоит его хранить где-то в другом месте
+type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 
 export type TitlesFromProps = InferGetStaticPropsType<
   typeof getServerSideProps
 >;
 
 export type Titles = TitlesFromProps['titles'];
+export type Title = ArrayElement<Titles>;
 
 type BooksPageProps = {
   forwardedRef: null;
@@ -98,7 +104,7 @@ function BooksPage({ forwardedRef, titles }: BooksPageProps) {
         forwardedRef={carouselRef}
         slides={[0, 1, 2]}
         options={{ dragThreshold: 1, duration: 25 }}
-        titles={titles?.filter((title) => title.is_featured === true) || []}
+        titles={titles?.filter((title) => title.isFeatured === true) || []}
       />
       <HomeLayout title='Издания'>
         <section className='max-width'>

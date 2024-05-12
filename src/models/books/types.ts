@@ -4,11 +4,18 @@ import { Tables } from 'api/books/types';
 
 export type BookType = 'write' | 'book2' | 'audio' | 'digital';
 
+// export enum BookTableTypesEnum {
+//   PrintedBooks = 'PrintedBooks',
+//   Ebooks = 'Ebooks',
+//   Audiobooks = 'Audiobooks',
+//   CardBooks = 'CardBooks',
+// }
+
 export enum BookTableTypesEnum {
-  PrintedBooks = 'PrintedBooks',
-  Ebooks = 'Ebooks',
-  Audiobooks = 'Audiobooks',
-  CardBooks = 'CardBooks',
+  PrintedBooks = 'printedBook',
+  Ebooks = 'eBook',
+  Audiobooks = 'audioBook',
+  CardBooks = 'cardBook',
 }
 
 export const bookTypes: BookTableTypesEnum[] = [
@@ -17,6 +24,8 @@ export const bookTypes: BookTableTypesEnum[] = [
   BookTableTypesEnum.Audiobooks,
   BookTableTypesEnum.CardBooks,
 ];
+
+// FIXME всё остальное здесь не используется. Это нужно или поудалять, либо заменить
 
 type AudioBook = Tables<'Audiobooks'>;
 type Ebook = Tables<'Ebooks'>;
@@ -32,6 +41,10 @@ type PrintedBookType = Tables<'PrintedBooks'> & {
   options: PrintedBookOptions[];
   cover: PrintBookCover[];
 };
+
+// FIXME этот интерфейс заменён на ITitle из entities/title
+// FIXME или на Title из pages/books (это ITitle куда подменишваются доп.данные prices, discount и types)
+// FIXME он нигде не используется, стоит его скорее всего удалить вообще или заменить
 
 export interface Title {
   readonly authors: Author[];

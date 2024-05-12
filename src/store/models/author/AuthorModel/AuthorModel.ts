@@ -11,6 +11,7 @@ class AuthorModel {
   phrase: string | null;
   birthDate: string | null;
   deathDate: string | null;
+  nonsalable: boolean;
 
   constructor(data: IAuthor) {
     this.id = data.id;
@@ -21,6 +22,7 @@ class AuthorModel {
     this.phrase = data.phrase;
     this.birthDate = data.birthDate;
     this.deathDate = data.deathDate;
+    this.nonsalable = data.nonsalable;
 
     makeObservable<AuthorModel>(this, {
       formData: computed,
@@ -37,6 +39,7 @@ class AuthorModel {
       phrase: this.phrase ? this.phrase : undefined,
       birthDate: this.birthDate ? new Date(this.birthDate) : undefined,
       deathDate: this.deathDate ? new Date(this.deathDate) : undefined,
+      nonsalable: this.nonsalable,
     };
   }
 

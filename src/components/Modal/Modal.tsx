@@ -28,10 +28,10 @@ import { postData } from '@/utils/postData';
 import { CartItemType } from 'pages/api/cart';
 
 const modalIconLookup: Record<BookTableTypesEnum[number], ReactNode> = {
-  Audiobooks: <AudioIcon />,
-  CardBooks: <BookTwoIcon />,
-  PrintedBooks: <BookIcon />,
-  Ebooks: <DigitalIcon />,
+  audioBook: <AudioIcon />,
+  cardBook: <BookTwoIcon />,
+  printedBook: <BookIcon />,
+  eBook: <DigitalIcon />,
 };
 
 interface BookModalState {

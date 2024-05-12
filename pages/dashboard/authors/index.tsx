@@ -88,6 +88,7 @@ const Authorslist = () => {
   );
 };
 
+// TODO перенести этот функционал в корень сайта
 function Authors(): React.ReactElement {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
