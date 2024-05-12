@@ -43,6 +43,8 @@ type PrintedBookType = Tables<'PrintedBooks'> & {
 };
 
 // FIXME этот интерфейс заменён на ITitle из entities/title
+// FIXME или на Title из pages/books (это ITitle куда подменишваются доп.данные prices, discount и types)
+// FIXME он нигде не используется, стоит его скорее всего удалить вообще или заменить
 
 export interface Title {
   readonly authors: Author[];

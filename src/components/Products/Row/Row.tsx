@@ -1,13 +1,14 @@
 import React from 'react';
 import { RowProps } from '../types';
-import { Title } from '@/models/books';
+// import { Title } from '@/models/books';
 import useScreenSize from '@/hooks/useScreenSize';
 import { useRouter } from 'next/router';
 import useScrollTo from '@/hooks/useScrollTo';
 import { RowContainer, RowItem } from './styles';
 import { ProductCard, ProductCard3d } from '@/components/product-cards';
 import { Preview } from './Preview';
-import { ITitle } from '@/entities/title/client';
+// import { ITitle } from '@/entities/title/client';
+import { Title } from 'pages/books';
 
 const Row = ({
   row,
@@ -18,7 +19,7 @@ const Row = ({
   openRowId,
   handleOpenRow,
 }: RowProps) => {
-  const [preview, setPreview] = React.useState<ITitle>();
+  const [preview, setPreview] = React.useState<Title>();
   const [titleSlug, setTitleSlug] = React.useState<string | null>(null);
 
   const [shouldClose, setShouldClose] = React.useState(false);

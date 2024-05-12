@@ -14,9 +14,10 @@ import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 // import { Title } from '@/models/books';
 import { useModal } from '../../Modal/Modal';
 import { TriggerStyles } from '@/components/Common/Trigger/types';
-import { ITitle } from '@/entities/title/client';
+// import { ITitle } from '@/entities/title/client';
+import { Title } from 'pages/books';
 
-export interface ProductCardProps extends ITitle {
+export interface ProductCardProps extends Title {
   onClick: () => void;
   onEnterKey: (event: ReactKeyEvent) => void;
   buttonStyle: TriggerStyles;

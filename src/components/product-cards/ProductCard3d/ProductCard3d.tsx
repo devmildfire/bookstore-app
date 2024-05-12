@@ -22,20 +22,12 @@ function ProductCard3d(props: ProductCardProps) {
 
   const { handleModalState, handleOpenModal } = useModal();
 
-  // console.log('productCard3D props are ', props);
-
-  // console.log('productCard3D prices are ... ', prices);
-
   const onAddToCartClick = () => {
     handleModalState({
       cover,
       name,
-      // FIXME: цены сломались
-      // price: [300],
       discount,
       price: prices,
-      // price: Math.min(...prices),
-      // newPrice,
       author: authors.map((author) => author.name).join(', '),
       types,
     });
@@ -69,9 +61,9 @@ function ProductCard3d(props: ProductCardProps) {
           {/* FIXME: цены починены, но засчёт упрощения ключа prices в типе Title. Теперь там просто массив чисел*/}
 
           <Price>от {minPrice}</Price>
-          <OldPrice
-            discount={!!discount[minIndex]}
-          >{`${prices[minIndex]}₽`}</OldPrice>
+          <OldPrice discount={discount[minIndex]}>
+            {`${prices[minIndex]}₽`}
+          </OldPrice>
         </PriceContainer>
         <ButtonsContainer>
           <IconButton

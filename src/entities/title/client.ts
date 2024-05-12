@@ -144,7 +144,7 @@ export interface ITitle {
   printedBook: ITitlePrintedBook | null;
   awards: ITitleAward[];
 
-  prices: number[];
-  discount: number[];
-  types: BookTableTypesEnum[];
+  //   prices: number[];
+  //   discount: number[];
+  //   types: BookTableTypesEnum[];
 }

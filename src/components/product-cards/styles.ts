@@ -43,18 +43,21 @@ export const PriceContainer = styled.div`
     flex-direction: row;
   }
 `;
+
 interface PriceProps {
-  discount?: boolean;
+  discount?: number;
 }
 
-export const Price = styled.span<PriceProps>`
+export const Price = styled.span`
   position: relative;
   color: var(--main-white-100);
   font-size: clamp(18px, 3vw, 24px);
   font-weight: 700;
 `;
 
-export const OldPrice = styled(Price)`
+export const OldPrice = styled(Price)<PriceProps>`
+  display: ${(props) => (props.discount !== 0 ? 'block' : 'none')};
+
   color: var(--main-red-100);
   font-size: var(--font-l);
   font-size: clamp(14px, 3vw, 20px);

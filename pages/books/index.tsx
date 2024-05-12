@@ -69,18 +69,26 @@ export const getServerSideProps = async () => {
     };
   }
 
-  return {
-    props: {
-      titles: null,
-    },
-  };
+  // return {
+  //   props: {
+  //     titles: null,
+  //   },
+  // };
+
+  return;
 };
+
+// FIXME возвращает тип элемента массива из другого типа, который является массивом
+// FIXME возможно стоит его хранить где-то в другом месте
+type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 
 export type TitlesFromProps = InferGetStaticPropsType<
   typeof getServerSideProps
 >;
 
 export type Titles = TitlesFromProps['titles'];
+export type Title = ArrayElement<Titles>;
 
 type BooksPageProps = {
   forwardedRef: null;
