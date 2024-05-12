@@ -7,4 +7,5 @@ export interface IAuthor {
   name: string;
   photo: string | null;
   phrase: string | null;
+  nonsalable: boolean;
 }

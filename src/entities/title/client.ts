@@ -1,16 +1,17 @@
 import { BookTableTypesEnum } from '@/models/books/types';
+import { IAuthor } from '../author/client';
 
-export interface ITitleAuthor {
-  id: number;
-  name: string;
-  city: string;
-  birthDate: string | null;
-  deathDate: string | null;
-  bio: string;
-  photo: string;
-  phrase: string;
-  nonsalable: boolean;
-}
+// export interface ITitleAuthor {
+//   id: number;
+//   name: string;
+//   city: string;
+//   birthDate: string | null;
+//   deathDate: string | null;
+//   bio: string;
+//   photo: string;
+//   phrase: string;
+//   nonsalable: boolean;
+// }
 
 export interface ITitlePhoto {
   id: number;
@@ -136,11 +137,11 @@ export interface ITitle {
   isFeatured: boolean;
   firstRelease: string;
   demo: string;
-  authors: ITitleAuthor[];
+  authors: IAuthor[];
   Photos: ITitlePhoto[];
   cardBook: ITitleCardBook | null;
   audioBook: ITitleAudiobook | null;
-  eBook: ITitleEbook; // электронное издание у книги всё равно есть, даже если никакого другого нет
+  eBook: ITitleEbook | null;
   printedBook: ITitlePrintedBook | null;
   awards: ITitleAward[];
 
