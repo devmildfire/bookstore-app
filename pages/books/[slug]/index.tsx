@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const book = {
       ...bookItem,
       price: bookTypes
-        .map((type) => (bookItem[type] ? bookItem[type].price : null))
+        .map((type) => (bookItem[type] ? bookItem[type]?.price : null))
         .filter((price) => price !== null),
       types: bookTypes
         .map((type) => (bookItem[type] ? { type, info: bookItem[type] } : null))

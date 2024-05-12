@@ -13,7 +13,8 @@ import BookIcon from '../Icons/Book';
 import Audio from '../Icons/Audio';
 import { EditionType } from '@/components/BookPage/BookProperties/BookProperties';
 import breakPoints from '@/utils/breakPoints';
-import { BookTableTypesEnum, Title } from '@/models/books';
+import { BookTableTypesEnum } from '@/models/books';
+import { Title } from 'pages/books';
 
 interface TabProps {
   active: string;
