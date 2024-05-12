@@ -1,14 +1,18 @@
 import books from '@/mocks/books';
-import { Book, Title } from '@/models/books';
+// import { Book, Title } from '@/models/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
-import { KeyboardEvent, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Text } from '../Common/Text/Text';
 import Link from 'next/link';
 import { useModal } from './Modal';
 import { useRouter } from 'next/router';
+import { Title, Titles } from 'pages/books';
+import { API } from 'api/books';
+import { ITitle } from '@/entities/title/client';
+import { normalizeTitle } from '@/entities/title/normalize';
 
 const CommandContainer = styled(Command)`
   position: relative;
@@ -135,12 +139,12 @@ const SearchResults = styled(Command.List)`
   }
 `;
 
-function MatchItem(props: Book) {
+function MatchItem(props: ITitle) {
   const { handleOpenModal } = useModal();
   const router = useRouter();
 
   function handleSelect() {
-    router.push(`/books/${props.transliteratedTitle}`);
+    router.push(`/books/${props.slug}`);
     handleOpenModal(false, 'search');
   }
 
@@ -148,11 +152,11 @@ function MatchItem(props: Book) {
     <CommandItem onSelect={handleSelect}>
       <MatchLink
         onClick={() => handleOpenModal(false, 'search')}
-        href={`/books/${props.transliteratedTitle}`}
+        href={`/books/${props.slug}`}
       >
-        <BookCover src={props.cover} alt={props.title} />
+        <BookCover src={props.cover} alt={props.name} />
         <MatchInfoContainer>
-          <MatchText weight='bold'>{props.title}</MatchText>
+          <MatchText weight='bold'>{props.name}</MatchText>
           <MatchText>
             {props.authors.map((author) => author.name).join(', ')}
           </MatchText>
@@ -164,6 +168,19 @@ function MatchItem(props: Book) {
 
 export function SearchModal() {
   const [query, setQuery] = useState('');
+  const [titles, setTitles] = useState<ITitle[]>();
+
+  const fetchTitles = async () => {
+    const { data } = await API.getTitles();
+    if (data) {
+      const normalizedTitles = data.map((title) => normalizeTitle(title));
+      setTitles(normalizedTitles);
+    }
+  };
+
+  useEffect(() => {
+    fetchTitles();
+  }, []);
 
   return (
     <>
@@ -174,9 +191,8 @@ export function SearchModal() {
         <SearchResults>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {books.map((book) => (
-              <MatchItem key={book.id} {...book} />
-            ))}
+            {titles &&
+              titles.map((title) => <MatchItem key={title.id} {...title} />)}
           </Command.Group>
         </SearchResults>
       </CommandContainer>
