@@ -11,4 +11,4 @@ const useTitlesStore = (): TitlesStore => {
 
 export * from './context';
 
-export { TitlesStore as TitlesStore, useTitlesStore };
+export { TitlesStore, useTitlesStore };

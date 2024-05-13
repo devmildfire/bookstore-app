@@ -3,7 +3,7 @@ import books from '@/mocks/books';
 import breakPoints from '@/utils/breakPoints';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command } from 'cmdk';
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { KeyboardEvent, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Text } from '../Common/Text/Text';
 import Link from 'next/link';
@@ -13,6 +13,12 @@ import { Title, Titles } from 'pages/books';
 import { API } from 'api/books';
 import { ITitle } from '@/entities/title/client';
 import { normalizeTitle } from '@/entities/title/normalize';
+import {
+  TitlesContext,
+  useTitlesStore,
+} from '@/store/locals/dashboard/TitlesStore';
+import { observer } from 'mobx-react-lite';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const CommandContainer = styled(Command)`
   position: relative;
@@ -166,21 +172,32 @@ function MatchItem(props: ITitle) {
   );
 }
 
-export function SearchModal() {
+export const SearchModal = observer(() => {
   const [query, setQuery] = useState('');
-  const [titles, setTitles] = useState<ITitle[]>();
+  // const [, setTitles] = useState<ITitle[]>();
 
-  const fetchTitles = async () => {
-    const { data } = await API.getTitles();
-    if (data) {
-      const normalizedTitles = data.map((title) => normalizeTitle(title));
-      setTitles(normalizedTitles);
-    }
-  };
+  const testTitles = titlesStore.titles;
 
-  useEffect(() => {
-    fetchTitles();
-  }, []);
+  // const titlesStore = useContext(TitlesContext);
+  // titlesStore?.load();
+
+  // const titlesStore = useTitlesStore();
+  // titlesStore.store?.load();
+  // console.log('title store for search is ...', titlesStore.store);
+
+  // const fetchTitles = async () => {
+  //   const { data } = await API.getTitles();
+  //   if (data) {
+  //     const normalizedTitles = data.map((title) => normalizeTitle(title));
+  //     setTitles(normalizedTitles);
+  //   }
+  // };
+
+  // useEffect(() => {
+  // fetchTitles();
+  // titlesStore && titlesStore.load();
+  // console.log('titlestore load ...', titlesStore);
+  // }, []);
 
   return (
     <>
@@ -191,11 +208,55 @@ export function SearchModal() {
         <SearchResults>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {titles &&
-              titles.map((title) => <MatchItem key={title.id} {...title} />)}
+            {testTitles &&
+              testTitles.map((title) => (
+                <MatchItem key={title.id} {...title} />
+              ))}
           </Command.Group>
         </SearchResults>
       </CommandContainer>
     </>
   );
-}
+});
+
+// export function SearchModal() {
+//   const [query, setQuery] = useState('');
+//   const [titles, setTitles] = useState<ITitle[]>();
+
+//   const titlesStore = useContext(TitlesContext);
+//   // const titlesStore = useTitlesStore();
+//   // titlesStore.store?.load();
+//   // console.log('title store for search is ...', titlesStore.store);
+
+//   const fetchTitles = async () => {
+//     const { data } = await API.getTitles();
+//     if (data) {
+//       const normalizedTitles = data.map((title) => normalizeTitle(title));
+//       setTitles(normalizedTitles);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchTitles();
+//     titlesStore && titlesStore.load();
+//     console.log('titlestore load ...', titlesStore);
+//   }, []);
+
+//   return (
+//     <>
+//       <BookTitle variant='h3_3'>Поиск</BookTitle>
+//       <CommandContainer>
+//         <CommandInput value={query} onValueChange={setQuery} />
+//         <StyledGlass />
+//         <SearchResults>
+//           <pre>{JSON.stringify(titlesStore?.titles, null, 2)}</pre>
+//           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
+//           <Command.Group>
+//             {titles &&
+//               titles.map((title) => <MatchItem key={title.id} {...title} />)}
+//           </Command.Group>
+//         </SearchResults>
+//       </CommandContainer>
+//     </>
+//   );
+// }

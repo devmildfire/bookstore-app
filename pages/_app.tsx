@@ -16,6 +16,13 @@ import { AppPropsWithLayout } from '@/types/page';
 
 import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
+import { useLocalStore } from '@/store/hooks/useLocalStore';
+import {
+  TitlesContext,
+  TitlesStore,
+  TitlesStoreProvider,
+} from '@/store/locals/dashboard/TitlesStore';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -61,6 +68,20 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     !user && anonymousLogin();
   };
 
+  const testTitles = titlesStore.titles;
+  titlesStore.load();
+  // console.log('loaded titles from store ... ', testTitles);
+
+  // const titlesStore = useLocalStore(() => new TitlesStore());
+  // titlesStore.load();
+
+  // const storedTitles = titlesStore.titles;
+  // console.log('loaded titles from store ... ', storedTitles);
+
+  // useEffect(() => {
+  //   console.log('loaded titles store ... ', titlesStore.titles);
+  // }, [titlesStore]);
+
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
     Router.events.on('routeChangeError', toggleOff);
@@ -87,9 +108,11 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
+            {/* <TitlesContext.Provider value={titlesStore}> */}
             <PageLoading show={value} />
             {getLayout(<Component {...pageProps} />)}
             <Toaster />
+            {/* </TitlesContext.Provider> */}
           </ThemeProvider>
         </ModalProvider>
       </Hydrate>

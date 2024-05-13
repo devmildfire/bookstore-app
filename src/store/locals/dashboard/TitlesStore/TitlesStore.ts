@@ -2,18 +2,29 @@ import { ILocalStore } from '@/store/interfaces';
 import { TitleModel } from '@/store/models/title/TitleModel';
 
 import { adminAPI } from 'api/admin';
-import { makeObservable, observable, runInAction } from 'mobx';
+import {
+  makeAutoObservable,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 
-class TitlesStore implements ILocalStore {
+export class TitlesStore implements ILocalStore {
   private _titles: TitleModel[] | null = null;
 
+  // constructor() {
+  //   makeObservable<TitlesStore, '_titles'>(this, {
+  //     _titles: observable,
+  //   });
+  // }
+
   constructor() {
-    makeObservable<TitlesStore, '_titles'>(this, {
+    makeAutoObservable<TitlesStore, '_titles'>(this, {
       _titles: observable,
     });
   }
 
-  get authors(): TitleModel[] | null {
+  get titles(): TitleModel[] | null {
     return this._titles;
   }
 
@@ -39,4 +50,5 @@ class TitlesStore implements ILocalStore {
   }
 }
 
-export default TitlesStore;
+// export default TitlesStore;
+export const titlesStore = new TitlesStore();

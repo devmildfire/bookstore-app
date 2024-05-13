@@ -113,7 +113,7 @@ const Hall = () => {
   });
 
   async function onSubmit(values: z.infer<typeof passwordFormSchema>) {
-    console.log(values);
+    // console.log(values);
 
     const success = await changeUserPassword(values.password);
 
