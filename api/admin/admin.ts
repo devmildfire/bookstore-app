@@ -1,4 +1,5 @@
 import { AuthorServer, IAuthor } from '@/entities/author';
+import { fullManyTitlesQuery } from '@/entities/title/server';
 import { supabase } from 'api/supabase-client';
 
 export const adminAPI = {
@@ -31,5 +32,9 @@ export const adminAPI = {
       .eq('id', author.id)
       .select('*')
       .single();
+  },
+  getTitles: async () => {
+    const response = await fullManyTitlesQuery;
+    return response;
   },
 };
