@@ -1,21 +1,20 @@
-import { AuthorPreview, AuthorServer } from '@/entities/author';
+import { TitlePreview } from '@/entities/title/server';
 
-class AuthorPreviewModel {
+class TitlePreviewModel {
   id: number;
-  bio: string | null;
   name: string;
-  photo: string | null;
+  cover: string | null;
 
-  constructor(data: AuthorPreview) {
+  constructor(data: TitlePreview) {
     this.id = data.id;
-    this.bio = data.bio;
+
     this.name = data.name;
-    this.photo = data.photo;
+    this.cover = data.cover;
   }
 
-  static fromJson(data: AuthorPreview) {
-    return new AuthorPreviewModel(data);
+  static fromJson(data: TitlePreview) {
+    return new TitlePreviewModel(data);
   }
 }
 
-export default AuthorPreviewModel;
+export default TitlePreviewModel;

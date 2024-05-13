@@ -76,3 +76,5 @@ export const fullManyTitlesQueryBySlugFunction = (slug: string) => {
 type FullTitleQueryType = QueryData<typeof fullTitleQuery>;
 
 export type TitleServer = FullTitleQueryType;
+
+export type TitlePreview = Pick<TitleServer, 'id' | 'name' | 'cover'>;

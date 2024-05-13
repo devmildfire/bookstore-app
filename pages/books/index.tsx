@@ -60,7 +60,7 @@ export const getServerSideProps = async () => {
       };
     });
 
-    console.log('titles log ... ', titles);
+    // console.log('titles log ... ', titles);
 
     return {
       props: {
