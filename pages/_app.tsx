@@ -16,12 +16,7 @@ import { AppPropsWithLayout } from '@/types/page';
 
 import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
-import { useLocalStore } from '@/store/hooks/useLocalStore';
-import {
-  TitlesContext,
-  TitlesStore,
-  TitlesStoreProvider,
-} from '@/store/locals/dashboard/TitlesStore';
+
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
