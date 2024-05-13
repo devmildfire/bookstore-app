@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import TitlesStore from './TitlesStore';
+import { TitlesStore } from './TitlesStore';
 import { TitlesContext } from './context';
 
 const useTitlesStore = (): TitlesStore => {
   const titlesContext = React.useContext(TitlesContext);
 
-  return titlesContext.store as TitlesStore;
+  return titlesContext as TitlesStore;
 };
 
 export * from './context';
 
-export { TitlesStore, useTitlesStore };
+export { useTitlesStore };
