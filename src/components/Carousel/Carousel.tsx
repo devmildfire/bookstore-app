@@ -283,7 +283,7 @@ function Carousel(props: PropType): ReactElement {
     emblaApi.on('reInit', onSelect);
     setSelectedIndex(emblaApi.selectedScrollSnap());
     setScrollSnaps(emblaApi.scrollSnapList());
-  }, [emblaApi, onSelect]);
+  }, [emblaApi, onSelect, props.titles]);
   // FIXME(@sergromm): убрать этот ужас, вместо кнопки должен использоваться Link
   // нужно создать новый вариант для кнопки или новый компонент ссылки с такими же стилями
   const router = useRouter();
