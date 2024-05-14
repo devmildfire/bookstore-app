@@ -19,6 +19,18 @@ class FiltersStore implements ILocalStore {
     this._filters = filters;
   };
 
+  setAthorsFilter = (authorFilters: string[]) => {
+    this._filters && (this._filters.authors = authorFilters);
+  };
+
+  setEditionsFilter = (editionFilters: string[]) => {
+    this._filters && (this._filters.types = editionFilters);
+  };
+
+  setYearFilter = (yearFilters: string[]) => {
+    this._filters && (this._filters.years = yearFilters);
+  };
+
   destroy(): void {
     return;
   }

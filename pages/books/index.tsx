@@ -9,6 +9,7 @@ import PageLayout from '@/layouts/PageLayout';
 import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
 import { ITitle } from '@/entities/title';
+import { FilterModel } from '@/store/models/filters';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -46,6 +47,10 @@ export type Title = ITitle & {
 
 export type Titles = Title[];
 
+function haveCommonItems(arr1: any[], arr2: any[]) {
+  return arr1.some((item) => arr2.includes(item));
+}
+
 export const extendTitles = (titles: ITitle[]): Titles => {
   return titles.map((title) => {
     return {
@@ -73,6 +78,35 @@ const BooksPage = observer(() => {
       multipleStoresFromContext.titleStore?.titles
     ));
 
+  const filtersFromStore = multipleStoresFromContext?.filterStore
+    ?.filters as FilterModel;
+
+  const filteredByAuthorsTitles =
+    filtersFromStore?.authors.length === 0
+      ? titlesFromStore
+      : titlesFromStore?.filter((title) => {
+          const authorsArray = title.authors.map((author) => author.name);
+
+          return haveCommonItems(authorsArray, filtersFromStore.authors);
+        });
+
+  const filteredByTypeTitles =
+    filtersFromStore?.types.length === 0
+      ? filteredByAuthorsTitles
+      : filteredByAuthorsTitles?.filter((title) => {
+          return haveCommonItems(title.types, filtersFromStore.types);
+        });
+
+  const filteredByYearTitles =
+    filtersFromStore?.years.length === 0
+      ? filteredByTypeTitles
+      : filteredByTypeTitles?.filter((title) => {
+          return haveCommonItems(
+            [title.firstRelease.slice(0, 4)],
+            filtersFromStore.years
+          );
+        });
+
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const isSliderOnScreen = useOnScreen(carouselRef);
 
@@ -89,7 +123,9 @@ const BooksPage = observer(() => {
       <HomeLayout title='Издания'>
         <section className='max-width'>
           <Drawer />
-          {titlesFromStore && <Products data={titlesFromStore} />}
+          {filteredByYearTitles && <Products data={filteredByYearTitles} />}
+
+          {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
         </section>
       </HomeLayout>
     </PageLayout>

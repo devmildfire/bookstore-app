@@ -1,5 +1,5 @@
 import { Command } from 'cmdk';
-import { Dispatch, useReducer } from 'react';
+import { Dispatch, useEffect, useReducer } from 'react';
 import {
   CommandInput,
   CommandList,
@@ -22,6 +22,7 @@ type MultiselectProps = {
   twoColumn?: boolean;
   title: string;
   data: SelectData;
+  setFunction: (selected: string[]) => void;
 };
 
 type UseMultiselectType = {
@@ -84,6 +85,11 @@ export function Multiselect(props: MultiselectProps) {
     selected: [],
     options: data,
   });
+
+  useEffect(() => {
+    console.log(`runnig setFunction with selected = ${selected}`);
+    props.setFunction(selected);
+  }, [selected.length]);
 
   return (
     <>

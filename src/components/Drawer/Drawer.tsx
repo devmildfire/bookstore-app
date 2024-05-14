@@ -10,6 +10,7 @@ import breakPoints from '@/utils/breakPoints';
 import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/context';
 import { observer } from 'mobx-react-lite';
 import { Titles, extendTitles } from 'pages/books';
+import { BookTableTypesEnum } from '@/models/books/types';
 
 const Content = styled(Primitive.Content)``;
 
@@ -204,25 +205,25 @@ function Wrapper({
   );
 }
 
-const yearsData = ['2020', '2021', '2022', '2023'];
-const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
-const authorsData = [
-  'Оганес Мартиросян',
-  'Алексей Михайлов',
-  'Анна Пашкова',
-  'Александ Гаврилов',
-  'Николай Старообрядцев',
-  'Андрей Янкус',
-  'Джек Керуак',
-  'Эдуард Диа Диникин',
-  'Андрей Платонов',
-  'Вячеслав Немиров',
-  'Фёдор Достоевский',
-  'Сергей Иннер',
-  'Эрих фон Нефф',
-  'Артём Северский',
-  'Владислав Несветаев',
-];
+// const yearsData = ['2020', '2021', '2022', '2023'];
+// const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
+// const authorsData = [
+//   'Оганес Мартиросян',
+//   'Алексей Михайлов',
+//   'Анна Пашкова',
+//   'Александ Гаврилов',
+//   'Николай Старообрядцев',
+//   'Андрей Янкус',
+//   'Джек Керуак',
+//   'Эдуард Диа Диникин',
+//   'Андрей Платонов',
+//   'Вячеслав Немиров',
+//   'Фёдор Достоевский',
+//   'Сергей Иннер',
+//   'Эрих фон Нефф',
+//   'Артём Северский',
+//   'Владислав Несветаев',
+// ];
 
 export const Drawer = observer(({ children }: PropsWithChildren) => {
   // const config = useControls('Фильтры', {
@@ -234,18 +235,30 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
   // });
   const [open, setOpen] = useState(false);
 
+  const filters = useContext(MultipleStoresContext).filterStore;
   const shortTitles = useContext(MultipleStoresContext).titleStore?.titles;
 
   let titles: Titles = [];
   shortTitles && (titles = extendTitles(shortTitles));
 
   const yearsDup = titles?.map((title) => title.firstRelease.slice(0, 4));
-  const years = [...new Set(yearsDup)];
+  const yearsData = [...new Set(yearsDup)];
 
-  const editions = titles?.map((title) => [...title.types]);
+  const editionsLong: BookTableTypesEnum[] = [];
+  titles.forEach((title) => {
+    title.types.forEach((type) => editionsLong.push(type));
+  });
+  const editionsData = [...new Set(editionsLong)];
 
-  console.log('years array from context', years);
-  console.log('editions array from context', editions);
+  const authorsLong: string[] = [];
+  titles.forEach((title) => {
+    title.authors.forEach((author) => authorsLong.push(author.name));
+  });
+  const authorsData = [...new Set(authorsLong)];
+
+  // console.log('years array from context', years);
+  // console.log('editions array from context', editions);
+  // console.log('authors array from context', authors);
 
   return (
     <Triggers>
@@ -266,9 +279,22 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                       twoColumn
                       title='Автор'
                       withSearch
+                      setFunction={filters!.setAthorsFilter}
+                      // setFunction={(i: string[]) => {}}
                     />
-                    <Multiselect data={editionsData} title='Издания ' />
-                    <Multiselect data={yearsData} title='Год издания' />
+                    <Multiselect
+                      data={editionsData}
+                      title='Издания '
+                      setFunction={filters!.setEditionsFilter}
+                      // setFunction={(i: string[]) => {}}
+                    />
+                    <Multiselect
+                      data={yearsData}
+                      title='Год издания'
+                      setFunction={filters!.setYearFilter}
+                      // setFunction={(i: string[]) => {}}
+                    />
+                    <pre>{JSON.stringify(filters, null, 2)}</pre>
                   </Container>
                 </Wrapper>
               </Content>
