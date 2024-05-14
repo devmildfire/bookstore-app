@@ -1,4 +1,9 @@
-import React, { PropsWithChildren, ReactElement, useState } from 'react';
+import React, {
+  PropsWithChildren,
+  ReactElement,
+  useContext,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import * as Popover from '@radix-ui/react-popover';
 import {
@@ -9,6 +14,7 @@ import {
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
 import { Multiselect } from '../Common/Multiselect';
 import breakPoints from '@/utils/breakPoints';
+import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/context';
 
 const PopoverContent = styled(Popover.Content)`
   position: relative;
@@ -192,6 +198,8 @@ const SortIcon = styled(SortIconSvg)`
 `;
 
 function Filters() {
+  const filters = useContext(MultipleStoresContext).filterStore;
+
   const yearsData = ['2020', '2021', '2022', '2023'];
   const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
   const authorsData = [
@@ -215,9 +223,23 @@ function Filters() {
   return (
     <Triggers>
       <FilterPopover align='start' title='Фильтры' icon={<FilterIcon />}>
-        <Multiselect data={authorsData} twoColumn title='Автор' withSearch />
-        <Multiselect data={editionsData} title='Издания ' />
-        <Multiselect data={yearsData} title='Год издания' />
+        <Multiselect
+          data={authorsData}
+          twoColumn
+          title='Автор'
+          withSearch
+          setFunction={filters!.setAthorsFilter}
+        />
+        <Multiselect
+          data={editionsData}
+          title='Издания '
+          setFunction={filters!.setEditionsFilter}
+        />
+        <Multiselect
+          data={yearsData}
+          title='Год издания'
+          setFunction={filters!.setYearFilter}
+        />
       </FilterPopover>
       <Separator />
       <FilterPopover align='end' title='Сортировка' icon={<SortIcon />}>
