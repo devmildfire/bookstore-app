@@ -29,7 +29,6 @@ export class TitlesStore implements ILocalStore {
   }
 
   load = async () => {
-    console.log('loading titles for store from API');
     const { error, data } = await adminAPI.getTitles();
 
     if (error?.code) {
