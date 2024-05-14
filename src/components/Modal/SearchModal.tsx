@@ -14,6 +14,7 @@ import { API } from 'api/books';
 import { ITitle } from '@/entities/title/client';
 import { normalizeTitle } from '@/entities/title/normalize';
 import {
+  MultipleStoresContext,
   TitlesContext,
   useTitlesStore,
 } from '@/store/locals/dashboard/TitlesStore';
@@ -172,30 +173,16 @@ function MatchItem(props: ITitle) {
   );
 }
 
-export const SearchModal = () => {
+export const SearchModal = observer(() => {
   const [query, setQuery] = useState('');
-  // const [, setTitles] = useState<ITitle[]>();
 
-  // этот стор из "синглтона" срабатывает
   // const testTitles = titlesStore.titles;
 
-  // этот стор из провайдера не срабатывает
-  const titlesStoreFromContext = useContext(TitlesContext);
-  titlesStoreFromContext?.store?.load();
+  // const titlesStoreFromContext = useContext(TitlesContext);
 
-  // const fetchTitles = async () => {
-  //   const { data } = await API.getTitles();
-  //   if (data) {
-  //     const normalizedTitles = data.map((title) => normalizeTitle(title));
-  //     setTitles(normalizedTitles);
-  //   }
-  // };
+  const multipleStoresFromContext = useContext(MultipleStoresContext);
 
-  // useEffect(() => {
-  // fetchTitles();
-  // titlesStore && titlesStore.load();
-  // console.log('titlestore load ...', titlesStore);
-  // }, []);
+  // <pre>{JSON.stringify(multipleStoresFromContext, null, 2)}</pre>
 
   return (
     <>
@@ -204,12 +191,14 @@ export const SearchModal = () => {
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />
         <SearchResults>
-          тут должен быть стор из контекста
-          <pre>{JSON.stringify(titlesStoreFromContext.store, null, 2)}</pre>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {titlesStoreFromContext?.store?.titles &&
+            {/* {titlesStoreFromContext?.store?.titles &&
               titlesStoreFromContext.store.titles.map((title) => (
+                <MatchItem key={title.id} {...title} />
+              ))} */}
+            {multipleStoresFromContext.titleStore?.titles &&
+              multipleStoresFromContext.titleStore.titles.map((title) => (
                 <MatchItem key={title.id} {...title} />
               ))}
           </Command.Group>
@@ -217,46 +206,4 @@ export const SearchModal = () => {
       </CommandContainer>
     </>
   );
-};
-
-// export function SearchModal() {
-//   const [query, setQuery] = useState('');
-//   const [titles, setTitles] = useState<ITitle[]>();
-
-//   const titlesStore = useContext(TitlesContext);
-//   // const titlesStore = useTitlesStore();
-//   // titlesStore.store?.load();
-//   // console.log('title store for search is ...', titlesStore.store);
-
-//   const fetchTitles = async () => {
-//     const { data } = await API.getTitles();
-//     if (data) {
-//       const normalizedTitles = data.map((title) => normalizeTitle(title));
-//       setTitles(normalizedTitles);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchTitles();
-//     titlesStore && titlesStore.load();
-//     console.log('titlestore load ...', titlesStore);
-//   }, []);
-
-//   return (
-//     <>
-//       <BookTitle variant='h3_3'>Поиск</BookTitle>
-//       <CommandContainer>
-//         <CommandInput value={query} onValueChange={setQuery} />
-//         <StyledGlass />
-//         <SearchResults>
-//           <pre>{JSON.stringify(titlesStore?.titles, null, 2)}</pre>
-//           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
-//           <Command.Group>
-//             {titles &&
-//               titles.map((title) => <MatchItem key={title.id} {...title} />)}
-//           </Command.Group>
-//         </SearchResults>
-//       </CommandContainer>
-//     </>
-//   );
-// }
+});
