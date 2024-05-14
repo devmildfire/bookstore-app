@@ -46,25 +46,32 @@ export type Title = ITitle & {
 
 export type Titles = Title[];
 
+export const extendTitles = (titles: ITitle[]): Titles => {
+  return titles.map((title) => {
+    return {
+      ...title,
+      prices: bookTypes
+        .map((type) => (title[type] ? title[type]?.price : null))
+        .filter((price) => price !== null) as number[],
+      discount: bookTypes
+        .map((type) => (title[type] ? title[type]?.discount : null))
+        .filter((discount) => discount !== null) as number[],
+      types: bookTypes
+        .map((type) => (title[type] ? type : null))
+        .filter((type) => type !== null) as BookTableTypesEnum[],
+    };
+  });
+};
+
 const BooksPage = observer(() => {
   const multipleStoresFromContext = useContext(MultipleStoresContext);
 
-  const titlesFromStore = multipleStoresFromContext.titleStore?.titles?.map(
-    (title) => {
-      return {
-        ...title,
-        prices: bookTypes
-          .map((type) => (title[type] ? title[type]?.price : null))
-          .filter((price) => price !== null) as number[],
-        discount: bookTypes
-          .map((type) => (title[type] ? title[type]?.discount : null))
-          .filter((discount) => discount !== null) as number[],
-        types: bookTypes
-          .map((type) => (title[type] ? type : null))
-          .filter((type) => type !== null) as BookTableTypesEnum[],
-      };
-    }
-  );
+  let titlesFromStore;
+
+  multipleStoresFromContext.titleStore?.titles &&
+    (titlesFromStore = extendTitles(
+      multipleStoresFromContext.titleStore?.titles
+    ));
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const isSliderOnScreen = useOnScreen(carouselRef);
