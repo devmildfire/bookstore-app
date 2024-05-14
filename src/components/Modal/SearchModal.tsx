@@ -176,13 +176,7 @@ function MatchItem(props: ITitle) {
 export const SearchModal = observer(() => {
   const [query, setQuery] = useState('');
 
-  // const testTitles = titlesStore.titles;
-
-  // const titlesStoreFromContext = useContext(TitlesContext);
-
   const multipleStoresFromContext = useContext(MultipleStoresContext);
-
-  // <pre>{JSON.stringify(multipleStoresFromContext, null, 2)}</pre>
 
   return (
     <>
@@ -193,10 +187,6 @@ export const SearchModal = observer(() => {
         <SearchResults>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {/* {titlesStoreFromContext?.store?.titles &&
-              titlesStoreFromContext.store.titles.map((title) => (
-                <MatchItem key={title.id} {...title} />
-              ))} */}
             {multipleStoresFromContext.titleStore?.titles &&
               multipleStoresFromContext.titleStore.titles.map((title) => (
                 <MatchItem key={title.id} {...title} />
