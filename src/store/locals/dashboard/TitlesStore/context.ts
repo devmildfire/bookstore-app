@@ -1,16 +1,29 @@
 import { createContext } from 'react';
 import { TitlesStore } from './TitlesStore';
+import { AuthorsStore } from '../AuthorsStore';
+import { FiltersStore } from '../FiltersStore';
 
-// import TitlesStore from './TitlesStore';
-
-// const TitlesContext = createContext<{
-//   store: TitlesStore | null;
-// }>({
-//   store: null,
-// });
-
-const TitlesContext = createContext<TitlesStore | null>(null);
+const TitlesContext = createContext<{
+  store: TitlesStore | null;
+}>({
+  store: null,
+});
 
 const TitlesStoreProvider = TitlesContext.Provider;
 
-export { TitlesContext, TitlesStoreProvider };
+const MultipleStoresContext = createContext<{
+  titleStore: TitlesStore | null;
+  filterStore: FiltersStore | null;
+}>({
+  titleStore: null,
+  filterStore: null,
+});
+
+const MultipleStoresProvider = MultipleStoresContext.Provider;
+
+export {
+  TitlesContext,
+  TitlesStoreProvider,
+  MultipleStoresContext,
+  MultipleStoresProvider,
+};

@@ -17,7 +17,19 @@ import { AppPropsWithLayout } from '@/types/page';
 import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
 
-import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import {
+  TitlesStore,
+  // titlesStore,
+} from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import {
+  MultipleStoresProvider,
+  TitlesContext,
+  TitlesStoreProvider,
+} from '@/store/locals/dashboard/TitlesStore/context';
+import { useLocalStore } from '@/store/hooks/useLocalStore';
+import { Provider } from 'mobx-react';
+import { AuthorsStore } from '@/store/locals';
+import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -63,19 +75,22 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     !user && anonymousLogin();
   };
 
-  const testTitles = titlesStore.titles;
-  titlesStore.load();
-  // console.log('loaded titles from store ... ', testTitles);
-
-  // const titlesStore = useLocalStore(() => new TitlesStore());
+  // это стор из "синглтона", он работает
   // titlesStore.load();
 
-  // const storedTitles = titlesStore.titles;
-  // console.log('loaded titles from store ... ', storedTitles);
+  const titlesStoreFromContext = useLocalStore(() => new TitlesStore());
+  titlesStoreFromContext.load();
 
-  // useEffect(() => {
-  //   console.log('loaded titles store ... ', titlesStore.titles);
-  // }, [titlesStore]);
+  const filtersStoreFromContext = useLocalStore(() => new FiltersStore());
+  filtersStoreFromContext.set({
+    authors: ['sdfsf', 'sfsfsfsfs'],
+    years: ['4545', '232'],
+    types: ['gdfd', 'sfsss'],
+  });
+
+  const stores = {
+    titlesStoreFromContext,
+  };
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -101,15 +116,20 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <ModalProvider>
-          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            {/* <TitlesContext.Provider value={titlesStore}> */}
-            <PageLoading show={value} />
-            {getLayout(<Component {...pageProps} />)}
-            <Toaster />
-            {/* </TitlesContext.Provider> */}
-          </ThemeProvider>
-        </ModalProvider>
+        <MultipleStoresProvider
+          value={{
+            titleStore: titlesStoreFromContext,
+            filterStore: filtersStoreFromContext,
+          }}
+        >
+          <ModalProvider>
+            <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
+              <PageLoading show={value} />
+              {getLayout(<Component {...pageProps} />)}
+              <Toaster />
+            </ThemeProvider>
+          </ModalProvider>
+        </MultipleStoresProvider>
       </Hydrate>
     </QueryClientProvider>
   );

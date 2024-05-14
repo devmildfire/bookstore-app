@@ -2,12 +2,7 @@ import { ILocalStore } from '@/store/interfaces';
 import { TitleModel } from '@/store/models/title/TitleModel';
 
 import { adminAPI } from 'api/admin';
-import {
-  makeAutoObservable,
-  makeObservable,
-  observable,
-  runInAction,
-} from 'mobx';
+import { makeAutoObservable, observable, runInAction } from 'mobx';
 
 export class TitlesStore implements ILocalStore {
   private _titles: TitleModel[] | null = null;
@@ -50,5 +45,5 @@ export class TitlesStore implements ILocalStore {
   }
 }
 
-// export default TitlesStore;
-export const titlesStore = new TitlesStore();
+export default TitlesStore;
+// export const titlesStore = new TitlesStore();

@@ -14,11 +14,12 @@ import { API } from 'api/books';
 import { ITitle } from '@/entities/title/client';
 import { normalizeTitle } from '@/entities/title/normalize';
 import {
+  MultipleStoresContext,
   TitlesContext,
   useTitlesStore,
 } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
-import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+// import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const CommandContainer = styled(Command)`
   position: relative;
@@ -174,30 +175,8 @@ function MatchItem(props: ITitle) {
 
 export const SearchModal = observer(() => {
   const [query, setQuery] = useState('');
-  // const [, setTitles] = useState<ITitle[]>();
 
-  const testTitles = titlesStore.titles;
-
-  // const titlesStore = useContext(TitlesContext);
-  // titlesStore?.load();
-
-  // const titlesStore = useTitlesStore();
-  // titlesStore.store?.load();
-  // console.log('title store for search is ...', titlesStore.store);
-
-  // const fetchTitles = async () => {
-  //   const { data } = await API.getTitles();
-  //   if (data) {
-  //     const normalizedTitles = data.map((title) => normalizeTitle(title));
-  //     setTitles(normalizedTitles);
-  //   }
-  // };
-
-  // useEffect(() => {
-  // fetchTitles();
-  // titlesStore && titlesStore.load();
-  // console.log('titlestore load ...', titlesStore);
-  // }, []);
+  const multipleStoresFromContext = useContext(MultipleStoresContext);
 
   return (
     <>
@@ -208,8 +187,8 @@ export const SearchModal = observer(() => {
         <SearchResults>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {testTitles &&
-              testTitles.map((title) => (
+            {multipleStoresFromContext.titleStore?.titles &&
+              multipleStoresFromContext.titleStore.titles.map((title) => (
                 <MatchItem key={title.id} {...title} />
               ))}
           </Command.Group>
@@ -218,45 +197,3 @@ export const SearchModal = observer(() => {
     </>
   );
 });
-
-// export function SearchModal() {
-//   const [query, setQuery] = useState('');
-//   const [titles, setTitles] = useState<ITitle[]>();
-
-//   const titlesStore = useContext(TitlesContext);
-//   // const titlesStore = useTitlesStore();
-//   // titlesStore.store?.load();
-//   // console.log('title store for search is ...', titlesStore.store);
-
-//   const fetchTitles = async () => {
-//     const { data } = await API.getTitles();
-//     if (data) {
-//       const normalizedTitles = data.map((title) => normalizeTitle(title));
-//       setTitles(normalizedTitles);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchTitles();
-//     titlesStore && titlesStore.load();
-//     console.log('titlestore load ...', titlesStore);
-//   }, []);
-
-//   return (
-//     <>
-//       <BookTitle variant='h3_3'>Поиск</BookTitle>
-//       <CommandContainer>
-//         <CommandInput value={query} onValueChange={setQuery} />
-//         <StyledGlass />
-//         <SearchResults>
-//           <pre>{JSON.stringify(titlesStore?.titles, null, 2)}</pre>
-//           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
-//           <Command.Group>
-//             {titles &&
-//               titles.map((title) => <MatchItem key={title.id} {...title} />)}
-//           </Command.Group>
-//         </SearchResults>
-//       </CommandContainer>
-//     </>
-//   );
-// }
