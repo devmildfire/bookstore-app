@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useContext, useState } from 'react';
 import * as Primitive from '@radix-ui/react-dialog';
 import styled from 'styled-components';
 import { Multiselect } from '../Common/Multiselect';
@@ -7,6 +7,9 @@ import { MixerVerticalIcon } from '@radix-ui/react-icons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useControls } from 'leva';
 import breakPoints from '@/utils/breakPoints';
+import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/context';
+import { observer } from 'mobx-react-lite';
+import { Titles, extendTitles } from 'pages/books';
 
 const Content = styled(Primitive.Content)``;
 
@@ -221,7 +224,7 @@ const authorsData = [
   'Владислав Несветаев',
 ];
 
-export function Drawer({ children }: PropsWithChildren) {
+export const Drawer = observer(({ children }: PropsWithChildren) => {
   // const config = useControls('Фильтры', {
   //   position: {
   //     value: 'left',
@@ -230,6 +233,19 @@ export function Drawer({ children }: PropsWithChildren) {
   //   } as const,
   // });
   const [open, setOpen] = useState(false);
+
+  const shortTitles = useContext(MultipleStoresContext).titleStore?.titles;
+
+  let titles: Titles = [];
+  shortTitles && (titles = extendTitles(shortTitles));
+
+  const yearsDup = titles?.map((title) => title.firstRelease.slice(0, 4));
+  const years = [...new Set(yearsDup)];
+
+  const editions = titles?.map((title) => [...title.types]);
+
+  console.log('years array from context', years);
+  console.log('editions array from context', editions);
 
   return (
     <Triggers>
@@ -262,4 +278,4 @@ export function Drawer({ children }: PropsWithChildren) {
       </Primitive.Root>
     </Triggers>
   );
-}
+});

@@ -83,9 +83,9 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
 
   const filtersStoreFromContext = useLocalStore(() => new FiltersStore());
   filtersStoreFromContext.set({
-    authors: ['sdfsf', 'sfsfsfsfs'],
-    years: ['4545', '232'],
-    types: ['gdfd', 'sfsss'],
+    authors: [],
+    years: [],
+    types: [],
   });
 
   const stores = {
