@@ -18,7 +18,7 @@ import {
   useTitlesStore,
 } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
-import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+// import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const CommandContainer = styled(Command)`
   position: relative;
@@ -172,18 +172,16 @@ function MatchItem(props: ITitle) {
   );
 }
 
-export const SearchModal = observer(() => {
+export const SearchModal = () => {
   const [query, setQuery] = useState('');
   // const [, setTitles] = useState<ITitle[]>();
 
-  const testTitles = titlesStore.titles;
+  // этот стор из "синглтона" срабатывает
+  // const testTitles = titlesStore.titles;
 
-  // const titlesStore = useContext(TitlesContext);
-  // titlesStore?.load();
-
-  // const titlesStore = useTitlesStore();
-  // titlesStore.store?.load();
-  // console.log('title store for search is ...', titlesStore.store);
+  // этот стор из провайдера не срабатывает
+  const titlesStoreFromContext = useContext(TitlesContext);
+  titlesStoreFromContext?.store?.load();
 
   // const fetchTitles = async () => {
   //   const { data } = await API.getTitles();
@@ -206,10 +204,12 @@ export const SearchModal = observer(() => {
         <CommandInput value={query} onValueChange={setQuery} />
         <StyledGlass />
         <SearchResults>
+          тут должен быть стор из контекста
+          <pre>{JSON.stringify(titlesStoreFromContext.store, null, 2)}</pre>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {testTitles &&
-              testTitles.map((title) => (
+            {titlesStoreFromContext?.store?.titles &&
+              titlesStoreFromContext.store.titles.map((title) => (
                 <MatchItem key={title.id} {...title} />
               ))}
           </Command.Group>
@@ -217,7 +217,7 @@ export const SearchModal = observer(() => {
       </CommandContainer>
     </>
   );
-});
+};
 
 // export function SearchModal() {
 //   const [query, setQuery] = useState('');

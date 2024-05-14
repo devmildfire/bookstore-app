@@ -17,7 +17,15 @@ import { AppPropsWithLayout } from '@/types/page';
 import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
 
-import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import {
+  TitlesStore,
+  // titlesStore,
+} from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import {
+  TitlesContext,
+  TitlesStoreProvider,
+} from '@/store/locals/dashboard/TitlesStore/context';
+import { useLocalStore } from '@/store/hooks/useLocalStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -63,19 +71,12 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     !user && anonymousLogin();
   };
 
-  const testTitles = titlesStore.titles;
-  titlesStore.load();
-  // console.log('loaded titles from store ... ', testTitles);
-
-  // const titlesStore = useLocalStore(() => new TitlesStore());
+  // это стор из "синглтона", он работает
   // titlesStore.load();
 
-  // const storedTitles = titlesStore.titles;
-  // console.log('loaded titles from store ... ', storedTitles);
-
-  // useEffect(() => {
-  //   console.log('loaded titles store ... ', titlesStore.titles);
-  // }, [titlesStore]);
+  // это стор из контекста, он не работает
+  const titlesStoreFromContext = useLocalStore(() => new TitlesStore());
+  titlesStoreFromContext.load();
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -103,11 +104,11 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            {/* <TitlesContext.Provider value={titlesStore}> */}
-            <PageLoading show={value} />
-            {getLayout(<Component {...pageProps} />)}
-            <Toaster />
-            {/* </TitlesContext.Provider> */}
+            <TitlesStoreProvider value={{ store: titlesStoreFromContext }}>
+              <PageLoading show={value} />
+              {getLayout(<Component {...pageProps} />)}
+              <Toaster />
+            </TitlesStoreProvider>
           </ThemeProvider>
         </ModalProvider>
       </Hydrate>
