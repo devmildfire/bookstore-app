@@ -16,7 +16,6 @@ import { StyledPromoMessage } from '@/components/CartPage/PromoMessage/Message';
 import { StyledButton } from '@/components/CartPage/styles';
 import { useRouter } from 'next/router';
 import PageLayout from '@/layouts/PageLayout';
-import PageLoading from '@/components/PageLoading/PageLoading';
 
 const StyledText = styled(Text)`
   padding-bottom: 65px;
@@ -183,66 +182,45 @@ function FullCart({ productQuantity, setStage }: fullCartProps) {
 
 const Cart = observer((): React.ReactElement => {
   const [stage, setStage] = useState('cartStage');
-  const [gotCart, setGotCart] = useState(false);
-
-  const getCartInfo = async (cartID: string) => {
-    const gotCart = await cartStore.setCart(cartID);
-    setGotCart(gotCart);
-  };
 
   useEffect(() => {
     cartStore.setCartID();
     if (cartStore.cartID) {
-      getCartInfo(cartStore.cartID);
+      cartStore.setCart(cartStore.cartID);
     }
   }, []);
 
-  const productQuantity = cartStore.cart.reduce(
+  const currentCart = [...cartStore.cart];
+
+  const productQuantity = currentCart.reduce(
     (acc, product) => acc + product.quantity!,
     0
   ) as number;
 
   return (
-    <>
-      <PageLoading show={!gotCart} />
+    <PageLayout headTitle='Корзина'>
+      <Styled.Main className='max-width'>
+        <StyledText textColor='white' variant='h2_1_Cart'>
+          {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
+        </StyledText>
 
-      <PageLayout headTitle='Корзина'>
-        <Styled.Main className='max-width'>
-          <StyledText textColor='white' variant='h2_1_Cart'>
-            {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
-          </StyledText>
-
-          {/* {stage === 'cartStage' &&
-          (cartStore.cart.length ? (
+        {stage === 'cartStage' &&
+          // (cartStore.cart.length ? (
+          (currentCart.length ? (
             <FullCart productQuantity={productQuantity} setStage={setStage} />
           ) : (
             <StyledEmptyCart className='emptyCart' />
-          ))} */}
+          ))}
 
-          {/* {stage === 'cartStage' &&
-            (gotCart && cartStore.isEmpty ? (
-              <StyledEmptyCart className='emptyCart' />
-            ) : (
-              <FullCart productQuantity={productQuantity} setStage={setStage} />
-            ))} */}
-
-          {stage === 'cartStage' && gotCart && cartStore.isEmpty && (
-            <StyledEmptyCart className='emptyCart' />
-          )}
-          {stage === 'cartStage' && gotCart && !cartStore.isEmpty && (
-            <FullCart productQuantity={productQuantity} setStage={setStage} />
-          )}
-
-          {stage === 'shipmentStage' && (
-            <Shipment
-              setStage={setStage}
-              cartID={cartStore.cartID!}
-              totalPrice={cartStore.price}
-            />
-          )}
-        </Styled.Main>
-      </PageLayout>
-    </>
+        {stage === 'shipmentStage' && (
+          <Shipment
+            setStage={setStage}
+            cartID={cartStore.cartID!}
+            totalPrice={cartStore.price}
+          />
+        )}
+      </Styled.Main>
+    </PageLayout>
   );
 });
 
