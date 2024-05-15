@@ -155,8 +155,11 @@ function MatchItem(props: ITitle) {
     handleOpenModal(false, 'search');
   }
 
+  const authorsString = props.authors.map((author) => author.name).join(' ');
+  const searchString = authorsString + ' ' + props.name;
+
   return (
-    <CommandItem onSelect={handleSelect}>
+    <CommandItem onSelect={handleSelect} value={searchString}>
       <MatchLink
         onClick={() => handleOpenModal(false, 'search')}
         href={`/books/${props.slug}`}
