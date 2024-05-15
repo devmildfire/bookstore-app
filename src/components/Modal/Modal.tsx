@@ -25,6 +25,7 @@ import { SearchModal } from './SearchModal';
 import { setOrGetCartCookie } from '@/utils/cardID';
 import { postData } from '@/utils/postData';
 import { CartItemType } from 'pages/api/cart';
+import { cartStore } from '@/store/CartStore';
 
 const modalIconLookup: Record<BookTableTypesEnum[number], ReactNode> = {
   audioBook: <AudioIcon />,
@@ -462,8 +463,13 @@ function BookModal(props: BookModalProps) {
     return items;
   };
 
+  // cartStore.setNonEmpty();
+  // console.log('setting cart to full');
+
   async function addMultipleItemsToCart() {
     const items = createCartObjects(props);
+
+    cartStore.setNonEmpty();
 
     items.forEach(async (item) => {
       const addedItem: CartItemType = await postData(`/api/cart`, {

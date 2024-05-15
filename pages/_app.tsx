@@ -28,7 +28,7 @@ import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
-  console.log(pageProps);
+  // console.log(pageProps);
   const { value, toggleOff, toggleOn } = useToggle();
   const getLayout = Component.getLayout ?? ((page) => page);
   const [user, setUser] = useState<User>();

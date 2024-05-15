@@ -13,6 +13,7 @@ import { CartItemType } from 'pages/api/cart';
 export class CartStore {
   cart: CartItemType[] = [];
   cartID: string | undefined = '';
+  isEmpty = true;
   // hasPhysicalGoods: boolean;
 
   // constructor() {
@@ -48,12 +49,23 @@ export class CartStore {
     this.cartID = setOrGetCartCookie()!.toString();
   };
 
-  setCart = async (cartID: string) => {
+  setNonEmpty = () => {
+    this.isEmpty = false;
+  };
+
+  setEmpty = () => {
+    this.isEmpty = true;
+  };
+
+  setCart = async (cartID: string): Promise<boolean> => {
     const gotCart = await getCart(cartID);
 
     runInAction(() => {
       this.cart = gotCart;
+      this.isEmpty = gotCart.length > 0 ? false : true;
     });
+
+    return !!gotCart;
   };
 
   incrementProduct = (index: number) => {
