@@ -49,5 +49,5 @@ export class TitlesStore implements ILocalStore {
   }
 }
 
-export default TitlesStore;
-// export const titlesStore = new TitlesStore();
+// export default TitlesStore;
+export const titlesStore = new TitlesStore();

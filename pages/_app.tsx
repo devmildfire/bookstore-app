@@ -18,12 +18,14 @@ import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
 
 import {
-  TitlesStore,
+  // TitlesStore,
+  titlesStore,
   // titlesStore,
 } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
-import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';
-import { useLocalStore } from '@/store/hooks/useLocalStore';
-import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
+import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
+// import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';
+// import { useLocalStore } from '@/store/hooks/useLocalStore';
+// import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -69,22 +71,15 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     !user && anonymousLogin();
   };
 
-  // это стор из "синглтона", он работает
-  // titlesStore.load();
+  // const titlesStoreFromContext = useLocalStore(() => new TitlesStore());
+  // titlesStoreFromContext.load();
 
-  const titlesStoreFromContext = useLocalStore(() => new TitlesStore());
-  titlesStoreFromContext.load();
-
-  const filtersStoreFromContext = useLocalStore(() => new FiltersStore());
-  filtersStoreFromContext.set({
-    authors: [],
-    years: [],
-    types: [],
-  });
-
-  // const stores = {
-  //   titlesStoreFromContext,
-  // };
+  // const filtersStoreFromContext = useLocalStore(() => new FiltersStore());
+  // filtersStoreFromContext.set({
+  //   authors: [],
+  //   years: [],
+  //   types: [],
+  // });
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -105,26 +100,26 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
   useEffect(() => {
     setOrGetCartCookie();
     getUserData();
+    // это стор из "синглтона", он работает
+    titlesStore.load();
+    filtersStore.set({
+      authors: [],
+      years: [],
+      types: [],
+    });
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <MultipleStoresProvider
-          value={{
-            titleStore: titlesStoreFromContext,
-            filterStore: filtersStoreFromContext,
-          }}
-        >
-          <ModalProvider>
-            <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-              <PageLoading show={value} />
+        <ModalProvider>
+          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
+            <PageLoading show={value} />
 
-              {getLayout(<Component {...pageProps} />)}
-              <Toaster />
-            </ThemeProvider>
-          </ModalProvider>
-        </MultipleStoresProvider>
+            {getLayout(<Component {...pageProps} />)}
+            <Toaster />
+          </ThemeProvider>
+        </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );

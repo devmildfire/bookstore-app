@@ -36,4 +36,5 @@ class FiltersStore implements ILocalStore {
   }
 }
 
-export default FiltersStore;
+// export default FiltersStore;
+export const filtersStore = new FiltersStore();

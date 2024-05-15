@@ -12,7 +12,8 @@ export const ShipmentSchema = z
       .min(
         6,
         'phone field with at least 6 digits is required for physical goods'
-      ),
+      )
+      .optional(),
     adress: z.string().optional(),
     email: z.string().email('email musrt be a valid email'),
   })
