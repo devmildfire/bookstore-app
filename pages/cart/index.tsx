@@ -203,11 +203,18 @@ const Cart = observer((): React.ReactElement => {
           {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
         </StyledText>
 
-        {stage === 'cartStage' &&
+        {/* {stage === 'cartStage' &&
           (cartStore.cart.length ? (
             <FullCart productQuantity={productQuantity} setStage={setStage} />
           ) : (
             <StyledEmptyCart className='emptyCart' />
+          ))} */}
+
+        {stage === 'cartStage' &&
+          (cartStore.cart.length === 0 ? (
+            <StyledEmptyCart className='emptyCart' />
+          ) : (
+            <FullCart productQuantity={productQuantity} setStage={setStage} />
           ))}
 
         {stage === 'shipmentStage' && (
