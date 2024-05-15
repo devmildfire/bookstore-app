@@ -114,24 +114,28 @@ const BooksPage = observer(() => {
   return (
     <>
       <PageLoading show={!multipleStoresFromContext?.titleStore?.isLoaded} />
-      <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
-        <Carousel
-          forwardedRef={carouselRef}
-          slides={[0, 1, 2]}
-          options={{ dragThreshold: 1, duration: 25 }}
-          titles={
-            titlesFromStore?.filter((title) => title.isFeatured === true) || []
-          }
-        />
-        <HomeLayout title='Издания'>
-          <section className='max-width'>
-            <Drawer />
-            {filteredByYearTitles && <Products data={filteredByYearTitles} />}
 
-            {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
-          </section>
-        </HomeLayout>
-      </PageLayout>
+      {multipleStoresFromContext?.titleStore?.isLoaded && (
+        <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
+          <Carousel
+            forwardedRef={carouselRef}
+            slides={[0, 1, 2]}
+            options={{ dragThreshold: 1, duration: 25 }}
+            titles={
+              titlesFromStore?.filter((title) => title.isFeatured === true) ||
+              []
+            }
+          />
+          <HomeLayout title='Издания'>
+            <section className='max-width'>
+              <Drawer />
+              {filteredByYearTitles && <Products data={filteredByYearTitles} />}
+
+              {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
+            </section>
+          </HomeLayout>
+        </PageLayout>
+      )}
     </>
   );
 });

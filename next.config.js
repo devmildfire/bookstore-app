@@ -37,10 +37,6 @@ const options = {
       },
       {
         protocol: 'https',
-        hostname: 'api.chtivo.duckdns.org',
-      },
-      {
-        protocol: 'https',
         hostname: 'api.mi59173.tw1.ru',
       },
     ],
