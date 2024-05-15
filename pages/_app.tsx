@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { Router, useRouter } from 'next/router';
@@ -21,14 +21,8 @@ import {
   TitlesStore,
   // titlesStore,
 } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
-import {
-  MultipleStoresProvider,
-  TitlesContext,
-  TitlesStoreProvider,
-} from '@/store/locals/dashboard/TitlesStore/context';
+import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';
 import { useLocalStore } from '@/store/hooks/useLocalStore';
-import { Provider } from 'mobx-react';
-import { AuthorsStore } from '@/store/locals';
 import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 
 const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
@@ -88,9 +82,9 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     types: [],
   });
 
-  const stores = {
-    titlesStoreFromContext,
-  };
+  // const stores = {
+  //   titlesStoreFromContext,
+  // };
 
   useEffect(() => {
     Router.events.on('routeChangeStart', toggleOn);
@@ -125,6 +119,7 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
           <ModalProvider>
             <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
               <PageLoading show={value} />
+
               {getLayout(<Component {...pageProps} />)}
               <Toaster />
             </ThemeProvider>
@@ -134,4 +129,5 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
     </QueryClientProvider>
   );
 };
+
 export default MyApp;

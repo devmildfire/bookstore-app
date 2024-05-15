@@ -23,6 +23,10 @@ export class TitlesStore implements ILocalStore {
     return this._titles;
   }
 
+  get isLoaded(): boolean {
+    return this._titles !== null && this._titles.length > 0 ? true : false;
+  }
+
   load = async () => {
     const { error, data } = await adminAPI.getTitles();
 

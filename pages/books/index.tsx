@@ -10,6 +10,7 @@ import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
 import { ITitle } from '@/entities/title';
 import { FilterModel } from '@/store/models/filters';
+import PageLoading from '@/components/PageLoading/PageLoading';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -111,24 +112,27 @@ const BooksPage = observer(() => {
   const isSliderOnScreen = useOnScreen(carouselRef);
 
   return (
-    <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
-      <Carousel
-        forwardedRef={carouselRef}
-        slides={[0, 1, 2]}
-        options={{ dragThreshold: 1, duration: 25 }}
-        titles={
-          titlesFromStore?.filter((title) => title.isFeatured === true) || []
-        }
-      />
-      <HomeLayout title='Издания'>
-        <section className='max-width'>
-          <Drawer />
-          {filteredByYearTitles && <Products data={filteredByYearTitles} />}
+    <>
+      <PageLoading show={!multipleStoresFromContext?.titleStore?.isLoaded} />
+      <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
+        <Carousel
+          forwardedRef={carouselRef}
+          slides={[0, 1, 2]}
+          options={{ dragThreshold: 1, duration: 25 }}
+          titles={
+            titlesFromStore?.filter((title) => title.isFeatured === true) || []
+          }
+        />
+        <HomeLayout title='Издания'>
+          <section className='max-width'>
+            <Drawer />
+            {filteredByYearTitles && <Products data={filteredByYearTitles} />}
 
-          {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
-        </section>
-      </HomeLayout>
-    </PageLayout>
+            {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
+          </section>
+        </HomeLayout>
+      </PageLayout>
+    </>
   );
 });
 
