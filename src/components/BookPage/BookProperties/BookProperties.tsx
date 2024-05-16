@@ -371,7 +371,8 @@ const PrintEdition = () => {
     options,
   } = printBook;
 
-  // {size} = options[0]
+  const { size, paper, cover, bindings, illustrations } = options[0];
+  const { width, height } = size[0];
 
   return (
     <TabContent>
@@ -393,7 +394,9 @@ const PrintEdition = () => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Формат:</DescriptionKey>
-            <DescriptionValue>145x215 мм</DescriptionValue>
+            <DescriptionValue>
+              {width}x{height} мм
+            </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Объём:</DescriptionKey>
@@ -401,29 +404,23 @@ const PrintEdition = () => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Бумага:</DescriptionKey>
-            <DescriptionValue>офсетная 80 гр/кв.м.</DescriptionValue>
+            <DescriptionValue>{paper}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Обложка:</DescriptionKey>
-            <DescriptionValue>
-              мелованная 300 гр/кв.м. матовое ламинирование
-            </DescriptionValue>
+            <DescriptionValue>{cover}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Переплет:</DescriptionKey>
-            <DescriptionValue>КБС, термопак поэкземплярно</DescriptionValue>
+            <DescriptionValue>{bindings}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Иллюстрации:</DescriptionKey>
-            <DescriptionValue>чёрно-белые</DescriptionValue>
+            <DescriptionValue>{illustrations}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>
-              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
-              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
-            </DescriptionValue>
+            <DescriptionValue>{extra}</DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>

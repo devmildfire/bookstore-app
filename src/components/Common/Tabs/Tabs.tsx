@@ -336,13 +336,7 @@ export default function Tabs(
         ))}
       </Labels>
       <TabContent direction={direction}>
-        <ActiveTabContent
-          // releaseDate={formatDate}
-          releaseDate={first_release.toLocaleDateString('ru-RU')}
-          // price={types.filter((type) => type.type === active)[0].info.price}
-          // price={10}
-          prices={prices}
-        />
+        <ActiveTabContent />
       </TabContent>
     </StyledTabs>
   );
