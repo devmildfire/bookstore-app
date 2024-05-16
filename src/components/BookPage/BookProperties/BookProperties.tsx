@@ -7,6 +7,9 @@ import { StyledWrapper } from './styles';
 import { BookTableTypesEnum, BookType, Worker } from '@/models/books';
 import Tabs from '@/components/Common/Tabs';
 import breakPoints from '@/utils/breakPoints';
+import { Title } from 'pages/books';
+import { useRouter } from 'next/router';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 interface BookPropertiesProps {
   readonly prices: Record<BookTableTypesEnum, number>[];
@@ -163,17 +166,32 @@ const Buttons = styled.div`
   }
 `;
 
-const DigitalEdition = ({ releaseDate }: { releaseDate: string }) => {
+const DigitalEdition = () => {
+  const router = useRouter();
+  const slug = router.query.slug;
+
+  const title =
+    titlesStore?.titles?.filter((title) => title.slug === slug)[0] || null;
+
+  const eBook = title?.eBook || null;
+
+  if (!eBook || !title) {
+    return <div> no digital edition </div>;
+  }
+
+  const { demo } = title;
+  const { price, releaseDate, characters, extra } = eBook;
+
   return (
     <TabContent>
       <TitleConteiner>
         <TabTitle>Цифровое издание</TabTitle>
-        <Price>300₽</Price>
+        <Price>{price}₽</Price>
       </TitleConteiner>
       <Descrption>
         <Buttons>
           <TabButton>Добавить в корзину</TabButton>
-          <TabButton>Демо-версия</TabButton>
+          <TabButton href={demo}>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
           <DesctiptionItem>
@@ -187,15 +205,16 @@ const DigitalEdition = ({ releaseDate }: { releaseDate: string }) => {
           <DesctiptionItem>
             <DescriptionKey>Количество символов:</DescriptionKey>
             <DescriptionValue>
-              {new Intl.NumberFormat('ru-RU').format(355000)}
+              {new Intl.NumberFormat('ru-RU').format(characters)}
             </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
-              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
+              {extra}
+              {/* редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
               дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
+              иллюстратор Евгений&nbsp;Борщевский */}
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
@@ -203,17 +222,33 @@ const DigitalEdition = ({ releaseDate }: { releaseDate: string }) => {
     </TabContent>
   );
 };
-const Book2Edition = ({ releaseDate }: { releaseDate: string }) => {
+
+const Book2Edition = () => {
+  const router = useRouter();
+  const slug = router.query.slug;
+
+  const title =
+    titlesStore?.titles?.filter((title) => title.slug === slug)[0] || null;
+
+  const cardBook = title?.cardBook || null;
+
+  if (!cardBook || !title) {
+    return <div> no Book 2.0 edition </div>;
+  }
+
+  const { demo } = title;
+  const { price, releaseDate, extra } = cardBook;
+
   return (
     <TabContent>
       <TitleConteiner>
         <TabTitle>Книга 2.0</TabTitle>
-        <Price>300₽</Price>
+        <Price>{price}₽</Price>
       </TitleConteiner>
       <Descrption>
         <Buttons>
           <TabButton>Добавить в корзину</TabButton>
-          <TabButton>Демо-версия</TabButton>
+          <TabButton href={demo}>Демо-версия</TabButton>
           <ButtonsText>Отправка по России включена в стоимость.</ButtonsText>
         </Buttons>
         <Paragraphs>
@@ -239,9 +274,10 @@ const Book2Edition = ({ releaseDate }: { releaseDate: string }) => {
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
             <DescriptionValue>
-              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
+              {extra}
+              {/* редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
               дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
+              иллюстратор Евгений&nbsp;Борщевский */}
             </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
@@ -250,8 +286,26 @@ const Book2Edition = ({ releaseDate }: { releaseDate: string }) => {
   );
 };
 
-const AudioEdition = (props: { price: number }) => {
-  const { price } = props;
+const AudioEdition = () => {
+  const router = useRouter();
+  const slug = router.query.slug;
+
+  const title =
+    titlesStore?.titles?.filter((title) => title.slug === slug)[0] || null;
+
+  const audioBook = title?.audioBook || null;
+
+  if (!audioBook || !title) {
+    return <div> no audioBook edition </div>;
+  }
+
+  const { demo } = title;
+  const { price, releaseDate, extra, duration, fileVolume } = audioBook;
+
+  const fileSize = parseInt(fileVolume) / 1024;
+  const hours = Math.floor(duration / 3600);
+  const mins = Math.floor((duration % 3600) / 60);
+
   return (
     <TabContent>
       <TitleConteiner>
@@ -261,9 +315,13 @@ const AudioEdition = (props: { price: number }) => {
       <Descrption>
         <Buttons>
           <TabButton>Добавить в корзину</TabButton>
-          <TabButton>Демо-версия</TabButton>
+          <TabButton href={demo}>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
+          <DesctiptionItem>
+            <DescriptionKey> Детали:</DescriptionKey>
+            <DescriptionValue> {extra} </DescriptionValue>
+          </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Текст читает:</DescriptionKey>
             <DescriptionValue>Ниёле Мейлуте</DescriptionValue>
@@ -276,11 +334,13 @@ const AudioEdition = (props: { price: number }) => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Вес файлов:</DescriptionKey>
-            <DescriptionValue>305 Мб</DescriptionValue>
+            <DescriptionValue>{fileSize} Мб</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Длительность:</DescriptionKey>
-            <DescriptionValue>5ч 32м</DescriptionValue>
+            <DescriptionValue>
+              {hours}ч {mins}м
+            </DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
@@ -288,12 +348,37 @@ const AudioEdition = (props: { price: number }) => {
   );
 };
 
-const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
+const PrintEdition = () => {
+  const router = useRouter();
+  const slug = router.query.slug;
+
+  const title =
+    titlesStore?.titles?.filter((title) => title.slug === slug)[0] || null;
+
+  const printBook = title?.printedBook || null;
+
+  if (!printBook || !title) {
+    return <div> no printBook edition </div>;
+  }
+
+  const { demo } = title;
+  const {
+    price,
+    releaseDate,
+    extra,
+    pages,
+
+    options,
+  } = printBook;
+
+  const { size, paper, cover, bindings, illustrations } = options[0];
+  const { width, height } = size[0];
+
   return (
     <TabContent>
       <TitleConteiner>
         <TabTitle>Печатное издание</TabTitle>
-        <Price>300₽</Price>
+        <Price>{price}₽</Price>
       </TitleConteiner>
 
       <Descrption>
@@ -309,37 +394,33 @@ const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Формат:</DescriptionKey>
-            <DescriptionValue>145x215 мм</DescriptionValue>
+            <DescriptionValue>
+              {width}x{height} мм
+            </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Объём:</DescriptionKey>
-            <DescriptionValue>144 стр</DescriptionValue>
+            <DescriptionValue>{pages} стр</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Бумага:</DescriptionKey>
-            <DescriptionValue>офсетная 80 гр/кв.м.</DescriptionValue>
+            <DescriptionValue>{paper}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Обложка:</DescriptionKey>
-            <DescriptionValue>
-              мелованная 300 гр/кв.м. матовое ламинирование
-            </DescriptionValue>
+            <DescriptionValue>{cover}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Переплет:</DescriptionKey>
-            <DescriptionValue>КБС, термопак поэкземплярно</DescriptionValue>
+            <DescriptionValue>{bindings}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Иллюстрации:</DescriptionKey>
-            <DescriptionValue>чёрно-белые</DescriptionValue>
+            <DescriptionValue>{illustrations}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>
-              редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
-              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский
-            </DescriptionValue>
+            <DescriptionValue>{extra}</DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
@@ -347,30 +428,61 @@ const PrintEdition = ({ releaseDate }: { releaseDate: string }) => {
   );
 };
 
-type EditionComponent = (props: {
-  releaseDate: string;
-  price: number;
-}) => ReactElement;
+type EditionComponent = () => ReactElement;
 
 export type EditionType = Record<BookTableTypesEnum[number], EditionComponent>;
 
+// const editions: EditionType = {
+//   Ebooks: DigitalEdition,
+//   CardBooks: Book2Edition,
+//   Audiobooks: AudioEdition,
+//   PrintedBooks: PrintEdition,
+// };
+
 const editions: EditionType = {
-  Ebooks: DigitalEdition,
-  CardBooks: Book2Edition,
-  Audiobooks: AudioEdition,
-  PrintedBooks: PrintEdition,
+  eBook: DigitalEdition,
+  cardBook: Book2Edition,
+  audioBook: AudioEdition,
+  printedBook: PrintEdition,
 };
 
-const BookProperties = (props: BookPropertiesProps): React.ReactElement => {
-  console.log(props);
+const BookProperties = (title: Title): React.ReactElement => {
+  const priceArr = [];
+  const typesArr = [];
+
+  title.printedBook &&
+    (priceArr.push({ printedBook: title.printedBook?.price }),
+    typesArr.push({
+      type: BookTableTypesEnum.PrintedBooks,
+      info: title[BookTableTypesEnum.PrintedBooks],
+    }));
+  title.eBook &&
+    (priceArr.push({ eBook: title.eBook.price }),
+    typesArr.push({
+      type: BookTableTypesEnum.Ebooks,
+      info: title[BookTableTypesEnum.Ebooks],
+    }));
+  title.audioBook &&
+    (priceArr.push({ audioBook: title.audioBook.price }),
+    typesArr.push({
+      type: BookTableTypesEnum.Audiobooks,
+      info: title[BookTableTypesEnum.Audiobooks],
+    }));
+  title.cardBook &&
+    (priceArr.push({ cardBook: title.cardBook.price }),
+    typesArr.push({
+      type: BookTableTypesEnum.CardBooks,
+      info: title[BookTableTypesEnum.CardBooks],
+    }));
+
   return (
     <StyledWrapper>
-      {/* <Tabs
-        types={props.types}
-        first_release={props.first_release}
-        prices={props.prices}
+      <Tabs
+        types={typesArr}
+        first_release={new Date(title.firstRelease)}
+        prices={priceArr}
         editions={editions}
-      /> */}
+      />
     </StyledWrapper>
   );
 };

@@ -1,5 +1,4 @@
 import React, { ReactElement } from 'react';
-import { Author } from '@/types/author';
 import {
   AuthorAbout,
   // AuthorContacts,
@@ -11,33 +10,36 @@ import {
   StyleWrapper,
   Title,
 } from './styles';
+import { IAuthor } from '@/entities/author/client';
 
 interface BookAuthorProps {
-  readonly authors: Author[];
+  readonly authors: IAuthor[];
 }
 
 const BookAuthor = (props: BookAuthorProps): ReactElement => {
   const { authors } = props;
-  // const author = authors[0];
   return (
     <StyleWrapper>
       <Title>Об авторе</Title>
-      <AuthorInfo>
-        {/* <AuthorPhoto src={author.photo} alt={author.name} /> */}
-        <AuthorDescr>
-          <AuthorProps>
-            {/* {authors.map(({ name }) => {
-              return <span key={name}>{`${name} `}</span>;
-            })} */}
-            {/* <span>{`${author.city} | ${author.dateOfBirth}`}</span> */}
-          </AuthorProps>
-          {/* <AuthorSpeech>{author.phrase}</AuthorSpeech> */}
-          {/* <AuthorAbout>{author.biography}</AuthorAbout> */}
-          {/* <AuthorContacts>
-            <span>Контакты:</span>
-          </AuthorContacts> */}
-        </AuthorDescr>
-      </AuthorInfo>
+
+      {authors.map(({ name, photo, city, birthDate, phrase, bio }) => (
+        <AuthorInfo key={name}>
+          <AuthorPhoto src={photo!} alt={name} />
+          <AuthorDescr>
+            <AuthorProps>
+              <span key={name}>{`${name} `}</span>
+              <span>{`${city} | ${birthDate}`}</span>
+            </AuthorProps>
+
+            <AuthorSpeech>{phrase}</AuthorSpeech>
+
+            <AuthorAbout>{bio}</AuthorAbout>
+            {/* <AuthorContacts>
+    <span>Контакты:</span>
+  </AuthorContacts> */}
+          </AuthorDescr>
+        </AuthorInfo>
+      ))}
     </StyleWrapper>
   );
 };
