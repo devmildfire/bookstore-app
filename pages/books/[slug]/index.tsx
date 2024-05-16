@@ -74,7 +74,9 @@ const BookPage = observer((): React.ReactElement => {
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
         <BookProperties {...book} />
-        <BookTrailer src={book.trailer} title={book.name} />
+
+        {book.trailer && <BookTrailer src={book.trailer} title={book.name} />}
+
         <BookAuthor authors={book.authors} />
         {/* <SimilarBooks /> */}
       </StyleWrapper>
