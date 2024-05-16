@@ -11,6 +11,8 @@ import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/cont
 import { observer } from 'mobx-react-lite';
 import { Titles, extendTitles } from 'pages/books';
 import { BookTableTypesEnum } from '@/models/books/types';
+import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const Content = styled(Primitive.Content)``;
 
@@ -235,8 +237,11 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
   // });
   const [open, setOpen] = useState(false);
 
-  const filters = useContext(MultipleStoresContext).filterStore;
-  const shortTitles = useContext(MultipleStoresContext).titleStore?.titles;
+  // const filters = useContext(MultipleStoresContext).filterStore;
+  const filters = filtersStore;
+
+  // const shortTitles = useContext(MultipleStoresContext).titleStore?.titles;
+  const shortTitles = titlesStore?.titles;
 
   let titles: Titles = [];
   shortTitles && (titles = extendTitles(shortTitles));

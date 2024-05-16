@@ -244,8 +244,6 @@ export function Shipment({
     };
     const payUrl = await getPayUrl(payUrlProps);
 
-    console.log('emptying cart id ....', cartID);
-
     // const emptyError = await emptyCartFromDB(cartID);
 
     // window.open(payUrl, '_blank');

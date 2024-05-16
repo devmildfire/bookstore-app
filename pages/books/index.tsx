@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import HomeLayout from '@/layouts/HomeLayout';
 import Products from '@/components/Products';
-import Filters from '@/components/Filters';
+// import Filters from '@/components/Filters';
 import Carousel from '@/components/Carousel';
 import { Drawer } from '@/components/Drawer';
 import { bookTypes, BookTableTypesEnum } from '@/models/books';
 import PageLayout from '@/layouts/PageLayout';
-import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore';
+// import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
 import { ITitle } from '@/entities/title';
 import { FilterModel } from '@/store/models/filters';
-import PageLoading from '@/components/PageLoading/PageLoading';
+// import PageLoading from '@/components/PageLoading/PageLoading';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -70,17 +72,21 @@ export const extendTitles = (titles: ITitle[]): Titles => {
 };
 
 const BooksPage = observer(() => {
-  const multipleStoresFromContext = useContext(MultipleStoresContext);
+  // const multipleStoresFromContext = useContext(MultipleStoresContext);
 
-  let titlesFromStore;
+  // let titlesFromStore;
 
-  multipleStoresFromContext.titleStore?.titles &&
-    (titlesFromStore = extendTitles(
-      multipleStoresFromContext.titleStore?.titles
-    ));
+  // multipleStoresFromContext.titleStore?.titles &&
+  //   (titlesFromStore = extendTitles(
+  //     multipleStoresFromContext.titleStore?.titles
+  //   ));
 
-  const filtersFromStore = multipleStoresFromContext?.filterStore
-    ?.filters as FilterModel;
+  const shortTitles = titlesStore.titles || [];
+  console.log('shortTitles are ...', shortTitles);
+
+  const titlesFromStore = extendTitles(shortTitles);
+
+  const filtersFromStore = filtersStore?.filters as FilterModel;
 
   const filteredByAuthorsTitles =
     filtersFromStore?.authors.length === 0
@@ -112,31 +118,22 @@ const BooksPage = observer(() => {
   const isSliderOnScreen = useOnScreen(carouselRef);
 
   return (
-    <>
-      <PageLoading show={!multipleStoresFromContext?.titleStore?.isLoaded} />
-
-      {multipleStoresFromContext?.titleStore?.isLoaded && (
-        <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
-          <Carousel
-            forwardedRef={carouselRef}
-            slides={[0, 1, 2]}
-            options={{ dragThreshold: 1, duration: 25 }}
-            titles={
-              titlesFromStore?.filter((title) => title.isFeatured === true) ||
-              []
-            }
-          />
-          <HomeLayout title='Издания'>
-            <section className='max-width'>
-              <Drawer />
-              {filteredByYearTitles && <Products data={filteredByYearTitles} />}
-
-              {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
-            </section>
-          </HomeLayout>
-        </PageLayout>
-      )}
-    </>
+    <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
+      <Carousel
+        forwardedRef={carouselRef}
+        slides={[0, 1, 2]}
+        options={{ dragThreshold: 1, duration: 25 }}
+        titles={
+          titlesFromStore?.filter((title) => title.isFeatured === true) || []
+        }
+      />
+      <HomeLayout title='Издания'>
+        <section className='max-width'>
+          <Drawer />
+          {filteredByYearTitles && <Products data={filteredByYearTitles} />}
+        </section>
+      </HomeLayout>
+    </PageLayout>
   );
 });
 

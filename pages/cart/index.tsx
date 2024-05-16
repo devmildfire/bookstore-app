@@ -192,12 +192,14 @@ const Cart = observer((): React.ReactElement => {
 
   useEffect(() => {
     cartStore.setCartID();
-    if (cartStore.cartID) {
+    if (cartStore.cartID && !gotCart) {
       getCartInfo(cartStore.cartID);
     }
   }, []);
 
-  const productQuantity = cartStore.cart.reduce(
+  const currentCart = [...cartStore.cart];
+
+  const productQuantity = currentCart.reduce(
     (acc, product) => acc + product.quantity!,
     0
   ) as number;
@@ -213,17 +215,11 @@ const Cart = observer((): React.ReactElement => {
           </StyledText>
 
           {/* {stage === 'cartStage' &&
-          (cartStore.cart.length ? (
-            <FullCart productQuantity={productQuantity} setStage={setStage} />
-          ) : (
-            <StyledEmptyCart className='emptyCart' />
-          ))} */}
-
-          {/* {stage === 'cartStage' &&
-            (gotCart && cartStore.isEmpty ? (
-              <StyledEmptyCart className='emptyCart' />
-            ) : (
+            // (cartStore.cart.length ? (
+            (currentCart.length ? (
               <FullCart productQuantity={productQuantity} setStage={setStage} />
+            ) : (
+              <StyledEmptyCart className='emptyCart' />
             ))} */}
 
           {stage === 'cartStage' && gotCart && cartStore.isEmpty && (

@@ -19,6 +19,7 @@ import {
   useTitlesStore,
 } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 // import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
 const CommandContainer = styled(Command)`
@@ -179,8 +180,6 @@ function MatchItem(props: ITitle) {
 export const SearchModal = observer(() => {
   const [query, setQuery] = useState('');
 
-  const multipleStoresFromContext = useContext(MultipleStoresContext);
-
   return (
     <>
       <BookTitle variant='h3_3'>Поиск</BookTitle>
@@ -190,8 +189,8 @@ export const SearchModal = observer(() => {
         <SearchResults>
           <Command.Empty>{`Простите, «${query}» у нас нет, а возможно никогда и не было.`}</Command.Empty>
           <Command.Group>
-            {multipleStoresFromContext.titleStore?.titles &&
-              multipleStoresFromContext.titleStore.titles.map((title) => (
+            {titlesStore?.titles &&
+              titlesStore.titles.map((title) => (
                 <MatchItem key={title.id} {...title} />
               ))}
           </Command.Group>
