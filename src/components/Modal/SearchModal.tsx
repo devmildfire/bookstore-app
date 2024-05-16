@@ -9,15 +9,15 @@ import { Text } from '../Common/Text/Text';
 import Link from 'next/link';
 import { useModal } from './Modal';
 import { useRouter } from 'next/router';
-import { Title, Titles } from 'pages/books';
-import { API } from 'api/books';
+// import { Title, Titles } from 'pages/books';
+// import { API } from 'api/books';
 import { ITitle } from '@/entities/title/client';
-import { normalizeTitle } from '@/entities/title/normalize';
-import {
-  MultipleStoresContext,
-  TitlesContext,
-  useTitlesStore,
-} from '@/store/locals/dashboard/TitlesStore';
+// import { normalizeTitle } from '@/entities/title/normalize';
+// import {
+//   MultipleStoresContext,
+//   TitlesContext,
+//   useTitlesStore,
+// } from '@/store/locals/dashboard/TitlesStore';
 import { observer } from 'mobx-react-lite';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 // import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';

@@ -14,7 +14,8 @@ import {
 import SortIconSvg from '@/assets/icons/sort-icon.svg';
 import { Multiselect } from '../Common/Multiselect';
 import breakPoints from '@/utils/breakPoints';
-import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/context';
+import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
+// import { MultipleStoresContext } from '@/store/locals/dashboard/TitlesStore/context';
 
 const PopoverContent = styled(Popover.Content)`
   position: relative;
@@ -198,7 +199,8 @@ const SortIcon = styled(SortIconSvg)`
 `;
 
 function Filters() {
-  const filters = useContext(MultipleStoresContext).filterStore;
+  // const filters = useContext(MultipleStoresContext).filterStore;
+  const filters = filtersStore;
 
   const yearsData = ['2020', '2021', '2022', '2023'];
   const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
