@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled from 'styled-components';
 // import dayjs from 'dayjs';
 import Button from '@/components/Common/Button';
@@ -10,6 +10,14 @@ import breakPoints from '@/utils/breakPoints';
 import { Title } from 'pages/books';
 import { useRouter } from 'next/router';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import { setOrGetCartCookie } from '@/utils/cardID';
+import { supabase } from 'api/supabase-client';
+import { CartItemType } from 'pages/api/cart';
+import { Database } from 'api/books/types';
+import Link from 'next/link';
+import { postData } from '@/utils/postData';
+
+type productCtegory = Database['public']['Enums']['category'];
 
 interface BookPropertiesProps {
   readonly prices: Record<BookTableTypesEnum, number>[];
@@ -166,6 +174,40 @@ const Buttons = styled.div`
   }
 `;
 
+type addBookProps = {
+  name: string;
+  author: string;
+  category: productCtegory;
+  price: number;
+  discount: number;
+  src: string;
+};
+
+async function addBookToCart({
+  name,
+  author,
+  category,
+  price,
+  discount,
+  src,
+}: addBookProps) {
+  const item: CartItemType = {
+    id: setOrGetCartCookie()!.toString(),
+    name: name,
+    category: category,
+    quantity: 1,
+    price: price,
+    discount: discount,
+    subtitle: author,
+    picture: src,
+  };
+
+  const addedItem: CartItemType = await postData(`/api/cart`, {
+    oper: 'update',
+    item: item,
+  });
+}
+
 const DigitalEdition = () => {
   const router = useRouter();
   const slug = router.query.slug;
@@ -175,12 +217,36 @@ const DigitalEdition = () => {
 
   const eBook = title?.eBook || null;
 
+  const [bookIsInTheCart, setBookIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (titleName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', titleName)
+      .eq('category', 'EBook');
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setBookIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    title && checkTheCart(title.name);
+  }, [buttonClicked]);
+
   if (!eBook || !title) {
     return <div> no digital edition </div>;
   }
 
-  const { demo } = title;
-  const { price, releaseDate, characters, extra } = eBook;
+  const { demo, authors } = title;
+  const authorsString = authors.map((author) => author.name).join(', ');
+
+  const { price, discount, releaseDate, characters, extra } = eBook;
 
   return (
     <TabContent>
@@ -190,7 +256,36 @@ const DigitalEdition = () => {
       </TitleConteiner>
       <Descrption>
         <Buttons>
-          <TabButton>Добавить в корзину</TabButton>
+          {!bookIsInTheCart && !buttonClicked && (
+            <TabButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addBookToCart({
+                  name: title.name,
+                  price: price,
+                  discount: discount,
+                  author: authorsString,
+                  category: 'EBook',
+                  src: title.cover,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </TabButton>
+          )}
+
+          {(bookIsInTheCart || buttonClicked) && (
+            <ButtonsText>
+              <Link
+                href={'/cart'}
+                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+              >
+                электронная книга уже в корзине
+              </Link>
+            </ButtonsText>
+          )}
           <TabButton href={demo}>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
@@ -232,12 +327,36 @@ const Book2Edition = () => {
 
   const cardBook = title?.cardBook || null;
 
+  const [bookIsInTheCart, setBookIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (titleName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', titleName)
+      .eq('category', 'Book2.0');
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setBookIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    title && checkTheCart(title.name);
+  }, [buttonClicked]);
+
   if (!cardBook || !title) {
     return <div> no Book 2.0 edition </div>;
   }
 
-  const { demo } = title;
-  const { price, releaseDate, extra } = cardBook;
+  const { demo, authors } = title;
+  const authorsString = authors.map((author) => author.name).join(', ');
+
+  const { price, discount, releaseDate, extra } = cardBook;
 
   return (
     <TabContent>
@@ -247,7 +366,37 @@ const Book2Edition = () => {
       </TitleConteiner>
       <Descrption>
         <Buttons>
-          <TabButton>Добавить в корзину</TabButton>
+          {!bookIsInTheCart && !buttonClicked && (
+            <TabButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addBookToCart({
+                  name: title.name,
+                  price: price,
+                  discount: discount,
+                  author: authorsString,
+                  category: 'Book2.0',
+                  src: title.cover,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </TabButton>
+          )}
+
+          {(bookIsInTheCart || buttonClicked) && (
+            <ButtonsText>
+              <Link
+                href={'/cart'}
+                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+              >
+                книга 2.0 уже в корзине
+              </Link>
+            </ButtonsText>
+          )}
+
           <TabButton href={demo}>Демо-версия</TabButton>
           <ButtonsText>Отправка по России включена в стоимость.</ButtonsText>
         </Buttons>
@@ -295,12 +444,37 @@ const AudioEdition = () => {
 
   const audioBook = title?.audioBook || null;
 
+  const [bookIsInTheCart, setBookIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (titleName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', titleName)
+      .eq('category', 'AudioBook');
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setBookIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    title && checkTheCart(title.name);
+  }, [buttonClicked]);
+
   if (!audioBook || !title) {
     return <div> no audioBook edition </div>;
   }
 
-  const { demo } = title;
-  const { price, releaseDate, extra, duration, fileVolume } = audioBook;
+  const { demo, authors } = title;
+  const authorsString = authors.map((author) => author.name).join(', ');
+
+  const { price, discount, releaseDate, extra, duration, fileVolume } =
+    audioBook;
 
   const fileSize = parseInt(fileVolume) / 1024;
   const hours = Math.floor(duration / 3600);
@@ -314,7 +488,37 @@ const AudioEdition = () => {
       </TitleConteiner>
       <Descrption>
         <Buttons>
-          <TabButton>Добавить в корзину</TabButton>
+          {!bookIsInTheCart && !buttonClicked && (
+            <TabButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addBookToCart({
+                  name: title.name,
+                  price: price,
+                  discount: discount,
+                  author: authorsString,
+                  category: 'AudioBook',
+                  src: title.cover,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </TabButton>
+          )}
+
+          {(bookIsInTheCart || buttonClicked) && (
+            <ButtonsText>
+              <Link
+                href={'/cart'}
+                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+              >
+                аудиокнига уже в корзине
+              </Link>
+            </ButtonsText>
+          )}
+
           <TabButton href={demo}>Демо-версия</TabButton>
         </Buttons>
         <Paragraphs>
@@ -357,13 +561,39 @@ const PrintEdition = () => {
 
   const printBook = title?.printedBook || null;
 
+  const [bookIsInTheCart, setBookIsInTheCart] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  const checkTheCart = async (titleName: string) => {
+    const cartID = setOrGetCartCookie()!.toString();
+
+    const inCart = await supabase
+      .from('Cart')
+      .select('*')
+      .eq('id', cartID)
+      .eq('name', titleName)
+      .eq('category', 'PrintBook');
+
+    if (inCart.data && inCart.data?.length > 0) {
+      setBookIsInTheCart(true);
+    }
+  };
+
+  useEffect(() => {
+    title && checkTheCart(title.name);
+  }, [buttonClicked]);
+
   if (!printBook || !title) {
     return <div> no printBook edition </div>;
   }
 
-  const { demo } = title;
+  const { demo, authors } = title;
+
+  const authorsString = authors.map((author) => author.name).join(', ');
+
   const {
     price,
+    discount,
     releaseDate,
     extra,
     pages,
@@ -383,7 +613,37 @@ const PrintEdition = () => {
 
       <Descrption>
         <Buttons>
-          <TabButton>Добавить в корзину</TabButton>
+          {!bookIsInTheCart && !buttonClicked && (
+            <TabButton
+              className='cartButton'
+              type='button'
+              onClick={() => {
+                addBookToCart({
+                  name: title.name,
+                  price: price,
+                  discount: discount,
+                  author: authorsString,
+                  category: 'PrintBook',
+                  src: title.cover,
+                });
+                setButtonClicked(true);
+              }}
+            >
+              Добавить в корзину
+            </TabButton>
+          )}
+
+          {(bookIsInTheCart || buttonClicked) && (
+            <ButtonsText>
+              <Link
+                href={'/cart'}
+                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+              >
+                книга уже в корзине
+              </Link>
+            </ButtonsText>
+          )}
+
           <ButtonsText>Цифровое издание в подарок.</ButtonsText>
           <ButtonsText>Условия доставки обсуждаются индивидуально.</ButtonsText>
         </Buttons>
