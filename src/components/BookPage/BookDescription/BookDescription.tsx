@@ -16,7 +16,7 @@ import CloseIcon from '@/assets/icons/close.svg';
 import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
 import breakPoints from '@/utils/breakPoints';
-import { Title } from '@/models/books';
+import { Title } from 'pages/books';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -58,9 +58,9 @@ const StyledCloseIcon = styled(CloseIcon)`
 const BookDescription = (props: Title): React.ReactElement => {
   const {
     name,
-    first_release,
+    firstRelease,
     // genre,
-    age_restriction,
+    ageRestriction,
     cover,
     description,
     authors,
@@ -113,7 +113,7 @@ const BookDescription = (props: Title): React.ReactElement => {
           {authors.map((author) => author.name)}
         </StyledAuthor>
         <StyledInfo variant='h4_1' component='p' fontWeight={700}>
-          {`${first_release} | +${age_restriction}`}
+          {`${firstRelease} | +${ageRestriction}`}
         </StyledInfo>
         <StyledThesis
           variant='h3_3'

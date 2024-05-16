@@ -16,13 +16,6 @@ import breakPoints from '@/utils/breakPoints';
 import { BookTableTypesEnum } from '@/models/books';
 import { Title } from 'pages/books';
 
-interface TabProps {
-  active: string;
-  handleTabClick: (tab: BookTableTypesEnum, index: number) => void;
-  item: BookTableTypesEnum;
-  index: number;
-}
-
 interface TriggerProps {
   active?: string;
 }
@@ -37,7 +30,9 @@ interface TabsProps {
     info: Title[BookTableTypesEnum];
   }[];
   first_release: Date;
-  prices: Record<BookTableTypesEnum[number], number>[];
+  // prices: Record<BookTableTypesEnum[number], number>[];
+  prices: Record<string, number>[];
+
   editions: EditionType;
 }
 
@@ -226,17 +221,33 @@ const StyledAudioIcon = styled(Audio)`
   }
 `;
 
+// const icons: Record<BookTableTypesEnum[number], any> = {
+//   Ebooks: StyledDigitalIcon,
+//   Audiobooks: StyledAudioIcon,
+//   CardBooks: StyledBook2Icon,
+//   PrintedBooks: StyledBookIcon,
+// };
+
+// const icons: Record<string, any> = {
 const icons: Record<BookTableTypesEnum[number], any> = {
-  Ebooks: StyledDigitalIcon,
-  Audiobooks: StyledAudioIcon,
-  CardBooks: StyledBook2Icon,
-  PrintedBooks: StyledBookIcon,
+  eBook: StyledDigitalIcon,
+  audioBook: StyledAudioIcon,
+  cardBook: StyledBook2Icon,
+  printedBook: StyledBookIcon,
 };
+
+interface TabProps {
+  active: string;
+  handleTabClick: (tab: BookTableTypesEnum, index: number) => void;
+  item: BookTableTypesEnum;
+  index: number;
+}
 
 function Tab(props: TabProps) {
   const { active, handleTabClick, item, index } = props;
 
   const Icon = icons[item];
+
   return (
     <StyledTab className={active === item ? 'active' : ''}>
       <Trigger
@@ -317,6 +328,7 @@ export default function Tabs(
           <Tab
             key={item.type}
             active={active}
+            // active={'printedBook'}
             handleTabClick={handleTabClick}
             index={idx}
             item={item.type}
@@ -324,10 +336,13 @@ export default function Tabs(
         ))}
       </Labels>
       <TabContent direction={direction}>
-        {/* <ActiveTabContent
-          releaseDate={formatDate}
-          price={types.filter((type) => type.type === active)[0].info.price}
-        /> */}
+        <ActiveTabContent
+          // releaseDate={formatDate}
+          releaseDate={first_release.toLocaleDateString('ru-RU')}
+          // price={types.filter((type) => type.type === active)[0].info.price}
+          // price={10}
+          prices={prices}
+        />
       </TabContent>
     </StyledTabs>
   );
