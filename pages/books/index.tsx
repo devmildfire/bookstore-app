@@ -131,8 +131,6 @@ const BooksPage = observer(() => {
         <section className='max-width'>
           <Drawer />
           {filteredByYearTitles && <Products data={filteredByYearTitles} />}
-
-          {/* {titlesFromStore && <Products data={titlesFromStore} />} */}
         </section>
       </HomeLayout>
     </PageLayout>

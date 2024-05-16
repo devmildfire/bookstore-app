@@ -2,10 +2,11 @@ import { ILocalStore } from '@/store/interfaces';
 import { TitleModel } from '@/store/models/title/TitleModel';
 
 import { adminAPI } from 'api/admin';
-import { makeAutoObservable, observable, runInAction } from 'mobx';
+import { computed, makeAutoObservable, observable, runInAction } from 'mobx';
 
 export class TitlesStore implements ILocalStore {
   private _titles: TitleModel[] | null = null;
+  isLoaded = false;
 
   // constructor() {
   //   makeObservable<TitlesStore, '_titles'>(this, {
@@ -16,6 +17,7 @@ export class TitlesStore implements ILocalStore {
   constructor() {
     makeAutoObservable<TitlesStore, '_titles'>(this, {
       _titles: observable,
+      isLoaded: observable,
     });
   }
 
@@ -23,11 +25,16 @@ export class TitlesStore implements ILocalStore {
     return this._titles;
   }
 
-  get isLoaded(): boolean {
-    return this._titles !== null && this._titles.length > 0 ? true : false;
-  }
+  // get isLoaded(): boolean {
+  //   return this._titles !== null && this._titles.length > 0 ? true : false;
+  // }
+
+  // get isLoaded() {
+  //   return this._titles !== null && this._titles.length > 0 ? true : false;
+  // }
 
   load = async () => {
+    this.isLoaded = false;
     const { error, data } = await adminAPI.getTitles();
 
     if (error?.code) {
@@ -41,6 +48,10 @@ export class TitlesStore implements ILocalStore {
 
     runInAction(() => {
       this._titles = data.map((title) => TitleModel.fromJson(title));
+      // console.log('isLoaded is ... ', this.isLoaded);
+      // console.log('setting isLoaded to true ... ');
+      this.isLoaded = true;
+      // console.log('isLoaded is ... ', this.isLoaded);
     });
   };
 

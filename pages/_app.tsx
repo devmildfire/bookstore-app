@@ -23,11 +23,12 @@ import {
   // titlesStore,
 } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
+import { Observer, observer } from 'mobx-react-lite';
 // import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';
 // import { useLocalStore } from '@/store/hooks/useLocalStore';
 // import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 
-const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
+const MyApp: NextPage<AppProps> = observer((props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const { Component, pageProps } = props;
   // console.log(pageProps);
@@ -114,15 +115,17 @@ const MyApp: NextPage<AppProps> = (props: AppPropsWithLayout) => {
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            <PageLoading show={value} />
+            <PageLoading show={!(titlesStore.isLoaded || value)} />
 
-            {getLayout(<Component {...pageProps} />)}
+            {titlesStore.isLoaded &&
+              !value &&
+              getLayout(<Component {...pageProps} />)}
             <Toaster />
           </ThemeProvider>
         </ModalProvider>
       </Hydrate>
     </QueryClientProvider>
   );
-};
+});
 
 export default MyApp;
