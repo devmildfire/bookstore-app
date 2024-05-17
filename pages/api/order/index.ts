@@ -36,6 +36,10 @@ function generateRoboURL({
     testMode: true, // Указываем true, если работаем в тестовом режиме
   };
 
+  console.log('Robokassa shopID: ', process.env.SHOP_ID);
+  console.log('Robokassa pass 1: ', process.env.ROBOPASS_ONE);
+  console.log('Robokassa pass 2: ', process.env.ROBOPASS_TWO);
+
   const roboKassa = new Robokaska(config);
 
   // Вернёт строку с URL адресом, на который можно отправить пользователя
