@@ -28,9 +28,16 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const req = context.req;
   const read = req.read();
-  const jso = JSON.parse(read) as propsType;
-  // const jso = read.toString();
+  // const jso = JSON.parse(read) as propsType;
+  const dataString = read.toString();
+  console.log('datastring is ... ', dataString);
   //  as propsType;
+
+  const jso = {
+    InvID: 1,
+    OutSum: 23,
+    SignatureValue: 'randomValue',
+  } as propsType;
 
   console.log('req params', req.method, jso);
 
