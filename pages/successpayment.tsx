@@ -14,6 +14,36 @@ import Checkmark from '@/assets/images/checkmark.svg';
 import PageLayout from '@/layouts/PageLayout';
 import RedLink from '@/components/Common/Link/RedLink';
 
+import { GetServerSideProps } from 'next/types';
+import { type GetServerSidePropsContext } from 'next';
+
+type propsType = {
+  InvID: number;
+  OutSum: number;
+  SignatureValue: string;
+};
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const req = context.req;
+  const read = req.read();
+  // const jso = JSON.parse(read) as propsType;
+  const jso = read.toString();
+  //  as propsType;
+
+  console.log('req params', req.method, jso);
+
+  const p = req.method;
+
+  return {
+    // props: jso,
+    props: {
+      jso: { InvID: jso },
+    },
+  };
+};
+
 const SuccessDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -76,7 +106,7 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Success = (): React.ReactElement => {
+const Success = ({ jso }: { jso: propsType }): React.ReactElement => {
   const [cartID, setCartID] = useState('');
 
   const [order, setOrder] = useState<OrdersType | null>(null);
@@ -96,9 +126,9 @@ const Success = (): React.ReactElement => {
     });
   };
 
-  const params = useSearchParams();
-
-  const invID = params.get('invid');
+  const invID = jso.InvID;
+  const outSum = jso.OutSum;
+  const signatureValue = jso.SignatureValue;
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
@@ -109,60 +139,8 @@ const Success = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    // cartID && invID && getOrder(cartID, invID);
-    // invID && getOrderItems(invID);
-    invID && getAllLinks(invID);
+    invID && getAllLinks(invID.toString());
   }, [invID, retries]);
-
-  // const getOrder = useCallback(
-  //   async (cartID: string, orderID: string) => {
-  //     const OrderResponse: OrdersType = await postData(`/api/order`, {
-  //       oper: 'fetch',
-  //       // cartID: cartID,
-  //       orderID: orderID,
-  //     });
-
-  //     console.log('settring order');
-
-  //     setOrder(OrderResponse);
-  //   },
-  //   [cartID]
-  // );
-
-  // const getOrderItems = useCallback(
-  //   async (orderID: string) => {
-  //     const OrderItemsResponse: OrderItemType[] = await postData(`/api/order`, {
-  //       oper: 'fetchitems',
-  //       orderID: orderID,
-  //     });
-
-  //     setOrderItems(OrderItemsResponse);
-  //   },
-  //   [cartID]
-  // );
-
-  // const getItemsLinks = async () => {
-  //   if (orderItems && orderItems.length) {
-  //     console.log('order items ...', orderItems);
-
-  //     const itemslinks: LinkReturnType[] = await Promise.all(
-  //       orderItems.map(async (item) => {
-  //         const link: string = await postData(`/api/order`, {
-  //           oper: 'fetchlink',
-  //           titleName: item.name,
-  //           productType: item.type,
-  //         });
-  //         console.log('link is ...', link);
-  //         return {
-  //           name: link.name,
-  //           url: link.url,
-  //         }
-  //       })
-  //     );
-
-  //     setItemsLinks(itemslinks);
-  //   }
-  // };
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
@@ -209,18 +187,14 @@ const Success = (): React.ReactElement => {
             </Text>
             <Text variant='h3c'>
               Если не началось, то нажмите сюда:
-              {
-                itemsLinks?.length &&
-                  itemsLinks.map((link, index) => {
-                    return (
-                      <div key={link.name + index.toString()}>
-                        <RedLink href={link.url}>{link.name}</RedLink>
-                      </div>
-                    );
-                  })
-
-                // <RedLink href={itemsLinks[0]}> ссылка  {} </RedLink>
-              }
+              {itemsLinks?.length &&
+                itemsLinks.map((link, index) => {
+                  return (
+                    <div key={link.name + index.toString()}>
+                      <RedLink href={link.url}>{link.name}</RedLink>
+                    </div>
+                  );
+                })}
             </Text>
           </div>
         </div>
@@ -233,12 +207,12 @@ const Success = (): React.ReactElement => {
             Перейти на главную
           </StyledButton>
         </div>
-        {/* order
+        order
         <pre>{JSON.stringify(order, null, 2)}</pre>
         items
         <pre>{JSON.stringify(orderItems, null, 2)}</pre>
         links
-        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre> */}
+        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre>
       </SuccessDiv>
     </PageLayout>
   );
