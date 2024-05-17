@@ -28,8 +28,8 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const req = context.req;
   const read = req.read();
-  // const jso = JSON.parse(read) as propsType;
-  const jso = read.toString();
+  const jso = JSON.parse(read) as propsType;
+  // const jso = read.toString();
   //  as propsType;
 
   console.log('req params', req.method, jso);
@@ -37,10 +37,10 @@ export const getServerSideProps: GetServerSideProps = async (
   const p = req.method;
 
   return {
-    // props: jso,
-    props: {
-      jso: { InvID: jso },
-    },
+    props: jso,
+    // props: {
+    //   jso: { InvID: jso },
+    // },
   };
 };
 
@@ -107,6 +107,8 @@ const StyledButton = styled(Button)`
 `;
 
 const Success = ({ jso }: { jso: propsType }): React.ReactElement => {
+  console.log('props are: ', jso);
+
   const [cartID, setCartID] = useState('');
 
   const [order, setOrder] = useState<OrdersType | null>(null);
