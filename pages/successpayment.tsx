@@ -28,10 +28,32 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const req = context.req;
   const read = req.read();
-  // const jso = JSON.parse(read) as propsType;
+
   const dataString = read.toString();
   console.log('datastring is ... ', dataString);
-  //  as propsType;
+
+  const dataItems = dataString.split('&');
+  console.log(dataItems);
+
+  const dataObjects: Record<string, string>[] = dataItems.map(
+    (item: string) => {
+      const keyValue = item.split('=');
+      const key = keyValue[0];
+      const value = keyValue[1];
+      const obj: Record<string, string> = {};
+      obj[key] = value;
+      return obj;
+    }
+  );
+
+  console.log('data objects are ... ', dataObjects);
+
+  let oneObject = {};
+  dataObjects.forEach((object) => {
+    oneObject = { ...oneObject, ...object };
+  });
+
+  console.log('one object is ... ', oneObject);
 
   const jso = {
     InvID: 1,
@@ -41,14 +63,9 @@ export const getServerSideProps: GetServerSideProps = async (
 
   console.log('req params', req.method, jso);
 
-  const p = req.method;
+  // return { props: { repo } };
 
-  return {
-    props: jso,
-    // props: {
-    //   jso: { InvID: jso },
-    // },
-  };
+  return { props: { jso } };
 };
 
 const SuccessDiv = styled.div`
