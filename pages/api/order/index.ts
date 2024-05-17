@@ -49,6 +49,26 @@ function generateRoboURL({
   return payURL;
 }
 
+function checkOrder(invId: number, outSum: number, signatureValue: string) {
+  const config = {
+    shopIdentifier: process.env.SHOP_ID,
+    password1: process.env.ROBOPASS_ONE,
+    password2: process.env.ROBOPASS_TWO,
+    testMode: true, // Указываем true, если работаем в тестовом режиме
+  };
+
+  const roboKassa = new Robokaska(config);
+
+  const isValid = roboKassa.checkPay(invId, outSum, signatureValue);
+  console.log('checking order... ', invId);
+  console.log('with sum... ', outSum);
+  console.log('and value... ', signatureValue);
+
+  console.log('order is valid... ', isValid);
+
+  return isValid;
+}
+
 async function emptyCartFromDB(cartID: string): Promise<string> {
   const emptyCartResponse: string = await postData(`/api/cart`, {
     oper: 'emptycart',
@@ -439,7 +459,10 @@ export default async function handler(
   let itemsLinks: (LinkReturnType | undefined)[] | PostgrestError;
 
   let orderID: string;
+  let orderIsValid: boolean;
   let sum: string;
+
+  let signatureValue: string;
 
   body.oper == 'fetch' &&
     ((cartID = body.cartID),
@@ -483,4 +506,14 @@ export default async function handler(
     (sum = body.sum),
     makeOrderPaid(orderID),
     res.status(200).json({ order: orderID, sum: sum }));
+
+  body.InvId &&
+    body.OutSum &&
+    body.SignatureValue &&
+    ((orderID = body.InvId),
+    (sum = body.OutSum),
+    (signatureValue = body.SignatureValue),
+    (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
+    orderIsValid && makeOrderPaid(orderID),
+    res.status(200).json({ status: 'OK', order: orderID, sum: sum }));
 }
