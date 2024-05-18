@@ -7,9 +7,9 @@
  * Документация ROBOKASSA - https://docs.robokassa.ru/
  */
 
-import md5 from "md5";
+import md5 from 'md5';
 
-const ROBOKASSA_PAY_URL = "https://auth.robokassa.ru/Merchant/Index.aspx";
+const ROBOKASSA_PAY_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx';
 
 /**
  * @var shopIdentifier - Идентификатор магазина, прописанный в разделе «Технические настройки» Вашего магазина
@@ -59,10 +59,25 @@ class Robokaska {
     const query = `?MerchantLogin=${
       this.shopIdentifier
     }&OutSum=${outSum}&Description=${encodedDescription}&SignatureValue=${signature}&Encoding=UTF-8&InvId=${invId}&Email=${encodedEmail}${
-      this.testMode ? "&IsTest=1" : ""
+      this.testMode ? '&IsTest=1' : ''
     }`;
 
     return `${ROBOKASSA_PAY_URL}${query}`;
+  }
+
+  /**
+   * @description Проверка валидности подписи для адреса перенаправления SuccessURL
+   * параметр outSum должен быть в формате строки из числа с плавающей точкой,
+   * с двумя знаками после запятой, например 20.00
+   * Именно такое значение использует Робокасса для формирования
+   * значения SignatureValue при перенаправлении пользователя на SuccessURL
+   *
+   * @param {string} outSum
+   * @param {number} invId
+   * @param {string} SignatureValue
+   */
+  checkSuccessURLsignature(invId, outSum, SignatureValue) {
+    return SignatureValue === md5(`${outSum}:${invId}:${this.password2}`);
   }
 
   /**
