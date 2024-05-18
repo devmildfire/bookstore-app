@@ -33,12 +33,15 @@ export const getServerSideProps: GetServerSideProps = async (
     signatureValue: string
   ): Promise<boolean> => {
     console.log('checking order from frontend ...');
-    const checkOrderObj: chekObjType = await postData(`/api/order`, {
-      oper: 'checkOrder',
-      orderID: invID,
-      outSum: outSum,
-      signatureValue: signatureValue,
-    });
+    const checkOrderObj: chekObjType = await postData(
+      `https://mi59173.tw1.ru/api/order`,
+      {
+        oper: 'checkOrder',
+        orderID: invID,
+        outSum: outSum,
+        signatureValue: signatureValue,
+      }
+    );
     console.log('checked order is ...', checkOrderObj);
     return checkOrderObj.isValid;
   };
