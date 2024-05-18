@@ -47,8 +47,12 @@ export const getServerSideProps: GetServerSideProps = async (
   const req = context.req;
 
   const method = req.method;
-  if (method === 'get') {
-    return { props: { valid: 'invalid' } };
+  console.log('method is ...', req.method);
+
+  if (method === 'GET') {
+    const oneObject = { valid: 'invalid' };
+    return { props: { oneObject } };
+    // return { props: { oneObject } };
   }
 
   const read = req.read();
@@ -162,6 +166,7 @@ const Success = ({
   oneObject: propsType;
 }): React.ReactElement => {
   console.log('props are: ', oneObject);
+  const router = useRouter();
 
   const [itemsLinks, setItemsLinks] = useState<LinkReturnType[]>();
   const [retries, setRetries] = useState(0);
@@ -188,7 +193,14 @@ const Success = ({
     invID && getAllLinks(invID);
   }, [invID, retries]);
 
-  if (isInvalid) return <div> Что-то пошло не так </div>;
+  if (isInvalid) {
+    router.push('/');
+    return (
+      <div>
+        За попытку впихать GET запрос в successpayment - ссылка на главную
+      </div>
+    );
+  }
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
