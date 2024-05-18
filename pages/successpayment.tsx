@@ -16,6 +16,8 @@ import { GetServerSideProps } from 'next/types';
 import { type GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 
+const domainURL = process.env.NEXT_PUBLIC_DOMAIN_URL;
+
 type propsType = { [key: string]: string };
 
 type chekObjType = {
@@ -31,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (
     signatureValue: string
   ): Promise<boolean> => {
     const checkOrderObj: chekObjType = await postData(
-      `https://mi59173.tw1.ru/api/order`,
+      `${domainURL}/api/order`,
       {
         oper: 'checkOrder',
         orderID: invID,
