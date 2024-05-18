@@ -36,9 +36,9 @@ function generateRoboURL({
     testMode: true, // Указываем true, если работаем в тестовом режиме
   };
 
-  console.log('Robokassa shopID: ', process.env.SHOP_ID);
-  console.log('Robokassa pass 1: ', process.env.ROBOPASS_ONE);
-  console.log('Robokassa pass 2: ', process.env.ROBOPASS_TWO);
+  // console.log('Robokassa shopID: ', process.env.SHOP_ID);
+  // console.log('Robokassa pass 1: ', process.env.ROBOPASS_ONE);
+  // console.log('Robokassa pass 2: ', process.env.ROBOPASS_TWO);
 
   const roboKassa = new Robokaska(config);
 
@@ -64,11 +64,11 @@ function checkOrder(invId: number, outSum: number, signatureValue: string) {
   const roboKassa = new Robokaska(config);
 
   const isValid = roboKassa.checkPay(invId, outSum, signatureValue);
-  console.log('checking order... ', invId);
-  console.log('with sum... ', outSum);
-  console.log('and value... ', signatureValue);
+  // console.log('checking order... ', invId);
+  // console.log('with sum... ', outSum);
+  // console.log('and value... ', signatureValue);
 
-  console.log('order is valid... ', isValid);
+  // console.log('order is valid... ', isValid);
 
   return isValid;
 }
@@ -92,11 +92,11 @@ function checkSuccesPageValidity(
     outSum,
     signatureValue
   );
-  console.log('checking SUCCESS URL order... ', invId);
-  console.log('with  SUCCESS URL sum... ', outSum);
-  console.log('and  SUCCESS URL value... ', signatureValue);
+  // console.log('checking SUCCESS URL order... ', invId);
+  // console.log('with  SUCCESS URL sum... ', outSum);
+  // console.log('and  SUCCESS URL value... ', signatureValue);
 
-  console.log('SUCCESS URL  order is valid... ', isValid);
+  // console.log('SUCCESS URL  order is valid... ', isValid);
 
   return isValid;
 }
@@ -318,11 +318,11 @@ async function alertCheck(order: string): Promise<boolean> {
     .single();
 
   if (data.alerts_sent) {
-    console.log('alerts allready sent');
+    // console.log('alerts allready sent');
     return true;
   }
 
-  console.log('alerts NOT sent');
+  // console.log('alerts NOT sent');
   return false;
 }
 
@@ -337,10 +337,10 @@ async function setAlertsSent(order: string) {
     .single();
 
   if (data) {
-    console.log('alerts sent status changed to TRUE');
+    // console.log('alerts sent status changed to TRUE');
   }
 
-  console.log('alerts sent status NOT changed');
+  // console.log('alerts sent status NOT changed');
 }
 
 async function telegramAlert(
@@ -351,14 +351,14 @@ async function telegramAlert(
   const token = process.env.TELEGRAM_BOT_APIKEY as string;
   const chatID = process.env.TELEGRAM_BOT_CHAT_ID as string;
 
-  console.log('sending alert to telegram chat ... ', chatID);
+  // console.log('sending alert to telegram chat ... ', chatID);
 
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
 
-  console.log('trying to send message with token: ', token);
-  console.log('url: ', url);
-  console.log('trying to send message to Telegram chat id: ', chatID);
+  // console.log('trying to send message with token: ', token);
+  // console.log('url: ', url);
+  // console.log('trying to send message to Telegram chat id: ', chatID);
 
   const obj = {
     chat_id: chatID, // Telegram chat id
@@ -377,7 +377,7 @@ async function telegramAlert(
 }
 
 async function emailAlert(email: string, order: string, details: string) {
-  console.log('sending alert to email ... ', email);
+  // console.log('sending alert to email ... ', email);
 
   const apiKey = process.env.BREVO_APIKEY as string;
 
@@ -437,10 +437,10 @@ async function makeOrderPaid(
       } else {
         const alertsSent = await alertCheck(paidOrderData.data.id);
 
-        console.log('alerts sent status is ... ', alertsSent);
+        // console.log('alerts sent status is ... ', alertsSent);
 
         if (alertsSent === false) {
-          console.log('sending alerts');
+          // console.log('sending alerts');
 
           const response = await emailAlert(
             paidOrderData.data.email,
@@ -453,13 +453,13 @@ async function makeOrderPaid(
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
 
-          console.log('telegram response is ...', teleResponse.statusText);
+          // console.log('telegram response is ...', teleResponse.statusText);
 
           setAlertsSent(paidOrderData.data.id);
 
           emptyCartFromDB(paidOrderData.data.cart_id);
         } else {
-          console.log('alerts ARE sent, doing nothing!');
+          // console.log('alerts ARE sent, doing nothing!');
         }
 
         return paidOrderData.data;
