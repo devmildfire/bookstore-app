@@ -152,7 +152,11 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Success = (oneObject: propsType): React.ReactElement => {
+const Success = ({
+  oneObject,
+}: {
+  oneObject: propsType;
+}): React.ReactElement => {
   console.log('props are: ', oneObject);
 
   // const [cartID, setCartID] = useState('');
@@ -173,8 +177,11 @@ const Success = (oneObject: propsType): React.ReactElement => {
   };
 
   const isInvalid = oneObject.valid === 'invalid';
+  console.log(' ... is invalid is ... ', isInvalid);
 
   const invID = oneObject.InvId;
+  console.log(' ... InvId is ... ', invID);
+
   // const outSum = oneObject.OutSum;
   // const signatureValue = oneObject.SignatureValue;
 
