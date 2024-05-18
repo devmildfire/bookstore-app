@@ -194,12 +194,8 @@ const Success = ({
   }, [invID, retries]);
 
   if (isInvalid) {
-    router.push('/');
-    return (
-      <div>
-        За попытку впихать GET запрос в successpayment - ссылка на главную
-      </div>
-    );
+    router.push('/404');
+    return <div></div>;
   }
 
   const getAllLinks = async (orderID: string) => {
