@@ -563,5 +563,7 @@ export default async function handler(
     (signatureValue = body.SignatureValue),
     (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
     orderIsValid && makeOrderPaid(orderID),
-    res.status(200).json({ status: 'OK', order: orderID, sum: sum }));
+    res.status(200).send(`OK${orderID}`));
 }
+
+// res.status(200).json({ status: 'OK', order: orderID, sum: sum })
