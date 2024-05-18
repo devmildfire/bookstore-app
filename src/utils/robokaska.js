@@ -77,7 +77,7 @@ class Robokaska {
    * @param {string} SignatureValue
    */
   checkSuccessURLsignature(invId, outSum, SignatureValue) {
-    return SignatureValue === md5(`${outSum}:${invId}:${this.password2}`);
+    return SignatureValue === md5(`${outSum}:${invId}:${this.password1}`);
   }
 
   /**
