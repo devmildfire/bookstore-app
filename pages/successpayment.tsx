@@ -18,9 +18,7 @@ import { GetServerSideProps } from 'next/types';
 import { type GetServerSidePropsContext } from 'next';
 
 type propsType = {
-  InvID: number;
-  OutSum: number;
-  SignatureValue: string;
+  [key: string]: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -48,24 +46,22 @@ export const getServerSideProps: GetServerSideProps = async (
 
   console.log('data objects are ... ', dataObjects);
 
-  let oneObject = {};
+  let oneObject: propsType = {};
   dataObjects.forEach((object) => {
     oneObject = { ...oneObject, ...object };
   });
 
   console.log('one object is ... ', oneObject);
 
-  const jso = {
-    InvID: 1,
-    OutSum: 23,
-    SignatureValue: 'randomValue',
-  } as propsType;
-
-  console.log('req params', req.method, jso);
+  // const jso = {
+  //   InvID: 1,
+  //   OutSum: 23,
+  //   SignatureValue: 'randomValue',
+  // } as propsType;
 
   // return { props: { repo } };
 
-  return { props: { jso } };
+  return { props: { oneObject } };
 };
 
 const SuccessDiv = styled.div`
@@ -130,8 +126,12 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Success = ({ jso }: { jso: propsType }): React.ReactElement => {
-  console.log('props are: ', jso);
+const Success = ({
+  oneObject,
+}: {
+  oneObject: propsType;
+}): React.ReactElement => {
+  console.log('props are: ', oneObject);
 
   const [cartID, setCartID] = useState('');
 
@@ -152,9 +152,9 @@ const Success = ({ jso }: { jso: propsType }): React.ReactElement => {
     });
   };
 
-  const invID = jso.InvID;
-  const outSum = jso.OutSum;
-  const signatureValue = jso.SignatureValue;
+  const invID = oneObject.InvID;
+  const outSum = oneObject.OutSum;
+  const signatureValue = oneObject.SignatureValue;
 
   useEffect(() => {
     const newCartID = setOrGetCartCookie()?.toString();
