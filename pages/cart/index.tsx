@@ -214,14 +214,6 @@ const Cart = observer((): React.ReactElement => {
             {stage === 'cartStage' ? 'Корзина' : 'Доставка'}
           </StyledText>
 
-          {/* {stage === 'cartStage' &&
-            // (cartStore.cart.length ? (
-            (currentCart.length ? (
-              <FullCart productQuantity={productQuantity} setStage={setStage} />
-            ) : (
-              <StyledEmptyCart className='emptyCart' />
-            ))} */}
-
           {stage === 'cartStage' && gotCart && cartStore.isEmpty && (
             <StyledEmptyCart className='emptyCart' />
           )}

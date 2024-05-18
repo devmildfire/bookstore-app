@@ -126,6 +126,10 @@ const StyledButton = styled(Button)`
   }
 `;
 
+type chekObjType = {
+  isValid: boolean;
+};
+
 const Success = ({
   oneObject,
 }: {
@@ -165,8 +169,25 @@ const Success = ({
   }, []);
 
   useEffect(() => {
+    invID && checkOrder(invID, outSum, signatureValue);
     invID && getAllLinks(invID.toString());
   }, [invID, retries]);
+
+  const checkOrder = async (
+    invID: string,
+    outSum: string,
+    signatureValue: string
+  ): Promise<boolean> => {
+    console.log('checking order from frontend ...');
+    const checkOrderObj: chekObjType = await postData(`/api/order`, {
+      oper: 'checkOrder',
+      orderID: invID,
+      outSum: outSum,
+      signatureValue: signatureValue,
+    });
+    console.log('checked order is ...', checkOrderObj);
+    return checkOrderObj.isValid;
+  };
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
