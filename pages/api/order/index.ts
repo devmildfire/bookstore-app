@@ -74,10 +74,14 @@ function checkOrder(invId: number, outSum: number, signatureValue: string) {
 }
 
 async function emptyCartFromDB(cartID: string): Promise<string> {
-  const emptyCartResponse: string = await postData(`/api/cart`, {
-    oper: 'emptycart',
-    id: cartID,
-  });
+  // const emptyCartResponse: string = await postData(`/api/cart`, {
+  const emptyCartResponse: string = await postData(
+    `https://mi59173.tw1.ru/api/cart`,
+    {
+      oper: 'emptycart',
+      id: cartID,
+    }
+  );
   return emptyCartResponse;
 }
 
