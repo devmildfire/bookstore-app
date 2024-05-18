@@ -75,7 +75,13 @@ const BookPage = observer((): React.ReactElement => {
         <BookDescription {...book} />
         <BookProperties {...book} />
 
-        {book.trailer && <BookTrailer src={book.trailer} title={book.name} />}
+        {book.trailer && (
+          <BookTrailer
+            src={book.trailer}
+            title={book.name}
+            cover={book.cover}
+          />
+        )}
 
         <BookAuthor authors={book.authors} />
         {/* <SimilarBooks /> */}
