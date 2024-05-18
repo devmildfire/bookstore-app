@@ -511,6 +511,13 @@ export default async function handler(
     makeOrderPaid(orderID),
     res.status(200).json({ order: orderID, sum: sum }));
 
+  body.oper == 'checkOrder' &&
+    ((orderID = body.orderID),
+    (sum = body.outSum),
+    (signatureValue = body.signatureValue),
+    (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
+    res.status(200).json({ isValid: orderIsValid }));
+
   body.InvId &&
     body.OutSum &&
     body.SignatureValue &&
