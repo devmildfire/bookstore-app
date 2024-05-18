@@ -3,12 +3,10 @@
 import Button from '@/components/Common/Button';
 import { Text } from '@/components/Common/Text/Text';
 import breakPoints from '@/utils/breakPoints';
-import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
-import { LinkReturnType, OrderItemType, OrdersType } from './api/order';
+import { LinkReturnType } from './api/order';
 import { postData } from '@/utils/postData';
-import { useCallback, useEffect, useState } from 'react';
-import { setOrGetCartCookie } from '@/utils/cardID';
+import { useEffect, useState } from 'react';
 
 import Checkmark from '@/assets/images/checkmark.svg';
 import PageLayout from '@/layouts/PageLayout';
@@ -16,7 +14,7 @@ import RedLink from '@/components/Common/Link/RedLink';
 
 import { GetServerSideProps } from 'next/types';
 import { type GetServerSidePropsContext } from 'next';
-// import { isEmpty } from '@/utils/isEmpty';
+import { useRouter } from 'next/router';
 
 type propsType = { [key: string]: string };
 
@@ -47,6 +45,12 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 
   const req = context.req;
+
+  const method = req.method;
+  if (method === 'get') {
+    return { props: { valid: 'invalid' } };
+  }
+
   const read = req.read();
 
   const dataString = read.toString();
@@ -159,8 +163,6 @@ const Success = ({
 }): React.ReactElement => {
   console.log('props are: ', oneObject);
 
-  // const [cartID, setCartID] = useState('');
-
   const [itemsLinks, setItemsLinks] = useState<LinkReturnType[]>();
   const [retries, setRetries] = useState(0);
 
@@ -182,39 +184,11 @@ const Success = ({
   const invID = oneObject.InvId;
   console.log(' ... InvId is ... ', invID);
 
-  // const outSum = oneObject.OutSum;
-  // const signatureValue = oneObject.SignatureValue;
-
-  // useEffect(() => {
-  //   const newCartID = setOrGetCartCookie()?.toString();
-
-  //   if (newCartID) {
-  //     setCartID(newCartID);
-  //   }
-  // }, []);
-
   useEffect(() => {
-    // invID && checkOrder(invID, outSum, signatureValue);
     invID && getAllLinks(invID);
   }, [invID, retries]);
 
   if (isInvalid) return <div> Что-то пошло не так </div>;
-
-  // const checkOrder = async (
-  //   invID: string,
-  //   outSum: string,
-  //   signatureValue: string
-  // ): Promise<boolean> => {
-  //   console.log('checking order from frontend ...');
-  //   const checkOrderObj: chekObjType = await postData(`/api/order`, {
-  //     oper: 'checkOrder',
-  //     orderID: invID,
-  //     outSum: outSum,
-  //     signatureValue: signatureValue,
-  //   });
-  //   console.log('checked order is ...', checkOrderObj);
-  //   return checkOrderObj.isValid;
-  // };
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
@@ -228,7 +202,6 @@ const Success = ({
       (console.log('allLinks ', allLinks),
       allLinks.forEach((link) => {
         console.log(`downloading ... ${link.name} `);
-        // const fileName = link.split('/').pop();
         const fileName = link.name;
 
         getFile(link.url, fileName!);
@@ -281,8 +254,6 @@ const Success = ({
             Перейти на главную
           </StyledButton>
         </div>
-        links
-        <pre>{JSON.stringify(itemsLinks, null, 2)}</pre>
       </SuccessDiv>
     </PageLayout>
   );
