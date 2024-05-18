@@ -73,6 +73,34 @@ function checkOrder(invId: number, outSum: number, signatureValue: string) {
   return isValid;
 }
 
+function checkSuccesPageValidity(
+  invId: number,
+  outSum: string,
+  signatureValue: string
+) {
+  const config = {
+    shopIdentifier: process.env.SHOP_ID,
+    password1: process.env.ROBOPASS_ONE,
+    password2: process.env.ROBOPASS_TWO,
+    testMode: true, // Указываем true, если работаем в тестовом режиме
+  };
+
+  const roboKassa = new Robokaska(config);
+
+  const isValid = roboKassa.checkSuccessURLsignature(
+    invId,
+    outSum,
+    signatureValue
+  );
+  console.log('checking SUCCESS URL order... ', invId);
+  console.log('with  SUCCESS URL sum... ', outSum);
+  console.log('and  SUCCESS URL value... ', signatureValue);
+
+  console.log('SUCCESS URL  order is valid... ', isValid);
+
+  return isValid;
+}
+
 async function emptyCartFromDB(cartID: string): Promise<string> {
   // const emptyCartResponse: string = await postData(`/api/cart`, {
   const emptyCartResponse: string = await postData(
@@ -519,7 +547,11 @@ export default async function handler(
     ((orderID = body.orderID),
     (sum = body.outSum),
     (signatureValue = body.signatureValue),
-    (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
+    (orderIsValid = checkSuccesPageValidity(
+      parseInt(orderID),
+      sum,
+      signatureValue
+    )),
     res.status(200).json({ isValid: orderIsValid }));
 
   !body.oper &&
