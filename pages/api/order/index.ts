@@ -421,7 +421,7 @@ async function makeOrderPaid(
             `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
           );
 
-          console.log('telegram response is ...', teleResponse);
+          console.log('telegram response is ...', teleResponse.statusText);
 
           setAlertsSent(paidOrderData.data.id);
 
@@ -518,7 +518,8 @@ export default async function handler(
     (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
     res.status(200).json({ isValid: orderIsValid }));
 
-  body.InvId &&
+  !body.oper &&
+    body.InvId &&
     body.OutSum &&
     body.SignatureValue &&
     ((orderID = body.InvId),
