@@ -152,7 +152,7 @@ const Success = ({
     });
   };
 
-  const invID = oneObject.InvID;
+  const invID = oneObject.InvId;
   const outSum = oneObject.OutSum;
   const signatureValue = oneObject.SignatureValue;
 
