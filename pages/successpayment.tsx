@@ -30,7 +30,6 @@ export const getServerSideProps: GetServerSideProps = async (
     outSum: string,
     signatureValue: string
   ): Promise<boolean> => {
-    console.log('checking order from frontend ...');
     const checkOrderObj: chekObjType = await postData(
       `https://mi59173.tw1.ru/api/order`,
       {
@@ -40,7 +39,6 @@ export const getServerSideProps: GetServerSideProps = async (
         signatureValue: signatureValue,
       }
     );
-    console.log('checked order is ...', checkOrderObj);
     return checkOrderObj.isValid;
   };
 
@@ -52,16 +50,13 @@ export const getServerSideProps: GetServerSideProps = async (
   if (method === 'GET') {
     const oneObject = { valid: 'invalid' };
     return { props: { oneObject } };
-    // return { props: { oneObject } };
   }
 
   const read = req.read();
 
   const dataString = read.toString();
-  console.log('datastring is ... ', dataString);
 
   const dataItems = dataString.split('&');
-  console.log(dataItems);
 
   const dataObjects: Record<string, string>[] = dataItems.map(
     (item: string) => {
@@ -74,14 +69,10 @@ export const getServerSideProps: GetServerSideProps = async (
     }
   );
 
-  console.log('data objects are ... ', dataObjects);
-
   let oneObject: propsType = {};
   dataObjects.forEach((object) => {
     oneObject = { ...oneObject, ...object };
   });
-
-  console.log('one object is ... ', oneObject);
 
   const invID = oneObject.InvId;
   const outSum = oneObject.OutSum;
@@ -165,7 +156,6 @@ const Success = ({
 }: {
   oneObject: propsType;
 }): React.ReactElement => {
-  console.log('props are: ', oneObject);
   const router = useRouter();
 
   const [itemsLinks, setItemsLinks] = useState<LinkReturnType[]>();
@@ -184,10 +174,8 @@ const Success = ({
   };
 
   const isInvalid = oneObject.valid === 'invalid';
-  console.log(' ... is invalid is ... ', isInvalid);
 
   const invID = oneObject.InvId;
-  console.log(' ... InvId is ... ', invID);
 
   useEffect(() => {
     invID && getAllLinks(invID);
