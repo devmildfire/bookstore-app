@@ -11,6 +11,8 @@ export type OrdersInsertType = Omit<OrdersType, 'id' | 'created_at'>;
 export type OrderItemType = Tables<'OrderItems'>;
 export type OrderItemInsertType = Omit<OrderItemType, 'id'>;
 
+const domainURL = process.env.NEXT_PUBLIC_DOMAIN_URL;
+
 export type roboUrlProps = {
   invoiceID: number;
   email: string;
@@ -103,13 +105,10 @@ function checkSuccesPageValidity(
 
 async function emptyCartFromDB(cartID: string): Promise<string> {
   // const emptyCartResponse: string = await postData(`/api/cart`, {
-  const emptyCartResponse: string = await postData(
-    `https://mi59173.tw1.ru/api/cart`,
-    {
-      oper: 'emptycart',
-      id: cartID,
-    }
-  );
+  const emptyCartResponse: string = await postData(`${domainURL}/api/cart`, {
+    oper: 'emptycart',
+    id: cartID,
+  });
   return emptyCartResponse;
 }
 
@@ -356,10 +355,6 @@ async function telegramAlert(
   const url = `https://api.telegram.org/bot${token}/sendMessage`; // The url to request
   const text = `Кто-то с электронной почтой ${email} сделал заказ ${order}. Детали заказа ${details}`;
 
-  // console.log('trying to send message with token: ', token);
-  // console.log('url: ', url);
-  // console.log('trying to send message to Telegram chat id: ', chatID);
-
   const obj = {
     chat_id: chatID, // Telegram chat id
     text: text, // The text to send
@@ -445,12 +440,12 @@ async function makeOrderPaid(
           const response = await emailAlert(
             paidOrderData.data.email,
             paidOrderData.data.id,
-            `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
+            `${domainURL}/dashboard/orders/${paidOrderData.data.id}`
           );
           const teleResponse = await telegramAlert(
             paidOrderData.data.email,
             paidOrderData.data.id,
-            `https://mi59173.tw1.ru/dashboard/orders/${paidOrderData.data.id}`
+            `${domainURL}/dashboard/orders/${paidOrderData.data.id}`
           );
 
           console.log('telegram response is ...', teleResponse.statusText);
@@ -563,7 +558,5 @@ export default async function handler(
     (signatureValue = body.SignatureValue),
     (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
     orderIsValid && makeOrderPaid(orderID),
-    res.status(200).send(`OK${orderID}`));
+    orderIsValid && res.status(200).send(`OK${orderID}`));
 }
-
-// res.status(200).json({ status: 'OK', order: orderID, sum: sum })
