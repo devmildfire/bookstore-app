@@ -16,14 +16,33 @@ import RedLink from '@/components/Common/Link/RedLink';
 
 import { GetServerSideProps } from 'next/types';
 import { type GetServerSidePropsContext } from 'next';
+// import { isEmpty } from '@/utils/isEmpty';
 
-type propsType = {
-  [key: string]: string;
+type propsType = { [key: string]: string };
+
+type chekObjType = {
+  isValid: boolean;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const checkOrder = async (
+    invID: string,
+    outSum: string,
+    signatureValue: string
+  ): Promise<boolean> => {
+    console.log('checking order from frontend ...');
+    const checkOrderObj: chekObjType = await postData(`/api/order`, {
+      oper: 'checkOrder',
+      orderID: invID,
+      outSum: outSum,
+      signatureValue: signatureValue,
+    });
+    console.log('checked order is ...', checkOrderObj);
+    return checkOrderObj.isValid;
+  };
+
   const req = context.req;
   const read = req.read();
 
@@ -53,13 +72,17 @@ export const getServerSideProps: GetServerSideProps = async (
 
   console.log('one object is ... ', oneObject);
 
-  // const jso = {
-  //   InvID: 1,
-  //   OutSum: 23,
-  //   SignatureValue: 'randomValue',
-  // } as propsType;
+  const invID = oneObject.InvId;
+  const outSum = oneObject.OutSum;
+  const signatureValue = oneObject.SignatureValue;
 
-  // return { props: { repo } };
+  const orderIsValid = await checkOrder(invID, outSum, signatureValue);
+
+  if (orderIsValid) {
+    oneObject = { ...oneObject, valid: 'valid' };
+  } else {
+    oneObject = { valid: 'invalid' };
+  }
 
   return { props: { oneObject } };
 };
@@ -126,21 +149,11 @@ const StyledButton = styled(Button)`
   }
 `;
 
-type chekObjType = {
-  isValid: boolean;
-};
-
-const Success = ({
-  oneObject,
-}: {
-  oneObject: propsType;
-}): React.ReactElement => {
+const Success = (oneObject: propsType): React.ReactElement => {
   console.log('props are: ', oneObject);
 
-  const [cartID, setCartID] = useState('');
+  // const [cartID, setCartID] = useState('');
 
-  const [order, setOrder] = useState<OrdersType | null>(null);
-  const [orderItems, setOrderItems] = useState<OrderItemType[] | []>();
   const [itemsLinks, setItemsLinks] = useState<LinkReturnType[]>();
   const [retries, setRetries] = useState(0);
 
@@ -156,38 +169,42 @@ const Success = ({
     });
   };
 
+  const isInvalid = oneObject.valid === 'invalid';
+
   const invID = oneObject.InvId;
-  const outSum = oneObject.OutSum;
-  const signatureValue = oneObject.SignatureValue;
+  // const outSum = oneObject.OutSum;
+  // const signatureValue = oneObject.SignatureValue;
+
+  // useEffect(() => {
+  //   const newCartID = setOrGetCartCookie()?.toString();
+
+  //   if (newCartID) {
+  //     setCartID(newCartID);
+  //   }
+  // }, []);
 
   useEffect(() => {
-    const newCartID = setOrGetCartCookie()?.toString();
-
-    if (newCartID) {
-      setCartID(newCartID);
-    }
-  }, []);
-
-  useEffect(() => {
-    invID && checkOrder(invID, outSum, signatureValue);
-    invID && getAllLinks(invID.toString());
+    // invID && checkOrder(invID, outSum, signatureValue);
+    invID && getAllLinks(invID);
   }, [invID, retries]);
 
-  const checkOrder = async (
-    invID: string,
-    outSum: string,
-    signatureValue: string
-  ): Promise<boolean> => {
-    console.log('checking order from frontend ...');
-    const checkOrderObj: chekObjType = await postData(`/api/order`, {
-      oper: 'checkOrder',
-      orderID: invID,
-      outSum: outSum,
-      signatureValue: signatureValue,
-    });
-    console.log('checked order is ...', checkOrderObj);
-    return checkOrderObj.isValid;
-  };
+  if (isInvalid) return <div> Что-то пошло не так </div>;
+
+  // const checkOrder = async (
+  //   invID: string,
+  //   outSum: string,
+  //   signatureValue: string
+  // ): Promise<boolean> => {
+  //   console.log('checking order from frontend ...');
+  //   const checkOrderObj: chekObjType = await postData(`/api/order`, {
+  //     oper: 'checkOrder',
+  //     orderID: invID,
+  //     outSum: outSum,
+  //     signatureValue: signatureValue,
+  //   });
+  //   console.log('checked order is ...', checkOrderObj);
+  //   return checkOrderObj.isValid;
+  // };
 
   const getAllLinks = async (orderID: string) => {
     console.log('fetching links ...');
@@ -254,10 +271,6 @@ const Success = ({
             Перейти на главную
           </StyledButton>
         </div>
-        order
-        <pre>{JSON.stringify(order, null, 2)}</pre>
-        items
-        <pre>{JSON.stringify(orderItems, null, 2)}</pre>
         links
         <pre>{JSON.stringify(itemsLinks, null, 2)}</pre>
       </SuccessDiv>
