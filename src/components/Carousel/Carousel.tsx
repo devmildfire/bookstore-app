@@ -6,7 +6,10 @@ import React, {
   PropsWithChildren,
   RefObject,
 } from 'react';
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+// import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+
+import useEmblaCarousel from 'embla-carousel-react';
+import { EmblaOptionsType } from 'embla-carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import styled, { StyledComponent } from 'styled-components';
 import { DotButton } from './DotButton';
