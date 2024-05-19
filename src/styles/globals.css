@@ -6,6 +6,8 @@
 @import url('./normalize.css');
 
 :root {
+  --slide-size: 60%;
+
   --text-high-contrast-rgb-value: '49, 49, 49';
   /* --detail-medium-contrast: rgba(22, 13, 13, 0.673); */
   --detail-medium-contrast: rgb(54, 49, 61);
@@ -197,6 +199,7 @@ body {
   :root {
     --width: 640px;
     --top-div-gap: 30px;
+    --slide-size: 80%;
   }
 }
 

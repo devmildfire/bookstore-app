@@ -1,8 +1,8 @@
 .embla {
   /* max-width: 48rem; */
-  display: grid;
+  /* display: grid;
   column-gap: 20px;
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: min-content 1fr min-content; */
 
   margin: auto;
   /* --slide-height: 19rem;
@@ -10,8 +10,9 @@
   --slide-height: auto;
 
   --slide-spacing: 1rem;
-  --slide-size: 60%;
+  /* --slide-size: 60%; */
 }
+
 .embla__viewport {
   overflow: hidden;
   padding: 50px 0;
@@ -50,13 +51,15 @@
   justify-content: center;
   align-items: center;
 }
+/* 
 .embla__buttons {
-  /* display: grid;
+  display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.6rem;
-  align-items: center; */
+  align-items: center;
   display: block;
-}
+} */
+
 .embla__button {
   -webkit-tap-highlight-color: rgba(49, 49, 49, 0.5);
 
