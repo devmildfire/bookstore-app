@@ -16,6 +16,10 @@ import { CartItemType } from 'pages/api/cart';
 import { Database } from 'api/books/types';
 import Link from 'next/link';
 import { postData } from '@/utils/postData';
+import BookPhotos from '../BookPhotos/BookPhotos';
+import { EmblaOptionsType } from 'embla-carousel';
+
+const OPTIONS: EmblaOptionsType = { loop: true };
 
 type productCtegory = Database['public']['Enums']['category'];
 
@@ -604,6 +608,10 @@ const PrintEdition = () => {
   const { size, paper, cover, bindings, illustrations } = options[0];
   const { width, height } = size[0];
 
+  const printPhotos = title.Photos.filter(
+    (photo) => photo.category === 'PrintBook'
+  );
+
   return (
     <TabContent>
       <TitleConteiner>
@@ -684,6 +692,9 @@ const PrintEdition = () => {
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
+      {printPhotos.length > 0 && (
+        <BookPhotos photos={printPhotos} options={OPTIONS} />
+      )}
     </TabContent>
   );
 };

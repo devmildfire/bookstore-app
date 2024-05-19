@@ -27,6 +27,7 @@ import { Observer, observer } from 'mobx-react-lite';
 // import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';
 // import { useLocalStore } from '@/store/hooks/useLocalStore';
 // import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
+import '@/components/BookPage/BookPhotos/embla.css';
 
 const MyApp: NextPage<AppProps> = observer((props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());

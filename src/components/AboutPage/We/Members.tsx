@@ -4,7 +4,9 @@ import MemberCard from './MemberCard';
 import members from '@/mocks/members';
 import setUUIDField from '@/utils/setUUIDField';
 
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { EmblaOptionsType } from 'embla-carousel';
+
 import styled from 'styled-components';
 import Autoplay from 'embla-carousel-autoplay';
 

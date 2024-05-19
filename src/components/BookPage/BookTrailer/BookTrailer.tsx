@@ -13,18 +13,14 @@ const BookTrailer = (props: BookTrailerProps): React.ReactElement => {
     <StyleWrapper>
       <Title>Буктрейлер</Title>
       <TrailerContainer>
-        <TrailerVideo
-          src={src}
-          title={title}
-          controls={true}
-          poster={cover}
-          // frameBorder='0'
-          // allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-          // allowFullScreen
-        />
+        <TrailerVideo title={title} controls={true} muted={true} preload='auto'>
+          <source src={`${src}#t=0.5`} />
+        </TrailerVideo>
       </TrailerContainer>
     </StyleWrapper>
   );
 };
 
 export default BookTrailer;
+
+// poster={`${src}#t=0.1`}

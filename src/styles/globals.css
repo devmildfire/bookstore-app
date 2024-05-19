@@ -6,6 +6,11 @@
 @import url('./normalize.css');
 
 :root {
+  --text-high-contrast-rgb-value: '49, 49, 49';
+  /* --detail-medium-contrast: rgba(22, 13, 13, 0.673); */
+  --detail-medium-contrast: rgb(54, 49, 61);
+  --text-body: rgb(54, 49, 61);
+
   --super-red: rgb(255, 0, 0);
   --main-red-100: rgb(147, 0, 0);
   --main-red-90: rgba(147, 0, 0, 0.9);

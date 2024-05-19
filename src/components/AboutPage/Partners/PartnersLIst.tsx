@@ -3,8 +3,9 @@ import PartnerCard from './PartnerCard';
 import partners from '@/mocks/partners';
 // import Marquee from '@/components/Common/Marquee';
 import setUUIDField from '@/utils/setUUIDField';
+import { EmblaOptionsType } from 'embla-carousel';
 
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+import useEmblaCarousel from 'embla-carousel-react';
 import styled from 'styled-components';
 import Autoplay from 'embla-carousel-autoplay';
 

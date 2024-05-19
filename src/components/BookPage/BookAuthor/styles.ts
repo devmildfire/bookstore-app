@@ -61,10 +61,11 @@ export const AuthorInfo = styled.div`
 `;
 
 export const AuthorPhoto = styled.img`
-  height: 320px;
-  width: 320px;
+  aspect-ratio: 1;
+  /* height: 320px; */
+  width: 560px;
   display: block;
-  object-fit: cover;
+  /* object-fit: cover; */
   border-radius: 50%;
   filter: saturate(0%);
   transition: 1s;
@@ -72,7 +73,7 @@ export const AuthorPhoto = styled.img`
     filter: saturate(100%);
   }
   @media ${breakPoints.xl} {
-    /* width: 416px; */
+    width: 385px;
     /* height: 416px; */
   }
 
@@ -82,7 +83,7 @@ export const AuthorPhoto = styled.img`
 
   @media ${breakPoints.sm} {
     width: 288px;
-    height: 288px;
+    /* height: 288px; */
   }
 `;
 
