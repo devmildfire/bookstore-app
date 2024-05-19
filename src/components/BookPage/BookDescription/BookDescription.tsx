@@ -65,7 +65,11 @@ const BookDescription = (props: Title): React.ReactElement => {
     description,
     authors,
     thesis,
+    eBook,
+    awards,
   } = props;
+
+  const ISBN = eBook?.ISBN;
 
   const [isImageOpen, setIsImageOpen] = useState(false);
   // const year = new Date(publishDate).getFullYear();
@@ -132,6 +136,22 @@ const BookDescription = (props: Title): React.ReactElement => {
           >
             {description}
           </Text>
+          {ISBN && (
+            <Text
+              variant='h3_3'
+              component='p'
+              textColor='white80'
+              fontWeight={300}
+            >
+              ISBN: {ISBN}
+            </Text>
+          )}
+          {awards &&
+            awards.map((award) => (
+              <div className='max-w-44' key={award.title}>
+                <img src={award.source} alt={award.title} />
+              </div>
+            ))}
         </StyledDescription>
       </DescriptionLayout>
     </StyledWrapper>

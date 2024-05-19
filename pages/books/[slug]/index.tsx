@@ -15,6 +15,13 @@ import { observer } from 'mobx-react-lite';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { useRouter } from 'next/router';
 import { Title, extendTitles } from '..';
+import { EmblaOptionsType } from 'embla-carousel';
+
+import BookPhotos from '@/components/BookPage/BookPhotos/BookPhotos';
+
+const OPTIONS: EmblaOptionsType = { loop: true };
+const SLIDE_COUNT = 5;
+const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
 
 interface BookPageProps {
   readonly book: Title;
@@ -69,11 +76,18 @@ const BookPage = observer((): React.ReactElement => {
 
   if (!book) return <p>Не удалось загрузить страницу книги</p>;
 
+  // const printPhotos = book.Photos.filter(
+  //   (photo) => photo.category === 'PrintBook'
+  // );
+
   return (
     <PageLayout headTitle={book.name}>
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
         <BookProperties {...book} />
+        {/* {printPhotos.length > 0 && (
+          <BookPhotos photos={printPhotos} options={OPTIONS} />
+        )} */}
 
         {book.trailer && (
           <BookTrailer
