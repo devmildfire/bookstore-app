@@ -479,10 +479,10 @@ const AudioEdition = () => {
     return <div> no audioBook edition </div>;
   }
 
-  const { demo, authors } = title;
+  const { authors } = title;
   const authorsString = authors.map((author) => author.name).join(', ');
 
-  const { price, discount, releaseDate, extra, duration, fileVolume } =
+  const { price, discount, releaseDate, extra, duration, fileVolume, demo } =
     audioBook;
 
   const fileSize = parseInt(fileVolume) / 1024;
@@ -528,7 +528,9 @@ const AudioEdition = () => {
             </ButtonsText>
           )}
 
-          <TabButton href={demo}>Демо-версия</TabButton>
+          <TabButton href={demo} target='_blank'>
+            Демо-версия
+          </TabButton>
         </Buttons>
         <Paragraphs>
           <DesctiptionItem>
