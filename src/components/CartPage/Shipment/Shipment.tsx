@@ -294,7 +294,7 @@ export function Shipment({
             className='formField'
             type='text'
             placeholder='example@example.ru'
-            label='Email'
+            label='E-mail'
             register={register('email', { required: 'email is required' })}
             name='email'
             error={errors.email}
