@@ -12,9 +12,9 @@ import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { useRouter } from 'next/router';
 import { Title, extendTitles } from '..';
 
-interface BookPageProps {
-  readonly book: Title;
-}
+// interface BookPageProps {
+//   readonly book: Title;
+// }
 
 const BookPage = observer((): React.ReactElement => {
   const router = useRouter();
@@ -32,9 +32,6 @@ const BookPage = observer((): React.ReactElement => {
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
         <BookProperties {...book} />
-        {/* {printPhotos.length > 0 && (
-          <BookPhotos photos={printPhotos} options={OPTIONS} />
-        )} */}
 
         {book.trailer && (
           <BookTrailer

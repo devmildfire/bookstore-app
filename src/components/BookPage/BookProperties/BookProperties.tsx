@@ -252,6 +252,8 @@ const DigitalEdition = () => {
 
   const { price, discount, releaseDate, characters, extra } = eBook;
 
+  const ePhotos = title.Photos.filter((photo) => photo.category === 'EBook');
+
   return (
     <TabContent>
       <TitleConteiner>
@@ -309,15 +311,11 @@ const DigitalEdition = () => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>
-              {extra}
-              {/* редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
-              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский */}
-            </DescriptionValue>
+            <DescriptionValue>{extra}</DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
+      {ePhotos.length > 0 && <BookPhotos photos={ePhotos} options={OPTIONS} />}
     </TabContent>
   );
 };
@@ -361,6 +359,10 @@ const Book2Edition = () => {
   const authorsString = authors.map((author) => author.name).join(', ');
 
   const { price, discount, releaseDate, extra } = cardBook;
+
+  const cardPhotos = title.Photos.filter(
+    (photo) => photo.category === 'Book2.0'
+  );
 
   return (
     <TabContent>
@@ -435,6 +437,9 @@ const Book2Edition = () => {
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
+      {cardPhotos.length > 0 && (
+        <BookPhotos photos={cardPhotos} options={OPTIONS} />
+      )}
     </TabContent>
   );
 };
