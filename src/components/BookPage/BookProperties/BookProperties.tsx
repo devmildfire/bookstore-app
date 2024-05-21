@@ -34,7 +34,16 @@ export interface EditionProps {
   price: number;
 }
 
-const TabContent = styled.div``;
+const TabContent = styled.div`
+  margin: 44px 110px;
+  @media ${breakPoints.lg} {
+    margin: 24px;
+  }
+  @media screen and (max-width: 576px) {
+    margin: 12px;
+  }
+`;
+
 const TabTitle = styled.h3`
   font-size: 40px;
   font-weight: 700;
@@ -620,89 +629,93 @@ const PrintEdition = () => {
   );
 
   return (
-    <TabContent>
-      <TitleConteiner>
-        <TabTitle>Печатное издание</TabTitle>
-        <Price>{price}₽</Price>
-      </TitleConteiner>
+    <>
+      <TabContent>
+        <TitleConteiner>
+          <TabTitle>Печатное издание</TabTitle>
+          <Price>{price}₽</Price>
+        </TitleConteiner>
 
-      <Descrption>
-        <Buttons>
-          {!bookIsInTheCart && !buttonClicked && (
-            <TabButton
-              className='cartButton'
-              type='button'
-              onClick={() => {
-                addBookToCart({
-                  name: title.name,
-                  price: price,
-                  discount: discount,
-                  author: authorsString,
-                  category: 'PrintBook',
-                  src: title.cover,
-                });
-                setButtonClicked(true);
-              }}
-            >
-              Добавить в корзину
-            </TabButton>
-          )}
-
-          {(bookIsInTheCart || buttonClicked) && (
-            <ButtonsText>
-              <Link
-                href={'/cart'}
-                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+        <Descrption>
+          <Buttons>
+            {!bookIsInTheCart && !buttonClicked && (
+              <TabButton
+                className='cartButton'
+                type='button'
+                onClick={() => {
+                  addBookToCart({
+                    name: title.name,
+                    price: price,
+                    discount: discount,
+                    author: authorsString,
+                    category: 'PrintBook',
+                    src: title.cover,
+                  });
+                  setButtonClicked(true);
+                }}
               >
-                книга уже в корзине
-              </Link>
-            </ButtonsText>
-          )}
+                Добавить в корзину
+              </TabButton>
+            )}
 
-          <ButtonsText>Цифровое издание в подарок.</ButtonsText>
-          <ButtonsText>Условия доставки обсуждаются индивидуально.</ButtonsText>
-        </Buttons>
-        <Paragraphs>
-          <DesctiptionItem>
-            <DescriptionKey>Дата релиза:</DescriptionKey>
-            <DescriptionValue>{releaseDate}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Формат:</DescriptionKey>
-            <DescriptionValue>
-              {width}x{height} мм
-            </DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Объём:</DescriptionKey>
-            <DescriptionValue>{pages} стр</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Бумага:</DescriptionKey>
-            <DescriptionValue>{paper}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Обложка:</DescriptionKey>
-            <DescriptionValue>{cover}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Переплет:</DescriptionKey>
-            <DescriptionValue>{bindings}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Иллюстрации:</DescriptionKey>
-            <DescriptionValue>{illustrations}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>{extra}</DescriptionValue>
-          </DesctiptionItem>
-        </Paragraphs>
-      </Descrption>
+            {(bookIsInTheCart || buttonClicked) && (
+              <ButtonsText>
+                <Link
+                  href={'/cart'}
+                  className='hover:underline hover:text-red-600 text-red-800 duration-300'
+                >
+                  книга уже в корзине
+                </Link>
+              </ButtonsText>
+            )}
+
+            <ButtonsText>Цифровое издание в подарок.</ButtonsText>
+            <ButtonsText>
+              Условия доставки обсуждаются индивидуально.
+            </ButtonsText>
+          </Buttons>
+          <Paragraphs>
+            <DesctiptionItem>
+              <DescriptionKey>Дата релиза:</DescriptionKey>
+              <DescriptionValue>{releaseDate}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Формат:</DescriptionKey>
+              <DescriptionValue>
+                {width}x{height} мм
+              </DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Объём:</DescriptionKey>
+              <DescriptionValue>{pages} стр</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Бумага:</DescriptionKey>
+              <DescriptionValue>{paper}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Обложка:</DescriptionKey>
+              <DescriptionValue>{cover}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Переплет:</DescriptionKey>
+              <DescriptionValue>{bindings}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Иллюстрации:</DescriptionKey>
+              <DescriptionValue>{illustrations}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Над изданием работали:</DescriptionKey>
+              <DescriptionValue>{extra}</DescriptionValue>
+            </DesctiptionItem>
+          </Paragraphs>
+        </Descrption>
+      </TabContent>
       {printPhotos.length > 0 && (
         <BookPhotos photos={printPhotos} options={OPTIONS} />
       )}
-    </TabContent>
+    </>
   );
 };
 
