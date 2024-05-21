@@ -65,7 +65,7 @@ export const AuthorPhoto = styled.img`
   /* height: 320px; */
   width: 560px;
   display: block;
-  /* object-fit: cover; */
+  object-fit: cover;
   border-radius: 50%;
   filter: saturate(0%);
   transition: 1s;

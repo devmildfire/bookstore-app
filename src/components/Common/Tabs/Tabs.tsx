@@ -155,16 +155,11 @@ const Labels = styled.ul`
 const StyledTabContent = styled.div`
   border: thin solid var(--main-white-100);
   border-radius: 0 0 14px 14px;
-  padding: 44px 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-  @media ${breakPoints.lg} {
-    padding: 24px;
-  }
 
   @media screen and (max-width: 576px) {
-    padding: 12px;
     border: none;
   }
 `;

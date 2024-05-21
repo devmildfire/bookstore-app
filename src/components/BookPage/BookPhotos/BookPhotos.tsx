@@ -115,9 +115,9 @@ const BookPhotos: React.FC<PropType> = (props) => {
   }, [emblaApi, tweenScale]);
 
   return (
-    <div className='embla w-full grid grid-cols-1 md:gap-5 md:grid-cols-[min-content_1fr_min-content]'>
+    <div className='embla w-full grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'>
       <div className='embla__controls'>
-        <div className='embla__buttons hidden md:block'>
+        <div className='embla__buttons'>
           <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
           {/* <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} /> */}
         </div>
