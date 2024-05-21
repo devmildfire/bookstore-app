@@ -156,6 +156,9 @@
 .embla__slide__number {
   backface-visibility: hidden;
 }
+.embla__slide__number img {
+  width: 100%;
+}
 
 .embla__slide:not(.is-snapped) {
   opacity: 0.3;
