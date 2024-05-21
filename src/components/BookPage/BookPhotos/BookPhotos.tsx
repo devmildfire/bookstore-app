@@ -36,6 +36,16 @@ const BookPhotos: React.FC<PropType> = (props) => {
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
 
+  const fullScreenElement = useRef<HTMLDivElement>(null);
+
+  const toggleFullScreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      fullScreenElement.current?.requestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }, []);
+
   const { selectedIndex, scrollSnaps, onDotButtonClick } =
     useDotButton(emblaApi);
 
@@ -115,7 +125,10 @@ const BookPhotos: React.FC<PropType> = (props) => {
   }, [emblaApi, tweenScale]);
 
   return (
-    <div className='embla w-full grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'>
+    <div
+      className='embla w-full max-h-screen grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'
+      ref={fullScreenElement}
+    >
       <div className='embla__controls'>
         <div className='embla__buttons'>
           <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
@@ -140,7 +153,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
           {photos.map((photo, index) => (
             <div className='embla__slide' key={index}>
               {/* <div className='embla__slide__number'>{index + 1}</div> */}
-              <div className='embla__slide__number'>
+              <div className='embla__slide__number' onClick={toggleFullScreen}>
                 <img src={photo.source} alt={photo.titleId.toString()} />
               </div>
             </div>
