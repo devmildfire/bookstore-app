@@ -17,6 +17,15 @@
   overflow: hidden;
   padding: 50px 0;
 }
+
+.embla:fullscreen .embla__viewport {
+  /* font-size: 3em;
+  text-align: center; */
+  padding: 0;
+  max-height: 100vh;
+  margin: auto 0;
+}
+
 .embla__container {
   backface-visibility: hidden;
   display: flex;
@@ -28,6 +37,7 @@
   flex: 0 0 var(--slide-size);
   min-width: 0;
   padding-left: var(--slide-spacing);
+  max-height: 100vh;
 }
 .embla__slide__number {
   /* background-color: blue; */
