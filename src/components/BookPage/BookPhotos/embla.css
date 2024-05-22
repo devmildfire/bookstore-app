@@ -20,6 +20,9 @@
   /* overflow-x: clip;
   overflow-y: visible; */
   padding: 50px 0;
+  outline-style: none;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 .embla:fullscreen .embla__viewport {
