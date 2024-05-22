@@ -127,12 +127,8 @@ const Trigger = styled.button<TriggerProps>`
 `;
 
 const StyledTabs = styled.div`
-  /* min-width: 320px; */
   @media screen and (max-width: 576px) {
     width: 100%;
-    padding: 0 20px;
-    /* max-width: 425px; */
-    /* padding: 0 20px; */
   }
 `;
 // const Title = styled.h3`
