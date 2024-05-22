@@ -163,12 +163,17 @@ const BookPhotos: React.FC<PropType> = (props) => {
         </div> */}
       </div>
 
-      <div className='embla__viewport' tabIndex={0} ref={emblaRef}>
+      <div
+        className='embla__viewport'
+        tabIndex={0}
+        ref={emblaRef}
+        onClick={toggleFullScreen}
+      >
         <div className='embla__container'>
           {photos.map((photo, index) => (
             <div className='embla__slide' key={index}>
               {/* <div className='embla__slide__number'>{index + 1}</div> */}
-              <div className='embla__slide__number' onClick={toggleFullScreen}>
+              <div className='embla__slide__number'>
                 <img src={photo.source} alt={photo.titleId.toString()} />
               </div>
             </div>
