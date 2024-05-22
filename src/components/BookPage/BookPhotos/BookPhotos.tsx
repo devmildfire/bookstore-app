@@ -36,6 +36,19 @@ const BookPhotos: React.FC<PropType> = (props) => {
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
 
+  const setupKeyEventsForCarousels = (carousel: EmblaCarouselType) => {
+    document.addEventListener('keyup', (event) => {
+      switch (event.code) {
+        case 'ArrowLeft':
+          carousel.scrollPrev();
+          break;
+        case 'ArrowRight':
+          carousel.scrollNext();
+          break;
+      }
+    });
+  };
+
   const fullScreenElement = useRef<HTMLDivElement>(null);
 
   const toggleFullScreen = useCallback(() => {
@@ -122,6 +135,8 @@ const BookPhotos: React.FC<PropType> = (props) => {
       .on('reInit', tweenScale)
       .on('scroll', tweenScale)
       .on('slideFocus', tweenScale);
+
+    setupKeyEventsForCarousels(emblaApi);
   }, [emblaApi, tweenScale]);
 
   return (
@@ -148,7 +163,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
         </div> */}
       </div>
 
-      <div className='embla__viewport' ref={emblaRef}>
+      <div className='embla__viewport' tabIndex={0} ref={emblaRef}>
         <div className='embla__container'>
           {photos.map((photo, index) => (
             <div className='embla__slide' key={index}>

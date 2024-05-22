@@ -15,11 +15,6 @@
   align-items: center;
 }
 
-.embla:fullscreen {
-  padding: 0 7%;
-  min-height: 0;
-}
-
 .embla__viewport {
   overflow: hidden;
   /* overflow-x: clip;
@@ -190,9 +185,35 @@
     -20px -20px 50px 0px rgba(0, 0, 0, 0.5);
 }
 
-@media screen and (max-width: 1200px) {
+.embla:fullscreen {
+  padding: 0 7%;
+  min-height: 0;
+}
+
+@media screen and (max-width: 2500px) {
   .embla:fullscreen {
-    padding: 0 0%;
+    padding: 0 7%;
+    min-height: 0;
+  }
+}
+
+@media screen and (max-width: 2000px) {
+  .embla:fullscreen {
+    padding: 0 6%;
+    min-height: 0;
+  }
+}
+
+@media screen and (max-width: 1920px) {
+  .embla:fullscreen {
+    padding: 0 5%;
+    min-height: 0;
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  .embla:fullscreen {
+    padding: 0 3%;
     min-height: 0;
   }
 }
@@ -204,23 +225,16 @@
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1023px) {
   .embla:fullscreen {
-    padding: 0 6%;
+    padding: 0 11%;
     min-height: 0;
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 800px) {
   .embla:fullscreen {
-    padding: 0 12%;
-    min-height: 0;
-  }
-}
-
-@media screen and (max-width: 900px) {
-  .embla:fullscreen {
-    padding: 0 20%;
+    padding: 0 10%;
     min-height: 0;
   }
 }

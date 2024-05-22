@@ -19,7 +19,7 @@ import { postData } from '@/utils/postData';
 import BookPhotos from '../BookPhotos/BookPhotos';
 import { EmblaOptionsType } from 'embla-carousel';
 
-const OPTIONS: EmblaOptionsType = { loop: true };
+const OPTIONS: EmblaOptionsType = { loop: true, skipSnaps: false };
 
 type productCtegory = Database['public']['Enums']['category'];
 
