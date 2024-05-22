@@ -28,15 +28,29 @@ const BugDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
+
+  /* display: grid;
+  justify-items: center;
+  align-items: center; */
+
+  display: block;
 
   img {
     position: fixed;
     max-width: 30%;
+    top: 40%;
+    right: calc((100vw - 1440px) / 2);
+  }
+
+  @media ${breakPoints.xxl} {
+    img {
+      right: 10vw;
+    }
   }
 
   @media ${breakPoints.md} {
-    flex-direction: row;
+    /* flex-direction: row; */
     width: 100%;
     margin: 0 auto;
 
