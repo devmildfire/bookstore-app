@@ -54,7 +54,6 @@ const Payment = observer(
           </Styled.CheckoutButton>
           <Styled.Instruction>
             После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
-            {cartStore.hasPhysicalGoods && 'this cart contains physical items'}
           </Styled.Instruction>
         </div>
       </Styled.Container>

@@ -299,7 +299,6 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                       setFunction={filters!.setYearFilter}
                       // setFunction={(i: string[]) => {}}
                     />
-                    <pre>{JSON.stringify(filters, null, 2)}</pre>
                   </Container>
                 </Wrapper>
               </Content>

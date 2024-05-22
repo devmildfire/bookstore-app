@@ -59,10 +59,12 @@ function Preview({
           >
             <BookDescriptionContainer gap={32}>
               <InfoContainer gap={12}>
-                <Title>{preview.name}</Title>
-                <Author>
-                  {preview.authors.map((author) => author.name).join(', ')}
-                </Author>
+                <div>
+                  <Title>{preview.name}</Title>
+                  <Author>
+                    {preview.authors.map((author) => author.name).join(', ')}
+                  </Author>
+                </div>
                 <Slogan>{preview.thesis}</Slogan>
               </InfoContainer>
               <DescriptionBox>
