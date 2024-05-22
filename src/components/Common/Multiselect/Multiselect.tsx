@@ -15,6 +15,13 @@ import {
 } from './styles';
 import { Cross2Icon } from '@radix-ui/react-icons';
 
+const itemsToLabelsObj: Record<string, string> = {
+  printedBook: 'печатное издание',
+  eBook: 'электронная книга',
+  audioBook: 'аудиокнига',
+  cardBook: 'книга 2.0',
+};
+
 type SelectData = string[];
 
 type MultiselectProps = {
@@ -108,7 +115,7 @@ export function Multiselect(props: MultiselectProps) {
                 onSelect={() => dispatch({ type: 'selected', item })}
                 key={item}
               >
-                {item}
+                {item in itemsToLabelsObj ? itemsToLabelsObj[item] : item}
               </SelectItem>
             ))}
           </SelectList>
@@ -121,7 +128,9 @@ export function Multiselect(props: MultiselectProps) {
                 key={item}
                 onClick={() => dispatch({ type: 'removed', item })}
               >
-                <ItemText>{item}</ItemText>
+                <ItemText>
+                  {item in itemsToLabelsObj ? itemsToLabelsObj[item] : item}
+                </ItemText>
                 <RemoveButton>
                   <Cross2Icon />
                 </RemoveButton>

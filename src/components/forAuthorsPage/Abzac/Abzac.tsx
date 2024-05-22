@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import abzacLogo from '@/assets/images/AbzacLogo_oldsite.png';
+import abzacIcon from '@/assets/images/abzac-cover_small.png';
 
 import Text from '@/components/Common/Text';
 import {
@@ -65,7 +66,7 @@ async function addCourseToCart({
     price: price,
     discount: discount,
     subtitle: lector,
-    picture: abzacLogo.src,
+    picture: abzacIcon.src,
   };
 
   const addedItem: CartItemType = await postData(`/api/cart`, {

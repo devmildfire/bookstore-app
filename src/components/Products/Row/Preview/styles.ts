@@ -99,6 +99,7 @@ export const InfoContainer = styled(Container)`
 export const Title = styled.h2`
   font-size: var(--font-heading-xl);
   font-family: 'Cheque', serif;
+  line-height: 56px;
 `;
 
 export const Author = styled.p`

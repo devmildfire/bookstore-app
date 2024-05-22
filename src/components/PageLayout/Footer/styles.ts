@@ -62,6 +62,19 @@ export const FooterContact = styled.div`
   flex-direction: row;
   align-items: center;
   font-weight: 600;
+
+  a svg {
+    stroke: var(--main-white-100);
+    color: var(--main-white-100);
+  }
+
+  :hover {
+    a,
+    a svg {
+      color: var(--main-red-100);
+      stroke: var(--main-red-100);
+    }
+  }
 `;
 
 export const FooterContactLink = styled.a`
@@ -77,6 +90,7 @@ export const FooterContactLink = styled.a`
   line-height: 17px;
 
   color: #dcdcdc;
+  transition: all 0.3s ease-in-out;
 `;
 
 export const FooterInfo = styled.div`
@@ -123,13 +137,13 @@ export const Icon = styled.svg`
 `;
 
 export const ContactIcon = styled.svg`
-  stroke: var(--main-white-100);
+  /* stroke: var(--main-white-100); */
   transition: all 0.3s ease-in-out;
 
-  :hover {
+  /* :hover {
     color: var(--main-red-100);
     stroke: var(--main-red-100);
-  }
+  } */
 `;
 
 export const FooterLogoLink = styled.a`
