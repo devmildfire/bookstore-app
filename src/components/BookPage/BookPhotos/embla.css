@@ -11,10 +11,12 @@
 
   --slide-spacing: 1rem;
   --slide-size: 80%;
+  min-height: 75vw;
 }
 
 .embla:fullscreen {
   padding: 0 7%;
+  min-height: 0;
 }
 
 .embla__viewport {
