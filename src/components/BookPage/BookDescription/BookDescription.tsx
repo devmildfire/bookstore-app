@@ -17,6 +17,7 @@ import Text from '@/components/Common/Text';
 import { Author } from '@/types/author';
 import breakPoints from '@/utils/breakPoints';
 import { Title } from 'pages/books';
+import getDateString from '@/utils/getDateString';
 
 interface BookDescriptionProps {
   readonly title: string;
@@ -69,6 +70,8 @@ const BookDescription = (props: Title): React.ReactElement => {
     awards,
   } = props;
 
+  const ruRDate = getDateString(firstRelease!);
+
   const ISBN = eBook?.ISBN;
 
   const [isImageOpen, setIsImageOpen] = useState(false);
@@ -116,9 +119,7 @@ const BookDescription = (props: Title): React.ReactElement => {
         <StyledAuthor variant='h3_2' component='h3' fontWeight={700}>
           {authors.map((author) => author.name)}
         </StyledAuthor>
-        <StyledInfo variant='h4_1' component='p' fontWeight={700}>
-          {`${firstRelease} | +${ageRestriction}`}
-        </StyledInfo>
+
         <StyledThesis
           variant='h3_3'
           component='p'
@@ -136,9 +137,13 @@ const BookDescription = (props: Title): React.ReactElement => {
           >
             {description}
           </Text>
+
+          <Text variant='h4_2' component='p' fontWeight={300}>
+            {`${ruRDate.slice(-5)} | ${ageRestriction}+`}
+          </Text>
           {ISBN && (
             <Text
-              variant='h3_3'
+              variant='h4_2'
               component='p'
               textColor='white80'
               fontWeight={300}

@@ -143,10 +143,17 @@ const BookPhotos: React.FC<PropType> = (props) => {
     <div
       className='embla w-full max-h-screen grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'
       ref={fullScreenElement}
+      onClick={toggleFullScreen}
     >
       <div className='embla__controls'>
         <div className='embla__buttons'>
-          <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+          <PrevButton
+            onClick={(event) => {
+              event.stopPropagation();
+              onPrevButtonClick();
+            }}
+            disabled={prevBtnDisabled}
+          />
           {/* <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} /> */}
         </div>
 
@@ -167,7 +174,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
         className='embla__viewport'
         tabIndex={0}
         ref={emblaRef}
-        onClick={toggleFullScreen}
+        // onClick={toggleFullScreen}
       >
         <div className='embla__container'>
           {photos.map((photo, index) => (
@@ -184,7 +191,13 @@ const BookPhotos: React.FC<PropType> = (props) => {
       <div className='embla__controls'>
         <div className='embla__buttons hidden md:block'>
           {/* <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} /> */}
-          <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+          <NextButton
+            onClick={(event) => {
+              event.stopPropagation();
+              onNextButtonClick();
+            }}
+            disabled={nextBtnDisabled}
+          />
         </div>
 
         {/* <div className='embla__dots'>

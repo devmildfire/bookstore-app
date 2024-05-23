@@ -44,7 +44,7 @@ const SubscribeForm = (): React.ReactElement => {
       setWipe(false);
       setIsvalid(valid);
       setError(
-        'Русский Динозар может писать только на валидные адреса электронной почты'
+        'Чтиво может писать только на валидные адреса электронной почты'
       );
     }
     if (value === '') {

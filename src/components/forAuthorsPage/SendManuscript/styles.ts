@@ -26,6 +26,7 @@ const BugDiv = styled.div`
   max-width: 600px;
 
   display: flex;
+  height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
@@ -39,7 +40,7 @@ const BugDiv = styled.div`
   img {
     position: fixed;
     max-width: 30%;
-    top: 40%;
+    top: 35%;
     right: calc((100vw - 1440px) / 2);
   }
 

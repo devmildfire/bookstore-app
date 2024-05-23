@@ -40,10 +40,12 @@ const StyledText = styled(Text)`
 
 const BackIcon = styled(backLinkArrow)`
   margin-right: 5px;
-  margin-top: 15px;
+  // margin-top: 15px;
 `;
 
 const ReturnButton = styled.button`
+  display: flex;
+  align-items: center;
   background-color: transparent;
   color: white;
   cursor: pointer;

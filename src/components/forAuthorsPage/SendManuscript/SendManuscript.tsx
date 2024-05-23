@@ -20,10 +20,13 @@ import FAQ from './faq';
 import RedLink from '@/components/Common/Link/RedLink';
 
 const firstString =
-  'Убедитесь, что ваша рукопись соответствует требованиям ниже, и присылайте её и синопсис на ';
+  'Убедитесь, что ваша рукопись соответствует требованиям ниже, и присылайте её вместе с синопсисом на ';
 
 const secondString =
-  'Заключаем только эксклюзивные контракты. Мы предлагаем роялти 50% от всех чистых доходов с продаж всех изданий авторского текста:';
+  'Заключаем только эксклюзивные контракты. Мы предлагаем вам роялти 50% чистого дохода от всех покупок изданий авторского текста:';
+
+const thirdString =
+  'Мы не берём денег с авторов за издание, только платим им. Если хотите издаватьс яна коммерческой основе, обратитесь в наш Русский Динозавр: ';
 
 const firstPar =
   'Здесь вы можете узнать, как отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
@@ -47,6 +50,14 @@ const SendManuscript = (): React.ReactElement => {
           </TextDiv>
         </div>
         <MediaIcons />
+        <TextDiv>
+          <Text variant='ctext'>
+            {thirdString}{' '}
+            <RedLink href='mailto:hello@russiandino.ru'>
+              info@chtivo.spb.ru
+            </RedLink>{' '}
+          </Text>
+        </TextDiv>
         <Requirements />
         <Conditions />
       </ManuscriptDiv>
@@ -84,7 +95,7 @@ const MediaIcons = (): React.ReactElement => {
 const Requirements = (): React.ReactElement => {
   return (
     <ReqDiv>
-      <Text variant='h2c'>Требования к рукописи:</Text>
+      <Text variant='h1c'>Требования к рукописи</Text>
 
       {requirements.map((requirement) => {
         return (
