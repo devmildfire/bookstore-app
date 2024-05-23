@@ -11,6 +11,8 @@ import {
   Title,
 } from './styles';
 import { IAuthor } from '@/entities/author/client';
+import getDateString from '@/utils/getDateString';
+import Text from '@/components/Common/Text';
 
 interface BookAuthorProps {
   readonly authors: IAuthor[];
@@ -28,10 +30,17 @@ const BookAuthor = (props: BookAuthorProps): ReactElement => {
           <AuthorDescr>
             <AuthorProps>
               <span key={name}>{`${name} `}</span>
-              <span>{`${city} | ${birthDate}`}</span>
+              {/* <span>{`${city} | ${getDateString(birthDate!)}`}</span> */}
             </AuthorProps>
 
-            <AuthorSpeech>{phrase}</AuthorSpeech>
+            <AuthorSpeech>
+              {phrase}
+              <Text align='right' variant='h4_1' component='p' fontWeight={300}>
+                {`${city} | ${getDateString(birthDate!)}`}
+              </Text>
+            </AuthorSpeech>
+
+            {/* <span>{`${city} | ${getDateString(birthDate!)}`}</span> */}
 
             <AuthorAbout>{bio}</AuthorAbout>
             {/* <AuthorContacts>

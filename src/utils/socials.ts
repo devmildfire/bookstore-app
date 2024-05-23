@@ -31,11 +31,11 @@ const socials: ISocialItem[] = [
     href: 'https://www.facebook.com/ichtivo',
     name: 'Facebook',
   },
-  {
-    icon: IconTwitter,
-    href: 'https://twitter.com/ichtivo',
-    name: 'Twitter',
-  },
+  // {
+  //   icon: IconTwitter,
+  //   href: 'https://twitter.com/ichtivo',
+  //   name: 'Twitter',
+  // },
 ];
 
 export default socials;

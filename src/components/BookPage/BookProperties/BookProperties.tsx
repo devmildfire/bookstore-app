@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { postData } from '@/utils/postData';
 import BookPhotos from '../BookPhotos/BookPhotos';
 import { EmblaOptionsType } from 'embla-carousel';
+import getDateString from '@/utils/getDateString';
 
 const OPTIONS: EmblaOptionsType = { loop: true, skipSnaps: false };
 
@@ -261,6 +262,8 @@ const DigitalEdition = () => {
 
   const { price, discount, releaseDate, characters, extra } = eBook;
 
+  const ruRDate = getDateString(releaseDate!);
+
   const ePhotos = title.Photos.filter((photo) => photo.category === 'EBook');
 
   return (
@@ -297,7 +300,7 @@ const DigitalEdition = () => {
                 href={'/cart'}
                 className='hover:underline hover:text-red-600 text-red-800 duration-300'
               >
-                электронная книга уже в корзине
+                Электронная книга уже в корзине
               </Link>
             </ButtonsText>
           )}
@@ -306,7 +309,7 @@ const DigitalEdition = () => {
         <Paragraphs>
           <DesctiptionItem>
             <DescriptionKey>Дата релиза:</DescriptionKey>
-            <DescriptionValue>{releaseDate}</DescriptionValue>
+            <DescriptionValue>{ruRDate}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Форматы:</DescriptionKey>
@@ -369,6 +372,8 @@ const Book2Edition = () => {
 
   const { price, discount, releaseDate, extra } = cardBook;
 
+  const ruRDate = getDateString(releaseDate!);
+
   const cardPhotos = title.Photos.filter(
     (photo) => photo.category === 'Book2.0'
   );
@@ -407,7 +412,7 @@ const Book2Edition = () => {
                 href={'/cart'}
                 className='hover:underline hover:text-red-600 text-red-800 duration-300'
               >
-                книга 2.0 уже в корзине
+                Книга 2.0 уже в корзине
               </Link>
             </ButtonsText>
           )}
@@ -418,7 +423,7 @@ const Book2Edition = () => {
         <Paragraphs>
           <DesctiptionItem>
             <DescriptionKey>Дата релиза:</DescriptionKey>
-            <DescriptionValue>{releaseDate}</DescriptionValue>
+            <DescriptionValue>{ruRDate}</DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Формат:</DescriptionKey>
@@ -494,6 +499,8 @@ const AudioEdition = () => {
   const { price, discount, releaseDate, extra, duration, fileVolume, demo } =
     audioBook;
 
+  const ruRDate = getDateString(releaseDate!);
+
   const fileSize = parseInt(fileVolume) / 1024;
   const hours = Math.floor(duration / 3600);
   const mins = Math.floor((duration % 3600) / 60);
@@ -532,7 +539,7 @@ const AudioEdition = () => {
                 href={'/cart'}
                 className='hover:underline hover:text-red-600 text-red-800 duration-300'
               >
-                аудиокнига уже в корзине
+                Аудиокнига уже в корзине
               </Link>
             </ButtonsText>
           )}
@@ -545,6 +552,10 @@ const AudioEdition = () => {
           <DesctiptionItem>
             <DescriptionKey> Детали:</DescriptionKey>
             <DescriptionValue> {extra} </DescriptionValue>
+          </DesctiptionItem>
+          <DesctiptionItem>
+            <DescriptionKey> Дата релиза:</DescriptionKey>
+            <DescriptionValue> {ruRDate} </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Текст читает:</DescriptionKey>
@@ -621,6 +632,8 @@ const PrintEdition = () => {
     options,
   } = printBook;
 
+  const ruRDate = getDateString(releaseDate!);
+
   const { size, paper, cover, bindings, illustrations } = options[0];
   const { width, height } = size[0];
 
@@ -664,7 +677,7 @@ const PrintEdition = () => {
                   href={'/cart'}
                   className='hover:underline hover:text-red-600 text-red-800 duration-300'
                 >
-                  книга уже в корзине
+                  Книга уже в корзине
                 </Link>
               </ButtonsText>
             )}
@@ -677,7 +690,7 @@ const PrintEdition = () => {
           <Paragraphs>
             <DesctiptionItem>
               <DescriptionKey>Дата релиза:</DescriptionKey>
-              <DescriptionValue>{releaseDate}</DescriptionValue>
+              <DescriptionValue>{ruRDate}</DescriptionValue>
             </DesctiptionItem>
             <DesctiptionItem>
               <DescriptionKey>Формат:</DescriptionKey>
