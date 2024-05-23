@@ -2,12 +2,13 @@ import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
 
 export const StyledList = styled.ul`
-  position: sticky;
+  // position: sticky;
+  position: fixed;
 
   //  перемещение меню навигации, чтобы не спрятаться под хедером
   top: calc(var(--header-height) - 1px);
   left: 0px;
-  
+
   z-index: 10;
 
   display: flex;
@@ -22,7 +23,7 @@ export const StyledList = styled.ul`
   backdrop-filter: blur(10px);
 
   text-transform: uppercase;
-  
+
   height: 40px;
 
   @media ${breakPoints.xxl} {
