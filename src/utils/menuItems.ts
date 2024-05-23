@@ -1,6 +1,7 @@
 export type SubmenuItem = {
   subtitle: string;
   link: string;
+  newTab?: boolean;
   items?: {
     title: string;
     link: string;
@@ -20,7 +21,8 @@ const forReaders: SubmenuItem[] = [
   },
   {
     subtitle: 'Литжурнал РД',
-    link: '/not-found',
+    link: 'https://dzen.ru/russiandino',
+    newTab: true,
   },
   // {
   //   subtitle: 'Мейнстрим',

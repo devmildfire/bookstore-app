@@ -59,7 +59,11 @@ function ListItem({
         >
           {submenu.map((item) => (
             <SubmenuListItem key={item.subtitle}>
-              <NavLink onClick={onClick} href={item.link}>
+              <NavLink
+                onClick={onClick}
+                href={item.link}
+                target={item.newTab ? '_blank' : '_self'}
+              >
                 {item.subtitle}
               </NavLink>
             </SubmenuListItem>
