@@ -91,6 +91,7 @@ function Text(props: PropsWithChildren<TextProps>) {
 const StyledTitle = styled(Text)`
   text-align: left;
   font-size: 96px;
+  font-weight: 900;
 
   @media screen and (max-width: 1280px) {
     font-size: 68px;
@@ -108,7 +109,23 @@ const StyledTitle = styled(Text)`
   }
 `;
 
-const StyledAuthor = styled(Text)`
+// const StyledAuthor = styled(Text)`
+//   text-align: left;
+//   font-size: 48px;
+//   @media screen and (max-width: 1024px) {
+//     font-size: 36px;
+//   }
+//   @media screen and (max-width: 768px) {
+//     font-size: 24px;
+//   }
+
+//   @media screen and (max-width: 512px) {
+//     font-size: 12px;
+//     text-transform: uppercase;
+//   }
+// `;
+
+const StyledAuthor = styled.p`
   text-align: left;
   font-size: 48px;
   @media screen and (max-width: 1024px) {
@@ -306,7 +323,10 @@ function Carousel(props: PropType): ReactElement {
                     <StyledTitle variant='heading' tag='h1'>
                       {title.name}
                     </StyledTitle>
-                    <StyledAuthor variant='heading' tag='h2'>
+                    {/* <StyledAuthor variant='heading' tag='h2'>
+                      {title.authors.map((author) => author.name).join(', ')}
+                    </StyledAuthor> */}
+                    <StyledAuthor>
                       {title.authors.map((author) => author.name).join(', ')}
                     </StyledAuthor>
                     <StyledThesis variant='caption'>

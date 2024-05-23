@@ -25,11 +25,13 @@ export const PreviewContainer = styled.div<PreviewProps>`
 
 export const DescriptionBox = styled.div`
   display: block;
-  max-height: 150px;
-  overflow-y: auto;
+  // max-height: 150px;
+  max-height: 100%;
+
+  overflow-y: scroll;
   grid-area: description;
-  mask-image: linear-gradient(black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
+  // mask-image: linear-gradient(black 90%, transparent 100%);
+  // -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
   /* width */
   ::-webkit-scrollbar {
     width: 4px;
@@ -100,6 +102,7 @@ export const Title = styled.h2`
   font-size: var(--font-heading-xl);
   font-family: 'Cheque', serif;
   line-height: 56px;
+  font-weight: 900;
 `;
 
 export const Author = styled.p`
