@@ -286,12 +286,13 @@ const Dots = styled.div`
 `;
 
 const CoverLink = styled(Link)`
+  z-index: 9001;
   position: relative;
   // box-shadow: 0px 5px 10px 0px rgba(255, 255, 255, 0.5);
   transition: all ease 0.5s;
 
   &:hover {
-    transform: translateY(-20px);
+    transform: translateY(-3px) scale(1.03);
     box-shadow: 0px 0px 60px -25px rgba(255, 0, 0, 1);
   }
 `;

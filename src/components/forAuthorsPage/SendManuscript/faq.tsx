@@ -42,8 +42,10 @@ const FAQ = (): React.ReactElement => {
           <Text variant='ctext'>
             Мы рассматриваем для издания только поэмы. Но вы можете отправить
             стихотворения в 
-            <RedLink href='https://t.me/ahulitera'>АХУЛИ</RedLink>,
-            чтобы попасть в сборник прозы и поэзии «Худшее».
+            <RedLink target='_blank' href='https://t.me/ahulitera'>
+              АХУЛИ
+            </RedLink>
+            , чтобы попасть в сборник прозы и поэзии «Худшее».
           </Text>
         </FaqItem>
         <FaqItem>
@@ -135,7 +137,12 @@ const FAQ = (): React.ReactElement => {
             Попасть в лонг-лист Чтива может и самое «нестандартное»
             произведение, если оно соответствует требованиям и одобрено ведущим
             редактором. С изданиями Чтива можно ознакомиться{' '}
-            <RedLink href='https://chtivo.spb.ru/all-books.html'>здесь</RedLink>{' '}
+            <RedLink
+              target='_blank'
+              href='https://chtivo.spb.ru/all-books.html'
+            >
+              здесь
+            </RedLink>{' '}
             и оценить их «нестандартность».
           </Text>
         </FaqItem>
@@ -159,7 +166,10 @@ const FAQ = (): React.ReactElement => {
           </Text>
           <Text variant='ctext'>
             Мы рассматриваем первую книгу цикла (об этапах отбора читайте в 
-            <RedLink href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'>
+            <RedLink
+              target='_blank'
+              href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
+            >
               статье
             </RedLink>
             ); если мы издаём её, то последующие книги цикла проходят

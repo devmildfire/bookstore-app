@@ -207,40 +207,11 @@ function Wrapper({
   );
 }
 
-// const yearsData = ['2020', '2021', '2022', '2023'];
-// const editionsData = ['Печатное', 'Цифровое', 'Книга 2.0', 'Аудио'];
-// const authorsData = [
-//   'Оганес Мартиросян',
-//   'Алексей Михайлов',
-//   'Анна Пашкова',
-//   'Александ Гаврилов',
-//   'Николай Старообрядцев',
-//   'Андрей Янкус',
-//   'Джек Керуак',
-//   'Эдуард Диа Диникин',
-//   'Андрей Платонов',
-//   'Вячеслав Немиров',
-//   'Фёдор Достоевский',
-//   'Сергей Иннер',
-//   'Эрих фон Нефф',
-//   'Артём Северский',
-//   'Владислав Несветаев',
-// ];
-
 export const Drawer = observer(({ children }: PropsWithChildren) => {
-  // const config = useControls('Фильтры', {
-  //   position: {
-  //     value: 'left',
-  //     label: 'Позиция',
-  //     options: { Слева: 'left', Внизу: 'bottom' },
-  //   } as const,
-  // });
   const [open, setOpen] = useState(false);
 
-  // const filters = useContext(MultipleStoresContext).filterStore;
   const filters = filtersStore;
 
-  // const shortTitles = useContext(MultipleStoresContext).titleStore?.titles;
   const shortTitles = titlesStore?.titles;
 
   let titles: Titles = [];
@@ -280,7 +251,9 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                   <Title variant='h3_3'>Фильтры</Title>
                   <Container>
                     <Multiselect
+                      type='authors'
                       data={authorsData}
+                      selectedData={filters!.filters!.authors || []}
                       twoColumn
                       title='Автор'
                       withSearch
@@ -288,13 +261,17 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                       // setFunction={(i: string[]) => {}}
                     />
                     <Multiselect
+                      type='editions'
                       data={editionsData}
+                      selectedData={filters!.filters!.types || []}
                       title='Издания '
                       setFunction={filters!.setEditionsFilter}
                       // setFunction={(i: string[]) => {}}
                     />
                     <Multiselect
+                      type='years'
                       data={yearsData}
+                      selectedData={filters!.filters!.years || []}
                       title='Год издания'
                       setFunction={filters!.setYearFilter}
                       // setFunction={(i: string[]) => {}}

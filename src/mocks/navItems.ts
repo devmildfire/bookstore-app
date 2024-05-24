@@ -11,7 +11,7 @@ const navItems: NavItem[] = [
     link: '/for-authors/send-manuscript',
   },
   {
-    title: 'Отправить материал в литжурнал РД',
+    title: 'Литжурнал РД',
     link: '/for-authors/send-novel',
   },
   {

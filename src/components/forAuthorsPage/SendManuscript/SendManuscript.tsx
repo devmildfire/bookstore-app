@@ -26,7 +26,7 @@ const secondString =
   'Заключаем только эксклюзивные контракты. Мы предлагаем вам роялти 50% чистого дохода от всех покупок изданий авторского текста:';
 
 const thirdString =
-  'Мы не берём денег с авторов за издание, только платим им. Если хотите издаватьс яна коммерческой основе, обратитесь в наш Русский Динозавр: ';
+  'Мы не берём денег с авторов за издание, только платим\u00a0им. Если хотите издаваться на коммерческой основе, обратитесь в наш';
 
 const firstPar =
   'Здесь вы можете узнать, как отправить свою рукопись для рассмотрения Советом Чтива. Заключаем только эксклюзивные контракты.';
@@ -53,6 +53,10 @@ const SendManuscript = (): React.ReactElement => {
         <TextDiv>
           <Text variant='ctext'>
             {thirdString}{' '}
+            <RedLink href='https://russiandino.ru' target='_blank'>
+              Русский Динозавр
+            </RedLink>
+            {': '}
             <RedLink href='mailto:hello@russiandino.ru'>
               info@chtivo.spb.ru
             </RedLink>{' '}
@@ -114,7 +118,10 @@ const Conditions = (): React.ReactElement => {
     <ReqDiv>
       <Text variant='ctext'>
         Подробно о том, как мы работаем с рукописями, узнайте в{' '}
-        <RedLink href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'>
+        <RedLink
+          target='_blank'
+          href='https://dzen.ru/a/ZVjmIR0BaUxB4hsg?share_to=link'
+        >
           статье
         </RedLink>
         .
@@ -123,14 +130,32 @@ const Conditions = (): React.ReactElement => {
         Также рассматриваем отдельные рассказы (статьи, эссе, пьесы) до 30 тысяч
         символов с пробелами для публикации в литжурнале Русского Динозавра с
         тиражированием на:{' '}
-        <RedLink href='https://dzen.ru/russiandino?share_to=link'>Дзен</RedLink>
-        , <RedLink href='https://vk.com/russiantrex'>ВКонтакте</RedLink>,{' '}
-        <RedLink href='https://t.me/russiandino'>Телеграм</RedLink>,{' '}
-        <RedLink href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'>
+        <RedLink
+          target='_blank'
+          href='https://dzen.ru/russiandino?share_to=link'
+        >
+          Дзен
+        </RedLink>
+        ,{' '}
+        <RedLink target='_blank' href='https://vk.com/russiantrex'>
+          ВКонтакте
+        </RedLink>
+        ,{' '}
+        <RedLink target='_blank' href='https://t.me/russiandino'>
+          Телеграм
+        </RedLink>
+        ,{' '}
+        <RedLink
+          target='_blank'
+          href='https://www.instagram.com/russiandino_ru/?igshid=MzRlODBiNWFlZA%3D%3D'
+        >
           Инстаграм*
         </RedLink>
-        , <RedLink href='https://pikabu.ru/@russiandino'>Пикабу</RedLink>.
-        Важно: материал не должен быть ранее опубликован на Дзене.
+        ,{' '}
+        <RedLink target='_blank' href='https://pikabu.ru/@russiandino'>
+          Пикабу
+        </RedLink>
+        . Важно: материал не должен быть ранее опубликован на Дзене.
       </Text>
       <Text variant='ctext'>Рукописи не рецензируются.</Text>
       <Text variant='ctext'>
