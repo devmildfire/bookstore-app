@@ -24,7 +24,11 @@ const itemsToLabelsObj: Record<string, string> = {
 
 type SelectData = string[];
 
+export type MultiselectType = 'authors' | 'editions' | 'years';
+
 type MultiselectProps = {
+  type: MultiselectType;
+  selectedData: SelectData;
   withSearch?: boolean;
   twoColumn?: boolean;
   title: string;
@@ -87,11 +91,20 @@ export function useMultiselect(
 }
 
 export function Multiselect(props: MultiselectProps) {
-  const { data, title, withSearch, twoColumn } = props;
-  const [selected, options, dispatch] = useMultiselect({
-    selected: [],
-    options: data,
+  const { type, data, selectedData, title, withSearch, twoColumn } = props;
+
+  const reducedData = data.filter(function (el) {
+    return selectedData.indexOf(el) < 0;
   });
+
+  const [selected, options, dispatch] = useMultiselect({
+    selected: selectedData,
+    options: reducedData,
+  });
+
+  // const initialSelectedItemsObj: Record<MultiselectType, SelectData> = {
+  //   'authors' :
+  // }
 
   useEffect(() => {
     console.log(`runnig setFunction with selected = ${selected}`);

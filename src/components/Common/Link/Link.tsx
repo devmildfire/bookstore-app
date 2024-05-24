@@ -8,13 +8,14 @@ export interface LinkProps extends ClassNameProps {
   readonly href: string;
   readonly scroll?: boolean;
   readonly shallow?: boolean;
+  target?: string;
 }
 
 function Link(
   props: PropsWithChildren<LinkProps>,
   ref: React.Ref<HTMLAnchorElement>
 ) {
-  const { children, href, scroll, className, shallow } = props;
+  const { children, href, scroll, className, shallow, target } = props;
 
   return (
     <NextLink
@@ -24,6 +25,7 @@ function Link(
       scroll={scroll}
       shallow={shallow}
       className={className}
+      target={target}
     >
       {children}
     </NextLink>
