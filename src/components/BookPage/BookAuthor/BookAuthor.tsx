@@ -30,15 +30,18 @@ const BookAuthor = (props: BookAuthorProps): ReactElement => {
           <AuthorDescr>
             <AuthorProps>
               <span key={name}>{`${name} `}</span>
-              {/* <span>{`${city} | ${getDateString(birthDate!)}`}</span> */}
-            </AuthorProps>
-
-            <AuthorSpeech>
-              {phrase}
-              <Text align='right' variant='h4_1' component='p' fontWeight={300}>
+              <Text
+                align='left'
+                variant='h4_1'
+                component='p'
+                fontWeight={300}
+                className='self-start'
+              >
                 {`${city} | ${getDateString(birthDate!)}`}
               </Text>
-            </AuthorSpeech>
+            </AuthorProps>
+
+            <AuthorSpeech>{phrase}</AuthorSpeech>
 
             {/* <span>{`${city} | ${getDateString(birthDate!)}`}</span> */}
 

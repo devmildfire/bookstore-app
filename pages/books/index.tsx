@@ -121,7 +121,6 @@ const BooksPage = observer(() => {
     <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
       <Carousel
         forwardedRef={carouselRef}
-        slides={[0, 1, 2]}
         options={{ dragThreshold: 1, duration: 25 }}
         titles={
           titlesFromStore?.filter((title) => title.isFeatured === true) || []

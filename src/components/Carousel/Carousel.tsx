@@ -22,7 +22,6 @@ import { Titles } from 'pages/books';
 
 type PropType = {
   titles: Titles;
-  slides: number[];
   options?: EmblaOptionsType;
   forwardedRef: RefObject<HTMLDivElement>;
 };
@@ -92,6 +91,7 @@ const StyledTitle = styled(Text)`
   text-align: left;
   font-size: 96px;
   font-weight: 900;
+  line-height: 100%;
 
   @media screen and (max-width: 1280px) {
     font-size: 68px;
@@ -128,6 +128,8 @@ const StyledTitle = styled(Text)`
 const StyledAuthor = styled.p`
   text-align: left;
   font-size: 48px;
+  // margin-top: -40px;
+
   @media screen and (max-width: 1024px) {
     font-size: 36px;
   }
@@ -182,11 +184,15 @@ const Wrapper = styled.section`
 
 const Viewport = styled.div`
   /* max-width: 1440px; */
-  overflow: hidden;
+  // overflow: hidden;
+  overflow-y: visible;
+  overflow-x: clip;
   margin: 0 auto;
 `;
 
 const Container = styled.div`
+  overflow: visible;
+
   display: flex;
   flex-direction: row;
   height: auto;
@@ -194,6 +200,9 @@ const Container = styled.div`
 `;
 
 const SlideContainer = styled.div`
+  // padding-top: 25px;
+  overflow: visible;
+
   max-width: 1440px;
   display: flex;
   justify-content: space-between;
@@ -206,6 +215,8 @@ const SlideContainer = styled.div`
 `;
 
 const Slide = styled.div`
+  overflow: visible;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -276,11 +287,20 @@ const Dots = styled.div`
 
 const CoverLink = styled(Link)`
   position: relative;
+  // box-shadow: 0px 5px 10px 0px rgba(255, 255, 255, 0.5);
+  transition: all ease 0.5s;
+
+  &:hover {
+    transform: translateY(-20px);
+    box-shadow: 0px 0px 60px -25px rgba(255, 0, 0, 1);
+  }
 `;
 
 function Carousel(props: PropType): ReactElement {
-  const { slides, options, forwardedRef, titles } = props;
-  const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
+  const { options, forwardedRef, titles } = props;
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, [
+    Autoplay({ delay: 2500, stopOnMouseEnter: true }),
+  ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
@@ -320,15 +340,17 @@ function Carousel(props: PropType): ReactElement {
                     <Cover src={title.cover} alt={title.name} />
                   </CoverLink>
                   <StyledInfo>
-                    <StyledTitle variant='heading' tag='h1'>
-                      {title.name}
-                    </StyledTitle>
-                    {/* <StyledAuthor variant='heading' tag='h2'>
+                    <div>
+                      <StyledTitle variant='heading' tag='h1'>
+                        {title.name}
+                      </StyledTitle>
+                      {/* <StyledAuthor variant='heading' tag='h2'>
                       {title.authors.map((author) => author.name).join(', ')}
                     </StyledAuthor> */}
-                    <StyledAuthor>
-                      {title.authors.map((author) => author.name).join(', ')}
-                    </StyledAuthor>
+                      <StyledAuthor>
+                        {title.authors.map((author) => author.name).join(', ')}
+                      </StyledAuthor>
+                    </div>
                     <StyledThesis variant='caption'>
                       {title.thesis}
                     </StyledThesis>
