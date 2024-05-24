@@ -252,8 +252,8 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                   <Container>
                     <Multiselect
                       type='authors'
-                      data={authorsData}
                       selectedData={filters!.filters!.authors || []}
+                      data={authorsData}
                       twoColumn
                       title='Автор'
                       withSearch
@@ -262,16 +262,16 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
                     />
                     <Multiselect
                       type='editions'
-                      data={editionsData}
                       selectedData={filters!.filters!.types || []}
+                      data={editionsData}
                       title='Издания '
                       setFunction={filters!.setEditionsFilter}
                       // setFunction={(i: string[]) => {}}
                     />
                     <Multiselect
                       type='years'
-                      data={yearsData}
                       selectedData={filters!.filters!.years || []}
+                      data={yearsData}
                       title='Год издания'
                       setFunction={filters!.setYearFilter}
                       // setFunction={(i: string[]) => {}}

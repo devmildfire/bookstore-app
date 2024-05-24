@@ -226,6 +226,8 @@ function Filters() {
     <Triggers>
       <FilterPopover align='start' title='Фильтры' icon={<FilterIcon />}>
         <Multiselect
+          type='authors'
+          selectedData={filters!.filters!.authors || []}
           data={authorsData}
           twoColumn
           title='Автор'
@@ -233,11 +235,15 @@ function Filters() {
           setFunction={filters!.setAthorsFilter}
         />
         <Multiselect
+          type='editions'
+          selectedData={filters!.filters!.types || []}
           data={editionsData}
           title='Издания '
           setFunction={filters!.setEditionsFilter}
         />
         <Multiselect
+          type='years'
+          selectedData={filters!.filters!.years || []}
           data={yearsData}
           title='Год издания'
           setFunction={filters!.setYearFilter}
