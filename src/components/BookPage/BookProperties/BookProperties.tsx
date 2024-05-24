@@ -550,23 +550,24 @@ const AudioEdition = () => {
         </Buttons>
         <Paragraphs>
           <DesctiptionItem>
-            <DescriptionKey> Детали:</DescriptionKey>
-            <DescriptionValue> {extra} </DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
             <DescriptionKey> Дата релиза:</DescriptionKey>
             <DescriptionValue> {ruRDate} </DescriptionValue>
           </DesctiptionItem>
           <DesctiptionItem>
+            <DescriptionKey> Детали:</DescriptionKey>
+            <DescriptionValue> {extra} </DescriptionValue>
+          </DesctiptionItem>
+
+          {/* <DesctiptionItem>
             <DescriptionKey>Текст читает:</DescriptionKey>
             <DescriptionValue>Ниёле Мейлуте</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
+          </DesctiptionItem> */}
+          {/* <DesctiptionItem>
             <DescriptionKey>Использована композиция:</DescriptionKey>
             <DescriptionValue>
               ‘Times Arrow’ Anamorphic Orchestra
             </DescriptionValue>
-          </DesctiptionItem>
+          </DesctiptionItem> */}
           <DesctiptionItem>
             <DescriptionKey>Вес файлов:</DescriptionKey>
             <DescriptionValue>{fileSize} Мб</DescriptionValue>

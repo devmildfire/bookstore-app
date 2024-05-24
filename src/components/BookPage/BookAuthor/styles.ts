@@ -102,9 +102,10 @@ export const AuthorDescr = styled.div`
 `;
 
 export const AuthorProps = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 8px;
   font-size: 30px;
   letter-spacing: 0.03em;
   font-weight: 700;
@@ -116,7 +117,7 @@ export const AuthorProps = styled.div`
   @media ${breakPoints.lg} {
     font-size: 18px;
     line-height: 22px;
-    gap: 12px;
+    gap: 4px;
   }
 
   @media ${breakPoints.sm} {

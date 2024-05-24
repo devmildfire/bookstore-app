@@ -5,6 +5,12 @@
 @import url('./fonts.css');
 @import url('./normalize.css');
 
+@property --rotate {
+  syntax: '<angle>';
+  initial-value: 132deg;
+  inherits: false;
+}
+
 :root {
   --text-high-contrast-rgb-value: '49, 49, 49';
   /* --detail-medium-contrast: rgba(22, 13, 13, 0.673); */
