@@ -39,7 +39,7 @@ export interface ITitleEbook {
   isPublished: boolean;
   publishDate: string | null;
   releaseDate: string | null;
-  titleId: 49;
+  titleId: number;
   ISBN: string;
   counterColor: string;
   demo: string | null;
@@ -74,7 +74,6 @@ export interface ITitlePrintedBook {
   id: number;
   pages: number;
   extra: string;
-  litForm: string;
   isPublished: boolean;
   publishDate: string | null;
   releaseDate: string | null;
@@ -113,11 +112,21 @@ export interface ITitleCardBook {
   soldOut: boolean;
 }
 
+export interface ITitleNovel {
+  titleId: number;
+  name: string;
+}
+
 export interface ITitle {
   id: number;
   description: string;
   thesis: string;
   trailer: string;
+
+  trailerPoster: string;
+  litForm: string;
+  isCompilation: boolean;
+
   ageRestriction: number;
   name: string;
   cover: string;
@@ -132,4 +141,5 @@ export interface ITitle {
   eBook: ITitleEbook | null;
   printedBook: ITitlePrintedBook | null;
   awards: ITitleAward[];
+  novels: ITitleNovel[];
 }
