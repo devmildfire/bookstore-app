@@ -17,7 +17,8 @@ export const fullTitleQuery = supabase
           ),
           cover:PrintedCover( * )
         ),
-        awards: TitlesAwards ( *,  ...Awards(*) )
+        awards: TitlesAwards ( *,  ...Awards(*) ),
+        novels: Novels_List ( * )
 
   `
   )
@@ -40,7 +41,8 @@ export const fullManyTitlesQuery = supabase
           ),
           cover:PrintedCover( * )
         ),
-        awards: TitlesAwards ( *,  ...Awards(*) )
+        awards: TitlesAwards ( *,  ...Awards(*) ),
+        novels: Novels_List ( * )
 
   `
   )
@@ -63,7 +65,8 @@ export const fullManyTitlesQueryBySlugFunction = (slug: string) => {
             ),
             cover:PrintedCover( * )
           ),
-          awards: TitlesAwards ( *,  ...Awards(*) )
+          awards: TitlesAwards ( *,  ...Awards(*) ),
+          novels: Novels_List ( * )
   
     `
     )

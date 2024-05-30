@@ -8,6 +8,7 @@ import {
   ITitleAward,
   ITitleCardBook,
   ITitleEbook,
+  ITitleNovel,
   ITitlePhoto,
   ITitlePrintedBook,
   // FullTitleNormalizedType,
@@ -21,6 +22,11 @@ class TitleModel {
   description: string;
   thesis: string;
   trailer: string;
+
+  litForm: string;
+  trailerPoster: string;
+  isCompilation: boolean;
+
   ageRestriction: number;
   name: string;
   cover: string;
@@ -35,6 +41,7 @@ class TitleModel {
   eBook: ITitleEbook | null;
   printedBook: ITitlePrintedBook | null;
   awards: ITitleAward[];
+  novels: ITitleNovel[];
 
   constructor(data: ITitle) {
     this.id = data.id;
@@ -42,6 +49,11 @@ class TitleModel {
 
     this.description = data.description;
     this.thesis = data.thesis;
+
+    this.litForm = data.litForm;
+    this.trailerPoster = data.trailerPoster;
+    this.isCompilation = data.isCompilation;
+
     this.trailer = data.trailer;
     this.ageRestriction = data.ageRestriction;
     this.cover = data.cover;
@@ -61,6 +73,8 @@ class TitleModel {
     this.printedBook = data.printedBook;
     this.awards = data.awards;
 
+    this.novels = data.novels;
+
     // this.photo = new AuthorPhotoModel(data.photo);
 
     makeObservable<TitleModel>(this, {
@@ -77,6 +91,10 @@ class TitleModel {
       thesis: this.thesis,
       trailer: this.trailer,
 
+      litForm: this.litForm,
+      trailerPoster: this.trailerPoster,
+      isCompilation: this.isCompilation,
+
       ageRestriction: this.ageRestriction,
       cover: this.cover,
       slug: this.slug,
@@ -90,6 +108,7 @@ class TitleModel {
       eBook: this.eBook,
       printedBook: this.printedBook,
       awards: this.awards,
+      novels: this.novels,
     };
   }
 
