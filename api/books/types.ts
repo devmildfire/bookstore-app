@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       Audiobooks: {
@@ -157,6 +157,7 @@ export interface Database {
           discount: number | null;
           id: number;
           name: string | null;
+          picture: string;
           price: number | null;
         };
         Insert: {
@@ -164,6 +165,7 @@ export interface Database {
           discount?: number | null;
           id?: number;
           name?: string | null;
+          picture?: string;
           price?: number | null;
         };
         Update: {
@@ -171,6 +173,7 @@ export interface Database {
           discount?: number | null;
           id?: number;
           name?: string | null;
+          picture?: string;
           price?: number | null;
         };
         Relationships: [];
@@ -183,7 +186,7 @@ export interface Database {
         };
         Insert: {
           box_set: number;
-          category: Database['public']['Enums']['category'];
+          category?: Database['public']['Enums']['category'];
           title_id: number;
         };
         Update: {
@@ -294,6 +297,35 @@ export interface Database {
         };
         Relationships: [];
       };
+      Contexts: {
+        Row: {
+          description: string;
+          name: string;
+          title_id: number;
+          url: string;
+        };
+        Insert: {
+          description?: string;
+          name?: string;
+          title_id: number;
+          url?: string;
+        };
+        Update: {
+          description?: string;
+          name?: string;
+          title_id?: number;
+          url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'Contexts_title_id_fkey';
+            columns: ['title_id'];
+            isOneToOne: false;
+            referencedRelation: 'Titles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       Courses: {
         Row: {
           description: string | null;
@@ -329,6 +361,68 @@ export interface Database {
           thesis?: string | null;
         };
         Relationships: [];
+      };
+      E_Magazine_Issues: {
+        Row: {
+          characters: number | null;
+          counter_color: string | null;
+          cover: string;
+          demo: string | null;
+          discount: number | null;
+          extra: string | null;
+          file_volume: number;
+          is_published: boolean;
+          issue_number: number;
+          Magazine_id: number;
+          price: number | null;
+          publish_date: string | null;
+          release_date: string | null;
+          sold: number | null;
+          src: string;
+        };
+        Insert: {
+          characters?: number | null;
+          counter_color?: string | null;
+          cover?: string;
+          demo?: string | null;
+          discount?: number | null;
+          extra?: string | null;
+          file_volume?: number;
+          is_published?: boolean;
+          issue_number: number;
+          Magazine_id: number;
+          price?: number | null;
+          publish_date?: string | null;
+          release_date?: string | null;
+          sold?: number | null;
+          src?: string;
+        };
+        Update: {
+          characters?: number | null;
+          counter_color?: string | null;
+          cover?: string;
+          demo?: string | null;
+          discount?: number | null;
+          extra?: string | null;
+          file_volume?: number;
+          is_published?: boolean;
+          issue_number?: number;
+          Magazine_id?: number;
+          price?: number | null;
+          publish_date?: string | null;
+          release_date?: string | null;
+          sold?: number | null;
+          src?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'E_Magazine_Issues_Magazine_id_fkey';
+            columns: ['Magazine_id'];
+            isOneToOne: false;
+            referencedRelation: 'Magazines';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       Ebooks: {
         Row: {
@@ -482,6 +576,65 @@ export interface Database {
           }
         ];
       };
+      Magazine_Issues_Articles_List: {
+        Row: {
+          article_name: string;
+          issue_number: number;
+          magazine_id: number;
+        };
+        Insert: {
+          article_name?: string;
+          issue_number?: number;
+          magazine_id: number;
+        };
+        Update: {
+          article_name?: string;
+          issue_number?: number;
+          magazine_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'Magazine_Issues_Articles_List_magazine_id_fkey';
+            columns: ['magazine_id'];
+            isOneToOne: false;
+            referencedRelation: 'Magazines';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      Magazine_Issues_Recommended_Titles: {
+        Row: {
+          issue_number: number;
+          magazine_id: number;
+          title_id: number;
+        };
+        Insert: {
+          issue_number?: number;
+          magazine_id: number;
+          title_id: number;
+        };
+        Update: {
+          issue_number?: number;
+          magazine_id?: number;
+          title_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'Magazine_Issues_Recommended_Titles_magazine_id_fkey';
+            columns: ['magazine_id'];
+            isOneToOne: false;
+            referencedRelation: 'Magazines';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'Magazine_Issues_Recommended_Titles_title_id_fkey';
+            columns: ['title_id'];
+            isOneToOne: false;
+            referencedRelation: 'Titles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       MagazineArticles: {
         Row: {
           author_id: number | null;
@@ -513,6 +666,80 @@ export interface Database {
             columns: ['author_id'];
             isOneToOne: false;
             referencedRelation: 'Authors';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      Magazines: {
+        Row: {
+          age_restriction: number | null;
+          counter_color: string | null;
+          cover: string | null;
+          demo: string | null;
+          description: string | null;
+          e_ISSN: string | null;
+          id: number;
+          is_featured: boolean;
+          name: string;
+          print_ISSN: string | null;
+          slug: string | null;
+          thesis: string | null;
+          trailer: string | null;
+          trailer_poster: string | null;
+        };
+        Insert: {
+          age_restriction?: number | null;
+          counter_color?: string | null;
+          cover?: string | null;
+          demo?: string | null;
+          description?: string | null;
+          e_ISSN?: string | null;
+          id?: number;
+          is_featured?: boolean;
+          name?: string;
+          print_ISSN?: string | null;
+          slug?: string | null;
+          thesis?: string | null;
+          trailer?: string | null;
+          trailer_poster?: string | null;
+        };
+        Update: {
+          age_restriction?: number | null;
+          counter_color?: string | null;
+          cover?: string | null;
+          demo?: string | null;
+          description?: string | null;
+          e_ISSN?: string | null;
+          id?: number;
+          is_featured?: boolean;
+          name?: string;
+          print_ISSN?: string | null;
+          slug?: string | null;
+          thesis?: string | null;
+          trailer?: string | null;
+          trailer_poster?: string | null;
+        };
+        Relationships: [];
+      };
+      Novels_List: {
+        Row: {
+          name: string;
+          title_id: number;
+        };
+        Insert: {
+          name?: string;
+          title_id: number;
+        };
+        Update: {
+          name?: string;
+          title_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'Novels_List_title_id_fkey';
+            columns: ['title_id'];
+            isOneToOne: false;
+            referencedRelation: 'Titles';
             referencedColumns: ['id'];
           }
         ];
@@ -561,7 +788,9 @@ export interface Database {
       Orders: {
         Row: {
           adress: string | null;
+          alerts_sent: boolean;
           cart_id: string | null;
+          code: string | null;
           created_at: string;
           email: string | null;
           id: number;
@@ -572,7 +801,9 @@ export interface Database {
         };
         Insert: {
           adress?: string | null;
+          alerts_sent?: boolean;
           cart_id?: string | null;
+          code?: string | null;
           created_at?: string;
           email?: string | null;
           id?: number;
@@ -583,7 +814,9 @@ export interface Database {
         };
         Update: {
           adress?: string | null;
+          alerts_sent?: boolean;
           cart_id?: string | null;
+          code?: string | null;
           created_at?: string;
           email?: string | null;
           id?: number;
@@ -629,6 +862,65 @@ export interface Database {
           }
         ];
       };
+      Printed_Magazine_Issues: {
+        Row: {
+          counter_color: string | null;
+          cover: string;
+          demo: string | null;
+          discount: number;
+          extra: string | null;
+          is_published: boolean;
+          issue_number: number;
+          magazine_id: number;
+          pages: number;
+          price: number;
+          publish_date: string | null;
+          release_date: string | null;
+          sold: number | null;
+          sold_out: boolean | null;
+        };
+        Insert: {
+          counter_color?: string | null;
+          cover?: string;
+          demo?: string | null;
+          discount?: number;
+          extra?: string | null;
+          is_published?: boolean;
+          issue_number?: number;
+          magazine_id: number;
+          pages?: number;
+          price?: number;
+          publish_date?: string | null;
+          release_date?: string | null;
+          sold?: number | null;
+          sold_out?: boolean | null;
+        };
+        Update: {
+          counter_color?: string | null;
+          cover?: string;
+          demo?: string | null;
+          discount?: number;
+          extra?: string | null;
+          is_published?: boolean;
+          issue_number?: number;
+          magazine_id?: number;
+          pages?: number;
+          price?: number;
+          publish_date?: string | null;
+          release_date?: string | null;
+          sold?: number | null;
+          sold_out?: boolean | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'Printed_Magazine_Issues_magazine_id_fkey';
+            columns: ['magazine_id'];
+            isOneToOne: false;
+            referencedRelation: 'Magazines';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       PrintedBooks: {
         Row: {
           counter_color: string | null;
@@ -638,7 +930,6 @@ export interface Database {
           id: number;
           is_published: boolean | null;
           ISBN: string | null;
-          lit_form: string | null;
           pages: number | null;
           price: number | null;
           publish_date: string | null;
@@ -655,7 +946,6 @@ export interface Database {
           id?: number;
           is_published?: boolean | null;
           ISBN?: string | null;
-          lit_form?: string | null;
           pages?: number | null;
           price?: number | null;
           publish_date?: string | null;
@@ -672,7 +962,6 @@ export interface Database {
           id?: number;
           is_published?: boolean | null;
           ISBN?: string | null;
-          lit_form?: string | null;
           pages?: number | null;
           price?: number | null;
           publish_date?: string | null;
@@ -820,6 +1109,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      Recommended_titles: {
+        Row: {
+          main_title_id: number;
+          recommended_title_id: number;
+        };
+        Insert: {
+          main_title_id: number;
+          recommended_title_id: number;
+        };
+        Update: {
+          main_title_id?: number;
+          recommended_title_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recommended_titles_main_title_id_fkey';
+            columns: ['main_title_id'];
+            isOneToOne: false;
+            referencedRelation: 'Titles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recommended_titles_recommended_title_id_fkey';
+            columns: ['recommended_title_id'];
+            isOneToOne: false;
+            referencedRelation: 'Titles';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       Subscriptions: {
         Row: {
           description: string | null;
@@ -852,11 +1171,14 @@ export interface Database {
           description: string | null;
           first_release: string | null;
           id: number;
+          is_compilation: boolean;
           is_featured: boolean | null;
+          lit_form: string | null;
           name: string;
           slug: string | null;
           thesis: string | null;
           trailer: string | null;
+          trailer_poster: string | null;
         };
         Insert: {
           age_restriction?: number | null;
@@ -865,11 +1187,14 @@ export interface Database {
           description?: string | null;
           first_release?: string | null;
           id?: number;
+          is_compilation?: boolean;
           is_featured?: boolean | null;
+          lit_form?: string | null;
           name?: string;
           slug?: string | null;
           thesis?: string | null;
           trailer?: string | null;
+          trailer_poster?: string | null;
         };
         Update: {
           age_restriction?: number | null;
@@ -878,11 +1203,14 @@ export interface Database {
           description?: string | null;
           first_release?: string | null;
           id?: number;
+          is_compilation?: boolean;
           is_featured?: boolean | null;
+          lit_form?: string | null;
           name?: string;
           slug?: string | null;
           thesis?: string | null;
           trailer?: string | null;
+          trailer_poster?: string | null;
         };
         Relationships: [];
       };
@@ -1014,11 +1342,53 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
+      delete_claim: {
+        Args: {
+          uid: string;
+          claim: string;
+        };
+        Returns: string;
+      };
+      get_claim: {
+        Args: {
+          uid: string;
+          claim: string;
+        };
+        Returns: Json;
+      };
+      get_claims: {
+        Args: {
+          uid: string;
+        };
+        Returns: Json;
+      };
+      get_my_claim: {
+        Args: {
+          claim: string;
+        };
+        Returns: Json;
+      };
+      get_my_claims: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
       get_types: {
         Args: {
           enum_type: string;
         };
         Returns: Json;
+      };
+      is_claims_admin: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
+      set_claim: {
+        Args: {
+          uid: string;
+          claim: string;
+          value: Json;
+        };
+        Returns: string;
       };
     };
     Enums: {
@@ -1067,11 +1437,13 @@ export interface Database {
       [_ in never]: never;
     };
   };
-}
+};
+
+type PublicSchema = Database[Extract<keyof Database, 'public'>];
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database['public']['Tables'] & Database['public']['Views'])
+    | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
@@ -1084,10 +1456,10 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database['public']['Tables'] &
-      Database['public']['Views'])
-  ? (Database['public']['Tables'] &
-      Database['public']['Views'])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] &
+      PublicSchema['Views'])
+  ? (PublicSchema['Tables'] &
+      PublicSchema['Views'])[PublicTableNameOrOptions] extends {
       Row: infer R;
     }
     ? R
@@ -1096,7 +1468,7 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof Database['public']['Tables']
+    | keyof PublicSchema['Tables']
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
@@ -1107,8 +1479,8 @@ export type TablesInsert<
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
-  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
       Insert: infer I;
     }
     ? I
@@ -1117,7 +1489,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof Database['public']['Tables']
+    | keyof PublicSchema['Tables']
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
@@ -1128,8 +1500,8 @@ export type TablesUpdate<
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database['public']['Tables']
-  ? Database['public']['Tables'][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
       Update: infer U;
     }
     ? U
@@ -1138,13 +1510,13 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof Database['public']['Enums']
+    | keyof PublicSchema['Enums']
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
     : never = never
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database['public']['Enums']
-  ? Database['public']['Enums'][PublicEnumNameOrOptions]
+  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
+  ? PublicSchema['Enums'][PublicEnumNameOrOptions]
   : never;

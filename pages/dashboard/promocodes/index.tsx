@@ -16,6 +16,7 @@ import {
 import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 import { Title } from '@/models/books';
 import PageLayout from '@/layouts/PageLayout';
+import { getEnumArray } from '@/utils/getEnumArray';
 // import { PromoEditForm, PromoForm } from '@/components/DashBoardPage/PromoForm';
 
 // export type AwardsType = Database['public']['Tables']['Awards']['Row'];
@@ -170,23 +171,26 @@ function Promos(): React.ReactElement {
     const categoryEnumName = 'category';
     const typeEnumName = 'promotype';
 
-    const categoryArray = await check_enums(categoryEnumName);
-    const typeArray = await check_enums(typeEnumName);
+    // const categoryArray = await check_enums(categoryEnumName);
+    // const typeArray = await check_enums(typeEnumName);
+
+    const categoryArray = await getEnumArray(categoryEnumName);
+    const typeArray = await getEnumArray(typeEnumName);
 
     categoryArray && setCategoryArray(categoryArray);
     typeArray && setTypeArray(typeArray);
   };
 
-  const check_enums = async (enumName: string): Promise<string[] | null> => {
-    const { data } = await supabase.rpc('get_types', { enum_type: enumName });
-    if (data) {
-      console.log(`got back ${enumName} enum from DB... `, data);
-      return data as string[];
-    } else {
-      console.log('no data returned');
-      return null;
-    }
-  };
+  // const check_enums = async (enumName: string): Promise<string[] | null> => {
+  //   const { data } = await supabase.rpc('get_types', { enum_type: enumName });
+  //   if (data) {
+  //     console.log(`got back ${enumName} enum from DB... `, data);
+  //     return data as string[];
+  //   } else {
+  //     console.log('no data returned');
+  //     return null;
+  //   }
+  // };
 
   useEffect(() => {
     check_session();

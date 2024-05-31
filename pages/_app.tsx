@@ -17,11 +17,7 @@ import { AppPropsWithLayout } from '@/types/page';
 import { supabase } from 'api/supabase-client';
 import { User } from '@supabase/supabase-js';
 
-import {
-  // TitlesStore,
-  titlesStore,
-  // titlesStore,
-} from '@/store/locals/dashboard/TitlesStore/TitlesStore';
+import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { Observer, observer } from 'mobx-react-lite';
 // import { MultipleStoresProvider } from '@/store/locals/dashboard/TitlesStore/context';

@@ -1,5 +1,6 @@
 import { AuthorServer, IAuthor } from '@/entities/author';
 import { fullManyTitlesQuery } from '@/entities/title/server';
+import { getAllEnums } from '@/utils/getAllEnums';
 import { supabase } from 'api/supabase-client';
 
 export const adminAPI = {
@@ -35,6 +36,12 @@ export const adminAPI = {
   },
   getTitles: async () => {
     const response = await fullManyTitlesQuery;
+    return response;
+  },
+  getEnums: async () => {
+    const response = await getAllEnums();
+
+    // const response = await fullManyTitlesQuery;
     return response;
   },
 };

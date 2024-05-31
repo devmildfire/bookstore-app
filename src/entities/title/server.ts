@@ -6,7 +6,9 @@ export const fullTitleQuery = supabase
   .select(
     `
         *,
-        authors: Titles_Authors ( ...Authors(*)),
+        authors: Titles_Authors ( ...Authors(*, 
+          contacts: AuthorsContacts ( * )
+        )),
         Photos( * ),
         cardBook: CardBooks ( * ),
         audioBook: Audiobooks ( * ),
@@ -30,7 +32,9 @@ export const fullManyTitlesQuery = supabase
   .select(
     `
         *,
-        authors: Titles_Authors ( ...Authors(*)),
+        authors: Titles_Authors ( ...Authors(*, 
+          contacts: AuthorsContacts ( * )
+        )),
         Photos( * ),
         cardBook: CardBooks ( * ),
         audioBook: Audiobooks ( * ),
@@ -54,7 +58,9 @@ export const fullManyTitlesQueryBySlugFunction = (slug: string) => {
     .select(
       `
           *,
-          authors: Titles_Authors ( ...Authors(*)),
+          authors: Titles_Authors ( ...Authors(*, 
+            contacts: AuthorsContacts ( * )
+          )),
           Photos( * ),
           cardBook: CardBooks ( * ),
           audioBook: Audiobooks ( * ),
