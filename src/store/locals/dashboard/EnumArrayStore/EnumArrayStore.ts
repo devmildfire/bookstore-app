@@ -3,17 +3,12 @@ import { ILocalStore } from '@/store/interfaces';
 import { adminAPI } from 'api/admin';
 import { computed, makeAutoObservable, observable, runInAction } from 'mobx';
 
-export type EnumArray = Record<string, string[]>;
+export type EnumArray = Record<string, string[]>[];
+export type EnumObj = Record<string, string[]>;
 
 export class EnumArrayStore implements ILocalStore {
-  private _enums: EnumArray[] | null = null;
+  private _enums: EnumObj | null = null;
   isLoaded = false;
-
-  // constructor() {
-  //   makeObservable<TitlesStore, '_titles'>(this, {
-  //     _titles: observable,
-  //   });
-  // }
 
   constructor() {
     makeAutoObservable<EnumArrayStore, '_enums'>(this, {
@@ -22,39 +17,37 @@ export class EnumArrayStore implements ILocalStore {
     });
   }
 
-  get enums(): EnumArray[] | null {
+  get enums(): EnumObj | null {
     return this._enums;
   }
 
-  // get isLoaded(): boolean {
-  //   return this._titles !== null && this._titles.length > 0 ? true : false;
-  // }
-
-  // get isLoaded() {
-  //   return this._titles !== null && this._titles.length > 0 ? true : false;
-  // }
-
   load = async () => {
     this.isLoaded = false;
-    const { error, data } = await adminAPI.getEnums();
+    const bigEnumsArray = await adminAPI.getEnums();
+    // console.log('big enums array is ... ', bigEnumsArray);
 
-    if (error?.code) {
-      // TODO: обработать ошибку
-      return;
-    }
+    const cutEnums = bigEnumsArray?.filter(
+      (item) => item.enum_schema === 'public'
+    );
 
-    if (!data) {
-      return;
-    }
+    const aggregatedEnums: Record<string, string[]> = {};
+
+    cutEnums?.forEach((item) => {
+      const key = item.enum_name;
+      const value = item.enum_value;
+
+      if (key in aggregatedEnums) {
+        aggregatedEnums[key].push(value);
+      } else {
+        aggregatedEnums[key] = [value];
+      }
+    });
 
     runInAction(() => {
-      this._enums = data;
+      this._enums = aggregatedEnums;
 
-      // this._enums = data.map((enum) => TitleModel.fromJson(title));
-      // console.log('isLoaded is ... ', this.isLoaded);
-      // console.log('setting isLoaded to true ... ');
       this.isLoaded = true;
-      // console.log('isLoaded is ... ', this.isLoaded);
+      console.log('enums are loaded ... ', this.isLoaded);
     });
   };
 
@@ -63,5 +56,4 @@ export class EnumArrayStore implements ILocalStore {
   }
 }
 
-// export default TitlesStore;
 export const enumsArrayStore = new EnumArrayStore();

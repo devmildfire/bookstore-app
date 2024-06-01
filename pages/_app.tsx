@@ -24,6 +24,7 @@ import { Observer, observer } from 'mobx-react-lite';
 // import { useLocalStore } from '@/store/hooks/useLocalStore';
 // import { FiltersStore } from '@/store/locals/dashboard/FiltersStore';
 import '@/components/BookPage/BookPhotos/embla.css';
+import { enumsArrayStore } from '@/store/locals/dashboard/EnumArrayStore/EnumArrayStore';
 
 const MyApp: NextPage<AppProps> = observer((props: AppPropsWithLayout) => {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -99,6 +100,7 @@ const MyApp: NextPage<AppProps> = observer((props: AppPropsWithLayout) => {
     setOrGetCartCookie();
     getUserData();
     // это стор из "синглтона", он работает
+    enumsArrayStore.load();
     titlesStore.load();
     filtersStore.set({
       authors: [],
@@ -112,11 +114,22 @@ const MyApp: NextPage<AppProps> = observer((props: AppPropsWithLayout) => {
       <Hydrate state={pageProps.dehydratedState}>
         <ModalProvider>
           <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
-            <PageLoading show={!(titlesStore.isLoaded || value)} />
+            {/* <PageLoading show={!(titlesStore.isLoaded || value)} /> */}
+            <PageLoading
+              show={
+                !(
+                  (titlesStore.isLoaded &&
+                    enumsArrayStore.enums &&
+                    'contacttypes' in enumsArrayStore.enums) ||
+                  value
+                )
+              }
+            />
 
             {titlesStore.isLoaded &&
               !value &&
               getLayout(<Component {...pageProps} />)}
+
             <Toaster />
           </ThemeProvider>
         </ModalProvider>

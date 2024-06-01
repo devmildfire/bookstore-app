@@ -41,7 +41,6 @@ export const adminAPI = {
   getEnums: async () => {
     const response = await getAllEnums();
 
-    // const response = await fullManyTitlesQuery;
     return response;
   },
 };

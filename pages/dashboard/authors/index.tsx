@@ -18,6 +18,8 @@ import {
   AuthorForm,
 } from '@/components/DashBoardPage/AuthorForm';
 import PageLayout from '@/layouts/PageLayout';
+import { enumsArrayStore } from '@/store/locals/dashboard/EnumArrayStore/EnumArrayStore';
+import { observer } from 'mobx-react-lite';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -35,6 +37,7 @@ const Authorslist = () => {
 
   useEffect(() => {
     getAuthors();
+    // enumsArrayStore.load();
   }, []);
 
   if (!authors) {
@@ -44,6 +47,8 @@ const Authorslist = () => {
   return (
     <div className='w-full'>
       <Text variant='h3c'> Authors </Text>
+      {enumsArrayStore.isLoaded && <div> enums are loaded</div>}
+      <pre> {JSON.stringify(enumsArrayStore.enums, null, 2)} </pre>
 
       <Accordion type='single' collapsible className='w-full'>
         {authors.map((author) => (
@@ -54,7 +59,9 @@ const Authorslist = () => {
           >
             <AccordionTrigger> {author.name} </AccordionTrigger>
             <AccordionContent>
-              <AuthorEditForm {...author} />
+              {enumsArrayStore.enums !== null && enumsArrayStore.isLoaded && (
+                <AuthorEditForm {...author} />
+              )}
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -72,15 +79,17 @@ const Authorslist = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <AuthorForm
-              defaultName='sdfdsfsdf'
-              defaultBio='sdfdsfsdf'
-              defaultBirthDate={new Date('2022-03-25')}
-              defaultDeathDate={new Date('2022-03-25')}
-              defaultCity='sdfdsfsdfsd'
-              // defaultPhoto='sdfsdfdsf'
-              defaultPhrase='sdfsdfsdf'
-            />
+            {enumsArrayStore.enums !== null && enumsArrayStore.isLoaded && (
+              <AuthorForm
+                defaultName='sdfdsfsdf'
+                defaultBio='sdfdsfsdf'
+                defaultBirthDate={new Date('2022-03-25')}
+                defaultDeathDate={new Date('2022-03-25')}
+                defaultCity='sdfdsfsdfsd'
+                // defaultPhoto='sdfsdfdsf'
+                defaultPhrase='sdfsdfsdf'
+              />
+            )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -89,7 +98,7 @@ const Authorslist = () => {
 };
 
 // TODO перенести этот функционал в корень сайта
-function Authors(): React.ReactElement {
+const Authors = observer(() => {
   const [session, setSession] = useState<Session>();
   const router = useRouter();
 
@@ -123,7 +132,43 @@ function Authors(): React.ReactElement {
       </DashMain>
     </PageLayout>
   );
-}
+});
+
+// function Authors(): React.ReactElement {
+//   const [session, setSession] = useState<Session>();
+//   const router = useRouter();
+
+//   const check_session = async () => {
+//     try {
+//       const { data, error } = await supabase.auth.getSession();
+//       if (error) {
+//         console.error(error);
+//       } else {
+//         data.session && setSession(data.session);
+//         // !data.session?.user.user_metadata.isAdmin && router.push('/login');
+//         !data.session?.user.app_metadata.claims_admin && router.push('/login');
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     check_session();
+//   }, []);
+
+//   return (
+//     <PageLayout>
+//       <DashMain>
+//         <div className='text-center dark flex flex-col justify-center items-center align-middle w-full self-center space-y-16'>
+//           <DashNav />
+//           <Authorslist />
+//           {session && <LogOut session={session} />}
+//         </div>
+//       </DashMain>
+//     </PageLayout>
+//   );
+// }
 
 // export { Authors };
 export default Authors;

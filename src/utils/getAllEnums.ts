@@ -1,11 +1,11 @@
 import { supabase } from 'api/supabase-client';
 
 export const getAllEnums = async (): Promise<
-  Record<string, string[]>[] | null
+  Record<string, string>[] | null
 > => {
   const { data } = await supabase.rpc('get_enums');
   if (data) {
-    return data as Record<string, string[]>[];
+    return data as Record<string, string>[];
   } else {
     return null;
   }
