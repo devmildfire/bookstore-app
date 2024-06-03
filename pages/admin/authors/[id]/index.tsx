@@ -17,7 +17,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const AddAuthorPage: NextPageWithLayout<{ id: string }> = ({ id }) => {
-  const authorStore = useLocalStore(() => new AuthorStore({ id }));
+  const idNumber = +id;
+  const authorStore = useLocalStore(() => new AuthorStore({ id: idNumber }));
 
   React.useEffect(() => {
     authorStore.load();

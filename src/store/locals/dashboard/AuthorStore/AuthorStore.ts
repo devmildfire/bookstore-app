@@ -7,11 +7,11 @@ import { makeObservable, observable, runInAction } from 'mobx';
 import { toast } from 'sonner';
 
 type InitialData = {
-  id: string;
+  id: number;
 };
 
 class AuthorStore implements ILocalStore {
-  readonly id: string;
+  readonly id: number;
   private _author: AuthorModel | null = null;
 
   constructor({ id }: InitialData) {
@@ -67,6 +67,9 @@ class AuthorStore implements ILocalStore {
       photo: this._author.photo.src,
       birth_date: payload.birthDate ? payload.birthDate.toISOString() : null,
       death_date: payload.deathDate ? payload.deathDate.toISOString() : null,
+      // TODO: пока в форме нет контактов авторов, поэтому в полях их тоже нет. Добавить поля с контактами авторов
+      // contacts: payload.contacts,
+      contacts: [],
     });
 
     if (error?.code) {
