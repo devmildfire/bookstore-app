@@ -7,9 +7,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
@@ -20,6 +27,16 @@ import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
+import { allEnums } from '@/utils/allEnums';
+
+// console.log('all imported enums are ... ', allEnums);
+console.log('all imported contact types are ... ', allEnums.contacttypes);
+
+// const isContactTypeValid = async (contactType: string): Promise<boolean> => {
+//   const isValid = enumsArrayStore.enums!.contacttypes.includes(contactType);
+
+//   return isValid;
+// };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -28,6 +45,53 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/png',
   'image/webp',
 ];
+
+const contactSchema = z.object({
+  contactType: z.string().refine(
+    (contactType) => {
+      // return await isContactTypeValid(contactType);
+      return allEnums.contacttypes.includes(contactType);
+    },
+    { message: 'contact type must be valid' }
+  ),
+  contactContent: z.string(),
+});
+
+type contactObject = z.infer<typeof contactSchema>;
+
+const contactSetSchema = z
+  .array(contactSchema)
+  .min(1, {
+    message: `You need to add at least 1 contact`,
+  })
+  .max(10, {
+    message: `You can add at most 10 contacts`,
+  });
+
+// const photoSchema = z.object({
+//   photo: z
+//     .instanceof(File, { message: 'Image is required.' })
+//     .optional()
+//     .refine(
+//       (file) => !file || file?.size <= MAX_FILE_SIZE,
+//       `Max file size is 5MB.`
+//     )
+//     .refine(
+//       (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
+//       '.jpg, .jpeg, .png and .webp files are accepted.'
+//     ),
+// });
+
+// const photoSetSchema = z
+//   .array(photoSchema)
+//   .min(MIN_PHOTOSET_LENGTH, {
+//     message: `You need to add at least ${MIN_PHOTOSET_LENGTH} student`,
+//   })
+//   .max(MAX_PHOTOSET_LENGTH, {
+//     message: `You can add at most ${MAX_PHOTOSET_LENGTH} students`,
+//   });
+
+// type photoObject = z.infer<typeof photoSchema>;
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -63,6 +127,8 @@ const formSchema = z.object({
     message: 'phrase must be least 3 characters.',
   }),
   nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
+  // contact: contactSchema,
+  contacts: contactSetSchema,
 });
 
 const formEditSchema = z.object({
@@ -89,6 +155,8 @@ const formEditSchema = z.object({
     message: 'phrase must be least 3 characters.',
   }),
   nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
+  // contact: contactSchema,
+  contacts: contactSetSchema,
 });
 
 type AuthorFormProps = {
@@ -111,7 +179,26 @@ function AuthorForm(props: AuthorFormProps) {
       city: props.defaultCity,
       phrase: props.defaultPhrase,
       nonsalable: false,
+      contacts: [
+        {
+          contactType: 'e-mail',
+          contactContent: 'example@example.com',
+        },
+      ],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+    // formState: { errors },
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'contacts',
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -321,6 +408,123 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
+
+          {fields.map((item, index) => (
+            <div className='flex flex-row gap-4' key={`contactsKey.${item.id}`}>
+              <FormField
+                control={form.control}
+                name={`contacts.${index}.contactType`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem>
+                    <FormLabel>Author Contact Type</FormLabel>
+                    <Select
+                      onValueChange={() => {
+                        onChange;
+                        append({
+                          contactType: 'e-mail',
+                          contactContent: 'kjkj',
+                        });
+                      }}
+                      defaultValue={value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a contact type' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {allEnums.contacttypes.map((type) => (
+                          <SelectItem key={type + index} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                        {/* {enumsArrayStore.enums &&
+                          enumsArrayStore.enums.contacttypes.map((type) => (
+                            <SelectItem key={type + index} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))} */}
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`contacts.${index}.contactContent`}
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className='flex flex-row items-start p-1'>
+                    <FormLabel>Author Contact Content</FormLabel>
+                    <FormControl>
+                      <Input placeholder='.....' {...fieldProps} />
+                    </FormControl>
+                    {value && (
+                      <Button
+                        color='failure'
+                        type='button'
+                        onClick={() => {
+                          console.log('removing input index ... ', index);
+                          remove(index);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
+
+          {/* <div className='flex flex-row gap-4'>
+            <FormField
+              control={form.control}
+              name='contacts.1.contactType'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Author Contact Type</FormLabel>
+                  <Select
+                    onValueChange={() => {
+                      field.onChange;
+                      append({ contactType: '', contactContent: '' });
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select a contact type' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {enumsArrayStore.enums &&
+                        enumsArrayStore.enums.contacttypes.map((type) => (
+                          <SelectItem value={type}>{type}</SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='contacts.1.contactContent'
+              render={({ field }) => (
+                <FormItem className='flex flex-col items-start p-1'>
+                  <FormLabel>Author Contact Content</FormLabel>
+                  <FormControl>
+                    <Input placeholder='.....' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div> */}
 
           <Button
             type='submit'
@@ -636,6 +840,20 @@ function AuthorEditForm(author: AuthorsType) {
                     placeholder='some profound saying'
                     {...field}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='contacts.1.contactType'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Author Contact</FormLabel>
+                <FormControl>
+                  <Input placeholder='e-mail' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

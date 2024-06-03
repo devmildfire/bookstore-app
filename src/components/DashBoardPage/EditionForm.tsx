@@ -4165,7 +4165,7 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       data.extra && form.setValue('extra', data.extra),
       data.is_published !== null &&
         form.setValue('is_published', data.is_published),
-      data.lit_form && form.setValue('lit_form', data.lit_form),
+      // data.lit_form && form.setValue('lit_form', data.lit_form),
       data.pages && form.setValue('pages', data.pages),
       data.price && form.setValue('price', data.price));
     // data.sold && form.setValue('sold', data.sold));
