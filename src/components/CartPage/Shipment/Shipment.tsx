@@ -194,6 +194,8 @@ export function Shipment({
       name: data.name || null,
       email: data.email,
       status: 'pending',
+      code: null,
+      alerts_sent: false,
       cart_id: cartID,
       summ: price,
     };

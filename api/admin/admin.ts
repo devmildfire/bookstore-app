@@ -1,4 +1,8 @@
-import { AuthorServer, IAuthor } from '@/entities/author';
+import {
+  AuthorServer,
+  IAuthor,
+  fullAuthorQueryByIdFunction,
+} from '@/entities/author';
 import { fullManyTitlesQuery } from '@/entities/title/server';
 import { getAllEnums } from '@/utils/getAllEnums';
 import { supabase } from 'api/supabase-client';
@@ -17,8 +21,8 @@ export const adminAPI = {
       .select('id, bio, photo, name');
     return response;
   },
-  getAuthorById: async (id: string) => {
-    const response = await supabase.from('Authors').select('*').eq('id', id);
+  getAuthorById: async (id: number) => {
+    const response = await fullAuthorQueryByIdFunction(id);
 
     if (!response.data) {
       return response;
@@ -31,7 +35,7 @@ export const adminAPI = {
       .from('Authors')
       .update(author)
       .eq('id', author.id)
-      .select('*')
+      .select('*, contacts: AuthorsContacts ( * )')
       .single();
   },
   getTitles: async () => {
