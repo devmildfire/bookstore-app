@@ -47,7 +47,7 @@ const printEnums = async () => {
     `export const allEnums = ` + JSON.stringify(aggregatedEnums, null, 2);
 
   try {
-    fs.writeFileSync('./testfornode.js', content);
+    fs.writeFileSync('./src/utils/allEnums.js', content);
     // file written successfully
   } catch (err) {
     console.error(err);

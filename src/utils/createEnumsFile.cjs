@@ -82,7 +82,7 @@ var printEnums = function () { return __awaiter(void 0, void 0, void 0, function
                 console.log('big enums array is ... ', aggregatedEnums);
                 content = "export const allEnums = " + JSON.stringify(aggregatedEnums, null, 2);
                 try {
-                    fs.writeFileSync('./test_for_node.js', content);
+                    fs.writeFileSync('./src/utils/allEnums.js', content);
                     // file written successfully
                 }
                 catch (err) {

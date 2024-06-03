@@ -28,6 +28,10 @@ import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
 import { enumsArrayStore } from '@/store/locals/dashboard/EnumArrayStore/EnumArrayStore';
+import { allEnums } from '@/utils/testfornode';
+
+// console.log('all imported enums are ... ', allEnums);
+console.log('all imported contact types are ... ', allEnums.contacttypes);
 
 const isContactTypeValid = async (contactType: string): Promise<boolean> => {
   const isValid = enumsArrayStore.enums!.contacttypes.includes(contactType);
