@@ -18,8 +18,8 @@ import {
   AuthorForm,
 } from '@/components/DashBoardPage/AuthorForm';
 import PageLayout from '@/layouts/PageLayout';
-import { enumsArrayStore } from '@/store/locals/dashboard/EnumArrayStore/EnumArrayStore';
 import { observer } from 'mobx-react-lite';
+import { allEnums } from '@/utils/allEnums';
 
 export type AuthorsType = Database['public']['Tables']['Authors']['Row'];
 
@@ -47,8 +47,8 @@ const Authorslist = () => {
   return (
     <div className='w-full'>
       <Text variant='h3c'> Authors </Text>
-      {enumsArrayStore.isLoaded && <div> enums are loaded</div>}
-      <pre> {JSON.stringify(enumsArrayStore.enums, null, 2)} </pre>
+
+      <pre> {JSON.stringify(allEnums, null, 2)} </pre>
 
       <Accordion type='single' collapsible className='w-full'>
         {authors.map((author) => (
@@ -59,9 +59,7 @@ const Authorslist = () => {
           >
             <AccordionTrigger> {author.name} </AccordionTrigger>
             <AccordionContent>
-              {enumsArrayStore.enums !== null && enumsArrayStore.isLoaded && (
-                <AuthorEditForm {...author} />
-              )}
+              <AuthorEditForm {...author} />
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -79,17 +77,15 @@ const Authorslist = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            {enumsArrayStore.enums !== null && enumsArrayStore.isLoaded && (
-              <AuthorForm
-                defaultName='sdfdsfsdf'
-                defaultBio='sdfdsfsdf'
-                defaultBirthDate={new Date('2022-03-25')}
-                defaultDeathDate={new Date('2022-03-25')}
-                defaultCity='sdfdsfsdfsd'
-                // defaultPhoto='sdfsdfdsf'
-                defaultPhrase='sdfsdfsdf'
-              />
-            )}
+            <AuthorForm
+              defaultName='sdfdsfsdf'
+              defaultBio='sdfdsfsdf'
+              defaultBirthDate={new Date('2022-03-25')}
+              defaultDeathDate={new Date('2022-03-25')}
+              defaultCity='sdfdsfsdfsd'
+              // defaultPhoto='sdfsdfdsf'
+              defaultPhrase='sdfsdfsdf'
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
