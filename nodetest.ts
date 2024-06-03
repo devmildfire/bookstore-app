@@ -1,0 +1,57 @@
+import { createClient } from '@supabase/supabase-js';
+import * as fs from 'fs';
+
+console.log('nodetest hello');
+
+const envSupabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const envSupabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// const supabase = createClient<Database>(
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+const getAllEnums = async (): Promise<Record<string, string>[] | null> => {
+  const { data } = await supabase.rpc('get_enums');
+  if (data) {
+    return data as Record<string, string>[];
+  } else {
+    return null;
+  }
+};
+
+const printEnums = async () => {
+  const enums = await getAllEnums();
+
+  // console.log('printing enums ... ', enums);
+
+  const cutEnums = enums?.filter((item) => item.enum_schema === 'public');
+
+  const aggregatedEnums: Record<string, string[]> = {};
+
+  cutEnums?.forEach((item) => {
+    const key = item.enum_name;
+    const value = item.enum_value;
+
+    if (key in aggregatedEnums) {
+      aggregatedEnums[key].push(value);
+    } else {
+      aggregatedEnums[key] = [value];
+    }
+  });
+
+  console.log('big enums array is ... ', aggregatedEnums);
+
+  const content =
+    `export const allEnums = ` + JSON.stringify(aggregatedEnums, null, 2);
+
+  try {
+    fs.writeFileSync('./testfornode.js', content);
+    // file written successfully
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+printEnums();
