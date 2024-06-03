@@ -27,17 +27,16 @@ import { AuthorsType } from 'pages/dashboard/authors';
 import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
-import { enumsArrayStore } from '@/store/locals/dashboard/EnumArrayStore/EnumArrayStore';
-import { allEnums } from '@/utils/testfornode';
+import { allEnums } from '@/utils/allEnums';
 
 // console.log('all imported enums are ... ', allEnums);
 console.log('all imported contact types are ... ', allEnums.contacttypes);
 
-const isContactTypeValid = async (contactType: string): Promise<boolean> => {
-  const isValid = enumsArrayStore.enums!.contacttypes.includes(contactType);
+// const isContactTypeValid = async (contactType: string): Promise<boolean> => {
+//   const isValid = enumsArrayStore.enums!.contacttypes.includes(contactType);
 
-  return isValid;
-};
+//   return isValid;
+// };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -49,8 +48,9 @@ const ACCEPTED_IMAGE_TYPES = [
 
 const contactSchema = z.object({
   contactType: z.string().refine(
-    async (contactType) => {
-      return await isContactTypeValid(contactType);
+    (contactType) => {
+      // return await isContactTypeValid(contactType);
+      return allEnums.contacttypes.includes(contactType);
     },
     { message: 'contact type must be valid' }
   ),
@@ -433,12 +433,17 @@ function AuthorForm(props: AuthorFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {enumsArrayStore.enums &&
+                        {allEnums.contacttypes.map((type) => (
+                          <SelectItem key={type + index} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                        {/* {enumsArrayStore.enums &&
                           enumsArrayStore.enums.contacttypes.map((type) => (
                             <SelectItem key={type + index} value={type}>
                               {type}
                             </SelectItem>
-                          ))}
+                          ))} */}
                       </SelectContent>
                     </Select>
 
