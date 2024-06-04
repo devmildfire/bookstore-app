@@ -28,6 +28,7 @@ import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
 import { allEnums } from '@/utils/allEnums';
+import { contacttypes } from '@/utils/EnumStrings/contacttypes';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -37,14 +38,19 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp',
 ];
 
+export const zContactType = z.enum(contacttypes);
+
 const contactSchema = z.object({
-  contactType: z.string().refine(
-    (contactType) => {
-      return allEnums.contacttypes.includes(contactType);
-    },
-    { message: 'contact type must be valid' }
-  ),
-  contactContent: z.string(),
+  // contactType: z.optional(zContactType),
+  contactType: zContactType,
+
+  // contactType: z.string().refine(
+  //   (contactType) => {
+  //     return allEnums.contacttypes.includes(contactType);
+  //   },
+  //   { message: 'contact type must be valid' }
+  // ),
+  contactContent: z.string().min(3, 'minimum 3 chars'),
 });
 
 type contactObject = z.infer<typeof contactSchema>;
@@ -144,8 +150,8 @@ function AuthorForm(props: AuthorFormProps) {
       nonsalable: false,
       contacts: [
         {
-          contactType: undefined,
-          contactContent: undefined,
+          contactType: 'X',
+          contactContent: '',
         },
       ],
     },
@@ -202,7 +208,17 @@ function AuthorForm(props: AuthorFormProps) {
         contact: contact.contactContent,
       }));
 
-      // const contactsData = await supabase.from('AuthorsContacts').insert();
+      const contactsData = await supabase
+        .from('AuthorsContacts')
+        .insert(contactsValues)
+        .select('*')
+        .limit(1)
+        .single();
+
+      contactsData.data &&
+        window.alert(
+          `контакты автора ${contactsData.data.author_id} успешно добавлены`
+        );
     }
   }
 
@@ -411,12 +427,13 @@ function AuthorForm(props: AuthorFormProps) {
                   <FormField
                     control={form.control}
                     name={`contacts.${index}.contactContent`}
-                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                    // render={({ field: { value, onChange, ...fieldProps } }) => (
+                    render={({ field }) => (
                       <FormItem className='flex flex-col flex-grow items-start p-1'>
                         <FormLabel>Contact Content</FormLabel>
                         <FormControl>
                           <div className='flex flex-row gap-4 w-full'>
-                            <Input placeholder='.....' {...fieldProps} />
+                            <Input placeholder='.....' {...field} />
 
                             <Button
                               color='failure'
@@ -444,7 +461,7 @@ function AuthorForm(props: AuthorFormProps) {
               className='w-full max-w-48'
               onClick={() => {
                 append({
-                  contactType: '',
+                  contactType: 'X',
                   contactContent: '',
                 });
               }}

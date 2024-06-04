@@ -52,6 +52,23 @@ const printEnums = async () => {
   } catch (err) {
     console.error(err);
   }
+
+  for (const key in aggregatedEnums) {
+    const keyString = `export const ${key} = `;
+    // const arrayString = aggregatedEnums[key];
+    const arrayString = JSON.stringify(aggregatedEnums[key], null, 2);
+    const endString = ' as const;';
+
+    const contentString = keyString + arrayString + endString;
+    console.log(contentString);
+
+    try {
+      fs.writeFileSync(`./src/utils/EnumStrings/${key}.ts`, contentString);
+      // file written successfully
+    } catch (err) {
+      console.error(err);
+    }
+  }
 };
 
 printEnums();

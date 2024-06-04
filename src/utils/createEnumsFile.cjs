@@ -61,7 +61,7 @@ var getAllEnums = function () { return __awaiter(void 0, void 0, void 0, functio
     });
 }); };
 var printEnums = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var enums, cutEnums, aggregatedEnums, content;
+    var enums, cutEnums, aggregatedEnums, content, key, keyString, arrayString, endString, contentString;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, getAllEnums()];
@@ -87,6 +87,20 @@ var printEnums = function () { return __awaiter(void 0, void 0, void 0, function
                 }
                 catch (err) {
                     console.error(err);
+                }
+                for (key in aggregatedEnums) {
+                    keyString = "export const ".concat(key, " = ");
+                    arrayString = JSON.stringify(aggregatedEnums[key], null, 2);
+                    endString = ' as const;';
+                    contentString = keyString + arrayString + endString;
+                    console.log(contentString);
+                    try {
+                        fs.writeFileSync("./src/utils/EnumStrings/".concat(key, ".ts"), contentString);
+                        // file written successfully
+                    }
+                    catch (err) {
+                        console.error(err);
+                    }
                 }
                 return [2 /*return*/];
         }
