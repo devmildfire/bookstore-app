@@ -41,19 +41,9 @@ const ACCEPTED_IMAGE_TYPES = [
 export const zContactType = z.enum(contacttypes);
 
 const contactSchema = z.object({
-  // contactType: z.optional(zContactType),
   contactType: zContactType,
-
-  // contactType: z.string().refine(
-  //   (contactType) => {
-  //     return allEnums.contacttypes.includes(contactType);
-  //   },
-  //   { message: 'contact type must be valid' }
-  // ),
   contactContent: z.string().min(3, 'minimum 3 chars'),
 });
-
-type contactObject = z.infer<typeof contactSchema>;
 
 const contactSetSchema = z
   .array(contactSchema)
