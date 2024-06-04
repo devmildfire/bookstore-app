@@ -16,6 +16,7 @@ export const fullAuthorQuery = supabase
 type FullAuthorQueryType = QueryData<typeof fullAuthorQuery>;
 
 export type AuthorServer = FullAuthorQueryType;
+export type ContactsServer = AuthorServer['contacts'];
 
 export const fullAuthorQueryByIdFunction = (id: number) => {
   const fullAuthorQueryById = supabase

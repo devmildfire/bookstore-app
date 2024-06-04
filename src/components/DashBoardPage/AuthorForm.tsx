@@ -28,15 +28,7 @@ import { DateTimePicker } from '../ui/datetime-picker';
 import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
 import { allEnums } from '@/utils/allEnums';
-
-// console.log('all imported enums are ... ', allEnums);
-console.log('all imported contact types are ... ', allEnums.contacttypes);
-
-// const isContactTypeValid = async (contactType: string): Promise<boolean> => {
-//   const isValid = enumsArrayStore.enums!.contacttypes.includes(contactType);
-
-//   return isValid;
-// };
+import { contacttypes } from '@/utils/EnumStrings/contacttypes';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -46,18 +38,12 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp',
 ];
 
-const contactSchema = z.object({
-  contactType: z.string().refine(
-    (contactType) => {
-      // return await isContactTypeValid(contactType);
-      return allEnums.contacttypes.includes(contactType);
-    },
-    { message: 'contact type must be valid' }
-  ),
-  contactContent: z.string(),
-});
+export const zContactType = z.enum(contacttypes);
 
-type contactObject = z.infer<typeof contactSchema>;
+const contactSchema = z.object({
+  contactType: zContactType,
+  contactContent: z.string().min(3, 'minimum 3 chars'),
+});
 
 const contactSetSchema = z
   .array(contactSchema)
@@ -67,31 +53,6 @@ const contactSetSchema = z
   .max(10, {
     message: `You can add at most 10 contacts`,
   });
-
-// const photoSchema = z.object({
-//   photo: z
-//     .instanceof(File, { message: 'Image is required.' })
-//     .optional()
-//     .refine(
-//       (file) => !file || file?.size <= MAX_FILE_SIZE,
-//       `Max file size is 5MB.`
-//     )
-//     .refine(
-//       (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file?.type),
-//       '.jpg, .jpeg, .png and .webp files are accepted.'
-//     ),
-// });
-
-// const photoSetSchema = z
-//   .array(photoSchema)
-//   .min(MIN_PHOTOSET_LENGTH, {
-//     message: `You need to add at least ${MIN_PHOTOSET_LENGTH} student`,
-//   })
-//   .max(MAX_PHOTOSET_LENGTH, {
-//     message: `You can add at most ${MAX_PHOTOSET_LENGTH} students`,
-//   });
-
-// type photoObject = z.infer<typeof photoSchema>;
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -127,7 +88,6 @@ const formSchema = z.object({
     message: 'phrase must be least 3 characters.',
   }),
   nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
-  // contact: contactSchema,
   contacts: contactSetSchema,
 });
 
@@ -155,7 +115,6 @@ const formEditSchema = z.object({
     message: 'phrase must be least 3 characters.',
   }),
   nonsalable: z.boolean({ required_error: 'nonsalable condition is required' }),
-  // contact: contactSchema,
   contacts: contactSetSchema,
 });
 
@@ -181,8 +140,8 @@ function AuthorForm(props: AuthorFormProps) {
       nonsalable: false,
       contacts: [
         {
-          contactType: 'e-mail',
-          contactContent: 'example@example.com',
+          contactType: 'X',
+          contactContent: '',
         },
       ],
     },
@@ -192,7 +151,6 @@ function AuthorForm(props: AuthorFormProps) {
   const {
     control,
     // handleSubmit,
-    // formState: { errors },
   } = form;
 
   // Create dynamic forms
@@ -232,6 +190,26 @@ function AuthorForm(props: AuthorFormProps) {
 
     error && window.alert(error.message);
     data && window.alert(`${data.name} успешно добавлен к авторам`);
+
+    if (data) {
+      const contactsValues = values.contacts.map((contact) => ({
+        author_id: data.id,
+        type: contact.contactType,
+        contact: contact.contactContent,
+      }));
+
+      const contactsData = await supabase
+        .from('AuthorsContacts')
+        .insert(contactsValues)
+        .select('*')
+        .limit(1)
+        .single();
+
+      contactsData.data &&
+        window.alert(
+          `контакты автора ${contactsData.data.author_id} успешно добавлены`
+        );
+    }
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -266,7 +244,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='nonsalable'
@@ -285,7 +262,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='bio'
@@ -303,7 +279,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='birthDate'
@@ -326,7 +301,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='deathDate'
@@ -350,7 +324,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='city'
@@ -364,7 +337,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='photo'
@@ -394,7 +366,6 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name='phrase'
@@ -408,124 +379,86 @@ function AuthorForm(props: AuthorFormProps) {
               </FormItem>
             )}
           />
+          <div className='flex flex-col gap-4'>
+            Author Contacts
+            {fields.map((item, index) => {
+              // console.log('fields are ... ', fields);
 
-          {fields.map((item, index) => (
-            <div className='flex flex-row gap-4' key={`contactsKey.${item.id}`}>
-              <FormField
-                control={form.control}
-                name={`contacts.${index}.contactType`}
-                render={({ field: { value, onChange, ...fieldProps } }) => (
-                  <FormItem>
-                    <FormLabel>Author Contact Type</FormLabel>
-                    <Select
-                      onValueChange={() => {
-                        onChange;
-                        append({
-                          contactType: 'e-mail',
-                          contactContent: 'kjkj',
-                        });
-                      }}
-                      defaultValue={value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select a contact type' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {allEnums.contacttypes.map((type) => (
-                          <SelectItem key={type + index} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                        {/* {enumsArrayStore.enums &&
-                          enumsArrayStore.enums.contacttypes.map((type) => (
-                            <SelectItem key={type + index} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))} */}
-                      </SelectContent>
-                    </Select>
+              return (
+                <div
+                  className='flex flex-row gap-4'
+                  key={`contactsKey.${item.id}`}
+                >
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.contactType`}
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                      <FormItem className='min-w-36'>
+                        <FormLabel>Contact Type</FormLabel>
+                        <Select onValueChange={onChange} defaultValue={value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Select type' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {allEnums.contacttypes.map((type) => (
+                              <SelectItem key={type + index} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`contacts.${index}.contactContent`}
-                render={({ field: { value, onChange, ...fieldProps } }) => (
-                  <FormItem className='flex flex-row items-start p-1'>
-                    <FormLabel>Author Contact Content</FormLabel>
-                    <FormControl>
-                      <Input placeholder='.....' {...fieldProps} />
-                    </FormControl>
-                    {value && (
-                      <Button
-                        color='failure'
-                        type='button'
-                        onClick={() => {
-                          console.log('removing input index ... ', index);
-                          remove(index);
-                        }}
-                      >
-                        Delete
-                      </Button>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          ))}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.contactContent`}
+                    // render={({ field: { value, onChange, ...fieldProps } }) => (
+                    render={({ field }) => (
+                      <FormItem className='flex flex-col flex-grow items-start p-1'>
+                        <FormLabel>Contact Content</FormLabel>
+                        <FormControl>
+                          <div className='flex flex-row gap-4 w-full'>
+                            <Input placeholder='.....' {...field} />
 
-          {/* <div className='flex flex-row gap-4'>
-            <FormField
-              control={form.control}
-              name='contacts.1.contactType'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Author Contact Type</FormLabel>
-                  <Select
-                    onValueChange={() => {
-                      field.onChange;
-                      append({ contactType: '', contactContent: '' });
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Select a contact type' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {enumsArrayStore.enums &&
-                        enumsArrayStore.enums.contacttypes.map((type) => (
-                          <SelectItem value={type}>{type}</SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                            <Button
+                              color='failure'
+                              type='button'
+                              onClick={() => {
+                                console.log('removing input index ... ', index);
+                                remove(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='contacts.1.contactContent'
-              render={({ field }) => (
-                <FormItem className='flex flex-col items-start p-1'>
-                  <FormLabel>Author Contact Content</FormLabel>
-                  <FormControl>
-                    <Input placeholder='.....' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div> */}
-
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              );
+            })}
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={() => {
+                append({
+                  contactType: 'X',
+                  contactContent: '',
+                });
+              }}
+            >
+              Добавить конткат
+            </Button>
+          </div>
           <Button
             type='submit'
             variant={'outline'}
