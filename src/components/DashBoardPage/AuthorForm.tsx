@@ -45,14 +45,9 @@ const contactSchema = z.object({
   contactContent: z.string().min(3, 'minimum 3 chars'),
 });
 
-const contactSetSchema = z
-  .array(contactSchema)
-  .min(1, {
-    message: `You need to add at least 1 contact`,
-  })
-  .max(10, {
-    message: `You can add at most 10 contacts`,
-  });
+const contactSetSchema = z.array(contactSchema).max(10, {
+  message: `You can add at most 10 contacts`,
+});
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -191,7 +186,7 @@ function AuthorForm(props: AuthorFormProps) {
     error && window.alert(error.message);
     data && window.alert(`${data.name} успешно добавлен к авторам`);
 
-    if (data) {
+    if (data && values.contacts.length > 0) {
       const contactsValues = values.contacts.map((contact) => ({
         author_id: data.id,
         type: contact.contactType,
