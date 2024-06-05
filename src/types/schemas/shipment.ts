@@ -15,7 +15,16 @@ export const ShipmentSchema = z
       )
       .optional(),
     adress: z.string().optional(),
-    email: z.string().email('email musrt be a valid email'),
+    email: z
+      .string()
+      .email({ message: 'email musrt be a valid email' })
+      .refine((email) => {
+        const localPart = email.split('@').slice(0, 1);
+        const longEnough = localPart[0].length > 2;
+        console.log('local part', longEnough);
+
+        return longEnough;
+      }),
   })
   // .refine(
   //   (data) => {

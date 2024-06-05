@@ -239,8 +239,8 @@ export function Shipment({
 
     const payUrlProps: roboUrlProps = {
       invoiceID: orderID,
-      // email: data.email, // Робокасса проверяет емейл на валидность и у неё свои представления о прекрасном. Поэтому даём ей что она хочет
-      email: 'bigsecret@yandex.ru',
+      email: data.email, // Робокасса проверяет емейл на валидность и у неё свои представления о прекрасном. Поэтому даём ей что она хочет
+      // email: 'bigsecret@yandex.ru',
       outSum: price.toString(),
       invoiceDescription: orderDescription,
     };
