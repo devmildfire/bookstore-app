@@ -145,6 +145,11 @@ const formSchema = z.object({
   cover: imageSchema,
   is_featured: z.boolean().default(false).optional(),
   demo: demoSchema,
+  lit_form: z.string().min(3, {
+    message: 'Literature form name must be at least 3 characters long.',
+  }),
+  is_compilation: z.boolean().default(false).optional(),
+  trailerPoster: imageOptionalSchema,
 });
 
 const formEditSchema = z.object({
@@ -169,6 +174,11 @@ const formEditSchema = z.object({
   cover: imageOptionalSchema,
   is_featured: z.boolean().default(false).optional(),
   demo: demoEditSchema,
+  lit_form: z.string().min(3, {
+    message: 'Literature form name must be at least 3 characters long.',
+  }),
+  is_compilation: z.boolean().default(false).optional(),
+  trailerPoster: imageOptionalSchema,
 });
 
 type TitleFormProps = {
@@ -236,6 +246,9 @@ function TitleForm(props: TitleFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
 
+  const posterImage = useRef<HTMLImageElement | null>(null);
+  const posterInputRef = useRef<HTMLInputElement | null>(null);
+
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -268,6 +281,7 @@ function TitleForm(props: TitleFormProps) {
     const time = Date.now();
 
     emptyVideoInput(videoInputRef, trailerVideo);
+
     emptyCoverInput(photoInputRef, photoImage);
 
     const coverExtention = values.cover.name.split('.').pop();
@@ -286,6 +300,29 @@ function TitleForm(props: TitleFormProps) {
     const publicUrl = supabase.storage
       .from('titles')
       .getPublicUrl(`${photoUpload.data?.path}`).data.publicUrl;
+
+    emptyCoverInput(posterInputRef, posterImage);
+
+    let publicPosterUrl = null;
+
+    if (values.trailerPoster) {
+      const posterExtention = values.trailerPoster.name.split('.').pop();
+
+      const posterUpload = await supabase.storage
+        .from('posters')
+        .upload(
+          `posters_${slugify(values.name)}.${posterExtention}`,
+          values.trailerPoster,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+
+      publicPosterUrl = supabase.storage
+        .from('posters')
+        .getPublicUrl(`${posterUpload.data?.path}`).data.publicUrl;
+    }
 
     let videoPublicUrl = null;
 
@@ -340,6 +377,9 @@ function TitleForm(props: TitleFormProps) {
         thesis: values.thesis,
         trailer: values.trailer ? videoPublicUrl : null,
         demo: demoPublicUrl,
+        is_compilation: values.is_compilation,
+        lit_form: values.lit_form,
+        trailer_poster: values.trailerPoster ? publicPosterUrl : null,
       })
       .select('*')
       .single();
@@ -392,12 +432,15 @@ function TitleForm(props: TitleFormProps) {
       thesis: '',
       age_restriction: 0,
       cover: undefined,
+      trailerPoster: undefined,
       name: '',
       authors: [],
       awards: [],
       trailer: undefined,
       first_release: undefined,
       is_featured: false,
+      is_compilation: false,
+      lit_form: '',
     });
   }
 
@@ -418,6 +461,39 @@ function TitleForm(props: TitleFormProps) {
                   <Input placeholder='someTitle' {...field} />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='lit_form'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Literature Form</FormLabel>
+                <FormControl>
+                  <Input placeholder='Novel' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_compilation'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is compilation</FormLabel>
+                </div>
               </FormItem>
             )}
           />
@@ -634,6 +710,36 @@ function TitleForm(props: TitleFormProps) {
                   ref={trailerVideo}
                   controls
                   src=''
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='trailerPoster'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Trailer Poster</FormLabel>
+                <FormControl>
+                  <Input
+                    id='poster'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onImageInputChange(event, posterImage);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <img
+                  className='max-w-72'
+                  ref={posterImage}
+                  src=''
+                  alt='photo image'
                 />
               </FormItem>
             )}
@@ -1196,10 +1302,10 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
             name='cover'
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Photo</FormLabel>
+                <FormLabel>Cover</FormLabel>
                 <FormControl>
                   <Input
-                    aria-label={'author photo'}
+                    aria-label={'cover'}
                     id='photo'
                     type='file'
                     {...fieldProps}
