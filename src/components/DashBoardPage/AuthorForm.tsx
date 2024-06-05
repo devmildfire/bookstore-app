@@ -127,6 +127,8 @@ type AuthorFormProps = {
 function AuthorForm(props: AuthorFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
 
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -191,6 +193,8 @@ function AuthorForm(props: AuthorFormProps) {
     if (data) {
       const uploadContacts = await setContactsData(data.id, values.contacts);
     }
+
+    data && router.reload();
   }
 
   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
