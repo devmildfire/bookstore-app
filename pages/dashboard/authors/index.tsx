@@ -48,8 +48,6 @@ const Authorslist = () => {
     <div className='w-full'>
       <Text variant='h3c'> Authors </Text>
 
-      <pre> {JSON.stringify(allEnums, null, 2)} </pre>
-
       <Accordion type='single' collapsible className='w-full'>
         {authors.map((author) => (
           <AccordionItem

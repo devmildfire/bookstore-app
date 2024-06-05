@@ -49,6 +49,8 @@ const contactSetSchema = z.array(contactSchema).max(10, {
   message: `You can add at most 10 contacts`,
 });
 
+type ContactArrayType = z.infer<typeof contactSetSchema>;
+
 const formSchema = z.object({
   name: z.string().min(3, {
     message: 'Author name must be at least 3 characters long.',
@@ -186,24 +188,8 @@ function AuthorForm(props: AuthorFormProps) {
     error && window.alert(error.message);
     data && window.alert(`${data.name} успешно добавлен к авторам`);
 
-    if (data && values.contacts.length > 0) {
-      const contactsValues = values.contacts.map((contact) => ({
-        author_id: data.id,
-        type: contact.contactType,
-        contact: contact.contactContent,
-      }));
-
-      const contactsData = await supabase
-        .from('AuthorsContacts')
-        .insert(contactsValues)
-        .select('*')
-        .limit(1)
-        .single();
-
-      contactsData.data &&
-        window.alert(
-          `контакты автора ${contactsData.data.author_id} успешно добавлены`
-        );
+    if (data) {
+      const uploadContacts = await setContactsData(data.id, values.contacts);
     }
   }
 
@@ -468,12 +454,90 @@ function AuthorForm(props: AuthorFormProps) {
   );
 }
 
+const getInitContactsArray = async (authorID: number) => {
+  const contactsData = await supabase
+    .from('AuthorsContacts')
+    .select('*')
+    .eq('author_id', authorID)
+    .order('id', { ascending: true });
+
+  contactsData && console.log('initial contacts data', contactsData.data);
+  const contactsNumber = contactsData.data?.length || 1;
+
+  const contactsInitArray = [];
+
+  for (let i = 0; i < contactsNumber; i++) {
+    contactsData.data &&
+      contactsData.data.length &&
+      contactsData.data[i].contact &&
+      contactsInitArray.push({
+        type: contactsData.data[i].type,
+        contact: contactsData.data[i].contact,
+      });
+  }
+
+  return contactsInitArray;
+};
+
+const deleteStoredContacts = async (authorID: number) => {
+  let succes = true;
+
+  const deleteData = await supabase
+    .from('AuthorsContacts')
+    .delete()
+    .eq('author_id', authorID);
+
+  deleteData.error && (succes = false);
+
+  return succes;
+};
+
+const setContactsData = async (
+  authorID: number,
+  contacts: ContactArrayType
+) => {
+  if (contacts.length > 0) {
+    console.log('contacts to add are ... ', contacts);
+
+    const contactsValues = contacts.map((contact) => ({
+      author_id: authorID,
+      type: contact.contactType,
+      contact: contact.contactContent,
+    }));
+
+    const contactsData = await supabase
+      .from('AuthorsContacts')
+      .insert(contactsValues)
+      .select('*');
+    // .limit(1)
+    // .single();
+
+    console.log('contacts data is ... ', contactsData);
+
+    contactsData.data &&
+      window.alert(
+        `контакты автора ${contactsData.data[0].author_id} успешно добавлены`
+      );
+  }
+};
+
 function AuthorEditForm(author: AuthorsType) {
   const [newPhoto, setNewPhoto] = useState<string>();
+  const effectRan = useRef(false);
 
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   async function getDataFromReq() {
+    const contactsInitArray = await getInitContactsArray(author.id);
+    const contactsNumber = contactsInitArray.length;
+
+    for (let i = 0; i < contactsNumber; i++) {
+      const contactType = contactsInitArray[i].type;
+      const contactContent = contactsInitArray[i].contact || '';
+
+      append({ contactType: contactType, contactContent: contactContent });
+    }
+
     const { data } = await supabase
       .from('Authors')
       .select('*')
@@ -492,7 +556,12 @@ function AuthorEditForm(author: AuthorsType) {
   }
 
   useEffect(() => {
-    getDataFromReq();
+    if (!effectRan.current) {
+      getDataFromReq();
+    }
+    return () => {
+      effectRan.current = true;
+    };
   }, []);
 
   const router = useRouter();
@@ -507,11 +576,30 @@ function AuthorEditForm(author: AuthorsType) {
       // photo: undefined,
       phrase: author.phrase ? author.phrase : undefined,
       nonsalable: author.nonsalable,
+      contacts: [],
     },
+  });
+
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'contacts',
   });
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
+
+    // if (values.contacts) {
+    deleteStoredContacts(author.id);
+
+    const uploadContacts = await setContactsData(author.id, values.contacts);
+    // }
 
     let imagePath = null;
     let publicUrl = null;
@@ -774,19 +862,86 @@ function AuthorEditForm(author: AuthorsType) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name='contacts.1.contactType'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Contact</FormLabel>
-                <FormControl>
-                  <Input placeholder='e-mail' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className='flex flex-col gap-4'>
+            Author Contacts
+            {fields.map((item, index) => {
+              // console.log('fields are ... ', fields);
+
+              return (
+                <div
+                  className='flex flex-row gap-4'
+                  key={`contactsKey.${item.id}`}
+                >
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.contactType`}
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                      <FormItem className='min-w-36'>
+                        <FormLabel>Contact Type</FormLabel>
+                        <Select onValueChange={onChange} defaultValue={value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Select type' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {allEnums.contacttypes.map((type) => (
+                              <SelectItem key={type + index} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.contactContent`}
+                    // render={({ field: { value, onChange, ...fieldProps } }) => (
+                    render={({ field }) => (
+                      <FormItem className='flex flex-col flex-grow items-start p-1'>
+                        <FormLabel>Contact Content</FormLabel>
+                        <FormControl>
+                          <div className='flex flex-row gap-4 w-full'>
+                            <Input placeholder='.....' {...field} />
+
+                            <Button
+                              color='failure'
+                              type='button'
+                              onClick={() => {
+                                console.log('removing input index ... ', index);
+                                remove(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              );
+            })}
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={() => {
+                append({
+                  contactType: 'X',
+                  contactContent: '',
+                });
+              }}
+            >
+              Добавить конткат
+            </Button>
+          </div>
 
           <Button
             type='submit'
