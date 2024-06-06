@@ -9,7 +9,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UseFormReturn, useForm, useFormContext } from 'react-hook-form';
+import {
+  UseFormReturn,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from 'react-hook-form';
 import { z } from 'zod';
 
 import { supabase } from 'api/supabase-client';
@@ -88,6 +93,16 @@ const awardsOptionSchema = z.object({
   disable: z.boolean().optional(),
 });
 
+const titlesOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
+
+const novelSchema = z.object({
+  name: z.string().min(3, 'novel name must be at least 3 chars long'),
+});
+
 const videoSchema = z
   .instanceof(File, { message: 'Image is required.' })
   .optional()
@@ -148,8 +163,11 @@ const formSchema = z.object({
   lit_form: z.string().min(3, {
     message: 'Literature form name must be at least 3 characters long.',
   }),
-  is_compilation: z.boolean().default(false).optional(),
   trailerPoster: imageOptionalSchema,
+  is_compilation: z.boolean().default(false).optional(),
+  // novels: z.array(z.string().optional()),
+  novels: z.array(novelSchema).optional(),
+  recommended_titles: z.array(titlesOptionSchema).optional(),
 });
 
 const formEditSchema = z.object({
@@ -177,13 +195,17 @@ const formEditSchema = z.object({
   lit_form: z.string().min(3, {
     message: 'Literature form name must be at least 3 characters long.',
   }),
-  is_compilation: z.boolean().default(false).optional(),
   trailerPoster: imageOptionalSchema,
+  is_compilation: z.boolean().default(false).optional(),
+  // novels: z.array(z.string().optional()),
+  novels: z.array(novelSchema).optional(),
+  recommended_titles: z.array(titlesOptionSchema).optional(),
 });
 
 type TitleFormProps = {
   authors: AuthorsType[];
   awards: AwardsType[];
+  titles: TitleType[];
   defaultName: string;
   defaultThesis: string;
   defaultDescription: string;
@@ -264,6 +286,12 @@ function TitleForm(props: TitleFormProps) {
     disable: false,
   }));
 
+  const TITLESOPTIONS: Option[] = props.titles.map((title) => ({
+    label: title.name || 'default title',
+    value: title.id.toString(),
+    disable: false,
+  }));
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -273,8 +301,24 @@ function TitleForm(props: TitleFormProps) {
 
       age_restriction: props.defaultAgeRestriction,
       first_release: props.defaultFirstRelease,
+      // novels: [],
     },
   });
+
+  // Get properties from react hook form
+  const {
+    control,
+    watch,
+    // handleSubmit,
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'novels',
+  });
+
+  const watchIsCompilation = watch('is_compilation');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -418,6 +462,28 @@ function TitleForm(props: TitleFormProps) {
           window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
       }
 
+      if (values.recommended_titles) {
+        const recomTitlesArray = values.recommended_titles.map((title) => {
+          const recomTitleID = parseInt(title.value);
+          const mainTitleID = data?.id;
+
+          return {
+            main_title_id: mainTitleID,
+            recommended_title_id: recomTitleID,
+          };
+        });
+
+        const recomTitlesData = await supabase
+          .from('Recommended_titles')
+          .insert(recomTitlesArray)
+          .select('*');
+        recomTitlesData.error && window.alert(recomTitlesData.error.message);
+        recomTitlesData.data &&
+          window.alert(
+            `Рекомендованные тайтлы успешно добавлен к тайтлу ${data.name} `
+          );
+      }
+
       const authorsData = await supabase
         .from('Titles_Authors')
         .insert(titlesAuthorsArray)
@@ -425,6 +491,28 @@ function TitleForm(props: TitleFormProps) {
       authorsData.error && window.alert(authorsData.error.message);
       authorsData.data &&
         window.alert(`Авторы успешно добавлен к тайтлу ${data.name} `);
+
+      if (values.novels && values.novels.length > 0) {
+        console.log('novels are ... ', values.novels);
+
+        const titlesNovelsArray = values.novels.map((novel) => {
+          const novelName = novel.name;
+          const titleID = data?.id;
+
+          return {
+            name: novelName,
+            title_id: titleID,
+          };
+        });
+
+        const novelsData = await supabase
+          .from('Novels_List')
+          .insert(titlesNovelsArray)
+          .select('*');
+        novelsData.error && window.alert(novelsData.error.message);
+        novelsData.data &&
+          window.alert(`Рассказы успешно добавлены к тайтлу ${data.name} `);
+      }
     }
 
     form.reset({
@@ -436,10 +524,12 @@ function TitleForm(props: TitleFormProps) {
       name: '',
       authors: [],
       awards: [],
+      recommended_titles: [],
       trailer: undefined,
       first_release: undefined,
       is_featured: false,
       is_compilation: false,
+      novels: [],
       lit_form: '',
     });
   }
@@ -497,6 +587,58 @@ function TitleForm(props: TitleFormProps) {
               </FormItem>
             )}
           />
+
+          {watchIsCompilation && (
+            <div className='flex flex-col gap-4'>
+              {fields.map((field, index) => (
+                <div
+                  className='flex flex-row gap-4'
+                  key={`novelsKey.${field.id}`}
+                >
+                  <FormField
+                    control={form.control}
+                    name={`novels.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem className='flex flex-col flex-grow items-start p-1'>
+                        <FormLabel>Novel title</FormLabel>
+                        <FormControl>
+                          <div className='flex flex-row gap-4 w-full'>
+                            <Input placeholder='.....' {...field} />
+
+                            <Button
+                              color='failure'
+                              type='button'
+                              onClick={() => {
+                                console.log('removing input index ... ', index);
+                                remove(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+
+              <Button
+                type='button'
+                size={'default'}
+                className='w-full max-w-48'
+                onClick={() => {
+                  append({
+                    name: '',
+                  });
+                }}
+              >
+                Добавить рассказ
+              </Button>
+            </div>
+          )}
 
           <FormField
             control={form.control}
@@ -557,6 +699,30 @@ function TitleForm(props: TitleFormProps) {
                     onChange={field.onChange}
                     defaultOptions={AWARDSOPTIONS}
                     placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='recommended_titles'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Recommended titles</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={TITLESOPTIONS}
+                    placeholder='Select recommended titles for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
                         no results found.
@@ -789,17 +955,21 @@ function VideoContainer({ children, hasVideo }: VideoContainerProps) {
 
 type TitleEditFormProps = {
   title: TitleType;
+  titles: TitleType[];
   authors: AuthorsType[];
   awards: AwardsType[];
 };
 
-function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
+function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
   // const [newPhoto, setNewPhoto] = useState<string>();
   const [hasVideo, setHasVideo] = useState(false);
 
   const photoImage = useRef<HTMLImageElement | null>(null);
+
   const trailerVideo = useRef<HTMLVideoElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const posterImage = useRef<HTMLImageElement | null>(null);
 
   const isVideoCleared = useRef(false);
 
@@ -814,6 +984,14 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
     value: award.id.toString(),
     disable: false,
   }));
+
+  const TITLESOPTIONS: Option[] = titles
+    .map((title) => ({
+      label: title.name || 'default title',
+      value: title.id.toString(),
+      disable: false,
+    }))
+    .filter((item) => item.label !== title.name);
 
   async function getDataFromReq() {
     const { data } = await supabase
@@ -835,7 +1013,9 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         form.setValue('first_release', new Date(data.first_release)),
       data.is_featured !== null &&
         form.setValue('is_featured', data.is_featured),
-      data.trailer && setHasVideo(true));
+      data.trailer && setHasVideo(true),
+      data.is_compilation !== null &&
+        form.setValue('is_compilation', data.is_compilation));
 
     const authorsData = await supabase
       .from('Titles_Authors')
@@ -868,11 +1048,34 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
 
       form.setValue('awards', awardsArray);
     }
+
+    const recomData = await supabase
+      .from('Recommended_titles')
+      .select('*, titleName: Titles ( name )')
+      .eq('main_title_id', title.id);
+
+    if (recomData.data) {
+      console.log(
+        'recommended titles data from reference table... ',
+        awardsData.data
+      );
+
+      const recomArray = recomData.data.map((title) => ({
+        label: title?.titleName?.name ? title.titleName.name : 'emptyLabel',
+        value: title.recommended_title_id
+          ? title.recommended_title_id.toString()
+          : 'emptyValue',
+      }));
+
+      form.setValue('recommended_titles', recomArray);
+    }
   }
   useEffect(() => {
     getDataFromReq();
   }, []);
+
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formEditSchema>>({
     resolver: zodResolver(formEditSchema),
     defaultValues: {
@@ -886,6 +1089,21 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
       // demo: title.demo || undefined,
     },
   });
+
+  // Get properties from react hook form
+  const {
+    control,
+    watch,
+    // handleSubmit,
+  } = form;
+
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'novels',
+  });
+
+  const watchIsCompilation = watch('is_compilation');
 
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
@@ -1140,6 +1358,91 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
         >
           <FormField
             control={form.control}
+            name='lit_form'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Literature Form</FormLabel>
+                <FormControl>
+                  <Input placeholder='Novel' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='is_compilation'
+            render={({ field }) => (
+              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+                <FormControl>
+                  <Checkbox
+                    className='bg-neutral-800'
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className='space-y-1 leading-none'>
+                  <FormLabel>is compilation</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {watchIsCompilation && (
+            <div className='flex flex-col gap-4'>
+              {fields.map((field, index) => (
+                <div
+                  className='flex flex-row gap-4'
+                  key={`novelsKey.${field.id}`}
+                >
+                  <FormField
+                    control={form.control}
+                    name={`novels.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem className='flex flex-col flex-grow items-start p-1'>
+                        <FormLabel>Novel title</FormLabel>
+                        <FormControl>
+                          <div className='flex flex-row gap-4 w-full'>
+                            <Input placeholder='.....' {...field} />
+
+                            <Button
+                              color='failure'
+                              type='button'
+                              onClick={() => {
+                                console.log('removing input index ... ', index);
+                                remove(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+
+              <Button
+                type='button'
+                size={'default'}
+                className='w-full max-w-48'
+                onClick={() => {
+                  append({
+                    name: '',
+                  });
+                }}
+              >
+                Добавить рассказ
+              </Button>
+            </div>
+          )}
+
+          <FormField
+            control={form.control}
             name='demo'
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem className='flex flex-col items-start p-1'>
@@ -1203,6 +1506,30 @@ function TitleEditForm({ title, authors, awards }: TitleEditFormProps) {
                     onChange={field.onChange}
                     defaultOptions={AWARDSOPTIONS}
                     placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='recommended_titles'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Recommended titles</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={TITLESOPTIONS}
+                    placeholder='Select recommended titles for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
                         no results found.

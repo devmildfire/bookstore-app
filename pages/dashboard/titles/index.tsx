@@ -78,6 +78,7 @@ const Titleslist = () => {
               {authors && awards && (
                 <TitleEditForm
                   title={title}
+                  titles={[...titles]}
                   authors={[...authors]}
                   awards={[...awards]}
                 />
@@ -103,6 +104,7 @@ const Titleslist = () => {
               <TitleForm
                 authors={[...authors]}
                 awards={[...awards]}
+                titles={[...titles]}
                 // {...authors}
                 defaultName='Default Title'
                 defaultThesis='Default Thesis'
