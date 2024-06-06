@@ -970,8 +970,10 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
   const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const posterImage = useRef<HTMLImageElement | null>(null);
+  const posterInputRef = useRef<HTMLInputElement | null>(null);
 
   const isVideoCleared = useRef(false);
+  const isPosterCleared = useRef(false);
 
   const OPTIONS: Option[] = authors.map((author) => ({
     label: author.name,
@@ -1003,6 +1005,7 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
 
     data &&
       (data.description && form.setValue('description', data.description),
+      data.lit_form && form.setValue('lit_form', data.lit_form),
       data.thesis && form.setValue('thesis', data.thesis),
       data.age_restriction
         ? form.setValue('age_restriction', data.age_restriction)
@@ -1051,7 +1054,7 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
 
     const recomData = await supabase
       .from('Recommended_titles')
-      .select('*, titleName: Titles ( name )')
+      .select('*, Titles!recommended_titles_recommended_title_id_fkey(name)')
       .eq('main_title_id', title.id);
 
     if (recomData.data) {
@@ -1061,13 +1064,29 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
       );
 
       const recomArray = recomData.data.map((title) => ({
-        label: title?.titleName?.name ? title.titleName.name : 'emptyLabel',
+        // label: title?.Titles?.name ? title.Titles.name : 'emptyLabel',
         value: title.recommended_title_id
           ? title.recommended_title_id.toString()
           : 'emptyValue',
+        label: title?.Titles?.name ? title.Titles.name : 'empty Name',
       }));
 
       form.setValue('recommended_titles', recomArray);
+    }
+
+    const novelData = await supabase
+      .from('Novels_List')
+      .select('*, titleName: Titles ( name )')
+      .eq('title_id', title.id);
+
+    if (novelData.data) {
+      console.log('novels data from reference table... ', novelData.data);
+
+      const novelArray = novelData.data.map((novel) => ({
+        name: novel.name,
+      }));
+
+      form.setValue('novels', novelArray);
     }
   }
   useEffect(() => {
@@ -1087,6 +1106,7 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
       is_featured: title.is_featured !== null ? title.is_featured : undefined,
       age_restriction: title.age_restriction || 0,
       // demo: title.demo || undefined,
+      novels: [],
     },
   });
 
@@ -1111,6 +1131,9 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
 
     let imagePath = null;
     let publicUrl = null;
+
+    let posterPath = null;
+    let publicPosterUrl = null;
 
     let videoPath = null;
     let publicVideoUrl = null;
@@ -1216,6 +1239,82 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
         .getPublicUrl(videoPath).data.publicUrl);
     console.log('public video URL is ...', publicVideoUrl);
 
+    // for poster just like for video
+
+    const deleteOldPoster = async (oldPoster: string) => {
+      console.log('current trailer poster ... ', title.trailer_poster);
+      const posterNameString = oldPoster.split('/');
+      console.log('poster Name String ... ', posterNameString);
+      console.log('selected poster file ... ', values.trailerPoster);
+      const posterRemove = await supabase.storage
+        .from('posters')
+        .remove([posterNameString.slice(-1)[0]]);
+      posterRemove.error &&
+        console.log('poster Remove error ... ', posterRemove.error.message);
+      posterRemove.data &&
+        console.log('poster Remove data... ', posterRemove.data);
+    };
+
+    const uploadNewPoster = async (newPoster: File) => {
+      const fileName = newPoster.name
+        ? slugify(newPoster.name)
+        : 'failNameString';
+      console.log('poster is...', values.trailerPoster);
+      console.log('poster file name is...', values.trailerPoster?.name);
+      const posterUpdate = await supabase.storage
+        .from('posters')
+        .upload(`poster_${fileName}`, newPoster, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      const posterError = posterUpdate.error?.message;
+      console.log('poster error is ... ', posterError);
+      posterPath = posterUpdate.data?.path;
+      console.log('poster path ... ', posterPath);
+
+      return posterPath;
+    };
+
+    if (
+      title.trailer_poster &&
+      (values.trailerPoster || isPosterCleared.current)
+    ) {
+      console.log('deleting old poster .... ');
+      await deleteOldPoster(title.trailer_poster);
+    }
+
+    console.log(
+      'V & !C .... ',
+      values.trailerPoster && !isPosterCleared.current
+    );
+
+    if (values.trailerPoster && !isPosterCleared.current) {
+      console.log('uploading new poster .... ');
+      await uploadNewPoster(values.trailerPoster);
+    }
+
+    if (isPosterCleared.current) {
+      publicPosterUrl = null;
+    }
+
+    if (
+      title.trailer_poster &&
+      !values.trailerPoster &&
+      !isPosterCleared.current
+    ) {
+      posterPath = title.trailer_poster;
+      publicPosterUrl = title.trailer_poster;
+    }
+
+    !publicPosterUrl &&
+      posterPath &&
+      (publicPosterUrl = supabase.storage
+        .from('posters')
+        .getPublicUrl(posterPath).data.publicUrl);
+    console.log('public poster URL is ...', publicPosterUrl);
+
+    // end for poster
+
     let demoPath = null;
     let demoPublicUrl = null;
 
@@ -1279,11 +1378,14 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
         description: values.description && values.description,
         thesis: values.thesis && values.thesis,
         is_featured: values.is_featured !== null && values.is_featured,
+        is_compilation: values.is_compilation !== null && values.is_compilation,
+        lit_form: values.lit_form,
         first_release: values.first_release
           ? values.first_release.toUTCString()
           : null,
         cover: publicUrl,
         trailer: publicVideoUrl,
+        trailer_poster: publicPosterUrl,
         demo: demoPublicUrl,
       })
       .eq('id', title.id)
@@ -1344,6 +1446,62 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
       awardsData.error && window.alert(awardsData.error.message);
       awardsData.data &&
         window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
+    }
+
+    const purgeRecoms = await supabase
+      .from('Recommended_titles')
+      .delete()
+      .eq('main_title_id', title.id);
+
+    !purgeRecoms.error && console.log('old recommends deleted');
+
+    if (data && values.recommended_titles) {
+      const titlesRecomsArray = values.recommended_titles.map((recom) => {
+        const recomID = parseInt(recom.value);
+        const titleID = data?.id;
+
+        return {
+          main_title_id: titleID,
+          recommended_title_id: recomID,
+        };
+      });
+
+      const recomsData = await supabase
+        .from('Recommended_titles')
+        .insert(titlesRecomsArray)
+        .select('*');
+      recomsData.error && window.alert(recomsData.error.message);
+      recomsData.data &&
+        window.alert(
+          `Рекомендованные тайтлы успешно добавлен к тайтлу ${data.name} `
+        );
+    }
+
+    const purgeNovels = await supabase
+      .from('Novels_List')
+      .delete()
+      .eq('title_id', title.id);
+
+    !purgeNovels.error && console.log('old novels list deleted');
+
+    if (data && values.novels && values.novels.length > 0) {
+      const novelsArray = values.novels.map((novel) => {
+        const novelName = novel.name;
+        const titleID = data?.id;
+
+        return {
+          name: novelName,
+          title_id: titleID,
+        };
+      });
+
+      const novelData = await supabase
+        .from('Novels_List')
+        .insert(novelsArray)
+        .select('*');
+      novelData.error && window.alert(novelData.error.message);
+      novelData.data &&
+        window.alert(`Рассказы успешно добавлены к тайтлу ${data.name} `);
     }
 
     data && router.reload();
@@ -1704,6 +1862,56 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
                     src={title.trailer || ''}
                   />
                 </VideoContainer>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='trailerPoster'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Trailer Poster</FormLabel>
+                <FormControl>
+                  <div className='flex flex-row items-start p-1'>
+                    <Input
+                      aria-label={'cover'}
+                      id='poster'
+                      type='file'
+                      {...fieldProps}
+                      onChange={(event) => {
+                        onImageInputChange(event, posterImage);
+                        isPosterCleared.current = false;
+
+                        return onChange(
+                          event.target.files && event.target.files[0]
+                        );
+                      }}
+                      ref={posterInputRef}
+                    />
+                    <Button
+                      type='button'
+                      variant={'outline'}
+                      onClick={() => {
+                        // emptyVideoInput(videoInputRef, trailerVideo);
+                        emptyCoverInput(posterInputRef, posterImage);
+                        form.setValue('trailerPoster', undefined);
+
+                        isPosterCleared.current = true;
+                      }}
+                    >
+                      clear ({' '}
+                      {isPosterCleared.current ? 'IS CLEARED' : 'NOT CLEARED'} )
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+                <img
+                  className='max-w-72'
+                  ref={posterImage}
+                  src={title.trailer_poster || ''}
+                  alt='photo image'
+                />
               </FormItem>
             )}
           />
