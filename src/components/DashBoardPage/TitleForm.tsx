@@ -103,6 +103,14 @@ const novelSchema = z.object({
   name: z.string().min(3, 'novel name must be at least 3 chars long'),
 });
 
+const contextSchema = z.object({
+  title: z.string().min(3, 'context title must be at least 3 chars long'),
+  description: z
+    .string()
+    .min(3, 'context description must be at least 3 chars long'),
+  url: z.string().url(),
+});
+
 const videoSchema = z
   .instanceof(File, { message: 'Image is required.' })
   .optional()
@@ -168,6 +176,7 @@ const formSchema = z.object({
   // novels: z.array(z.string().optional()),
   novels: z.array(novelSchema).optional(),
   recommended_titles: z.array(titlesOptionSchema).optional(),
+  context: z.array(contextSchema).optional(),
 });
 
 const formEditSchema = z.object({
@@ -200,6 +209,7 @@ const formEditSchema = z.object({
   // novels: z.array(z.string().optional()),
   novels: z.array(novelSchema).optional(),
   recommended_titles: z.array(titlesOptionSchema).optional(),
+  context: z.array(contextSchema).optional(),
 });
 
 type TitleFormProps = {
@@ -302,6 +312,13 @@ function TitleForm(props: TitleFormProps) {
       age_restriction: props.defaultAgeRestriction,
       first_release: props.defaultFirstRelease,
       // novels: [],
+      context: [
+        {
+          title: '',
+          description: '',
+          url: '',
+        },
+      ],
     },
   });
 
@@ -316,6 +333,12 @@ function TitleForm(props: TitleFormProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'novels',
+  });
+
+  // Create dynamic forms for context
+  const contextFieldObj = useFieldArray({
+    control,
+    name: 'context',
   });
 
   const watchIsCompilation = watch('is_compilation');
@@ -513,6 +536,29 @@ function TitleForm(props: TitleFormProps) {
         novelsData.data &&
           window.alert(`Рассказы успешно добавлены к тайтлу ${data.name} `);
       }
+
+      if (values.context && values.context.length > 0) {
+        console.log('contexts are ... ', values.context);
+
+        const contextsArray = values.context.map((context) => {
+          const titleID = data?.id;
+
+          return {
+            name: context.title,
+            description: context.description,
+            url: context.url,
+            title_id: titleID,
+          };
+        });
+
+        const novelsData = await supabase
+          .from('Contexts')
+          .insert(contextsArray)
+          .select('*');
+        novelsData.error && window.alert(novelsData.error.message);
+        novelsData.data &&
+          window.alert(`Контексты успешно добавлены к тайтлу ${data.name} `);
+      }
     }
 
     form.reset({
@@ -530,6 +576,7 @@ function TitleForm(props: TitleFormProps) {
       is_featured: false,
       is_compilation: false,
       novels: [],
+      context: [],
       lit_form: '',
     });
   }
@@ -762,6 +809,94 @@ function TitleForm(props: TitleFormProps) {
               </FormItem>
             )}
           />
+
+          <div> Контексты </div>
+
+          <div className='flex flex-col gap-4'>
+            {contextFieldObj.fields.map((field, index) => (
+              <div
+                className='flex flex-col gap-4'
+                key={`contextsKey.${field.id}`}
+              >
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.title`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col flex-grow items-start p-1'>
+                      <FormLabel>Title context</FormLabel>
+                      <FormControl>
+                        <div className='flex flex-row gap-4 w-full'>
+                          <Input placeholder='.....' {...field} />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.description`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col items-start p-1'>
+                      <FormLabel>context description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          aria-label={'titleDescription'}
+                          placeholder=''
+                          className='resize-none'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.url`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col flex-grow items-start p-1'>
+                      <FormLabel>context URL</FormLabel>
+                      <FormControl>
+                        <div className='flex flex-row gap-4 w-full'>
+                          <Input placeholder='.....' {...field} />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  color='failure'
+                  type='button'
+                  onClick={() => {
+                    console.log('removing context input index ... ', index);
+
+                    contextFieldObj.remove(index);
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))}
+
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={() => {
+                contextFieldObj.append({
+                  title: '',
+                  description: '',
+                  url: '',
+                });
+              }}
+            >
+              Добавить контекст
+            </Button>
+          </div>
 
           <FormField
             control={form.control}
@@ -1088,6 +1223,23 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
 
       form.setValue('novels', novelArray);
     }
+
+    const contextData = await supabase
+      .from('Contexts')
+      .select('*')
+      .eq('title_id', title.id);
+
+    if (contextData.data) {
+      console.log('context data from reference table... ', contextData.data);
+
+      const contextArray = contextData.data.map((context) => ({
+        title: context.name,
+        description: context.description,
+        url: context.url,
+      }));
+
+      form.setValue('context', contextArray);
+    }
   }
   useEffect(() => {
     getDataFromReq();
@@ -1121,6 +1273,12 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'novels',
+  });
+
+  // Create dynamic forms for context
+  const contextFieldObj = useFieldArray({
+    control,
+    name: 'context',
   });
 
   const watchIsCompilation = watch('is_compilation');
@@ -1504,6 +1662,38 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
         window.alert(`Рассказы успешно добавлены к тайтлу ${data.name} `);
     }
 
+    const purgeContext = await supabase
+      .from('Contexts')
+      .delete()
+      .eq('title_id', title.id);
+
+    !purgeContext.error && console.log('old context list deleted');
+
+    if (data && values.context && values.context.length > 0) {
+      const contextArray = values.context.map((context) => {
+        const contextName = context.title;
+        const contextDesc = context.description;
+        const contextURL = context.url;
+
+        const titleID = data?.id;
+
+        return {
+          name: contextName,
+          title_id: titleID,
+          description: contextDesc,
+          url: contextURL,
+        };
+      });
+
+      const contextData = await supabase
+        .from('Contexts')
+        .insert(contextArray)
+        .select('*');
+      contextData.error && window.alert(contextData.error.message);
+      contextData.data &&
+        window.alert(`Контексты успешно добавлены к тайтлу ${data.name} `);
+    }
+
     data && router.reload();
   }
 
@@ -1737,6 +1927,94 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
               </FormItem>
             )}
           />
+
+          <div> Контексты </div>
+
+          <div className='flex flex-col gap-4'>
+            {contextFieldObj.fields.map((field, index) => (
+              <div
+                className='flex flex-col gap-4'
+                key={`contextsKey.${field.id}`}
+              >
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.title`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col flex-grow items-start p-1'>
+                      <FormLabel>Title context</FormLabel>
+                      <FormControl>
+                        <div className='flex flex-row gap-4 w-full'>
+                          <Input placeholder='.....' {...field} />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.description`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col items-start p-1'>
+                      <FormLabel>context description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          aria-label={'titleDescription'}
+                          placeholder=''
+                          className='resize-none'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`context.${index}.url`}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col flex-grow items-start p-1'>
+                      <FormLabel>context URL</FormLabel>
+                      <FormControl>
+                        <div className='flex flex-row gap-4 w-full'>
+                          <Input placeholder='.....' {...field} />
+                        </div>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  color='failure'
+                  type='button'
+                  onClick={() => {
+                    console.log('removing context input index ... ', index);
+
+                    contextFieldObj.remove(index);
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))}
+
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={() => {
+                contextFieldObj.append({
+                  title: '',
+                  description: '',
+                  url: '',
+                });
+              }}
+            >
+              Добавить контекст
+            </Button>
+          </div>
 
           <FormField
             control={form.control}
