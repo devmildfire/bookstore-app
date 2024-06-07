@@ -71,8 +71,7 @@ export const zCategoryType = z.enum(category);
 // });
 
 const productSchema = z.object({
-  // productNumber: z.number().int().positive().optional(),
-  productNumber: z.string().optional(),
+  productNumber: z.number().int().optional(),
 });
 
 const productSetSchema = z.array(productSchema);
@@ -135,7 +134,7 @@ function BoxSetForm({ products }: boxSetFormProps) {
       prods.forEach((prod) => {
         if (!prod.productNumber) return;
 
-        const prodIndex = parseInt(prod.productNumber);
+        const prodIndex = prod.productNumber;
 
         const prodType = products[prodIndex].type;
         const prodTitleID = products[prodIndex].title_id;
@@ -370,7 +369,9 @@ function BoxSetForm({ products }: boxSetFormProps) {
                       <FormItem className='min-w-36'>
                         <FormLabel>Product Title</FormLabel>
                         <Select
-                          onValueChange={onChange}
+                          onValueChange={(value) => {
+                            onChange(+value);
+                          }}
                           defaultValue={value?.toString() || ''}
                         >
                           <FormControl>
@@ -387,7 +388,6 @@ function BoxSetForm({ products }: boxSetFormProps) {
                                   product.type +
                                   index
                                 }
-                                // value={prodIndex.toString()}
                                 value={prodIndex.toString()}
                               >
                                 {product.title_name} - {product.type}
@@ -400,35 +400,6 @@ function BoxSetForm({ products }: boxSetFormProps) {
                       </FormItem>
                     )}
                   />
-
-                  {/* <FormField
-                    control={form.control}
-                    name={`products.${index}.type`}
-                    render={({ field: { value, onChange, ...fieldProps } }) => (
-                      <FormItem className='min-w-36'>
-                        <FormLabel>Product Type</FormLabel>
-                        <Select onValueChange={onChange} defaultValue={value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder='Select type' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {products.map((product) => (
-                              <SelectItem
-                                key={product.title_id + index}
-                                value={product.type}
-                              >
-                                {product.type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
 
                   <Button
                     color='failure'
@@ -448,13 +419,7 @@ function BoxSetForm({ products }: boxSetFormProps) {
               size={'default'}
               className='w-full max-w-48'
               onClick={() => {
-                // append({
-                //   title_id: 1,
-                //   type: 'EBook',
-                // });
                 append({
-                  // title_id: undefined,
-                  // type: undefined,
                   productNumber: undefined,
                 });
               }}
