@@ -71,7 +71,8 @@ export const zCategoryType = z.enum(category);
 // });
 
 const productSchema = z.object({
-  productNumber: z.number().int().positive().optional(),
+  // productNumber: z.number().int().positive().optional(),
+  productNumber: z.string().optional(),
 });
 
 const productSetSchema = z.array(productSchema);
@@ -89,7 +90,7 @@ const formSchema = z.object({
   }),
   picture: imageSchema,
   price: z.number().int().positive(),
-  discount: z.number().int().positive().min(0).max(100).default(0),
+  discount: z.number().int().min(0).max(100).default(0),
   products: productSetSchema,
 });
 
@@ -134,8 +135,10 @@ function BoxSetForm({ products }: boxSetFormProps) {
       prods.forEach((prod) => {
         if (!prod.productNumber) return;
 
-        const prodType = products[prod.productNumber].type;
-        const prodTitleID = products[prod.productNumber].title_id;
+        const prodIndex = parseInt(prod.productNumber);
+
+        const prodType = products[prodIndex].type;
+        const prodTitleID = products[prodIndex].title_id;
 
         productsValues.push({
           box_set: boxSetID,
@@ -150,6 +153,8 @@ function BoxSetForm({ products }: boxSetFormProps) {
         .select('*');
 
       console.log('products data is ... ', productsData);
+
+      productsData.error && window.alert(productsData.error.message);
 
       productsData.data &&
         window.alert(
@@ -301,6 +306,49 @@ function BoxSetForm({ products }: boxSetFormProps) {
                   src=''
                   alt='photo image'
                 />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
