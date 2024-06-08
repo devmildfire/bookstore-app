@@ -1096,7 +1096,6 @@ type TitleEditFormProps = {
 };
 
 function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
-  // const [newPhoto, setNewPhoto] = useState<string>();
   const [hasVideo, setHasVideo] = useState(false);
 
   const photoImage = useRef<HTMLImageElement | null>(null);

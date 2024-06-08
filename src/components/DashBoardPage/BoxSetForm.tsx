@@ -30,8 +30,9 @@ import slugify from 'slugify';
 import { allEnums } from '@/utils/allEnums';
 import { category } from '@/utils/EnumStrings/category';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
-import { BookProductType } from 'pages/dashboard/boxsets';
+import { BookProductType, BoxSetType } from 'pages/dashboard/boxsets';
 import { Database } from 'api/books/types';
+import DeleteDialog from './DeleteDialog';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //  5MB
 const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; //  5MB
@@ -99,7 +100,7 @@ const formEditSchema = z.object({
   }),
   picture: imageOptionalSchema,
   price: z.number().int().positive(),
-  discount: z.number().int().positive().min(0).max(100).default(0),
+  discount: z.number().int().min(0).max(100).default(0),
   products: productSetSchema,
 });
 
@@ -107,60 +108,69 @@ type boxSetFormProps = {
   products: BookProductType[];
 };
 
+type boxSetEfitFormProps = {
+  products: BookProductType[];
+  boxSet: BoxSetType;
+};
+
+const setProductsData = async (
+  boxSetID: number,
+  prods: ProductArrayType,
+  products: BookProductType[]
+) => {
+  if (prods.length > 0) {
+    console.log('products to add are ... ', prods);
+
+    const productsValues: ProductInsertType[] = [];
+
+    prods.forEach((prod) => {
+      if (prod.productNumber === undefined) return;
+
+      const prodIndex = prod.productNumber;
+
+      const prodType = products[prodIndex].type;
+      const prodTitleID = products[prodIndex].title_id;
+
+      productsValues.push({
+        box_set: boxSetID,
+        category: prodType,
+        title_id: prodTitleID,
+      });
+    });
+
+    const productsData = await supabase
+      .from('BoxSets_Books')
+      .insert(productsValues)
+      .select('*');
+
+    console.log('products data is ... ', productsData);
+
+    productsData.error && window.alert(productsData.error.message);
+
+    productsData.data &&
+      window.alert(
+        `Товары бокс сета ${productsData.data[0].box_set} успешно добавлены`
+      );
+  }
+};
+
+const deleteStoredProducts = async (boxSetID: number) => {
+  let succes = true;
+
+  const deleteData = await supabase
+    .from('BoxSets_Books')
+    .delete()
+    .eq('box_set', boxSetID);
+
+  deleteData.error && (succes = false);
+
+  return succes;
+};
+
 function BoxSetForm({ products }: boxSetFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
 
   const router = useRouter();
-
-  const deleteStoredProducts = async (boxSetID: number) => {
-    let succes = true;
-
-    const deleteData = await supabase
-      .from('BoxSets_Books')
-      .delete()
-      .eq('box_set', boxSetID);
-
-    deleteData.error && (succes = false);
-
-    return succes;
-  };
-
-  const setProductsData = async (boxSetID: number, prods: ProductArrayType) => {
-    if (prods.length > 0) {
-      console.log('products to add are ... ', prods);
-
-      const productsValues: ProductInsertType[] = [];
-
-      prods.forEach((prod) => {
-        if (!prod.productNumber) return;
-
-        const prodIndex = prod.productNumber;
-
-        const prodType = products[prodIndex].type;
-        const prodTitleID = products[prodIndex].title_id;
-
-        productsValues.push({
-          box_set: boxSetID,
-          category: prodType,
-          title_id: prodTitleID,
-        });
-      });
-
-      const productsData = await supabase
-        .from('BoxSets_Books')
-        .insert(productsValues)
-        .select('*');
-
-      console.log('products data is ... ', productsData);
-
-      productsData.error && window.alert(productsData.error.message);
-
-      productsData.data &&
-        window.alert(
-          `Товары бокс сета ${productsData.data[0].box_set} успешно добавлены`
-        );
-    }
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -172,8 +182,6 @@ function BoxSetForm({ products }: boxSetFormProps) {
       discount: 0,
       products: [
         {
-          // type: undefined,
-          // title_id: undefined,
           productNumber: undefined,
         },
       ],
@@ -222,7 +230,11 @@ function BoxSetForm({ products }: boxSetFormProps) {
     data && window.alert(`${data.name} успешно добавлен к бокс сетам`);
 
     if (data) {
-      const uploadProducts = await setProductsData(data.id, values.products);
+      const uploadProducts = await setProductsData(
+        data.id,
+        values.products,
+        products
+      );
     }
 
     data && router.reload();
@@ -252,7 +264,7 @@ function BoxSetForm({ products }: boxSetFormProps) {
             name='name'
             render={({ field }) => (
               <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Author Name</FormLabel>
+                <FormLabel>Box Set Name</FormLabel>
                 <FormControl>
                   <Input placeholder='somebody' {...field} />
                 </FormControl>
@@ -359,15 +371,15 @@ function BoxSetForm({ products }: boxSetFormProps) {
 
               return (
                 <div
-                  className='flex flex-row gap-4'
+                  className='flex flex-row gap-4 items-end'
                   key={`productsKey.${item.id}`}
                 >
                   <FormField
                     control={form.control}
                     name={`products.${index}.productNumber`}
                     render={({ field: { value, onChange, ...fieldProps } }) => (
-                      <FormItem className='min-w-36'>
-                        <FormLabel>Product Title</FormLabel>
+                      <FormItem className='min-w-36 grow'>
+                        <FormLabel>Product</FormLabel>
                         <Select
                           onValueChange={(value) => {
                             onChange(+value);
@@ -441,468 +453,427 @@ function BoxSetForm({ products }: boxSetFormProps) {
   );
 }
 
-// const getInitContactsArray = async (authorID: number) => {
-//   const contactsData = await supabase
-//     .from('AuthorsContacts')
-//     .select('*')
-//     .eq('author_id', authorID)
-//     .order('id', { ascending: true });
+function BoxSetEditForm({ products, boxSet }: boxSetEfitFormProps) {
+  const [newPicture, setNewPicture] = useState<string>();
+  const effectRan = useRef(false);
 
-//   contactsData && console.log('initial contacts data', contactsData.data);
-//   const contactsNumber = contactsData.data?.length || 1;
+  const photoImage = useRef<HTMLImageElement | null>(null);
 
-//   const contactsInitArray = [];
+  async function getDataFromReq() {
+    const { data } = await supabase
+      .from('BoxSets')
+      .select('*')
+      .eq('id', boxSet.id)
+      .single();
 
-//   for (let i = 0; i < contactsNumber; i++) {
-//     contactsData.data &&
-//       contactsData.data.length &&
-//       contactsData.data[i].contact &&
-//       contactsInitArray.push({
-//         type: contactsData.data[i].type,
-//         contact: contactsData.data[i].contact,
-//       });
-//   }
+    data && console.log('data from req is...', data);
 
-//   return contactsInitArray;
-// };
+    data &&
+      (data.picture && setNewPicture(data.picture),
+      data.description && form.setValue('description', data.description),
+      data.price !== null && form.setValue('price', data.price),
+      data.discount !== null && form.setValue('discount', data.discount));
 
-// function AuthorEditForm(author: AuthorsType) {
-//   const [newPhoto, setNewPhoto] = useState<string>();
-//   const effectRan = useRef(false);
+    const productsData = await supabase
+      .from('BoxSets_Books')
+      // .select('*, BoxSets(name)')
+      .select('*')
+      .eq('box_set', boxSet.id);
 
-//   const photoImage = useRef<HTMLImageElement | null>(null);
+    if (productsData.data) {
+      console.log('products data from reference table... ', productsData.data);
 
-//   async function getDataFromReq() {
-//     const contactsInitArray = await getInitContactsArray(author.id);
-//     const contactsNumber = contactsInitArray.length;
+      const productsArray: ProductArrayType = productsData.data.map(
+        (boxSetItem) => {
+          const filteredProducts = products.filter(
+            (product) =>
+              boxSetItem.title_id === product.title_id &&
+              boxSetItem.category === product.type
+          );
 
-//     for (let i = 0; i < contactsNumber; i++) {
-//       const contactType = contactsInitArray[i].type;
-//       const contactContent = contactsInitArray[i].contact || '';
+          const prodNumber = products.indexOf(filteredProducts[0]);
 
-//       append({ contactType: contactType, contactContent: contactContent });
-//     }
+          return {
+            productNumber: prodNumber,
+          };
+        }
+      );
 
-//     const { data } = await supabase
-//       .from('Authors')
-//       .select('*')
-//       .eq('id', author.id)
-//       .single();
+      form.setValue('products', productsArray);
+    }
+  }
 
-//     data && console.log('data from req is...', data);
+  useEffect(() => {
+    if (!effectRan.current) {
+      getDataFromReq();
+    }
+    return () => {
+      effectRan.current = true;
+    };
+  }, []);
 
-//     data &&
-//       (data.photo && setNewPhoto(data.photo),
-//       data.bio && form.setValue('bio', data.bio),
-//       data.city && form.setValue('city', data.city),
-//       data.phrase && form.setValue('phrase', data.phrase),
-//       data.birth_date && form.setValue('birthDate', new Date(data.birth_date)),
-//       data.death_date && form.setValue('deathDate', new Date(data.death_date)));
-//   }
+  const router = useRouter();
 
-//   useEffect(() => {
-//     if (!effectRan.current) {
-//       getDataFromReq();
-//     }
-//     return () => {
-//       effectRan.current = true;
-//     };
-//   }, []);
+  const form = useForm<z.infer<typeof formEditSchema>>({
+    resolver: zodResolver(formEditSchema),
+    defaultValues: {
+      // bio: author.bio ? author.bio : undefined,
+      // birthDate: author.birth_date ? new Date(author.birth_date) : undefined,
+      // deathDate: author.death_date ? new Date(author.death_date) : undefined,
+      // city: author.city ? author.city : undefined,
+      // phrase: author.phrase ? author.phrase : undefined,
+      // nonsalable: author.nonsalable,
+      // contacts: [],
+    },
+  });
 
-//   const router = useRouter();
+  // Get properties from react hook form
+  const {
+    control,
+    // handleSubmit,
+  } = form;
 
-//   const form = useForm<z.infer<typeof formEditSchema>>({
-//     resolver: zodResolver(formEditSchema),
-//     defaultValues: {
-//       bio: author.bio ? author.bio : undefined,
-//       birthDate: author.birth_date ? new Date(author.birth_date) : undefined,
-//       deathDate: author.death_date ? new Date(author.death_date) : undefined,
-//       city: author.city ? author.city : undefined,
-//       // photo: undefined,
-//       phrase: author.phrase ? author.phrase : undefined,
-//       nonsalable: author.nonsalable,
-//       contacts: [],
-//     },
-//   });
+  // Create dynamic forms
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'products',
+  });
 
-//   // Get properties from react hook form
-//   const {
-//     control,
-//     // handleSubmit,
-//   } = form;
+  async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
+    console.log('values ... ', values);
+    const time = Date.now();
 
-//   // Create dynamic forms
-//   const { fields, append, remove } = useFieldArray({
-//     control,
-//     name: 'contacts',
-//   });
+    deleteStoredProducts(boxSet.id);
 
-//   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
-//     console.log('values ... ', values);
+    const uploadProducts = await setProductsData(
+      boxSet.id,
+      values.products,
+      products
+    );
 
-//     // if (values.contacts) {
-//     deleteStoredContacts(author.id);
+    let imagePath = null;
+    let publicUrl = null;
 
-//     const uploadContacts = await setContactsData(author.id, values.contacts);
-//     // }
+    if (boxSet.picture && values.picture) {
+      console.log('current boxSet picture ... ', boxSet.picture);
 
-//     let imagePath = null;
-//     let publicUrl = null;
+      const imageNameString = boxSet.picture.split('/');
 
-//     if (author.photo && values.photo) {
-//       console.log('current author photo ... ', author.photo);
+      const fileExtention = values.picture.name.split('.').pop();
 
-//       const imageNameString = author.photo.split('/');
+      console.log('image Name String ... ', imageNameString);
 
-//       console.log('image Name String ... ', imageNameString);
+      console.log('selected photo file ... ', values.picture);
 
-//       console.log('selected photo file ... ', values.photo);
+      const photoRemove = await supabase.storage
+        .from('boxsets')
+        .remove([imageNameString.slice(-1)[0]]);
 
-//       const photoRemove = await supabase.storage
-//         .from('authors')
-//         .remove([imageNameString.slice(-1)[0]]);
+      photoRemove.error &&
+        console.log('photo Remove error ... ', photoRemove.error.message);
 
-//       photoRemove.error &&
-//         console.log('photo Remove error ... ', photoRemove.error.message);
+      photoRemove.data &&
+        console.log('photo Remove data... ', photoRemove.data);
 
-//       photoRemove.data &&
-//         console.log('photo Remove data... ', photoRemove.data);
+      const photoUdate = await supabase.storage
+        .from('boxsets')
+        .upload(
+          `boxset_${slugify(boxSet.name!)}_${time}.${fileExtention}`,
+          values.picture,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
 
-//       const fileName = values.photo?.name
-//         ? values.photo?.name
-//         : 'failNameString';
-//       console.log('photo is...', values.photo);
-//       console.log('photo name is...', values.photo?.name);
+      photoUdate.error &&
+        console.log('photo update error ... ', photoUdate.error.message);
 
-//       const photoUdate = await supabase.storage
-//         .from('authors')
-//         .upload(`author_${slugify(author.name)}`, values.photo, {
-//           cacheControl: '3600',
-//           upsert: true,
-//         });
+      imagePath = photoUdate.data?.path;
+      console.log('image path ... ', imagePath);
+    }
 
-//       photoUdate.error &&
-//         console.log('photo update error ... ', photoUdate.error.message);
+    if (!boxSet.picture && values.picture) {
+      const fileExtention = values.picture.name.split('.').pop();
 
-//       imagePath = photoUdate.data?.path;
-//       console.log('image path ... ', imagePath);
-//     }
+      const photoUpload = await supabase.storage
+        .from('boxsets')
+        .upload(
+          `boxset_${slugify(boxSet.name!)}_${time}.${fileExtention}`,
+          values.picture,
+          {
+            cacheControl: '3600',
+            upsert: true,
+          }
+        );
+      imagePath = photoUpload.data?.path;
+    }
 
-//     if (!author.photo && values.photo) {
-//       const photoUpload = await supabase.storage
-//         .from('authors')
-//         .upload(`author_${slugify(author.name)}`, values.photo, {
-//           cacheControl: '3600',
-//           upsert: true,
-//         });
-//       imagePath = photoUpload.data?.path;
-//     }
+    if (boxSet.picture && !values.picture) {
+      imagePath = boxSet.picture;
+      publicUrl = boxSet.picture;
+    }
 
-//     if (author.photo && !values.photo) {
-//       imagePath = author.photo;
-//       publicUrl = author.photo;
-//     }
+    !publicUrl &&
+      imagePath &&
+      (publicUrl = supabase.storage.from('boxsets').getPublicUrl(imagePath)
+        .data.publicUrl);
 
-//     !publicUrl &&
-//       imagePath &&
-//       (publicUrl = supabase.storage.from('authors').getPublicUrl(imagePath)
-//         .data.publicUrl);
+    console.log('public URL is ...', publicUrl);
 
-//     console.log('public URL is ...', publicUrl);
+    const { data, error } = await supabase
+      .from('BoxSets')
+      .update({
+        picture: publicUrl || '',
+        description: values.description,
+        price: values.price,
+        discount: values.discount,
+      })
+      .eq('id', boxSet.id)
+      .select('*')
+      .single();
 
-//     console.log('birth date is ...', values.birthDate);
-//     console.log(
-//       'birth date to base is ...',
-//       values.birthDate ? values.birthDate.toUTCString() : null
-//     );
+    error && window.alert(error.message);
+    data && window.alert(`бокс сет ${data.name} успешно обновлён`);
+    data && router.reload();
+  }
 
-//     const { data, error } = await supabase
-//       .from('Authors')
-//       .update({
-//         birth_date: values.birthDate ? values.birthDate.toUTCString() : null,
-//         death_date: values.deathDate ? values.deathDate.toUTCString() : null,
-//         phrase: values.phrase,
-//         photo: publicUrl,
-//         city: values.city,
-//         bio: values.bio,
-//         nonsalable: values.nonsalable,
-//       })
-//       .eq('id', author.id)
-//       .select('*')
-//       .single();
+  async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const imageInput = event.target;
+    const pImage = photoImage.current;
 
-//     error && window.alert(error.message);
-//     data && window.alert(`автор ${data.name} успешно обновлён`);
-//     data && router.reload();
-//   }
+    if (imageInput.files) {
+      const file = imageInput.files[0];
+      if (file) {
+        pImage && (pImage.src = URL.createObjectURL(file));
+      }
+    }
+  }
 
-//   async function onImageInputChange(event: ChangeEvent<HTMLInputElement>) {
-//     const imageInput = event.target;
-//     const pImage = photoImage.current;
+  return (
+    <div className=''>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onEditSubmit)}
+          className='space-y-4 w-full'
+        >
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Box Set Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='Tell us a little bit about yourself'
+                    className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-//     if (imageInput.files) {
-//       const file = imageInput.files[0];
-//       if (file) {
-//         pImage && (pImage.src = URL.createObjectURL(file));
-//       }
-//     }
-//   }
+          <FormField
+            control={form.control}
+            name='picture'
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Box Set Picture</FormLabel>
+                <FormControl>
+                  <Input
+                    id='photo'
+                    type='file'
+                    {...fieldProps}
+                    onChange={(event) => {
+                      onImageInputChange(event);
+                      return onChange(
+                        event.target.files && event.target.files[0]
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <img
+                  className='max-w-72'
+                  ref={photoImage}
+                  src={boxSet.picture || ''}
+                  alt='photo image'
+                />
+              </FormItem>
+            )}
+          />
 
-//   return (
-//     <div className=''>
-//       <Form {...form}>
-//         <form
-//           onSubmit={form.handleSubmit(onEditSubmit)}
-//           className='space-y-4 w-full'
-//         >
-//           <FormField
-//             control={form.control}
-//             name='nonsalable'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
-//                 <FormControl>
-//                   <Checkbox
-//                     className='bg-neutral-800'
-//                     checked={field.value}
-//                     onCheckedChange={field.onChange}
-//                   />
-//                 </FormControl>
-//                 <div className='space-y-1 leading-none'>
-//                   <FormLabel>Непродаваемый автор</FormLabel>
-//                 </div>
-//               </FormItem>
-//             )}
-//           />
+          <FormField
+            control={form.control}
+            name='price'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-//           <FormField
-//             control={form.control}
-//             name='bio'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Aithor Bio</FormLabel>
-//                 <FormControl>
-//                   <Textarea
-//                     aria-label={'author bio'}
-//                     placeholder='Tell us a little bit about yourself'
-//                     className='resize-none'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+          <FormField
+            control={form.control}
+            name='discount'
+            render={({ field }) => (
+              <FormItem className='flex flex-col items-start p-1'>
+                <FormLabel>discount</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    max={100}
+                    min={0}
+                    {...field}
+                    onChange={(value) =>
+                      field.onChange(value.target.valueAsNumber)
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-//           <FormField
-//             control={form.control}
-//             name='birthDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>birth date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     onNull={() => {
-//                       form.setValue('birthDate', null);
+          <div className='flex flex-col gap-4'>
+            Box Set Products
+            {fields.map((item, index) => {
+              // console.log('fields are ... ', fields);
 
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+              return (
+                <div
+                  className='flex flex-row gap-4 items-end'
+                  key={`productsKey.${item.id}`}
+                >
+                  <FormField
+                    control={form.control}
+                    name={`products.${index}.productNumber`}
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                      <FormItem className='min-w-36 grow'>
+                        <FormLabel>Product</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            onChange(+value);
+                          }}
+                          defaultValue={value?.toString() || ''}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Select title' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {products.map((product, prodIndex) => (
+                              <SelectItem
+                                key={
+                                  product.title_name +
+                                  prodIndex +
+                                  product.type +
+                                  index
+                                }
+                                value={prodIndex.toString()}
+                              >
+                                {product.title_name} - {product.type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-//           <FormField
-//             control={form.control}
-//             name='deathDate'
-//             render={({ field }) => (
-//               <FormItem>
-//                 <FormLabel htmlFor='datetime'>death date</FormLabel>
-//                 <FormControl>
-//                   <DateTimePicker
-//                     jsDate={field.value}
-//                     onJsDateChange={field.onChange}
-//                     showClearButton={true}
-//                     onNull={() => {
-//                       form.setValue('deathDate', null);
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-//                       console.log('on null function call');
-//                       console.log('form state is...', form.getValues());
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+                  <Button
+                    color='failure'
+                    type='button'
+                    onClick={() => {
+                      console.log('removing input index ... ', index);
+                      remove(index);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              );
+            })}
+            <Button
+              type='button'
+              size={'default'}
+              className='w-full max-w-48'
+              onClick={() => {
+                append({
+                  productNumber: undefined,
+                });
+              }}
+            >
+              Добавить продукт
+            </Button>
+          </div>
+          <div className='flex flex-row justify-between'>
+            <Button
+              type='submit'
+              variant={'outline'}
+              size={'default'}
+              className='w-full max-w-48'
+            >
+              Обновить
+            </Button>
+            <DeleteDialog deleteFunction={deleteBoxSet} itemID={boxSet.id} />
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+}
 
-//           <FormField
-//             control={form.control}
-//             name='city'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author City</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author city'}
-//                     placeholder='default city'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
+const getBoxSetByID = async (boxSetID: number) => {
+  const boxSet = await supabase
+    .from('BoxSets')
+    .select('*')
+    .eq('id', boxSetID)
+    .single();
 
-//           <FormField
-//             control={form.control}
-//             name='photo'
-//             render={({ field: { value, onChange, ...fieldProps } }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Photo</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author photo'}
-//                     id='photo'
-//                     type='file'
-//                     {...fieldProps}
-//                     onChange={(event) => {
-//                       onImageInputChange(event);
-//                       return onChange(
-//                         event.target.files && event.target.files[0]
-//                       );
-//                     }}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//                 <img
-//                   className='max-w-72'
-//                   ref={photoImage}
-//                   src={newPhoto || author.photo || ''}
-//                   alt='photo image'
-//                 />
-//               </FormItem>
-//             )}
-//           />
-
-//           <FormField
-//             control={form.control}
-//             name='phrase'
-//             render={({ field }) => (
-//               <FormItem className='flex flex-col items-start p-1'>
-//                 <FormLabel>Author Phrase</FormLabel>
-//                 <FormControl>
-//                   <Input
-//                     aria-label={'author phrase'}
-//                     placeholder='some profound saying'
-//                     {...field}
-//                   />
-//                 </FormControl>
-//                 <FormMessage />
-//               </FormItem>
-//             )}
-//           />
-
-//           <div className='flex flex-col gap-4'>
-//             Author Contacts
-//             {fields.map((item, index) => {
-//               // console.log('fields are ... ', fields);
-
-//               return (
-//                 <div
-//                   className='flex flex-row gap-4'
-//                   key={`contactsKey.${item.id}`}
-//                 >
-//                   <FormField
-//                     control={form.control}
-//                     name={`contacts.${index}.contactType`}
-//                     render={({ field: { value, onChange, ...fieldProps } }) => (
-//                       <FormItem className='min-w-36'>
-//                         <FormLabel>Contact Type</FormLabel>
-//                         <Select onValueChange={onChange} defaultValue={value}>
-//                           <FormControl>
-//                             <SelectTrigger>
-//                               <SelectValue placeholder='Select type' />
-//                             </SelectTrigger>
-//                           </FormControl>
-//                           <SelectContent>
-//                             {allEnums.contacttypes.map((type) => (
-//                               <SelectItem key={type + index} value={type}>
-//                                 {type}
-//                               </SelectItem>
-//                             ))}
-//                           </SelectContent>
-//                         </Select>
-
-//                         <FormMessage />
-//                       </FormItem>
-//                     )}
-//                   />
-//                   <FormField
-//                     control={form.control}
-//                     name={`contacts.${index}.contactContent`}
-//                     // render={({ field: { value, onChange, ...fieldProps } }) => (
-//                     render={({ field }) => (
-//                       <FormItem className='flex flex-col flex-grow items-start p-1'>
-//                         <FormLabel>Contact Content</FormLabel>
-//                         <FormControl>
-//                           <div className='flex flex-row gap-4 w-full'>
-//                             <Input placeholder='.....' {...field} />
-
-//                             <Button
-//                               color='failure'
-//                               type='button'
-//                               onClick={() => {
-//                                 console.log('removing input index ... ', index);
-//                                 remove(index);
-//                               }}
-//                             >
-//                               Delete
-//                             </Button>
-//                           </div>
-//                         </FormControl>
-
-//                         <FormMessage />
-//                       </FormItem>
-//                     )}
-//                   />
-//                 </div>
-//               );
-//             })}
-//             <Button
-//               type='button'
-//               size={'default'}
-//               className='w-full max-w-48'
-//               onClick={() => {
-//                 append({
-//                   contactType: 'X',
-//                   contactContent: '',
-//                 });
-//               }}
-//             >
-//               Добавить конткат
-//             </Button>
-//           </div>
-
-//           <Button
-//             type='submit'
-//             variant={'outline'}
-//             size={'default'}
-//             className='w-full max-w-48'
-//           >
-//             Обновить
-//           </Button>
-//         </form>
-//       </Form>
-//     </div>
-//   );
-// }
-
-export {
-  BoxSetForm,
-  //  AuthorEditForm
+  return boxSet.data ? boxSet.data : null;
 };
+
+const deleteBoxSet = async (boxSetID: number) => {
+  const boxSet = await getBoxSetByID(boxSetID);
+
+  if (boxSet) {
+    const imageNameString = boxSet.picture.split('/');
+
+    console.log('image Name String ... ', imageNameString);
+
+    const photoRemove = await supabase.storage
+      .from('boxsets')
+      .remove([imageNameString.slice(-1)[0]]);
+
+    photoRemove.error &&
+      console.log('photo Remove error ... ', photoRemove.error.message);
+
+    photoRemove.data && console.log('photo Remove data... ', photoRemove.data);
+  }
+
+  const { error } = await supabase.from('BoxSets').delete().eq('id', boxSetID);
+
+  error && window.alert(error.message);
+  !error && window.alert(`Бокс сет номер ${boxSetID} успешно удалён`);
+
+  return !error ? true : false;
+};
+
+export { BoxSetForm, BoxSetEditForm };

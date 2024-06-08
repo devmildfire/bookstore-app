@@ -20,7 +20,10 @@ import {
 } from '@/components/DashBoardPage/CourseForm';
 import PageLayout from '@/layouts/PageLayout';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
-import { BoxSetForm } from '@/components/DashBoardPage/BoxSetForm';
+import {
+  BoxSetEditForm,
+  BoxSetForm,
+} from '@/components/DashBoardPage/BoxSetForm';
 
 export type CoursesType = Database['public']['Tables']['Courses']['Row'];
 export type LectorsType = {
@@ -107,6 +110,10 @@ const BoxSetList = () => {
           >
             <AccordionTrigger> {boxSet.name} </AccordionTrigger>
             <AccordionContent>
+              {bookProducts && (
+                <BoxSetEditForm boxSet={boxSet} products={[...bookProducts]} />
+              )}
+
               {/* {lectors && (
                 <CourseEditForm course={course} lectors={[...lectors]} />
               )} */}
