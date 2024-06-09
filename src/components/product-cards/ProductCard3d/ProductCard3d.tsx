@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { KeyboardEvent as ReactKeyEvent, useState } from 'react';
+
 import Image from 'next/image';
 import {
   BackCover,
@@ -14,12 +15,33 @@ import { ButtonsContainer, OldPrice, Price, PriceContainer } from '../styles';
 import CartIcon from '@/assets/icons/ui-icons/add-to-cart.svg';
 import { IconButton } from '@/components/Common/IconButton';
 import { useModal } from '@/components/Modal/Modal';
-import { ProductCardProps } from '../ProductCard/ProductCard';
+import { Title } from 'pages/books';
+import { TriggerStyles } from '@/components/Common/Trigger/types';
 
-function ProductCard3d(props: ProductCardProps) {
-  const { prices, discount, cover, name, onClick, onEnterKey, authors, types } =
-    props;
+export interface ProductCard3DProps extends Title {
+  onOpenClick: () => void;
+  onCloseClick: () => void;
 
+  onEnterKey: (event: ReactKeyEvent) => void;
+  buttonStyle: TriggerStyles;
+  isOpen?: boolean;
+}
+
+function ProductCard3d(props: ProductCard3DProps) {
+  const {
+    prices,
+    discount,
+    cover,
+    name,
+    onOpenClick,
+    onCloseClick,
+    onEnterKey,
+    authors,
+    types,
+  } = props;
+
+  const [isCardOpen, setIsCardOpen] = useState(false);
+  // console.log('open card state is ... ', isCardOpen);
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
@@ -44,7 +66,20 @@ function ProductCard3d(props: ProductCardProps) {
 
   return (
     <BookWrapper tabIndex={0}>
-      <Book onMouseUp={onClick} onKeyDown={onEnterKey} className='book'>
+      <Book
+        // onMouseUp={onClick}
+        onMouseUp={() => {
+          if (isCardOpen) {
+            onCloseClick();
+            setIsCardOpen(false);
+          } else {
+            onOpenClick();
+            setIsCardOpen(true);
+          }
+        }}
+        onKeyDown={onEnterKey}
+        className='book'
+      >
         <Cover
           alt='cover'
           src={cover}
