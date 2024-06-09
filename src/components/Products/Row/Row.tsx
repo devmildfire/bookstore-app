@@ -46,6 +46,18 @@ const Row = ({
     handleOpenRow(rowId);
     setPreview(bookItem);
     setTitleSlug(bookItem?.slug);
+
+    // FIXME  добавлена простая заплатка, чтобы вид всегда прокручивался
+    //  до элемента превью по клику на книгу, а не только один раз когда
+    //  элемент отрисовывается в первый раз
+    previewRef.current &&
+      setTimeout(() => {
+        previewRef.current!.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        });
+      }, 250);
   };
 
   const close = () => {
@@ -79,9 +91,19 @@ const Row = ({
         {row.map((props) =>
           bookStyle === '3d' ? (
             <ProductCard3d
+              isOpen={shouldClose}
               key={props.id}
               onEnterKey={onEnterKey}
-              onClick={() => open(props.id)}
+              // onClick={() => open(props.id)}
+
+              onOpenClick={() => {
+                console.log('openimg...');
+                open(props.id);
+              }}
+              onCloseClick={() => {
+                console.log('closing...');
+                close();
+              }}
               buttonStyle={buttonStyle}
               {...props}
             />
