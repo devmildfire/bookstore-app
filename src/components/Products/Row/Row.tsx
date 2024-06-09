@@ -46,6 +46,16 @@ const Row = ({
     handleOpenRow(rowId);
     setPreview(bookItem);
     setTitleSlug(bookItem?.slug);
+
+    // FIXME  добавлена простая заплатка, чтобы вид всегда прокручивался
+    //  до элемента превью по клику на книгу, а не только один раз когда
+    //  элемент отрисовывается в первый раз
+    previewRef.current &&
+      previewRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      });
   };
 
   const close = () => {
