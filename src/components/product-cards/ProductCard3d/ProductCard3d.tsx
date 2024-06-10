@@ -1,4 +1,4 @@
-import React, { KeyboardEvent as ReactKeyEvent, useState } from 'react';
+import React, { KeyboardEvent as ReactKeyEvent, useRef, useState } from 'react';
 
 import Image from 'next/image';
 import {
@@ -26,7 +26,7 @@ export interface ProductCard3DProps extends Title {
 
   onEnterKey: (event: ReactKeyEvent) => void;
   buttonStyle: TriggerStyles;
-  isOpen?: boolean;
+  // isOpen?: boolean;
 }
 
 const ProductCard3d = observer((props: ProductCard3DProps) => {
@@ -43,9 +43,8 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
     types,
   } = props;
 
-  // const [isCardOpen, setIsCardOpen] = useState(false);
+  const bookRef = useRef<HTMLDivElement>(null);
 
-  // console.log('open card state is ... ', isCardOpen);
   const { handleModalState, handleOpenModal } = useModal();
 
   const onAddToCartClick = () => {
@@ -69,18 +68,26 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
   const minIndex = disPrices.findIndex((x) => x === minPrice);
 
   return (
-    <BookWrapper tabIndex={0}>
+    <BookWrapper
+      tabIndex={0}
+      ref={bookRef}
+      onMouseEnter={() => {
+        previewStore.openTitleID !== id && bookRef.current?.focus();
+      }}
+      onMouseLeave={() => {
+        previewStore.openTitleID !== id && bookRef.current?.blur();
+      }}
+    >
       <Book
-        // onMouseUp={onClick}
         onMouseUp={() => {
           if (previewStore.openTitleID === id) {
             onCloseClick();
             previewStore.openTitleID = null;
-            // setIsCardOpen(false);
+            console.log('current bookRef is ...', bookRef.current);
+            bookRef.current?.blur();
           } else {
             onOpenClick();
             previewStore.openTitleID = id;
-            // setIsCardOpen(true);
           }
         }}
         onKeyDown={onEnterKey}
