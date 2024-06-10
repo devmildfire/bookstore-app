@@ -81,9 +81,40 @@ const Preview = observer(
                 </Button>
               </BookDescriptionContainer>
               <VideoContainer ref={videoContainerRef}>
-                <Video autoPlay muted loop>
-                  <source src='video/composition-v2.mp4' />
-                </Video>
+                {/* {preview.trailer || 'No trailer'} */}
+
+                {preview.trailer && (
+                  <Video
+                    key={preview.trailer}
+                    autoPlay
+                    muted
+                    loop
+                    controls
+                    poster={preview.trailerPoster || undefined}
+                  >
+                    <source src={preview.trailer} />
+                  </Video>
+                )}
+
+                {!preview.trailer && (
+                  <>
+                    <Video
+                      key={preview.name}
+                      autoPlay
+                      muted
+                      loop
+                      controls
+                      poster={preview.trailerPoster || undefined}
+                    >
+                      <source src='video/composition-v2.mp4' />
+                    </Video>
+                    <img
+                      className='absolute top-[50%] left-[50%] h-[80%] translate-y-[-50%] translate-x-[-50%] '
+                      src={preview.cover}
+                      alt={preview.name}
+                    />
+                  </>
+                )}
               </VideoContainer>
               <CloseButton
                 onClick={() => {
