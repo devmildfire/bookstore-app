@@ -18,78 +18,162 @@ import {
   Video,
   VideoContainer,
 } from './styles';
+import { previewStore } from '@/store/locals';
+import { observer } from 'mobx-react-lite';
 
-function Preview({
-  isOpen,
-  shouldClose,
-  preview,
-  slug,
-  width,
-  videoContainerRef,
-  handleClose,
-}: PreviewProps) {
-  const router = useRouter();
+const Preview = observer(
+  ({
+    isOpen,
+    shouldClose,
+    preview,
+    slug,
+    width,
+    videoContainerRef,
+    handleClose,
+  }: PreviewProps) => {
+    const router = useRouter();
 
-  const onOpenTitlePage = useCallback(() => {
-    router.push(`/books/${slug}`);
-  }, [slug, router]);
+    const onOpenTitlePage = useCallback(() => {
+      router.push(`/books/${slug}`);
+    }, [slug, router]);
 
-  return (
-    <AnimatePresence>
-      {!shouldClose && preview && isOpen && width > 512 && (
-        <PreviewContainer
-          style={{ overflowX: 'hidden', overflowY: 'hidden' }}
-          className={isOpen ? 'visible' : 'hidden'}
-          width={document.body.clientWidth}
-        >
-          <MotionPreview
-            initial={{
-              opacity: 0,
-              height: 0,
-            }}
-            animate={{
-              opacity: 1,
-              height: width > 1024 ? '60vh' : 'auto',
-            }}
-            exit={{
-              opacity: 0,
-              height: 0,
-            }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
+    return (
+      <AnimatePresence>
+        {!shouldClose && preview && isOpen && width > 512 && (
+          <PreviewContainer
+            style={{ overflowX: 'hidden', overflowY: 'hidden' }}
+            className={isOpen ? 'visible' : 'hidden'}
+            width={document.body.clientWidth}
           >
-            <BookDescriptionContainer gap={32}>
-              <InfoContainer gap={12}>
-                <div>
-                  <Title>{preview.name}</Title>
-                  <Author>
-                    {preview.authors.map((author) => author.name).join(', ')}
-                  </Author>
-                </div>
-                <Slogan>{preview.thesis}</Slogan>
-              </InfoContainer>
-              <DescriptionBox>
-                <Description>
-                  {/* TODO убрать повторение перед релизом */}
-                  {preview.description}
-                </Description>
-              </DescriptionBox>
-              <Button variant='outlined' onClick={onOpenTitlePage}>
-                Познать
-              </Button>
-            </BookDescriptionContainer>
-            <VideoContainer ref={videoContainerRef}>
-              <Video autoPlay muted loop>
-                <source src='video/composition-v2.mp4' />
-              </Video>
-            </VideoContainer>
-            <CloseButton onClick={handleClose} type='button'>
-              <CloseIcon />
-            </CloseButton>
-          </MotionPreview>
-        </PreviewContainer>
-      )}
-    </AnimatePresence>
-  );
-}
+            <MotionPreview
+              initial={{
+                opacity: 0,
+                height: 0,
+              }}
+              animate={{
+                opacity: 1,
+                height: width > 1024 ? '60vh' : 'auto',
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+              }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+            >
+              <BookDescriptionContainer gap={32}>
+                <InfoContainer gap={12}>
+                  <div>
+                    <Title>{preview.name}</Title>
+                    <Author>
+                      {preview.authors.map((author) => author.name).join(', ')}
+                    </Author>
+                  </div>
+                  <Slogan>{preview.thesis}</Slogan>
+                </InfoContainer>
+                <DescriptionBox>
+                  <Description>
+                    {/* TODO убрать повторение перед релизом */}
+                    {preview.description}
+                  </Description>
+                </DescriptionBox>
+                <Button variant='outlined' onClick={onOpenTitlePage}>
+                  Познать
+                </Button>
+              </BookDescriptionContainer>
+              <VideoContainer ref={videoContainerRef}>
+                <Video autoPlay muted loop>
+                  <source src='video/composition-v2.mp4' />
+                </Video>
+              </VideoContainer>
+              <CloseButton
+                onClick={() => {
+                  handleClose();
+                  previewStore.openTitleID = null;
+                }}
+                type='button'
+              >
+                <CloseIcon />
+              </CloseButton>
+            </MotionPreview>
+          </PreviewContainer>
+        )}
+      </AnimatePresence>
+    );
+  }
+);
 
-export default React.memo(Preview);
+// function Preview({
+//   isOpen,
+//   shouldClose,
+//   preview,
+//   slug,
+//   width,
+//   videoContainerRef,
+//   handleClose,
+// }: PreviewProps) {
+//   const router = useRouter();
+
+//   const onOpenTitlePage = useCallback(() => {
+//     router.push(`/books/${slug}`);
+//   }, [slug, router]);
+
+//   return (
+//     <AnimatePresence>
+//       {!shouldClose && preview && isOpen && width > 512 && (
+//         <PreviewContainer
+//           style={{ overflowX: 'hidden', overflowY: 'hidden' }}
+//           className={isOpen ? 'visible' : 'hidden'}
+//           width={document.body.clientWidth}
+//         >
+//           <MotionPreview
+//             initial={{
+//               opacity: 0,
+//               height: 0,
+//             }}
+//             animate={{
+//               opacity: 1,
+//               height: width > 1024 ? '60vh' : 'auto',
+//             }}
+//             exit={{
+//               opacity: 0,
+//               height: 0,
+//             }}
+//             transition={{ duration: 0.4, ease: 'easeInOut' }}
+//           >
+//             <BookDescriptionContainer gap={32}>
+//               <InfoContainer gap={12}>
+//                 <div>
+//                   <Title>{preview.name}</Title>
+//                   <Author>
+//                     {preview.authors.map((author) => author.name).join(', ')}
+//                   </Author>
+//                 </div>
+//                 <Slogan>{preview.thesis}</Slogan>
+//               </InfoContainer>
+//               <DescriptionBox>
+//                 <Description>
+//                   {/* TODO убрать повторение перед релизом */}
+//                   {preview.description}
+//                 </Description>
+//               </DescriptionBox>
+//               <Button variant='outlined' onClick={onOpenTitlePage}>
+//                 Познать
+//               </Button>
+//             </BookDescriptionContainer>
+//             <VideoContainer ref={videoContainerRef}>
+//               <Video autoPlay muted loop>
+//                 <source src='video/composition-v2.mp4' />
+//               </Video>
+//             </VideoContainer>
+//             <CloseButton onClick={handleClose} type='button'>
+//               <CloseIcon />
+//             </CloseButton>
+//           </MotionPreview>
+//         </PreviewContainer>
+//       )}
+//     </AnimatePresence>
+//   );
+// }
+
+// export default React.memo(Preview);
+export default Preview;

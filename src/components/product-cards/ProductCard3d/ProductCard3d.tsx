@@ -17,6 +17,8 @@ import { IconButton } from '@/components/Common/IconButton';
 import { useModal } from '@/components/Modal/Modal';
 import { Title } from 'pages/books';
 import { TriggerStyles } from '@/components/Common/Trigger/types';
+import { previewStore } from '@/store/locals';
+import { observer } from 'mobx-react-lite';
 
 export interface ProductCard3DProps extends Title {
   onOpenClick: () => void;
@@ -27,8 +29,9 @@ export interface ProductCard3DProps extends Title {
   isOpen?: boolean;
 }
 
-function ProductCard3d(props: ProductCard3DProps) {
+const ProductCard3d = observer((props: ProductCard3DProps) => {
   const {
+    id,
     prices,
     discount,
     cover,
@@ -40,7 +43,8 @@ function ProductCard3d(props: ProductCard3DProps) {
     types,
   } = props;
 
-  const [isCardOpen, setIsCardOpen] = useState(false);
+  // const [isCardOpen, setIsCardOpen] = useState(false);
+
   // console.log('open card state is ... ', isCardOpen);
   const { handleModalState, handleOpenModal } = useModal();
 
@@ -69,12 +73,14 @@ function ProductCard3d(props: ProductCard3DProps) {
       <Book
         // onMouseUp={onClick}
         onMouseUp={() => {
-          if (isCardOpen) {
+          if (previewStore.openTitleID === id) {
             onCloseClick();
-            setIsCardOpen(false);
+            previewStore.openTitleID = null;
+            // setIsCardOpen(false);
           } else {
             onOpenClick();
-            setIsCardOpen(true);
+            previewStore.openTitleID = id;
+            // setIsCardOpen(true);
           }
         }}
         onKeyDown={onEnterKey}
@@ -114,6 +120,98 @@ function ProductCard3d(props: ProductCard3DProps) {
       </Footer>
     </BookWrapper>
   );
-}
+});
+
+// function ProductCard3d(props: ProductCard3DProps) {
+//   const {
+//     id,
+//     prices,
+//     discount,
+//     cover,
+//     name,
+//     onOpenClick,
+//     onCloseClick,
+//     onEnterKey,
+//     authors,
+//     types,
+//   } = props;
+
+//   // const [isCardOpen, setIsCardOpen] = useState(false);
+
+//   // console.log('open card state is ... ', isCardOpen);
+//   const { handleModalState, handleOpenModal } = useModal();
+
+//   const onAddToCartClick = () => {
+//     handleModalState({
+//       cover,
+//       name,
+//       discount,
+//       price: prices,
+//       author: authors.map((author) => author.name).join(', '),
+//       types,
+//     });
+//     handleOpenModal(true, 'book');
+//   };
+
+//   const disPrices = prices.map((price, index) =>
+//     Math.floor((price * (100 - discount[index])) / 100)
+//   );
+
+//   const minPrice = Math.min(...disPrices);
+
+//   const minIndex = disPrices.findIndex((x) => x === minPrice);
+
+//   return (
+//     <BookWrapper tabIndex={0}>
+//       <Book
+//         // onMouseUp={onClick}
+//         onMouseUp={() => {
+//           if (previewStore.openTitleID === id) {
+//             onCloseClick();
+//             // setIsCardOpen(false);
+//           } else {
+//             onOpenClick();
+//             previewStore.openTitleID = id;
+//             // setIsCardOpen(true);
+//           }
+//         }}
+//         onKeyDown={onEnterKey}
+//         className='book'
+//       >
+//         <Cover
+//           alt='cover'
+//           src={cover}
+//           width={330}
+//           height={550}
+//           className='cover'
+//         />
+//         <Pages className='pages' />
+//         <BackCover aria-hidden='true' src={cover} className='back-cover' />
+//         <Lightmap className='lightmap' />
+//       </Book>
+//       <Footer>
+//         <PriceContainer>
+//           {/* FIXME: цены починены, но засчёт упрощения ключа prices в типе Title. Теперь там просто массив чисел*/}
+
+//           <Price>от {minPrice}</Price>
+//           <OldPrice discount={discount[minIndex]}>
+//             {`${prices[minIndex]}₽`}
+//           </OldPrice>
+//         </PriceContainer>
+//         <ButtonsContainer>
+//           <IconButton
+//             width={36}
+//             height={36}
+//             label='добавить в корзину'
+//             onClick={onAddToCartClick}
+//           >
+//             <CartIcon />
+//           </IconButton>
+//           {/* <Button type='button'>В Избранное</Button> */}
+//         </ButtonsContainer>
+//       </Footer>
+//     </BookWrapper>
+//   );
+// }
 
 export default React.memo(ProductCard3d);
