@@ -90,11 +90,8 @@ const Row = ({
       <RowContainer>
         {row.map((props) => (
           <ProductCard3d
-            isOpen={shouldClose}
             key={props.id}
             onEnterKey={onEnterKey}
-            // onClick={() => open(props.id)}
-
             onOpenClick={() => {
               console.log('openimg...');
               open(props.id);
@@ -107,35 +104,6 @@ const Row = ({
             {...props}
           />
         ))}
-        {/* {row.map((props) =>
-          bookStyle === '3d' ? (
-            <ProductCard3d
-              isOpen={shouldClose}
-              key={props.id}
-              onEnterKey={onEnterKey}
-              // onClick={() => open(props.id)}
-
-              onOpenClick={() => {
-                console.log('openimg...');
-                open(props.id);
-              }}
-              onCloseClick={() => {
-                console.log('closing...');
-                close();
-              }}
-              buttonStyle={buttonStyle}
-              {...props}
-            />
-          ) : (
-            <ProductCard
-              key={props.id}
-              onEnterKey={onEnterKey}
-              onClick={() => open(props.id)}
-              buttonStyle={buttonStyle}
-              {...props}
-            />
-          )
-        )} */}
       </RowContainer>
       <div ref={previewRef}>
         <Preview
