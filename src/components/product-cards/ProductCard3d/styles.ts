@@ -13,14 +13,24 @@ import styled from 'styled-components';
 //   }
 // `;
 
-export const BookWrapper = styled.div`
+interface wrapperProps {
+  rotated: boolean;
+}
+
+export const BookWrapper = styled.div<wrapperProps>`
   position: relative;
   perspective: 800px;
   outline: none;
   @media screen and (min-width: 512px) {
-    &:focus .book {
-      transform: rotateY(-15deg) translateX(-20px) scale(1.05);
+    .book {
+      transform: ${(p) =>
+        p.rotated
+          ? 'rotateY(-15deg) translateX(-20px) scale(1.05);'
+          : 'rotateY(0deg)'};
     }
+    /* &:focus .book {
+      transform: rotateY(-15deg) translateX(-20px) scale(1.05);
+    } */
   }
 `;
 

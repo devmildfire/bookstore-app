@@ -1,4 +1,9 @@
-import React, { KeyboardEvent as ReactKeyEvent, useRef, useState } from 'react';
+import React, {
+  KeyboardEvent as ReactKeyEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import Image from 'next/image';
 import {
@@ -43,6 +48,7 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
     types,
   } = props;
 
+  const [rotated, setRotated] = useState(false);
   const bookRef = useRef<HTMLDivElement>(null);
 
   const { handleModalState, handleOpenModal } = useModal();
@@ -67,25 +73,34 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
 
   const minIndex = disPrices.findIndex((x) => x === minPrice);
 
+  useEffect(() => {
+    setRotated(previewStore.openTitleID === id);
+  }, [previewStore.openTitleID]);
+
   return (
     <BookWrapper
       tabIndex={0}
       ref={bookRef}
+      rotated={rotated}
       onMouseEnter={() => {
-        previewStore.openTitleID !== id && bookRef.current?.focus();
+        // previewStore.openTitleID !== id && bookRef.current?.focus();
+        previewStore.openTitleID !== id && setRotated(true);
       }}
       onMouseLeave={() => {
-        previewStore.openTitleID !== id && bookRef.current?.blur();
+        // previewStore.openTitleID !== id && bookRef.current?.blur();
+        previewStore.openTitleID !== id && setRotated(false);
       }}
     >
       <Book
         onMouseUp={() => {
           if (previewStore.openTitleID === id) {
+            setRotated(false);
             onCloseClick();
             previewStore.openTitleID = null;
             console.log('current bookRef is ...', bookRef.current);
             bookRef.current?.blur();
           } else {
+            setRotated(true);
             onOpenClick();
             previewStore.openTitleID = id;
           }
