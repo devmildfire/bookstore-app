@@ -713,7 +713,7 @@ const setEBookData = async (eBookData: eBookInsertType) => {
 
   newEBook.error && window.alert(newEBook.error.message);
   newEBook.data &&
-    window.alert(`${newEBook.data.id} успешно добавлен к электронным книгам`);
+    window.alert(`${newEBook.data.id} успешно добавлен к цифровым книгам`);
 
   if (newEBook.data) {
     return newEBook.data.id;
@@ -731,8 +731,7 @@ const updateEBookData = async (id: number, eBookData: eBookInsertType) => {
     .single();
 
   eBook.error && window.alert(eBook.error.message);
-  eBook.data &&
-    window.alert(`электронная книга ${eBook.data.id} успешно изменена`);
+  eBook.data && window.alert(`Цифровая книга${eBook.data.id} успешно изменена`);
 
   if (eBook.data) {
     return eBook.data.id;
@@ -874,7 +873,7 @@ const deleteEBook = async (eBookID: number) => {
       deletedLinks &&
       !eBookRemove.error &&
       (success = true) &&
-      window.alert(`Электронная книга номер ${eBook.id} успешно удалена`);
+      window.alert(`Цифровая книганомер ${eBook.id} успешно удалена`);
   }
 
   return success;
@@ -1348,7 +1347,7 @@ function EBookForm({ titleID }: { titleID: number }) {
             size={'default'}
             className='w-full max-w-64'
           >
-            Добавить Электронную Книгу
+            Добавить Цифровую Книгу
           </Button>
         </form>
       </Form>
