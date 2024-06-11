@@ -40,6 +40,46 @@ export const Book = styled.div`
     inset 0 1.8px 1.8px hsla(0, 0%, 100%, 0.2),
     inset 3.6px 0 3.6px rgba(0, 0, 0, 0.2);
 `;
+
+export const BookForPreview = styled.div`
+  img {
+    border-radius: 6px 2px 2px 6px;
+    outline: thin solid transparent;
+  }
+
+  border-radius: 6px 2px 2px 6px;
+  outline: thin solid transparent;
+  display: flex;
+  position: relative;
+  max-width: 335px;
+  aspect-ratio: 6/9;
+  transition: transform 0.3s ease;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transform: translateY(-50%) perspective(800px) rotateY(-15deg)
+    translateX(-50%) scale(1.05);
+  animation: scaleUpDown 10s ease-in-out infinite;
+  box-shadow: 0 1.8px 3.6px rgba(0, 0, 0, 0.05),
+    0 10.8px 21.6px rgba(0, 0, 0, 0.08), inset 0 -0.9px 0 rgba(0, 0, 0, 0.1),
+    inset 0 1.8px 1.8px hsla(0, 0%, 100%, 0.2),
+    inset 3.6px 0 3.6px rgba(0, 0, 0, 0.2);
+
+  @keyframes scaleUpDown {
+    0% {
+      transform: translateY(-50%) perspective(800px) rotateY(-15deg)
+        translateX(-50%) scale(1.05);
+    }
+    50% {
+      transform: translateY(-50%) perspective(800px) rotateY(0deg)
+        translateX(-50%) scale(1);
+    }
+    100% {
+      transform: translateY(-50%) perspective(800px) rotateY(-15deg)
+        translateX(-50%) scale(1.05);
+    }
+  }
+`;
+
 // NOTE(@sergromm): использование next/image приводит к смещению разметки
 export const Cover = styled.img`
   position: relative;

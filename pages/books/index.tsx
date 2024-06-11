@@ -13,6 +13,7 @@ import { FilterModel } from '@/store/models/filters';
 // import PageLoading from '@/components/PageLoading/PageLoading';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
+import { previewStore } from '@/store/locals';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -80,6 +81,8 @@ const BooksPage = observer(() => {
   //   (titlesFromStore = extendTitles(
   //     multipleStoresFromContext.titleStore?.titles
   //   ));
+
+  previewStore.openTitleID = null;
 
   const shortTitles = titlesStore.titles || [];
   console.log('shortTitles are ...', shortTitles);
