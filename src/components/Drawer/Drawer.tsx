@@ -14,6 +14,8 @@ import { BookTableTypesEnum } from '@/models/books/types';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 
+import SortIconSvg from '@/assets/icons/sort-icon.svg';
+
 const Content = styled(Primitive.Content)``;
 
 const ContentWrapper = styled(motion.div)`
@@ -79,18 +81,29 @@ const Separator = styled.hr`
 `;
 
 const FilterIcon = styled(MixerVerticalIcon)`
-  width: clamp(1rem, 3vw, 30px);
-  height: auto;
+  /* width: clamp(1rem, 3vw, 30px);
+  height: auto; */
+  height: clamp(1rem, 3vw, 30px);
+  width: auto;
+`;
+
+const SortIcon = styled(SortIconSvg)`
+  /* width: clamp(1rem, 3vw, 30px);
+  height: auto; */
+  height: clamp(1rem, 3vw, 30px);
+  width: auto;
 `;
 
 const Trigger = styled(Primitive.Trigger)`
   background: transparent;
   color: var(--main-white-80);
-  padding: 16px;
+
+  /* padding: 9px; */
+
   // min-width: 64px;
   // max-width: 200px;
   // width: 100%;
-  width: clamp(100px, 27vw, 200px);
+  /* width: clamp(100px, 27vw, 200px); */
 
   transition: 0.15s;
   cursor: pointer;
@@ -98,8 +111,36 @@ const Trigger = styled(Primitive.Trigger)`
   display: flex;
   justify-content: center;
 
-  &:hover {
-    color: var(--main-red-100);
+  > * {
+    transition: 0.15s;
+
+    &:hover {
+      color: var(--main-red-100);
+    }
+
+    /* padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: clamp(1rem, 6vw, 140px);
+    padding-right: clamp(1rem, 6vw, 140px); */
+
+    padding: 12px clamp(40px, 10vw, 200px);
+
+    box-sizing: content-box;
+
+    :first-child {
+      border-right: 1px solid var(--main-white-80);
+    }
+    :last-child {
+      border-left: 1px solid var(--main-white-80);
+    }
+    :not(:first-child, :last-child) {
+      border-left: 1px solid var(--main-white-80);
+      border-right: 1px solid var(--main-white-80);
+    }
+
+    :only-child {
+      border: none;
+    }
   }
 `;
 
@@ -247,6 +288,7 @@ export const Drawer = observer(({ children }: PropsWithChildren) => {
       <Primitive.Root open={open} onOpenChange={setOpen}>
         <Trigger>
           <FilterIcon />
+          {/* <SortIcon /> */}
         </Trigger>
         <AnimatePresence>
           {open ? (
