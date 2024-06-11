@@ -1,11 +1,7 @@
-// import { Title } from '@/models/books/types';
 import { TriggerStyles } from '../Common/Trigger/types';
-// import { ITitle } from '@/entities/title/client';
 import { Title, Titles } from 'pages/books';
 
 export type RowProps = {
-  // row: ITitle[];
-  // data: ITitle[];
   row: Titles;
   data: Titles;
   buttonStyle: TriggerStyles;

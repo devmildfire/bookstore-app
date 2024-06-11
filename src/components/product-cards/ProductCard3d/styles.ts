@@ -1,25 +1,20 @@
 import breakPoints from '@/utils/breakPoints';
 import styled from 'styled-components';
 
-// export const BookWrapper = styled.div`
-//   position: relative;
-//   perspective: 800px;
-//   outline: none;
-//   @media screen and (min-width: 512px) {
-//     &:hover .book,
-//     &:focus .book {
-//       transform: rotateY(-15deg) translateX(-20px) scale(1.05);
-//     }
-//   }
-// `;
+interface wrapperProps {
+  rotated: boolean;
+}
 
-export const BookWrapper = styled.div`
+export const BookWrapper = styled.div<wrapperProps>`
   position: relative;
   perspective: 800px;
   outline: none;
   @media screen and (min-width: 512px) {
-    &:focus .book {
-      transform: rotateY(-15deg) translateX(-20px) scale(1.05);
+    .book {
+      transform: ${(p) =>
+        p.rotated
+          ? 'rotateY(-15deg) translateX(-20px) scale(1.05);'
+          : 'rotateY(0deg)'};
     }
   }
 `;

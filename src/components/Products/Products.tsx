@@ -1,15 +1,11 @@
 import React, { useMemo, useState, ReactElement } from 'react';
 import { GridContainer } from './styles';
-import { Title } from '@/models/books';
 import splitByRows from '@/utils/splitByRows';
 import useScreenSize from '@/hooks/useScreenSize';
 import { Row } from './Row';
-import { ITitle } from '@/entities/title/client';
 import { Titles } from 'pages/books';
 
 interface GridProps {
-  // data: Title[];
-  // data: ITitle[];
   data: Titles;
 }
 
