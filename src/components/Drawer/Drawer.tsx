@@ -60,13 +60,13 @@ const Overlay = styled(Primitive.Overlay)`
   z-index: 99999;
 `;
 
+// width: 100%;
 const Triggers = styled.div`
   background-color: #171717;
   border-radius: 60px;
   display: flex;
   justify-content: space-evenly;
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
-  width: 100%;
   max-width: 755px;
   height: auto;
   max-height: 66px;
@@ -87,10 +87,16 @@ const Trigger = styled(Primitive.Trigger)`
   background: transparent;
   color: var(--main-white-80);
   padding: 16px;
-  min-width: 64px;
-  width: 100%;
+  // min-width: 64px;
+  // max-width: 200px;
+  // width: 100%;
+  width: clamp(100px, 27vw, 200px);
+
   transition: 0.15s;
   cursor: pointer;
+
+  display: flex;
+  justify-content: center;
 
   &:hover {
     color: var(--main-red-100);
