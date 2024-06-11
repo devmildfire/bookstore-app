@@ -106,7 +106,8 @@ const Preview = observer(
                       controls
                       poster={preview.trailerPoster || undefined}
                     >
-                      <source src='video/composition-v2.mp4' />
+                      {/* <source src='video/composition-v2.mp4' /> */}
+                      <source src='video/shadows.mp4' />
                     </Video>
                     <img
                       className='absolute top-[50%] left-[50%] h-[80%] translate-y-[-50%] translate-x-[-50%] '
