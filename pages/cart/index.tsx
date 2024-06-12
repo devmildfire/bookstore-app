@@ -38,12 +38,12 @@ const StyledText = styled(Text)`
   }
 `;
 
-const BackIcon = styled(backLinkArrow)`
+export const BackIcon = styled(backLinkArrow)`
   margin-right: 5px;
   // margin-top: 15px;
 `;
 
-const ReturnButton = styled.button`
+export const ReturnButton = styled.button`
   display: flex;
   align-items: center;
   background-color: transparent;

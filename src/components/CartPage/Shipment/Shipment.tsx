@@ -2,11 +2,7 @@ import { ShipmentSchema, ShipmentFormData } from '@/types/schemas/shipment';
 import {
   StyledForm,
   StyledButton,
-  FormDiv,
-  ButtonDiv,
   StyledInput,
-  FormColumn,
-  StyledBackButton,
 } from '@/components/CartPage/styles';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { FieldError, UseFormRegister } from 'react-hook-form';
@@ -23,17 +19,9 @@ import { promoStore } from '@/store/PromoStore';
 import { cartStore } from '@/store/CartStore';
 import styled from 'styled-components';
 import breakPoints from '@/utils/breakPoints';
-import { useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { CheckedState } from '@radix-ui/react-checkbox';
-import Link from 'next/link';
 
-// async function emptyCartFromDB(cartID: string) {
-//   const emptyCartResponse: string = await postData(`/api/cart`, {
-//     oper: 'emptycart',
-//     id: cartID,
-//   });
-// }
+import Link from 'next/link';
+import { BackIcon, ReturnButton } from 'pages/cart';
 
 async function createNewOrder(order: OrdersInsertType) {
   const newOrderResponse: OrdersType[] = await postData(`/api/order`, {
@@ -284,7 +272,7 @@ export function Shipment({
                 className='formField'
                 type='text'
                 placeholder='улица Двинская, дом 10, корпус 2'
-                label='Адрес удобного Boxberry'
+                label='Адрес удобного СДЭК (Boxberry)'
                 register={register('adress')}
                 name='adress'
                 error={errors.adress}
@@ -309,7 +297,7 @@ export function Shipment({
 
             <div className='flex items-center sm:items-start space-x-2'>
               <p className='text-center sm:text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-                переходя к оплате, Вы соглашаетесь с 
+                Переходя к оплате, Вы соглашаетесь с 
                 <Link
                   href={`/docs/oferta.pdf`}
                   target='_blank'
@@ -321,13 +309,15 @@ export function Shipment({
               </p>
             </div>
           </div>
-          <StyledBackButton
+
+          <ReturnButton
             onClick={() => {
               setStage('cartStage');
             }}
           >
-            Вернуться
-          </StyledBackButton>
+            <BackIcon />
+            Вернуться назад
+          </ReturnButton>
         </StyledForm>
       </div>
     </div>

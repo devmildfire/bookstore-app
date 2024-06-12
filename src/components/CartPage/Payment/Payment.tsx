@@ -53,7 +53,7 @@ const Payment = observer(
             Продолжить
           </Styled.CheckoutButton>
           <Styled.Instruction>
-            После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.
+            После оплаты нажмите «Вернуться в магазин».
           </Styled.Instruction>
         </div>
       </Styled.Container>

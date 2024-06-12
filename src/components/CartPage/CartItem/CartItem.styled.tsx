@@ -68,12 +68,8 @@ export const ProductInfo = styled.div`
 `;
 
 export const BookImage = styled.img`
-  /* height: 144px; */
-  /* min-width: 103px; */
   width: 100%;
-  /* margin-right: 18px; */
-  box-shadow: 1px 1px 7px rgba(85, 85, 85, 0.37);
-  /* padding-right: 12px; */
+
   @media (max-width: 768px) {
     grid-area: image;
   }
