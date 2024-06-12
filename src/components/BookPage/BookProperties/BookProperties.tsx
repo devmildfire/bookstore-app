@@ -442,12 +442,7 @@ const Book2Edition = () => {
           </DesctiptionItem>
           <DesctiptionItem>
             <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>
-              {extra}
-              {/* редактор Наталья&nbsp;Кислова, веб-мастер Серафим&nbsp;Лоза,
-              дизайнер Екатерина&nbsp;Яковлева, верстальщик Леон&nbsp;Меликьянц,
-              иллюстратор Евгений&nbsp;Борщевский */}
-            </DescriptionValue>
+            <DescriptionValue>{extra}</DescriptionValue>
           </DesctiptionItem>
         </Paragraphs>
       </Descrption>
@@ -532,7 +527,6 @@ const AudioEdition = () => {
               Добавить в корзину
             </TabButton>
           )}
-
           {(bookIsInTheCart || buttonClicked) && (
             <ButtonsText>
               <Link
@@ -544,9 +538,10 @@ const AudioEdition = () => {
             </ButtonsText>
           )}
 
-          <TabButton href={demo} target='_blank'>
-            Демо-версия
-          </TabButton>
+          <ButtonsText>Демо-версия</ButtonsText>
+          <audio controls title='Демо-версия'>
+            <source src={demo} type='audio/mpeg' />
+          </audio>
         </Buttons>
         <Paragraphs>
           <DesctiptionItem>
@@ -682,6 +677,8 @@ const PrintEdition = () => {
                 </Link>
               </ButtonsText>
             )}
+
+            <TabButton href={demo}>Демо-версия</TabButton>
 
             <ButtonsText>Цифровое издание в подарок.</ButtonsText>
             <ButtonsText>

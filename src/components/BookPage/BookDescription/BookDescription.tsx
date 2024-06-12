@@ -62,6 +62,7 @@ const BookDescription = (props: Title): React.ReactElement => {
     firstRelease,
     // genre,
     ageRestriction,
+    litForm,
     cover,
     description,
     authors,
@@ -139,7 +140,7 @@ const BookDescription = (props: Title): React.ReactElement => {
           </Text>
 
           <Text variant='h4_2' component='p' fontWeight={300}>
-            {`${ruRDate.slice(-5)} | ${ageRestriction}+`}
+            {`${ruRDate.slice(-5)} | ${litForm} | ${ageRestriction}+`}
           </Text>
           {ISBN && (
             <Text

@@ -4,16 +4,22 @@ import { StyleWrapper, Title, TrailerContainer, TrailerVideo } from './styles';
 interface BookTrailerProps {
   readonly title: string;
   readonly src: string;
-  readonly cover: string;
+  readonly poster: string;
 }
 
 const BookTrailer = (props: BookTrailerProps): React.ReactElement => {
-  const { src, title, cover } = props;
+  const { src, title, poster } = props;
   return (
     <StyleWrapper>
       <Title>Буктрейлер</Title>
       <TrailerContainer>
-        <TrailerVideo title={title} controls={true} muted={true} preload='auto'>
+        <TrailerVideo
+          title={title}
+          controls={true}
+          muted={true}
+          poster={poster}
+          preload='auto'
+        >
           <source src={`${src}#t=0.5`} />
         </TrailerVideo>
       </TrailerContainer>
@@ -22,5 +28,3 @@ const BookTrailer = (props: BookTrailerProps): React.ReactElement => {
 };
 
 export default BookTrailer;
-
-// poster={`${src}#t=0.1`}
