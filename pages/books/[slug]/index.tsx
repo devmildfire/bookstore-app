@@ -10,11 +10,7 @@ import PageLayout from '@/layouts/PageLayout';
 import { observer } from 'mobx-react-lite';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { useRouter } from 'next/router';
-import { Title, extendTitles } from '..';
-
-// interface BookPageProps {
-//   readonly book: Title;
-// }
+import { extendTitles } from '..';
 
 const BookPage = observer((): React.ReactElement => {
   const router = useRouter();
@@ -27,8 +23,14 @@ const BookPage = observer((): React.ReactElement => {
 
   if (!book) return <p>Не удалось загрузить страницу книги</p>;
 
+  const authorsString = book.authors.map((author) => author.name).join(', ');
+
   return (
-    <PageLayout headTitle={book.name}>
+    <PageLayout
+      headTitle={
+        book.name + ` | ` + authorsString + ` | ` + `Официальная страница книги`
+      }
+    >
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
         <BookProperties {...book} />
@@ -37,7 +39,7 @@ const BookPage = observer((): React.ReactElement => {
           <BookTrailer
             src={book.trailer}
             title={book.name}
-            cover={book.cover}
+            poster={book.trailerPoster}
           />
         )}
 
