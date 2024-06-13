@@ -97,7 +97,6 @@ const Preview = observer(
                     autoPlay
                     muted
                     loop
-                    controls
                     poster={preview.trailerPoster || undefined}
                   >
                     <source src={preview.trailer} />

@@ -7,11 +7,18 @@ import { StyledWrapper } from './styles';
 import { PropsWithChildren } from 'react';
 import { useRouter } from 'next/router';
 
+export interface Preload {
+  link: string;
+  as: string;
+  type: string;
+}
+
 export interface PageLayoutProps {
   readonly headTitle?: string;
   readonly withHeader?: boolean;
   readonly withFooter?: boolean;
   readonly shouldBlacken?: boolean;
+  readonly preloads?: Preload[];
 }
 
 const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
@@ -21,12 +28,27 @@ const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
     withHeader = true,
     withFooter = true,
     shouldBlacken = false,
+    preloads,
   } = props;
   const router = useRouter();
+
   return (
     <>
       <Head>
         <title>{headTitle}</title>
+        {preloads && (
+          <>
+            {preloads.map((preload) => (
+              <link
+                key={preload.link}
+                rel='preload'
+                href={preload.link}
+                as={preload.as}
+                type={preload.type}
+              ></link>
+            ))}
+          </>
+        )}
       </Head>
       <StyledWrapper>
         {withHeader && (

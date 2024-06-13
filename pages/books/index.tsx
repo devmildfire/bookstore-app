@@ -14,6 +14,7 @@ import { FilterModel } from '@/store/models/filters';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { previewStore } from '@/store/locals';
+import { Preload } from '@/layouts/PageLayout/PageLayout';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -120,8 +121,20 @@ const BooksPage = observer(() => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const isSliderOnScreen = useOnScreen(carouselRef);
 
+  const preloads: Preload[] = filteredByYearTitles
+    .filter((title) => title.trailer !== null)
+    .map((titleWithTrailer) => ({
+      link: titleWithTrailer.trailer,
+      as: 'video',
+      type: 'video/mp4',
+    }));
+
   return (
-    <PageLayout headTitle='Главная' shouldBlacken={isSliderOnScreen}>
+    <PageLayout
+      headTitle='Главная'
+      shouldBlacken={isSliderOnScreen}
+      preloads={preloads}
+    >
       <Carousel
         forwardedRef={carouselRef}
         options={{ dragThreshold: 1, duration: 25 }}
