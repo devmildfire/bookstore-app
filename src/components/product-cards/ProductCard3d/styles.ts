@@ -50,7 +50,7 @@ export const BookForPreview = styled.div`
   border-radius: 6px 2px 2px 6px;
   outline: thin solid transparent;
   display: flex;
-  position: relative;
+  /* position: relative; */
   max-width: 335px;
   aspect-ratio: 6/9;
   transition: transform 0.3s ease;
@@ -81,14 +81,14 @@ export const BookForPreview = styled.div`
 `;
 
 // NOTE(@sergromm): использование next/image приводит к смещению разметки
-// export const Cover = styled.img`
-//   position: relative;
-//   z-index: 1;
-//   /* NOTE(@sergromm): у обложек разное разрешение.
-//     Нужно стандартизировать и убрать cover, иначе некотрые обложки обрезаются */
-//   object-fit: cover;
-//   width: 100%;
-// `;
+export const Cover = styled.img`
+  position: relative;
+  z-index: 1;
+  /* NOTE(@sergromm): у обложек разное разрешение.
+    Нужно стандартизировать и убрать cover, иначе некотрые обложки обрезаются */
+  object-fit: cover;
+  width: 100%;
+`;
 
 export const Lightmap = styled.div`
   inset: 0;

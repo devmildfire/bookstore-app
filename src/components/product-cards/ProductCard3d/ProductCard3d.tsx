@@ -30,7 +30,7 @@ type CoverPropsType = {
   className: string;
 } & ImageProps;
 
-const Cover = ({
+export const Cover = ({
   className,
   src,
   height,
