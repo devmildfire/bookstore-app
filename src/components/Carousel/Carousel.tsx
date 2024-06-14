@@ -17,8 +17,8 @@ import Link from 'next/link';
 import breakPoints from '@/utils/breakPoints';
 import { Trigger } from '../Common/Trigger';
 import { useRouter } from 'next/router';
-import texture from '@/assets/images/mockups/mockup-var-2.png';
 import { Titles } from 'pages/books';
+import Image, { ImageProps } from 'next/image';
 
 type PropType = {
   titles: Titles;
@@ -228,15 +228,6 @@ const Slide = styled.div`
   }
 `;
 
-const Cover = styled.img`
-  display: block;
-  position: relative;
-  height: var(--slide-height);
-  max-height: 70vh;
-  width: 100%;
-  object-fit: contain;
-`;
-
 const Texture = styled.div`
   display: block;
   object-fit: cover;
@@ -285,11 +276,49 @@ const Dots = styled.div`
   align-items: center;
 `;
 
+type CoverPropsType = {
+  className: string;
+} & ImageProps;
+
+const Cover = ({
+  className,
+  src,
+  height,
+  width,
+  alt,
+  style,
+  fill,
+  blurDataURL,
+  placeholder,
+}: CoverPropsType) => {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      className={className}
+      fill={fill}
+      style={style}
+      placeholder={placeholder}
+      blurDataURL={blurDataURL}
+      // width={width}
+      // height={height}
+    />
+  );
+};
+
 const CoverLink = styled(Link)`
   z-index: 9001;
-  position: relative;
   // box-shadow: 0px 5px 10px 0px rgba(255, 255, 255, 0.5);
   transition: all ease 0.5s;
+
+  display: block;
+  position: relative;
+  height: var(--slide-height);
+  max-height: 70vh;
+  max-width: 48vh;
+  width: 100%;
+  aspect-ratio: 6/9;
+  /* object-fit: contain; */
 
   &:hover {
     transform: translateY(-3px) scale(1.03);
@@ -338,7 +367,21 @@ function Carousel(props: PropType): ReactElement {
                 <SlideContainer>
                   <CoverLink href={`/books/${title.slug}`}>
                     <Texture /*src={texture.src} */ />
-                    <Cover src={title.cover} alt={title.name} />
+
+                    {/* <Cover src={title.cover} alt={title.name} /> */}
+
+                    <Cover
+                      src={title.cover}
+                      alt={title.name}
+                      className='coverClass'
+                      fill={true}
+                      width={330}
+                      height={550}
+                      placeholder='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
+                      blurDataURL={
+                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
+                      }
+                    />
                   </CoverLink>
                   <StyledInfo>
                     <div>

@@ -9,7 +9,7 @@ import {
   BackCover,
   Book,
   BookWrapper,
-  Cover,
+  // Cover,
   Footer,
   Lightmap,
   Pages,
@@ -23,6 +23,37 @@ import { Title } from 'pages/books';
 import { TriggerStyles } from '@/components/Common/Trigger/types';
 import { previewStore } from '@/store/locals';
 import { observer } from 'mobx-react-lite';
+
+import Image, { ImageProps } from 'next/image';
+
+type CoverPropsType = {
+  className: string;
+} & ImageProps;
+
+const Cover = ({
+  className,
+  src,
+  height,
+  width,
+  alt,
+  style,
+  // fill,
+  blurDataURL,
+}: CoverPropsType) => {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      className={className}
+      // fill={fill}
+      style={style}
+      placeholder='blur'
+      blurDataURL={blurDataURL}
+      width={width}
+      height={height}
+    />
+  );
+};
 
 export interface ProductCard3DProps extends Title {
   onOpenClick: () => void;
@@ -109,6 +140,9 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
           width={330}
           height={550}
           className='cover'
+          blurDataURL={
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
+          }
         />
         <Pages className='pages' />
         <BackCover aria-hidden='true' src={cover} className='back-cover' />
