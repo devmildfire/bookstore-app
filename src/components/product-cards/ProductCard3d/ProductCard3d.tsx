@@ -69,6 +69,7 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
     prices,
     discount,
     cover,
+    coverBlurHash,
     name,
     onOpenClick,
     onCloseClick,
@@ -140,9 +141,7 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
           width={330}
           height={550}
           className='cover'
-          blurDataURL={
-            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
-          }
+          blurDataURL={coverBlurHash}
         />
         <Pages className='pages' />
         <BackCover aria-hidden='true' src={cover} className='back-cover' />

@@ -76,17 +76,6 @@ export const extendTitles = (titles: ITitle[]): Titles => {
 };
 
 const BooksPage = observer(() => {
-  // const getBlurs = async () => {
-
-  //   const blur: string = await postData(`/api/blur`, {
-  //     oper: 'getBlur',
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   getBlurs();
-  // }, []);
-
   previewStore.openTitleID = null;
 
   const shortTitles = titlesStore.titles || [];

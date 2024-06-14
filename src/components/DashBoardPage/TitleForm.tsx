@@ -37,6 +37,7 @@ import { Checkbox } from '../ui/checkbox';
 import slugify from 'slugify';
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { AwardsType } from 'pages/dashboard/awards';
+import { postData } from '@/utils/postData';
 
 const MAX_VIDEO_FILE_SIZE = 58 * 1024 * 1024; //  50MB
 const ACCEPTED_VIDEO_TYPES = [
@@ -274,6 +275,14 @@ const emptyCoverInput = (
   photoImageRef.current && (photoImageRef.current.src = '');
 };
 
+const getBlur = async (imageUrl: string) => {
+  const blur: string = await postData(`/api/blur`, {
+    oper: 'getBlur',
+    imageUrl: imageUrl,
+  });
+  return blur;
+};
+
 function TitleForm(props: TitleFormProps) {
   const photoImage = useRef<HTMLImageElement | null>(null);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
@@ -370,6 +379,8 @@ function TitleForm(props: TitleFormProps) {
 
     emptyCoverInput(posterInputRef, posterImage);
 
+    const coverBlurHash = await getBlur(publicUrl);
+
     let publicPosterUrl = null;
 
     if (values.trailerPoster) {
@@ -434,6 +445,7 @@ function TitleForm(props: TitleFormProps) {
       .insert({
         age_restriction: values.age_restriction,
         cover: publicUrl,
+        cover_blurHash: coverBlurHash,
         description: values.description,
         first_release: values.first_release
           ? values.first_release.toUTCString()
@@ -1334,6 +1346,8 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
         .data.publicUrl);
     console.log('public URL is ...', publicUrl);
 
+    const coverBlurHash = await getBlur(publicUrl || '');
+
     const deleteOldVideo = async (oldTrailer: string) => {
       console.log('current title trailer ... ', title.trailer);
       const videoNameString = oldTrailer.split('/');
@@ -1541,6 +1555,8 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
           ? values.first_release.toUTCString()
           : null,
         cover: publicUrl,
+        cover_blurHash: coverBlurHash,
+
         trailer: publicVideoUrl,
         trailer_poster: publicPosterUrl,
         demo: demoPublicUrl,

@@ -129,7 +129,10 @@ export interface ITitle {
 
   ageRestriction: number;
   name: string;
+
   cover: string;
+  coverBlurHash: string;
+
   slug: string;
   isFeatured: boolean;
   firstRelease: string;
