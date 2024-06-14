@@ -283,11 +283,12 @@ type CoverPropsType = {
 const Cover = ({
   className,
   src,
-  // height,
-  // width,
+  height,
+  width,
   alt,
   style,
   fill,
+  blurDataURL,
 }: CoverPropsType) => {
   return (
     <Image
@@ -297,7 +298,7 @@ const Cover = ({
       fill={fill}
       style={style}
       placeholder='blur'
-      blurDataURL={'UBL_:rOpGG-oBUNG,qRj2so|=eE1w^n4S5NH'}
+      blurDataURL={blurDataURL}
       // width={width}
       // height={height}
     />
@@ -373,6 +374,11 @@ function Carousel(props: PropType): ReactElement {
                       alt={title.name}
                       className='coverClass'
                       fill={true}
+                      width={330}
+                      height={550}
+                      blurDataURL={
+                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
+                      }
                     />
                   </CoverLink>
                   <StyledInfo>

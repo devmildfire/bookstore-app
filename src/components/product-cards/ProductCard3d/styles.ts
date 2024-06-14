@@ -81,14 +81,14 @@ export const BookForPreview = styled.div`
 `;
 
 // NOTE(@sergromm): использование next/image приводит к смещению разметки
-export const Cover = styled.img`
-  position: relative;
-  z-index: 1;
-  /* NOTE(@sergromm): у обложек разное разрешение.
-    Нужно стандартизировать и убрать cover, иначе некотрые обложки обрезаются */
-  object-fit: cover;
-  width: 100%;
-`;
+// export const Cover = styled.img`
+//   position: relative;
+//   z-index: 1;
+//   /* NOTE(@sergromm): у обложек разное разрешение.
+//     Нужно стандартизировать и убрать cover, иначе некотрые обложки обрезаются */
+//   object-fit: cover;
+//   width: 100%;
+// `;
 
 export const Lightmap = styled.div`
   inset: 0;

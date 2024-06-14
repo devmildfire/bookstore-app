@@ -15,6 +15,8 @@ import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { previewStore } from '@/store/locals';
 import { Preload } from '@/layouts/PageLayout/PageLayout';
+import getBase64 from '@/lib/getLocalBase64';
+import { postData } from '@/utils/postData';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -74,14 +76,16 @@ export const extendTitles = (titles: ITitle[]): Titles => {
 };
 
 const BooksPage = observer(() => {
-  // const multipleStoresFromContext = useContext(MultipleStoresContext);
+  // const getBlurs = async () => {
 
-  // let titlesFromStore;
+  //   const blur: string = await postData(`/api/blur`, {
+  //     oper: 'getBlur',
+  //   });
+  // };
 
-  // multipleStoresFromContext.titleStore?.titles &&
-  //   (titlesFromStore = extendTitles(
-  //     multipleStoresFromContext.titleStore?.titles
-  //   ));
+  // useEffect(() => {
+  //   getBlurs();
+  // }, []);
 
   previewStore.openTitleID = null;
 
