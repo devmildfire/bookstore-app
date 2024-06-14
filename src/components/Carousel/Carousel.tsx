@@ -289,6 +289,7 @@ const Cover = ({
   style,
   fill,
   blurDataURL,
+  placeholder,
 }: CoverPropsType) => {
   return (
     <Image
@@ -297,7 +298,7 @@ const Cover = ({
       className={className}
       fill={fill}
       style={style}
-      placeholder='blur'
+      placeholder={placeholder}
       blurDataURL={blurDataURL}
       // width={width}
       // height={height}
@@ -376,6 +377,7 @@ function Carousel(props: PropType): ReactElement {
                       fill={true}
                       width={330}
                       height={550}
+                      placeholder='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
                       blurDataURL={
                         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAALklEQVR4nGOQlpI6sn+/vJwcg4Kc/Kc3b5SUlBjEREUN9A3EREVBrMjwcEVFRQDWzwkza7Tb0gAAAABJRU5ErkJggg=='
                       }
