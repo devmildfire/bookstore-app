@@ -22,7 +22,7 @@ import { previewStore } from '@/store/locals';
 import { observer } from 'mobx-react-lite';
 import {
   BackCover,
-  Book,
+  // Book,
   BookForPreview,
   Cover,
   Lightmap,
@@ -119,8 +119,6 @@ const Preview = observer(
                       <Cover
                         alt='cover'
                         src={preview.cover}
-                        // width={330}
-                        // height={550}
                         width={165}
                         height={275}
                         className='cover'
@@ -133,11 +131,6 @@ const Preview = observer(
                       />
                       <Lightmap className='lightmap' />
                     </BookForPreview>
-                    {/* <img
-                      className='absolute top-[50%] left-[50%] h-[80%] translate-y-[-50%] translate-x-[-50%] '
-                      src={preview.cover}
-                      alt={preview.name}
-                    /> */}
                   </>
                 )}
               </VideoContainer>
