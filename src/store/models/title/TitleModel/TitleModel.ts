@@ -1,6 +1,10 @@
-import { AuthorServer, IAuthor, normalizeAuthor } from '@/entities/author';
+import {
+  // AuthorServer,
+  IAuthor,
+  //  normalizeAuthor
+} from '@/entities/author';
 import { computed, makeObservable } from 'mobx';
-import { TitlePhotoModel } from '../TitlePhotoModel';
+// import { TitlePhotoModel } from '../TitlePhotoModel';
 import {
   ITitle,
   ITitleAudiobook,
@@ -15,7 +19,7 @@ import {
   TitleServer,
   normalizeTitle,
 } from '@/entities/title';
-import { BookTableTypesEnum } from '@/models/books';
+// import { BookTableTypesEnum } from '@/models/books';
 
 class TitleModel {
   id: number;
@@ -29,7 +33,10 @@ class TitleModel {
 
   ageRestriction: number;
   name: string;
+
   cover: string;
+  coverBlurHash: string;
+
   slug: string;
   isFeatured: boolean;
   firstRelease: string;
@@ -57,6 +64,8 @@ class TitleModel {
     this.trailer = data.trailer;
     this.ageRestriction = data.ageRestriction;
     this.cover = data.cover;
+    this.coverBlurHash = data.coverBlurHash;
+
     this.slug = data.slug;
     this.isFeatured = data.isFeatured;
     this.firstRelease = data.firstRelease;
@@ -96,7 +105,10 @@ class TitleModel {
       isCompilation: this.isCompilation,
 
       ageRestriction: this.ageRestriction,
+
       cover: this.cover,
+      coverBlurHash: this.coverBlurHash,
+
       slug: this.slug,
       isFeatured: this.isFeatured,
       firstRelease: this.firstRelease,
