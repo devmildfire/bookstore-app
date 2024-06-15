@@ -30,8 +30,19 @@ export const DescriptionBox = styled.div`
 
   overflow-y: scroll;
   grid-area: description;
-  // mask-image: linear-gradient(black 90%, transparent 100%);
-  // -webkit-mask-image: linear-gradient(black 90%, transparent 100%);
+
+  mask-image: linear-gradient(
+    transparent 0%,
+    black 25%,
+    black 75%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    transparent 0%,
+    black 25%,
+    black 75%,
+    transparent 100%
+  );
   /* width */
   ::-webkit-scrollbar {
     width: 4px;
