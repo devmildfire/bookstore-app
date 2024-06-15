@@ -873,7 +873,7 @@ const deleteEBook = async (eBookID: number) => {
       deletedLinks &&
       !eBookRemove.error &&
       (success = true) &&
-      window.alert(`Цифровая книганомер ${eBook.id} успешно удалена`);
+      window.alert(`Цифровая книга номер ${eBook.id} успешно удалена`);
   }
 
   return success;

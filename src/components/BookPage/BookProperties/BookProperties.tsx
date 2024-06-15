@@ -301,7 +301,7 @@ const DigitalEdition = () => {
                   href={'/cart'}
                   className='hover:underline hover:text-red-600 text-red-800 duration-300'
                 >
-                  Цифровая книга уже в корзине
+                  Цифровое издание уже в корзине
                 </Link>
               </ButtonsText>
             )}
