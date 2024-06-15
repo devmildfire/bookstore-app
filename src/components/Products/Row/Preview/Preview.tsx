@@ -98,6 +98,7 @@ const Preview = observer(
                     muted
                     loop
                     poster={preview.trailerPoster || undefined}
+                    preload='auto'
                   >
                     <source src={preview.trailer} />
                   </Video>
@@ -110,7 +111,7 @@ const Preview = observer(
                       autoPlay
                       muted
                       loop
-                      poster={preview.trailerPoster || undefined}
+                      preload='auto'
                     >
                       <source src='video/shadows.mp4' />
                     </Video>
