@@ -267,68 +267,70 @@ const DigitalEdition = () => {
   const ePhotos = title.Photos.filter((photo) => photo.category === 'EBook');
 
   return (
-    <TabContent>
-      <TitleConteiner>
-        <TabTitle>Цифровое издание</TabTitle>
-        <Price>{price}₽</Price>
-      </TitleConteiner>
-      <Descrption>
-        <Buttons>
-          {!bookIsInTheCart && !buttonClicked && (
-            <TabButton
-              className='cartButton'
-              type='button'
-              onClick={() => {
-                addBookToCart({
-                  name: title.name,
-                  price: price,
-                  discount: discount,
-                  author: authorsString,
-                  category: 'EBook',
-                  src: title.cover,
-                });
-                setButtonClicked(true);
-              }}
-            >
-              Добавить в корзину
-            </TabButton>
-          )}
-
-          {(bookIsInTheCart || buttonClicked) && (
-            <ButtonsText>
-              <Link
-                href={'/cart'}
-                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+    <>
+      <TabContent>
+        <TitleConteiner>
+          <TabTitle>Цифровое издание</TabTitle>
+          <Price>{price}₽</Price>
+        </TitleConteiner>
+        <Descrption>
+          <Buttons>
+            {!bookIsInTheCart && !buttonClicked && (
+              <TabButton
+                className='cartButton'
+                type='button'
+                onClick={() => {
+                  addBookToCart({
+                    name: title.name,
+                    price: price,
+                    discount: discount,
+                    author: authorsString,
+                    category: 'EBook',
+                    src: title.cover,
+                  });
+                  setButtonClicked(true);
+                }}
               >
-                Цифровая книга уже в корзине
-              </Link>
-            </ButtonsText>
-          )}
-          <TabButton href={demo}>Демо-версия</TabButton>
-        </Buttons>
-        <Paragraphs>
-          <DesctiptionItem>
-            <DescriptionKey>Дата релиза:</DescriptionKey>
-            <DescriptionValue>{ruRDate}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Форматы:</DescriptionKey>
-            <DescriptionValue>Fb2, Epub</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Количество символов:</DescriptionKey>
-            <DescriptionValue>
-              {new Intl.NumberFormat('ru-RU').format(characters)}
-            </DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>{extra}</DescriptionValue>
-          </DesctiptionItem>
-        </Paragraphs>
-      </Descrption>
+                Добавить в корзину
+              </TabButton>
+            )}
+
+            {(bookIsInTheCart || buttonClicked) && (
+              <ButtonsText>
+                <Link
+                  href={'/cart'}
+                  className='hover:underline hover:text-red-600 text-red-800 duration-300'
+                >
+                  Цифровая книга уже в корзине
+                </Link>
+              </ButtonsText>
+            )}
+            <TabButton href={demo}>Демо-версия</TabButton>
+          </Buttons>
+          <Paragraphs>
+            <DesctiptionItem>
+              <DescriptionKey>Дата релиза:</DescriptionKey>
+              <DescriptionValue>{ruRDate}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Форматы:</DescriptionKey>
+              <DescriptionValue>Fb2, Epub</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Количество символов:</DescriptionKey>
+              <DescriptionValue>
+                {new Intl.NumberFormat('ru-RU').format(characters)}
+              </DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Над изданием работали:</DescriptionKey>
+              <DescriptionValue>{extra}</DescriptionValue>
+            </DesctiptionItem>
+          </Paragraphs>
+        </Descrption>
+      </TabContent>
       {ePhotos.length > 0 && <BookPhotos photos={ePhotos} options={OPTIONS} />}
-    </TabContent>
+    </>
   );
 };
 
@@ -379,77 +381,79 @@ const Book2Edition = () => {
   );
 
   return (
-    <TabContent>
-      <TitleConteiner>
-        <TabTitle>Книга 2.0</TabTitle>
-        <Price>{price}₽</Price>
-      </TitleConteiner>
-      <Descrption>
-        <Buttons>
-          {!bookIsInTheCart && !buttonClicked && (
-            <TabButton
-              className='cartButton'
-              type='button'
-              onClick={() => {
-                addBookToCart({
-                  name: title.name,
-                  price: price,
-                  discount: discount,
-                  author: authorsString,
-                  category: 'Book2.0',
-                  src: title.cover,
-                });
-                setButtonClicked(true);
-              }}
-            >
-              Добавить в корзину
-            </TabButton>
-          )}
-
-          {(bookIsInTheCart || buttonClicked) && (
-            <ButtonsText>
-              <Link
-                href={'/cart'}
-                className='hover:underline hover:text-red-600 text-red-800 duration-300'
+    <>
+      <TabContent>
+        <TitleConteiner>
+          <TabTitle>Книга 2.0</TabTitle>
+          <Price>{price}₽</Price>
+        </TitleConteiner>
+        <Descrption>
+          <Buttons>
+            {!bookIsInTheCart && !buttonClicked && (
+              <TabButton
+                className='cartButton'
+                type='button'
+                onClick={() => {
+                  addBookToCart({
+                    name: title.name,
+                    price: price,
+                    discount: discount,
+                    author: authorsString,
+                    category: 'Book2.0',
+                    src: title.cover,
+                  });
+                  setButtonClicked(true);
+                }}
               >
-                Книга 2.0 уже в корзине
-              </Link>
-            </ButtonsText>
-          )}
+                Добавить в корзину
+              </TabButton>
+            )}
 
-          <TabButton href={demo}>Демо-версия</TabButton>
-          <ButtonsText>Отправка по России включена в стоимость.</ButtonsText>
-        </Buttons>
-        <Paragraphs>
-          <DesctiptionItem>
-            <DescriptionKey>Дата релиза:</DescriptionKey>
-            <DescriptionValue>{ruRDate}</DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Формат:</DescriptionKey>
-            <DescriptionValue>
-              <List>
-                <ListItem>50x70 мм</ListItem>
-                <ListItem>двухстороняя шелкография белым</ListItem>
-                <ListItem>
-                  дизайнерская бумага Sirio Black Black 0,7 мм
-                </ListItem>
-                <ListItem>
-                  индивидуальная упаковка с цветной запечаткой
-                </ListItem>
-              </List>
-            </DescriptionValue>
-          </DesctiptionItem>
-          <DesctiptionItem>
-            <DescriptionKey>Над изданием работали:</DescriptionKey>
-            <DescriptionValue>{extra}</DescriptionValue>
-          </DesctiptionItem>
-        </Paragraphs>
-      </Descrption>
+            {(bookIsInTheCart || buttonClicked) && (
+              <ButtonsText>
+                <Link
+                  href={'/cart'}
+                  className='hover:underline hover:text-red-600 text-red-800 duration-300'
+                >
+                  Книга 2.0 уже в корзине
+                </Link>
+              </ButtonsText>
+            )}
+
+            <TabButton href={demo}>Демо-версия</TabButton>
+            <ButtonsText>Отправка по России включена в стоимость.</ButtonsText>
+          </Buttons>
+          <Paragraphs>
+            <DesctiptionItem>
+              <DescriptionKey>Дата релиза:</DescriptionKey>
+              <DescriptionValue>{ruRDate}</DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Формат:</DescriptionKey>
+              <DescriptionValue>
+                <List>
+                  <ListItem>50x70 мм</ListItem>
+                  <ListItem>двухстороняя шелкография белым</ListItem>
+                  <ListItem>
+                    дизайнерская бумага Sirio Black Black 0,7 мм
+                  </ListItem>
+                  <ListItem>
+                    индивидуальная упаковка с цветной запечаткой
+                  </ListItem>
+                </List>
+              </DescriptionValue>
+            </DesctiptionItem>
+            <DesctiptionItem>
+              <DescriptionKey>Над изданием работали:</DescriptionKey>
+              <DescriptionValue>{extra}</DescriptionValue>
+            </DesctiptionItem>
+          </Paragraphs>
+        </Descrption>
+      </TabContent>
       {cardPhotos.length > 0 && (
         <BookPhotos photos={cardPhotos} options={OPTIONS} />
       )}
-    </TabContent>
+    </>
   );
 };
 
@@ -733,13 +737,6 @@ const PrintEdition = () => {
 type EditionComponent = () => ReactElement;
 
 export type EditionType = Record<BookTableTypesEnum[number], EditionComponent>;
-
-// const editions: EditionType = {
-//   Ebooks: DigitalEdition,
-//   CardBooks: Book2Edition,
-//   Audiobooks: AudioEdition,
-//   PrintedBooks: PrintEdition,
-// };
 
 const editions: EditionType = {
   eBook: DigitalEdition,
