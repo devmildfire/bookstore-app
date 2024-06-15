@@ -19,7 +19,7 @@ const About: NextPage = () => (
   <PageLayout headTitle='О Чтиве'>
     <StyledWrapper>
       <VideoContainer>
-        <PageTitle />
+        {/* <PageTitle /> */}
         <Video src='/videos/chtivo.mp4' poster='/images/poster.png' />
       </VideoContainer>
       <AboutUs />
@@ -68,7 +68,7 @@ const PageTitle = (): React.ReactElement => (
 );
 
 const VideoContainer = styled(Container)`
-  max-width: var(--width);
+  /* max-width: var(--width); */
   width: 100%;
   display: grid;
   justify-items: center;
