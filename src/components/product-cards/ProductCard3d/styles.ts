@@ -9,6 +9,13 @@ export const BookWrapper = styled.div<wrapperProps>`
   position: relative;
   perspective: 800px;
   outline: none;
+
+  max-width: calc(90vw / 2 - 1rem);
+
+  @media screen and (max-width: 512px) {
+    max-width: none;
+  }
+
   @media screen and (min-width: 512px) {
     .book {
       transform: ${(p) =>
