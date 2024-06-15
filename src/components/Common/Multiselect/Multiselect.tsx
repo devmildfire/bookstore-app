@@ -17,7 +17,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 
 const itemsToLabelsObj: Record<string, string> = {
   printedBook: 'печатное издание',
-  eBook: 'цифровая книга',
+  eBook: 'цифровое издание',
   audioBook: 'аудиокнига',
   cardBook: 'книга 2.0',
 };

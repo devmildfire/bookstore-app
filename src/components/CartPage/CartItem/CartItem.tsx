@@ -5,7 +5,7 @@ import { CartItemType } from 'pages/api/cart';
 const readableCategories = {
   PrintBook: 'печатное издание',
   AudioBook: 'аудиокнига',
-  EBook: 'цифровая книга',
+  EBook: 'цифровое издание',
   'Book2.0': 'книга 2.0',
   GiftCard: 'карта даров',
   BoxSet: 'бокс сет',
