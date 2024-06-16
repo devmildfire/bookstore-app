@@ -2603,20 +2603,20 @@ function AudioBookForm({ titleID }: { titleID: number }) {
 
     const fileExtention = values.audio.name.split('.').pop();
 
+    const fileString = `audio_${slugify(titleName)}_${time}.${fileExtention}`;
+
     const audioUpload = await supabase.storage
       .from('audiobooks')
-      .upload(
-        `audio_${slugify(titleName)}_${time}.${fileExtention}`,
-        values.audio,
-        {
-          cacheControl: '3600',
-          upsert: true,
-        }
-      );
+      .upload(fileString, values.audio, {
+        cacheControl: '3600',
+        upsert: true,
+      });
 
-    const publicUrl = supabase.storage
-      .from('audiobooks')
-      .getPublicUrl(`${audioUpload.data?.path}`).data.publicUrl;
+    // const publicUrl = supabase.storage
+    //   .from('audiobooks')
+    //   .getPublicUrl(`${audioUpload.data?.path}`).data.publicUrl;
+
+    const publicUrl = fileString;
 
     console.log('URL is... ', publicUrl);
 
@@ -2969,8 +2969,13 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
     const time = Date.now();
 
+    const titleName = await getTitleName(audiobook.title_id);
+
     let audioPath = null;
     let publicUrl = null;
+
+    const fileNameString = audiobook.src?.split('/').pop() || 'no file';
+    let fileExtention = fileNameString.split('.').pop();
 
     if (values.audio) {
       console.log('current book audio ... ', audiobook.src);
@@ -2995,7 +3000,7 @@ function AudioBookEditForm(audiobook: AudiobookType) {
       console.log('audio is...', values.audio);
       console.log('audio name is...', values.audio.name);
 
-      const fileExtention = fileName.split('.').pop();
+      fileExtention = fileName.split('.').pop();
 
       const titleName = await getTitleName(audiobook.title_id);
       console.log('title name is... ', titleName);
@@ -3025,8 +3030,9 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
     !publicUrl &&
       audioPath &&
-      (publicUrl = supabase.storage.from('audiobooks').getPublicUrl(audioPath)
-        .data.publicUrl);
+      (publicUrl = `audio_${slugify(titleName)}_${time}.${fileExtention}`);
+    // (publicUrl = supabase.storage.from('audiobooks').getPublicUrl(audioPath)
+    //   .data.publicUrl);
 
     console.log('public URL is ...', publicUrl);
 

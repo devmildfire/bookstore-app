@@ -284,10 +284,21 @@ async function getAllLinks(
           const link = titleData.data.Audiobooks.src as string;
           const audioBookName = `${item.name} — ${item.type}` as string;
           // console.log('audio link is ...', link);
+
+          const privateUrl = supabaseService.storage
+            .from('audiobooks')
+            .createSignedUrl(link, 600, { download: true });
+
           return {
-            url: link,
+            // url: link,
+            url: (await privateUrl).data?.signedUrl || 'error link',
             name: audioBookName,
           };
+
+          // return {
+          //   url: link,
+          //   name: audioBookName,
+          // };
         }
       }
     })
