@@ -256,8 +256,13 @@ async function getAllLinks(
           // console.log('link is ...', link);
           // return link;
 
+          const privateUrl = supabaseService.storage
+            .from('ebooks')
+            .createSignedUrl(link, 600, { download: true });
+
           return {
-            url: link,
+            // url: link,
+            url: (await privateUrl).data?.signedUrl || 'error link',
             name: bookName,
           };
         }
