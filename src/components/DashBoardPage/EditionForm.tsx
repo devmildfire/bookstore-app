@@ -1032,16 +1032,20 @@ function EBookForm({ titleID }: { titleID: number }) {
 
     const fileExtention = values.src.name.split('.').pop();
 
+    const fileString = `ebook_${slugify(titleName)}.${fileExtention}`;
+
     const eBookUpload = await supabase.storage
       .from('ebooks')
-      .upload(`ebook_${slugify(titleName)}.${fileExtention}`, values.src, {
+      .upload(fileString, values.src, {
         cacheControl: '3600',
         upsert: true,
       });
 
-    const publicUrl = supabase.storage
-      .from('ebooks')
-      .getPublicUrl(`${eBookUpload.data?.path}`).data.publicUrl;
+    // const publicUrl = supabase.storage
+    //   .from('ebooks')
+    //   .getPublicUrl(`${eBookUpload.data?.path}`).data.publicUrl;
+
+    const publicUrl = fileString;
 
     console.log('URL is... ', publicUrl);
 
@@ -1450,10 +1454,13 @@ function EBookEditForm(ebook: EbookType) {
     let eBookPath = null;
     let publicUrl = null;
 
+    let fileNameString = ebook.src?.split('/').pop() || 'no file';
+    let fileExtention = fileNameString.split('.').pop();
+
     if (values.src) {
       console.log('current ebook file ... ', ebook.src);
 
-      const fileNameString = ebook.src?.split('/').pop() || 'no file';
+      fileNameString = ebook.src?.split('/').pop() || 'no file';
 
       console.log('ebook Name String ... ', fileNameString);
 
@@ -1473,9 +1480,8 @@ function EBookEditForm(ebook: EbookType) {
       console.log('eBook file is...', values.src);
       console.log('eBook file name is...', values.src.name);
 
-      const fileExtention = fileName.split('.').pop();
+      fileExtention = fileName.split('.').pop();
 
-      const titleName = await getTitleName(ebook.title_id);
       console.log('title name is... ', titleName);
 
       const eBookUpdate = await supabase.storage
@@ -1499,8 +1505,9 @@ function EBookEditForm(ebook: EbookType) {
 
     !publicUrl &&
       eBookPath &&
-      (publicUrl = supabase.storage.from('ebooks').getPublicUrl(eBookPath)
-        .data.publicUrl);
+      (publicUrl = `ebook_${slugify(titleName)}.${fileExtention}`);
+    // (publicUrl = supabase.storage.from('ebooks').getPublicUrl(eBookPath)
+    //   .data.publicUrl);
 
     console.log('public URL is ...', publicUrl);
 
