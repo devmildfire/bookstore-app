@@ -128,16 +128,20 @@ function CourseForm({ lectors }: CourseFormProps) {
     console.log(values);
     const time = Date.now();
 
+    const fileString = `course_${slugify(values.name)}_${time}.zip`;
+
     const courseUpload = await supabase.storage
       .from('courses')
-      .upload(`course_${slugify(values.name)}_${time}.zip`, values.src, {
+      .upload(fileString, values.src, {
         cacheControl: '3600',
         upsert: true,
       });
 
-    const coursePublicUrl = supabase.storage
-      .from('courses')
-      .getPublicUrl(`${courseUpload.data?.path}`).data.publicUrl;
+    const coursePublicUrl = fileString;
+
+    // const coursePublicUrl = supabase.storage
+    //   .from('courses')
+    //   .getPublicUrl(`${courseUpload.data?.path}`).data.publicUrl;
 
     const { data, error } = await supabase
       .from('Courses')
@@ -436,10 +440,12 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
     let coursePath = null;
     let coursePublicUrl = null;
 
+    let srcNameString = course.src?.split('/').pop() || 'no src';
+
     if (values.src) {
       console.log('current course src ... ', course.src);
 
-      const srcNameString = course.src?.split('/').pop() || 'no src';
+      srcNameString = course.src?.split('/').pop() || 'no src';
 
       console.log('src Name String ... ', srcNameString);
 
@@ -478,11 +484,18 @@ function CourseEditForm({ course, lectors }: CourseEditFormProps) {
       coursePublicUrl = course.src;
     }
 
+    // const privateUrl = supabase.storage
+    // .from('courses')
+    // .createSignedUrl(link, 600, { download: true });
+
+    // (await privateUrl).data?.signedUrl || 'error link',
+
     !coursePublicUrl &&
       coursePath &&
-      (coursePublicUrl = supabase.storage
-        .from('courses')
-        .getPublicUrl(coursePath).data.publicUrl);
+      (coursePublicUrl = `course_${slugify(course.name)}_${time + 3475}.zip`);
+    // (coursePublicUrl = supabase.storage
+    //   .from('courses')
+    //   .getPublicUrl(coursePath).data.publicUrl);
 
     console.log('public src URL is ...', coursePublicUrl);
 
