@@ -223,10 +223,19 @@ async function getAllLinks(
           // console.log(' course name is ...', courseName);
           // console.log(' course link is ...', link);
 
+          const privateUrl = supabaseService.storage
+            .from('courses')
+            .createSignedUrl(link, 600, { download: true });
+
           return {
-            url: link,
+            url: (await privateUrl).data?.signedUrl || 'error link',
             name: courseName,
           };
+
+          // return {
+          //   url: link,
+          //   name: courseName,
+          // };
         }
       }
 
@@ -234,8 +243,6 @@ async function getAllLinks(
         item.type === 'EBook' ||
         item.type === 'PrintBook' ||
         item.type === 'Book2.0'
-        // ||
-        // item.type === 'AudioBook'
       ) {
         const titleData = await supabaseService
           .from('Titles')
@@ -250,18 +257,14 @@ async function getAllLinks(
           .single();
 
         if (titleData.data) {
-          // console.log('Titles are ...', titleData.data);
           const bookName = `${item.name} — ${item.type}` as string;
           const link = titleData.data.Ebooks.src as string;
-          // console.log('link is ...', link);
-          // return link;
 
           const privateUrl = supabaseService.storage
             .from('ebooks')
             .createSignedUrl(link, 600, { download: true });
 
           return {
-            // url: link,
             url: (await privateUrl).data?.signedUrl || 'error link',
             name: bookName,
           };
@@ -290,21 +293,13 @@ async function getAllLinks(
             .createSignedUrl(link, 600, { download: true });
 
           return {
-            // url: link,
             url: (await privateUrl).data?.signedUrl || 'error link',
             name: audioBookName,
           };
-
-          // return {
-          //   url: link,
-          //   name: audioBookName,
-          // };
         }
       }
     })
   );
-
-  // console.log('links are ...', itemslinks);
 
   return itemslinks;
 }
