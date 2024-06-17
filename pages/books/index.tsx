@@ -15,8 +15,6 @@ import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { previewStore } from '@/store/locals';
 import { Preload } from '@/layouts/PageLayout/PageLayout';
-import getBase64 from '@/lib/getLocalBase64';
-import { postData } from '@/utils/postData';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);

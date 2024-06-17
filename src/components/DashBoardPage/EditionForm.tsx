@@ -1363,6 +1363,7 @@ function EBookEditForm(ebook: EbookType) {
   const router = useRouter();
   const effectRan = useRef(false);
   const oldVal = useRef<File | undefined>();
+  const downloadURL = useRef<string>('');
 
   const setPhotoInputValue = (file: File, index: number) => {
     const inputTag = document.getElementById(
@@ -1393,7 +1394,19 @@ function EBookEditForm(ebook: EbookType) {
     }
   }
 
+  const getDownloadURL = async () => {
+    const downloadData = await supabase.storage
+      .from('ebooks')
+      .createSignedUrl(ebook.src || '', 600, { download: true });
+
+    if (downloadData.data) {
+      downloadURL.current = downloadData.data.signedUrl;
+    }
+  };
+
   useEffect(() => {
+    getDownloadURL();
+
     if (!effectRan.current) {
       getDataFromReq();
     }
@@ -1627,7 +1640,7 @@ function EBookEditForm(ebook: EbookType) {
 
                 <p>{ebook.src}</p>
 
-                <a href={ebook.src!} download target='_blank'>
+                <a href={downloadURL.current} download target='_blank'>
                   download file
                 </a>
 
@@ -2941,8 +2954,23 @@ function AudioBookForm({ titleID }: { titleID: number }) {
 function AudioBookEditForm(audiobook: AudiobookType) {
   const audioPlayer = useRef<HTMLAudioElement | null>(null);
   const demoAudioPlayer = useRef<HTMLAudioElement | null>(null);
+  const [downloadURL, setDownloadURL] = useState<string>('');
 
   const router = useRouter();
+
+  const getDownloadURL = async () => {
+    const downloadData = await supabase.storage
+      .from('audiobooks')
+      .createSignedUrl(audiobook.src || '', 600, { download: true });
+
+    if (downloadData.data) {
+      setDownloadURL(downloadData.data.signedUrl);
+    }
+  };
+
+  useEffect(() => {
+    getDownloadURL();
+  }, []);
 
   const form = useForm<z.infer<typeof audioFormEditSchema>>({
     resolver: zodResolver(audioFormEditSchema),
@@ -3221,7 +3249,7 @@ function AudioBookEditForm(audiobook: AudiobookType) {
 
                 <p>{audiobook.src}</p>
 
-                <a href={audiobook.src!} download target='_blank'>
+                <a href={downloadURL} download target='_blank'>
                   download file
                 </a>
 
