@@ -15,6 +15,7 @@ import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { filtersStore } from '@/store/locals/dashboard/FiltersStore/FiltersStore';
 import { previewStore } from '@/store/locals';
 import { Preload } from '@/layouts/PageLayout/PageLayout';
+import Head from 'next/head';
 
 function useOnScreen(ref: React.RefObject<Element>, rootMargin = '0px') {
   const [isIntersecting, setIntersecting] = useState(false);
@@ -122,10 +123,13 @@ const BooksPage = observer(() => {
 
   return (
     <PageLayout
-      headTitle='Главная'
+      // headTitle='Главная'
       shouldBlacken={isSliderOnScreen}
       preloads={preloads}
     >
+      <Head>
+        <meta property='og:title' content='Глаанвя' key='ogtitle' />
+      </Head>
       <Carousel
         forwardedRef={carouselRef}
         options={{ dragThreshold: 1, duration: 25 }}
