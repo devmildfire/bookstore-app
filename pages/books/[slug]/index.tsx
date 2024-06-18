@@ -36,7 +36,7 @@ const BookPage = observer((): React.ReactElement => {
       }
     >
       <Head>
-        <title>Белый цветок</title>
+        {/* <title>Белый цветок</title> */}
         <meta name='description' content={book.thesis} />
 
         {/* <meta
