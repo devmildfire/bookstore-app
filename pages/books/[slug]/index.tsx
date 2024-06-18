@@ -11,6 +11,7 @@ import { observer } from 'mobx-react-lite';
 import { titlesStore } from '@/store/locals/dashboard/TitlesStore/TitlesStore';
 import { useRouter } from 'next/router';
 import { extendTitles } from '..';
+import Head from 'next/head';
 
 const BookPage = observer((): React.ReactElement => {
   const router = useRouter();
@@ -31,6 +32,31 @@ const BookPage = observer((): React.ReactElement => {
         book.name + ` | ` + authorsString + ` | ` + `Официальная страница книги`
       }
     >
+      <Head>
+        <meta property='og:title' content={book.name} key='ogtitle' />
+        <meta
+          property='description'
+          content={
+            `официальная страница книги, ` +
+            book.name +
+            `, ` +
+            authorsString +
+            `, покупка, демо, информация`
+          }
+          key='description'
+        />
+        <meta
+          property='keywords'
+          content={
+            book.name +
+            `, ` +
+            authorsString +
+            `купить, читать, читать онлайн, скачать бесплатно, роман, книги, проза, новые книги, художественная литература, независимое издательство, инди книги`
+          }
+          key='keywords'
+        />
+        <meta property='og:image' content={book.cover} key='ogimage' />
+      </Head>
       <StyleWrapper className='max-width'>
         <BookDescription {...book} />
         <BookProperties {...book} />
