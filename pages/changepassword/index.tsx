@@ -129,6 +129,10 @@ const Hall = () => {
       return true;
     }
 
+    if (error) {
+      console.log('error changing password : ', error);
+    }
+
     return false;
   };
 
