@@ -1,8 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import { UserMetadata } from '@supabase/supabase-js';
-// import { Session } from '@supabase/gotrue-js/src/lib/types';
-import { Session } from '@supabase/supabase-js';
+import { useRef, useState } from 'react';
 
 import { supabase } from 'api/supabase-client';
 import { Button } from '@/components/ui/button';
@@ -17,11 +13,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 
 async function sendRecoveryEmail(email: string): Promise<boolean> {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `https://mi59173.tw1.ru/changepassword`,
+  });
 
   if (data) {
     console.log('data of sending email ... ', data);

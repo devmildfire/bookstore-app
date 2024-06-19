@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { PreviewProps } from '../../types';
 import { AnimatePresence } from 'framer-motion';
 import CloseIcon from '@/assets/icons/close.svg';
@@ -41,6 +41,35 @@ const Preview = observer(
   }: PreviewProps) => {
     const router = useRouter();
 
+    const [upperBlur, setUpperBlur] = useState(false);
+
+    const descriptionRef = useRef<HTMLDivElement | null>(null);
+
+    const logScroll = () => {
+      const scrollH = descriptionRef.current?.scrollHeight || 0;
+      const clientH = descriptionRef.current?.clientHeight || 0;
+
+      const scrollAble = scrollH > clientH;
+
+      const scrollAmount = descriptionRef.current?.scrollTop || 0;
+
+      console.log('scroll...', scrollAmount);
+      console.log('scrollAble...', scrollAble);
+
+      scrollAmount > 10 && setUpperBlur(true);
+
+      console.log('upperBlur...', upperBlur);
+    };
+
+    useEffect(() => {
+      console.log('description ref...', descriptionRef.current);
+
+      descriptionRef.current?.addEventListener('scroll', logScroll);
+      return () => {
+        descriptionRef.current?.removeEventListener('scroll', logScroll);
+      };
+    }, [isOpen]);
+
     const onOpenTitlePage = useCallback(() => {
       router.push(`/books/${slug}`);
     }, [slug, router]);
@@ -78,7 +107,7 @@ const Preview = observer(
                   </div>
                   <Slogan>{preview.thesis}</Slogan>
                 </InfoContainer>
-                <DescriptionBox>
+                <DescriptionBox ref={descriptionRef}>
                   <Description>
                     {/* TODO убрать повторение перед релизом */}
                     {preview.description}
