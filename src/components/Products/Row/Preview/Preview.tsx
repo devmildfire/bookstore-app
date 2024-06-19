@@ -42,31 +42,26 @@ const Preview = observer(
     const router = useRouter();
 
     const [upperBlur, setUpperBlur] = useState(false);
+    const [lowerBlur, setLowerBlur] = useState(false);
 
     const descriptionRef = useRef<HTMLDivElement | null>(null);
 
-    const logScroll = () => {
+    const blurOnScroll = () => {
       const scrollH = descriptionRef.current?.scrollHeight || 0;
       const clientH = descriptionRef.current?.clientHeight || 0;
 
-      const scrollAble = scrollH > clientH;
-
       const scrollAmount = descriptionRef.current?.scrollTop || 0;
 
-      console.log('scroll...', scrollAmount);
-      console.log('scrollAble...', scrollAble);
-
-      scrollAmount > 10 && setUpperBlur(true);
-
-      console.log('upperBlur...', upperBlur);
+      scrollAmount > 15 ? setUpperBlur(true) : setUpperBlur(false);
+      scrollH - clientH - scrollAmount > 15
+        ? setLowerBlur(true)
+        : setLowerBlur(false);
     };
 
     useEffect(() => {
-      console.log('description ref...', descriptionRef.current);
-
-      descriptionRef.current?.addEventListener('scroll', logScroll);
+      descriptionRef.current?.addEventListener('scroll', blurOnScroll);
       return () => {
-        descriptionRef.current?.removeEventListener('scroll', logScroll);
+        descriptionRef.current?.removeEventListener('scroll', blurOnScroll);
       };
     }, [isOpen]);
 
@@ -107,7 +102,11 @@ const Preview = observer(
                   </div>
                   <Slogan>{preview.thesis}</Slogan>
                 </InfoContainer>
-                <DescriptionBox ref={descriptionRef}>
+                <DescriptionBox
+                  ref={descriptionRef}
+                  lowerBlur={lowerBlur}
+                  upperBlur={upperBlur}
+                >
                   <Description>
                     {/* TODO убрать повторение перед релизом */}
                     {preview.description}

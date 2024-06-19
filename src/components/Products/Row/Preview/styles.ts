@@ -23,7 +23,12 @@ export const PreviewContainer = styled.div<PreviewProps>`
   background-color: #050505;
 `;
 
-export const DescriptionBox = styled.div`
+type DescriptionBoxProps = {
+  lowerBlur: boolean;
+  upperBlur: boolean;
+};
+
+export const DescriptionBox = styled.div<DescriptionBoxProps>`
   display: block;
   // max-height: 150px;
   max-height: 100%;
@@ -31,18 +36,20 @@ export const DescriptionBox = styled.div`
   overflow-y: scroll;
   grid-area: description;
 
-  mask-image: linear-gradient(
-    transparent 0%,
+  mask-image: ${(props) => `
+    linear-gradient(
+    ${props.upperBlur ? `transparent` : `black`} 0%,
     black 25%,
     black 75%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    transparent 0%,
+    ${props.lowerBlur ? `transparent` : `black`} 100% )`};
+
+  -webkit-mask-image: ${(props) => `
+    linear-gradient(
+    ${props.upperBlur ? `transparent` : `black`} 0%,
     black 25%,
     black 75%,
-    transparent 100%
-  );
+    ${props.lowerBlur ? `transparent` : `black`} 100% )`};
+
   /* width */
   ::-webkit-scrollbar {
     width: 4px;
