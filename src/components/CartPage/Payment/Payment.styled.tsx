@@ -1,36 +1,37 @@
 import styled from 'styled-components';
+import Button from '@/components/Common/Button';
 
-export const Button = styled.button`
-  cursor: pointer;
-  height: 32px;
-  padding: 0 40px;
+// export const Button = styled.button`
+//   cursor: pointer;
+//   height: 32px;
+//   padding: 0 40px;
 
-  border-radius: 4px;
-  /* margin-bottom: 30px; */
-  grid-area: apply;
+//   border-radius: 4px;
+//   /* margin-bottom: 30px; */
+//   grid-area: apply;
 
-  @media (min-width: 768px) {
-    height: 45px;
-    /* width: 160px; */
-  }
+//   @media (min-width: 768px) {
+//     height: 45px;
+//     /* width: 160px; */
+//   }
 
-  @media (min-width: 1024px) {
-    height: 50px;
-    /* width: 160px; */
-  }
+//   @media (min-width: 1024px) {
+//     height: 50px;
+//     /* width: 160px; */
+//   }
 
-  :hover {
-    background-color: var(--main-red-100);
-  }
+//   :hover {
+//     background-color: var(--main-red-100);
+//   }
 
-  transition: all 0.2s;
-`;
+//   transition: all 0.2s;
+// `;
 
 export const CheckoutButton = styled(Button)`
-  background-color: transparent;
-  color: white;
-  border: 1px solid white;
+  // color: white;
   width: 280px;
+  height: 32px;
+  min-height: 32px;
 
   /* margin: 20px 0px 10px; */
   /* grid-area: checkout; */
@@ -38,18 +39,41 @@ export const CheckoutButton = styled(Button)`
   @media (max-width: 530px) {
     width: 100%;
   }
+
+  @media (min-width: 768px) {
+    height: 45px;
+    // min-height: 45px;
+  }
+
+  @media (min-width: 1024px) {
+    height: 50px;
+    /* width: 160px; */
+  }
 `;
 
 export const PromoButton = styled(Button)`
-  background-color: transparent;
+  // background-color: transparent;
   color: white;
-  border: 1px solid white;
+  // border: 1px solid white;
   width: auto;
   grid-area: checkout;
+  height: 32px;
+  min-height: 32px;
 
   @media (max-width: 530px) {
     margin: 0;
     padding: 0 10px;
+    min-width: 0px;
+  }
+
+  @media (min-width: 768px) {
+    height: 45px;
+    // min-height: 45px;
+  }
+
+  @media (min-width: 1024px) {
+    height: 50px;
+    /* width: 160px; */
   }
 `;
 
