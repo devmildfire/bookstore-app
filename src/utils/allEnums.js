@@ -1,13 +1,6 @@
 export const allEnums = {
-  "promotype": [
-    "cart",
-    "item"
-  ],
-  "covershade": [
-    "light",
-    "dark"
-  ],
   "contacttypes": [
+    "vk",
     "e-mail",
     "phone",
     "mail",
@@ -16,6 +9,14 @@ export const allEnums = {
     "facebook",
     "instagram",
     "web"
+  ],
+  "promotype": [
+    "cart",
+    "item"
+  ],
+  "covershade": [
+    "light",
+    "dark"
   ],
   "digitaleditionextentiontype": [
     "audio",

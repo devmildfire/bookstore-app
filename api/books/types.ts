@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       Audiobooks: {
@@ -65,7 +65,7 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Authors: {
@@ -130,7 +130,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Authors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Awards: {
@@ -225,7 +225,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       CardBooks: {
@@ -278,7 +278,7 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Cart: {
@@ -340,7 +340,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Courses: {
@@ -438,7 +438,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Magazines"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Ebooks: {
@@ -500,7 +500,7 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Extentions: {
@@ -590,7 +590,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Lectors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Magazine_Issues_Articles_List: {
@@ -616,7 +616,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Magazines"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Magazine_Issues_Recommended_Titles: {
@@ -649,7 +649,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       MagazineArticles: {
@@ -684,7 +684,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Authors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Magazines: {
@@ -758,7 +758,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       OrderItems: {
@@ -799,7 +799,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Orders"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Orders: {
@@ -876,7 +876,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Printed_Magazine_Issues: {
@@ -935,7 +935,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Magazines"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       PrintedBooks: {
@@ -994,7 +994,7 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       PrintedCover: {
@@ -1026,7 +1026,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "PrintedBooks"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       PrintOptions: {
@@ -1061,7 +1061,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "PrintedBooks"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       PrintSize: {
@@ -1090,7 +1090,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "PrintOptions"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Promocodes: {
@@ -1153,7 +1153,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Subscriptions: {
@@ -1264,7 +1264,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       TitlesAwards: {
@@ -1297,7 +1297,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       Workers: {
@@ -1354,7 +1354,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "Workers"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
     }
@@ -1443,6 +1443,7 @@ export type Database = {
         | "facebook"
         | "instagram"
         | "web"
+        | "vk"
       covershade: "light" | "dark"
       digitaleditionextentiontype: "audio" | "ebook"
       ebookext:
@@ -1463,16 +1464,14 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
-
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -1480,68 +1479,68 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
+      Database["public"]["Views"])
+  ? (Database["public"]["Tables"] &
+      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
     : never
+  : never
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+    | keyof Database["public"]["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
     : never
+  : never
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+    | keyof Database["public"]["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never = never
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
     : never
+  : never
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+    | keyof Database["public"]["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never = never
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
+  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
+  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+  : never
 
