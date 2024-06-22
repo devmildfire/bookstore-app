@@ -104,6 +104,7 @@ const ModalTitle = styled(Text)`
 const Title = styled(Text)`
   font-size: clamp(18px, 2vw, 30px);
   font-weight: bold;
+  margin: 0 1rem;
 `;
 const Author = styled(Text)`
   font-size: clamp(14px, 2vw, 24px);
