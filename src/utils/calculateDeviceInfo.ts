@@ -9,16 +9,16 @@ const calculateDeviceInfo = (width: string | number): DeviceInfo => {
     isTabletHorizontal: false,
     isTabletVertical: false,
   };
-  if (width <= 576) {
+  if (+width <= 576) {
     deviceInfo.device = 'mobile';
     deviceInfo.isMobile = true;
-  } else if (width <= 830) {
+  } else if (+width <= 830) {
     deviceInfo.device = 'tablet-vertical';
     deviceInfo.isTabletVertical = true;
-  } else if (width <= 1024) {
+  } else if (+width <= 1024) {
     deviceInfo.device = 'tablet-horizontal';
     deviceInfo.isTabletHorizontal = true;
-  } else if (width <= 1440) {
+  } else if (+width <= 1440) {
     deviceInfo.device = 'desktop-small';
     deviceInfo.isDesktopSmall = true;
   } else {
