@@ -116,9 +116,6 @@ const formSchema = z.object({
   ISBN: z.string().min(3, {
     message: 'ISBN must be at least 3 characters long.',
   }),
-  lit_form: z.string().min(3, {
-    message: 'Literature dorm must be at least 3 characters long.',
-  }),
   cover: z
     .instanceof(File, { message: 'Image is required.' })
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
@@ -173,9 +170,6 @@ const formEditSchema = z.object({
   }),
   ISBN: z.string().min(3, {
     message: 'ISBN must be at least 3 characters long.',
-  }),
-  lit_form: z.string().min(3, {
-    message: 'Literature dorm must be at least 3 characters long.',
   }),
   cover: z.any().optional(),
   pages: z.number().positive('must be positive'),
@@ -2204,45 +2198,6 @@ function CardBookEditForm(cardBook: CardBookType) {
       console.log(`prepending item ${i + 1}`);
       append({ photo: undefined });
     }
-
-    // const { data } = await supabase
-    //   .from('PrintedBooks')
-    //   .select(
-    //     ` *,
-    //             cover: PrintedCover(*),
-    //             options:PrintOptions ( *,
-    //               size:PrintSize( * )
-    //           )`
-    //   )
-    //   .eq('id', book.id)
-    //   .single();
-
-    // data && console.log('combined data from req is...', data);
-
-    // data &&
-    //   (data.cover[0].source && setImage(data.cover[0].source),
-    //   data.cover[0].shade && form.setValue('shade', data.cover[0].shade),
-    //   data.options[0].bindings &&
-    //     form.setValue('bindings', data.options[0].bindings),
-    //   data.options[0].cover &&
-    //     form.setValue('coverType', data.options[0].cover),
-    //   data.options[0].illustrations &&
-    //     form.setValue('illustrations', data.options[0].illustrations),
-    //   data.options[0].paper && form.setValue('paper', data.options[0].paper),
-    //   data.options[0].size[0].height &&
-    //     form.setValue('height', data.options[0].size[0].height),
-    //   data.options[0].size[0].width &&
-    //     form.setValue('width', data.options[0].size[0].width),
-    //   data.counter_color && form.setValue('counter_color', data.counter_color),
-    //   data.ISBN && form.setValue('ISBN', data.ISBN),
-    //   data.discount !== null && form.setValue('discount', data.discount),
-    //   data.extra && form.setValue('extra', data.extra),
-    //   data.is_published !== null &&
-    //     form.setValue('is_published', data.is_published),
-    //   data.lit_form && form.setValue('lit_form', data.lit_form),
-    //   data.pages && form.setValue('pages', data.pages),
-    //   data.price && form.setValue('price', data.price));
-    // // data.sold && form.setValue('sold', data.sold));
   }
 
   useEffect(() => {
@@ -3478,7 +3433,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       extra: 'some text',
       is_published: false,
       ISBN: '1-234-54789-0',
-      lit_form: 'Роман',
       pages: 123,
       discount: 0,
       shade: 'light',
@@ -3551,7 +3505,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
       extra: values.extra,
       is_published: values.is_published,
       ISBN: values.ISBN,
-      lit_form: values.lit_form,
       pages: values.pages,
       price: values.price,
       discount: values.discount,
@@ -3700,20 +3653,6 @@ function PrintedBookForm({ titleID }: { titleID: number }) {
                       console.log('form state is...', form.getValues());
                     }}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='lit_form'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Literature Form</FormLabel>
-                <FormControl>
-                  <Input placeholder='Повесть' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -4205,7 +4144,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       data.extra && form.setValue('extra', data.extra),
       data.is_published !== null &&
         form.setValue('is_published', data.is_published),
-      // data.lit_form && form.setValue('lit_form', data.lit_form),
       data.pages && form.setValue('pages', data.pages),
       data.price && form.setValue('price', data.price));
     // data.sold && form.setValue('sold', data.sold));
@@ -4330,7 +4268,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
       extra: values.extra,
       is_published: values.is_published,
       ISBN: values.ISBN,
-      lit_form: values.lit_form,
       pages: values.pages,
       price: values.price,
       discount: values.discount,
@@ -4512,19 +4449,6 @@ function PrintedBookEditForm(book: FullPrintedBookType) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name='lit_form'
-            render={({ field }) => (
-              <FormItem className='flex flex-col items-start p-1'>
-                <FormLabel>Literature Form</FormLabel>
-                <FormControl>
-                  <Input placeholder='Повесть' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name='pages'
