@@ -42,6 +42,9 @@ const options = {
     ],
   },
   output: 'standalone',
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 module.exports = options;
