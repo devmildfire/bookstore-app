@@ -13,6 +13,7 @@ import {
 } from './EmblaCarouselArrowButtons';
 import { useDotButton, DotButton } from './EmblaCarouselDotButton';
 import { ITitlePhoto } from '@/entities/title';
+import useScreenSize from '@/hooks/useScreenSize';
 // import {
 //   NextButton,
 //   PrevButton,
@@ -122,6 +123,8 @@ const BookPhotos: React.FC<PropType> = (props) => {
     []
   );
 
+  const [width, height] = useScreenSize();
+
   useEffect(() => {
     if (!emblaApi) return;
 
@@ -137,11 +140,33 @@ const BookPhotos: React.FC<PropType> = (props) => {
       .on('slideFocus', tweenScale);
 
     setupKeyEventsForCarousels(emblaApi);
+
+    const aspect = width / height;
+    console.log('aspect is ... ', aspect);
+
+    // const emblaWidth = fullScreenElement.current?.clientWidth || 16;
+    // const emblaHeight = fullScreenElement.current?.clientHeight || 9;
+
+    const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
+    const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
+
+    const emblaAspect = emblaWidth / emblaHeight;
+    console.log('emblaAspect is ... ', emblaAspect);
+
+    const pad = (aspect - emblaAspect) / (4 * aspect);
+    // const pad = (aspect - emblaAspect) / 4;
+
+    console.log('padding is ... ', `${pad * 100}vw`);
+
+    fullScreenElement.current?.style.setProperty(
+      '--myPadding',
+      `${pad * 100}vw`
+    );
   }, [emblaApi, tweenScale]);
 
   return (
     <div
-      className='embla w-full max-h-screen grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'
+      className='embla w-full grid grid-cols-1 md:grid-cols-[min-content_1fr_min-content]'
       ref={fullScreenElement}
       onClick={toggleFullScreen}
     >
@@ -171,7 +196,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
       </div>
 
       <div
-        className='embla__viewport'
+        className='embla__viewport max-h-[inherit]'
         tabIndex={0}
         ref={emblaRef}
         // onClick={toggleFullScreen}

@@ -14,20 +14,9 @@ export interface VideoProps {
 }
 
 const StyledVideo = styled.video`
-  /* global --width = 1440px */
-  /* width: var(--width); */
   width: 100%;
-  /* max-width: calc(0.8 * 1440px); */
-
-  /* max-width: calc(0.8 * var(--width)); */
-
-  /* background-color: var(--grey); */
 
   @media ${breakPoints.xl} {
-    /* max-width: var(--width); */
-
-    /* width: calc(var(--width) - 0px);  */
-    /* global --width = 1024px */
   }
 `;
 
