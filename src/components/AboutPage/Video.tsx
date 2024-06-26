@@ -21,7 +21,7 @@ const StyledVideo = styled.video`
 
   /* max-width: calc(0.8 * var(--width)); */
 
-  background-color: var(--grey);
+  /* background-color: var(--grey); */
 
   @media ${breakPoints.xl} {
     /* max-width: var(--width); */
