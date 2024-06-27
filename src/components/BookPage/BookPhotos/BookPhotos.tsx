@@ -123,7 +123,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
     []
   );
 
-  const [width, height] = useScreenSize();
+  const [width, height, screenWidth, screenHeight] = useScreenSize();
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -141,19 +141,28 @@ const BookPhotos: React.FC<PropType> = (props) => {
 
     setupKeyEventsForCarousels(emblaApi);
 
-    const aspect = width / height;
-    console.log('aspect is ... ', aspect);
+    console.log('screen Width is ... ', screenWidth);
+    console.log('screen Height is ... ', screenHeight);
+
+    const screenAspect = screenWidth / screenHeight;
+    console.log('screenAspect is ... ', screenAspect);
 
     // const emblaWidth = fullScreenElement.current?.clientWidth || 16;
     // const emblaHeight = fullScreenElement.current?.clientHeight || 9;
 
-    const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
-    const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
+    // const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
+    const emblaWidth = fullScreenElement.current?.scrollWidth || 16;
+    console.log('emblaWidth is ... ', emblaWidth);
+
+    // const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
+    const emblaHeight = fullScreenElement.current?.scrollHeight || 9;
+
+    console.log('emblaHeight is ... ', emblaHeight);
 
     const emblaAspect = emblaWidth / emblaHeight;
     console.log('emblaAspect is ... ', emblaAspect);
 
-    const pad = (aspect - emblaAspect) / (4 * aspect);
+    const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
     // const pad = (aspect - emblaAspect) / 4;
 
     console.log('padding is ... ', `${pad * 100}vw`);
