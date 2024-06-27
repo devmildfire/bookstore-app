@@ -147,16 +147,11 @@ const BookPhotos: React.FC<PropType> = (props) => {
     const screenAspect = screenWidth / screenHeight;
     console.log('screenAspect is ... ', screenAspect);
 
-    // const emblaWidth = fullScreenElement.current?.clientWidth || 16;
-    // const emblaHeight = fullScreenElement.current?.clientHeight || 9;
-
     setTimeout(() => {
       const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
-      // const emblaWidth = fullScreenElement.current?.scrollWidth || 16;
       console.log('emblaWidth is ... ', emblaWidth);
 
       const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
-      // const emblaHeight = fullScreenElement.current?.scrollHeight || 9;
 
       console.log('emblaHeight is ... ', emblaHeight);
 
@@ -172,7 +167,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
         `${pad * 100}vw`
       );
     }, 1000);
-  }, [emblaApi, tweenScale]);
+  }, [emblaApi, tweenScale, screenWidth, screenHeight]);
 
   return (
     <div
