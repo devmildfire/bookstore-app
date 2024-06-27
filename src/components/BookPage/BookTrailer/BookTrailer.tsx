@@ -20,7 +20,7 @@ const BookTrailer = (props: BookTrailerProps): React.ReactElement => {
           poster={poster}
           preload='auto'
         >
-          <source src={`${src}#t=0.5`} />
+          <source src={src} />
         </TrailerVideo>
       </TrailerContainer>
     </StyleWrapper>
