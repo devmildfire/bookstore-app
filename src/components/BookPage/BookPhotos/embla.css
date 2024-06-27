@@ -265,4 +265,11 @@
   .embla__viewport {
     margin: 0 12px;
   }
+
+  .embla:fullscreen {
+    /* padding: 0 1%; */
+    padding: 0 var(--myPadding);
+
+    min-height: 0;
+  }
 }

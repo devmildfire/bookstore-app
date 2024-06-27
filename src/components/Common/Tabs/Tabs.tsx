@@ -163,6 +163,14 @@ const TabContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  padding-bottom: 44px;
+  @media ${breakPoints.lg} {
+    padding-bottom: 24px;
+  }
+  @media screen and (max-width: 576px) {
+    padding-bottom: 12px;
+  }
 `;
 const StyledBook2Icon = styled(Book2)`
   height: 48px;
