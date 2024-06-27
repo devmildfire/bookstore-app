@@ -150,27 +150,28 @@ const BookPhotos: React.FC<PropType> = (props) => {
     // const emblaWidth = fullScreenElement.current?.clientWidth || 16;
     // const emblaHeight = fullScreenElement.current?.clientHeight || 9;
 
-    // const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
-    const emblaWidth = fullScreenElement.current?.scrollWidth || 16;
-    console.log('emblaWidth is ... ', emblaWidth);
+    setTimeout(() => {
+      const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
+      // const emblaWidth = fullScreenElement.current?.scrollWidth || 16;
+      console.log('emblaWidth is ... ', emblaWidth);
 
-    // const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
-    const emblaHeight = fullScreenElement.current?.scrollHeight || 9;
+      const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
+      // const emblaHeight = fullScreenElement.current?.scrollHeight || 9;
 
-    console.log('emblaHeight is ... ', emblaHeight);
+      console.log('emblaHeight is ... ', emblaHeight);
 
-    const emblaAspect = emblaWidth / emblaHeight;
-    console.log('emblaAspect is ... ', emblaAspect);
+      const emblaAspect = emblaWidth / emblaHeight;
+      console.log('emblaAspect is ... ', emblaAspect);
 
-    const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
-    // const pad = (aspect - emblaAspect) / 4;
+      const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
 
-    console.log('padding is ... ', `${pad * 100}vw`);
+      console.log('padding is ... ', `${pad * 100}vw`);
 
-    fullScreenElement.current?.style.setProperty(
-      '--myPadding',
-      `${pad * 100}vw`
-    );
+      fullScreenElement.current?.style.setProperty(
+        '--myPadding',
+        `${pad * 100}vw`
+      );
+    }, 1000);
   }, [emblaApi, tweenScale]);
 
   return (
