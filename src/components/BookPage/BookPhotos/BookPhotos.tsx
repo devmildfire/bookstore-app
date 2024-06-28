@@ -177,6 +177,12 @@ const BookPhotos: React.FC<PropType> = (props) => {
           '--myPadding',
           `${pad * 100}vw`
         );
+        const newSlideSize = 0.6;
+
+        fullScreenElement.current?.style.setProperty(
+          '--slide-size-fullscreen',
+          `${newSlideSize * 100}%`
+        );
       } else {
         const controlsWidth = screenWidth > 1024 ? 110 : 0;
 
