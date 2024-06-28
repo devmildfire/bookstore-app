@@ -45,6 +45,8 @@ const PageLayout: React.FC<PropsWithChildren<PageLayoutProps>> = (props) => {
                 href={preload.link}
                 as={preload.as}
                 type={preload.type}
+                media='screen'
+                crossOrigin='anonymous'
               ></link>
             ))}
           </>
