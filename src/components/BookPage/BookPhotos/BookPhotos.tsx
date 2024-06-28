@@ -52,6 +52,8 @@ const BookPhotos: React.FC<PropType> = (props) => {
 
   const fullScreenElement = useRef<HTMLDivElement>(null);
 
+  const slideRef = useRef<HTMLDivElement>(null);
+
   const toggleFullScreen = useCallback(() => {
     if (!document.fullscreenElement) {
       fullScreenElement.current?.requestFullscreen();
@@ -152,20 +154,42 @@ const BookPhotos: React.FC<PropType> = (props) => {
       console.log('emblaWidth is ... ', emblaWidth);
 
       const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
-
       console.log('emblaHeight is ... ', emblaHeight);
 
       const emblaAspect = emblaWidth / emblaHeight;
       console.log('emblaAspect is ... ', emblaAspect);
 
+      const slideWidth = slideRef.current?.offsetWidth || 16;
+      console.log('slide Width is ... ', slideWidth);
+
+      const slideHeight = slideRef.current?.offsetHeight || 9;
+      console.log('slide Height is ... ', slideHeight);
+
+      const slideAspect = slideWidth / slideHeight;
+      console.log('slide Aspect is ... ', slideAspect);
+
       const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
 
       console.log('padding is ... ', `${pad * 100}vw`);
 
-      fullScreenElement.current?.style.setProperty(
-        '--myPadding',
-        `${pad * 100}vw`
-      );
+      if (pad >= 0) {
+        fullScreenElement.current?.style.setProperty(
+          '--myPadding',
+          `${pad * 100}vw`
+        );
+      } else {
+        const newSlideSize = screenHeight / (screenWidth - 2 * 110);
+
+        console.log('slide newSlideSize is ... ', newSlideSize);
+        fullScreenElement.current?.style.setProperty(
+          '--slide-size',
+          `${newSlideSize * 100}%`
+        );
+      }
+
+      // const extraHeight =
+      //   (emblaWidth * screenHeight) / screenWidth - emblaHeight;
+      // console.log('slide extraHeight is ... ', extraHeight);
     }, 1000);
   }, [emblaApi, tweenScale, screenWidth, screenHeight]);
 
@@ -208,7 +232,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
       >
         <div className='embla__container'>
           {photos.map((photo, index) => (
-            <div className='embla__slide' key={index}>
+            <div className='embla__slide' key={index} ref={slideRef}>
               {/* <div className='embla__slide__number'>{index + 1}</div> */}
               <div className='embla__slide__number'>
                 <img src={photo.source} alt={photo.titleId.toString()} />
