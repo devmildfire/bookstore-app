@@ -180,7 +180,10 @@ const BookPhotos: React.FC<PropType> = (props) => {
       } else {
         const controlsWidth = screenWidth > 1024 ? 110 : 0;
 
-        const newSlideSize = screenHeight / (screenWidth - 2 * controlsWidth);
+        const newSlideSize = Math.min(
+          1,
+          screenHeight / (screenWidth - 2 * controlsWidth)
+        );
 
         console.log('slide newSlideSize is ... ', newSlideSize);
         fullScreenElement.current?.style.setProperty(
