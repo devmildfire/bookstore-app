@@ -50,6 +50,12 @@
   /* padding-left: var(--slide-spacing); */
   /* max-height: 100vh; */
 }
+
+.embla:fullscreen .embla__slide {
+  flex: 0 0 var(--slide-size-fullscreen);
+  min-width: 0;
+}
+
 .embla__slide__number {
   /* background-color: blue; */
   /* border-radius: 1.8rem; */

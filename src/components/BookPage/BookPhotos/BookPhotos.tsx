@@ -159,14 +159,14 @@ const BookPhotos: React.FC<PropType> = (props) => {
       const emblaAspect = emblaWidth / emblaHeight;
       console.log('emblaAspect is ... ', emblaAspect);
 
-      const slideWidth = slideRef.current?.offsetWidth || 16;
-      console.log('slide Width is ... ', slideWidth);
+      // const slideWidth = slideRef.current?.offsetWidth || 16;
+      // console.log('slide Width is ... ', slideWidth);
 
-      const slideHeight = slideRef.current?.offsetHeight || 9;
-      console.log('slide Height is ... ', slideHeight);
+      // const slideHeight = slideRef.current?.offsetHeight || 9;
+      // console.log('slide Height is ... ', slideHeight);
 
-      const slideAspect = slideWidth / slideHeight;
-      console.log('slide Aspect is ... ', slideAspect);
+      // const slideAspect = slideWidth / slideHeight;
+      // console.log('slide Aspect is ... ', slideAspect);
 
       const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
 
@@ -182,14 +182,10 @@ const BookPhotos: React.FC<PropType> = (props) => {
 
         console.log('slide newSlideSize is ... ', newSlideSize);
         fullScreenElement.current?.style.setProperty(
-          '--slide-size',
+          '--slide-size-fullscreen',
           `${newSlideSize * 100}%`
         );
       }
-
-      // const extraHeight =
-      //   (emblaWidth * screenHeight) / screenWidth - emblaHeight;
-      // console.log('slide extraHeight is ... ', extraHeight);
     }, 1000);
   }, [emblaApi, tweenScale, screenWidth, screenHeight]);
 
