@@ -151,26 +151,17 @@ const BookPhotos: React.FC<PropType> = (props) => {
 
     setTimeout(() => {
       const emblaWidth = fullScreenElement.current?.offsetWidth || 16;
-      console.log('emblaWidth is ... ', emblaWidth);
+      // console.log('emblaWidth is ... ', emblaWidth);
 
       const emblaHeight = fullScreenElement.current?.offsetHeight || 9;
-      console.log('emblaHeight is ... ', emblaHeight);
+      // console.log('emblaHeight is ... ', emblaHeight);
 
       const emblaAspect = emblaWidth / emblaHeight;
-      console.log('emblaAspect is ... ', emblaAspect);
-
-      // const slideWidth = slideRef.current?.offsetWidth || 16;
-      // console.log('slide Width is ... ', slideWidth);
-
-      // const slideHeight = slideRef.current?.offsetHeight || 9;
-      // console.log('slide Height is ... ', slideHeight);
-
-      // const slideAspect = slideWidth / slideHeight;
-      // console.log('slide Aspect is ... ', slideAspect);
+      // console.log('emblaAspect is ... ', emblaAspect);
 
       const pad = (screenAspect - emblaAspect) / (2 * screenAspect);
 
-      console.log('padding is ... ', `${pad * 100}vw`);
+      // console.log('padding is ... ', `${pad * 100}vw`);
 
       if (pad >= 0) {
         fullScreenElement.current?.style.setProperty(
@@ -191,7 +182,7 @@ const BookPhotos: React.FC<PropType> = (props) => {
           screenHeight / (screenWidth - 2 * controlsWidth)
         );
 
-        console.log('slide newSlideSize is ... ', newSlideSize);
+        // console.log('slide newSlideSize is ... ', newSlideSize);
         fullScreenElement.current?.style.setProperty(
           '--slide-size-fullscreen',
           `${newSlideSize * 100}%`
