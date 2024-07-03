@@ -599,8 +599,10 @@ function AuthorEditForm(author: AuthorsType) {
   async function onEditSubmit(values: z.infer<typeof formEditSchema>) {
     console.log('values ... ', values);
 
+    console.log('contact values ... ', values.contacts);
+
     // if (values.contacts) {
-    deleteStoredContacts(author.id);
+    await deleteStoredContacts(author.id);
 
     const uploadContacts = await setContactsData(author.id, values.contacts);
     // }
