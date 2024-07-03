@@ -80,7 +80,13 @@ const BooksPage = observer(() => {
   const shortTitles = titlesStore.titles || [];
   console.log('shortTitles are ...', shortTitles);
 
-  const titlesFromStore = extendTitles(shortTitles);
+  const titlesFromStore = extendTitles(shortTitles).filter(
+    (title) =>
+      title.audioBook !== null ||
+      title.printedBook !== null ||
+      title.eBook !== null ||
+      title.cardBook !== null
+  );
 
   const filtersFromStore = filtersStore?.filters as FilterModel;
 
