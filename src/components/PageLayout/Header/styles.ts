@@ -88,10 +88,12 @@ const CartIconStyled = styled(CartIcon)`
   }
 `;
 
-const MenuButton = styled.div`
+const MenuButton = styled.div<{ negMargin?: number }>`
   display: none;
   @media ${breakPoints.headerNavCutoff} {
     display: block;
+    margin-right: ${(props) =>
+      props.negMargin ? `-${props.negMargin}px` : `0`};
   }
 `;
 

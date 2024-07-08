@@ -156,7 +156,7 @@ const ProductCard3d = observer((props: ProductCard3DProps) => {
             {`${prices[minIndex]}₽`}
           </OldPrice>
         </PriceContainer>
-        <ButtonsContainer>
+        <ButtonsContainer negMargin={12}>
           <IconButton
             width={36}
             height={36}

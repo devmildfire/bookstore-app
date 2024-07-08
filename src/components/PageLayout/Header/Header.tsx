@@ -5,7 +5,7 @@ import {
   // CartIconStyled,
   // ProfileIconStyled,
   MenuButton,
-  BurgerIconStyled,
+  // BurgerIconStyled,
   HeaderContainer,
   IconContainer,
   MenuOverlay,
@@ -140,12 +140,17 @@ function Header({
           >
             <SearchIcon />
           </IconButton>
-          <IconButton label='корзина' onClick={() => router.push('/cart')}>
+          <IconButton
+            label='корзина'
+            onClick={() => router.push('/cart')}
+            negMargin={14}
+          >
             {/* FIXME(@sergromm): нужно сделать выровненный набор иконок в фигме или использовать готовые.
              Сейчас иконки визуально не выровнены из-за разного 'визуального веса' */}
             <CartIcon />
+            {/* <CartIconNM /> */}
           </IconButton>
-          <MenuButton>
+          <MenuButton negMargin={11}>
             <IconButton
               label={isOpen ? 'закрыть' : 'меню'}
               onClick={() => setIsOpen((prev) => !prev)}

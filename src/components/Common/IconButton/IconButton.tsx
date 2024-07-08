@@ -1,3 +1,4 @@
+import breakPoints from '@/utils/breakPoints';
 import React, { MouseEvent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
@@ -6,9 +7,10 @@ type IconButtonProps = {
   label: string;
   width?: number;
   height?: number;
+  negMargin?: number;
 };
 
-const Button = styled.button`
+const Button = styled.button<{ negMargin?: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,6 +27,12 @@ const Button = styled.button`
   color: var(--main-white-80);
   &:hover {
     color: var(--main-red-100);
+  }
+
+  margin-right: ${(props) => (props.negMargin ? `-${props.negMargin}px` : `0`)};
+
+  @media ${breakPoints.headerNavCutoff} {
+    margin-right: 0;
   }
 
   span.ripple {
@@ -45,7 +53,10 @@ const Button = styled.button`
   }
 `;
 
-const IconContainer = styled.div<{ width?: number; height?: number }>`
+const IconContainer = styled.div<{
+  width?: number;
+  height?: number;
+}>`
   display: flex;
   position: relative;
   width: max-content;
@@ -66,6 +77,7 @@ export function IconButton({
   onClick,
   width,
   height,
+  negMargin,
 }: PropsWithChildren<IconButtonProps>) {
   const handleClick = (event: MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
@@ -90,7 +102,7 @@ export function IconButton({
   };
 
   return (
-    <Button aria-label={label} onClick={handleClick}>
+    <Button aria-label={label} onClick={handleClick} negMargin={negMargin}>
       <IconContainer width={width} height={height}>
         {children}
       </IconContainer>
