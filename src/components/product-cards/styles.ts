@@ -19,8 +19,9 @@ export const Cover = styled(Image)`
     box-shadow: var(--red-hover);
   }
 `;
-export const ButtonsContainer = styled.div`
+export const ButtonsContainer = styled.div<{ negMargin?: number }>`
   display: flex;
+  margin-right: ${(props) => (props.negMargin ? `-${props.negMargin}px` : `0`)};
 `;
 export const Footer = styled.footer`
   display: flex;
