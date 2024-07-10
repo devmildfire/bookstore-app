@@ -135,9 +135,11 @@ const BookDescription = (props: Title): React.ReactElement => {
             component='p'
             fontWeight={400}
             textTransform='none'
-          >
-            {description}
-          </Text>
+            dangerouslySetInnerHTML={{
+              __html: description,
+            }}
+          ></Text>
+          {/* {description} */}
 
           <Text variant='h4_2' component='p' fontWeight={300}>
             {`${ruRDate.slice(-5)} | ${litForm} | ${ageRestriction}+`}
