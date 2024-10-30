@@ -135,6 +135,7 @@ const BooksPage = observer(() => {
     >
       <Head>
         <meta property='og:title' content='Глаанвя' key='ogtitle' />
+        <meta property='test' content='serverup' key='test' />
       </Head>
       <Carousel
         forwardedRef={carouselRef}
