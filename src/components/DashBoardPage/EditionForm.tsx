@@ -1357,7 +1357,8 @@ function EBookEditForm(ebook: EbookType) {
   const router = useRouter();
   const effectRan = useRef(false);
   const oldVal = useRef<File | undefined>();
-  const downloadURL = useRef<string>('');
+  // const downloadURL = useRef<string>('');
+  const [downloadURL, setDownloadURL] = useState('')
 
   const setPhotoInputValue = (file: File, index: number) => {
     const inputTag = document.getElementById(
@@ -1393,8 +1394,18 @@ function EBookEditForm(ebook: EbookType) {
       .from('ebooks')
       .createSignedUrl(ebook.src || '', 600, { download: true });
 
+    console.log('download Data function ... src = ', ebook.src)
+    console.log('download Data function ... downloadData = ', downloadData.data)
+
+
     if (downloadData.data) {
-      downloadURL.current = downloadData.data.signedUrl;
+
+      console.log('download Data  url is ... url = ', downloadData.data.signedUrl)
+
+      // downloadURL.current = downloadData.data.signedUrl;
+      setDownloadURL(downloadData.data.signedUrl)
+
+      console.log('downloadURL current is ... url = ', downloadURL)
     }
   };
 
@@ -1633,10 +1644,18 @@ function EBookEditForm(ebook: EbookType) {
                 <FormLabel>eBook file</FormLabel>
 
                 <p>{ebook.src}</p>
+                {/* <p>{downloadURL}</p> */}
 
-                <a href={downloadURL.current} download target='_blank'>
+                {
+                  downloadURL && 
+                  <a href={downloadURL} download target='_blank'>
+                    download file
+                  </a>
+                }
+
+                {/* <a href={downloadURL.current} download target='_blank'>
                   download file
-                </a>
+                </a> */}
 
                 <FormControl>
                   <Input
