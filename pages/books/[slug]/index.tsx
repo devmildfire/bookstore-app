@@ -41,6 +41,7 @@ const BookPage = observer((): React.ReactElement => {
         <meta property='og:description' content={book.thesis} key='ogdesc' />
         <meta property='og:image' content={book.cover} key='ogimage' />
         <meta property='og:url' content={adress} key='ogurl' />
+        <meta property='test' content='test' key='test' />
 
         <meta
           name='description'
