@@ -40,6 +40,7 @@ export const adminAPI = {
   },
   getTitles: async () => {
     const response = await fullManyTitlesQuery;
+    // console.log('allTitles are ... ', response);
     return response;
   },
   getEnums: async () => {

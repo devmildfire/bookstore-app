@@ -20,7 +20,8 @@ export const fullTitleQuery = supabase
           cover:PrintedCover( * )
         ),
         awards: TitlesAwards ( *,  ...Awards(*) ),
-        novels: Novels_List ( * )
+        novels: Novels_List ( * ),
+        workers: Workers_Products ( * , ...Workers(*))
 
   `
   )
@@ -46,7 +47,8 @@ export const fullManyTitlesQuery = supabase
           cover:PrintedCover( * )
         ),
         awards: TitlesAwards ( *,  ...Awards(*) ),
-        novels: Novels_List ( * )
+        novels: Novels_List ( * ),
+        workers: Workers_Products ( * , ...Workers(*))
 
   `
   )
