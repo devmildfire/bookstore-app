@@ -29,7 +29,7 @@ import {
   useState,
   ReactNode,
 } from 'react';
-import { TitleType } from 'pages/dashboard/titles';
+import { TitleType, Worker } from 'pages/dashboard/titles';
 import { AuthorsType } from 'pages/dashboard/authors';
 
 import { DateTimePicker } from '../ui/datetime-picker';
@@ -83,6 +83,12 @@ const demoSchema = z
   );
 
 const authorsOptionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
+
+const translatorsOptionSchema = z.object({
   label: z.string(),
   value: z.string(),
   disable: z.boolean().optional(),
@@ -150,6 +156,7 @@ const formSchema = z.object({
   }),
   awards: z.array(awardsOptionSchema).optional(),
   authors: z.array(authorsOptionSchema).min(1),
+  translators: z.array(translatorsOptionSchema).optional(),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
   }),
@@ -182,6 +189,7 @@ const formSchema = z.object({
 
 const formEditSchema = z.object({
   authors: z.array(authorsOptionSchema).min(1),
+  translators: z.array(translatorsOptionSchema).optional(),
   awards: z.array(awardsOptionSchema).optional(),
   description: z.string().min(6, {
     message: 'Title description must be at least 6 characters long.',
@@ -216,6 +224,7 @@ const formEditSchema = z.object({
 type TitleFormProps = {
   authors: AuthorsType[];
   awards: AwardsType[];
+  workers: Worker[];
   titles: TitleType[];
   defaultName: string;
   defaultThesis: string;
@@ -298,6 +307,14 @@ function TitleForm(props: TitleFormProps) {
     value: author.id.toString(),
     disable: false,
   }));
+
+  const TRANSLATORSOPTIONS: Option[] = props.workers
+    .filter((w) => w.job === 'translator')
+    .map((translator) => ({
+      label: translator.name || 'default translator',
+      value: translator.id.toString(),
+      disable: false,
+    }));
 
   const AWARDSOPTIONS: Option[] = props.awards.map((award) => ({
     label: award.title || 'default award title',
@@ -477,6 +494,26 @@ function TitleForm(props: TitleFormProps) {
         };
       });
 
+      if (values.translators) {
+        const titlesTranslatorsArray = values.translators.map((translator) => {
+          const translatorID = parseInt(translator.value);
+          const titleID = data?.id;
+
+          return {
+            worker_ID: translatorID,
+            title_ID: titleID,
+          };
+        });
+
+        const translatorsData = await supabase
+          .from('Workers_Products')
+          .insert(titlesTranslatorsArray)
+          .select('*');
+        translatorsData.error && window.alert(translatorsData.error.message);
+        translatorsData.data &&
+          window.alert(`Переводчики успешно добавлены к тайтлу ${data.name} `);
+      }
+
       if (values.awards) {
         const titlesAwardsArray = values.awards.map((award) => {
           const awardID = parseInt(award.value);
@@ -582,6 +619,7 @@ function TitleForm(props: TitleFormProps) {
       name: '',
       authors: [],
       awards: [],
+      translators: [],
       recommended_titles: [],
       trailer: undefined,
       first_release: undefined,
@@ -733,6 +771,30 @@ function TitleForm(props: TitleFormProps) {
                     value={field.value}
                     onChange={field.onChange}
                     defaultOptions={OPTIONS}
+                    placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='translators'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Translators</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={TRANSLATORSOPTIONS}
                     placeholder='Select authors for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
@@ -1105,9 +1167,16 @@ type TitleEditFormProps = {
   titles: TitleType[];
   authors: AuthorsType[];
   awards: AwardsType[];
+  workers: Worker[];
 };
 
-function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
+function TitleEditForm({
+  title,
+  authors,
+  awards,
+  titles,
+  workers,
+}: TitleEditFormProps) {
   const [hasVideo, setHasVideo] = useState(false);
 
   const photoImage = useRef<HTMLImageElement | null>(null);
@@ -1126,6 +1195,14 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
     value: author.id.toString(),
     disable: false,
   }));
+
+  const TRANSLATORSOPTIONS: Option[] = workers
+    .filter((w) => w.job === 'translator')
+    .map((translator) => ({
+      label: translator.name || 'default translator',
+      value: translator.id.toString(),
+      disable: false,
+    }));
 
   const AWARDSOPTIONS: Option[] = awards.map((award) => ({
     label: award.title || 'default award title',
@@ -1180,6 +1257,31 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
       }));
 
       form.setValue('authors', authorsArray);
+    }
+
+    const translatorsData = await supabase
+      .from('Workers_Products')
+      .select('*, Workers(*)')
+      .eq('title_ID', title.id);
+
+    if (translatorsData.data) {
+      console.log(
+        'Workers data from reference table... ',
+        translatorsData.data
+      );
+
+      const translatorsArray = translatorsData.data
+        .filter((t) => t.Workers?.job === 'translator')
+        .map((translator) => ({
+          label: translator.Workers
+            ? translator.Workers.name + ' ' + translator.Workers.surname
+            : 'emptyLabel',
+          value: translator.Workers
+            ? translator.Workers.id.toString()
+            : 'emptyLabel',
+        }));
+
+      form.setValue('translators', translatorsArray);
     }
 
     const awardsData = await supabase
@@ -1252,8 +1354,10 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
       form.setValue('context', contextArray);
     }
   }
+
   useEffect(() => {
     getDataFromReq();
+    testTranslators();
   }, []);
 
   const router = useRouter();
@@ -1291,6 +1395,46 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
     control,
     name: 'context',
   });
+
+  async function testTranslators() {
+    const allWorkers = await supabase
+      .from('Workers_Products')
+      .select(`*`)
+      .eq('title_ID', title.id);
+
+    !allWorkers.error &&
+      console.log('all workers data for this title ... ', allWorkers.data);
+
+    const allWorkersIDArray = [] as number[];
+
+    allWorkers.data &&
+      allWorkers.data.forEach((worker) =>
+        allWorkersIDArray.push(worker.worker_ID!)
+      );
+
+    const allTranslators = await supabase
+      .from('Workers')
+      .select('*')
+      .in('id', allWorkersIDArray)
+      .eq('job', 'translator');
+
+    allTranslators.error &&
+      console.log('all translators data for this title ... ', allWorkers.data);
+
+    const allTranslatorsIDArray = [] as number[];
+
+    allTranslators.data &&
+      allTranslators.data.forEach((translator) =>
+        allTranslatorsIDArray.push(translator.id!)
+      );
+
+    console.log(
+      'all translators ID ARRAY for this title ... ',
+      allTranslatorsIDArray
+    );
+
+    return allTranslatorsIDArray;
+  }
 
   const watchIsCompilation = watch('is_compilation');
 
@@ -1621,6 +1765,70 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
         window.alert(`Награды успешно добавлен к тайтлу ${data.name} `);
     }
 
+    // const allWorkers = await supabase
+    //   .from('Workers_Products')
+    //   .select(`*`)
+    //   .eq('title_ID', title.id);
+
+    // !allWorkers.error &&
+    //   console.log('all workers data for this title ... ', allWorkers.data);
+
+    // let allWorkersIDArray = [] as number[];
+
+    // allWorkers.data &&
+    //   allWorkers.data.forEach((worker) =>
+    //     allWorkersIDArray.push(worker.worker_ID!)
+    //   );
+
+    // const allTranslators = await supabase
+    //   .from('Workers')
+    //   .select('*')
+    //   .in('id', allWorkersIDArray)
+    //   .eq('job', 'translator');
+
+    // allTranslators.error &&
+    //   console.log('all translators data for this title ... ', allWorkers.data);
+
+    // let allTranslatorsIDArray = [] as number[];
+
+    // allTranslators.data &&
+    //   allTranslators.data.forEach((translator) =>
+    //     allTranslatorsIDArray.push(translator.id!)
+    //   );
+
+    // console.log(
+    //   'all translators ID ARRAY for this title ... ',
+    //   allTranslatorsIDArray
+    // );
+
+    const translatorsIDs = await testTranslators();
+    const purgeTranslators = await supabase
+      .from('Workers_Products')
+      .delete()
+      .in('worker_ID', translatorsIDs);
+
+    !purgeTranslators.error && console.log('old translators deleted');
+
+    if (data && values.translators) {
+      const titlesTranslatorssArray = values.translators.map((translator) => {
+        const translatorID = parseInt(translator.value);
+        const titleID = data?.id;
+
+        return {
+          worker_ID: translatorID,
+          title_ID: titleID,
+        };
+      });
+
+      const translatorsData = await supabase
+        .from('Workers_Products')
+        .insert(titlesTranslatorssArray)
+        .select('*');
+      translatorsData.error && window.alert(translatorsData.error.message);
+      translatorsData.data &&
+        window.alert(`Переводчики успешно добавлены к тайтлу ${data.name} `);
+    }
+
     const purgeRecoms = await supabase
       .from('Recommended_titles')
       .delete()
@@ -1845,6 +2053,30 @@ function TitleEditForm({ title, authors, awards, titles }: TitleEditFormProps) {
                     onChange={field.onChange}
                     defaultOptions={OPTIONS}
                     placeholder='Select authors for the title...'
+                    emptyIndicator={
+                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                        no results found.
+                      </p>
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='translators'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Translators</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    defaultOptions={TRANSLATORSOPTIONS}
+                    placeholder='Select translators for the title...'
                     emptyIndicator={
                       <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
                         no results found.

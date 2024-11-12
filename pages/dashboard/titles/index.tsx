@@ -18,19 +18,29 @@ import { AuthorsType } from '../authors';
 import { AwardsType } from '../awards';
 import PageLayout from '@/layouts/PageLayout';
 
+export type Worker = {
+  id: number,
+  job: string | null,
+  name: string | null,
+  surname: string | null,
+};
+
+
 export type TitleType = Database['public']['Tables']['Titles']['Row'];
+export type TitleTypeWithWorkers = TitleType & { workers: Worker[] }  ;
 
 const Titleslist = () => {
-  const [titles, setTitles] = useState<TitleType[]>();
+  const [titles, setTitles] = useState<TitleTypeWithWorkers[]>();
   const [authors, setAuthors] = useState<AuthorsType[]>();
+  const [workers, setWorkers] = useState<Worker[]>([]);
   const [awards, setAwards] = useState<AwardsType[]>();
 
   async function getTitles() {
-    const { data, error } = await supabase.from('Titles').select('*');
-
+    const { data, error } = await supabase.from('Titles').select(`*, workers: Workers_Products ( * , ...Workers(*))`);
+   
     data && console.log('Titles data ... ', data);
     error && alert(error);
-
+    
     data && setTitles(data);
   }
 
@@ -41,6 +51,15 @@ const Titleslist = () => {
     error && alert(error);
 
     data && setAuthors(data);
+  }
+
+  async function getWorkers() {
+    const { data, error } = await supabase.from('Workers').select('*');
+
+    data && console.log('Workers data ... ', data);
+    error && alert(error);
+
+    data && setWorkers(data);
   }
 
   async function getAwards() {
@@ -56,6 +75,7 @@ const Titleslist = () => {
     getTitles();
     getAuthors();
     getAwards();
+    getWorkers();
   }, []);
 
   if (!titles) {
@@ -73,7 +93,17 @@ const Titleslist = () => {
             key={title.id}
             className='w-full'
           >
-            <AccordionTrigger> {title.name} </AccordionTrigger>
+            <AccordionTrigger> {title.name} 
+              
+            {
+              title.workers.some( worker => worker.job === 'translator' ) && ` |  переводчик ` + title.workers.filter(
+                worker => worker.job === 'translator'
+              )[0].name + ' ' + title.workers.filter(
+                worker => worker.job === 'translator'
+              )[0].surname 
+            }
+
+            </AccordionTrigger>
             <AccordionContent>
               {authors && awards && (
                 <TitleEditForm
@@ -81,6 +111,7 @@ const Titleslist = () => {
                   titles={[...titles]}
                   authors={[...authors]}
                   awards={[...awards]}
+                  workers={[...workers]}
                 />
               )}
             </AccordionContent>
@@ -103,9 +134,9 @@ const Titleslist = () => {
             {authors && awards && (
               <TitleForm
                 authors={[...authors]}
+                workers={[...workers]}
                 awards={[...awards]}
                 titles={[...titles]}
-                // {...authors}
                 defaultName='Default Title'
                 defaultThesis='Default Thesis'
                 defaultDescription='Default Description'
