@@ -1816,7 +1816,7 @@ function TitleEditForm({
 
         return {
           worker_ID: translatorID,
-          title_id: titleID,
+          title_ID: titleID,
         };
       });
 
