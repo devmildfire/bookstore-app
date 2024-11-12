@@ -76,4 +76,4 @@ jobs:
             docker rm chtivo-next
             docker rmi ${{ steps.meta.outputs.tags }}
             docker pull ${{ steps.meta.outputs.tags }}
-            docker run --rm -d --name chtivo-next -p 3000:3000 --network supabase_default ${{ steps.meta.outputs.tags }}
+            docker run -d --restart unless-stopped --name chtivo-next -p 3000:3000 --network supabase_default ${{ steps.meta.outputs.tags }}
