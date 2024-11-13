@@ -18,12 +18,15 @@ import { AuthorsType } from '../authors';
 import { AwardsType } from '../awards';
 import PageLayout from '@/layouts/PageLayout';
 
-export type Worker = {
-  id: number,
-  job: string | null,
-  name: string | null,
-  surname: string | null,
-};
+// export type Worker = {
+//   id: number,
+//   job: string | null,
+//   name: string | null,
+//   surname: string | null,
+//   photo: string | null,
+// };
+
+export type Worker = Database['public']['Tables']['Workers']['Row'];
 
 
 export type TitleType = Database['public']['Tables']['Titles']['Row'];

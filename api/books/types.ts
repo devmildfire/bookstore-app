@@ -1305,18 +1305,21 @@ export interface Database {
           id: number
           job: string | null
           name: string | null
+          photo: string | null
           surname: string | null
         }
         Insert: {
           id?: number
           job?: string | null
           name?: string | null
+          photo?: string | null
           surname?: string | null
         }
         Update: {
           id?: number
           job?: string | null
           name?: string | null
+          photo?: string | null
           surname?: string | null
         }
         Relationships: []

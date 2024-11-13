@@ -39,6 +39,10 @@ const dashlist: DashItem[] = [
     link: '/dashboard/lectors',
   },
   {
+    title: 'Workers',
+    link: '/dashboard/workers',
+  },
+  {
     title: 'Courses',
     link: '/dashboard/courses',
   },
