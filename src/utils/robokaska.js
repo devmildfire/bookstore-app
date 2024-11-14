@@ -90,7 +90,8 @@ class Robokaska {
     // Робокасса возвращает обратно эти значения
     return (
       SignatureValue ===
-      md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase()
+      // md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase()
+      md5(`${Math.round(outSum)}:${invId}:${this.password1}`).toUpperCase()
     );
   }
 }
