@@ -88,10 +88,13 @@ class Robokaska {
    */
   checkPay(invId, outSum, SignatureValue) {
     // Робокасса возвращает обратно эти значения
+
+    console.log(`test signature value from formula with pass 1... `, md5(`${Math.round(outSum)}:${invId}:${this.password1}`).toUpperCase())
+    console.log(`test signature value from formula with pass 2... `, md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase())
     return (
       SignatureValue ===
-      // md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase()
-      md5(`${Math.round(outSum)}:${invId}:${this.password1}`).toUpperCase()
+      md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase()
+      // md5(`${Math.round(outSum)}:${invId}:${this.password1}`).toUpperCase()
     );
   }
 }
