@@ -55,7 +55,7 @@ function generateRoboURL({
   return payURL;
 }
 
-function checkOrder(invId: number, outSum: number, signatureValue: string) {
+function checkOrder(invId: number, outSum: string, signatureValue: string) {
   const config = {
     shopIdentifier: process.env.SHOP_ID,
     password1: process.env.ROBOPASS_ONE,
@@ -573,11 +573,15 @@ export default async function handler(
     res.status(200).json({ isValid: orderIsValid }));
 
   !body.oper &&
-  
-    console.log(' robokassa answer request ');
-    console.log(' robokassa answer InvId ... ', body.InvId);
-    console.log(' robokassa answer OutSum ... ', body.OutSum);
-    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue);
+
+  (
+    console.log(' robokassa answer request '),
+    console.log(' robokassa answer InvId ... ', body.InvId),
+    console.log(' robokassa answer OutSum ... ', body.OutSum),
+    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue)
+  ) &&
+
+    
 
     body.InvId &&
     body.OutSum &&
@@ -585,7 +589,7 @@ export default async function handler(
     ((orderID = body.InvId),
     (sum = body.OutSum),
     (signatureValue = body.SignatureValue),
-    (orderIsValid = checkOrder(parseInt(orderID), +sum, signatureValue)),
+    (orderIsValid = checkOrder(parseInt(orderID), body.OutSum, signatureValue)),
     orderIsValid && makeOrderPaid(orderID),
     orderIsValid && res.status(200).send(`OK${orderID}`));
 }
