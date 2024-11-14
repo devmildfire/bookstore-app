@@ -35,7 +35,7 @@ function generateRoboURL({
     shopIdentifier: process.env.SHOP_ID,
     password1: process.env.ROBOPASS_ONE,
     password2: process.env.ROBOPASS_TWO,
-    testMode: true, // Указываем true, если работаем в тестовом режиме
+    testMode: false, // Указываем true, если работаем в тестовом режиме
   };
 
   // console.log('Robokassa shopID: ', process.env.SHOP_ID);
@@ -60,7 +60,8 @@ function checkOrder(invId: number, outSum: number, signatureValue: string) {
     shopIdentifier: process.env.SHOP_ID,
     password1: process.env.ROBOPASS_ONE,
     password2: process.env.ROBOPASS_TWO,
-    testMode: true, // Указываем true, если работаем в тестовом режиме
+    // testMode: true, // Указываем true, если работаем в тестовом режиме
+    testMode: false,
   };
 
   const roboKassa = new Robokaska(config);
@@ -84,7 +85,7 @@ function checkSuccesPageValidity(
     shopIdentifier: process.env.SHOP_ID,
     password1: process.env.ROBOPASS_ONE,
     password2: process.env.ROBOPASS_TWO,
-    testMode: true, // Указываем true, если работаем в тестовом режиме
+    testMode: false, // Указываем true, если работаем в тестовом режиме
   };
 
   const roboKassa = new Robokaska(config);
