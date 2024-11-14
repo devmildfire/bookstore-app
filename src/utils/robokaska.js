@@ -91,6 +91,20 @@ class Robokaska {
 
     console.log(`test signature value from formula with pass 1... `, md5(`${Math.round(outSum)}:${invId}:${this.password1}`).toUpperCase())
     console.log(`test signature value from formula with pass 2... `, md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase())
+
+
+    const answerInvId = '300';
+    const answerOutSum = '3.000000';
+    const answerSignatureValue = 'C3432A50EDC44F78D2C76ACC27EEFD16';
+    const MD5 = md5(`${answerOutSum}:${answerInvId}:${this.password2}`).toUpperCase();
+
+    console.log( 'test answerInvId ... ', answerInvId);
+    console.log( 'test answerOutSum ... ', answerOutSum);
+    console.log( 'test answerSignatureValue ... ', answerSignatureValue);
+
+    console.log( 'test answerSignatureValue ... ', answerSignatureValue);
+    console.log( 'test MD5 ... ', MD5);
+
     return (
       SignatureValue ===
       md5(`${Math.round(outSum)}:${invId}:${this.password2}`).toUpperCase()
