@@ -64,12 +64,17 @@ function checkOrder(invId: number, outSum: number, signatureValue: string) {
     testMode: false,
   };
 
+  console.log('shopIdentifier ... ', process.env.SHOP_ID);
+  console.log('password1 ... ', process.env.ROBOPASS_ONE);
+  console.log('password2 ... ', process.env.ROBOPASS_TWO);
+
   const roboKassa = new Robokaska(config);
 
   const isValid = roboKassa.checkPay(invId, outSum, signatureValue);
-  // console.log('checking order... ', invId);
-  // console.log('with sum... ', outSum);
-  // console.log('and value... ', signatureValue);
+
+  console.log('checking order... ', invId);
+  console.log('with sum... ', outSum);
+  console.log('and value... ', signatureValue);
 
   console.log('order is valid... ', isValid);
 
@@ -88,6 +93,12 @@ function checkSuccesPageValidity(
     testMode: false, // Указываем true, если работаем в тестовом режиме
   };
 
+  console.log('checkSuccesPageValidity ... ');
+
+  console.log('shopIdentifier ... ', process.env.SHOP_ID);
+  console.log('password1 ... ', process.env.ROBOPASS_ONE);
+  console.log('password2 ... ', process.env.ROBOPASS_TWO);
+
   const roboKassa = new Robokaska(config);
 
   const isValid = roboKassa.checkSuccessURLsignature(
@@ -95,11 +106,11 @@ function checkSuccesPageValidity(
     outSum,
     signatureValue
   );
-  // console.log('checking SUCCESS URL order... ', invId);
-  // console.log('with  SUCCESS URL sum... ', outSum);
-  // console.log('and  SUCCESS URL value... ', signatureValue);
+  console.log('checking SUCCESS URL order... ', invId);
+  console.log('with  SUCCESS URL sum... ', outSum);
+  console.log('and  SUCCESS URL value... ', signatureValue);
 
-  // console.log('SUCCESS URL  order is valid... ', isValid);
+  console.log('SUCCESS URL  order is valid... ', isValid);
 
   return isValid;
 }
