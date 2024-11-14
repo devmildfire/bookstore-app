@@ -573,6 +573,12 @@ export default async function handler(
     res.status(200).json({ isValid: orderIsValid }));
 
   !body.oper &&
+  
+    console.log(' robokassa answer request ');
+    console.log(' robokassa answer InvId ... ', body.InvId);
+    console.log(' robokassa answer OutSum ... ', body.OutSum);
+    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue);
+
     body.InvId &&
     body.OutSum &&
     body.SignatureValue &&
