@@ -45,6 +45,8 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 
   const req = context.req;
+  console.log('req is ...', req);
+
 
   const method = req.method;
   console.log('method is ...', req.method);
