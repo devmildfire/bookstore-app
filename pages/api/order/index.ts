@@ -574,14 +574,10 @@ export default async function handler(
 
   !body.oper &&
 
-  (
-    console.log(' robokassa answer request '),
-    console.log(' robokassa answer InvId ... ', body.InvId),
-    console.log(' robokassa answer OutSum ... ', body.OutSum),
-    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue)
-  ) &&
-
-    
+    console.log(' robokassa answer request ');
+    console.log(' robokassa answer InvId ... ', body.InvId);
+    console.log(' robokassa answer OutSum ... ', body.OutSum);
+    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue);
 
     body.InvId &&
     body.OutSum &&
