@@ -38,10 +38,6 @@ function generateRoboURL({
     testMode: false, // Указываем true, если работаем в тестовом режиме
   };
 
-  // console.log('Robokassa shopID: ', process.env.SHOP_ID);
-  // console.log('Robokassa pass 1: ', process.env.ROBOPASS_ONE);
-  // console.log('Robokassa pass 2: ', process.env.ROBOPASS_TWO);
-
   const roboKassa = new Robokaska(config);
 
   // Вернёт строку с URL адресом, на который можно отправить пользователя
@@ -64,19 +60,8 @@ function checkOrder(invId: number, outSum: string, signatureValue: string) {
     testMode: false,
   };
 
-  console.log('shopIdentifier ... ', process.env.SHOP_ID);
-  console.log('password1 ... ', process.env.ROBOPASS_ONE);
-  console.log('password2 ... ', process.env.ROBOPASS_TWO);
-
   const roboKassa = new Robokaska(config);
-
   const isValid = roboKassa.checkPay(invId, outSum, signatureValue);
-
-  console.log('checking order... ', invId);
-  console.log('with sum... ', outSum);
-  console.log('and value... ', signatureValue);
-
-  console.log('order is valid... ', isValid);
 
   return isValid;
 }
@@ -93,12 +78,6 @@ function checkSuccesPageValidity(
     testMode: false, // Указываем true, если работаем в тестовом режиме
   };
 
-  console.log('checkSuccesPageValidity ... ');
-
-  console.log('shopIdentifier ... ', process.env.SHOP_ID);
-  console.log('password1 ... ', process.env.ROBOPASS_ONE);
-  console.log('password2 ... ', process.env.ROBOPASS_TWO);
-
   const roboKassa = new Robokaska(config);
 
   const isValid = roboKassa.checkSuccessURLsignature(
@@ -106,11 +85,6 @@ function checkSuccesPageValidity(
     outSum,
     signatureValue
   );
-  console.log('checking SUCCESS URL order... ', invId);
-  console.log('with  SUCCESS URL sum... ', outSum);
-  console.log('and  SUCCESS URL value... ', signatureValue);
-
-  console.log('SUCCESS URL  order is valid... ', isValid);
 
   return isValid;
 }
@@ -125,14 +99,12 @@ async function emptyCartFromDB(cartID: string): Promise<string> {
 }
 
 async function getOrder(orderID: string): Promise<OrdersType | PostgrestError> {
-  // console.log('getting order id...', orderID);
 
   const { data, error } = await supabaseService
     .from('Orders')
     .select('*')
     .eq('id', orderID)
     .single();
-  // .eq('cart_id', cartID)
 
   if (error) {
     return error;
@@ -211,15 +183,12 @@ async function getAllLinks(
     .select()
     .eq('order_id', numOrder);
 
-  // console.log('order items data is ...', orderItems.data);
-
   if (!orderItems.data) {
     return orderItems.error;
   }
 
   const itemslinks: (LinkReturnType | undefined)[] = await Promise.all(
     orderItems.data.map(async (item) => {
-      // console.log('item type is...', item.type);
 
       if (item.type === 'Course') {
         const coursesData = await supabaseService
@@ -229,11 +198,8 @@ async function getAllLinks(
           .single();
 
         if (coursesData.data) {
-          // console.log('Courses are ...', coursesData.data);
           const link = coursesData.data.src as string;
           const courseName = (coursesData.data.name + ` — Курс`) as string;
-          // console.log(' course name is ...', courseName);
-          // console.log(' course link is ...', link);
 
           const privateUrl = supabaseService.storage
             .from('courses')
@@ -295,10 +261,10 @@ async function getAllLinks(
           .single();
 
         if (titleData.data) {
-          // console.log('Audio data is ...', titleData.data.Audiobooks);
+          
           const link = titleData.data.Audiobooks.src as string;
           const audioBookName = `${item.name} — ${item.type}` as string;
-          // console.log('audio link is ...', link);
+          
 
           const privateUrl = supabaseService.storage
             .from('audiobooks')
@@ -458,7 +424,6 @@ async function makeOrderPaid(
         console.log('alerts sent status is ... ', alertsSent);
 
         if (alertsSent === false) {
-          // console.log('sending alerts');
 
           const response = await emailAlert(
             paidOrderData.data.email,
@@ -494,8 +459,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const body = req.body;
-
-  // const cartID: string = body.id ? body.id : '';
 
   let order: OrdersType[] | PostgrestError;
   let singleOrder: OrdersType | PostgrestError;
@@ -573,12 +536,6 @@ export default async function handler(
     res.status(200).json({ isValid: orderIsValid }));
 
   !body.oper &&
-
-    console.log(' robokassa answer request ');
-    console.log(' robokassa answer InvId ... ', body.InvId);
-    console.log(' robokassa answer OutSum ... ', body.OutSum);
-    console.log(' robokassa answer SignatureValue ... ', body.SignatureValue);
-
     body.InvId &&
     body.OutSum &&
     body.SignatureValue &&

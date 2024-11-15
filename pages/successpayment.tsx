@@ -45,11 +45,8 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 
   const req = context.req;
-  console.log('req is ...', req);
-
 
   const method = req.method;
-  console.log('method is ...', req.method);
 
   if (method === 'GET') {
     const oneObject = { valid: 'invalid' };
@@ -59,12 +56,8 @@ export const getServerSideProps: GetServerSideProps = async (
   const read = req.read();
 
   const dataString = read.toString();
-  console.log('dataString is ...', dataString);
-
 
   const dataItems = dataString.split('&');
-  console.log('dataItems are ...', dataItems);
-
 
   const dataObjects: Record<string, string>[] = dataItems.map(
     (item: string) => {
@@ -77,16 +70,10 @@ export const getServerSideProps: GetServerSideProps = async (
     }
   );
 
-  console.log('dataObjects are ...', dataObjects);
-
-
   let oneObject: propsType = {};
   dataObjects.forEach((object) => {
     oneObject = { ...oneObject, ...object };
   });
-
-  console.log('oneObject is ...', oneObject);
-
 
   const invID = oneObject.InvId;
   const outSum = oneObject.OutSum;
