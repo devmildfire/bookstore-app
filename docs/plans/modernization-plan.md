@@ -114,7 +114,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 |---|-------|--------|-------|
 | 1 | Project Setup & Foundation | ✅ Complete | |
 | 2 | SCSS Design System | ✅ Complete | Done alongside Phase 1 |
-| 3 | Database & Auth Layer | 🔲 Not started | |
+| 3 | Database & Auth Layer | ✅ Complete | proxy.ts (Next.js 16), CookieOptions typed, types recovered from git |
 | 4 | Core UI Components | 🔲 Not started | |
 | 5 | Book Catalog & Filters | 🔲 Not started | |
 | 6 | Book Detail Page | 🔲 Not started | |
@@ -171,18 +171,17 @@ Update status as you work. A phase is complete only when every checkbox in its s
 
 **Goal**: Supabase client wiring, type generation, anonymous session bootstrap, cookie cart, RLS confirmation.
 
-- [ ] Create `src/lib/supabase/client.ts` — browser client via `createBrowserClient` from `@supabase/ssr`
-- [ ] Create `src/lib/supabase/server.ts` — server client via `createServerClient` (Next.js cookies)
-- [ ] Create `src/middleware.ts` — refresh Supabase session on every request; protect `/account/*` and `/admin/*` routes
-- [ ] Regenerate Supabase types: `supabase gen types typescript --db-url "..." > src/types/supabase.ts` (command in CLAUDE.md)
-- [ ] Create `src/types/database.ts` — re-export generated types; add client-facing normalized interfaces
-- [ ] Implement anonymous session bootstrap (runs once on first visit, server-side):
+- [x] Create `src/lib/supabase/client.ts` — browser client via `createBrowserClient` from `@supabase/ssr`
+- [x] Create `src/lib/supabase/server.ts` — server client via `createServerClient` (Next.js cookies)
+- [x] Create `src/proxy.ts` — refresh Supabase session on every request; protect `/account/*` and `/admin/*` routes (Next.js 16: `middleware.ts` → `proxy.ts`, `middleware()` → `proxy()`)
+- [x] Regenerate Supabase types: recovered from `git show HEAD~3:api/types/supabase.ts`; regenerate when DB access restored
+- [x] Create `src/types/database.ts` — re-export generated types; add client-facing normalized interfaces
+- [x] Implement anonymous session bootstrap (runs once on first visit, client-side in providers.tsx):
   - `supabase.auth.signInAnonymously()` if no session
-  - Generate `bookstore_cart_id` UUID cookie if absent
-  - Insert `carts` row in DB linked to cookie
-- [ ] Set up TanStack Query `QueryClientProvider` in `src/app/layout.tsx`
-- [ ] Create `src/hooks/useSupabaseUser.ts` — reactive current user hook
-- [ ] Create `src/lib/auth/` — helpers: `login`, `register`, `logout`, `migrateCart` (anon → user)
+  - Generate `bookstore_cart_id` UUID cookie if absent (set in proxy.ts)
+- [x] Set up TanStack Query `QueryClientProvider` in `src/app/providers.tsx` (layout wraps children with it)
+- [x] Create `src/hooks/useSupabaseUser.ts` — reactive current user hook
+- [x] Create `src/lib/auth/actions.ts` — Server Actions: `loginAction`, `registerAction`, `logoutAction`, `migrateCartAction` (stub — Phase 7)
 - [ ] Review and verify Supabase RLS policies:
   - Anon: read books, read/write own cart rows
   - Authenticated: read/write own orders, own account
