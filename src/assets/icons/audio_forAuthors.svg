@@ -1,9 +1,0 @@
-<!-- <svg width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="42.5" cy="42.5" r="42" stroke="#DCDCDC"/>
-<path d="M27.3988 18.6013L67.8608 41.962L27.3988 65.3228V18.6013Z" stroke="#DCDCDC"/>
-</svg> -->
-
-<svg viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="42.5" cy="42.5" r="42" stroke="#DCDCDC"/>
-<path d="M27.3988 18.6013L67.8608 41.962L27.3988 65.3228V18.6013Z" stroke="#DCDCDC"/>
-</svg>

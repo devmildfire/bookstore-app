@@ -1,0 +1,107 @@
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+// Brand
+$color-brand-primary: #c0392b;
+$color-brand-primary-hover: #a93226;
+
+// Backgrounds
+$color-bg-page: var(--color-bg-page);
+$color-bg-surface: var(--color-bg-surface);
+$color-bg-surface-hover: var(--color-bg-surface-hover);
+$color-bg-muted: var(--color-bg-muted);
+
+// Text
+$color-text-primary: var(--color-text-primary);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-muted: var(--color-text-muted);
+$color-text-inverse: var(--color-text-inverse);
+$color-text-link: var(--color-text-link);
+
+// Borders
+$color-border: var(--color-border);
+$color-border-focus: var(--color-border-focus);
+
+// Semantic
+$color-success: #27ae60;
+$color-success-bg: #eafaf1;
+$color-warning: #f39c12;
+$color-warning-bg: #fef9e7;
+$color-danger: #e74c3c;
+$color-danger-bg: #fdedec;
+$color-info: #2980b9;
+$color-info-bg: #eaf4fb;
+
+// Neutrals (static, used inside CSS custom property definitions)
+$neutral-50: #fafafa;
+$neutral-100: #f5f5f5;
+$neutral-200: #e5e5e5;
+$neutral-300: #d4d4d4;
+$neutral-400: #a3a3a3;
+$neutral-500: #737373;
+$neutral-600: #525252;
+$neutral-700: #404040;
+$neutral-800: #262626;
+$neutral-900: #171717;
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+
+$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+$font-size-4xl: 36px;
+
+$line-height-tight: 1.25;
+$line-height-snug: 1.375;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.625;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ─── Spacing ──────────────────────────────────────────────────────────────────
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+$space-20: 80px;
+
+// ─── Border Radius ────────────────────────────────────────────────────────────
+
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-full: 9999px;
+
+// ─── Shadows ──────────────────────────────────────────────────────────────────
+
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+$shadow-popup: 0 20px 60px 0 rgba(0, 0, 0, 0.2);
+
+// ─── Z-index ──────────────────────────────────────────────────────────────────
+
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-header: 300;
+$z-overlay: 400;
+$z-modal: 500;
+$z-toast: 600;

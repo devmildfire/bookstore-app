@@ -1,0 +1,89 @@
+@use 'params' as *;
+
+// ─── CSS Custom Properties ────────────────────────────────────────────────────
+
+:root {
+  // Backgrounds
+  --color-bg-page: #{$neutral-100};
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-hover: #{$neutral-50};
+  --color-bg-muted: #{$neutral-200};
+
+  // Text
+  --color-text-primary: #{$neutral-900};
+  --color-text-secondary: #{$neutral-700};
+  --color-text-muted: #{$neutral-500};
+  --color-text-inverse: #ffffff;
+  --color-text-link: #{$color-brand-primary};
+
+  // Borders
+  --color-border: #{$neutral-200};
+  --color-border-focus: #{$color-brand-primary};
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: $font-size-base;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-primary;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-primary;
+  background-color: $color-bg-page;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+}
+
+a {
+  color: $color-text-link;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
