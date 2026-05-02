@@ -115,7 +115,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 | 1 | Project Setup & Foundation | ✅ Complete | |
 | 2 | SCSS Design System | ✅ Complete | Done alongside Phase 1 |
 | 3 | Database & Auth Layer | ✅ Complete | proxy.ts (Next.js 16), CookieOptions typed, types recovered from git |
-| 4 | Core UI Components | 🔲 Not started | |
+| 4 | Core UI Components | ✅ Complete | 16 components: Spinner/Badge/Skeleton/Button/Input/Textarea/Checkbox/Select/Dialog/Popover/Toast/Pagination/BookCard/Header/Footer/PageLayout |
 | 5 | Book Catalog & Filters | 🔲 Not started | |
 | 6 | Book Detail Page | 🔲 Not started | |
 | 7 | Cart System | 🔲 Not started | |
