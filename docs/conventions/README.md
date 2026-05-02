@@ -15,3 +15,6 @@ If this documentation conflicts with tooling config (ESLint, TypeScript, Prettie
 | [TYPESCRIPT.md](TYPESCRIPT.md) | TypeScript strict conventions, type design, `any` policy |
 | [COMPONENTS.md](COMPONENTS.md) | Component structure, Server vs Client, Radix UI, forms |
 | [DATA.md](DATA.md) | TanStack Query, Supabase, data fetching, mutations |
+| [PERFORMANCE.md](PERFORMANCE.md) | Core Web Vitals targets, dynamic imports, images, fonts, Suspense |
+| [SEO.md](SEO.md) | Metadata API, accessibility (WCAG 2.1 AA), security |
+| [ERROR_HANDLING.md](ERROR_HANDLING.md) | Error boundaries, Server Action errors, TanStack Query errors, loading/not-found |
