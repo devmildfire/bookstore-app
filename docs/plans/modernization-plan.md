@@ -116,7 +116,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 | 2 | SCSS Design System | ✅ Complete | Done alongside Phase 1 |
 | 3 | Database & Auth Layer | ✅ Complete | proxy.ts (Next.js 16), CookieOptions typed, types recovered from git |
 | 4 | Core UI Components | ✅ Complete | 16 components: Spinner/Badge/Skeleton/Button/Input/Textarea/Checkbox/Select/Dialog/Popover/Toast/Pagination/BookCard/Header/Footer/PageLayout |
-| 5 | Book Catalog & Filters | 🔲 Not started | |
+| 5 | Book Catalog & Filters | ✅ Complete | Server-rendered `/books` catalog with URL filters, sorting, pagination, loading/error states |
 | 6 | Book Detail Page | 🔲 Not started | |
 | 7 | Cart System | 🔲 Not started | |
 | 8 | Checkout & Delivery | 🔲 Not started | |
@@ -163,7 +163,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 - [x] Create `src/styles/common.scss`: `@forward 'params'; @forward 'breakpoints';`
 - [x] Create `src/styles/globals.scss`: CSS reset, base styles, root CSS custom properties
 - [x] SCSS `@use` pattern chosen: explicit `@use '@/styles/common' as *;` per module file (no additionalData)
-- [ ] Verify a sample `.module.scss` file can use `$variables` and `@include breakpoint()` — to confirm in Phase 4 when first component is built
+- [x] Verify a sample `.module.scss` file can use `$variables` and `@include breakpoint()` — confirmed by Phase 4 components
 
 ---
 
@@ -195,22 +195,22 @@ Update status as you work. A phase is complete only when every checkbox in its s
 
 Each component: implement Radix primitive + `.module.scss`, match current app's visual style.
 
-- [ ] `Button` — variants: primary, secondary, ghost, danger; loading state
-- [ ] `Input` — text and password; error state; label
-- [ ] `Textarea`
-- [ ] `Select` — Radix `Select` primitive
-- [ ] `Checkbox` — Radix `Checkbox` primitive
-- [ ] `Dialog` — Radix `Dialog` primitive (modal)
-- [ ] `Popover` — Radix `Popover` primitive
-- [ ] `Toast` — Radix `Toast` primitive (success / error notifications)
-- [ ] `Badge` — price, category, availability tags
-- [ ] `Spinner` — inline loading indicator
-- [ ] `Skeleton` — loading placeholder for cards and text
-- [ ] `Pagination`
-- [ ] `BookCard` — cover image, title, author, price, add-to-cart button
-- [ ] `PageLayout` — outer shell: header + main content + footer
-- [ ] `Header` — logo, navigation, cart icon with item count, auth buttons
-- [ ] `Footer`
+- [x] `Button` — variants: primary, secondary, ghost, danger; loading state
+- [x] `Input` — text and password; error state; label
+- [x] `Textarea`
+- [x] `Select` — Radix `Select` primitive
+- [x] `Checkbox` — Radix `Checkbox` primitive
+- [x] `Dialog` — Radix `Dialog` primitive (modal)
+- [x] `Popover` — Radix `Popover` primitive
+- [x] `Toast` — Radix `Toast` primitive (success / error notifications)
+- [x] `Badge` — price, category, availability tags
+- [x] `Spinner` — inline loading indicator
+- [x] `Skeleton` — loading placeholder for cards and text
+- [x] `Pagination`
+- [x] `BookCard` — cover image, title, author, price, add-to-cart button
+- [x] `PageLayout` — outer shell: header + main content + footer
+- [x] `Header` — logo, navigation, cart icon with item count, auth buttons
+- [x] `Footer`
 
 ---
 
@@ -218,21 +218,21 @@ Each component: implement Radix primitive + `.module.scss`, match current app's 
 
 **Goal**: `/books` page with server-rendered catalog and URL-param-driven filters.
 
-- [ ] Configure root redirect: `/` → `/books` (via `next.config.ts` redirect or `app/page.tsx`)
-- [ ] Create `src/entities/book/server.ts` — Supabase query definitions and inferred server types
-- [ ] Create `src/entities/book/client.ts` — normalized frontend interface
-- [ ] Create `src/entities/book/normalize.ts` — server → client transform
-- [ ] Create `src/entities/book/validation.ts` — Zod schemas
-- [ ] Create `api/books/` — query functions wrapping Supabase calls
-- [ ] `app/books/page.tsx` — Server Component; fetches initial book list; passes to client grid
-- [ ] `app/books/layout.tsx` — catalog layout with filter sidebar
-- [ ] `BookGrid` component — responsive grid of `BookCard`
-- [ ] `FiltersPanel` component — genre, price range, author; state via URL search params
-- [ ] `SearchBar` — client component; filters by title / author
-- [ ] Sorting controls — price asc/desc, newest first
-- [ ] `app/books/loading.tsx` — skeleton grid
-- [ ] `app/books/error.tsx`
-- [ ] Configure `next/image` for Supabase Storage book covers
+- [x] Configure root redirect: `/` → `/books` (via `next.config.ts` redirect or `app/page.tsx`)
+- [x] Create `src/entities/book/server.ts` — Supabase query definitions and inferred server types
+- [x] Create `src/entities/book/client.ts` — normalized frontend interface
+- [x] Create `src/entities/book/normalize.ts` — server → client transform
+- [x] Create `src/entities/book/validation.ts` — Zod schemas
+- [x] Create `src/api/books/` — query functions wrapping Supabase calls
+- [x] `app/books/page.tsx` — Server Component; fetches initial book list; passes to client grid
+- [x] `app/books/layout.tsx` — catalog layout with filter sidebar
+- [x] `BookGrid` component — responsive grid of `BookCard`
+- [x] `FiltersPanel` component — category, price range, author; state via URL search params
+- [x] `SearchBar` — client component; filters by title / author
+- [x] Sorting controls — price asc/desc, newest first
+- [x] `app/books/loading.tsx` — skeleton grid
+- [x] `app/books/error.tsx`
+- [x] Configure `next/image` for Supabase Storage book covers
 
 ---
 

@@ -1,0 +1,32 @@
+@use '@/styles/common' as *;
+
+.panel {
+  display: grid;
+  align-content: start;
+  gap: $space-5;
+  padding: $space-5;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-3;
+
+  h2 {
+    font-size: $font-size-xl;
+  }
+}
+
+.resetLink {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.priceForm {
+  display: grid;
+  gap: $space-3;
+}

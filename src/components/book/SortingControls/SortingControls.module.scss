@@ -1,0 +1,9 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  min-width: 220px;
+
+  @include breakpoint('phone') {
+    min-width: 0;
+  }
+}

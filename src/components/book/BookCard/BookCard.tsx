@@ -5,22 +5,11 @@ import Link from 'next/link'
 import cn from 'classnames'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
+import type { Book } from '@/entities/book/client'
 import styles from './BookCard.module.scss'
 
-// Minimal type — replaced with full entity type in Phase 5
-export type BookCardData = {
-  id: string
-  slug: string
-  name: string
-  coverUrl: string | null
-  authorName: string
-  price: number
-  category: string
-  inStock: boolean
-}
-
 type Props = {
-  book: BookCardData
+  book: Book
   onAddToCart?: (bookId: string) => void
   className?: string
 }

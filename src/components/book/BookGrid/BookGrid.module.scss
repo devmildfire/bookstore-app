@@ -1,0 +1,35 @@
+@use '@/styles/common' as *;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-6;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-4;
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+}
+
+.empty {
+  display: grid;
+  gap: $space-2;
+  padding: $space-12;
+  text-align: center;
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  h2 {
+    font-size: $font-size-xl;
+  }
+
+  p {
+    color: $color-text-muted;
+  }
+}
