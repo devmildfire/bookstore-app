@@ -1,0 +1,32 @@
+@use '@/styles/common' as *;
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: $radius-full;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-top-color: currentColor;
+  animation: spin 0.7s linear infinite;
+  color: $color-brand-primary;
+
+  &.sm {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.md {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.lg {
+    width: 28px;
+    height: 28px;
+  }
+}

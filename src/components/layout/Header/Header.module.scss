@@ -1,0 +1,140 @@
+@use '@/styles/common' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  background-color: $color-bg-surface;
+  border-bottom: 1px solid $color-border;
+  z-index: $z-header;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 $space-6;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+
+  @include breakpoint(phone) {
+    padding: 0 $space-4;
+    gap: $space-4;
+  }
+}
+
+.logo {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-brand-primary;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover {
+    text-decoration: none;
+    color: $color-brand-primary-hover;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+
+  @include breakpoint(phone) {
+    display: none;
+  }
+}
+
+.navLink {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $color-text-primary;
+    text-decoration: none;
+  }
+
+  &.active {
+    color: $color-brand-primary;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-left: auto;
+}
+
+.cartLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-md;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: $color-bg-muted;
+    color: $color-text-primary;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: 2px;
+  }
+}
+
+.cartBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: $radius-full;
+  background-color: $color-brand-primary;
+  color: $color-text-inverse;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  line-height: 16px;
+  text-align: center;
+}
+
+.authGroup {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.loginLink {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-1 $space-3;
+  border: 1px solid $color-brand-primary;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-brand-primary;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: $color-danger-bg;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: 2px;
+  }
+}

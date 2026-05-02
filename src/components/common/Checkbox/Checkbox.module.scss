@@ -1,0 +1,50 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.root {
+  width: 18px;
+  height: 18px;
+  border-radius: $radius-sm;
+  border: 1.5px solid $color-border;
+  background-color: $color-bg-surface;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+
+  &[data-state='checked'] {
+    background-color: $color-brand-primary;
+    border-color: $color-brand-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: 2px;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-inverse;
+}
+
+.label {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  cursor: pointer;
+  user-select: none;
+}

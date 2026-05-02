@@ -1,0 +1,104 @@
+@use '@/styles/common' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  border-radius: $radius-md;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.sm {
+    padding: $space-1 $space-3;
+    font-size: $font-size-sm;
+    min-height: 30px;
+  }
+
+  &.md {
+    padding: $space-2 $space-4;
+    font-size: $font-size-base;
+    min-height: 38px;
+  }
+
+  &.lg {
+    padding: $space-3 $space-6;
+    font-size: $font-size-lg;
+    min-height: 46px;
+  }
+
+  &.primary {
+    background-color: $color-brand-primary;
+    color: $color-text-inverse;
+
+    &:hover:not(:disabled) {
+      background-color: $color-brand-primary-hover;
+    }
+
+    .buttonSpinner {
+      color: #ffffff;
+      border-top-color: #ffffff;
+    }
+  }
+
+  &.secondary {
+    background-color: transparent;
+    color: $color-brand-primary;
+    border-color: $color-brand-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $color-danger-bg;
+    }
+
+    .buttonSpinner {
+      color: $color-brand-primary;
+    }
+  }
+
+  &.ghost {
+    background-color: transparent;
+    color: $color-text-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $color-bg-muted;
+    }
+
+    .buttonSpinner {
+      color: $color-text-secondary;
+    }
+  }
+
+  &.danger {
+    background-color: $color-danger;
+    color: $color-text-inverse;
+
+    &:hover:not(:disabled) {
+      background-color: darken($color-danger, 8%);
+    }
+
+    .buttonSpinner {
+      color: #ffffff;
+      border-top-color: #ffffff;
+    }
+  }
+}
+
+.buttonSpinner {
+  flex-shrink: 0;
+}

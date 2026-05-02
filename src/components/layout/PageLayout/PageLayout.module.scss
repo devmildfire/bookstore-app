@@ -1,0 +1,23 @@
+@use '@/styles/common' as *;
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: $space-8 $space-6;
+
+  @include breakpoint(tablet) {
+    padding: $space-6;
+  }
+
+  @include breakpoint(phone) {
+    padding: $space-4;
+  }
+}

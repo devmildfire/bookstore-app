@@ -1,0 +1,37 @@
+@use '@/styles/common' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+
+  &.default {
+    background-color: $color-bg-muted;
+    color: $color-text-secondary;
+  }
+
+  &.success {
+    background-color: $color-success-bg;
+    color: $color-success;
+  }
+
+  &.warning {
+    background-color: $color-warning-bg;
+    color: $color-warning;
+  }
+
+  &.danger {
+    background-color: $color-danger-bg;
+    color: $color-danger;
+  }
+
+  &.info {
+    background-color: $color-info-bg;
+    color: $color-info;
+  }
+}

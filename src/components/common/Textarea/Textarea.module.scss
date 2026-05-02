@@ -1,0 +1,59 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.textarea {
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  background-color: $color-bg-surface;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-border-focus;
+  }
+
+  &:disabled {
+    background-color: $color-bg-muted;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.hasError .textarea {
+  border-color: $color-danger;
+
+  &:focus {
+    border-color: $color-danger;
+  }
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-danger;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}

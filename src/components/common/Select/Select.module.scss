@@ -1,0 +1,108 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  background-color: $color-bg-surface;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:focus-visible {
+    outline: none;
+    border-color: $color-border-focus;
+  }
+
+  &[data-placeholder] {
+    color: $color-text-muted;
+  }
+
+  &[disabled] {
+    background-color: $color-bg-muted;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.hasError .trigger {
+  border-color: $color-danger;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.content {
+  background-color: $color-bg-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  min-width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  z-index: $z-dropdown;
+  overflow: hidden;
+}
+
+.viewport {
+  padding: $space-1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+
+  &[data-highlighted] {
+    background-color: $color-bg-muted;
+  }
+
+  &[data-state='checked'] {
+    font-weight: $font-weight-medium;
+    color: $color-brand-primary;
+  }
+
+  &[data-disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.itemIndicator {
+  display: flex;
+  align-items: center;
+  color: $color-brand-primary;
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-danger;
+}

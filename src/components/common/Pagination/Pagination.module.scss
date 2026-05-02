@@ -1,0 +1,61 @@
+@use '@/styles/common' as *;
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 $space-2;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg-muted;
+    color: $color-text-primary;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: 2px;
+  }
+
+  &.active {
+    background-color: $color-brand-primary;
+    color: $color-text-inverse;
+
+    &:hover {
+      background-color: $color-brand-primary-hover;
+    }
+  }
+
+  &.arrow {
+    color: $color-text-muted;
+  }
+}
+
+.ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  cursor: default;
+  user-select: none;
+}
