@@ -89,6 +89,26 @@ MyPage.getLayout = (page) => <PageLayout>{page}</PageLayout>;
 
 On app load, `_app.tsx` checks for an existing Supabase session. If none exists it calls `supabase.auth.signInAnonymously()`, attaching the cart cookie UUID to `user.user_metadata.cartID`. Real accounts are created via `/createaccount`.
 
+## Conventions and Code Culture
+
+**Read these before writing any code.** They define the standards all agents must follow.
+
+| Document | Covers |
+|----------|--------|
+| [docs/conventions/CODE_STYLE.md](docs/conventions/CODE_STYLE.md) | Formatting, naming, React/Next.js rules, Server vs Client |
+| [docs/conventions/SCSS.md](docs/conventions/SCSS.md) | SCSS Modules, tokens, breakpoints, responsive strategy |
+| [docs/conventions/TYPESCRIPT.md](docs/conventions/TYPESCRIPT.md) | Strict TypeScript, type design, `any` policy |
+| [docs/conventions/COMPONENTS.md](docs/conventions/COMPONENTS.md) | Component structure, Radix UI, forms, layouts |
+| [docs/conventions/DATA.md](docs/conventions/DATA.md) | TanStack Query, Supabase, Server Actions, entity layer |
+
+Key rules at a glance:
+- **No Tailwind. No styled-components.** SCSS Modules only.
+- **No class components.** Functional components with hooks only.
+- **No `any`.** Use `unknown` at unsafe boundaries, then narrow.
+- **Server Components by default.** Add `'use client'` only when required.
+- **All Supabase calls go through `src/api/<domain>/`.** Never call Supabase directly from components.
+- **Commit messages**: short imperative slug, no AI attribution.
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
