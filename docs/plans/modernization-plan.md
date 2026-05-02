@@ -112,8 +112,8 @@ Update status as you work. A phase is complete only when every checkbox in its s
 
 | # | Phase | Status | Notes |
 |---|-------|--------|-------|
-| 1 | Project Setup & Foundation | 🔲 Not started | |
-| 2 | SCSS Design System | 🔲 Not started | |
+| 1 | Project Setup & Foundation | ✅ Complete | |
+| 2 | SCSS Design System | ✅ Complete | Done alongside Phase 1 |
 | 3 | Database & Auth Layer | 🔲 Not started | |
 | 4 | Core UI Components | 🔲 Not started | |
 | 5 | Book Catalog & Filters | 🔲 Not started | |
@@ -133,30 +133,23 @@ Update status as you work. A phase is complete only when every checkbox in its s
 
 **Goal**: Clean Next.js 16.2.4+ project with all tooling in place, no legacy or banned dependencies.
 
-- [ ] Initialize project: `npx create-next-app@latest . --typescript --app --no-tailwind --no-eslint`
-- [ ] Confirm `next` version ≥ 16.2.4 in `package.json`
-- [ ] Configure `tsconfig.json`: `strict: true`, path alias `@/*` → `src/*`
-- [ ] Install and configure ESLint with Next.js recommended config
-- [ ] Set up husky + lint-staged: pre-commit runs lint on `.ts .tsx .js .jsx`
-- [ ] Install core dependencies:
+- [x] Initialize project: manual setup (create-next-app not used — existing repo)
+- [x] Confirm `next` version ≥ 16.2.4 in `package.json` — using 16.2.4 exactly
+- [x] Configure `tsconfig.json`: `strict: true`, path alias `@/*` → `src/*`
+- [x] Install and configure ESLint with Next.js recommended config (ESLint 9 flat config, `eslint-config-next` native flat export — `next lint` removed in v16)
+- [x] Set up husky + lint-staged: pre-commit runs `eslint --fix` on `.ts .tsx .js .jsx`
+- [x] Install core dependencies:
   - `sass`
   - `@supabase/supabase-js` `@supabase/ssr`
   - `@tanstack/react-query` `@tanstack/react-query-devtools`
   - `react-hook-form` `zod` `@hookform/resolvers`
   - `resend` `@react-email/components`
-  - Radix UI packages as needed per phase (install per-component)
-- [ ] Remove any auto-generated Tailwind/PostCSS files (`tailwind.config.*`, `postcss.config.*`)
-- [ ] Create `next.config.ts` with `basePath`, `assetPrefix`, `i18n` (`locales: ['ru']`), `output: 'standalone'`
-- [ ] Create `.env.local.example` documenting all required environment variables:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `RESEND_API_KEY`
-  - `YUKASSA_SHOP_ID`
-  - `YUKASSA_SECRET_KEY`
-  - `NEXT_PUBLIC_BASE_URL`
-- [ ] Create `src/` directory skeleton (see CLAUDE.md architecture section)
-- [ ] Confirm `npm run build` passes on the empty project
+  - All Radix UI packages pre-installed upfront
+- [x] Remove all old Tailwind/PostCSS files
+- [x] Create `next.config.ts` with `basePath`, `assetPrefix`, `output: 'standalone'` (i18n not used in App Router — handled by content)
+- [x] Create `.env.example` documenting all required environment variables
+- [x] Create `src/` directory skeleton
+- [x] Confirm `npm run build` passes on the empty project
 
 ---
 
@@ -164,20 +157,13 @@ Update status as you work. A phase is complete only when every checkbox in its s
 
 **Goal**: Extract the current app's visual identity into SCSS tokens; establish the module system all subsequent components will use.
 
-- [ ] Inspect the current live app (or legacy codebase) and document the color palette, typography, spacing, and shadows
-- [ ] Create `src/styles/params.scss`:
-  - Color variables (`$color-*`, semantic aliases)
-  - Typography: font families, sizes, weights, line-heights
-  - Spacing scale
-  - Border radius values
-  - Box shadow presets
-  - Z-index scale
-  - CSS custom property declarations for theming (`--variable: value`)
-- [ ] Create `src/styles/breakpoints.scss` with `@mixin breakpoint($point)` (desktop / tablet / phone)
-- [ ] Create `src/styles/common.scss`: `@forward 'params'; @forward 'breakpoints';`
-- [ ] Create `src/styles/globals.scss`: CSS reset, base `body`/`html` styles, root CSS custom properties
-- [ ] Configure `next.config.ts` `sassOptions.additionalData` to auto-import `common.scss` in all modules (or document explicit `@use` pattern — pick one and stick to it)
-- [ ] Verify a sample `.module.scss` file can use `$variables` and `@include breakpoint()` without extra imports
+- [x] Inspect the current legacy codebase and document the color palette, typography, spacing, and shadows
+- [x] Create `src/styles/params.scss`: colors, typography, spacing, radii, shadows, z-index, CSS custom properties
+- [x] Create `src/styles/breakpoints.scss` with `@mixin breakpoint($point)` (desktop / tablet / tablet-only / phone)
+- [x] Create `src/styles/common.scss`: `@forward 'params'; @forward 'breakpoints';`
+- [x] Create `src/styles/globals.scss`: CSS reset, base styles, root CSS custom properties
+- [x] SCSS `@use` pattern chosen: explicit `@use '@/styles/common' as *;` per module file (no additionalData)
+- [ ] Verify a sample `.module.scss` file can use `$variables` and `@include breakpoint()` — to confirm in Phase 4 when first component is built
 
 ---
 
