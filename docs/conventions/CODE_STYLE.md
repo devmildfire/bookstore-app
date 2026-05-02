@@ -72,6 +72,13 @@ Keep `'use client'` boundaries as deep in the tree as possible — push them to 
 - Remove temporary debug logs (`console.log`) before committing
 - Never commit secrets or values from `.env*` files
 
+## Dependency Management
+
+- **All dependencies must be pinned to exact versions** — no `^`, `~`, or `latest` in `package.json`
+- `.npmrc` contains `save-exact=true` so `npm install <pkg>` defaults to exact pinning
+- Reason: range specifiers allow automatic minor/patch upgrades that can introduce supply chain compromises
+- When adding a new package: install it (`npm install <pkg>`), verify the exact version landed in `package.json`, commit both `package.json` and `package-lock.json`
+
 ## Commit Messages
 
 - Short imperative slug: `add book detail page`, `fix cart cookie on SSR`
