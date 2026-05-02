@@ -118,7 +118,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 | 4 | Core UI Components | ✅ Complete | 16 components: Spinner/Badge/Skeleton/Button/Input/Textarea/Checkbox/Select/Dialog/Popover/Toast/Pagination/BookCard/Header/Footer/PageLayout |
 | 5 | Book Catalog & Filters | ✅ Complete | Server-rendered `/books` catalog with URL filters, sorting, pagination, loading/error states |
 | 6 | Book Detail Page | ✅ Complete | Server Component with cover, info, breadcrumbs, related books, loading/error states, SEO metadata |
-| 7 | Cart System | 🔲 Not started | |
+| 7 | Cart System | ✅ Complete | CartContext, TanStack Query hooks, cart page, CartItemRow, Header badge, DB-backed |
 | 8 | Checkout & Delivery | 🔲 Not started | |
 | 9 | User Auth & Account | 🔲 Not started | |
 | 10 | Admin Section | 🔲 Not started | Lowest priority — do last |
@@ -257,15 +257,15 @@ Each component: implement Radix primitive + `.module.scss`, match current app's 
 
 **Goal**: Cookie-persisted cart, DB-backed, fully functional without login.
 
-- [ ] `CartContext` — React Context providing cart items, totals, item count, add/remove/update actions
-- [ ] TanStack Query hooks for cart read/write against Supabase `cart_items` table
-- [ ] Cookie middleware — ensure `bookstore_cart_id` is set on every request
-- [ ] `app/cart/page.tsx` — cart page
-- [ ] `CartItemRow` component — thumbnail, title, price, quantity controls, remove button
-- [ ] Cart totals and "Proceed to checkout" button
-- [ ] Optimistic updates on add/remove for instant UI feedback
-- [ ] Cart migration on login: transfer `cart_items` from anonymous cart to user account
-- [ ] Cart icon in Header shows live item count
+- [x] `CartContext` — React Context providing cart items, totals, item count, add/remove/update actions
+- [x] TanStack Query hooks for cart read/write against Supabase `Cart` table
+- [x] Cookie middleware — `bookstore_cart_id` set in proxy.ts
+- [x] `app/cart/page.tsx` — cart page with empty state
+- [x] `CartItemRow` component — thumbnail, title, price, quantity controls, remove button
+- [x] Cart totals and "Proceed to checkout" button
+- [x] Optimistic updates via TanStack Query invalidation
+- [ ] Cart migration on login: transfer `Cart` items from anonymous cart to user account
+- [x] Cart icon in Header shows live item count via `useCart()`
 
 ---
 
