@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { createClient } from '@/lib/supabase/client'
+import { createAuthClient } from '@/lib/supabase/client'
 import { ToastProvider } from '@/contexts/toast'
 import { CartProvider } from '@/contexts/cart'
 
@@ -38,7 +38,7 @@ export default function Providers({ children, hasSession }: Props) {
   // Sign in anonymously on first visit if no session exists
   useEffect(() => {
     if (!hasSession) {
-      createClient().auth.signInAnonymously().catch(console.error)
+      createAuthClient().auth.signInAnonymously().catch(console.error)
     }
   }, [hasSession])
 
