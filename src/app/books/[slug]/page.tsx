@@ -99,7 +99,14 @@ export default async function BookDetailPage({ params }: Props) {
             </div>
           </div>
 
-          <AddToCartButton bookId={book.id} inStock={book.inStock} bookName={book.name} />
+          <AddToCartButton
+            bookId={book.id}
+            inStock={book.inStock}
+            bookName={book.name}
+            price={book.price}
+            picture={book.coverUrl}
+            category={book.category}
+          />
         </div>
       </div>
 

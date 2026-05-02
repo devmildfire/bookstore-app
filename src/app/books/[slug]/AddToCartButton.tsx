@@ -1,23 +1,23 @@
 'use client'
 
-import { useState } from 'react'
 import Button from '@/components/common/Button'
+import { useCart } from '@/contexts/cart'
 import styles from './AddToCartButton.module.scss'
 
 type Props = {
   bookId: string
   inStock: boolean
   bookName: string
+  price: number
+  picture?: string | null
+  category: string
 }
 
-export default function AddToCartButton({ bookId, inStock, bookName }: Props) {
-  const [isPending, setIsPending] = useState(false)
+export default function AddToCartButton({ bookId, inStock, bookName, price, picture, category }: Props) {
+  const { addItem, isPending } = useCart()
 
   const handleClick = () => {
-    setIsPending(true)
-    // TODO: Implement actual add-to-cart logic in Phase 7
-    console.log('Add to cart:', bookId)
-    setTimeout(() => setIsPending(false), 500)
+    addItem({ id: bookId, name: bookName, price, picture, category })
   }
 
   if (!inStock) {

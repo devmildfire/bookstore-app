@@ -5,16 +5,17 @@ import Link from 'next/link'
 import cn from 'classnames'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
+import { useCart } from '@/contexts/cart'
 import type { Book } from '@/entities/book/client'
 import styles from './BookCard.module.scss'
 
 type Props = {
   book: Book
-  onAddToCart?: (bookId: string) => void
   className?: string
 }
 
-export default function BookCard({ book, onAddToCart, className }: Props) {
+export default function BookCard({ book, className }: Props) {
+  const { addItem, isPending } = useCart()
   const priceFormatted = new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',
@@ -55,8 +56,8 @@ export default function BookCard({ book, onAddToCart, className }: Props) {
           <Button
             variant='primary'
             size='sm'
-            onClick={() => onAddToCart?.(book.id)}
-            disabled={!book.inStock}
+            onClick={() => addItem({ id: book.id, name: book.name, price: book.price, picture: book.coverUrl, category: book.category })}
+            disabled={!book.inStock || isPending}
             aria-label={`Добавить «${book.name}» в корзину`}
           >
             {book.inStock ? 'В корзину' : 'Нет в наличии'}
