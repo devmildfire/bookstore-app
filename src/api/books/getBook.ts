@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createDataClient } from '@/lib/supabase/server'
 import type { Book } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
 import { bookCatalogSelect, type BookServerRow } from '@/entities/book/server'
@@ -6,7 +6,7 @@ import { bookCatalogSelect, type BookServerRow } from '@/entities/book/server'
 export const bookQueryKey = (slug: string) => ['book', slug] as const
 
 export async function getBook(slug: string): Promise<Book | null> {
-  const supabase = await createClient()
+  const supabase = createDataClient()
 
   const { data, error } = await supabase
     .from('CardBooks')
@@ -25,7 +25,7 @@ export async function getBook(slug: string): Promise<Book | null> {
 }
 
 export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
-  const supabase = await createClient()
+  const supabase = createDataClient()
 
   const { data, error } = await supabase
     .from('CardBooks')

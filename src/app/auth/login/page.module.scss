@@ -1,0 +1,67 @@
+@use '@/styles/common' as *;
+
+.page {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: $space-12 $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.input {
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  outline: none;
+
+  &:focus {
+    border-color: $color-border-focus;
+  }
+}
+
+.submit {
+  width: 100%;
+  margin-top: $space-2;
+}
+
+.error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  padding: $space-2 $space-3;
+  background-color: $color-danger-bg;
+  border-radius: $radius-md;
+}
+
+.success {
+  color: $color-success;
+  font-size: $font-size-sm;
+  padding: $space-2 $space-3;
+  background-color: $color-success-bg;
+  border-radius: $radius-md;
+}
+
+.link {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  a {
+    color: $color-text-link;
+  }
+}

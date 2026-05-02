@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { createDataClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
 

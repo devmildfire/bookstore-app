@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createDataClient } from '@/lib/supabase/server'
 import type { ProductCategory } from '@/types/database'
 import type { Book, BookCatalog, BookFilters } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
@@ -7,7 +7,7 @@ import { BOOK_CATALOG_PAGE_SIZE, bookCatalogSelect, type BookServerRow } from '@
 export const booksQueryKey = (filters: BookFilters) => ['books', filters] as const
 
 export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
-  const supabase = await createClient()
+  const supabase = createDataClient()
   const pageSize = BOOK_CATALOG_PAGE_SIZE
   const from = (filters.page - 1) * pageSize
 
