@@ -5,13 +5,12 @@ import styles from './PageLayout.module.scss'
 
 type Props = {
   children: ReactNode
-  cartItemCount?: number
 }
 
-export default function PageLayout({ children, cartItemCount }: Props) {
+export default function PageLayout({ children }: Props) {
   return (
     <div className={styles.layout}>
-      <Header cartItemCount={cartItemCount} />
+      <Header />
       <main className={styles.main}>{children}</main>
       <Footer />
     </div>

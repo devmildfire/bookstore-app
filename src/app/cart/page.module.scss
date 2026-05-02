@@ -1,0 +1,85 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: grid;
+  gap: $space-6;
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-16 $space-6;
+  text-align: center;
+
+  h1 {
+    font-size: $font-size-3xl;
+  }
+
+  p {
+    color: $color-text-muted;
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+
+  h1 {
+    font-size: $font-size-3xl;
+  }
+}
+
+.count {
+  font-size: $font-size-base;
+  color: $color-text-muted;
+  margin-right: auto;
+}
+
+// ─── Items list ───────────────────────────────────────────────────────────────
+
+.items {
+  display: grid;
+  gap: $space-3;
+}
+
+// ─── Summary ──────────────────────────────────────────────────────────────────
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-4;
+  padding: $space-6;
+  background-color: $color-bg-surface;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+}
+
+.summaryLabel {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+}
+
+.summaryTotal {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $color-brand-primary;
+}
+
+.checkoutBtn {
+  min-width: 280px;
+}

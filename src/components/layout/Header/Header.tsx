@@ -5,14 +5,12 @@ import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import Button from '@/components/common/Button'
 import useSupabaseUser from '@/hooks/useSupabaseUser'
+import { useCart } from '@/contexts/cart'
 import { logoutAction } from '@/lib/auth/actions'
 import styles from './Header.module.scss'
 
-type Props = {
-  cartItemCount?: number
-}
-
-export default function Header({ cartItemCount = 0 }: Props) {
+export default function Header() {
+  const { itemCount } = useCart()
   const pathname = usePathname()
   const { isAnonymous, isLoading } = useSupabaseUser()
 
@@ -30,7 +28,7 @@ export default function Header({ cartItemCount = 0 }: Props) {
         </nav>
 
         <div className={styles.actions}>
-          <Link href='/cart' className={styles.cartLink} aria-label={`Корзина, ${cartItemCount} товаров`}>
+          <Link href='/cart' className={styles.cartLink} aria-label={`Корзина, ${itemCount} товаров`}>
             <svg width='22' height='22' viewBox='0 0 22 22' fill='none' aria-hidden>
               <path
                 d='M1 1H3.5L5.5 13H16.5L18.5 5H5'
@@ -42,9 +40,9 @@ export default function Header({ cartItemCount = 0 }: Props) {
               <circle cx='8' cy='17' r='1.5' fill='currentColor' />
               <circle cx='15' cy='17' r='1.5' fill='currentColor' />
             </svg>
-            {cartItemCount > 0 && (
+            {itemCount > 0 && (
               <span className={styles.cartBadge} aria-hidden>
-                {cartItemCount > 99 ? '99+' : cartItemCount}
+                {itemCount > 99 ? '99+' : itemCount}
               </span>
             )}
           </Link>
