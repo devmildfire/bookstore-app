@@ -117,7 +117,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 | 3 | Database & Auth Layer | ✅ Complete | proxy.ts (Next.js 16), CookieOptions typed, types recovered from git |
 | 4 | Core UI Components | ✅ Complete | 16 components: Spinner/Badge/Skeleton/Button/Input/Textarea/Checkbox/Select/Dialog/Popover/Toast/Pagination/BookCard/Header/Footer/PageLayout |
 | 5 | Book Catalog & Filters | ✅ Complete | Server-rendered `/books` catalog with URL filters, sorting, pagination, loading/error states |
-| 6 | Book Detail Page | 🔲 Not started | |
+| 6 | Book Detail Page | ✅ Complete | Server Component with cover, info, breadcrumbs, related books, loading/error states, SEO metadata |
 | 7 | Cart System | 🔲 Not started | |
 | 8 | Checkout & Delivery | 🔲 Not started | |
 | 9 | User Auth & Account | 🔲 Not started | |
@@ -238,16 +238,18 @@ Each component: implement Radix primitive + `.module.scss`, match current app's 
 
 ## Phase 6 — Book Detail Page
 
-**Goal**: `/books/[id]` full book page with add-to-cart.
+**Goal**: `/books/[slug]` full book page with add-to-cart.
 
-- [ ] `app/books/[id]/page.tsx` — Server Component
-- [ ] Display: cover image, title, author, description, genre tags, price
-- [ ] "Add to cart" button — Client Component island
-- [ ] Related books section (same genre, excluding current)
-- [ ] Breadcrumb navigation
-- [ ] `generateMetadata()` for SEO (title, description, og:image)
-- [ ] `app/books/[id]/loading.tsx`
-- [ ] `app/books/[id]/error.tsx`
+- [x] `app/books/[slug]/page.tsx` — Server Component
+- [x] Display: cover image, title, author, description, category badge, price
+- [x] "Add to cart" button — Client Component island (stub for Phase 7)
+- [x] Related books section (same category first, then others)
+- [x] Breadcrumb navigation
+- [x] `generateMetadata()` for SEO (title, description, og:image)
+- [x] `app/books/[slug]/loading.tsx`
+- [x] `app/books/[slug]/error.tsx`
+- [x] `src/api/books/getBook.ts` — API function for single book by slug
+- [x] `src/api/books/getRelatedBooks` — API function for related books
 
 ---
 

@@ -1,0 +1,57 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: grid;
+  gap: $space-10;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  gap: $space-10;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.coverSection {
+  display: flex;
+  justify-content: center;
+}
+
+.coverSkeleton {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 2 / 3;
+  border-radius: $radius-lg;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.related {
+  display: grid;
+  gap: $space-6;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-6;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+  }
+}

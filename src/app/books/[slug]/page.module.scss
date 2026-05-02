@@ -1,0 +1,167 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: grid;
+  gap: $space-10;
+}
+
+// ─── Breadcrumbs ───────────────────────────────────────────────────────────────
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  a {
+    color: $color-text-link;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.separator {
+  color: $color-text-muted;
+  user-select: none;
+}
+
+// ─── Main layout ───────────────────────────────────────────────────────────────
+
+.main {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  gap: $space-10;
+  align-items: start;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: $space-8;
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+    gap: $space-6;
+  }
+}
+
+// ─── Cover ─────────────────────────────────────────────────────────────────────
+
+.coverSection {
+  display: flex;
+  justify-content: center;
+}
+
+.coverWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 2 / 3;
+  background-color: $color-bg-muted;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-lg;
+}
+
+.coverImage {
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-200 0%, $neutral-300 100%);
+}
+
+// ─── Info section ──────────────────────────────────────────────────────────────
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.category {
+  align-self: flex-start;
+}
+
+.title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+
+  @include breakpoint('phone') {
+    font-size: $font-size-2xl;
+  }
+}
+
+.author {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+}
+
+.description {
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  color: $color-text-secondary;
+  white-space: pre-line;
+}
+
+// ─── Meta info ─────────────────────────────────────────────────────────────────
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-5;
+  background-color: $color-bg-surface;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.metaLabel {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.price {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-brand-primary;
+}
+
+// ─── Related books ─────────────────────────────────────────────────────────────
+
+.related {
+  display: grid;
+  gap: $space-6;
+}
+
+.relatedTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-6;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+  }
+}

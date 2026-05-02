@@ -1,9 +1,13 @@
 import type { NextConfig } from 'next'
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 const nextConfig: NextConfig = {
   output: 'standalone',
-  basePath: '/bookstore-app',
-  assetPrefix: '/bookstore-app',
+  ...(isProduction && {
+    basePath: '/bookstore-app',
+    assetPrefix: '/bookstore-app',
+  }),
   images: {
     remotePatterns: [
       {

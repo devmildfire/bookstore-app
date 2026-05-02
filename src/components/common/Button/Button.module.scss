@@ -89,7 +89,7 @@
     color: $color-text-inverse;
 
     &:hover:not(:disabled) {
-      background-color: darken($color-danger, 8%);
+      background-color: #c0392b;
     }
 
     .buttonSpinner {
