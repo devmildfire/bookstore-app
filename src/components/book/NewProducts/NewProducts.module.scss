@@ -1,0 +1,89 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  @include page-container;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin: 204px 0 80px;
+  font-family: Cheque, sans-serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 60px;
+  text-transform: uppercase;
+  line-height: 72px;
+  color: $color-text-on-dark;
+
+  @include breakpoint('tablet') {
+    margin: 150px 0 60px;
+    font-size: 48px;
+    line-height: 58px;
+  }
+
+  @include breakpoint('phone') {
+    margin: 100px 0 40px;
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 100px;
+  row-gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @include breakpoint('tablet') {
+    column-gap: 60px;
+    row-gap: 40px;
+  }
+
+  @include breakpoint('phone') {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-4;
+    row-gap: $space-6;
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 200px;
+
+  @include breakpoint('tablet') {
+    margin-bottom: 150px;
+  }
+
+  @include breakpoint('phone') {
+    margin-bottom: 100px;
+  }
+}
+
+.button {
+  width: 320px;
+  height: 70px;
+  margin-top: 100px;
+  color: $color-text-inverse;
+  background: transparent;
+  border: 1px solid $color-text-inverse;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  font-size: $font-size-lg;
+
+  @include breakpoint('phone') {
+    width: 260px;
+    height: 56px;
+    margin-top: 60px;
+    font-size: $font-size-base;
+  }
+
+  &:hover {
+    color: $color-accent-hover-on-dark;
+    border: 0.5px solid rgba($color-text-on-dark, 0.5);
+  }
+}

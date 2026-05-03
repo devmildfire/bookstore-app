@@ -9,8 +9,8 @@
 ## Phase 2: Homepage Sections
 | Component | Status | Files |
 |-----------|--------|-------|
-| NewProducts | ⬜ Pending | `src/components/book/NewProducts/NewProducts.tsx`, `NewProducts.module.scss` |
-| Homepage page | ⬜ Pending | Update homepage route to compose Slider + NewProducts |
+| NewProducts | ✅ Done | `src/components/book/NewProducts/NewProducts.tsx`, `NewProducts.module.scss` |
+| Homepage page | ✅ Done | `src/app/page.tsx`, `src/app/page.module.scss` |
 
 ## Phase 3: Book Detail Sub-Components
 | Component | Status | Files |
