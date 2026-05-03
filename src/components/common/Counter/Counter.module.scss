@@ -1,0 +1,39 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 21px;
+  font-weight: $font-weight-bold;
+  user-select: none;
+  width: 320px;
+  height: 70px;
+}
+
+.button {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid $color-grey;
+  border-radius: $radius-sm;
+  color: $color-grey;
+  font-size: 25px;
+  cursor: pointer;
+  transition: background 0.2s ease-out;
+
+  &:hover {
+    background: $neutral-50;
+  }
+}
+
+.value {
+  margin: 0 5px;
+  width: 38px;
+  text-align: center;
+  color: $color-text-inverse;
+}
