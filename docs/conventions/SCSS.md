@@ -5,6 +5,7 @@
 - Component/page-specific styles: `ComponentName.module.scss` next to the component file
 - Global token definitions: `src/styles/params.scss`
 - Breakpoint mixin: `src/styles/breakpoints.scss`
+- Reusable mixins (text types, layout, utilities): `src/styles/mixins.scss`
 - Barrel (shared imports): `src/styles/common.scss`
 - Global reset and base styles: `src/styles/globals.scss` (imported once in `app/layout.tsx`)
 
@@ -62,6 +63,43 @@ background: #ffffff;
 
 Prefer semantic token names over palette names where they exist.
 When introducing a new token, add it to `params.scss` — never scatter literals.
+
+## Mixins
+
+Reusable mixins live in `src/styles/mixins.scss` and are available via `common.scss`.
+
+```scss
+@use '@/styles/common' as *;
+
+.title {
+  @include section-title;
+}
+
+.description {
+  @include text-body;
+  @include line-clamp(3);
+}
+```
+
+Available mixins:
+
+| Mixin | Purpose |
+|-------|---------|
+| `section-title` | Cheque display heading at 57px with full responsive scaling |
+| `text-body` | Base body text (16px, Inter) |
+| `text-body-lg` | Large body text (18px) |
+| `text-body-sm` | Small body text (14px) |
+| `text-heading` | Bold heading text |
+| `text-muted` | Muted secondary text |
+| `focus-ring` | Accessible focus outline |
+| `hover-opacity($opacity)` | Opacity transition on hover |
+| `page-container` | Centered 1400px max-width container with side padding |
+| `aspect-ratio($w, $h)` | Aspect ratio helper |
+| `line-clamp($lines)` | Multi-line ellipsis |
+| `truncate` | Single-line ellipsis |
+| `visually-hidden` | Screen-reader-only content |
+
+When multiple components share the same typographic or layout pattern, extract it into a mixin rather than duplicating values.
 
 ## CSS Custom Properties
 
