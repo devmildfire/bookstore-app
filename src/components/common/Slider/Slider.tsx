@@ -32,7 +32,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           delay: 2500,
           disableOnInteraction: false,
         }}
-        loop
+        loop={items.length > 2}
       >
         {items.map((item) => (
           <SwiperSlide key={item.id} className={styles.slide}>

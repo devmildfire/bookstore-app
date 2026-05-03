@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   },
 }
 
+const banners = [
+  { id: '1', banner: '/images/banners/dostoevskie-dni-banner.png', title: 'Достоевские дни' },
+  { id: '2', banner: '/images/banners/dostoevskie-dni-banner(2).png', title: 'Достоевские дни' },
+]
+
 export default async function HomePage() {
   const catalog = await getBooks({
     search: '',
@@ -24,15 +29,9 @@ export default async function HomePage() {
     page: 1,
   })
 
-  const sliderItems = catalog.books.map((book) => ({
-    id: book.id,
-    banner: book.coverUrl ?? '',
-    title: book.name,
-  }))
-
   return (
     <div className={styles.page}>
-      <Slider items={sliderItems} />
+      <Slider items={banners} />
       <NewProducts books={catalog.books} />
     </div>
   )
