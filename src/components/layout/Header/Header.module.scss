@@ -3,7 +3,7 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: $color-black-base;
+  background-color: $color-surface-dark;
   z-index: $z-header;
 }
 
@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid $color-grey;
+  border-bottom: 1px solid $color-text-on-dark;
 
   @media (max-width: 1440px) {
     padding: 0 40px;
@@ -55,7 +55,7 @@
   font-size: 16px;
   line-height: 20px;
   font-weight: $font-weight-normal;
-  color: $color-grey;
+  color: $color-text-on-dark;
   opacity: 0.7;
   cursor: pointer;
   text-decoration: none;
@@ -66,13 +66,13 @@
   transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    color: $color-red-base;
+    color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-red-base;
+    outline: 2px solid $color-accent-on-dark;
     outline-offset: 2px;
   }
 }
@@ -90,30 +90,30 @@
   background: none;
   border: none;
   padding: $space-1;
-  color: $color-grey;
+  color: $color-text-on-dark;
   cursor: pointer;
   transition: color 0.15s ease;
   text-decoration: none;
 
   &:hover {
-    color: $color-red-base;
+    color: $color-accent-on-dark;
     text-decoration: none;
 
     .icon {
-      fill: $color-red-base;
-      stroke: $color-red-base;
+      fill: $color-accent-on-dark;
+      stroke: $color-accent-on-dark;
     }
   }
 
   &:focus-visible {
-    outline: 2px solid $color-red-base;
+    outline: 2px solid $color-accent-on-dark;
     outline-offset: 2px;
   }
 }
 
 .icon {
-  fill: $color-grey;
-  stroke: $color-grey;
+  fill: $color-text-on-dark;
+  stroke: $color-text-on-dark;
   transition: fill 0.15s ease, stroke 0.15s ease;
 }
 
@@ -125,7 +125,7 @@
   height: 16px;
   padding: 0 3px;
   border-radius: $radius-full;
-  background-color: $color-red-base;
+  background-color: $color-accent-on-dark;
   color: $color-text-inverse;
   font-size: 10px;
   font-weight: $font-weight-bold;
@@ -138,7 +138,7 @@
 }
 
 .dropdownContent {
-  background-color: $color-black-base;
+  background-color: $color-surface-dark;
   padding: $space-5;
   min-width: 200px;
 }
@@ -149,7 +149,7 @@
   margin: $space-3 0;
 
   &:not(:last-child) {
-    border-bottom: 1px solid rgba($color-grey, 0.2);
+    border-bottom: 1px solid rgba($color-text-on-dark, 0.2);
   }
 }
 
@@ -157,7 +157,7 @@
   font-size: 16px;
   line-height: 20px;
   font-weight: $font-weight-normal;
-  color: $color-grey;
+  color: $color-text-on-dark;
   margin-bottom: $space-2;
   opacity: 0.7;
   cursor: default;
@@ -166,7 +166,7 @@
 .dropdownLink {
   font-size: 14px;
   line-height: 17px;
-  color: $color-grey;
+  color: $color-text-on-dark;
   opacity: 0.5;
   text-decoration: none;
   padding: $space-1 0;
@@ -175,13 +175,13 @@
   transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    color: $color-red-base;
+    color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-red-base;
+    outline: 2px solid $color-accent-on-dark;
     outline-offset: 2px;
   }
 }

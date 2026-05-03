@@ -11,7 +11,7 @@
   border-radius: 18px;
   font-size: 22px;
   font-weight: $font-weight-bold;
-  color: #fff;
+  color: $color-text-inverse;
 }
 
 .image {
@@ -40,7 +40,7 @@
     width: 14px;
     height: 14px;
     opacity: 1;
-    background: $color-grey;
+    background: $color-text-on-dark;
 
     &:not(:last-child) {
       margin-right: 20px;
@@ -50,7 +50,7 @@
   :global(.swiper-pagination-bullet-active) {
     width: 22px;
     height: 22px;
-    background: #930000;
+    background: $color-accent-hover-on-dark;
   }
 }
 
@@ -65,14 +65,14 @@
   width: 150px;
   height: 50px;
   background: transparent;
-  border: 1px solid $color-grey;
+  border: 1px solid $color-text-on-dark;
   border-radius: $radius-sm;
-  color: $color-grey;
+  color: $color-text-on-dark;
   cursor: pointer;
   transition: all 0.2s ease-out;
 
   &:hover {
-    color: #930000;
-    border: 0.5px solid rgba(220, 220, 220, 0.5);
+    color: $color-accent-hover-on-dark;
+    border: 0.5px solid rgba($color-text-on-dark, 0.5);
   }
 }

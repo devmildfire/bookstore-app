@@ -10,10 +10,11 @@ $color-bg-surface: var(--color-bg-surface);
 $color-bg-surface-hover: var(--color-bg-surface-hover);
 $color-bg-muted: var(--color-bg-muted);
 
-// Legacy colors (from old header design)
-$color-black-base: #121212;
-$color-grey: #DCDCDC;
-$color-red-base: #A10202;
+// Dark surface tokens (themeable via CSS custom properties)
+$color-surface-dark: #121212;
+$color-text-on-dark: #DCDCDC;
+$color-accent-on-dark: #A10202;
+$color-accent-hover-on-dark: #930000;
 
 // Text
 $color-text-primary: var(--color-text-primary);
