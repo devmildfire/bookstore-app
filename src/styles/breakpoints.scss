@@ -1,7 +1,9 @@
 $desktop-min-width: 1201px;
 $tablet-max-width: 1200px;
 $tablet-min-width: 768px;
-$phone-max-width: 767px;
+$small-tablet-max-width: 767px;
+$small-tablet-min-width: 533px;
+$phone-max-width: 532px;
 
 @mixin breakpoint($point) {
   @if $point == desktop {
@@ -12,8 +14,8 @@ $phone-max-width: 767px;
     @media screen and (max-width: $tablet-max-width) {
       @content;
     }
-  } @else if $point == tablet-only {
-    @media screen and (min-width: $tablet-min-width) and (max-width: $tablet-max-width) {
+  } @else if $point == tablet-small {
+    @media screen and (max-width: $small-tablet-max-width) {
       @content;
     }
   } @else if $point == phone {

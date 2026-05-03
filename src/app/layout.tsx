@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createDataClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
+import Header from '@/components/layout/Header'
 
 export const metadata: Metadata = {
   title: {
@@ -21,7 +22,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='ru'>
       <body>
-        <Providers hasSession={!!user}>{children}</Providers>
+        <Providers hasSession={!!user}>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   )

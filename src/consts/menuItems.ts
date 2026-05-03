@@ -50,8 +50,8 @@ const forAuthors: SubmenuItem[] = [
 
 const menu: MenuItem[] = [
   {
-    title: 'Главная',
-    link: '/',
+    title: 'О Чтиве',
+    link: '/about',
   },
   {
     title: 'Чтецам',
@@ -62,12 +62,8 @@ const menu: MenuItem[] = [
     submenu: forAuthors,
   },
   {
-    title: 'Партнёрам',
-    link: '/for-partners',
-  },
-  {
-    title: 'О Чтиве',
-    link: '/about',
+    title: 'Инвесторам и донаторам',
+    link: '/investors',
   },
   {
     title: 'Контакты',

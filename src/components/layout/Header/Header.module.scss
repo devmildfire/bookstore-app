@@ -8,23 +8,31 @@
 }
 
 .inner {
-  height: 80px;
+  
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  height: 80px;
+  padding: 0 60px;
+
   border-bottom: 1px solid $color-text-on-dark;
 
-  @media (max-width: 1440px) {
+  @include breakpoint(tablet) {
+    height: 60px;
     padding: 0 40px;
   }
 
-  @media (max-width: 1024px) {
-    padding: 0 20px;
+  @include breakpoint(tablet-small) {
+    height: 40px;
+    padding: 0 26px;
   }
 
-  @media (max-width: 768px) {
-    padding: 0 $space-4;
+  @include breakpoint(phone) {
+    height: 36px;
+    padding: 0 18px;
   }
+
 }
 
 .logoLink {
@@ -36,8 +44,23 @@
 }
 
 .logo {
-  width: 119px;
-  height: 26px;
+  width: 145px;
+  height: 32px;
+  
+  @include breakpoint(tablet) {
+    width: 84px;
+    height: 18px;
+  }
+
+  @include breakpoint(tablet-small) {
+    width: 61px;
+    height: 13px;
+  }
+
+  @include breakpoint(phone) {
+    width: 54px;
+    height: 11px;
+  }  
 }
 
 .nav {
@@ -183,5 +206,41 @@
   &:focus-visible {
     outline: 2px solid $color-accent-on-dark;
     outline-offset: 2px;
+  }
+}
+
+.profile {
+  width: 26px;
+  height: 28px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    width: 17px;
+    height: 18px;
+  }
+
+  @include breakpoint(phone) {
+    width: 12px;
+    height: 13px;
+  }
+}
+
+.cross {
+  width: 20px;
+  height: 20px;
+  color: $color-text-on-dark;
+}
+
+.burger {
+  width: 20px;
+  height: 13px;
+  color: $color-text-on-dark;
+}
+
+.mobileNav {
+  display: none;
+
+  @include breakpoint(phone) {
+    display: flex;
   }
 }

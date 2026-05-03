@@ -1,31 +1,22 @@
+// src/lib/supabase/client.ts
 import { createBrowserClient } from '@supabase/ssr'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
 
-// Auth client — uses SSR for cookie-based session management
-export function createAuthClient() {
-  return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+type BrowserClient = ReturnType<typeof createBrowserClient<Database>>
+
+declare global {
+  var __supabaseBrowserClient: BrowserClient | undefined
 }
 
-// Data client — uses anon key directly, no session management
 export function createClient() {
-  return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
-      },
-      global: {
-        headers: {
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        },
-      },
-    }
-  )
+  if (!globalThis.__supabaseBrowserClient) {
+    globalThis.__supabaseBrowserClient = createBrowserClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+  }
+
+  return globalThis.__supabaseBrowserClient
 }
+
+export const createAuthClient = createClient

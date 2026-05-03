@@ -1,0 +1,7 @@
+<!-- width="20" height="13" -->
+
+<svg  viewBox="0 0 20 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line opacity="0.7" x1="0.25" y1="0.25" x2="19.75" y2="0.25" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+<path opacity="0.7" d="M5 6H19.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+<line opacity="0.7" x1="0.25" y1="12.25" x2="19.75" y2="12.25" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+</svg>

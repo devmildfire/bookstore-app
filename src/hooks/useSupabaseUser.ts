@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
+import { createAuthClient } from '@/lib/supabase/client'
 
 type UseSupabaseUserResult = {
   user: User | null
@@ -15,7 +15,7 @@ export default function useSupabaseUser(): UseSupabaseUserResult {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const supabase = createClient()
+    const supabase = createAuthClient()
 
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
@@ -26,9 +26,12 @@ export default function useSupabaseUser(): UseSupabaseUserResult {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      setIsLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   const isAnonymous = user?.is_anonymous ?? true

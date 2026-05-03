@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createAuthClient } from '@/lib/supabase/client'
@@ -34,12 +34,20 @@ type Props = {
 
 export default function Providers({ children, hasSession }: Props) {
   const queryClient = getQueryClient()
+  const anonymousSignInStarted = useRef(false)
 
-  // Sign in anonymously on first visit if no session exists
   useEffect(() => {
-    if (!hasSession) {
-      createAuthClient().auth.signInAnonymously().catch(console.error)
-    }
+    if (hasSession) return
+    if (anonymousSignInStarted.current) return
+
+    anonymousSignInStarted.current = true
+
+    const supabase = createAuthClient()
+
+    supabase.auth.signInAnonymously().catch((error) => {
+      anonymousSignInStarted.current = false
+      console.error(error)
+    })
   }, [hasSession])
 
   return (
@@ -47,6 +55,7 @@ export default function Providers({ children, hasSession }: Props) {
       <CartProvider>
         <ToastProvider>{children}</ToastProvider>
       </CartProvider>
+
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   )
