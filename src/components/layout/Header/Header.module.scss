@@ -3,37 +3,41 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: $color-bg-surface;
-  border-bottom: 1px solid $color-border;
+  background-color: $color-black-base;
   z-index: $z-header;
 }
 
 .inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 $space-6;
-  height: 60px;
+  height: 80px;
   display: flex;
   align-items: center;
-  gap: $space-8;
+  justify-content: space-between;
+  border-bottom: 1px solid $color-grey;
 
-  @include breakpoint(phone) {
+  @media (max-width: 1440px) {
+    padding: 0 40px;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 20px;
+  }
+
+  @media (max-width: 768px) {
     padding: 0 $space-4;
-    gap: $space-4;
+  }
+}
+
+.logoLink {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
   }
 }
 
 .logo {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  color: $color-brand-primary;
-  text-decoration: none;
-  flex-shrink: 0;
-
-  &:hover {
-    text-decoration: none;
-    color: $color-brand-primary-hover;
-  }
+  width: 119px;
+  height: 26px;
 }
 
 .nav {
@@ -41,25 +45,35 @@
   align-items: center;
   gap: $space-6;
 
-  @include breakpoint(phone) {
+  @media (max-width: 768px) {
     display: none;
   }
 }
 
-.navLink {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $color-text-secondary;
+.navLink,
+.navTrigger {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: $font-weight-normal;
+  color: $color-grey;
+  opacity: 0.7;
+  cursor: pointer;
   text-decoration: none;
-  transition: color 0.15s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    color: $color-text-primary;
+    color: $color-red-base;
+    opacity: 1;
     text-decoration: none;
   }
 
-  &.active {
-    color: $color-brand-primary;
+  &:focus-visible {
+    outline: 2px solid $color-red-base;
+    outline-offset: 2px;
   }
 }
 
@@ -67,31 +81,40 @@
   display: flex;
   align-items: center;
   gap: $space-3;
-  margin-left: auto;
 }
 
-.cartLink {
-  position: relative;
+.iconBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: $radius-md;
-  color: $color-text-secondary;
+  background: none;
+  border: none;
+  padding: $space-1;
+  color: $color-grey;
+  cursor: pointer;
+  transition: color 0.15s ease;
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: $color-bg-muted;
-    color: $color-text-primary;
+    color: $color-red-base;
     text-decoration: none;
+
+    .icon {
+      fill: $color-red-base;
+      stroke: $color-red-base;
+    }
   }
 
   &:focus-visible {
-    outline: 2px solid $color-brand-primary;
+    outline: 2px solid $color-red-base;
     outline-offset: 2px;
   }
+}
+
+.icon {
+  fill: $color-grey;
+  stroke: $color-grey;
+  transition: fill 0.15s ease, stroke 0.15s ease;
 }
 
 .cartBadge {
@@ -102,7 +125,7 @@
   height: 16px;
   padding: 0 3px;
   border-radius: $radius-full;
-  background-color: $color-brand-primary;
+  background-color: $color-red-base;
   color: $color-text-inverse;
   font-size: 10px;
   font-weight: $font-weight-bold;
@@ -110,31 +133,55 @@
   text-align: center;
 }
 
-.authGroup {
-  display: flex;
-  align-items: center;
-  gap: $space-2;
+.iconBtn {
+  position: relative;
 }
 
-.loginLink {
-  display: inline-flex;
-  align-items: center;
-  padding: $space-1 $space-3;
-  border: 1px solid $color-brand-primary;
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $color-brand-primary;
+.dropdownContent {
+  background-color: $color-black-base;
+  padding: $space-5;
+  min-width: 200px;
+}
+
+.dropdownGroup {
+  display: flex;
+  flex-direction: column;
+  margin: $space-3 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba($color-grey, 0.2);
+  }
+}
+
+.dropdownSectionTitle {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: $font-weight-normal;
+  color: $color-grey;
+  margin-bottom: $space-2;
+  opacity: 0.7;
+  cursor: default;
+}
+
+.dropdownLink {
+  font-size: 14px;
+  line-height: 17px;
+  color: $color-grey;
+  opacity: 0.5;
   text-decoration: none;
-  transition: background-color 0.15s ease;
+  padding: $space-1 0;
+  margin-top: $space-1;
+  cursor: pointer;
+  transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    background-color: $color-danger-bg;
+    color: $color-red-base;
+    opacity: 1;
     text-decoration: none;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-brand-primary;
+    outline: 2px solid $color-red-base;
     outline-offset: 2px;
   }
 }
