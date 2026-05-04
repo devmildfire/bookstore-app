@@ -3,7 +3,7 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: $color-surface-dark;
+  background-color: $color-panel;
   z-index: $z-header;
 }
 
@@ -154,7 +154,7 @@
 .dropdownContent {
   position: relative;
   z-index: $z-modal;
-  background-color: $color-surface-dark;
+  background-color: $color-panel;
   padding: $space-5;
   min-width: 200px;
   @include header-nav-text;
@@ -261,7 +261,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $color-surface-dark;
+  background-color: $color-panel;
   z-index: $z-modal;
   overflow-y: auto;
   padding: $space-6 $space-4;
