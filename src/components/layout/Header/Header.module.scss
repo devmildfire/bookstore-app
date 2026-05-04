@@ -16,8 +16,6 @@
   height: 80px;
   padding: 0 60px;
 
-  border-bottom: 1px solid $color-text-on-dark;
-
   @include breakpoint(tablet) {
     height: 60px;
     padding: 0 40px;
