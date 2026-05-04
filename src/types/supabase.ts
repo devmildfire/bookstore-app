@@ -508,6 +508,35 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_books: {
+        Row: {
+          created_at: string | null
+          id: number
+          sort_order: number
+          title_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          sort_order?: number
+          title_id: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          sort_order?: number
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_books_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: true
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       GiftCards: {
         Row: {
           amount: number | null

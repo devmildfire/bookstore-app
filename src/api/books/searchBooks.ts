@@ -21,6 +21,7 @@ type RpcRow = {
   title_slug: string | null
   title_cover: string | null
   title_description: string | null
+  title_thesis: string | null
   title_lit_form: string | null
   title_age_restriction: number | null
   title_first_release: string | null
@@ -65,6 +66,7 @@ export async function searchBooks(
         name: row.title_name,
         cover: row.title_cover,
         description: row.title_description,
+        thesis: row.title_thesis,
         lit_form: row.title_lit_form,
         age_restriction: row.title_age_restriction,
         first_release: row.title_first_release,

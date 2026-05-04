@@ -18,6 +18,7 @@ export type Book = {
   slug: string
   name: string
   description: string | null
+  thesis: string | null
   coverUrl: string | null
   authorNames: string[]
   authorName: string

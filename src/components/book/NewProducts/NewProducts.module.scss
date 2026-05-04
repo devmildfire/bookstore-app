@@ -7,7 +7,7 @@
 .title {
   display: flex;
   justify-content: center;
-  margin: 204px 0 80px;
+  margin: 100px 0 80px;
   font-family: Cheque, sans-serif;
   font-style: normal;
   font-weight: 900;
@@ -17,13 +17,13 @@
   color: $color-text-on-dark;
 
   @include breakpoint('tablet') {
-    margin: 150px 0 60px;
+    margin: 80px 0 60px;
     font-size: 48px;
     line-height: 58px;
   }
 
   @include breakpoint('phone') {
-    margin: 100px 0 40px;
+    margin: 60px 0 40px;
     font-size: 32px;
     line-height: 38px;
   }

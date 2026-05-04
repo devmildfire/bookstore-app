@@ -15,6 +15,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     slug: raw.Titles.slug ?? String(raw.title_id),
     name: raw.Titles.name,
     description: raw.Titles.description,
+    thesis: raw.Titles.thesis ?? null,
     coverUrl: getCoverUrl(raw.Titles.cover),
     authorNames,
     authorName: authorNames.length > 0 ? authorNames.join(', ') : 'Автор не указан',

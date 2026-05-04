@@ -1,78 +1,256 @@
 @use '@/styles/common' as *;
 
+// ─── Font Faces ───────────────────────────────────────────────────────────────
+
+@font-face {
+  font-family: 'Cheque';
+  src: url('/fonts/Chequeblack.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+// ─── Slider ──────────────────────────────────────────────────────────────────
+
 .wrapper {
   width: 100%;
+  background-color: $color-surface-dark;
+  border-radius: 0;
+
+  :global(.swiper-slide) {
+    height: auto;
+  }
 }
 
 .slide {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: $font-weight-bold;
-  color: $color-text-inverse;
-}
-
-.image {
+  gap: 100px;
+  padding: 60px 60px;
+  max-width: 1400px;
   margin: 0 auto;
-  display: block;
-  width: 100%;
-  height: 600px;
-  object-fit: cover;
-  border-radius: 18px;
+  height: 100%;
 
-  @include breakpoint('tablet') {
-    height: 400px;
+  @include breakpoint(tablet) {
+    gap: 40px;
+    padding: 40px 40px;
   }
 
-  @include breakpoint('phone') {
-    height: 300px;
+  @include breakpoint(tablet-small) {
+    gap: 24px;
+    padding: 24px 26px;
+  }
+
+  // ── Mobile: stacked column layout ────────────────────────────────────
+
+  @include breakpoint(phone) {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 24px 18px 0;
+    min-height: 480px;
   }
 }
+
+.coverWrap {
+  flex-shrink: 0;
+  width: 355px;
+  height: 533px;
+  overflow: hidden;
+  background-color: rgba($color-text-on-dark, 0.1);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+
+  @include breakpoint(tablet) {
+    width: 220px;
+    height: 331px;
+  }
+
+  @include breakpoint(tablet-small) {
+    width: 180px;
+    height: 270px;
+  }
+
+  @include breakpoint(phone) {
+    width: 174px;
+    height: 255px;
+  }
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color-text-on-dark, 0.15);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+
+  @include breakpoint(phone) {
+    align-items: center;
+    flex-grow: 1;
+    max-width: 300px;
+    justify-content: flex-start;
+  }
+}
+
+.title {
+  font-family: 'Cheque', sans-serif;
+  font-weight: 400;
+  font-size: 70px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: $color-text-inverse;
+
+  @include breakpoint(tablet) {
+    font-size: 40px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 30px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 24px;
+    line-height: 1.2;
+    text-align: center;
+    margin-top: 24px;
+  }
+}
+
+.author {
+  font-family: 'Cheque', sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: $color-text-inverse;
+  margin-top: 22px;
+
+  @include breakpoint(tablet) {
+    font-size: 24px;
+    margin-top: 14px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+.thesis {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: $color-text-on-dark;
+  opacity: 0.6;
+  margin-top: 36px;
+
+  @include breakpoint(tablet) {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 234px;
+  height: 62px;
+  margin-top: 90px;
+  background-color: $color-accent-hover-on-dark;
+  color: $color-text-inverse;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 0;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-brand-primary;
+    text-decoration: none;
+  }
+
+  @include breakpoint(tablet) {
+    margin-top: 40px;
+    width: 180px;
+    height: 50px;
+    font-size: 14px;
+  }
+
+  @include breakpoint(phone) {
+    margin-top: auto;
+    width: 95px;
+    height: 22px;
+    font-size: 8px;
+  }
+}
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 8px;
+  padding-bottom: $space-4;
+
+  @include breakpoint(phone) {
+    margin-top: 26px;
+  }
 
   :global(.swiper-pagination-bullet) {
-    width: 14px;
-    height: 14px;
+    width: 4px;
+    height: 4px;
     opacity: 1;
     background: $color-text-on-dark;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 
     &:not(:last-child) {
-      margin-right: 20px;
+      margin-right: 12px;
     }
   }
 
   :global(.swiper-pagination-bullet-active) {
-    width: 22px;
-    height: 22px;
+    width: 8px;
+    height: 8px;
     background: $color-accent-hover-on-dark;
-  }
-}
-
-.buttonBlock {
-  display: flex;
-  justify-content: space-between;
-  max-width: 330px;
-  margin: 42px auto 63px;
-}
-
-.button {
-  width: 150px;
-  height: 50px;
-  background: transparent;
-  border: 1px solid $color-text-on-dark;
-  border-radius: $radius-sm;
-  color: $color-text-on-dark;
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-
-  &:hover {
-    color: $color-accent-hover-on-dark;
-    border: 0.5px solid rgba($color-text-on-dark, 0.5);
   }
 }

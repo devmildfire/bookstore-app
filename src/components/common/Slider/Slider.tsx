@@ -14,7 +14,7 @@ type SlideItem = {
   coverUrl: string | null
   title: string
   author: string
-  subtitle?: string
+  thesis: string | null
   slug: string
 }
 
@@ -47,9 +47,10 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                   <Image
                     src={item.coverUrl}
                     alt={item.title}
-                    width={280}
-                    height={400}
+                    width={355}
+                    height={533}
                     className={styles.cover}
+                    priority
                   />
                 ) : (
                   <div className={styles.coverPlaceholder} />
@@ -58,11 +59,11 @@ const Slider = memo(function Slider({ items }: SliderProps) {
               <div className={styles.info}>
                 <h2 className={styles.title}>{item.title}</h2>
                 <p className={styles.author}>{item.author}</p>
-                {item.subtitle && (
-                  <p className={styles.subtitle}>{item.subtitle}</p>
+                {item.thesis && (
+                  <p className={styles.thesis}>{item.thesis}</p>
                 )}
                 <Link href={`/books/${item.slug}`} className={styles.button}>
-                  Подробнее
+                  Познать
                 </Link>
               </div>
             </div>

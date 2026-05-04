@@ -1,9 +1,18 @@
 import type { Metadata } from 'next'
+import { Montserrat } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
 import { createDataClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
 import Header from '@/components/layout/Header'
+
+const montserrat = Montserrat({
+  subsets: ['cyrillic', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-montserrat',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -20,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } = await supabase.auth.getUser()
 
   return (
-    <html lang='ru'>
+    <html lang='ru' className={montserrat.variable}>
       <body>
         <Providers hasSession={!!user}>
           <Header />
