@@ -1,0 +1,328 @@
+@use '@/styles/common' as *;
+
+// ─── Desktop search ────────────────────────────────────────
+
+.desktopSearch {
+  align-self: flex-start;
+  margin-top: 24px;
+
+  @include breakpoint(tablet) {
+    margin-top: 18px;
+  }
+
+  @include breakpoint(tablet-small) {
+    display: none;
+  }
+}
+
+// ─── Unified block — one border, one background ────────────
+
+.block {
+  border: 1.5px solid $color-brand-primary;
+  border-radius: 4px;
+  background-color: $color-surface-dark;
+  overflow: hidden;
+  width: 270px;
+
+  @include breakpoint(tablet) {
+    width: 186px;
+  }
+
+  @include breakpoint(tablet-small) {
+    width: 100%;
+  }
+}
+
+.searchField {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 32px;
+
+  @include breakpoint(tablet) {
+    height: 24px;
+  }
+
+  @include breakpoint(tablet-small) {
+    height: 20px;
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: $space-2;
+  width: 16px;
+  height: 16px;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+  pointer-events: none;
+
+  @include breakpoint(tablet) {
+    width: 14px;
+    height: 14px;
+    left: $space-1;
+  }
+
+  @include breakpoint(tablet-small) {
+    width: 12px;
+    height: 12px;
+    left: $space-1;
+  }
+}
+
+.searchField:focus-within .searchIcon {
+  opacity: 1;
+  color: $color-text-inverse;
+}
+
+.clearBtn {
+  position: absolute;
+  right: $space-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px;
+  color: $color-text-on-dark;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.clearIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.input {
+  width: 100%;
+  height: 100%;
+  padding: 0 $space-6 0 $space-6;
+  border: none;
+  background-color: transparent;
+  color: $color-text-on-dark;
+  font-family: $font-primary;
+  @include header-nav-text;
+  outline: none;
+
+  &::placeholder {
+    color: $color-text-on-dark;
+    opacity: 0.5;
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    display: none;
+  }
+
+  @include breakpoint(tablet) {
+    padding: 0 $space-2 0 $space-5;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: 0 $space-1 0 $space-4;
+  }
+}
+
+// ─── Dropdown content (inside the same block) ──────────────
+
+.separator {
+  height: 1px;
+  margin: 0 $space-2;
+  background-color: $color-brand-primary;
+}
+
+.dropdownContent {
+  padding: $space-2 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.resultsHeading {
+  @include header-nav-text;
+  padding: $space-1 $space-3 $space-1;
+  color: $color-text-on-dark;
+  opacity: 0.5;
+}
+
+.resultsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.resultItem {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  color: $color-text-on-dark;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: rgba($color-text-on-dark, 0.05);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-brand-primary;
+    outline-offset: -2px;
+  }
+}
+
+.resultCover {
+  position: relative;
+  width: 58px;
+  height: 87px;
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background-color: rgba($color-text-on-dark, 0.1);
+}
+
+.resultImage {
+  object-fit: cover;
+}
+
+.resultCoverPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color-text-on-dark, 0.1);
+}
+
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.resultTitle {
+  @include header-nav-text;
+  font-weight: $font-weight-medium;
+  color: $color-text-on-dark;
+  @include truncate;
+}
+
+.resultAuthor {
+  @include header-nav-text;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+  @include truncate;
+}
+
+.resultMeta {
+  @include header-nav-text;
+  color: $color-text-on-dark;
+  opacity: 0.5;
+  margin-top: auto;
+}
+
+.loadingState {
+  padding: $space-3 $space-4;
+  @include header-nav-text;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+}
+
+.emptyState {
+  padding: $space-3 $space-4;
+  @include header-nav-text;
+  color: $color-text-on-dark;
+  opacity: 0.5;
+}
+
+// ─── Mobile overlay — covers entire header row ──────────────
+
+.mobileOverlay {
+  display: none;
+
+  @include breakpoint(tablet-small) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: $z-header + 1;
+    background-color: $color-panel;
+    padding: $space-2 $space-4;
+  }
+
+  @include breakpoint(phone) {
+    padding: 0 $space-4;
+  }
+}
+
+.mobileSearchField {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 28px;
+}
+
+.mobileSearchIcon {
+  position: absolute;
+  left: $space-2;
+  width: 14px;
+  height: 14px;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.mobileSearchField:focus-within .mobileSearchIcon {
+  opacity: 1;
+  color: $color-text-inverse;
+}
+
+.mobileInput {
+  width: 100%;
+  height: 100%;
+  padding: 0 $space-8 0 $space-6;
+  border: none;
+  background-color: transparent;
+  color: $color-text-on-dark;
+  font-family: $font-primary;
+  font-size: 10px;
+  line-height: 13px;
+  outline: none;
+
+  &::placeholder {
+    color: $color-text-on-dark;
+    opacity: 0.5;
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    display: none;
+  }
+}
+
+.mobileCloseBtn {
+  position: absolute;
+  right: $space-2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: $space-1;
+  color: $color-text-on-dark;
+  cursor: pointer;
+}
+
+.mobileCloseIcon {
+  width: 16px;
+  height: 16px;
+  color: $color-text-on-dark;
+}

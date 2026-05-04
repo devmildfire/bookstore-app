@@ -21,5 +21,8 @@ export function normalizeBook(raw: BookServerRow): Book {
     category: DEFAULT_CATEGORY,
     inStock: raw.sold_out !== true,
     publishedAt: raw.publish_date ?? raw.release_date,
+    litForm: raw.Titles.lit_form ?? null,
+    ageRestriction: raw.Titles.age_restriction ?? null,
+    year: raw.Titles.first_release?.slice(0, 4) ?? null,
   }
 }

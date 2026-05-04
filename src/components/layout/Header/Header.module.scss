@@ -8,6 +8,7 @@
 }
 
 .inner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -102,6 +103,7 @@
 }
 
 .iconBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,35 +120,11 @@
     color: $color-accent-on-dark;
     text-decoration: none;
 
-    .search,
     .cart,
     .profile {
       color: $color-accent-on-dark;
     }
   }
-}
-
-.search {
-  width: 32px;
-  height: 32px;
-  color: $color-text-on-dark;
-  opacity: 0.7;
-
-  @include breakpoint(tablet) {
-    width: 18px;
-    height: 18px;
-  }
-
-  @include breakpoint(tablet-small) {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-
-
-.iconBtn {
-  position: relative;
 }
 
 .dropdownContent {
@@ -326,6 +304,10 @@
   padding: $space-6 $space-4;
   outline: none;
 
+  @include breakpoint(tablet-small) {
+    top: 40px;
+  }
+
   &:focus {
     outline: none;
   }
@@ -443,5 +425,41 @@
   &:focus-visible {
     outline: 2px solid $color-accent-on-dark;
     outline-offset: 2px;
+  }
+}
+
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.hiddenOnPhone {
+  @include breakpoint(tablet-small) {
+    display: none;
+  }
+}
+
+.searchExpanded {
+  position: relative;
+}
+
+.searchMobileBtn {
+  display: none;
+
+  @include breakpoint(tablet-small) {
+    display: flex;
+  }
+}
+
+.searchMobileIcon {
+  width: 14px;
+  height: 14px;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+
+  @include breakpoint(tablet-small) {
+    width: 12px;
+    height: 12px;
   }
 }

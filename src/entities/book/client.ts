@@ -25,6 +25,9 @@ export type Book = {
   category: ProductCategory
   inStock: boolean
   publishedAt: string | null
+  litForm: string | null
+  ageRestriction: number | null
+  year: string | null
 }
 
 export type BookCatalog = {

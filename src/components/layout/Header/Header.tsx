@@ -7,44 +7,54 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useCart } from '@/contexts/cart'
 import useSupabaseUser from '@/hooks/useSupabaseUser'
 import { logoutAction } from '@/lib/auth/actions'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import menu, { type SubmenuItem } from '@/consts/menuItems'
+import HeaderSearchBar from '@/components/layout/HeaderSearchBar'
 import styles from './Header.module.scss'
 import Logo from '@/assets/images/logo.svg'
 import Cart from '@/assets/icons/shop-cart.svg'
 import Profile from '@/assets/icons/profile.svg'
 import Burger from '@/assets/icons/burger.svg'
 import Cross from '@/assets/icons/cross.svg'
-
+import SearchIcon from '@/assets/icons/search.svg'
 
 export default function Header() {
   const { itemCount } = useCart()
   const { isAnonymous, isLoading } = useSupabaseUser()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchExpanded, setSearchExpanded] = useState(false)
+
+  const handleSearchExpand = useCallback(() => setSearchExpanded(true), [])
+  const handleSearchCollapse = useCallback(() => setSearchExpanded(false), [])
 
   return (
     <header className={styles.header}>
-      <div className={styles.inner}>
-        <Link href='/' className={styles.logoLink}>
+      <div className={cn(styles.inner, searchExpanded && styles.searchExpanded)}>
+        <Link href='/' className={cn(styles.logoLink, searchExpanded && styles.hiddenOnPhone)}>
           <Logo className={styles.logo} />
         </Link>
 
-        <nav className={styles.nav} aria-label='Основная навигация'>
+        <nav className={cn(styles.nav, searchExpanded && styles.hiddenOnPhone)} aria-label='Основная навигация'>
           {menu.map((item) => (
             <HeaderNavItem key={item.title} item={item} />
           ))}
         </nav>
 
-        <div className={styles.actions}>
-          <Link href='/search' className={styles.iconBtn} aria-label='Поиск'>
-            <svg
-              viewBox='0 0 20 20'
-              fill='currentColor'
-              className={styles.search}
-            >
-              <path d='M18.0916 16.9084L15 13.8417C16.2001 12.3454 16.7812 10.4461 16.624 8.53446C16.4667 6.62279 15.583 4.84403 14.1546 3.56391C12.7261 2.2838 10.8615 1.59963 8.94408 1.6521C7.02668 1.70457 5.20225 2.48968 3.84593 3.84599C2.48962 5.20231 1.70451 7.02674 1.65204 8.94415C1.59957 10.8615 2.28374 12.7262 3.56385 14.1546C4.84397 15.5831 6.62273 16.4668 8.5344 16.6241C10.4461 16.7813 12.3453 16.2001 13.8416 15L16.9083 18.0667C16.9858 18.1448 17.078 18.2068 17.1795 18.2491C17.2811 18.2914 17.39 18.3132 17.5 18.3132C17.61 18.3132 17.7189 18.2914 17.8205 18.2491C17.922 18.2068 18.0142 18.1448 18.0916 18.0667C18.2418 17.9113 18.3258 17.7037 18.3258 17.4875C18.3258 17.2714 18.2418 17.0638 18.0916 16.9084ZM9.16665 15C8.01292 15 6.88511 14.6579 5.92582 14.0169C4.96654 13.376 4.21886 12.4649 3.77735 11.399C3.33584 10.3331 3.22032 9.16024 3.4454 8.02868C3.67048 6.89713 4.22605 5.85773 5.04186 5.04192C5.85767 4.22611 6.89707 3.67054 8.02862 3.44546C9.16018 3.22038 10.3331 3.3359 11.399 3.77741C12.4649 4.21892 13.3759 4.9666 14.0169 5.92588C14.6579 6.88517 15 8.01299 15 9.16671C15 10.7138 14.3854 12.1975 13.2914 13.2915C12.1975 14.3855 10.7137 15 9.16665 15Z' />
-            </svg>
-          </Link>
+        <HeaderSearchBar
+          expanded={searchExpanded}
+          onExpand={handleSearchExpand}
+          onCollapse={handleSearchCollapse}
+        />
+
+        <div className={cn(styles.actions, searchExpanded && styles.hiddenOnPhone)}>
+          <button
+            type='button'
+            className={cn(styles.iconBtn, styles.searchMobileBtn)}
+            onClick={handleSearchExpand}
+            aria-label='Поиск'
+          >
+            <SearchIcon className={styles.searchMobileIcon} />
+          </button>
 
           <Link
             href='/cart'

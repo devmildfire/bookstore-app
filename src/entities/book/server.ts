@@ -16,6 +16,9 @@ export const bookCatalogSelect = `
     name,
     cover,
     description,
+    lit_form,
+    age_restriction,
+    first_release,
     Titles_Authors(
       Authors(
         id,
@@ -28,7 +31,7 @@ export const bookCatalogSelect = `
 type CardBookRow = Database['public']['Tables']['CardBooks']['Row']
 type TitleRow = Pick<
   Database['public']['Tables']['Titles']['Row'],
-  'id' | 'slug' | 'name' | 'cover' | 'description'
+  'id' | 'slug' | 'name' | 'cover' | 'description' | 'lit_form' | 'age_restriction' | 'first_release'
 >
 type AuthorRow = Pick<Database['public']['Tables']['Authors']['Row'], 'id' | 'name'>
 
