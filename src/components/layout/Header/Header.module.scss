@@ -86,16 +86,12 @@
   padding: 0;
   white-space: pre-wrap;
   transition: color 0.15s ease, opacity 0.15s ease;
+  outline: none;
 
   &:hover {
     color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 2px;
   }
 }
 
@@ -116,6 +112,7 @@
   cursor: pointer;
   transition: color 0.15s ease;
   text-decoration: none;
+  outline: none;
 
   &:hover {
     color: $color-accent-on-dark;
@@ -125,11 +122,6 @@
       fill: $color-accent-on-dark;
       stroke: $color-accent-on-dark;
     }
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 2px;
   }
 }
 
