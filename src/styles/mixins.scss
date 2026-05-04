@@ -1,4 +1,5 @@
 @use 'params' as *;
+@use 'breakpoints' as *;
 
 // ─── Section Title ─────────────────────────────────────────────────────────────
 // Shared pattern across BookDescription, BookProperties, BookTrailer,
@@ -113,6 +114,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// ─── Header Nav Text ───────────────────────────────────────────────────────────
+
+@mixin header-nav-text {
+  font-size: 16px;
+  line-height: 20px;
+
+  @include breakpoint(tablet) {
+    font-size: 10px;
+    line-height: 13px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 8px;
+    line-height: 10px;
+  }
 }
 
 // ─── Visually Hidden (Accessibility) ───────────────────────────────────────────

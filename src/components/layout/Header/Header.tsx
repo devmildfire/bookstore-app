@@ -135,7 +135,7 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
             <DropdownMenuGroup key={section.subtitle}>
               {section.link ? (
                 <DropdownMenu.Item asChild>
-                  <Link href={section.link} className={styles.dropdownLink}>
+                  <Link href={section.link} className={styles.dropdownSectionLink}>
                     {section.subtitle}
                   </Link>
                 </DropdownMenu.Item>
@@ -144,7 +144,7 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
                   <div className={styles.dropdownSectionTitle}>{section.subtitle}</div>
                   {section.items?.map((subItem) => (
                     <DropdownMenu.Item asChild key={subItem.title}>
-                      <Link href={subItem.link} className={styles.dropdownLink}>
+                      <Link href={subItem.link} className={styles.dropdownSubLink}>
                         {subItem.title}
                       </Link>
                     </DropdownMenu.Item>
