@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import cn from 'classnames'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useCart } from '@/contexts/cart'
 import useSupabaseUser from '@/hooks/useSupabaseUser'
 import { logoutAction } from '@/lib/auth/actions'
 import { useState } from 'react'
-import menu from '@/consts/menuItems'
+import menu, { type SubmenuItem } from '@/consts/menuItems'
 import styles from './Header.module.scss'
 import Logo from '@/assets/images/logo.svg'
 import Cart from '@/assets/icons/shop-cart.svg'
@@ -68,23 +69,20 @@ export default function Header() {
           {!isLoading && (
             <form action={logoutAction}>
               <button type='submit' className={styles.iconBtn} aria-label='Выйти'>
-                <Profile className={styles.profile}/>            
+                <Profile className={styles.profile}/>
               </button>
             </form>
           )}
 
-
-
-
-           <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <Dialog.Trigger asChild className={styles.mobileNav}>
+          <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <Dialog.Trigger asChild>
               <button
                 type="button"
-                className={styles.iconBtn}
+                className={cn(styles.iconBtn, styles.mobileOnly)}
                 aria-label={mobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
               >
-                {mobileMenuOpen 
-                  ? <Cross className={styles.cross} /> 
+                {mobileMenuOpen
+                  ? <Cross className={styles.cross} />
                   : <Burger className={styles.burger}/>
                 }
               </button>
@@ -92,34 +90,24 @@ export default function Header() {
 
             <Dialog.Portal>
               <Dialog.Overlay className={styles.mobileMenuOverlay} />
-
               <Dialog.Content className={styles.mobileMenuContent}>
                 <Dialog.Title className={styles.mobileMenuTitle}>
                   Меню
                 </Dialog.Title>
 
-                <nav className={styles.mobileNav} aria-label="Мобильная навигация">
+                <nav className={styles.mobileMenuNav} aria-label="Мобильная навигация">
                   {menu.map((item) => (
                     <MobileNavItem
                       key={item.title}
                       item={item}
-                      // onNavigate={() => setMobileMenuOpen(false)}
+                      onNavigate={() => setMobileMenuOpen(false)}
                     />
                   ))}
                 </nav>
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
-
-
-
-
-
-
         </div>
-
-
-
       </div>
     </header>
   )
@@ -171,14 +159,74 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
   )
 }
 
-const MobileNavItem = ({ item }: { item: typeof menu[number] }) => {
+function MobileNavItem({ item, onNavigate }: { item: typeof menu[number]; onNavigate: () => void }) {
+  const [expanded, setExpanded] = useState(false)
+
+  if (item.link) {
     return (
-        <li className={styles.mobileNavItem}>
-            <Link href={item.link || ''} className={styles.mobileNavLink}>
-                {item.title}
-            </Link>
-        </li>
+      <div className={styles.mobileNavItem}>
+        <Link href={item.link} className={styles.mobileNavLink} onClick={onNavigate}>
+          {item.title}
+        </Link>
+      </div>
     )
+  }
+
+  return (
+    <div className={styles.mobileNavItem}>
+      <button
+        type="button"
+        className={styles.mobileNavTrigger}
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+      >
+        {item.title}
+      </button>
+      {expanded && item.submenu && (
+        <div className={styles.mobileSubmenu}>
+          {item.submenu.map((section) => (
+            <MobileSubmenuSection key={section.subtitle} section={section} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MobileSubmenuSection({
+  section,
+  onNavigate,
+}: {
+  section: SubmenuItem
+  onNavigate: () => void
+}) {
+  if (section.items) {
+    return (
+      <div className={styles.mobileSubmenuSection}>
+        <div className={styles.mobileSubmenuSectionTitle}>{section.subtitle}</div>
+        {section.items.map((subItem) => (
+          <Link
+            key={subItem.title}
+            href={subItem.link}
+            className={styles.mobileSubmenuLink}
+            onClick={onNavigate}
+          >
+            {subItem.title}
+          </Link>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <Link
+      href={section.link ?? '#'}
+      className={styles.mobileSubmenuSectionLink}
+      onClick={onNavigate}
+    >
+      {section.subtitle}
+    </Link>
+  )
 }
 
 function DropdownMenuGroup({ children }: { children: React.ReactNode }) {
