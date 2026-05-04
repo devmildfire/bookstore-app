@@ -1,5 +1,6 @@
 $desktop-min-width: 1201px;
 $tablet-max-width: 1200px;
+$search-bar-cutoff: 1000px;
 $tablet-min-width: 768px;
 $small-tablet-max-width: 767px;
 $small-tablet-min-width: 533px;
@@ -12,6 +13,10 @@ $phone-max-width: 532px;
     }
   } @else if $point == tablet {
     @media screen and (max-width: $tablet-max-width) {
+      @content;
+    }
+  } @else if $point == search-bar {
+    @media screen and (max-width: $search-bar-cutoff) {
       @content;
     }
   } @else if $point == tablet-small {

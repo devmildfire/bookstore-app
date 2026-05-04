@@ -133,8 +133,9 @@ function main() {
     let ageRestriction = book.ageRestriction || null
     if (ageRestriction === 0) ageRestriction = null
 
-    // Cover URL: prefer detail page cover, fallback to listing cover
-    const coverUrl = book.detailCoverUrl || book.coverUrl || null
+    // Cover: store only the filename — the app constructs the full URL from this
+    const coverFullUrl = book.detailCoverUrl || book.coverUrl || null
+    const cover = coverFullUrl ? coverFullUrl.split('/').pop() : null
 
     // Authors
     let authors = book.detailAuthors || (book.listingAuthor ? [book.listingAuthor] : [])
@@ -177,7 +178,7 @@ function main() {
       id: titleId,
       name: title,
       slug,
-      cover: coverUrl,
+      cover,
       description,
       thesis,
       age_restriction: ageRestriction,

@@ -89,6 +89,36 @@ MyPage.getLayout = (page) => <PageLayout>{page}</PageLayout>;
 
 On app load, `_app.tsx` checks for an existing Supabase session. If none exists it calls `supabase.auth.signInAnonymously()`, attaching the cart cookie UUID to `user.user_metadata.cartID`. Real accounts are created via `/createaccount`.
 
+## Storage & Images
+
+### Cover images
+
+Book covers are stored in a **Supabase Storage bucket called `covers`** (public, 20 MB file limit).
+
+**How it works:**
+- The `Titles.cover` column stores **bare filenames only** (e.g., `murlo.jpg`, `povelitel-bloh.png`).
+- The `getCoverUrl()` function in `src/lib/storage.ts` converts filenames to full URLs at runtime using `NEXT_PUBLIC_SUPABASE_URL`.
+- All code paths (`getBooks`, `getBook`, `searchBooks`) go through `normalizeBook()` → `getCoverUrl()`.
+- `next/image` handles optimization and resizing — no separate thumbnails needed.
+
+**Adding new covers:**
+1. Upload the image to the `covers` bucket (via Supabase Dashboard, CLI, or `scripts/upload-covers-to-supabase.mjs`)
+2. Set `Titles.cover = 'filename.jpg'` in the database (bare filename, no path prefix)
+
+**Self-hosted Supabase (same VPS):**
+- `NEXT_PUBLIC_SUPABASE_URL` must be the **public-facing** URL (e.g., `https://api.example.com`), not an internal Docker hostname, because it's used in browser-side image URLs.
+- Add the hostname to `remotePatterns` in `next.config.ts` so `next/image` can optimize the images.
+- The Supabase Storage API serves images at `{NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/{filename}`.
+- If using a reverse proxy (nginx/caddy), ensure it proxies `/storage/v1/object/public/` requests to the Supabase Storage container.
+
+**Scripts:**
+- `scripts/scrape-books.mjs` — Scrapes book data from the old chtivo.spb.ru site
+- `scripts/generate-seed-sql.mjs` — Generates `supabase/seed-books.sql` from scraped JSON (stores bare filenames for covers)
+- `scripts/download-covers.mjs` — Downloads cover images locally (to `public/covers/`)
+- `scripts/upload-covers-to-supabase.mjs` — Creates the `covers` bucket and uploads images
+- `scripts/retry-covers.mjs` — Retries failed uploads
+- `scripts/update-cover-urls-supabase.mjs` — Generates SQL to update cover URLs in the database
+
 ## Conventions and Code Culture
 
 **Read these before writing any code.** They define the standards all agents must follow.

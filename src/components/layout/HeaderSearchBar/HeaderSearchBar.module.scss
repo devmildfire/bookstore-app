@@ -6,11 +6,15 @@
   align-self: flex-start;
   margin-top: 24px;
 
+  flex: 1 0 0;
+  max-width: 356px;
+
+
   @include breakpoint(tablet) {
     margin-top: 18px;
   }
 
-  @include breakpoint(tablet-small) {
+  @include breakpoint(search-bar) {
     display: none;
   }
 }
@@ -22,15 +26,7 @@
   border-radius: 4px;
   background-color: $color-surface-dark;
   overflow: hidden;
-  width: 270px;
-
-  @include breakpoint(tablet) {
-    width: 186px;
-  }
-
-  @include breakpoint(tablet-small) {
-    width: 100%;
-  }
+  width: 100%;
 }
 
 .searchField {
@@ -102,7 +98,7 @@
 .input {
   width: 100%;
   height: 100%;
-  padding: 0 $space-6 0 $space-6;
+  padding: 0 $space-6 0 $space-8;
   border: none;
   background-color: transparent;
   color: $color-text-on-dark;
@@ -258,14 +254,14 @@
   @include header-nav-text;
   font-weight: $font-weight-medium;
   color: $color-text-on-dark;
-  @include truncate;
+  word-break: break-word;
 }
 
 .resultAuthor {
   @include header-nav-text;
   color: $color-text-on-dark;
   opacity: 0.7;
-  @include truncate;
+  word-break: break-word;
 }
 
 .resultMeta {
@@ -294,7 +290,7 @@
 .mobileOverlay {
   display: none;
 
-  @include breakpoint(tablet-small) {
+  @include breakpoint(search-bar) {
     display: flex;
     flex-direction: column;
     align-items: stretch;

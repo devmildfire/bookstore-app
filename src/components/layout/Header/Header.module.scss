@@ -16,6 +16,8 @@
   height: 80px;
   padding: 0 60px;
 
+  gap: $space-5;
+
   @include breakpoint(tablet) {
     height: 60px;
     padding: 0 40px;
@@ -99,7 +101,7 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: $space-3;
+  gap: $space-5;
 }
 
 .iconBtn {
@@ -447,7 +449,7 @@
 .searchMobileBtn {
   display: none;
 
-  @include breakpoint(tablet-small) {
+  @include breakpoint(search-bar) {
     display: flex;
   }
 }

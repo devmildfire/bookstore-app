@@ -1,5 +1,6 @@
 import type { Book } from './client'
 import type { BookServerRow } from './server'
+import { getCoverUrl } from '@/lib/storage'
 
 const DEFAULT_CATEGORY = 'Book2.0'
 
@@ -14,7 +15,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     slug: raw.Titles.slug ?? String(raw.title_id),
     name: raw.Titles.name,
     description: raw.Titles.description,
-    coverUrl: raw.Titles.cover,
+    coverUrl: getCoverUrl(raw.Titles.cover),
     authorNames,
     authorName: authorNames.length > 0 ? authorNames.join(', ') : 'Автор не указан',
     price: raw.price ?? 0,
