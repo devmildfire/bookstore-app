@@ -53,9 +53,7 @@ export default function Header() {
           >
             <Cart className={styles.cart} />
             {itemCount > 0 && (
-              <span className={styles.cartBadge} aria-hidden>
-                {itemCount > 99 ? '99+' : itemCount}
-              </span>
+              <span className={styles.cartBadge}>{itemCount > 99 ? '99+' : itemCount}</span>
             )}
           </Link>
 

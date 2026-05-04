@@ -141,21 +141,7 @@
   }
 }
 
-.cartBadge {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  border-radius: $radius-full;
-  background-color: $color-accent-on-dark;
-  color: $color-text-inverse;
-  font-size: 10px;
-  font-weight: $font-weight-bold;
-  line-height: 16px;
-  text-align: center;
-}
+
 
 .iconBtn {
   position: relative;
@@ -252,6 +238,56 @@
   @include breakpoint(tablet-small) {
     width: 14px;
     height: 14px;
+  }
+
+  @include breakpoint(phone) {
+    display: none;
+  }
+}
+
+.cartBadge {
+  position: inherit;
+  top: -10px;
+  right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: $radius-full;
+  background-color: $color-accent-on-dark;
+  color: $color-text-inverse;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+
+  @include breakpoint(tablet) {
+    min-width: 14px;
+    height: 14px;
+    font-size: 8px;
+    top: -5px;
+    right: 8px;
+  }
+
+  @include breakpoint(tablet-small) {
+    min-width: 12px;
+    height: 12px;
+    font-size: 8px;
+    padding: 0;
+    top: -5px;
+    right: 5px;
+  }
+
+  @include breakpoint(phone) {
+    position: relative;
+    min-width: 14px;
+    height: 14px;
+    font-size: 8px;
+    padding: 0;
+    top: unset;
+    right: unset;
   }
 }
 
