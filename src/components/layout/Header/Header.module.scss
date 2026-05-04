@@ -177,11 +177,16 @@
   text-decoration: none;
   padding: $space-1 0;
   cursor: pointer;
+  outline: none;
   transition: color 0.15s ease;
 
   &:hover {
     color: $color-accent-on-dark;
     text-decoration: none;
+  }
+
+  &:focus {
+    outline: none;
   }
 }
 
@@ -192,12 +197,17 @@
   padding: $space-1 0;
   padding-left: $space-4;
   cursor: pointer;
+  outline: none;
   transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
     color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
+  }
+
+  &:focus {
+    outline: none;
   }
 }
 
