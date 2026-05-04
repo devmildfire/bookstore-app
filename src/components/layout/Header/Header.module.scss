@@ -152,6 +152,8 @@
 }
 
 .dropdownContent {
+  position: relative;
+  z-index: $z-modal;
   background-color: $color-surface-dark;
   padding: $space-5;
   min-width: 200px;
