@@ -50,6 +50,7 @@ TODO.md
 
 # local tooling
 .claude/
+.opencode
 .mcp.json
 CLAUDE.md
 .aider*

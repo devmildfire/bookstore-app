@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import * as ScrollArea from '@radix-ui/react-scroll-area'
 import cn from 'classnames'
 import { useSearch } from '@/hooks/useSearch'
 import SearchIcon from '@/assets/icons/search.svg'
@@ -36,16 +37,32 @@ function formatMetaLine(book: {
 
 export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Props) {
   const [query, setQuery] = useState('')
-  const { results, isLoading } = useSearch(query)
+  const { results, total, isLoading, isFetchingMore, hasMore, fetchMore } = useSearch(query)
   const hasQuery = query.length >= 3
-  const isDropdownOpen = hasQuery && !isLoading
+  const isDropdownOpen = hasQuery && (results.length > 0 || isLoading)
   const mobileInputRef = useRef<HTMLInputElement>(null)
+  const scrollViewportRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLLIElement>(null)
 
   useEffect(() => {
     if (expanded && mobileInputRef.current) {
       mobileInputRef.current.focus()
     }
   }, [expanded])
+
+  useEffect(() => {
+    if (!isDropdownOpen || !sentinelRef.current) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          fetchMore()
+        }
+      },
+      { root: scrollViewportRef.current, threshold: 0.1 },
+    )
+    observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [isDropdownOpen, hasMore, fetchMore])
 
   const handleClose = useCallback(() => {
     setQuery('')
@@ -57,52 +74,54 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
   }
 
   function renderResults(onClickResult: () => void) {
-    if (isLoading) {
-      return <div className={styles.loadingState}>Поиск...</div>
-    }
-
-    if (results.length === 0) {
-      return <div className={styles.emptyState}>Ничего не найдено...</div>
-    }
-
     return (
-      <ul className={styles.resultsList}>
-        <li className={styles.resultsHeading}>Издания</li>
-        {results.map((book) => (
-          <li key={book.id}>
-            <Link
-              href={`/books/${book.slug}`}
-              className={styles.resultItem}
-              onClick={onClickResult}
-            >
-              <div className={styles.resultCover}>
-                {book.coverUrl ? (
-                  <Image
-                    src={book.coverUrl}
-                    alt={book.name}
-                    fill
-                    sizes='58px'
-                    className={styles.resultImage}
-                  />
-                ) : (
-                  <div className={styles.resultCoverPlaceholder} aria-hidden />
-                )}
-              </div>
-              <div className={styles.resultInfo}>
-                <span className={styles.resultTitle}>{book.name}</span>
-                <span className={styles.resultAuthor}>{book.authorName}</span>
-                <span className={styles.resultMeta}>{formatMetaLine(book)}</span>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <ScrollArea.Root className={styles.scrollArea} type='hover'>
+        <ScrollArea.Viewport className={styles.scrollViewport} ref={scrollViewportRef}>
+          <ul className={styles.resultsList}>
+            <li className={styles.resultsHeading}>
+              Издания{total > 0 ? ` \u00B7 ${total}` : ''}
+            </li>
+            {results.map((book) => (
+              <li key={book.id}>
+                <Link
+                  href={`/books/${book.slug}`}
+                  className={styles.resultItem}
+                  onClick={onClickResult}
+                >
+                  <div className={styles.resultCover}>
+                    {book.coverUrl ? (
+                      <Image
+                        src={book.coverUrl}
+                        alt={book.name}
+                        fill
+                        sizes='58px'
+                        className={styles.resultImage}
+                      />
+                    ) : (
+                      <div className={styles.resultCoverPlaceholder} aria-hidden />
+                    )}
+                  </div>
+                  <div className={styles.resultInfo}>
+                    <span className={styles.resultTitle}>{book.name}</span>
+                    <span className={styles.resultAuthor}>{book.authorName}</span>
+                    <span className={styles.resultMeta}>{formatMetaLine(book)}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+            {hasMore && <li ref={sentinelRef} className={styles.loadingMore}>Загрузка...</li>}
+          </ul>
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar className={styles.scrollbar} orientation='vertical'>
+          <ScrollArea.Thumb className={styles.scrollThumb} />
+        </ScrollArea.Scrollbar>
+      </ScrollArea.Root>
     )
   }
 
   return (
     <>
-      {/* Desktop inline search — hidden on phone */}
+      {/* Desktop inline search — hidden on tablet-small and below */}
       <div className={styles.desktopSearch}>
         <div className={cn(styles.block, isDropdownOpen && styles.blockOpen)}>
           <div className={styles.searchField}>
@@ -129,10 +148,23 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
 
           {isDropdownOpen && (
             <>
-              <div className={styles.separator} aria-hidden />
-              <div className={styles.dropdownContent}>
-                {renderResults(() => setQuery(''))}
-              </div>
+              {!isLoading || results.length > 0 ? (
+                <>
+                  <div className={styles.separator} aria-hidden />
+                  <div className={styles.dropdownContent}>
+                    {results.length === 0 && isLoading
+                      ? <div className={styles.emptyState}>Ничего не найдено...</div>
+                      : renderResults(() => setQuery(''))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.separator} aria-hidden />
+                  <div className={styles.dropdownContent}>
+                    <div className={styles.loadingState}>Поиск...</div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
@@ -166,10 +198,23 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
 
             {isDropdownOpen && (
               <>
-                <div className={styles.separator} aria-hidden />
-                <div className={styles.dropdownContent}>
-                  {renderResults(handleClose)}
-                </div>
+                {!isLoading || results.length > 0 ? (
+                  <>
+                    <div className={styles.separator} aria-hidden />
+                    <div className={styles.dropdownContent}>
+                      {results.length === 0 && isLoading
+                        ? <div className={styles.emptyState}>Ничего не найдено...</div>
+                        : renderResults(handleClose)}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.separator} aria-hidden />
+                    <div className={styles.dropdownContent}>
+                      <div className={styles.loadingState}>Поиск...</div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>

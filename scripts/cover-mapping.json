@@ -1,0 +1,416 @@
+[
+  {
+    "slug": "baron",
+    "filename": "baron.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/baron_ungern/15.jpg",
+    "localPath": "/covers/baron.jpg"
+  },
+  {
+    "slug": "na-zemle-zaratushtry",
+    "filename": "na-zemle-zaratushtry.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/na-zemle-zaratushtry/01.jpg",
+    "localPath": "/covers/na-zemle-zaratushtry.jpg"
+  },
+  {
+    "slug": "troe-v-lodke-ne-schitaya-harona",
+    "filename": "troe-v-lodke-ne-schitaya-harona.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/v-lodke/01.png",
+    "localPath": "/covers/troe-v-lodke-ne-schitaya-harona.png"
+  },
+  {
+    "slug": "serebro",
+    "filename": "serebro.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_serebro.png",
+    "localPath": "/covers/serebro.png"
+  },
+  {
+    "slug": "povelitel-bloh",
+    "filename": "povelitel-bloh.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_blohi.png",
+    "localPath": "/covers/povelitel-bloh.png"
+  },
+  {
+    "slug": "doch-greha",
+    "filename": "doch-greha.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-dochGreha.png",
+    "localPath": "/covers/doch-greha.png"
+  },
+  {
+    "slug": "sverhderzhava",
+    "filename": "sverhderzhava.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/sverhderzhava/book-title-sverhderzhava.jpg",
+    "localPath": "/covers/sverhderzhava.jpg"
+  },
+  {
+    "slug": "gomoza",
+    "filename": "gomoza.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/gomoza/01.jpg",
+    "localPath": "/covers/gomoza.jpg"
+  },
+  {
+    "slug": "moguchij-russkij-dinozavr",
+    "filename": "moguchij-russkij-dinozavr.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/mrd/mrd6/title_mrd6.png",
+    "localPath": "/covers/moguchij-russkij-dinozavr.png"
+  },
+  {
+    "slug": "segamegadrive",
+    "filename": "segamegadrive.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/SegaMegaDrive/01.png",
+    "localPath": "/covers/segamegadrive.png"
+  },
+  {
+    "slug": "moguchij-russkij-dinozavr-6",
+    "filename": "moguchij-russkij-dinozavr-6.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/mrd/mrd6/book-mrd6.jpg",
+    "localPath": "/covers/moguchij-russkij-dinozavr-6.jpg"
+  },
+  {
+    "slug": "peterburgskie-povesty",
+    "filename": "peterburgskie-povesty.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/peterburgskie-povesti/1.png",
+    "localPath": "/covers/peterburgskie-povesty.png"
+  },
+  {
+    "slug": "murlo",
+    "filename": "murlo.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/murlo/murlo-cover.jpg",
+    "localPath": "/covers/murlo.jpg"
+  },
+  {
+    "slug": "sin-greha",
+    "filename": "sin-greha.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/sin-greha/book-title-sin-greha.jpg",
+    "localPath": "/covers/sin-greha.jpg"
+  },
+  {
+    "slug": "kubok-voiny-i-tanca",
+    "filename": "kubok-voiny-i-tanca.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/kubok-voiny-i-tanca/01.png",
+    "localPath": "/covers/kubok-voiny-i-tanca.png"
+  },
+  {
+    "slug": "whiskey-sour",
+    "filename": "whiskey-sour.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/wiskey-sour/01.png",
+    "localPath": "/covers/whiskey-sour.png"
+  },
+  {
+    "slug": "kokora",
+    "filename": "kokora.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-kokora.jpg",
+    "localPath": "/covers/kokora.jpg"
+  },
+  {
+    "slug": "makintosh-dlya-bliznecov",
+    "filename": "makintosh-dlya-bliznecov.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-makintosh-dlya-bliznecov.jpg",
+    "localPath": "/covers/makintosh-dlya-bliznecov.jpg"
+  },
+  {
+    "slug": "snovidyashiy-i-snotvorishiy",
+    "filename": "snovidyashiy-i-snotvorishiy.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/son/01.png",
+    "localPath": "/covers/snovidyashiy-i-snotvorishiy.png"
+  },
+  {
+    "slug": "ob-pol",
+    "filename": "ob-pol.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-obPol.jpg",
+    "localPath": "/covers/ob-pol.jpg"
+  },
+  {
+    "slug": "poseiden",
+    "filename": "poseiden.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/poseiden/01.jpg",
+    "localPath": "/covers/poseiden.jpg"
+  },
+  {
+    "slug": "unhappened",
+    "filename": "unhappened.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/unhappened/01.jpg",
+    "localPath": "/covers/unhappened.jpg"
+  },
+  {
+    "slug": "vremyapadenie",
+    "filename": "vremyapadenie.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/vremyapadenie/01.jpg",
+    "localPath": "/covers/vremyapadenie.jpg"
+  },
+  {
+    "slug": "hudshee",
+    "filename": "hudshee.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/hudshee/01.jpg",
+    "localPath": "/covers/hudshee.jpg"
+  },
+  {
+    "slug": "gorod-sluchajnostej",
+    "filename": "gorod-sluchajnostej.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/gorod/01.jpg",
+    "localPath": "/covers/gorod-sluchajnostej.jpg"
+  },
+  {
+    "slug": "vihr-zhizni",
+    "filename": "vihr-zhizni.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/vihr-zhizni/01.jpg",
+    "localPath": "/covers/vihr-zhizni.jpg"
+  },
+  {
+    "slug": "prizrachnye-istorii",
+    "filename": "prizrachnye-istorii.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/prizrachnye-istorii/01.jpg",
+    "localPath": "/covers/prizrachnye-istorii.jpg"
+  },
+  {
+    "slug": "hudshee-2",
+    "filename": "hudshee-2.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/hudshee-2/01.jpg",
+    "localPath": "/covers/hudshee-2.jpg"
+  },
+  {
+    "slug": "amystis",
+    "filename": "amystis.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/amystis/00.jpg",
+    "localPath": "/covers/amystis.jpg"
+  },
+  {
+    "slug": "pupsiki",
+    "filename": "pupsiki.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-pupsiki.jpg",
+    "localPath": "/covers/pupsiki.jpg"
+  },
+  {
+    "slug": "rossijskoe-vremja",
+    "filename": "rossijskoe-vremja.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/rossijskoe-vremja/01.jpg",
+    "localPath": "/covers/rossijskoe-vremja.jpg"
+  },
+  {
+    "slug": "leshu-neubitiy-zhivoy",
+    "filename": "leshu-neubitiy-zhivoy.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/title_lezhu.png",
+    "localPath": "/covers/leshu-neubitiy-zhivoy.png"
+  },
+  {
+    "slug": "advent-calendar",
+    "filename": "advent-calendar.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_advent.png",
+    "localPath": "/covers/advent-calendar.png"
+  },
+  {
+    "slug": "i-est-rossia",
+    "filename": "i-est-rossia.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_ieastrossia.png",
+    "localPath": "/covers/i-est-rossia.png"
+  },
+  {
+    "slug": "abzac-workshop",
+    "filename": "abzac-workshop.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/ellipse-photo-archet.png",
+    "localPath": "/covers/abzac-workshop.png"
+  },
+  {
+    "slug": "v-yarosti-i-pod-solyu",
+    "filename": "v-yarosti-i-pod-solyu.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_sol.jpg",
+    "localPath": "/covers/v-yarosti-i-pod-solyu.jpg"
+  },
+  {
+    "slug": "predsetatel-tomskiy",
+    "filename": "predsetatel-tomskiy.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/predsetatel-tomskiy/predsedatel-tomskiy.jpg",
+    "localPath": "/covers/predsetatel-tomskiy.jpg"
+  },
+  {
+    "slug": "local_press",
+    "filename": "local_press.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_local1.jpg",
+    "localPath": "/covers/local_press.jpg"
+  },
+  {
+    "slug": "olesya",
+    "filename": "olesya.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_olesya.png",
+    "localPath": "/covers/olesya.png"
+  },
+  {
+    "slug": "nevidimyi-drug",
+    "filename": "nevidimyi-drug.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_drug.jpg",
+    "localPath": "/covers/nevidimyi-drug.jpg"
+  },
+  {
+    "slug": "glas-zemli",
+    "filename": "glas-zemli.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_glas-zemli.png",
+    "localPath": "/covers/glas-zemli.png"
+  },
+  {
+    "slug": "doctor-sax",
+    "filename": "doctor-sax.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_sax.png",
+    "localPath": "/covers/doctor-sax.png"
+  },
+  {
+    "slug": "bog-ego-imya",
+    "filename": "bog-ego-imya.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_bog_izd.jpg",
+    "localPath": "/covers/bog-ego-imya.jpg"
+  },
+  {
+    "slug": "rossia",
+    "filename": "rossia.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_rossia.png",
+    "localPath": "/covers/rossia.png"
+  },
+  {
+    "slug": "overdrive",
+    "filename": "overdrive.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/overdrive/01.jpg",
+    "localPath": "/covers/overdrive.jpg"
+  },
+  {
+    "slug": "kolmi-press",
+    "filename": "kolmi-press.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_kolmi-number6.jpg",
+    "localPath": "/covers/kolmi-press.jpg"
+  },
+  {
+    "slug": "deleted",
+    "filename": "deleted.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title__deleted.jpg",
+    "localPath": "/covers/deleted.jpg"
+  },
+  {
+    "slug": "kotlovan",
+    "filename": "kotlovan.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_kotlovan.jpg",
+    "localPath": "/covers/kotlovan.jpg"
+  },
+  {
+    "slug": "slava",
+    "filename": "slava.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_slava.png",
+    "localPath": "/covers/slava.png"
+  },
+  {
+    "slug": "dostoevski-dvoinik",
+    "filename": "dostoevski-dvoinik.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_dvoinik.png",
+    "localPath": "/covers/dostoevski-dvoinik.png"
+  },
+  {
+    "slug": "pozhninoch",
+    "filename": "pozhninoch.png",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title_pozhninoch.png",
+    "localPath": "/covers/pozhninoch.png"
+  },
+  {
+    "slug": "dostoevskie_dni",
+    "filename": "dostoevskie_dni.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/predsetatel-tomskiy/book-title-predsetatel-tomskiy.jpg",
+    "localPath": "/covers/dostoevskie_dni.jpg"
+  },
+  {
+    "slug": "prostitutes",
+    "filename": "prostitutes.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/prostitutes/3.jpg",
+    "localPath": "/covers/prostitutes.jpg"
+  },
+  {
+    "slug": "sepiya",
+    "filename": "sepiya.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/sepiya/sepia-cover.jpg",
+    "localPath": "/covers/sepiya.jpg"
+  },
+  {
+    "slug": "prizraki",
+    "filename": "prizraki.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/prizraki/prizraki-cover.jpg",
+    "localPath": "/covers/prizraki.jpg"
+  },
+  {
+    "slug": "irokez",
+    "filename": "irokez.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/irokez/irokes-cover.jpg",
+    "localPath": "/covers/irokez.jpg"
+  },
+  {
+    "slug": "pyl-na-ladonyah",
+    "filename": "pyl-na-ladonyah.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-pyl.jpg",
+    "localPath": "/covers/pyl-na-ladonyah.jpg"
+  },
+  {
+    "slug": "aristotel-v-kaz",
+    "filename": "aristotel-v-kaz.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-aristotel.jpg",
+    "localPath": "/covers/aristotel-v-kaz.jpg"
+  },
+  {
+    "slug": "craft",
+    "filename": "craft.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title__craft.jpg",
+    "localPath": "/covers/craft.jpg"
+  },
+  {
+    "slug": "podzemnie",
+    "filename": "podzemnie.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title__podzemnuie.jpg",
+    "localPath": "/covers/podzemnie.jpg"
+  },
+  {
+    "slug": "white-flower",
+    "filename": "white-flower.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/white-flower/whiteflower1.jpg",
+    "localPath": "/covers/white-flower.jpg"
+  },
+  {
+    "slug": "smerti-net",
+    "filename": "smerti-net.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title__smerti-net.jpg",
+    "localPath": "/covers/smerti-net.jpg"
+  },
+  {
+    "slug": "frieda-and-gitta",
+    "filename": "frieda-and-gitta.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/frieda-and-gitta-banner.jpg",
+    "localPath": "/covers/frieda-and-gitta.jpg"
+  },
+  {
+    "slug": "gorod-posledny",
+    "filename": "gorod-posledny.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-gorod.jpg",
+    "localPath": "/covers/gorod-posledny.jpg"
+  },
+  {
+    "slug": "lucifer",
+    "filename": "lucifer.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/book-title-lucifer.jpg",
+    "localPath": "/covers/lucifer.jpg"
+  },
+  {
+    "slug": "v-doroge",
+    "filename": "v-doroge.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/v-doroge/00-.jpg",
+    "localPath": "/covers/v-doroge.jpg"
+  },
+  {
+    "slug": "prepodrobniy",
+    "filename": "prepodrobniy.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/prepodrobniy/book-title-prepodrobniy.jpg",
+    "localPath": "/covers/prepodrobniy.jpg"
+  },
+  {
+    "slug": "my-komu-to-nujni",
+    "filename": "my-komu-to-nujni.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/cards/card-mktn-1.jpg",
+    "localPath": "/covers/my-komu-to-nujni.jpg"
+  },
+  {
+    "slug": "course-proza",
+    "filename": "course-proza.jpg",
+    "originalUrl": "https://chtivo.spb.ru/assets/img/author_inner.jpg",
+    "localPath": "/covers/course-proza.jpg"
+  }
+]

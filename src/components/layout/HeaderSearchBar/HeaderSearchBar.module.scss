@@ -139,8 +139,58 @@
 
 .dropdownContent {
   padding: $space-2 0;
-  max-height: 400px;
-  overflow-y: auto;
+}
+
+.scrollArea {
+  overflow: hidden;
+}
+
+.scrollViewport {
+  max-height: 320px;
+
+  @include breakpoint(phone) {
+    max-height: calc(100vh - 80px);
+  }
+}
+
+.scrollbar {
+  display: flex;
+  user-select: none;
+  touch-action: none;
+  padding: 1px;
+  background-color: transparent;
+  transition: background-color 160ms ease;
+}
+
+.scrollbar:hover {
+  background-color: rgba($color-text-on-dark, 0.05);
+}
+
+.scrollThumb {
+  flex: 1;
+  border-radius: $radius-full;
+  background-color: rgba($color-text-on-dark, 0.3);
+  position: relative;
+  min-height: 30px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    min-width: 6px;
+    min-height: 6px;
+  }
+}
+
+.loadingMore {
+  @include header-nav-text;
+  padding: $space-2 $space-3;
+  color: $color-text-on-dark;
+  opacity: 0.5;
 }
 
 .resultsHeading {
