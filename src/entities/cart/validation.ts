@@ -6,7 +6,7 @@ export const addToCartSchema = z.object({
   subtitle: z.string().nullable().optional(),
   price: z.number().min(0, 'Цена должна быть положительной'),
   picture: z.string().nullable().optional(),
-  category: z.string().min(1),
+  category: z.enum(['PrintBook', 'AudioBook', 'EBook', 'Book2.0', 'GiftCard', 'BoxSet', 'Subscription', 'Course']),
 })
 
 export type AddToCartInput = z.infer<typeof addToCartSchema>

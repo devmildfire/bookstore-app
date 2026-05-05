@@ -30,7 +30,7 @@ export async function addToCart(item: AddToCartInput): Promise<void> {
         price: item.price,
         quantity: 1,
         picture: item.picture ?? null,
-        category: item.category as any,
+        category: item.category,
       })
 
     if (error) throw new Error(`Не удалось добавить в корзину: ${error.message}`)
