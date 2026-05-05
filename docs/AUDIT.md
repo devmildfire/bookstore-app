@@ -179,11 +179,11 @@ Policy updated to `auth.uid() IS NOT NULL`. A follow-up migration drops and recr
 
 ---
 
-### A8 🟡 `search_books` RPC uses `ILIKE '%term%'` — no full-text index
+### ~~A8~~ ✅ FIXED — `search_books` RPC uses `ILIKE '%term%'` — no full-text index
 
-**File:** `supabase/migrations/20260504000000_search_books_rpc.sql:59-68`
+**Migration:** `supabase/migrations/20260505300000_search_books_gin_index.sql`
 
-`ILIKE '%' || search_term || '%'` requires a sequential scan on `Titles` and `Authors`. As the catalog grows this will become slow. A `tsvector`/`tsquery` GIN index would scale properly.
+Added `pg_trgm` extension and GIN trigram indexes on `Titles.name` and `Authors.name`. Trigram indexes directly accelerate `ILIKE '%term%'` queries without changing the RPC function — the query planner picks them up automatically. Pending `supabase db push` to apply to live DB.
 
 ---
 
