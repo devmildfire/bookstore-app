@@ -462,13 +462,9 @@ No admin routes, no admin auth guard, no book management UI.
 
 ---
 
-### G6 — Many menu links lead to non-existent routes
+### ~~G6~~ ✅ FIXED — Many menu links lead to non-existent routes
 
-The following links in `src/consts/menuItems.ts` point to pages that don't exist:
-
-`/about`, `/gift-cards`, `/subscription`, `/dino-magazine`, `/suggest-manuscript`, `/suggest-story-to-rd`, `/investors`, `/contacts`
-
-All will 404. Add `not-found.tsx` at root at minimum, and stub pages or disable the menu items until pages are built.
+Added stub pages using a shared `ComingSoon` component for all 8 routes: `/about`, `/gift-cards`, `/subscription`, `/dino-magazine`, `/suggest-manuscript`, `/suggest-story-to-rd`, `/investors`, `/contacts`.
 
 ---
 
@@ -490,13 +486,11 @@ The deployment workflow (Docker build + SSH deploy) was premature — VPS infra 
 
 ---
 
-### G10 — Two conflicting category enum types in the database schema
+### ~~G10~~ ✅ FIXED — Two conflicting category enum types in the database schema
 
-The schema has two enums with overlapping but inconsistent values:
-- `category`: `PrintBook | AudioBook | EBook | Book2.0 | GiftCard | BoxSet | Subscription | Course`
-- `productcategory`: `PrintedBook | AudioBook | Ebook | CardBook`
+**Migration:** `supabase/migrations/20260505400000_unify_category_enum.sql`
 
-`productcategory` is used only in `Workers_Products`. The naming differs (`PrintBook` vs `PrintedBook`, `EBook` vs `Ebook`, `Book2.0`/`CardBook` naming inconsistency). This should be resolved to a single canonical enum.
+`Workers_Products.type` altered to use the canonical `category` enum with explicit value mapping (`PrintedBook→PrintBook`, `Ebook→EBook`, `CardBook→Book2.0`). `productcategory` enum dropped. Pending `supabase db push` + types regen.
 
 ---
 
