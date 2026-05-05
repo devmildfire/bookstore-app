@@ -6,28 +6,27 @@
   background-color: $color-bg-surface;
   border-radius: $radius-lg;
   overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
-    box-shadow: $shadow-md;
     transform: translateY(-2px);
   }
 }
 
-.imageLink {
+.coverLink {
   display: block;
   text-decoration: none;
+  flex: 1;
 }
 
-.imageWrapper {
+.coverWrap {
   position: relative;
   aspect-ratio: 2 / 3;
   background-color: $color-bg-muted;
   overflow: hidden;
 }
 
-.image {
+.cover {
   object-fit: cover;
   transition: transform 0.3s ease;
 
@@ -36,61 +35,58 @@
   }
 }
 
-.imagePlaceholder {
+.coverPlaceholder {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, $neutral-200 0%, $neutral-300 100%);
-}
-
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: $space-2;
-  padding: $space-3;
-  flex: 1;
-}
-
-.category {
-  align-self: flex-start;
-}
-
-.titleLink {
-  text-decoration: none;
-
-  &:hover .title {
-    color: $color-brand-primary;
-  }
-}
-
-.title {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  line-height: $line-height-snug;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color 0.15s ease;
-}
-
-.author {
-  font-size: $font-size-xs;
-  color: $color-text-muted;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
 }
 
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-2;
-  margin-top: auto;
-  padding-top: $space-2;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+}
+
+.prices {
+  display: flex;
+  align-items: baseline;
+  gap: $space-3;
 }
 
 .price {
-  font-size: $font-size-base;
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $color-text-primary;
   white-space: nowrap;
+}
+
+.originalPrice {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-brand-primary;
+  white-space: nowrap;
+}
+
+.cartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: $space-1;
+  cursor: pointer;
+  color: $color-text-primary;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $color-brand-primary;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
 }

@@ -8,6 +8,10 @@ export function normalizeBook(raw: BookServerRow): Book {
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b, 'ru'))
 
+  const price = raw.price ?? 0
+  const discount = raw.discount ?? null
+  const originalPrice = discount ? Math.round(price / (1 - discount / 100)) : null
+
   return {
     id: `${raw.product_type ?? 'Book2.0'}-${raw.id}`,
     titleId: raw.title_id,
@@ -18,9 +22,12 @@ export function normalizeBook(raw: BookServerRow): Book {
     coverUrl: getCoverUrl(raw.title_cover),
     authorNames,
     authorName: authorNames.length > 0 ? authorNames.join(', ') : 'Автор не указан',
-    price: raw.price ?? 0,
+    price,
+    discount,
+    originalPrice,
     category: (raw.product_type ?? 'Book2.0') as ProductCategory,
     inStock: raw.sold_out !== true,
+    hasMultipleProducts: raw.has_multiple_products ?? false,
     publishedAt: raw.publish_date ?? raw.release_date,
     litForm: raw.title_lit_form ?? null,
     ageRestriction: raw.title_age_restriction ?? null,

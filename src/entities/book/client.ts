@@ -23,8 +23,11 @@ export type Book = {
   authorNames: string[]
   authorName: string
   price: number
+  discount: number | null
+  originalPrice: number | null
   category: ProductCategory
   inStock: boolean
+  hasMultipleProducts: boolean
   publishedAt: string | null
   litForm: string | null
   ageRestriction: number | null

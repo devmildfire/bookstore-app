@@ -5,6 +5,7 @@ export const BOOK_CATALOG_PAGE_SIZE = 12
 export type BookServerRow = {
   id: number
   price: number | null
+  discount: number | null
   sold_out: boolean
   is_published: boolean
   publish_date: string | null
@@ -20,4 +21,5 @@ export type BookServerRow = {
   title_age_restriction: number | null
   title_first_release: string | null
   author_names: string[]
+  has_multiple_products?: boolean
 }

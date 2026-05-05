@@ -1,5 +1,3 @@
-// Regenerate: see "Regenerate Supabase types" in CLAUDE.md
-
 export type Json =
   | string
   | number
@@ -13,6 +11,7 @@ export interface Database {
     Tables: {
       Audiobooks: {
         Row: {
+          discount: number | null
           id: number
           is_published: boolean | null
           price: number | null
@@ -21,6 +20,7 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -29,6 +29,7 @@ export interface Database {
           title_id: number
         }
         Update: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -181,6 +182,7 @@ export interface Database {
       }
       Ebooks: {
         Row: {
+          discount: number | null
           id: number
           is_published: boolean | null
           price: number | null
@@ -189,6 +191,7 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -197,6 +200,7 @@ export interface Database {
           title_id: number
         }
         Update: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -316,6 +320,7 @@ export interface Database {
       }
       PrintedBooks: {
         Row: {
+          discount: number | null
           id: number
           is_published: boolean | null
           price: number | null
@@ -325,6 +330,7 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -334,6 +340,7 @@ export interface Database {
           title_id: number
         }
         Update: {
+          discount?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -446,56 +453,59 @@ export interface Database {
           title_slug: string
         }
         Returns: {
-          is_published: boolean
-          author_names: string[]
           title_first_release: string
           title_age_restriction: number
           title_lit_form: string
           title_thesis: string
           title_description: string
+          author_names: string[]
           title_cover: string
-          title_name: string
-          title_slug: string
           sold_out: boolean
+          is_published: boolean
+          publish_date: string
+          release_date: string
+          title_id: number
+          discount: number
           price: number
           id: number
           product_type: string
-          title_id: number
-          release_date: string
-          publish_date: string
+          title_name: string
+          title_slug: string
         }[]
       }
       get_catalog_books: {
         Args: {
-          product_type_filter?: string
-          author_name?: string
-          price_from?: number
-          price_to?: number
-          sort_by?: string
           title_ids?: number[]
-          result_limit?: number
-          result_offset?: number
+          sort_by?: string
+          price_to?: number
+          price_from?: number
+          author_name?: string
+          product_type_filter?: string
           search_term?: string
+          result_offset?: number
+          result_limit?: number
         }
         Returns: {
-          title_cover: string
-          id: number
-          price: number
-          sold_out: boolean
-          is_published: boolean
-          publish_date: string
-          release_date: string
-          title_id: number
-          product_type: string
-          title_name: string
           title_slug: string
-          title_description: string
-          title_thesis: string
-          title_lit_form: string
-          title_age_restriction: number
-          title_first_release: string
-          author_names: string[]
+          title_name: string
+          product_type: string
+          title_id: number
+          release_date: string
+          publish_date: string
+          is_published: boolean
+          sold_out: boolean
+          discount: number
+          price: number
+          id: number
+          has_multiple_products: boolean
           total_count: number
+          author_names: string[]
+          title_first_release: string
+          title_age_restriction: number
+          title_lit_form: string
+          title_thesis: string
+          title_description: string
+          title_cover: string
         }[]
       }
       gtrgm_compress: {
@@ -542,24 +552,24 @@ export interface Database {
           result_offset?: number
         }
         Returns: {
-          total_count: number
+          title_name: string
           id: number
           price: number
           sold_out: boolean
           is_published: boolean
           publish_date: string
-          author_names: string[]
-          title_first_release: string
-          title_age_restriction: number
-          title_lit_form: string
-          title_thesis: string
-          title_description: string
-          title_cover: string
-          title_slug: string
-          title_name: string
-          product_type: string
-          title_id: number
           release_date: string
+          title_id: number
+          product_type: string
+          title_slug: string
+          title_cover: string
+          title_description: string
+          title_thesis: string
+          title_lit_form: string
+          title_age_restriction: number
+          title_first_release: string
+          author_names: string[]
+          total_count: number
         }[]
       }
       set_limit: {
