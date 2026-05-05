@@ -5,6 +5,12 @@
  * Output: supabase/seed-books.sql
  *
  * Then run:  psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -f supabase/seed-books.sql
+ *
+ * Product type mapping:
+ *   CardBooks   (Book2.0)  — always created (chtivo's own format)
+ *   Ebooks      (EBook)    — created when priceDigital is present
+ *   Audiobooks  (AudioBook)— created when priceAudio is present
+ *   PrintedBooks(PrintBook)— created when pricePrint is present
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -47,12 +53,6 @@ const MANUAL_AUTHOR_OVERRIDES = {
   course_proza: null,
 }
 
-const MANUAL_TITLE_OVERRIDES = {
-  advent_calendar: 'Адвент-календарь Чтива',
-  local_press: 'Локал',
-  rossia: 'Россия',
-}
-
 const TITLE_FIXES = {
   'gorod-sluchajnostej': { title: 'Город случайностей' },
   'vihr-zhizni': { title: 'Вихрь жизни' },
@@ -69,6 +69,14 @@ const TITLE_FIXES = {
 function escapeSql(str) {
   if (str === null || str === undefined) return 'NULL'
   return "'" + String(str).replace(/'/g, "''") + "'"
+}
+
+function parseReleaseDate(raw) {
+  if (!raw) return null
+  const cleaned = raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+  const match = cleaned.match(/(\d{1,2})\.(\d{2})\.(\d{4})/)
+  if (match) return `${match[3]}-${match[2]}-${match[1].padStart(2, '0')}`
+  return null
 }
 
 function main() {
@@ -89,95 +97,65 @@ function main() {
     return authorId
   }
 
-  // Filter and process books
   const validBooks = books.filter((b) => !SKIP_SLUGS.has(b.slug) && b.isSubscription !== true)
 
-  // Generate IDs
   let titleId = 0
   let cardBookId = 0
+  let ebookId = 0
+  let audiobookId = 0
+  let printedBookId = 0
 
   const titles = []
   const titlesAuthors = []
   const cardBooks = []
+  const ebooks = []
+  const audiobooks = []
+  const printedBooks = []
 
   for (const book of validBooks) {
     titleId++
 
-    // Fix title
     let title = book.title || book.slug
     const fixes = TITLE_FIXES[book.slug]
     if (fixes?.title) title = fixes.title
-    if (title === 'Об пол') title = 'Об пол'
 
-    // Fix МРД description overflow
     let thesis = book.thesis || null
-    if (thesis && thesis.length > 500) {
-      thesis = null
-    }
+    if (thesis && thesis.length > 500) thesis = null
 
-    // Fix description overflow for Худшее
     let description = book.description || null
-    if (description && description.includes('Незаконное потребление')) {
-      description = null
-    }
+    if (description && description.includes('Незаконное потребление')) description = null
 
-    // Fix lit_form for advent-calendar (no lit_form, only age)
     let litForm = book.litForm || null
     if (book.slug === 'advent-calendar') litForm = 'ежегодник'
 
-    // Use year from detail page if available, otherwise from listing
     const year = book.detailYear || book.year || null
     const firstRelease = year && year !== 'preorder' && year !== 'unknown' ? year : null
 
-    // Age restriction
     let ageRestriction = book.ageRestriction || null
     if (ageRestriction === 0) ageRestriction = null
 
-    // Cover: store only the filename — the app constructs the full URL from this
     const coverFullUrl = book.detailCoverUrl || book.coverUrl || null
     const cover = coverFullUrl ? coverFullUrl.split('/').pop() : null
 
-    // Authors
     let authors = book.detailAuthors || (book.listingAuthor ? [book.listingAuthor] : [])
-    // Filter out garbage authors (drug warnings, etc.)
     authors = authors.filter((a) => !Array.from(AUTHOR_BLACKLIST).some((b) => a.includes(b)))
-    // Apply manual overrides
     const overrideKey = book.slug.replace(/-/g, '_')
     if (overrideKey in MANUAL_AUTHOR_OVERRIDES) {
       authors = MANUAL_AUTHOR_OVERRIDES[overrideKey] || []
     }
-    // Fix author name inflections
     authors = authors.map((a) => AUTHOR_NAME_FIXES[a] || a)
-    const authorIds = []
     for (const authorName of authors) {
-      const aid = getOrCreateAuthorId(authorName)
-      authorIds.push(aid)
+      titlesAuthors.push({ title_id: titleId, author_id: getOrCreateAuthorId(authorName) })
     }
 
-    // Determine is_published
     const isPublished = !book.isPreorder
-
-    // Price: prefer print price, then digital, then audio
-    const price = book.pricePrint || book.priceDigital || book.priceAudio || null
-
-    // Release date
-    let releaseDate = book.releaseDate || null
-    // Clean up release date - some are like "22.10.2025</br></br>"
-    if (releaseDate) {
-      releaseDate = releaseDate.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
-      // Convert DD.MM.YYYY to YYYY-MM-DD for consistency
-      const dateMatch = releaseDate.match(/(\d{1,2})\.(\d{2})\.(\d{4})/)
-      if (dateMatch) {
-        releaseDate = `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1].padStart(2, '0')}`
-      }
-    }
-
-    const slug = book.slug
+    const publishDate = firstRelease ? `${firstRelease}-01-01` : null
+    const releaseDate = parseReleaseDate(book.releaseDate)
 
     titles.push({
       id: titleId,
       name: title,
-      slug,
+      slug: book.slug,
       cover,
       description,
       thesis,
@@ -188,100 +166,153 @@ function main() {
       is_featured: false,
     })
 
-    for (const aid of authorIds) {
-      titlesAuthors.push({ title_id: titleId, author_id: aid })
-    }
-
+    // CardBook (Book2.0) — always created
     cardBookId++
     cardBooks.push({
       id: cardBookId,
       title_id: titleId,
-      price,
+      price: book.priceDigital || book.pricePrint || book.priceAudio || null,
       sold_out: false,
       is_published: isPublished,
-      publish_date: firstRelease ? `${firstRelease}-01-01` : null,
+      publish_date: publishDate,
       release_date: releaseDate,
     })
+
+    // Ebook — only when digital price is known
+    if (book.priceDigital) {
+      ebookId++
+      ebooks.push({
+        id: ebookId,
+        title_id: titleId,
+        price: book.priceDigital,
+        is_published: isPublished,
+        publish_date: publishDate,
+        release_date: releaseDate,
+      })
+    }
+
+    // Audiobook — only when audio price is known
+    if (book.priceAudio) {
+      audiobookId++
+      audiobooks.push({
+        id: audiobookId,
+        title_id: titleId,
+        price: book.priceAudio,
+        is_published: isPublished,
+        publish_date: publishDate,
+        release_date: releaseDate,
+      })
+    }
+
+    // PrintedBook — only when print price is known
+    if (book.pricePrint) {
+      printedBookId++
+      printedBooks.push({
+        id: printedBookId,
+        title_id: titleId,
+        price: book.pricePrint,
+        sold_out: false,
+        is_published: isPublished,
+        publish_date: publishDate,
+        release_date: releaseDate,
+      })
+    }
   }
 
-  // Generate SQL
+  // --- SQL generation ---
   let sql = `-- Seed data generated from chtivo.spb.ru scrape\n`
   sql += `-- Generated at: ${new Date().toISOString()}\n`
-  sql += `-- Total: ${titles.length} titles, ${authorNames.length} authors\n\n`
+  sql += `-- Titles: ${titles.length} | Authors: ${authorNames.length}\n`
+  sql += `-- CardBooks: ${cardBooks.length} | Ebooks: ${ebooks.length} | Audiobooks: ${audiobooks.length} | PrintedBooks: ${printedBooks.length}\n\n`
 
-  // Clear existing data (respect FK order)
-  sql += `-- Clear existing seed data\n`
+  sql += `-- Clear existing seed data (FK order)\n`
+  sql += `DELETE FROM "PrintedBooks";\n`
+  sql += `DELETE FROM "Audiobooks";\n`
+  sql += `DELETE FROM "Ebooks";\n`
   sql += `DELETE FROM "CardBooks";\n`
   sql += `DELETE FROM "Titles_Authors";\n`
   sql += `DELETE FROM "Titles";\n`
   sql += `DELETE FROM "Authors";\n\n`
 
-  // Reset sequences
   sql += `ALTER SEQUENCE "Authors_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "Titles_id_seq" RESTART WITH 1;\n`
+  sql += `ALTER SEQUENCE "Titles_Authors_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "CardBooks_id_seq" RESTART WITH 1;\n`
-  sql += `ALTER SEQUENCE "Titles_Authors_id_seq" RESTART WITH 1;\n\n`
+  sql += `ALTER SEQUENCE "Ebooks_id_seq" RESTART WITH 1;\n`
+  sql += `ALTER SEQUENCE "Audiobooks_id_seq" RESTART WITH 1;\n`
+  sql += `ALTER SEQUENCE "PrintedBooks_id_seq" RESTART WITH 1;\n\n`
 
-  // Insert Authors
   sql += `-- Authors (${authorNames.length})\n`
   sql += `INSERT INTO "Authors" (id, name) VALUES\n`
   sql += authorNames.map((a) => `  (${a.id}, ${escapeSql(a.name)})`).join(',\n')
   sql += ';\n\n'
 
-  // Insert Titles
   sql += `-- Titles (${titles.length})\n`
   sql += `INSERT INTO "Titles" (id, name, slug, cover, description, thesis, age_restriction, first_release, lit_form, is_compilation, is_featured) VALUES\n`
-  sql += titles
-    .map((t) => {
-      const fields = [
-        t.id,
-        escapeSql(t.name),
-        escapeSql(t.slug),
-        escapeSql(t.cover),
-        escapeSql(t.description),
-        escapeSql(t.thesis),
-        t.age_restriction !== null ? t.age_restriction : 'NULL',
-        escapeSql(t.first_release),
-        escapeSql(t.lit_form),
-        t.is_compilation ? 'true' : 'false',
-        t.is_featured ? 'true' : 'false',
-      ]
-      return `  (${fields.join(', ')})`
-    })
-    .join(',\n')
+  sql += titles.map((t) => `  (${[
+    t.id, escapeSql(t.name), escapeSql(t.slug), escapeSql(t.cover),
+    escapeSql(t.description), escapeSql(t.thesis),
+    t.age_restriction ?? 'NULL', escapeSql(t.first_release),
+    escapeSql(t.lit_form), t.is_compilation ? 'true' : 'false', t.is_featured ? 'true' : 'false',
+  ].join(', ')})`).join(',\n')
   sql += ';\n\n'
 
-  // Insert Titles_Authors
   sql += `-- Title-Author links (${titlesAuthors.length})\n`
   sql += `INSERT INTO "Titles_Authors" (title_id, author_id) VALUES\n`
   sql += titlesAuthors.map((ta) => `  (${ta.title_id}, ${ta.author_id})`).join(',\n')
   sql += ';\n\n'
 
-  // Insert CardBooks
-  sql += `-- CardBooks (${cardBooks.length})\n`
+  sql += `-- CardBooks / Book2.0 (${cardBooks.length})\n`
   sql += `INSERT INTO "CardBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date) VALUES\n`
-  sql += cardBooks
-    .map((cb) => {
-      const fields = [
-        cb.id,
-        cb.title_id,
-        cb.price !== null ? cb.price : 'NULL',
-        cb.sold_out ? 'true' : 'false',
-        cb.is_published ? 'true' : 'false',
-        escapeSql(cb.publish_date),
-        escapeSql(cb.release_date),
-      ]
-      return `  (${fields.join(', ')})`
-    })
-    .join(',\n')
+  sql += cardBooks.map((cb) => `  (${[
+    cb.id, cb.title_id, cb.price ?? 'NULL',
+    cb.sold_out ? 'true' : 'false', cb.is_published ? 'true' : 'false',
+    escapeSql(cb.publish_date), escapeSql(cb.release_date),
+  ].join(', ')})`).join(',\n')
   sql += ';\n\n'
+
+  if (ebooks.length > 0) {
+    sql += `-- Ebooks (${ebooks.length})\n`
+    sql += `INSERT INTO "Ebooks" (id, title_id, price, is_published, publish_date, release_date) VALUES\n`
+    sql += ebooks.map((e) => `  (${[
+      e.id, e.title_id, e.price ?? 'NULL',
+      e.is_published ? 'true' : 'false',
+      escapeSql(e.publish_date), escapeSql(e.release_date),
+    ].join(', ')})`).join(',\n')
+    sql += ';\n\n'
+  }
+
+  if (audiobooks.length > 0) {
+    sql += `-- Audiobooks (${audiobooks.length})\n`
+    sql += `INSERT INTO "Audiobooks" (id, title_id, price, is_published, publish_date, release_date) VALUES\n`
+    sql += audiobooks.map((a) => `  (${[
+      a.id, a.title_id, a.price ?? 'NULL',
+      a.is_published ? 'true' : 'false',
+      escapeSql(a.publish_date), escapeSql(a.release_date),
+    ].join(', ')})`).join(',\n')
+    sql += ';\n\n'
+  }
+
+  if (printedBooks.length > 0) {
+    sql += `-- PrintedBooks (${printedBooks.length})\n`
+    sql += `INSERT INTO "PrintedBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date) VALUES\n`
+    sql += printedBooks.map((pb) => `  (${[
+      pb.id, pb.title_id, pb.price ?? 'NULL',
+      pb.sold_out ? 'true' : 'false', pb.is_published ? 'true' : 'false',
+      escapeSql(pb.publish_date), escapeSql(pb.release_date),
+    ].join(', ')})`).join(',\n')
+    sql += ';\n\n'
+  }
 
   writeFileSync(OUTPUT_PATH, sql, 'utf-8')
   console.log(`Generated ${OUTPUT_PATH}`)
   console.log(`  ${authorNames.length} authors`)
   console.log(`  ${titles.length} titles`)
   console.log(`  ${titlesAuthors.length} title-author links`)
-  console.log(`  ${cardBooks.length} card books`)
+  console.log(`  ${cardBooks.length} card books (Book2.0)`)
+  console.log(`  ${ebooks.length} ebooks`)
+  console.log(`  ${audiobooks.length} audiobooks`)
+  console.log(`  ${printedBooks.length} printed books`)
 }
 
 main()
