@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { getBooks } from '@/api/books'
-import { getFeaturedBooks } from '@/api/books'
+import { getLatestBooks, getFeaturedBooks } from '@/api/books'
 import Slider from '@/components/common/Slider'
 import NewProducts from '@/components/book/NewProducts'
 import styles from './page.module.scss'
@@ -15,16 +14,8 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [catalog, featuredBooks] = await Promise.all([
-    getBooks({
-      search: '',
-      category: 'all',
-      author: '',
-      priceFrom: null,
-      priceTo: null,
-      sort: 'newest',
-      page: 1,
-    }),
+  const [latestBooks, featuredBooks] = await Promise.all([
+    getLatestBooks(12),
     getFeaturedBooks(),
   ])
 
@@ -40,7 +31,7 @@ export default async function HomePage() {
   return (
     <div className={styles.page}>
       <Slider items={slides} />
-      <NewProducts books={catalog.books} />
+      <NewProducts books={latestBooks} />
     </div>
   )
 }

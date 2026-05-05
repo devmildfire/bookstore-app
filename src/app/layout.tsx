@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
-import { createDataClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
 import Header from '@/components/layout/Header'
