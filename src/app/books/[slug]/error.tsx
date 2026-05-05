@@ -4,10 +4,11 @@ import Button from '@/components/common/Button'
 import styles from './error.module.scss'
 
 type Props = {
+  error: Error & { digest?: string }
   reset: () => void
 }
 
-export default function BookDetailError({ reset }: Props) {
+export default function BookDetailError({ error, reset }: Props) {
   return (
     <section className={styles.error} role='alert'>
       <h1>Не удалось загрузить книгу</h1>

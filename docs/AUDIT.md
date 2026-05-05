@@ -155,20 +155,11 @@ Phase 8 status changed from ✅ Complete → 🔄 In progress with an accurate n
 
 ---
 
-### A5 🟡 `BooksError` is missing the required `error` prop
+### ~~A5~~ ✅ FIXED — `BooksError` is missing the required `error` prop
 
-**File:** `src/app/books/error.tsx`
+**Fixed in:** `src/app/books/error.tsx`, `src/app/books/[slug]/error.tsx`
 
-The error boundary convention (`docs/conventions/ERROR_HANDLING.md`) requires:
-
-```ts
-type Props = {
-  error: Error & { digest?: string }
-  reset: () => void
-}
-```
-
-The current implementation only accepts `reset`. The `error` object (including the `digest` for server-side error correlation) is silently dropped.
+Both error boundaries now accept `error: Error & { digest?: string }` alongside `reset`, matching the convention. The `digest` is available for future server-side error correlation.
 
 ---
 
