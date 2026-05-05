@@ -226,6 +226,7 @@ function main() {
   sql += `-- CardBooks: ${cardBooks.length} | Ebooks: ${ebooks.length} | Audiobooks: ${audiobooks.length} | PrintedBooks: ${printedBooks.length}\n\n`
 
   sql += `-- Clear existing seed data (FK order)\n`
+  sql += `DELETE FROM "featured_books";\n`
   sql += `DELETE FROM "PrintedBooks";\n`
   sql += `DELETE FROM "Audiobooks";\n`
   sql += `DELETE FROM "Ebooks";\n`
@@ -304,6 +305,26 @@ function main() {
     sql += ';\n\n'
   }
 
+  // Featured books — slugs of titles to highlight on the homepage slider
+  const FEATURED_SLUGS = [
+    'murlo',
+    'kokora',
+    'makintosh-dlya-bliznecov',
+    'sin-greha',
+    'snovidyashiy-i-snotvorishiy',
+  ]
+
+  const featuredEntries = FEATURED_SLUGS
+    .map((slug, i) => ({ slug, sort_order: i + 1, title_id: titles.find((t) => t.slug === slug)?.id }))
+    .filter((f) => f.title_id != null)
+
+  if (featuredEntries.length > 0) {
+    sql += `-- Featured books (homepage slider)\n`
+    sql += `INSERT INTO "featured_books" (title_id, sort_order) VALUES\n`
+    sql += featuredEntries.map((f) => `  (${f.title_id}, ${f.sort_order})`).join(',\n')
+    sql += ';\n\n'
+  }
+
   writeFileSync(OUTPUT_PATH, sql, 'utf-8')
   console.log(`Generated ${OUTPUT_PATH}`)
   console.log(`  ${authorNames.length} authors`)
@@ -313,6 +334,7 @@ function main() {
   console.log(`  ${ebooks.length} ebooks`)
   console.log(`  ${audiobooks.length} audiobooks`)
   console.log(`  ${printedBooks.length} printed books`)
+  console.log(`  ${featuredEntries.length} featured books`)
 }
 
 main()

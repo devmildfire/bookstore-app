@@ -9,7 +9,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     .sort((a, b) => a.localeCompare(b, 'ru'))
 
   return {
-    id: String(raw.id),
+    id: `${raw.product_type ?? 'Book2.0'}-${raw.id}`,
     titleId: raw.title_id,
     slug: raw.title_slug ?? String(raw.title_id),
     name: raw.title_name,

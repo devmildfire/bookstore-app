@@ -1,9 +1,10 @@
 -- Seed data generated from chtivo.spb.ru scrape
--- Generated at: 2026-05-05T15:20:49.483Z
+-- Generated at: 2026-05-05T15:32:44.377Z
 -- Titles: 64 | Authors: 39
 -- CardBooks: 64 | Ebooks: 56 | Audiobooks: 4 | PrintedBooks: 21
 
 -- Clear existing seed data (FK order)
+DELETE FROM "featured_books";
 DELETE FROM "PrintedBooks";
 DELETE FROM "Audiobooks";
 DELETE FROM "Ebooks";
@@ -350,4 +351,12 @@ INSERT INTO "PrintedBooks" (id, title_id, price, sold_out, is_published, publish
   (19, 57, 500, false, true, '2021-01-01', '2021-10-21'),
   (20, 58, 900, false, true, '2019-01-01', '2019-04-04'),
   (21, 62, 700, false, true, '2020-01-01', '2020-07-22');
+
+-- Featured books (homepage slider)
+INSERT INTO "featured_books" (title_id, sort_order) VALUES
+  (13, 1),
+  (17, 2),
+  (18, 3),
+  (14, 4),
+  (19, 5);
 
