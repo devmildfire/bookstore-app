@@ -20,8 +20,8 @@ CREATE POLICY "Featured books are publicly readable"
 -- Only authenticated users can modify (admin use)
 CREATE POLICY "Authenticated users can modify featured books"
   ON "featured_books" FOR ALL
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
+  USING (auth.uid() IS NOT NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Seed: the 5 highlighted books for the homepage slider
 INSERT INTO "featured_books" (title_id, sort_order) VALUES

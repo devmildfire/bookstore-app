@@ -171,15 +171,11 @@ Both error boundaries now accept `error: Error & { digest?: string }` alongside 
 
 ---
 
-### A7 🟡 `featured_books` RLS policy uses deprecated `auth.role()` syntax
+### ~~A7~~ ✅ FIXED — `featured_books` RLS policy uses deprecated `auth.role()` syntax
 
-**File:** `supabase/migrations/20260504100000_featured_books.sql:21`
+**Fixed in:** `supabase/migrations/20260504100000_featured_books.sql`, `supabase/migrations/20260505200000_fix_featured_books_rls.sql`
 
-```sql
-USING (auth.role() = 'authenticated')
-```
-
-`auth.role()` is deprecated in Supabase. Modern syntax: `auth.uid() IS NOT NULL`. The deprecated form may stop working in future Supabase versions.
+Policy updated to `auth.uid() IS NOT NULL`. A follow-up migration drops and recreates the policy on the live DB since the original migration was already applied.
 
 ---
 
