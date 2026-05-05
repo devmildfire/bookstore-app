@@ -238,13 +238,11 @@ Option is now gated: `...(!isProduction && { dangerouslyAllowLocalIP: true })` �
 
 ---
 
-### S5 🟡 Account page redirects anonymous users client-side — flash-of-content for anonymous sessions
+### ~~S5~~ ✅ FIXED — Account page redirects anonymous users client-side — flash-of-content for anonymous sessions
 
-**File:** `src/app/account/page.tsx:15-19`
+**Fixed in:** `src/app/account/page.tsx`
 
-The proxy correctly blocks truly unauthenticated requests to `/account` at the server level. However, users who hold an anonymous Supabase session (`is_anonymous === true`) pass the proxy check and reach the page. The page then detects them via `useEffect` and redirects client-side. This means the server-rendered HTML is briefly visible before the redirect fires — a flash-of-unauthorized-content that also leaks the page structure to anonymous users.
-
-The correct fix is to read the session in the Server Component and call `redirect()` server-side before any HTML is rendered.
+Converted from Client Component to Server Component. Now calls `createClient()` server-side, checks `user.is_anonymous`, and calls `redirect('/auth/login')` before any HTML is rendered. Removed `useEffect` redirect, `useRouter`, and `useSupabaseUser` hook usage. The `logoutAction` form action works natively in Server Components.
 
 ---
 

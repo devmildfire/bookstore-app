@@ -1,29 +1,16 @@
-'use client'
-
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import useSupabaseUser from '@/hooks/useSupabaseUser'
+import { createClient } from '@/lib/supabase/server'
 import Button from '@/components/common/Button'
 import { logoutAction } from '@/lib/auth/actions'
 import styles from './page.module.scss'
 
-export default function AccountPage() {
-  const router = useRouter()
-  const { user, isLoading, isAnonymous } = useSupabaseUser()
+export default async function AccountPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  useEffect(() => {
-    if (!isLoading && isAnonymous) {
-      router.push('/auth/login')
-    }
-  }, [isLoading, isAnonymous, router])
-
-  if (isLoading || isAnonymous) {
-    return (
-      <div className={styles.page}>
-        <p>Загрузка...</p>
-      </div>
-    )
+  if (!user || user.is_anonymous) {
+    redirect('/auth/login')
   }
 
   return (
@@ -32,7 +19,7 @@ export default function AccountPage() {
 
       <div className={styles.section}>
         <h2>Профиль</h2>
-        <p className={styles.email}>{user?.email}</p>
+        <p className={styles.email}>{user.email}</p>
       </div>
 
       <div className={styles.section}>
