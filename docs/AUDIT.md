@@ -127,23 +127,15 @@ The `CardBooks` table has no `category` column. `normalizeBook` assigns `DEFAULT
 
 ---
 
-### A2 🟠 Dead import in root layout
+### ~~A2~~ ✅ FIXED — Dead import in root layout
 
-**File:** `src/app/layout.tsx:4`
-
-```ts
-import { createDataClient } from '@/lib/supabase/server'
-```
-
-`createDataClient` is imported but never used. Only `createClient` (line 3) is used.
+**Fixed in:** `src/app/layout.tsx` — dead `createDataClient` import removed.
 
 ---
 
-### A3 🟡 Homepage double-fetches the full catalog
+### ~~A3~~ ✅ FIXED — Homepage double-fetches the full catalog
 
-**File:** `src/app/page.tsx:18-28`
-
-`getBooks()` is called with default filters (all books, page 1) to populate the `NewProducts` section. This fires the same full-catalog scan as C3. The `NewProducts` section should use a targeted "newest N books" query rather than the full `getBooks` function.
+**Fixed in:** `src/app/page.tsx`, `src/api/books/getLatestBooks.ts` — homepage now calls `getLatestBooks(12)` which skips the parallel authors query and applies DB-side limit.
 
 ---
 
