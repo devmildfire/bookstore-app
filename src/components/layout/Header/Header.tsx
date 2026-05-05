@@ -132,7 +132,7 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className={styles.navTrigger} aria-expanded='false' aria-haspopup='menu'>
+        <button className={styles.navTrigger} aria-haspopup='menu'>
           {item.title}
         </button>
       </DropdownMenu.Trigger>
