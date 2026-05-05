@@ -89,12 +89,16 @@
   padding: 0;
   white-space: pre-wrap;
   transition: color 0.15s ease, opacity 0.15s ease;
-  outline: none;
 
   &:hover {
     color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
   }
 }
 
@@ -116,7 +120,11 @@
   cursor: pointer;
   transition: color 0.15s ease;
   text-decoration: none;
-  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
+  }
 
   &:hover {
     color: $color-accent-on-dark;
@@ -157,7 +165,6 @@
   text-decoration: none;
   padding: $space-1 0;
   cursor: pointer;
-  outline: none;
   transition: color 0.15s ease;
 
   &:hover {
@@ -165,8 +172,9 @@
     text-decoration: none;
   }
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
   }
 }
 
@@ -177,7 +185,6 @@
   padding: $space-1 0;
   padding-left: $space-4;
   cursor: pointer;
-  outline: none;
   transition: color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
@@ -186,8 +193,9 @@
     text-decoration: none;
   }
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
   }
 }
 
