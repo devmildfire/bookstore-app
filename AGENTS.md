@@ -15,8 +15,14 @@ There is no test suite. Lint runs automatically on staged `.ts/.tsx/.js/.jsx` fi
 
 ### Regenerate Supabase types (run from repo root)
 
+Local (Docker):
 ```bash
-supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" > "./src/types/supabase.ts"
+supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" 2>/dev/null > "./src/types/supabase.ts"
+```
+
+Production (once VPS is live):
+```bash
+supabase gen types typescript --db-url "postgresql://postgres:<password>@<vps-ip>:5432/postgres" 2>/dev/null > "./src/types/supabase.ts"
 ```
 
 This overwrites `src/types/supabase.ts` (generated — do not edit manually).

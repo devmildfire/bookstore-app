@@ -35,17 +35,15 @@
 
 The App Router migration is structurally complete — there is no `pages/` directory, all routes live under `src/app/`, conventions are largely followed, and the component library looks solid. `src/proxy.ts` (Next.js 16's correctly-named proxy file, following the v16.0.0 rename from `middleware.ts`) handles session refresh, cart cookie creation, and server-side route protection and is running correctly.
 
-**Issues fixed since initial audit:** C1–C5, C7 (all critical bugs), A1–A5 (architecture), S6, G1 (multi-product-type catalog), Doc1–Doc7 (documentation), and C6/A6 (Cart user isolation migration added).
+**Issues fixed since initial audit:** C1–C5, C7 (all critical bugs), A1–A8 (architecture), S2–S6 (security), V1–V9 (convention violations), D1–D9 (dead code), G1/G6–G10 (gaps), Doc1–Doc7 (documentation). All migrations applied to local DB; types regenerated. Unused dependencies (`cookies-next`, `date-fns`) removed. `.env` credentials wiped.
 
-**Remaining open issues** cluster around four areas:
+**Remaining open issues:**
 
-**Security (S1–S5):** Production credentials in `.env` need rotating (S1 — cannot fix in code). `createOrder` runs client-side with anon key — no server-side price validation (S2). Auth actions lack Zod input validation (S3). `dangerouslyAllowLocalIP: true` is active in production (S4). Account page redirects anonymous users client-side causing a flash (S5).
+**Security:** S1 — credentials in `.env` history may need rotating (Brevo, Telegram, YooKassa). `.env` is gitignored; check `git log --all -- .env` to confirm if ever committed.
 
-**Convention violations (V1–V9):** All fixed — `as any` casts removed (V1), all forms now use RHF + Zod (V2), header auth state corrected (V3), focus outlines restored (V4), `cn()` usage (V5), invalid nesting fixed (V6), `alt` text (V7), static `aria-expanded` removed (V8), `ProductCategory` type (V9).
+**Deferred features (infra/VPS not ready):** G2 (email delivery via Brevo), G3 (YooKassa payment gateway).
 
-**Dead code (D1–D9):** All resolved — `.gitkeep` cleanup (D1, D2), vestigial migration docs deleted (D3), test images deleted (D4), video dirs consolidated (D5), unused order entity deleted (D6), build artifact untracked (D7), stale planning doc deleted (D8), aider history confirmed untracked (D9).
-
-**Deferred gaps (G2–G10):** Email delivery, payment gateway, admin section, order history, missing routes/pages, CI/CD targeting wrong branch, conflicting DB enums.
+**Planned features:** G4 (admin section), G5 (order history in account page).
 
 ---
 
@@ -501,9 +499,9 @@ The deployment workflow (Docker build + SSH deploy) was premature — VPS infra 
 | Package | Status |
 |---------|--------|
 | `uuid` | Only used in `src/proxy.ts` — actively used for cart cookie generation |
-| `cookies-next` | Not imported anywhere in `src/` |
-| `date-fns` | Not imported anywhere in `src/` |
-| `resend` | Installed for Phase 8 email; no implementation yet (G2) |
+| ~~`cookies-next`~~ | ✅ Removed — was not imported anywhere |
+| ~~`date-fns`~~ | ✅ Removed — was not imported anywhere |
+| `resend` | Installed for G2 email delivery; intentionally kept until implemented |
 | `@react-email/components` | Same as above |
 
 ### Radix packages with no current usage
