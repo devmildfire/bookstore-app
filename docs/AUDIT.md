@@ -163,11 +163,16 @@ Both error boundaries now accept `error: Error & { digest?: string }` alongside 
 
 ---
 
-### A6 🟡 Cart migration on login is a stub
+### A6 ⚠️ Cart migration on login is a stub — blocked by C6
 
-**File:** `src/lib/auth/actions.ts:72-74`
+**File:** `src/lib/auth/actions.ts`
 
-`migrateCartAction` has an empty body. Anonymous cart items are lost on login. The modernization plan Phase 7 checkbox "Cart migration on login" is unchecked.
+`migrateCartAction` remains an intentional stub. Implementation is blocked by two unresolved dependencies:
+
+1. **C6 (Cart RLS unverified)** — `Cart` has no `user_id` column. Without a stored user identifier, a service-role UPDATE to move rows between UIDs cannot be written.
+2. **Register flow uses `signUp()`** — this creates a new user with a new UID, orphaning the anonymous cart. The correct fix for the register path is `supabase.auth.updateUser({ email, password })` to upgrade the anonymous user in-place (keeps same UID, cart survives automatically with no migration).
+
+The login path (existing account) requires a `SECURITY DEFINER` DB function once C6 is resolved and a `user_id` column exists. The stub now carries a comment explaining both blockers.
 
 ---
 

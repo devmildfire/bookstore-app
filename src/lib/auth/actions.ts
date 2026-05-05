@@ -33,6 +33,10 @@ export async function logoutAction(): Promise<void> {
   redirect('/')
 }
 
-export async function migrateCartAction(_cartId: string): Promise<AuthError | void> {
-  // Phase 7: update Cart rows where id = cartId to attach to the authenticated user
-}
+// Intentional stub — blocked by two unresolved dependencies:
+// 1. C6: Cart table has no user_id column; RLS policy is unverified/undocumented.
+//    Cannot write UPDATE Cart SET … WHERE user_id = old_uid without that column.
+// 2. Register path should use supabase.auth.updateUser({ email, password }) to upgrade
+//    the anonymous user in-place (keeps same UID → cart survives without migration).
+//    Login path requires a SECURITY DEFINER DB function once C6 is resolved.
+export async function migrateCartAction(_cartId: string): Promise<AuthError | void> {}
