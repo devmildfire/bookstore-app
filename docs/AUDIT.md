@@ -47,53 +47,35 @@ The App Router migration is structurally complete — there is no `pages/` direc
 
 ## 2. Critical Bugs
 
-### C1 🔴 Login session cookie is incompatible with `@supabase/ssr` — auth never persists
+### ~~C1~~ ✅ FIXED — Login session cookie is incompatible with `@supabase/ssr`
 
-**File:** `src/lib/auth/actions.ts`
+**Fixed in:** `src/lib/auth/actions.ts`
 
-`loginAction` manually sets a cookie named `sb-auth-token` with raw JWT data. `@supabase/ssr`'s `createServerClient` reads cookies using its own internal naming (`sb-{project-ref}-auth-token-*` with chunking for large tokens). The manually set cookie is never read back.
-
-**Consequence:** After login, every Server Component that calls `createClient()` sees no session. The anonymous sign-in in `providers.tsx` triggers again. The user is effectively always logged out on the server side, even after a successful login.
-
-**Additional issues in `actions.ts`:**
-- Uses `createClient` directly from `@supabase/supabase-js` instead of the project's `@/lib/supabase/server` abstraction
-- `flowType: 'implicit'` is deprecated in Supabase Auth (PKCE is the current recommendation)
-- `migrateCartAction` has an entirely empty function body (stub never implemented)
+Replaced the manual `@supabase/supabase-js` client + `sb-auth-token` cookie with `createClient()` from `@/lib/supabase/server`. The `@supabase/ssr` adapter now writes and reads session cookies correctly on every auth call. `flowType: 'implicit'` removed — PKCE is the default (fixes S6 too). `logoutAction` now calls `supabase.auth.signOut()` instead of manually deleting the old cookie.
 
 ---
 
-### C2 🔴 `getBooks` fetches the entire catalog (up to 1000 rows) and filters in JavaScript
+### ~~C2~~ ✅ FIXED — `getBooks` fetches the entire catalog and filters in JavaScript
 
-**File:** `src/api/books/getBooks.ts:14-19`
+**Fixed in:** `src/api/books/getBooks.ts`
 
-```ts
-const { data, error } = await supabase
-  .from('CardBooks')
-  .select(bookCatalogSelect)
-  .eq('is_published', true)
-  .limit(1000)
-  .returns<BookServerRow[]>()
-```
-
-All search, category, author, and price filtering happens in `filterBooks()` (line 43) and `sortBooks()` (line 60) in JavaScript, after loading everything from the DB.
-
-**Consequence:** Every catalog page load fetches the entire book database over the network. At >1000 books, results are silently truncated. The `search_books` RPC — which performs proper DB-side filtering — exists but is only used by the header search bar, not the catalog.
+Replaced `.limit(1000)` + JS `filterBooks`/`sortBooks` with DB-side filtering. Price filters use `.gte`/`.lte`, sort uses `.order()` (with `referencedTable: 'Titles'` for title sort), pagination uses `.range()` with `count: 'exact'` for total. Author filter resolves to `title_id` list via a preliminary `Authors` query. Search uses `.filter('Titles.name', 'ilike', ...)` (title-only; header bar covers title+author via `search_books` RPC). Authors list for the filter dropdown comes from a parallel `Authors` query instead of being derived from the loaded rows.
 
 ---
 
-### C3 🔴 `getBook` fetches ALL books to find one by slug
+### ~~C3~~ ✅ FIXED — `getBook` fetches ALL books to find one by slug
 
-**File:** `src/api/books/getBook.ts:14-23`
+**Fixed in:** `src/api/books/getBook.ts`
 
-Fetches the entire published catalog (`.limit(1000)`) then does `allBooks.find((b) => b.slug === slug)`. Should use `.eq('Titles.slug', slug)` or join on the title slug in the query.
+Query now uses `.filter('Titles.slug', 'eq', slug).limit(1)` — fetches exactly one row from the DB instead of the full catalog.
 
 ---
 
-### C4 🔴 `getRelatedBooks` fetches ALL books for every book detail page
+### ~~C4~~ ✅ FIXED — `getRelatedBooks` fetches ALL books for every book detail page
 
-**File:** `src/api/books/getBook.ts:27-48`
+**Fixed in:** `src/api/books/getBook.ts`
 
-Same pattern: fetches up to 1000 books minus the current one, filters by category client-side. A book detail page triggers two full-catalog loads (C3 + C4).
+Now uses `.limit(limit)` with DB-side date ordering. The JS category-preference logic was removed — it was a no-op since all books share the same category (A1), and with proper DB pagination it would have been broken anyway.
 
 ---
 
@@ -294,11 +276,9 @@ The correct fix is to read the session in the Server Component and call `redirec
 
 ---
 
-### S6 🟡 `loginAction` uses deprecated `flowType: 'implicit'`
+### ~~S6~~ ✅ FIXED — `loginAction` used deprecated `flowType: 'implicit'`
 
-**File:** `src/lib/auth/actions.ts:20`
-
-The implicit flow passes access tokens as URL fragments, which can leak via Referer headers or browser history. PKCE (the default for server-side flows in `@supabase/ssr`) is the correct approach.
+Resolved as part of the C1 fix — `flowType: 'implicit'` removed along with the manual client. `@supabase/ssr` defaults to PKCE.
 
 ---
 

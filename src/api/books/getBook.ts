@@ -12,16 +12,16 @@ export async function getBook(slug: string): Promise<Book | null> {
     .from('CardBooks')
     .select(bookCatalogSelect)
     .eq('is_published', true)
+    .filter('Titles.slug', 'eq', slug)
+    .limit(1)
     .returns<BookServerRow[]>()
 
   if (error) {
     throw new Error(`Не удалось загрузить книгу: ${error.message}`)
   }
 
-  const allBooks = (data ?? []).map(normalizeBook)
-  const book = allBooks.find((b) => b.slug === slug)
-
-  return book ?? null
+  const row = data?.[0]
+  return row ? normalizeBook(row) : null
 }
 
 export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
@@ -32,20 +32,14 @@ export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
     .select(bookCatalogSelect)
     .eq('is_published', true)
     .neq('id', Number(book.id))
-    .limit(1000)
+    .order('publish_date', { ascending: false, nullsFirst: false })
+    .order('release_date', { ascending: false, nullsFirst: false })
+    .limit(limit)
     .returns<BookServerRow[]>()
 
   if (error) {
     throw new Error(`Не удалось загрузить похожие книги: ${error.message}`)
   }
 
-  const allBooks = (data ?? []).map(normalizeBook)
-
-  // Prefer books from the same category
-  const sameCategory = allBooks.filter((b) => b.category === book.category && b.id !== book.id)
-  const others = allBooks.filter((b) => b.category !== book.category && b.id !== book.id)
-
-  const related = [...sameCategory, ...others].slice(0, limit)
-
-  return related
+  return (data ?? []).map(normalizeBook)
 }
