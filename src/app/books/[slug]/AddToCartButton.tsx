@@ -2,6 +2,7 @@
 
 import Button from '@/components/common/Button'
 import { useCart } from '@/contexts/cart'
+import type { ProductCategory } from '@/types/database'
 import styles from './AddToCartButton.module.scss'
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   bookName: string
   price: number
   picture?: string | null
-  category: string
+  category: ProductCategory
 }
 
 export default function AddToCartButton({ bookId, inStock, bookName, price, picture, category }: Props) {
