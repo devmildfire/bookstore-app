@@ -40,6 +40,12 @@
   margin-top: $space-2;
 }
 
+.fieldError {
+  color: $color-danger;
+  font-size: $font-size-xs;
+  margin-top: $space-1;
+}
+
 .error {
   color: $color-danger;
   font-size: $font-size-sm;

@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import Link from 'next/link'
 import { useCart } from '@/contexts/cart'
 import CartItemRow from '@/components/cart/CartItemRow'
@@ -9,13 +12,29 @@ import Button from '@/components/common/Button'
 import { createOrderAction } from '@/lib/orders/actions'
 import styles from './page.module.scss'
 
+const deliverySchema = z.object({
+  method: z.enum(['download', 'email']),
+  email: z.string(),
+}).superRefine((val, ctx) => {
+  if (val.method === 'email' && !z.string().email().safeParse(val.email).success) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Введите корректный email', path: ['email'] })
+  }
+})
+
+type DeliveryValues = z.infer<typeof deliverySchema>
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, total, itemCount, updateQuantity, removeItem, clearItems } = useCart()
   const [step, setStep] = useState<'review' | 'payment' | 'processing'>('review')
-  const [deliveryEmail, setDeliveryEmail] = useState('')
-  const [deliveryMethod, setDeliveryMethod] = useState<'download' | 'email'>('download')
   const [error, setError] = useState<string | null>(null)
+
+  const { register, handleSubmit, control, getValues, formState: { errors } } = useForm<DeliveryValues>({
+    resolver: zodResolver(deliverySchema),
+    defaultValues: { method: 'download', email: '' },
+  })
+
+  const deliveryMethod = useWatch({ control, name: 'method' })
 
   const totalFormatted = new Intl.NumberFormat('ru-RU', {
     style: 'currency',
@@ -38,21 +57,18 @@ export default function CheckoutPage() {
   const handlePayment = async () => {
     setStep('processing')
     setError(null)
+    const { method, email } = getValues()
 
     try {
-      // Simulate payment processing
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      const result = await createOrderAction(deliveryMethod === 'email' ? deliveryEmail : undefined)
+      const result = await createOrderAction(method === 'email' ? email : undefined)
       if ('error' in result) throw new Error(result.error)
       const { orderId } = result
       await clearItems()
 
-      const params = new URLSearchParams({
-        orderId: String(orderId),
-        delivery: deliveryMethod,
-      })
-      if (deliveryEmail) params.set('email', deliveryEmail)
+      const params = new URLSearchParams({ orderId: String(orderId), delivery: method })
+      if (method === 'email' && email) params.set('email', email)
 
       router.push(`/checkout/success?${params.toString()}`)
     } catch (err) {
@@ -99,59 +115,45 @@ export default function CheckoutPage() {
           <div className={styles.summary}>
             <h2 className={styles.sectionTitle}>Доставка</h2>
             <div className={styles.summaryCard}>
-              <div className={styles.deliveryOptions}>
-                <label className={styles.radio}>
-                  <input
-                    type='radio'
-                    name='delivery'
-                    value='download'
-                    checked={deliveryMethod === 'download'}
-                    onChange={() => setDeliveryMethod('download')}
-                  />
-                  <span>Скачать после оплаты</span>
-                </label>
-                <label className={styles.radio}>
-                  <input
-                    type='radio'
-                    name='delivery'
-                    value='email'
-                    checked={deliveryMethod === 'email'}
-                    onChange={() => setDeliveryMethod('email')}
-                  />
-                  <span>Отправить на email</span>
-                </label>
-              </div>
+              <form onSubmit={handleSubmit(() => setStep('payment'))}>
+                <div className={styles.deliveryOptions}>
+                  <label className={styles.radio}>
+                    <input type='radio' value='download' {...register('method')} />
+                    <span>Скачать после оплаты</span>
+                  </label>
+                  <label className={styles.radio}>
+                    <input type='radio' value='email' {...register('method')} />
+                    <span>Отправить на email</span>
+                  </label>
+                </div>
 
-              {deliveryMethod === 'email' && (
-                <input
-                  type='email'
-                  placeholder='Ваш email'
-                  value={deliveryEmail}
-                  onChange={(e) => setDeliveryEmail(e.target.value)}
-                  className={styles.emailInput}
-                  required
-                />
-              )}
+                {deliveryMethod === 'email' && (
+                  <div className={styles.emailField}>
+                    <input
+                      type='email'
+                      placeholder='Ваш email'
+                      {...register('email')}
+                      className={styles.emailInput}
+                    />
+                    {errors.email && <p className={styles.fieldError}>{errors.email.message}</p>}
+                  </div>
+                )}
 
-              <div className={styles.divider} />
+                <div className={styles.divider} />
 
-              <div className={styles.summaryRow}>
-                <span>Товары ({itemCount})</span>
-                <span>{totalFormatted}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span className={styles.totalLabel}>К оплате</span>
-                <span className={styles.totalPrice}>{totalFormatted}</span>
-              </div>
+                <div className={styles.summaryRow}>
+                  <span>Товары ({itemCount})</span>
+                  <span>{totalFormatted}</span>
+                </div>
+                <div className={styles.summaryRow}>
+                  <span className={styles.totalLabel}>К оплате</span>
+                  <span className={styles.totalPrice}>{totalFormatted}</span>
+                </div>
 
-              <Button
-                variant='primary'
-                size='lg'
-                className={styles.payBtn}
-                onClick={() => setStep('payment')}
-              >
-                Перейти к оплате
-              </Button>
+                <Button type='submit' variant='primary' size='lg' className={styles.payBtn}>
+                  Перейти к оплате
+                </Button>
+              </form>
             </div>
           </div>
         </div>

@@ -155,6 +155,18 @@
   font-size: $font-size-base;
 }
 
+.emailField {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  margin-bottom: $space-3;
+}
+
+.fieldError {
+  color: $color-danger;
+  font-size: $font-size-xs;
+}
+
 .emailInput {
   width: 100%;
   padding: $space-2 $space-3;
