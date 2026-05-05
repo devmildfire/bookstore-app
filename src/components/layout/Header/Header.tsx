@@ -68,11 +68,17 @@ export default function Header() {
           </Link>
 
           {!isLoading && (
-            <form action={logoutAction}>
-              <button type='submit' className={styles.iconBtn} aria-label='Выйти'>
-                <Profile className={styles.profile}/>
-              </button>
-            </form>
+            isAnonymous ? (
+              <Link href='/auth/login' className={styles.iconBtn} aria-label='Войти'>
+                <Profile className={styles.profile} />
+              </Link>
+            ) : (
+              <form action={logoutAction}>
+                <button type='submit' className={styles.iconBtn} aria-label='Выйти'>
+                  <Profile className={styles.profile} />
+                </button>
+              </form>
+            )
           )}
 
           <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
