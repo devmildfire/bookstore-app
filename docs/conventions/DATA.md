@@ -16,11 +16,11 @@ Fetch directly using the server Supabase client. Do not wrap in TanStack Query.
 
 ```tsx
 // app/books/page.tsx
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { normalizeBook } from '@/entities/book/normalize'
 
 export default async function BooksPage() {
-  const supabase = createServerClient()
+  const supabase = await createClient()
   const { data, error } = await supabase.from('books').select('*')
   if (error) throw error
   const books = data.map(normalizeBook)
@@ -89,12 +89,12 @@ All Supabase calls go through `src/api/<domain>/` functions — never call Supab
 
 ```ts
 // src/api/books/getBook.ts
-import { createBrowserClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { Book } from '@/entities/book/client'
 
 export async function getBook(id: string): Promise<Book> {
-  const supabase = createBrowserClient()
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('books')
     .select('*, authors(*)')
@@ -122,9 +122,10 @@ Each domain entity in `src/entities/<name>/` has:
 
 ```ts
 // src/entities/book/server.ts
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import type { QueryData } from '@supabase/supabase-js'
 
+const supabase = createClient()
 export const bookQuery = supabase.from('books').select('*, authors(*)')
 export type BookServerRow = QueryData<typeof bookQuery>[number]
 ```
@@ -166,11 +167,11 @@ Server Actions handle mutations that require server-side trust (auth, orders, pa
 // src/lib/auth/actions.ts
 'use server'
 
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function loginAction(formData: FormData) {
-  const supabase = createServerClient()
+  const supabase = await createClient()
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const { error } = await supabase.auth.signInWithPassword({ email, password })

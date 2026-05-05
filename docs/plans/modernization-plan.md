@@ -119,7 +119,7 @@ Update status as you work. A phase is complete only when every checkbox in its s
 | 5 | Book Catalog & Filters | ✅ Complete | Server-rendered `/books` catalog with URL filters, sorting, pagination, loading/error states |
 | 6 | Book Detail Page | ✅ Complete | Server Component with cover, info, breadcrumbs, related books, loading/error states, SEO metadata |
 | 7 | Cart System | ✅ Complete | CartContext, TanStack Query hooks, cart page, CartItemRow, Header badge, DB-backed |
-| 8 | Checkout & Delivery | ✅ Complete | Multi-step checkout, payment simulation, order creation, success page |
+| 8 | Checkout & Delivery | 🔄 In progress | UI shell exists; payment is simulated, order creation broken (schema mismatch), no email/download |
 | 9 | User Auth & Account | 🔲 Not started | |
 | 10 | Admin Section | 🔲 Not started | Lowest priority — do last |
 | 11 | CI/CD & Deployment | 🔲 Not started | Future work |

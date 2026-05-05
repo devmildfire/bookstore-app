@@ -85,7 +85,7 @@ Available mixins:
 
 | Mixin | Purpose |
 |-------|---------|
-| `section-title` | Cheque display heading at 57px with full responsive scaling |
+| `section-title` | Cheque display heading at 57px with full responsive scaling (⚠ `@font-face` for Cheque lives in `Slider.module.scss` — move to `globals.scss`) |
 | `text-body` | Base body text (16px, Inter) |
 | `text-body-lg` | Large body text (18px) |
 | `text-body-sm` | Small body text (14px) |

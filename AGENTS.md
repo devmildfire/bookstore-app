@@ -16,56 +16,51 @@ There is no test suite. Lint runs automatically on staged `.ts/.tsx/.js/.jsx` fi
 ### Regenerate Supabase types (run from repo root)
 
 ```bash
-supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" > "./api/books/types.ts"; node --env-file .env ./src/utils/createEnumsFile.cjs
+supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" > "./src/types/supabase.ts"
 ```
 
-This overwrites `api/books/types.ts` (generated — do not edit manually) and regenerates enum files from the database schema.
+This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
 ## Architecture
 
 ### Stack
 
-- **Next.js 14** (Pages Router, Russian locale only: `i18n.locales: ['ru']`)
+- **Next.js 16.2.4** (App Router, Russian content — no i18n framework, locale is handled by content only)
 - **Supabase** for database + auth (anonymous login on first visit, promoting to real user on account creation)
-- **MobX** (`makeAutoObservable`) for client state; **React Query** for server-state caching
-- **Tailwind CSS** + **shadcn/ui** (Radix primitives) + **styled-components** (legacy, being phased out)
-- **Redux Toolkit** present as a dependency but not actively used
-
-Root redirects `/` → `/books` (configured in `next.config.js`).
+- **TanStack Query v5** for server-state caching and client-side data fetching
+- **SCSS Modules** for all styling; **Radix UI** primitives for accessible components
+- No MobX, no Tailwind, no styled-components, no Redux in the codebase
 
 ### Directory layout
 
 ```
-pages/          Next.js routes (Pages Router)
-api/            Supabase client + typed API modules (NOT Next.js API routes — those live in pages/api/)
 src/
+  app/          Next.js App Router routes (layout.tsx, page.tsx, error.tsx per segment)
+    account/    User account page
+    auth/       login/ and register/ routes
+    books/      Catalog ([slug]/ for book detail)
+    cart/       Cart page
+    checkout/   Checkout and success/
+  api/          Supabase API modules — one directory per domain (books/, cart/, orders/)
   assets/       SVGs, images (SVGs imported via @svgr/webpack)
-  components/   UI components, grouped by page; Common/ for shared; Popups/ for modals
+  components/   UI components, grouped by domain; common/ for shared
   consts/       Named constant exports, one file per domain
   contexts/     React contexts — context.ts + provider.ts + index.ts per context
   entities/     Domain types split into client.ts / server.ts / normalize.ts / validation.ts
   hooks/        Custom hooks, one per file, default export
-  layouts/      Page layout wrappers; pages declare getLayout on the component
-  lib/          Small utilities (getLocalBase64, Supabase helpers)
-  models/       Enums and model types (books, etc.) — some auto-generated
-  mocks/        Static mock data
-  store/
-    globals/    RootStore singleton (LoadingStageModel for app-level loading state)
-    locals/     Feature stores (dashboard: TitlesStore, FiltersStore, AdminStore, etc.)
-    models/     MobX model classes (TitleModel, AuthorModel, LoadingStageModel)
-    interfaces/ ILocalStore — every local store must implement destroy()
-  styles/       globals.css and shared style tokens
-  types/        Shared TypeScript types; page.ts exports NextPageWithLayout
-  utils/        Utility functions, default exports
+  lib/          Helpers: auth/actions.ts, supabase/client.ts + server.ts, storage.ts, etc.
+  styles/       globals.scss and shared style tokens
+  types/        Shared TypeScript types; supabase.ts is generated — do not edit manually
+  utils/        Utility functions, default exports (currently empty placeholder)
 ```
 
 ### Import alias
 
-`@/*` maps to `src/*`. External API modules are imported as `api/...` (no alias).
+`@/*` maps to `src/*`. API modules live in `src/api/` and are imported as `@/api/...`.
 
 ### State management pattern
 
-Local stores live under `src/store/locals/` and implement `ILocalStore` (requires `destroy()`). They use `makeAutoObservable` and are typically instantiated as module-level singletons (e.g. `titlesStore`, `filtersStore`) or provided via React context. `_app.tsx` bootstraps `titlesStore.load()` on mount and gates rendering behind `titlesStore.isLoaded`.
+There is no global client-side state library. Server state is managed by TanStack Query (cache keys, mutations, invalidation). Local UI state uses `useState`/`useReducer` in components or React context for cross-component sharing (see `src/contexts/`). There is no MobX, Redux, or Zustand.
 
 ### Entity / data layer pattern
 
@@ -75,19 +70,15 @@ Each domain entity in `src/entities/<name>/` has:
 - `normalize.ts` — transforms server shape → client shape via `normalizeObject`
 - `validation.ts` — Zod schemas
 
-API calls go through `api/<domain>/` modules that import `supabase` from `api/supabase-client` and call Supabase directly (no REST wrapper layer).
+API calls go through `src/api/<domain>/` modules that import the Supabase client from `@/lib/supabase/client` (browser) or `@/lib/supabase/server` (RSC / Server Actions) and call Supabase directly (no REST wrapper layer).
 
 ### Layout system
 
-Pages that need a shell declare `getLayout` on the page component:
-```ts
-MyPage.getLayout = (page) => <PageLayout>{page}</PageLayout>;
-```
-`_app.tsx` calls `Component.getLayout ?? ((page) => page)` to apply it.
+Layouts use the App Router convention: each route segment can have a `layout.tsx` that wraps its children. The root layout (`src/app/layout.tsx`) sets the HTML shell, loads fonts, and renders `<Header>` and the `Providers` wrapper. There is no `getLayout` pattern — that was a Pages Router convention.
 
 ### Auth flow
 
-On app load, `_app.tsx` checks for an existing Supabase session. If none exists it calls `supabase.auth.signInAnonymously()`, attaching the cart cookie UUID to `user.user_metadata.cartID`. Real accounts are created via `/createaccount`.
+On app load, `src/app/providers.tsx` checks for an existing Supabase session client-side. If none exists it calls `supabase.auth.signInAnonymously()`. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`.
 
 ## Storage & Images
 

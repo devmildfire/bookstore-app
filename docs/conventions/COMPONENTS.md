@@ -167,21 +167,32 @@ export default function LoginForm() {
 Pages that need a shell declare layout in `app/<route>/layout.tsx`.
 Do not replicate layout markup per page — compose through layout files.
 
+Current structure (flat — no route groups yet):
+
 ```
 app/
-  layout.tsx            ← root layout (fonts, providers, globals.scss)
+  layout.tsx            ← root layout (fonts, providers, globals.scss, Header)
+  page.tsx              ← homepage
+  books/
+  account/
+  auth/
+  cart/
+  checkout/
+```
+
+Intended future structure using route groups (not yet implemented):
+
+```
+app/
+  layout.tsx            ← root layout
   (shop)/
     layout.tsx          ← PageLayout (header + footer)
     books/
-      page.tsx
     cart/
-      page.tsx
   (protected)/
-    layout.tsx          ← auth guard + account shell
+    layout.tsx          ← server-side auth guard + account shell
     account/
-      page.tsx
   (admin)/
     layout.tsx          ← admin auth guard + admin shell
     admin/
-      page.tsx
 ```
