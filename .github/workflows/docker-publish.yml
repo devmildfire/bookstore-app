@@ -1,79 +1,34 @@
-name: publish
-run-name: ${{ github.actor }} - publish - pull - deploy frvrlop
+name: CI
 
 on:
   push:
-    branches: ['develop']
-
-env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
-  # IMAGE_NAME: ${{ github.actor }}/<image-name>:latest
-  # IMAGE_NAME: ${{ github.actor }}/chtivo-next
-  IMAGE_NAME: ${{ github.repository }}
-  NEXT_PUBLIC_SUPABASE_URL: ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
-  SUPABASE_SERVICE_ROLE_KEY: ${{secrets.SUPABASE_SERVICE_ROLE_KEY}}
-
-  SHOP_ID: ${{secrets.SHOP_ID}}
-  ROBOPASS_ONE: ${{secrets.ROBOPASS_ONE}}
-  ROBOPASS_TWO: ${{secrets.ROBOPASS_TWO}}
-  BREVO_APIKEY: ${{secrets.BREVO_APIKEY}}
-
-  TELEGRAM_BOT_APIKEY: ${{secrets.TELEGRAM_BOT_APIKEY}}
-  TELEGRAM_BOT_CHAT_ID: ${{secrets.TELEGRAM_BOT_CHAT_ID}}
+    branches: ['update', 'main', 'staging']
+  pull_request:
+    branches: ['main', 'staging']
 
 jobs:
-  publish:
-    name: publish image
+  lint-and-build:
+    name: Lint & Build
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Lint
+        run: npm run lint
 
-      - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # port: ${{ secrets.PORT }}
-          port: 22
-          script: |
-            cd ${{ secrets.WORK_DIR }}
-            cd chtivo-next
-            echo "${{ env.IMAGE_NAME }}"
-            echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-            echo "tags ${{ steps.meta.outputs.tags }}"
-            echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker stop chtivo-next
-            docker rm chtivo-next
-            docker rmi ${{ steps.meta.outputs.tags }}
-            docker pull ${{ steps.meta.outputs.tags }}
-            docker run -d --restart unless-stopped --name chtivo-next -p 3000:3000 --network supabase_default ${{ steps.meta.outputs.tags }}
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

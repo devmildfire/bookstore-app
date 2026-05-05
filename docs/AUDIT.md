@@ -484,17 +484,9 @@ The plan specifies a failure/retry page but it doesn't exist. Payment simulation
 
 ---
 
-### G9 — CI/CD triggers on `develop` branch, active branch is `update`
+### ~~G9~~ ✅ FIXED — CI/CD workflow replaced with lint + build check
 
-**File:** `.github/workflows/docker-publish.yml:5`
-
-```yaml
-on:
-  push:
-    branches: ['develop']
-```
-
-The active development branch (`update`) will never trigger CI. The workflow also runs `docker stop chtivo-next` without a `|| true` guard, which will fail on first deploy (container doesn't exist yet). The `docker run` command has no env var injection — the application's env vars would not be available in production containers.
+The deployment workflow (Docker build + SSH deploy) was premature — VPS infra not ready, and `update` is a feature branch that should never deploy. Replaced with a lightweight lint + build CI job that triggers on push to `update`, `main`, `staging` and on PRs targeting `main`/`staging`. Deployment steps removed entirely until infra is provisioned.
 
 ---
 
