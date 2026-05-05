@@ -1,15 +1,30 @@
 'use server'
 
+import { z } from 'zod'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 type AuthError = { error: string }
 type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
 
-export async function loginAction(_prev: AuthError | null, formData: FormData): Promise<AuthError | null> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+const loginSchema = z.object({
+  email: z.string().email('Введите корректный email'),
+  password: z.string().min(1, 'Введите пароль'),
+})
 
+const registerSchema = z.object({
+  email: z.string().email('Введите корректный email'),
+  password: z.string().min(6, 'Пароль должен содержать не менее 6 символов'),
+})
+
+export async function loginAction(_prev: AuthError | null, formData: FormData): Promise<AuthError | null> {
+  const parsed = loginSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const { email, password } = parsed.data
   const supabase = await createClient()
 
   // Capture anonymous session before it is replaced by signInWithPassword
@@ -28,9 +43,13 @@ export async function loginAction(_prev: AuthError | null, formData: FormData): 
 }
 
 export async function registerAction(_prev: AuthError | null, formData: FormData): Promise<AuthError | null> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const parsed = registerSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
+  const { email, password } = parsed.data
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

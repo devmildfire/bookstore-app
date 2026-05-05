@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useCart } from '@/contexts/cart'
 import CartItemRow from '@/components/cart/CartItemRow'
 import Button from '@/components/common/Button'
-import { createOrder } from '@/api/orders'
+import { createOrderAction } from '@/lib/orders/actions'
 import styles from './page.module.scss'
 
 export default function CheckoutPage() {
@@ -43,7 +43,9 @@ export default function CheckoutPage() {
       // Simulate payment processing
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      const { orderId } = await createOrder(items, deliveryMethod === 'email' ? deliveryEmail : undefined)
+      const result = await createOrderAction(deliveryMethod === 'email' ? deliveryEmail : undefined)
+      if ('error' in result) throw new Error(result.error)
+      const { orderId } = result
       await clearItems()
 
       const params = new URLSearchParams({

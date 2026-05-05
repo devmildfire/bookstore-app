@@ -212,31 +212,29 @@ Old Robokassa keys are also present in commented-out lines, which appear in `git
 
 ---
 
-### S2 🟠 `createOrder` is called from a Client Component via browser Supabase
+### ~~S2~~ ✅ FIXED — `createOrder` is called from a Client Component via browser Supabase
 
-**File:** `src/app/checkout/page.tsx:46`, `src/api/orders/createOrder.ts`
+**Fixed in:** `src/lib/orders/actions.ts`, `src/app/checkout/page.tsx`
 
-Order creation runs in the browser using the anon key Supabase client. There is no server-side validation of cart contents, pricing, or ownership. Any authenticated user can craft a Supabase insert to create arbitrary order records. Order creation must move to a Server Action with validation.
+`createOrderAction` is a Server Action that reads the cart directly from the DB server-side (`supabase.from('Cart').select('*')`) — client-provided items and prices are never trusted. Verifies the user is authenticated before proceeding. Checkout page now calls `createOrderAction(deliveryEmail)` instead of the old browser-side `createOrder`.
 
----
-
-### S3 🟠 Auth Server Actions have no input validation
-
-**File:** `src/lib/auth/actions.ts:12-25`, `47-64`
-
-`loginAction` and `registerAction` read form fields with `formData.get('email') as string` and pass them directly to Supabase. There is no Zod validation. The HTML `minLength=6` on the register password input is client-only and trivially bypassed.
+The original `src/api/orders/createOrder.ts` is now dead code (D-series).
 
 ---
 
-### S4 🟠 `dangerouslyAllowLocalIP: true` is in the production image config path
+### ~~S3~~ ✅ FIXED — Auth Server Actions have no input validation
 
-**File:** `next.config.ts:8`
+**Fixed in:** `src/lib/auth/actions.ts`
 
-```ts
-dangerouslyAllowLocalIP: true,
-```
+`loginAction` and `registerAction` now parse form data through Zod schemas before passing to Supabase. `loginSchema` validates email format and non-empty password. `registerSchema` additionally enforces minimum 6-character password server-side.
 
-This option is not gated by `isProduction` (unlike `basePath`/`assetPrefix`). It is active in the production Docker image, potentially allowing SSRF via `next/image` to internal network addresses.
+---
+
+### ~~S4~~ ✅ FIXED — `dangerouslyAllowLocalIP: true` is in the production image config path
+
+**Fixed in:** `next.config.ts`
+
+Option is now gated: `...(!isProduction && { dangerouslyAllowLocalIP: true })` — disabled in production builds, active only in development.
 
 ---
 

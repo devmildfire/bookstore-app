@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     assetPrefix: '/bookstore-app',
   }),
   images: {
-    dangerouslyAllowLocalIP: true,
+    ...(!isProduction && { dangerouslyAllowLocalIP: true }),
     remotePatterns: [
       // Supabase Cloud — matches any project subdomain
       {
