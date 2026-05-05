@@ -33,15 +33,19 @@
 
 ## 1. Executive Summary
 
-The App Router migration is structurally complete — there is no `pages/` directory, all routes live under `src/app/`, conventions are largely followed, and the component library looks solid. `src/proxy.ts` (Next.js 16's correctly-named proxy file, following the v16.0.0 rename from `middleware.ts`) handles session refresh, cart cookie creation, and server-side route protection and is running correctly. However, several systems that appear to be implemented are actually broken at runtime, and the codebase contains at least one serious credential leak. The core issues cluster around three areas:
+The App Router migration is structurally complete — there is no `pages/` directory, all routes live under `src/app/`, conventions are largely followed, and the component library looks solid. `src/proxy.ts` (Next.js 16's correctly-named proxy file, following the v16.0.0 rename from `middleware.ts`) handles session refresh, cart cookie creation, and server-side route protection and is running correctly.
 
-**Auth session cannot round-trip.** `loginAction` creates a Supabase session but stores it in a custom cookie (`sb-auth-token`) that `@supabase/ssr`'s `createServerClient` never reads. The server always sees the user as unauthenticated after login. Auth server actions also bypass Zod validation and use the deprecated implicit flow.
+**Issues fixed since initial audit:** C1–C5, C7 (all critical bugs), A1–A5 (architecture), S6, G1 (multi-product-type catalog), Doc1–Doc7 (documentation), and C6/A6 (Cart user isolation migration added).
 
-**Data fetching is not scalable.** `getBooks`, `getBook`, and `getRelatedBooks` each load the entire `CardBooks` table (up to 1000 rows) and do all filtering/pagination in JavaScript. The `search_books` RPC that does proper DB-side filtering exists but is only used by the search bar, not the catalog.
+**Remaining open issues** cluster around four areas:
 
-**Order creation is broken.** `createOrder` inserts against columns that don't exist in the DB schema (`total`, `delivery_method`, `delivery_email` instead of `summ`), hidden by `as any` casts. The checkout flow fails at runtime after the payment simulation step.
+**Security (S1–S5):** Production credentials in `.env` need rotating (S1 — cannot fix in code). `createOrder` runs client-side with anon key — no server-side price validation (S2). Auth actions lack Zod input validation (S3). `dangerouslyAllowLocalIP: true` is active in production (S4). Account page redirects anonymous users client-side causing a flash (S5).
 
-**Production credentials are in `.env`**, which is gitignored but has a confirmed history of being leaked. The keys need rotating.
+**Convention violations (V1–V9):** Remaining `as any` casts (V1), forms bypass React Hook Form + Zod (V2), header auth state display (V3), accessibility regressions in focus handling and ARIA (V4, V8), and several smaller UI/type issues (V5–V7, V9).
+
+**Dead code (D1–D9):** Empty `utils/` directory, stale `.gitkeep` files, vestigial docs, test assets, unused entity layer, tracked build artifact.
+
+**Deferred gaps (G2–G10):** Email delivery, payment gateway, admin section, order history, missing routes/pages, CI/CD targeting wrong branch, conflicting DB enums.
 
 ---
 
@@ -57,9 +61,9 @@ Replaced the manual `@supabase/supabase-js` client + `sb-auth-token` cookie with
 
 ### ~~C2~~ ✅ FIXED — `getBooks` fetches the entire catalog and filters in JavaScript
 
-**Fixed in:** `src/api/books/getBooks.ts`
+**Fixed in:** `src/api/books/getBooks.ts`, `supabase/migrations/20260505000000_catalog_products.sql`
 
-Replaced `.limit(1000)` + JS `filterBooks`/`sortBooks` with DB-side filtering. Price filters use `.gte`/`.lte`, sort uses `.order()` (with `referencedTable: 'Titles'` for title sort), pagination uses `.range()` with `count: 'exact'` for total. Author filter resolves to `title_id` list via a preliminary `Authors` query. Search uses `.filter('Titles.name', 'ilike', ...)` (title-only; header bar covers title+author via `search_books` RPC). Authors list for the filter dropdown comes from a parallel `Authors` query instead of being derived from the loaded rows.
+Replaced `.limit(1000)` + JS filtering with a call to the `get_catalog_books` RPC — all filtering (search, category, author, price range), sorting, and pagination happen in PostgreSQL. Returns `total_count` via window function so the catalog page gets accurate pagination without a second query.
 
 ---
 
@@ -67,7 +71,7 @@ Replaced `.limit(1000)` + JS `filterBooks`/`sortBooks` with DB-side filtering. P
 
 **Fixed in:** `src/api/books/getBook.ts`
 
-Query now uses `.filter('Titles.slug', 'eq', slug).limit(1)` — fetches exactly one row from the DB instead of the full catalog.
+Now calls `get_catalog_book_by_slug` RPC — DB-side filter by slug, EBook-first ordering, returns only matching rows.
 
 ---
 
@@ -75,7 +79,7 @@ Query now uses `.filter('Titles.slug', 'eq', slug).limit(1)` — fetches exactly
 
 **Fixed in:** `src/api/books/getBook.ts`
 
-Now uses `.limit(limit)` with DB-side date ordering. The JS category-preference logic was removed — it was a no-op since all books share the same category (A1), and with proper DB pagination it would have been broken anyway.
+Now calls `get_catalog_books` RPC with `result_limit` — DB-side limit, no full-table scan.
 
 ---
 
@@ -89,17 +93,19 @@ Note: order creation still runs client-side with the anon key (S2 — deferred).
 
 ---
 
-### C6 ⚠️ Cart queries have no explicit user filter — correctness depends entirely on unverified RLS
+### ~~C6~~ ✅ FIXED — Cart queries have no explicit user filter — correctness depends entirely on unverified RLS
 
-**File:** `src/api/cart/getCart.ts:11`
+**Fixed in:** `supabase/migrations/20260505100000_cart_user_isolation.sql`, `src/lib/auth/actions.ts`
 
-```ts
-const { data, error } = await supabase.from('Cart').select('*')
-```
+Migration adds:
+- `user_id uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE` to `Cart`
+- Composite primary key `(user_id, id)` — multiple users can each hold the same product
+- Four explicit RLS policies (SELECT / INSERT / UPDATE / DELETE) all keyed to `user_id = auth.uid()`
+- `migrate_cart(from_user_id, to_user_id)` SECURITY DEFINER function: merges anonymous cart items into the authenticated user's cart on login, with per-call auth check (`to_user_id = auth.uid()`)
 
-No WHERE clause. User isolation depends entirely on Supabase RLS policies keyed to the current auth context. The proxy sets the cart cookie and the anon session is established, so RLS does receive an auth context — but the Cart RLS policies are not present in the migration files in this repo and therefore cannot be audited or verified here. If a policy is misconfigured or missing, any authenticated user could read or mutate another user's cart.
+`loginAction` now captures the anonymous user's ID before `signInWithPassword`, then calls `migrateCartAction` best-effort after sign-in. `registerAction` now calls `supabase.auth.updateUser({ email, password })` for anonymous sessions — upgrades in-place, keeping the same UID so the cart survives without any migration.
 
-The `Cart` table schema (from generated types) has no `user_id` column — the user link is implicit through RLS, which is not visible in the repo migrations and has not been verified.
+**Note:** Supabase types must be regenerated after this migration is applied to pick up the new `user_id` column and `migrate_cart` RPC in TypeScript.
 
 ---
 
@@ -155,16 +161,13 @@ Both error boundaries now accept `error: Error & { digest?: string }` alongside 
 
 ---
 
-### A6 ⚠️ Cart migration on login is a stub — blocked by C6
+### ~~A6~~ ✅ FIXED — Cart migration on login is a stub
 
-**File:** `src/lib/auth/actions.ts`
+**Fixed in:** `src/lib/auth/actions.ts`, `supabase/migrations/20260505100000_cart_user_isolation.sql` (C6 fix)
 
-`migrateCartAction` remains an intentional stub. Implementation is blocked by two unresolved dependencies:
+`migrateCartAction(fromUserId)` is now implemented: calls the `migrate_cart` SECURITY DEFINER RPC which merges cart items from the anonymous user into the authenticated user, merging quantities on conflict.
 
-1. **C6 (Cart RLS unverified)** — `Cart` has no `user_id` column. Without a stored user identifier, a service-role UPDATE to move rows between UIDs cannot be written.
-2. **Register flow uses `signUp()`** — this creates a new user with a new UID, orphaning the anonymous cart. The correct fix for the register path is `supabase.auth.updateUser({ email, password })` to upgrade the anonymous user in-place (keeps same UID, cart survives automatically with no migration).
-
-The login path (existing account) requires a `SECURITY DEFINER` DB function once C6 is resolved and a `user_id` column exists. The stub now carries a comment explaining both blockers.
+`loginAction` captures the anonymous UID before `signInWithPassword` and calls `migrateCartAction` best-effort after sign-in. `registerAction` uses `supabase.auth.updateUser()` for anonymous sessions (in-place upgrade, same UID, no migration needed) and falls back to `signUp()` for non-anonymous sessions.
 
 ---
 
@@ -364,9 +367,9 @@ The `category` prop is typed as `string`, losing the enum constraint. Should be 
 
 ---
 
-### V10 🟡 `docs/conventions/DATA.md` names the Supabase helpers inconsistently
+### ~~V10~~ ✅ FIXED — `docs/conventions/DATA.md` names the Supabase helpers inconsistently
 
-`DATA.md` examples use `createBrowserClient` and `createServerClient` as function names, but the actual files export `createClient` (both `src/lib/supabase/client.ts` and `server.ts`). The naming mismatch will confuse developers following the docs.
+**Fixed in:** `docs/conventions/DATA.md` (Doc4 fix) — all helper names corrected to `createClient()`.
 
 ---
 
@@ -436,74 +439,59 @@ These are Aider (AI coding assistant) history files. They are gitignored (via `.
 
 ## 7. Documentation Gaps & Mistakes
 
-### Doc1 🔴 `AGENTS.md` / `CLAUDE.md` is significantly outdated
+### ~~Doc1~~ ✅ FIXED — `AGENTS.md` / `CLAUDE.md` is significantly outdated
 
-The main project documentation file describes the old Pages Router architecture. Key inaccuracies:
+**Fixed in:** `CLAUDE.md` / `AGENTS.md`
 
-| Claim in AGENTS.md | Actual state |
-|-------------------|-------------|
-| "Next.js 14 (Pages Router)" | Next.js 16.2.4, App Router |
-| "Tailwind CSS + shadcn/ui + styled-components (legacy, being phased out)" | None of these are in the codebase; SCSS Modules only |
-| "MobX (`makeAutoObservable`) for client state" | Not in dependencies |
-| "Redux Toolkit present as a dependency but not actively used" | Not in dependencies |
-| "`api/` Supabase client + typed API modules (NOT Next.js API routes — those live in `pages/api/`)" | API modules are now in `src/api/`; `pages/api/` doesn't exist |
-| `i18n.locales: ['ru']` | App Router doesn't use the `i18n` config key |
-| Directory listing references `pages/`, `src/store/`, `src/mocks/`, `src/layouts/` | None of these exist |
-| "External API modules are imported as `api/...` (no alias)" | Now in `src/api/`, imported as `@/api/...` |
-| Supabase types regeneration command outputs to `"./api/books/types.ts"` | Should output to `"./src/types/supabase.ts"` |
-| `node --env-file .env ./src/utils/createEnumsFile.cjs` | This file does not exist |
-| State management pattern describes MobX singleton stores | No MobX in codebase |
+Fully rewritten: Next.js 16.2.4 App Router, SCSS Modules only, TanStack Query v5, no MobX/Redux/Tailwind, correct directory layout, correct `@/api/...` import alias, correct Supabase types regen command, correct auth flow (`providers.tsx` + `src/proxy.ts`).
 
 ---
 
-### Doc2 🟠 Supabase types regeneration command is wrong
+### ~~Doc2~~ ✅ FIXED — Supabase types regeneration command is wrong
 
-**File:** `AGENTS.md` (commands section)
+**Fixed in:** `CLAUDE.md`
 
-```bash
-supabase gen types typescript --db-url "..." > "./api/books/types.ts"
-```
-
-The output path is from the Pages Router era. The generated types now live at `src/types/supabase.ts`. The second command (`createEnumsFile.cjs`) references a file that doesn't exist in `src/utils/`.
+Command now outputs to `./src/types/supabase.ts`. The non-existent `createEnumsFile.cjs` command removed.
 
 ---
 
-### Doc3 🟡 `src/types/supabase.ts` has a stale header comment
+### ~~Doc3~~ ✅ FIXED — `src/types/supabase.ts` has a stale header comment
 
-**File:** `src/types/supabase.ts:1-3`
+**Fixed in:** `src/types/supabase.ts`
 
-```ts
-// Recovered from git history — regenerate with the command in AGENTS.md when DB is accessible.
-// Last generated: 2025 (pre-rewrite)
-```
-
-The types have since been updated (the `featured_books` table is in the file). This comment is misleading. It should either be removed or updated to reflect the current state.
+Stale header replaced with `// Regenerate: see "Regenerate Supabase types" in CLAUDE.md`.
 
 ---
 
-### Doc4 🟡 `docs/conventions/DATA.md` references helper function names that don't exist
+### ~~Doc4~~ ✅ FIXED — `docs/conventions/DATA.md` references helper function names that don't exist
 
-The file shows `createBrowserClient()` and `createServerClient()` as the function names to use. The actual exported names are both `createClient()` (one from `@/lib/supabase/client`, one from `@/lib/supabase/server`). The convention doc also implies a `src/lib/supabase/client.ts` and `server.ts` structure that matches reality, but the function names are wrong throughout.
+**Fixed in:** `docs/conventions/DATA.md`
 
----
-
-### Doc5 🟡 `docs/conventions/COMPONENTS.md` describes route groups that aren't implemented
-
-The layout section shows `app/(shop)/`, `app/(protected)/`, `app/(admin)/` route groups. The actual app has a flat `app/` structure with no route groups. This is a forward-looking pattern that isn't in place yet — the convention doc should note it as the intended target.
+All `createBrowserClient()` / `createServerClient()` occurrences replaced with the correct `createClient()` (both client and server exports). Also resolves V10.
 
 ---
 
-### Doc6 🟡 `docs/plans/modernization-plan.md` Phase 8 status is contradictory
+### ~~Doc5~~ ✅ FIXED — `docs/conventions/COMPONENTS.md` describes route groups that aren't implemented
 
-The progress table marks Phase 8 (Checkout & Delivery) as ✅ Complete. Every checklist item under Phase 8 is unchecked (`[ ]`). The checkout page exists but contains a payment simulation stub, not real implementation.
+**Fixed in:** `docs/conventions/COMPONENTS.md`
+
+Route groups `(shop)`, `(protected)`, `(admin)` labeled as "intended future structure, not yet implemented". Current flat `app/` structure documented.
 
 ---
 
-### Doc7 🟡 `docs/conventions/SCSS.md` references `globals.scss` imported in `app/layout.tsx`
+### ~~Doc6~~ ✅ FIXED — `docs/plans/modernization-plan.md` Phase 8 status is contradictory
 
-The SCSS doc says globals are imported "once in `app/layout.tsx`". This is correct. ✓
+**Fixed in:** `docs/plans/modernization-plan.md`
 
-The doc also mentions a `section-title` mixin described as "Cheque display heading at 57px with full responsive scaling". The `Cheque` font files exist (`public/fonts/Chequeblack.ttf`, `Chequeregular.ttf`) and a `@font-face` declaration does exist — but it lives inside `src/components/common/Slider/Slider.module.scss` rather than `globals.scss`. This means the font is only guaranteed to load when the Slider component renders. Any page using `@include section-title` without a Slider will silently fall back to `sans-serif`. The `@font-face` declaration should be moved to `globals.scss`.
+Phase 8 changed from ✅ Complete → 🔄 In progress with note: "UI shell exists; payment is simulated, order creation broken (schema mismatch), no email/download". Also resolves A4.
+
+---
+
+### ~~Doc7~~ ✅ FIXED — `docs/conventions/SCSS.md` `section-title` mixin has undocumented font dependency
+
+**Fixed in:** `docs/conventions/SCSS.md`
+
+`section-title` mixin annotated: Cheque `@font-face` lives in `Slider.module.scss`, not `globals.scss` — any page using the mixin without a Slider will fall back to `sans-serif` until the declaration is moved to `globals.scss`.
 
 ---
 
