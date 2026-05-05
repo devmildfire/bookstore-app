@@ -74,6 +74,8 @@ Rules:
 - Decorative images: `alt=""`
 
 Remote image domains must be added to `next.config.ts` `images.remotePatterns`.
+For book cover storage rules, including how `Titles.cover` maps to Supabase
+Storage URLs, see `docs/conventions/DATA.md`.
 
 ## Preventing Layout Shift (CLS)
 

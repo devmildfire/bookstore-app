@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
 const INPUT_PATH = join(SCRIPT_DIR, 'scraped-books.json')
+const COVER_MAPPING_PATH = join(SCRIPT_DIR, 'cover-mapping.json')
 const OUTPUT_PATH = join(SCRIPT_DIR, '..', 'supabase', 'seed-books.sql')
 
 const SKIP_SLUGS = new Set([
@@ -81,6 +82,8 @@ function parseReleaseDate(raw) {
 
 function main() {
   const data = JSON.parse(readFileSync(INPUT_PATH, 'utf-8'))
+  const coverMapping = JSON.parse(readFileSync(COVER_MAPPING_PATH, 'utf-8'))
+  const coverBySlug = new Map(coverMapping.map((entry) => [entry.slug, entry.filename]))
   const books = data.books
 
   // Deduplicate authors
@@ -135,7 +138,7 @@ function main() {
     if (ageRestriction === 0) ageRestriction = null
 
     const coverFullUrl = book.detailCoverUrl || book.coverUrl || null
-    const cover = coverFullUrl ? coverFullUrl.split('/').pop() : null
+    const cover = coverBySlug.get(book.slug) ?? (coverFullUrl ? coverFullUrl.split('/').pop() : null)
 
     let authors = book.detailAuthors || (book.listingAuthor ? [book.listingAuthor] : [])
     authors = authors.filter((a) => !Array.from(AUTHOR_BLACKLIST).some((b) => a.includes(b)))

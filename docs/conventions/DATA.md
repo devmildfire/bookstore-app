@@ -159,6 +159,58 @@ export function normalizeBook(raw: BookServerRow): Book {
 }
 ```
 
+## Book Cover Storage
+
+Book cover images are stored in the public Supabase Storage bucket named `covers`.
+The database stores only the storage object filename, not a URL or path.
+
+```txt
+Titles.cover = 'sin-greha.jpg'
+```
+
+Do not store any of these in `Titles.cover`:
+
+```txt
+http://localhost:54321/storage/v1/object/public/covers/sin-greha.jpg
+/storage/v1/object/public/covers/sin-greha.jpg
+/covers/sin-greha.jpg
+book-title-sin-greha.jpg
+01.png
+```
+
+The app turns the filename into a public URL in one place:
+
+```ts
+// src/lib/storage.ts
+getCoverUrl('sin-greha.jpg')
+// => `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/sin-greha.jpg`
+```
+
+All book API paths must normalize rows through `normalizeBook()`, which calls
+`getCoverUrl(raw.title_cover)`. Components should receive `book.coverUrl`; they
+should not construct Supabase Storage URLs themselves.
+
+When adding or changing covers:
+- Upload the image object to the `covers` bucket.
+- Store the exact object filename in `Titles.cover`.
+- Keep `scripts/cover-mapping.json` in sync if the image came from scraped data.
+- Regenerate `supabase/seed-books.sql` with `node scripts/generate-seed-sql.mjs`.
+- If fixing an existing database, add a migration that updates `Titles.cover` to
+  the bare filenames.
+
+To verify local storage consistency:
+
+```sql
+select count(*) as missing_cover_objects
+from public."Titles" t
+left join storage.objects o on o.bucket_id = 'covers' and o.name = t.cover
+where t.cover is not null and o.id is null;
+```
+
+The expected count is `0`. A Supabase Storage `Object not found` response from
+`next/image` usually means `Titles.cover` does not exactly match an object name
+in the `covers` bucket.
+
 ## Server Actions
 
 Server Actions handle mutations that require server-side trust (auth, orders, payments).
