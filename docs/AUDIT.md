@@ -147,15 +147,11 @@ import { createDataClient } from '@/lib/supabase/server'
 
 ---
 
-### A4 🟡 `checkout/page.tsx` marks Phase 8 complete but key requirements are unimplemented
+### ~~A4~~ ✅ FIXED — `checkout/page.tsx` marks Phase 8 complete but key requirements are unimplemented
 
-The modernization plan shows Phase 8 (Checkout & Delivery) as ✅ Complete in the progress table, but every checklist item is unchecked:
-- Payment is simulated with `setTimeout(1500)` — no YooKassa integration
-- No download link generation (Supabase Storage signed URL)
-- No email delivery (Resend)
-- Order creation is broken (C6)
+**Fixed in:** `docs/plans/modernization-plan.md` (Doc6 fix)
 
-The plan's status tracking and the actual implementation are contradictory.
+Phase 8 status changed from ✅ Complete → 🔄 In progress with an accurate note: "UI shell exists; payment is simulated, order creation broken (schema mismatch), no email/download". The remaining work (YooKassa, Resend, signed URL download) is intentionally deferred in G-series gaps.
 
 ---
 
