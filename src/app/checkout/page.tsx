@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import cn from 'classnames'
 import Link from 'next/link'
 import { useCart } from '@/contexts/cart'
 import CartItemRow from '@/components/cart/CartItemRow'
@@ -83,15 +84,15 @@ export default function CheckoutPage() {
 
       {/* Step indicator */}
       <div className={styles.steps}>
-        <div className={`${styles.step} ${step === 'review' ? styles.active : styles.done}`}>
+        <div className={cn(styles.step, step === 'review' ? styles.active : styles.done)}>
           1. Заказ
         </div>
         <div className={styles.stepLine} />
-        <div className={`${styles.step} ${step === 'payment' || step === 'processing' ? styles.active : ''}`}>
+        <div className={cn(styles.step, (step === 'payment' || step === 'processing') && styles.active)}>
           2. Оплата
         </div>
         <div className={styles.stepLine} />
-        <div className={`${styles.step} ${step === 'processing' ? styles.active : ''}`}>
+        <div className={cn(styles.step, step === 'processing' && styles.active)}>
           3. Доставка
         </div>
       </div>
