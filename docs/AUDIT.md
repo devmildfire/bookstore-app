@@ -468,15 +468,15 @@ Added stub pages using a shared `ComingSoon` component for all 8 routes: `/about
 
 ---
 
-### G7 — No `app/not-found.tsx`
+### ~~G7~~ ✅ FIXED — No `app/not-found.tsx`
 
-No global 404 page. Next.js will use its default, which is English-language and unstyled.
+Added styled 404 page with Cheque font "404" heading, subtitle, and link back to homepage.
 
 ---
 
-### G8 — No `app/checkout/failure/page.tsx`
+### ~~G8~~ ✅ FIXED — No `app/checkout/failure/page.tsx`
 
-The plan specifies a failure/retry page but it doesn't exist. Payment simulation only handles the success case.
+Added failure page with error icon, message, and buttons to retry checkout or return to cart.
 
 ---
 
