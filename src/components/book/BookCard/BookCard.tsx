@@ -29,7 +29,7 @@ export default function BookCard({ book, className }: Props) {
           {book.coverUrl ? (
             <Image
               src={book.coverUrl}
-              alt={book.name}
+              alt={`Обложка книги: ${book.name}`}
               fill
               sizes='(max-width: 767px) 45vw, (max-width: 1200px) 30vw, 220px'
               className={styles.image}

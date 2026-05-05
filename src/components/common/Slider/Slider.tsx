@@ -46,7 +46,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                 {item.coverUrl ? (
                   <Image
                     src={item.coverUrl}
-                    alt={item.title}
+                    alt={`Обложка книги: ${item.title}`}
                     width={355}
                     height={533}
                     className={styles.cover}
