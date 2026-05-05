@@ -113,7 +113,7 @@ Extracted `useSearchParams` logic into `CheckoutSuccessContent.tsx` (Client Comp
 
 ## 3. Architecture Issues
 
-### A1 🟠 Category is hardcoded as `'Book2.0'` for every book
+### ~~A1~~ ✅ FIXED — Category was hardcoded as `'Book2.0'` for every book
 
 **File:** `src/entities/book/normalize.ts:5`
 
@@ -527,14 +527,13 @@ The doc also mentions a `section-title` mixin described as "Cheque display headi
 
 These are known incomplete features that are intentionally deferred. Documented here for planning purposes.
 
-### G1 — Database schema covers only `CardBooks` product type
+### ~~G1~~ ✅ FIXED — Multi-product-type catalog support
 
-The DB schema has tables for all product types: `CardBooks`, `Ebooks`, `Audiobooks`, `PrintedBooks`, `BoxSets`, `Subscriptions`, `Courses`, `Magazines`, `E_Magazine_Issues`. The API layer queries only `CardBooks`. Category normalization hardcodes `'Book2.0'` (A1).
+**Fixed in:** `supabase/migrations/20260505000000_catalog_products.sql` + API + entity layer
 
-When multi-product support is added, the entity/API layer will need:
-- A unified product abstraction or per-type entity modules
-- A category discriminator in normalize functions
-- Updated `BookServerRow` type to accommodate multiple table schemas
+Three new SQL functions: `get_catalog_books` (full catalog with all filters/sorts/pagination, unions CardBooks + Ebooks + Audiobooks + PrintedBooks, supports `title_ids` for featured books), `get_catalog_book_by_slug` (single book detail, EBook-first), and updated `search_books` (now searches all types, deduplicates per title).
+
+`BookServerRow` rewritten as the flat RPC row shape. `normalizeBook` updated to use `raw.product_type` — `DEFAULT_CATEGORY = 'Book2.0'` hardcode removed, A1 resolved. All book API functions (`getBooks`, `getBook`, `getRelatedBooks`, `getFeaturedBooks`, `searchBooks`) now call these RPCs.
 
 ---
 

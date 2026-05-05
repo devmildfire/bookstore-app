@@ -1,9 +1,11 @@
 import { createDataClient } from '@/lib/supabase/server'
 import type { Book } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
-import { bookCatalogSelect, type BookServerRow } from '@/entities/book/server'
+import type { BookServerRow } from '@/entities/book/server'
 
 export const featuredBooksQueryKey = ['featuredBooks'] as const
+
+type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
 
 export async function getFeaturedBooks(): Promise<Book[]> {
   const supabase = createDataClient()
@@ -21,21 +23,19 @@ export async function getFeaturedBooks(): Promise<Book[]> {
 
   const titleIds = featured.map((f) => f.title_id)
 
-  const { data, error } = await supabase
-    .from('CardBooks')
-    .select(bookCatalogSelect)
-    .in('title_id', titleIds)
-    .returns<BookServerRow[]>()
+  const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_books', {
+    title_ids: titleIds,
+    result_limit: titleIds.length,
+    result_offset: 0,
+    sort_by: 'newest',
+  })
 
-  if (error) {
-    throw new Error(`Не удалось загрузить избранные книги: ${error.message}`)
-  }
+  if (error) throw new Error(`Не удалось загрузить избранные книги: ${error.message}`)
 
-  const books = (data ?? []).map(normalizeBook)
+  const books = ((data ?? []) as BookServerRow[]).map(normalizeBook)
 
-  const sorted = featured
+  // Restore the explicit featured sort order
+  return featured
     .map((f) => books.find((b) => b.titleId === f.title_id))
     .filter((b): b is Book => b !== undefined)
-
-  return sorted
 }
