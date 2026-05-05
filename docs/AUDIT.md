@@ -89,7 +89,7 @@ Note: order creation still runs client-side with the anon key (S2 — deferred).
 
 ---
 
-### C6 🔴 Cart queries have no explicit user filter — correctness depends entirely on unverified RLS
+### C6 ⚠️ Cart queries have no explicit user filter — correctness depends entirely on unverified RLS
 
 **File:** `src/api/cart/getCart.ts:11`
 
@@ -103,11 +103,11 @@ The `Cart` table schema (from generated types) has no `user_id` column — the u
 
 ---
 
-### C7 🟠 `checkout/success/page.tsx` calls `useSearchParams()` without `Suspense`
+### ~~C7~~ ✅ FIXED — `checkout/success/page.tsx` calls `useSearchParams()` without `Suspense`
 
-**File:** `src/app/checkout/success/page.tsx`
+**Fixed in:** `src/app/checkout/success/`
 
-In Next.js App Router, `useSearchParams()` in a Client Component requires a `<Suspense>` boundary above it, otherwise the build fails or the page is forcibly deoptimized to client-only rendering. This page has neither a `Suspense` wrapper nor a `loading.tsx`.
+Extracted `useSearchParams` logic into `CheckoutSuccessContent.tsx` (Client Component). `page.tsx` is now a Server Component that wraps it in `<Suspense>`.
 
 ---
 
