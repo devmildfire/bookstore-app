@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import type { CartItem } from '@/entities/cart/client'
+import type { DbOrderInsert, DbOrderItemInsert } from '@/types/database'
 
 type CreateOrderResult = {
   orderId: number
@@ -8,35 +9,32 @@ type CreateOrderResult = {
 
 export async function createOrder(items: CartItem[], deliveryEmail?: string): Promise<CreateOrderResult> {
   const supabase = createClient()
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-  // Create the order
+  const orderInsert: DbOrderInsert = {
+    status: 'paid',
+    summ: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    email: deliveryEmail ?? null,
+  }
+
   const { data: order, error: orderError } = await supabase
     .from('Orders')
-    .insert({
-      status: 'paid',
-      total,
-      delivery_method: deliveryEmail ? 'email' : 'download',
-      delivery_email: deliveryEmail ?? null,
-    } as any)
-    .select()
+    .insert(orderInsert)
+    .select('id')
     .single()
 
   if (orderError) throw new Error(`Не удалось создать заказ: ${orderError.message}`)
 
-  // Create order items
-  const orderItems = items.map((item) => ({
+  const orderItems: DbOrderItemInsert[] = items.map((item) => ({
     order_id: order.id,
-    book_id: item.id,
     name: item.name,
     price: item.price,
     quantity: item.quantity,
-    category: item.category,
+    summ: item.price * item.quantity,
+    discount: item.discount,
+    type: item.category,
   }))
 
-  const { error: itemsError } = await supabase
-    .from('OrderItems')
-    .insert(orderItems as any)
+  const { error: itemsError } = await supabase.from('OrderItems').insert(orderItems)
 
   if (itemsError) throw new Error(`Не удалось сохранить товары заказа: ${itemsError.message}`)
 

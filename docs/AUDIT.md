@@ -79,26 +79,13 @@ Now uses `.limit(limit)` with DB-side date ordering. The JS category-preference 
 
 ---
 
-### C5 🔴 `createOrder` inserts columns that don't exist in the `Orders` schema
+### ~~C5~~ ✅ FIXED — `createOrder` inserts columns that don't exist in the `Orders` schema
 
-**File:** `src/api/orders/createOrder.ts:16-21`
+**Fixed in:** `src/api/orders/createOrder.ts`
 
-```ts
-.insert({
-  status: 'paid',
-  total,                  // ← doesn't exist; schema has `summ`
-  delivery_method: ...,   // ← doesn't exist
-  delivery_email: ...,    // ← doesn't exist
-} as any)
-```
+Column mapping corrected: `total` → `summ`, `delivery_email` → `email`, `delivery_method` removed (no such column). `OrderItems` insert corrected: `book_id` removed, `category` → `type`, `summ` (line total) and `discount` added. Both inserts now use generated `DbOrderInsert` / `DbOrderItemInsert` types — no `as any` casts. Also removes two of the four V1 `as any` instances.
 
-The actual `Orders` table has: `adress` (typo), `alerts_sent`, `cart_id`, `code`, `email`, `name`, `phone`, `status`, `summ`. The `as any` cast suppresses the TypeScript error.
-
-Similarly, the `OrderItems` insert uses `book_id` which is absent from the schema.
-
-**Consequence:** Order creation fails at runtime with a Supabase error. The checkout flow is completely broken past the payment simulation step.
-
-**Related:** `src/entities/order/normalize.ts` defines `OrderRaw` with `user_id`, `total`, `delivery_method`, `delivery_email` — none of which correspond to the actual DB columns. The order entity layer is entirely mismatched from the schema.
+Note: order creation still runs client-side with the anon key (S2 — deferred).
 
 ---
 
@@ -284,16 +271,14 @@ Resolved as part of the C1 fix — `flowType: 'implicit'` removed along with the
 
 ## 5. Convention Violations
 
-### V1 🟠 Multiple `as any` casts violate the no-any rule
+### V1 🟡 Remaining `as any` casts violate the no-any rule
 
-| File | Line | Cast |
-|------|------|------|
-| `src/api/books/searchBooks.ts` | 40 | `(supabase.rpc as any)('search_books', ...)` |
-| `src/api/cart/addToCart.ts` | 34 | `category: item.category as any` |
-| `src/api/orders/createOrder.ts` | 21 | `} as any)` — hides schema mismatch (see C6) |
-| `src/api/orders/createOrder.ts` | 39 | `.insert(orderItems as any)` — hides schema mismatch |
+| File | Cast | Fix |
+|------|------|-----|
+| `src/api/books/searchBooks.ts` | `(supabase.rpc as any)('search_books', ...)` | Regenerate Supabase types to include the RPC |
+| `src/api/cart/addToCart.ts` | `category: item.category as any` | Align Cart insert type with `ProductCategory` enum |
 
-The `searchBooks.ts` cast exists because the generated Supabase types don't include `search_books` — the migration was applied after the types were generated. Regenerating types would fix this one without an `any` cast.
+The two `createOrder.ts` casts were removed as part of C5. The `searchBooks.ts` cast will be eliminated when Supabase types are regenerated after the `search_books` migration is applied.
 
 ---
 
