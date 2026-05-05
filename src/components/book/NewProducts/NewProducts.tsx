@@ -21,10 +21,8 @@ export default function NewProducts({ books }: Props) {
         ))}
       </div>
       <div className={styles.buttonContainer}>
-        <Link href="/books">
-          <button type="button" className={styles.button}>
-            Перейти в книжную лавку
-          </button>
+        <Link href='/books' className={styles.button}>
+          Перейти в книжную лавку
         </Link>
       </div>
     </section>
