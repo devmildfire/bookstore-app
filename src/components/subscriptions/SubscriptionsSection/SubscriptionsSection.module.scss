@@ -51,6 +51,9 @@
   font-size: 16px;
   line-height: 1.5;
   color: $color-text-on-dark;
+  max-width: 850px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 60px;
 
   @include breakpoint(tablet) {
