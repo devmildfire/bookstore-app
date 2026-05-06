@@ -146,6 +146,7 @@
   color: $color-text-on-dark;
   margin-bottom: 24px;
   text-transform: uppercase;
+  text-align: center;
 
   @include breakpoint(tablet) {
     font-size: 20px;
@@ -166,6 +167,8 @@
   flex-direction: column;
   gap: 20px;
   flex: 1;
+  align-self: center;
+  width: fit-content;
 }
 
 .perk {
