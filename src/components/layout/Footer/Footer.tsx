@@ -124,10 +124,10 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className={styles.credit}>
+          <a href="https://t.me/russiandino" className={styles.credit} target="_blank" rel="noopener noreferrer" aria-label="Russkiy Dinozavr on Telegram">
             <MrdIcon className={styles.mrdIcon} />
             <span className={styles.creditText}>made by<br/>Russkiy<br/>Dinozavr</span>
-          </div>
+          </a>
         </div>
       </div>
 
