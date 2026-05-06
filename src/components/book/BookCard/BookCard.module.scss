@@ -3,9 +3,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  background-color: $color-bg-surface;
-  border-radius: $radius-lg;
-  overflow: hidden;
+  background: transparent;
   transition: transform 0.2s ease;
 
   &:hover {
@@ -16,7 +14,6 @@
 .coverLink {
   display: block;
   text-decoration: none;
-  flex: 1;
 }
 
 .coverWrap {
@@ -24,6 +21,7 @@
   aspect-ratio: 2 / 3;
   background-color: $color-bg-muted;
   overflow: hidden;
+  border-radius: $radius-md;
 }
 
 .cover {
@@ -46,7 +44,7 @@
   align-items: center;
   justify-content: space-between;
   gap: $space-3;
-  padding: $space-3 $space-4;
+  padding: $space-3 $space-2;
 }
 
 .prices {
@@ -73,16 +71,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
   background: none;
-  border: none;
-  padding: $space-1;
+  border: 1.5px solid $color-text-primary;
+  border-radius: $radius-sm;
+  padding: 0;
   cursor: pointer;
   color: $color-text-primary;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
   flex-shrink: 0;
 
   &:hover {
     color: $color-brand-primary;
+    border-color: $color-brand-primary;
   }
 
   &:disabled {
