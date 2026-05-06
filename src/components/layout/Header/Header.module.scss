@@ -14,23 +14,23 @@
   justify-content: space-between;
   
   height: 80px;
-  padding: 0 60px;
+  padding: 0 $layout-px;
 
   gap: $space-5;
 
   @include breakpoint(tablet) {
     height: 60px;
-    padding: 0 40px;
+    padding: 0 $layout-px-tablet;
   }
 
   @include breakpoint(tablet-small) {
     height: 40px;
-    padding: 0 26px;
+    padding: 0 $layout-px-tablet-small;
   }
 
   @include breakpoint(phone) {
     height: 36px;
-    padding: 0 18px;
+    padding: 0 $layout-px-phone;
   }
 }
 

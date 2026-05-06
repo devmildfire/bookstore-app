@@ -91,10 +91,25 @@
 
 @mixin page-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: $layout-max-width;
   margin: 0 auto;
-  padding-left: $space-6;
-  padding-right: $space-6;
+  padding-left: $layout-px;
+  padding-right: $layout-px;
+
+  @include breakpoint(tablet) {
+    padding-left: $layout-px-tablet;
+    padding-right: $layout-px-tablet;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding-left: $layout-px-tablet-small;
+    padding-right: $layout-px-tablet-small;
+  }
+
+  @include breakpoint(phone) {
+    padding-left: $layout-px-phone;
+    padding-right: $layout-px-phone;
+  }
 }
 
 @mixin aspect-ratio($width, $height) {

@@ -104,6 +104,14 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.
 $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 $shadow-popup: 0 20px 60px 0 rgba(0, 0, 0, 0.2);
 
+// ─── Layout ───────────────────────────────────────────────────────────────────
+
+$layout-max-width: 1400px;
+$layout-px:              60px; // desktop  >1200px
+$layout-px-tablet:       40px; // tablet   ≤1200px
+$layout-px-tablet-small: 26px; // phone-lg ≤767px
+$layout-px-phone:        18px; // phone    ≤532px
+
 // ─── Z-index ──────────────────────────────────────────────────────────────────
 
 $z-dropdown: 100;
