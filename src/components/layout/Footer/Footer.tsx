@@ -48,9 +48,16 @@ function TelegramIcon() {
 
 function VkIcon() {
   return (
-    <svg className={styles.socialIcon} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="32" cy="32" r="29"/>
-      <text x="32" y="37" textAnchor="middle" fontSize="16" fontWeight="600" fontFamily="system-ui,sans-serif" fill="currentColor" stroke="none">ВК</text>
+    <svg className={styles.socialIcon} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="32" cy="32" r="29" strokeWidth="2"/>
+      {/* V — two diagonals meeting at bottom */}
+      <polyline points="12,21 23,44 34,21" strokeWidth="3.5"/>
+      {/* K — vertical bar */}
+      <line x1="38" y1="21" x2="38" y2="44" strokeWidth="3.5"/>
+      {/* K — upper arm */}
+      <line x1="38" y1="31" x2="51" y2="21" strokeWidth="3.5"/>
+      {/* K — lower arm (offset start, characteristic of VK logo) */}
+      <line x1="42" y1="34" x2="51" y2="44" strokeWidth="3.5"/>
     </svg>
   )
 }
