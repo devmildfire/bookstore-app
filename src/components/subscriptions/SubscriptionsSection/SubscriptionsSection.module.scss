@@ -127,7 +127,7 @@
   display: flex;
   flex-direction: column;
   padding: 52px 67px;
-  background: linear-gradient(341.86deg, #121212 12.37%, #000000 87.69%);
+  background: $gradient-card-body;
 
   @include breakpoint(tablet) {
     padding: 32px 36px;
