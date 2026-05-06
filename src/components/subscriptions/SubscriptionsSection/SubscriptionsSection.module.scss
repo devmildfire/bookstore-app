@@ -196,8 +196,8 @@
 }
 
 .price {
-  font-family: 'Cheque', sans-serif;
-  font-weight: 900;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-weight: 700;
   font-size: 36px;
   line-height: 1;
   color: $color-text-on-dark;
