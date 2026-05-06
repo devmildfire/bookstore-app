@@ -39,8 +39,13 @@
     row-gap: 40px;
   }
 
-  @include breakpoint('phone') {
+  @include breakpoint('tablet-small') {
     grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-6;
+    row-gap: $space-8;
+  }
+
+  @include breakpoint('phone') {
     column-gap: $space-4;
     row-gap: $space-6;
   }
