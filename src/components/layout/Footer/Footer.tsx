@@ -107,16 +107,16 @@ export default function Footer() {
           </Link>
 
           <div className={styles.socials}>
-            <a href="#" className={styles.socialLink} aria-label="Instagram">
+            <a href="https://www.instagram.com/ichtivo" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <InstagramIcon />
             </a>
-            <a href="#" className={styles.socialLink} aria-label="Telegram">
+            <a href="https://t.me/ichtivo" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Telegram">
               <TelegramIcon />
             </a>
-            <a href="#" className={styles.socialLink} aria-label="ВКонтакте">
+            <a href="https://vk.com/ichtivo" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте">
               <VkIcon />
             </a>
-            <a href="#" className={styles.socialLink} aria-label="Facebook">
+            <a href="https://www.facebook.com/ichtivo" className={styles.socialLink} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FacebookIcon />
             </a>
             <a href="#" className={styles.socialLink} aria-label="Twitter">
