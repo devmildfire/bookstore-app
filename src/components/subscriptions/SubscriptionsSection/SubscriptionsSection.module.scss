@@ -242,7 +242,7 @@
 
 .swiper {
   width: 100%;
-  padding-bottom: 40px !important;
+  padding-bottom: 24px !important;
 
   :global(.swiper-wrapper) {
     align-items: stretch;
@@ -259,27 +259,3 @@
   }
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  :global(.swiper-pagination-bullet) {
-    width: 5px;
-    height: 5px;
-    opacity: 1;
-    background: rgba($color-text-on-dark, 0.3);
-    border-radius: 50%;
-    transition: all 0.2s ease;
-
-    &:not(:last-child) {
-      margin-right: 10px;
-    }
-  }
-
-  :global(.swiper-pagination-bullet-active) {
-    width: 8px;
-    height: 8px;
-    background: $color-accent-hover-on-dark;
-  }
-}

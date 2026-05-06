@@ -1,9 +1,7 @@
 'use client'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Pagination } from 'swiper/modules'
 import 'swiper/css'
-import 'swiper/css/pagination'
 import Image from 'next/image'
 import type { Subscription } from '@/entities/subscription/client'
 import styles from './SubscriptionsSection.module.scss'
@@ -11,11 +9,9 @@ import styles from './SubscriptionsSection.module.scss'
 export default function SubscriptionsCarousel({ items }: { items: Subscription[] }) {
   return (
     <Swiper
-      modules={[Pagination]}
-      slidesPerView={1.3}
+      slidesPerView={1.6}
       centeredSlides
       spaceBetween={16}
-      pagination={{ el: `.${styles.pagination}`, clickable: true }}
       className={styles.swiper}
     >
       {items.map((sub) => (
@@ -23,7 +19,6 @@ export default function SubscriptionsCarousel({ items }: { items: Subscription[]
           <SubscriptionCard sub={sub} />
         </SwiperSlide>
       ))}
-      <div className={styles.pagination} />
     </Swiper>
   )
 }
