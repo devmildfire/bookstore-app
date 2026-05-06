@@ -48,16 +48,9 @@ function TelegramIcon() {
 
 function VkIcon() {
   return (
-    <svg className={styles.socialIcon} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="32" cy="32" r="29" strokeWidth="2"/>
-      {/* V — two diagonals meeting at bottom */}
-      <polyline points="12,21 23,44 34,21" strokeWidth="3.5"/>
-      {/* K — vertical bar */}
-      <line x1="38" y1="21" x2="38" y2="44" strokeWidth="3.5"/>
-      {/* K — upper arm */}
-      <line x1="38" y1="31" x2="51" y2="21" strokeWidth="3.5"/>
-      {/* K — lower arm (offset start, characteristic of VK logo) */}
-      <line x1="42" y1="34" x2="51" y2="44" strokeWidth="3.5"/>
+    <svg className={styles.socialIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <circle cx="12" cy="12" r="10.8" strokeWidth="0.75"/>
+      <path fill="currentColor" stroke="none" d="M17.515 16h-1.309c-.496 0-.653-.491-1.518-1.5-.75-.875-1.138-1-1.329-1C13.091 13.5 13 13.566 13 13.967v1.486C13 15.786 12.914 16 12.075 16c-1.385 0-2.95-.938-4.137-2.563C6.3 11.196 6 9.247 6 8.887 6 8.687 6.063 8.5 6.445 8.5h1.321c.331 0 .458.147.585.534C8.938 11 9.813 12.5 10.258 12.5c.165 0 .242-.08.242-.52v-1.812C10.449 9.234 10 9.154 10 8.82c0-.161.106-.32.31-.32h2.324C12.914 8.5 13 8.66 13 9.007v2.593C13 11.893 13.224 12 13.312 12c.165 0 .32.008.625-.313.94-1.108 1.756-2.787 1.756-2.787C15.783 8.7 15.935 8.5 16.266 8.5h1.309c.293 0 .417.131.425.313.003.063-.008.133-.031.208-.165.8-1.857 3.176-1.844 3.176-.072.123-.12.211-.125.304-.005.088.031.18.125.31.139.2.443.568.75.94.555.671 1 1.375 1.097 1.663.021.078.03.149.028.212C17.993 15.872 17.818 16 17.515 16z"/>
     </svg>
   )
 }
