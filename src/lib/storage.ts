@@ -35,4 +35,12 @@ export function getCoverFilename(value: string | null): string | null {
   return value
 }
 
-export { COVERS_BUCKET }
+const SUBSCRIPTIONS_BUCKET = 'subscriptions'
+
+export function getSubscriptionImageUrl(filename: string | null): string | null {
+  if (!filename) return null
+  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
+  return `${supabaseUrl}/storage/v1/object/public/${SUBSCRIPTIONS_BUCKET}/${filename}`
+}
+
+export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET }

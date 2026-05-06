@@ -359,6 +359,39 @@ export interface Database {
           }
         ]
       }
+      Subscriptions: {
+        Row: {
+          id: number
+          image: string | null
+          is_active: boolean
+          name: string
+          perks: string[]
+          position: number
+          price: number
+          slug: string
+        }
+        Insert: {
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          name: string
+          perks?: string[]
+          position?: number
+          price: number
+          slug: string
+        }
+        Update: {
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          name?: string
+          perks?: string[]
+          position?: number
+          price?: number
+          slug?: string
+        }
+        Relationships: []
+      }
       Titles: {
         Row: {
           age_restriction: number | null

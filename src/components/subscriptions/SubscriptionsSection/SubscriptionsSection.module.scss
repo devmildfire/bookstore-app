@@ -1,0 +1,263 @@
+@use '@/styles/common' as *;
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+.section {
+  background-color: $color-surface-dark;
+  padding-bottom: 120px;
+
+  @include breakpoint(tablet) {
+    padding-bottom: 80px;
+  }
+
+  @include breakpoint(phone) {
+    padding-bottom: 60px;
+  }
+}
+
+.inner {
+  @include page-container;
+}
+
+// ─── Heading ─────────────────────────────────────────────────────────────────
+
+.heading {
+  display: flex;
+  justify-content: center;
+  margin: 100px 0 20px;
+  font-family: 'Cheque', sans-serif;
+  font-weight: 900;
+  font-size: 60px;
+  text-transform: uppercase;
+  line-height: 72px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    margin: 80px 0 16px;
+    font-size: 48px;
+    line-height: 58px;
+  }
+
+  @include breakpoint(phone) {
+    margin: 60px 0 14px;
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+.subtitle {
+  text-align: center;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba($color-text-on-dark, 0.55);
+  margin-bottom: 60px;
+
+  @include breakpoint(tablet) {
+    margin-bottom: 40px;
+    font-size: 14px;
+  }
+
+  @include breakpoint(tablet-small) {
+    margin-bottom: 32px;
+  }
+}
+
+// ─── Desktop Grid ─────────────────────────────────────────────────────────────
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  @include breakpoint(tablet) {
+    gap: 16px;
+  }
+
+  @include breakpoint(tablet-small) {
+    display: none;
+  }
+}
+
+// ─── Mobile Carousel ─────────────────────────────────────────────────────────
+
+.mobileCarousel {
+  display: none;
+
+  @include breakpoint(tablet-small) {
+    display: block;
+  }
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+.card {
+  background-color: $color-panel;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background-color: $color-surface-dark;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color-text-on-dark, 0.05);
+}
+
+.cardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+
+  @include breakpoint(tablet) {
+    padding: 18px;
+  }
+
+  @include breakpoint(phone) {
+    padding: 16px;
+  }
+}
+
+.cardName {
+  font-family: 'Cheque', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  line-height: 1.2;
+  color: $color-text-on-dark;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+
+  @include breakpoint(tablet) {
+    font-size: 22px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 20px;
+  }
+}
+
+.perks {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.perk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 14px;
+  color: rgba($color-text-on-dark, 0.75);
+
+  &::before {
+    content: '';
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: $color-accent-on-dark;
+  }
+}
+
+.priceBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.price {
+  font-family: 'Cheque', sans-serif;
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 1;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    font-size: 28px;
+  }
+}
+
+.priceLabel {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 14px;
+  color: rgba($color-text-on-dark, 0.5);
+}
+
+.connectBtn {
+  width: 100%;
+  height: 48px;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.3);
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}
+
+// ─── Swiper ───────────────────────────────────────────────────────────────────
+
+.swiper {
+  width: 100%;
+  padding-bottom: 40px !important;
+}
+
+.swiperSlide {
+  transition: opacity 0.3s ease;
+  opacity: 0.4;
+
+  &:global(.swiper-slide-active) {
+    opacity: 1;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  :global(.swiper-pagination-bullet) {
+    width: 5px;
+    height: 5px;
+    opacity: 1;
+    background: rgba($color-text-on-dark, 0.3);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    width: 8px;
+    height: 8px;
+    background: $color-accent-hover-on-dark;
+  }
+}
