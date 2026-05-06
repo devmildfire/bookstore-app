@@ -12,7 +12,7 @@ export default function SubscriptionsCarousel({ items }: { items: Subscription[]
   return (
     <Swiper
       modules={[Pagination]}
-      slidesPerView={1.15}
+      slidesPerView={1.3}
       centeredSlides
       spaceBetween={16}
       pagination={{ el: `.${styles.pagination}`, clickable: true }}
