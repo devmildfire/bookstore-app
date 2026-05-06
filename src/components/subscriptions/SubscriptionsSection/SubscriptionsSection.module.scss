@@ -68,13 +68,17 @@
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 80px;
 
   @include breakpoint(tablet) {
-    gap: 16px;
+    gap: 46px;
   }
 
   @include breakpoint(tablet-small) {
+    gap: 25px;
+  }
+
+  @include breakpoint(phone) {
     display: none;
   }
 }
@@ -84,7 +88,7 @@
 .mobileCarousel {
   display: none;
 
-  @include breakpoint(tablet-small) {
+  @include breakpoint(phone) {
     display: block;
   }
 }
@@ -122,14 +126,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 32px 28px 24px;
+  padding: 52px 67px;
 
   @include breakpoint(tablet) {
-    padding: 24px 20px 20px;
+    padding: 32px 36px;
   }
 
   @include breakpoint(phone) {
-    padding: 24px 20px 20px;
+    padding: 20px 26px;
   }
 }
 
