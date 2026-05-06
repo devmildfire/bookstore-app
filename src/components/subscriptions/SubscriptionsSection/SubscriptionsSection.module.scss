@@ -92,18 +92,19 @@
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 .card {
-  background-color: $color-panel;
-  border-radius: $radius-lg;
+  background-color: #000;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .imageWrap {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 2;
-  background-color: $color-surface-dark;
+  background-color: #000;
   overflow: hidden;
 }
 
@@ -121,32 +122,34 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 32px 28px 24px;
 
   @include breakpoint(tablet) {
-    padding: 18px;
+    padding: 24px 20px 20px;
   }
 
   @include breakpoint(phone) {
-    padding: 16px;
+    padding: 24px 20px 20px;
   }
 }
 
 .cardName {
-  font-family: 'Cheque', sans-serif;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-weight: 900;
-  font-size: 28px;
-  line-height: 1.2;
+  font-size: 26px;
+  line-height: 1.15;
   color: $color-text-on-dark;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   text-transform: uppercase;
 
   @include breakpoint(tablet) {
-    font-size: 22px;
+    font-size: 20px;
+    margin-bottom: 20px;
   }
 
   @include breakpoint(phone) {
-    font-size: 20px;
+    font-size: 22px;
+    margin-bottom: 20px;
   }
 }
 
@@ -156,23 +159,25 @@
   margin: 0 0 24px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   flex: 1;
 }
 
 .perk {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: rgba($color-text-on-dark, 0.75);
+  font-size: 15px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
 
   &::before {
     content: '';
     flex-shrink: 0;
-    width: 5px;
-    height: 5px;
+    margin-top: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background-color: $color-accent-on-dark;
   }
@@ -180,8 +185,9 @@
 
 .priceBlock {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 20px;
 }
 
@@ -199,8 +205,8 @@
 
 .priceLabel {
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: rgba($color-text-on-dark, 0.5);
+  font-size: 13px;
+  color: rgba($color-text-on-dark, 0.45);
 }
 
 .connectBtn {
@@ -208,7 +214,7 @@
   height: 48px;
   background: transparent;
   border: 1px solid rgba($color-text-on-dark, 0.3);
-  border-radius: $radius-sm;
+  border-radius: 0;
   color: $color-text-on-dark;
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: 15px;
@@ -226,9 +232,14 @@
 .swiper {
   width: 100%;
   padding-bottom: 40px !important;
+
+  :global(.swiper-wrapper) {
+    align-items: stretch;
+  }
 }
 
 .swiperSlide {
+  height: auto;
   transition: opacity 0.3s ease;
   opacity: 0.4;
 
