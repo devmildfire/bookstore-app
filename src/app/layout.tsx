@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
 import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers hasSession={!!user}>
           <Header />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>
