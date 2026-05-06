@@ -78,10 +78,6 @@
   }
 
   @include breakpoint(tablet-small) {
-    gap: 25px;
-  }
-
-  @include breakpoint(phone) {
     display: none;
   }
 }
@@ -91,7 +87,7 @@
 .mobileCarousel {
   display: none;
 
-  @include breakpoint(phone) {
+  @include breakpoint(tablet-small) {
     display: block;
   }
 }
