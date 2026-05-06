@@ -10,7 +10,7 @@ export default async function SubscriptionsSection() {
     <section className={styles.section}>
       <div className={styles.inner}>
         <h2 className={styles.heading}>Чудеса подписки</h2>
-        <p className={styles.subtitle}>Поддержите издательство и получите особые привилегии читателя</p>
+        <p className={styles.subtitle}>Красиво и просто, как в сказке: деньги ежемесячно снимаются с вашей карты (надоест — отключим), а вам тем временем приходят все наши новые уникальные издания, теперь об этом можно не только мечтать.</p>
 
         <div className={styles.cards}>
           {subscriptions.map((sub) => (

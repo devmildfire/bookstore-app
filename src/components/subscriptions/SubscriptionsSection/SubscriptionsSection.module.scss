@@ -50,7 +50,7 @@
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: rgba($color-text-on-dark, 0.55);
+  color: $color-text-on-dark;
   margin-bottom: 60px;
 
   @include breakpoint(tablet) {
