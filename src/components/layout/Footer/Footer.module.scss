@@ -1,15 +1,5 @@
 @use '@/styles/common' as *;
 
-// ─── Font Faces ───────────────────────────────────────────────────────────────
-
-@font-face {
-  font-family: 'ChequeRegular';
-  src: url('/fonts/Chequeregular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 // ─── Footer ──────────────────────────────────────────────────────────────────
 
 .footer {
@@ -125,7 +115,7 @@
   justify-self: center;
   align-self: end;
   text-decoration: none;
-  font-family: 'ChequeRegular', sans-serif;
+  font-family: 'Cheque', sans-serif;
   font-weight: 400;
   font-size: 62px;
   line-height: 1;
@@ -152,7 +142,7 @@
 }
 
 .wordmarkAccent {
-  font-family: 'ChequeRegular', sans-serif;
+  font-family: 'Cheque', sans-serif;
   color: $color-accent-on-dark;
 }
 
