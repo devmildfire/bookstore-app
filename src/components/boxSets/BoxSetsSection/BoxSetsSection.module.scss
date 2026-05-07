@@ -1,40 +1,43 @@
 @use '@/styles/common' as *;
 
 .section {
-  background-color: $color-surface-dark;
-  padding: $space-16 0;
+  background: linear-gradient(180deg, $color-surface-dark 0%, #3e3e3e 50%, $color-surface-dark 100%);
+  padding-bottom: 120px;
 
   @include breakpoint(tablet) {
-    padding: $space-12 0;
+    padding-bottom: 80px;
   }
 
   @include breakpoint(phone) {
-    padding: $space-8 0;
+    padding-bottom: 60px;
   }
 }
 
 .inner {
   @include page-container;
-  margin-bottom: $space-8;
-
-  @include breakpoint(phone) {
-    margin-bottom: $space-6;
-  }
 }
 
 .heading {
-  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-size: $font-size-4xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-on-dark;
+  display: flex;
+  justify-content: center;
+  margin: 100px 0 20px;
+  font-family: Cheque, sans-serif;
+  font-weight: 900;
+  font-size: 60px;
   text-transform: uppercase;
+  line-height: 72px;
+  color: $color-text-on-dark;
 
   @include breakpoint(tablet) {
-    font-size: $font-size-3xl;
+    margin: 80px 0 16px;
+    font-size: 48px;
+    line-height: 58px;
   }
 
   @include breakpoint(phone) {
-    font-size: $font-size-2xl;
+    margin: 60px 0 14px;
+    font-size: 32px;
+    line-height: 38px;
   }
 }
 
@@ -198,6 +201,7 @@
   // Escape the gridWrap padding so the panel fills the full section width.
   margin-left: calc(-1 * $layout-px);
   width: calc(100% + $layout-px * 2);
+  background: $color-surface-dark;
   animation: expandIn 0.2s ease;
 
   @include breakpoint(tablet) {
