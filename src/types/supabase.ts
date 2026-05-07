@@ -83,6 +83,42 @@ export interface Database {
         }
         Relationships: []
       }
+      BoxSetBooks: {
+        Row: {
+          box_set_id: number
+          id: number
+          position: number
+          title_id: number
+        }
+        Insert: {
+          box_set_id: number
+          id?: number
+          position?: number
+          title_id: number
+        }
+        Update: {
+          box_set_id?: number
+          id?: number
+          position?: number
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "BoxSetBooks_box_set_id_fkey"
+            columns: ["box_set_id"]
+            isOneToOne: false
+            referencedRelation: "BoxSets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "BoxSetBooks_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       BoxSets: {
         Row: {
           description: string | null

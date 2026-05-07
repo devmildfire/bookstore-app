@@ -1,3 +1,11 @@
+export type BoxSetBook = {
+  titleId: number
+  name: string
+  coverUrl: string | null
+  authorName: string
+  position: number
+}
+
 export type BoxSet = {
   id: number
   cartId: string

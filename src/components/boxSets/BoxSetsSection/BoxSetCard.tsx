@@ -15,14 +15,17 @@ const fmt = new Intl.NumberFormat('ru-RU', {
 
 type Props = {
   boxSet: BoxSet
+  isOpen: boolean
+  onToggle: () => void
 }
 
-export default function BoxSetCard({ boxSet }: Props) {
+export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
   const { addItem, isPending } = useCart()
   const { success } = useToast()
   const [liked, setLiked] = useState(false)
 
-  function handleAddToCart() {
+  function handleAddToCart(e: React.MouseEvent) {
+    e.stopPropagation()
     addItem({
       id: boxSet.cartId,
       name: boxSet.name,
@@ -35,12 +38,20 @@ export default function BoxSetCard({ boxSet }: Props) {
     success('Добавлено в корзину', boxSet.name)
   }
 
-  function handleToggleLiked() {
+  function handleToggleLiked(e: React.MouseEvent) {
+    e.stopPropagation()
     setLiked((prev) => !prev)
   }
 
   return (
-    <div className={styles.card}>
+    <div
+      className={cn(styles.card, isOpen && styles.cardOpen)}
+      onClick={onToggle}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle() } }}
+      aria-expanded={isOpen}
+    >
       <div className={styles.imageWrap}>
         {boxSet.imageUrl && (
           <img

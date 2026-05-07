@@ -1,5 +1,5 @@
 import { getBoxSets } from '@/api/boxSets/getBoxSets'
-import BoxSetCard from './BoxSetCard'
+import BoxSetsGrid from './BoxSetsGrid'
 import styles from './BoxSetsSection.module.scss'
 
 export default async function BoxSetsSection() {
@@ -10,12 +10,8 @@ export default async function BoxSetsSection() {
     <section className={styles.section}>
       <div className={styles.inner}>
         <h2 className={styles.heading}>Бокс-сеты</h2>
-        <div className={styles.grid}>
-          {boxSets.map((boxSet) => (
-            <BoxSetCard key={boxSet.id} boxSet={boxSet} />
-          ))}
-        </div>
       </div>
+      <BoxSetsGrid boxSets={boxSets} />
     </section>
   )
 }

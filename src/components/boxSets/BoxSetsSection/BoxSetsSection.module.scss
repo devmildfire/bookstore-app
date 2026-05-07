@@ -15,6 +15,11 @@
 
 .inner {
   @include page-container;
+  margin-bottom: $space-8;
+
+  @include breakpoint(phone) {
+    margin-bottom: $space-6;
+  }
 }
 
 .heading {
@@ -23,7 +28,6 @@
   font-weight: $font-weight-bold;
   color: $color-text-on-dark;
   text-transform: uppercase;
-  margin-bottom: $space-8;
 
   @include breakpoint(tablet) {
     font-size: $font-size-3xl;
@@ -31,21 +35,45 @@
 
   @include breakpoint(phone) {
     font-size: $font-size-2xl;
-    margin-bottom: $space-6;
+  }
+}
+
+// ─── Grid ─────────────────────────────────────────────────────────────────────
+
+.gridWrap {
+  width: 100%;
+  max-width: $layout-max-width;
+  margin: 0 auto;
+  padding: 0 $layout-px;
+
+  @include breakpoint(tablet) {
+    padding: 0 $layout-px-tablet;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: 0 $layout-px-tablet-small;
+  }
+
+  @include breakpoint(phone) {
+    padding: 0 $layout-px-phone;
   }
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: $space-4;
+  column-gap: 52px;
+  row-gap: 52px;
 
   @include breakpoint(tablet) {
     grid-template-columns: repeat(2, 1fr);
+    column-gap: 32px;
+    row-gap: 32px;
   }
 
   @include breakpoint(phone) {
     grid-template-columns: 1fr;
+    row-gap: $space-4;
   }
 }
 
@@ -56,7 +84,22 @@
   flex-direction: column;
   background: linear-gradient(315.47deg, rgba(62, 62, 62, 0.5) -0.84%, rgba(0, 0, 0, 0.5) 100%);
   background-color: #1a1a1a;
-  cursor: default;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 40px rgba($color-accent-on-dark, 0.25), 0 2px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px $color-accent-on-dark;
+  }
+}
+
+.cardOpen {
+  box-shadow: 0 0 0 1px rgba($color-accent-on-dark, 0.4), 0 4px 20px rgba($color-accent-on-dark, 0.15);
 }
 
 .imageWrap {
@@ -145,5 +188,123 @@
 
   &:hover:not(:disabled) {
     color: $color-accent-hover-on-dark;
+  }
+}
+
+// ─── Expansion panel ──────────────────────────────────────────────────────────
+
+.expansion {
+  grid-column: 1 / -1;
+  // Escape the gridWrap padding so the panel fills the full section width.
+  margin-left: calc(-1 * $layout-px);
+  width: calc(100% + $layout-px * 2);
+  animation: expandIn 0.2s ease;
+
+  @include breakpoint(tablet) {
+    margin-left: calc(-1 * $layout-px-tablet);
+    width: calc(100% + $layout-px-tablet * 2);
+  }
+
+  @include breakpoint(tablet-small) {
+    margin-left: calc(-1 * $layout-px-tablet-small);
+    width: calc(100% + $layout-px-tablet-small * 2);
+  }
+
+  @include breakpoint(phone) {
+    margin-left: calc(-1 * $layout-px-phone);
+    width: calc(100% + $layout-px-phone * 2);
+  }
+}
+
+// ─── Preview (book list inside expansion) ────────────────────────────────────
+
+.previewInner {
+  overflow-x: auto;
+  padding: $space-8 $layout-px;
+
+  @include breakpoint(tablet) {
+    padding: $space-6 $layout-px-tablet;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: $space-6 $layout-px-tablet-small;
+  }
+
+  @include breakpoint(phone) {
+    padding: $space-4 $layout-px-phone;
+  }
+}
+
+.previewGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  gap: $space-6 $space-10;
+  width: max-content;
+  min-width: 100%;
+}
+
+.previewBook {
+  display: flex;
+  gap: $space-4;
+  align-items: flex-start;
+  width: 320px;
+
+  @include breakpoint(phone) {
+    width: 260px;
+  }
+}
+
+.previewCover {
+  width: 98px;
+  height: 137px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.previewCoverEmpty {
+  background: rgba($color-text-on-dark, 0.1);
+  border-radius: $radius-sm;
+}
+
+.previewBookInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-top: 2px;
+}
+
+.previewBookTitle {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  color: $color-text-on-dark;
+}
+
+.previewBookAuthor {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: $font-weight-normal;
+  line-height: 1.4;
+  color: rgba($color-text-on-dark, 0.65);
+}
+
+.previewLoading {
+  color: rgba($color-text-on-dark, 0.4);
+  font-size: $font-size-sm;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
