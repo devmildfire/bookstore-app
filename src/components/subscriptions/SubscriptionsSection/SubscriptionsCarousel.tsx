@@ -3,6 +3,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import Image from 'next/image'
+import Link from 'next/link'
 import cn from 'classnames'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
@@ -85,14 +86,20 @@ export function SubscriptionCard({ sub }: { sub: Subscription }) {
           <span className={styles.priceLabel}>в месяц</span>
         </div>
 
-        <button
-          type="button"
-          className={cn(styles.connectBtn, inCart && styles.connectBtnInCart)}
-          onClick={handleAddToCart}
-          disabled={isPending || inCart}
-        >
-          {inCart ? 'В корзине' : 'Подключить'}
-        </button>
+        {inCart ? (
+          <Link href="/cart" className={cn(styles.connectBtn, styles.connectBtnInCart)}>
+            В корзине
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className={styles.connectBtn}
+            onClick={handleAddToCart}
+            disabled={isPending}
+          >
+            Подключить
+          </button>
+        )}
       </div>
     </div>
   )

@@ -249,12 +249,17 @@
 }
 
 .connectBtnInCart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   border-color: $color-accent-on-dark;
   color: $color-accent-on-dark;
 
   &:hover {
     border-color: $color-accent-on-dark;
     color: $color-accent-on-dark;
+    text-decoration: none;
   }
 }
 
