@@ -24,10 +24,10 @@
   align-items: flex-start;
   gap: $space-3;
   padding: $space-4;
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-lg;
+  background: linear-gradient(160deg, #1c1c1c 0%, $color-panel 65%);
+  border: 1px solid rgba($color-text-on-dark, 0.1);
+  border-radius: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
   animation: slideIn 0.2s ease;
 
   &[data-state='closed'] {
@@ -49,14 +49,16 @@
 }
 
 .title {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
-  color: $color-text-primary;
+  color: $color-text-on-dark;
 }
 
 .description {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: rgba($color-text-on-dark, 0.6);
   margin-top: 2px;
 }
 
@@ -67,12 +69,11 @@
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  border-radius: $radius-sm;
-  color: $color-text-muted;
-  transition: background-color 0.15s ease;
+  color: $color-text-on-dark;
+  transition: color 0.15s ease;
 
   &:hover {
-    background-color: $color-bg-muted;
+    color: $color-accent-on-dark;
   }
 }
 
