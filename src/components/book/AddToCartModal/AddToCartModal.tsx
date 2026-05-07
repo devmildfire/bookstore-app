@@ -117,7 +117,7 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
                 className={`${styles.row} ${!book.inStock ? styles.rowSoldOut : ''}`}
               >
                 <div className={styles.rowIcon}>
-                  <ProductTypeIcon category={book.category} size={28} />
+                  <ProductTypeIcon category={book.category} size={52} />
                 </div>
 
                 <span className={styles.rowLabel}>

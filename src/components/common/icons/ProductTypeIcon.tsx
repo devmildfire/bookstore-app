@@ -6,56 +6,57 @@ type Props = {
   className?: string
 }
 
-export default function ProductTypeIcon({ category, size = 32, className }: Props) {
-  const props = {
+export default function ProductTypeIcon({ category, size = 56, className }: Props) {
+  const svgProps = {
     width: size,
     height: size,
-    viewBox: '0 0 32 32',
+    viewBox: '0 0 56 56',
     fill: 'none',
     stroke: 'currentColor',
-    strokeWidth: 1.5,
+    strokeWidth: 1.2,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    'aria-hidden': true,
+    'aria-hidden': true as const,
     className,
   }
 
   if (category === 'PrintBook') {
     return (
-      <svg {...props}>
-        {/* envelope */}
-        <rect x="4" y="8" width="24" height="18" rx="2" />
-        <polyline points="4,8 16,18 28,8" />
+      <svg {...svgProps}>
+        <circle cx="28" cy="28" r="26" />
+        <rect x="14" y="19" width="28" height="20" rx="1" />
+        <polyline points="14,19 28,30 42,19" />
       </svg>
     )
   }
 
   if (category === 'EBook') {
     return (
-      <svg {...props}>
-        {/* tablet */}
-        <rect x="7" y="3" width="18" height="26" rx="2" />
-        <line x1="14" y1="25" x2="18" y2="25" />
+      <svg {...svgProps}>
+        <circle cx="28" cy="28" r="26" />
+        <rect x="18" y="14" width="20" height="28" rx="2" />
+        <line x1="24" y1="38" x2="32" y2="38" />
       </svg>
     )
   }
 
   if (category === 'Book2.0') {
     return (
-      <svg {...props}>
-        {/* open book */}
-        <path d="M16 7 C16 7 10 5 4 7 L4 26 C10 24 16 26 16 26 C16 26 22 24 28 26 L28 7 C22 5 16 7 16 7Z" />
-        <line x1="16" y1="7" x2="16" y2="26" />
+      <svg {...svgProps}>
+        <circle cx="28" cy="28" r="26" />
+        <rect x="17" y="17" width="9" height="9" />
+        <rect x="30" y="17" width="9" height="9" />
+        <rect x="17" y="30" width="9" height="9" />
+        <rect x="30" y="30" width="9" height="9" />
       </svg>
     )
   }
 
   if (category === 'AudioBook') {
     return (
-      <svg {...props}>
-        {/* play button circle */}
-        <circle cx="16" cy="16" r="12" />
-        <polygon points="13,11 13,21 23,16" />
+      <svg {...svgProps}>
+        <circle cx="28" cy="28" r="26" />
+        <polygon points="22,19 22,37 39,28" />
       </svg>
     )
   }

@@ -84,23 +84,16 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: $space-2;
+  gap: $space-4;
   margin-bottom: $space-6;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 44px 1fr auto auto;
+  grid-template-columns: 52px 1fr auto auto;
   align-items: center;
   gap: $space-3;
-  padding: $space-3 $space-2;
-  border-radius: $radius-md;
-  border: 1px solid rgba($color-text-on-dark, 0.08);
-  transition: border-color 0.15s ease;
-
-  &:hover:not(.rowSoldOut) {
-    border-color: rgba($color-text-on-dark, 0.18);
-  }
+  padding: $space-1 $space-2;
 }
 
 .rowSoldOut {
@@ -111,11 +104,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-sm;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
-  color: $color-text-on-dark;
+  width: 52px;
+  height: 52px;
+  color: rgba($color-text-on-dark, 0.6);
 }
 
 .rowLabel {
@@ -141,13 +132,13 @@
   align-items: center;
   gap: 2px;
   background: rgba($color-text-on-dark, 0.07);
-  border-radius: $radius-sm;
+  border-radius: $radius-full;
   padding: 2px;
 }
 
 .stepperBtn {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,7 +147,7 @@
   cursor: pointer;
   font-size: $font-size-base;
   color: $color-text-on-dark;
-  border-radius: $radius-sm;
+  border-radius: $radius-full;
   transition: background-color 0.1s ease;
   line-height: 1;
 
