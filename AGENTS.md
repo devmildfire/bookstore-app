@@ -47,9 +47,10 @@ src/
     books/      Catalog ([slug]/ for book detail)
     cart/       Cart page
     checkout/   Checkout and success/
-  api/          Supabase API modules — one directory per domain (books/, cart/, orders/)
+    subscription/ Subscription plans page
+  api/          Supabase API modules — one directory per domain (books/, cart/, orders/, subscriptions/)
   assets/       SVGs, images (SVGs imported via @svgr/webpack)
-  components/   UI components, grouped by domain; common/ for shared
+  components/   UI components, grouped by domain; common/ for shared; subscriptions/ for subscription UI
   consts/       Named constant exports, one file per domain
   contexts/     React contexts — context.ts + provider.ts + index.ts per context
   entities/     Domain types split into client.ts / server.ts / normalize.ts / validation.ts

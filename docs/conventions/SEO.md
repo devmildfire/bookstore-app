@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 - Always set `title`, `description`, and `openGraph` fields
 - `description` must be ≤ 160 characters
 - `title` should use the template defined in root `layout.tsx`
+- The root layout sets `<html lang='ru'>` — do not remove it; the site is Russian-only
 
 ## Accessibility
 

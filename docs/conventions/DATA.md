@@ -73,6 +73,40 @@ export function useAddToCart() {
 - Always invalidate or update related queries on success
 - Use optimistic updates for cart operations (add, remove, quantity change) to keep the UI instant
 
+### `staleTime`
+
+The global default is `staleTime: 60_000` (1 minute), set in `src/app/providers.tsx`. This prevents unnecessary refetches on every route change for data that rarely changes.
+
+Override per-query when the data has a different freshness requirement:
+
+```ts
+useQuery({
+  queryKey: bookQueryKey(id),
+  queryFn: () => getBook(id),
+  staleTime: 5 * 60 * 1000, // book detail is stable for 5 minutes
+})
+```
+
+### Infinite / paginated queries
+
+Use `useInfiniteQuery` for paginated lists that load more on scroll. Pass the offset as `pageParam`:
+
+```ts
+useInfiniteQuery({
+  queryKey: searchBooksQueryKey(query),
+  queryFn: ({ pageParam }) => searchBooks(query, pageParam as number, PAGE_SIZE),
+  initialPageParam: 0,
+  getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    const fetched = allPages.reduce((sum, p) => sum + p.books.length, 0)
+    if (fetched >= lastPage.total) return undefined
+    return lastPageParam + PAGE_SIZE
+  },
+  enabled: query.length >= 3,
+})
+```
+
+Flatten pages for rendering: `data?.pages.flatMap((p) => p.books) ?? []`.
+
 ### Query Key Convention
 
 Define query keys as constants next to the API function:
@@ -244,6 +278,5 @@ For UI-only state, use in this order:
 1. **Local `useState`** — if state is only needed in one component
 2. **URL search params** — for filters, sorting, pagination (bookmarkable, shareable)
 3. **React Context** — for state shared across a subtree (cart count in header, auth user)
-4. **Zustand** — only if Context causes performance issues with frequent updates
 
-Do not reach for Zustand by default — most state fits the first three options.
+There is no global client-state library (no Zustand, no Redux, no MobX). Most state fits the first three options.

@@ -5,7 +5,7 @@
 Each component lives in its own folder with co-located styles and index re-export:
 
 ```
-src/components/common/BookCard/
+src/components/book/BookCard/
   BookCard.tsx
   BookCard.module.scss
   index.ts            ← re-exports BookCard as default
@@ -22,7 +22,7 @@ export { default } from './BookCard'
 - If a component exceeds ~200 lines of JSX + logic, split it into smaller focused sub-components
 - Sub-components that are only used by one parent live in the parent's folder:
   ```
-  src/components/common/BookCard/
+  src/components/book/BookCard/
     BookCard.tsx
     BookCard.module.scss
     BookCardBadge.tsx       ← only used inside BookCard

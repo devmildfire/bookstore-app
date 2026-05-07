@@ -13,7 +13,7 @@ Throw errors freely — Next.js catches them and renders the nearest `error.tsx`
 ```tsx
 // src/api/books/getBook.ts
 export async function getBook(id: string): Promise<Book> {
-  const supabase = createServerClient()
+  const supabase = await createClient()
   const { data, error } = await supabase.from('books').select('*').eq('id', id).single()
   if (error) throw new Error(`Failed to fetch book ${id}: ${error.message}`)
   return normalizeBook(data)

@@ -59,18 +59,15 @@ import Image from 'next/image'
 
 <Image
   src={book.coverUrl}
-  alt={book.title}
+  alt={book.name}
   width={240}
   height={320}
-  placeholder='blur'
-  blurDataURL={book.blurDataUrl}
 />
 ```
 
 Rules:
 - Always set explicit `width` and `height` (or `fill`) — this prevents CLS
 - Use `priority` on the LCP image (the first book cover visible above the fold)
-- Use `placeholder="blur"` with a `blurDataUrl` for book covers to prevent layout shift
 - Decorative images: `alt=""`
 
 Remote image domains must be added to `next.config.ts` `images.remotePatterns`.

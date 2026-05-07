@@ -85,7 +85,7 @@ Available mixins:
 
 | Mixin | Purpose |
 |-------|---------|
-| `section-title` | Cheque display heading at 57px with full responsive scaling (⚠ `@font-face` for Cheque lives in `Slider.module.scss` — move to `globals.scss`) |
+| `section-title` | Cheque display heading at 57px with full responsive scaling |
 | `text-body` | Base body text (16px, Inter) |
 | `text-body-lg` | Large body text (18px) |
 | `text-body-sm` | Small body text (14px) |
@@ -138,8 +138,9 @@ Available breakpoints (defined in `src/styles/breakpoints.scss`):
 |------|------|
 | `desktop` | `min-width: 1201px` |
 | `tablet` | `max-width: 1200px` |
-| `tablet-only` | `min-width: 768px` and `max-width: 1200px` |
-| `phone` | `max-width: 767px` |
+| `search-bar` | `max-width: 1000px` |
+| `tablet-small` | `max-width: 767px` |
+| `phone` | `max-width: 532px` |
 
 Keep responsive overrides adjacent to their base selector — do not collect all responsive rules at the bottom of the file.
 
