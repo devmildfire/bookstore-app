@@ -83,6 +83,48 @@ export interface Database {
         }
         Relationships: []
       }
+      BoxSets: {
+        Row: {
+          description: string | null
+          discount: number | null
+          id: number
+          image: string | null
+          is_active: boolean
+          is_published: boolean
+          name: string
+          position: number
+          price: number
+          publish_date: string | null
+          slug: string
+        }
+        Insert: {
+          description?: string | null
+          discount?: number | null
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          is_published?: boolean
+          name: string
+          position?: number
+          price: number
+          publish_date?: string | null
+          slug: string
+        }
+        Update: {
+          description?: string | null
+          discount?: number | null
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          is_published?: boolean
+          name?: string
+          position?: number
+          price?: number
+          publish_date?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
       CardBooks: {
         Row: {
           counter_color: string | null

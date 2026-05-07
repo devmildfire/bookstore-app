@@ -3,6 +3,7 @@ import { getLatestBooks, getFeaturedBooks } from '@/api/books'
 import Slider from '@/components/common/Slider'
 import NewProducts from '@/components/book/NewProducts'
 import SubscriptionsSection from '@/components/subscriptions/SubscriptionsSection/SubscriptionsSection'
+import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = {
@@ -34,6 +35,7 @@ export default async function HomePage() {
       <Slider items={slides} />
       <NewProducts books={latestBooks} />
       <SubscriptionsSection />
+      <BoxSetsSection />
     </div>
   )
 }

@@ -43,4 +43,11 @@ export function getSubscriptionImageUrl(filename: string | null): string | null 
   return `${supabaseUrl}/storage/v1/object/public/${SUBSCRIPTIONS_BUCKET}/${filename}`
 }
 
-export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET }
+const BOX_SETS_PUBLIC_PATH = '/boxsets'
+
+export function getBoxSetImageUrl(filename: string | null): string | null {
+  if (!filename) return null
+  return `${BOX_SETS_PUBLIC_PATH}/${filename}`
+}
+
+export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH }
