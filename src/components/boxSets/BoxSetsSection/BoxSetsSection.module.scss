@@ -2,6 +2,7 @@
 
 .section {
   background: linear-gradient(180deg, $color-surface-dark 0%, #3e3e3e 50%, $color-surface-dark 100%);
+  overflow-x: clip; // contain expansion panel so it never creates body horizontal scroll
   padding-bottom: 120px;
 
   @include breakpoint(tablet) {
@@ -224,6 +225,7 @@
 
 .previewInner {
   overflow-x: auto;
+  overscroll-behavior-x: contain; // stop horizontal scroll from propagating to page
   padding: $space-8 $layout-px;
 
   @include breakpoint(tablet) {
@@ -235,6 +237,7 @@
   }
 
   @include breakpoint(phone) {
+    overflow-x: visible; // no horizontal scroll on phone — books stack vertically
     padding: $space-4 $layout-px-phone;
   }
 }
@@ -246,6 +249,14 @@
   gap: $space-6 $space-10;
   width: max-content;
   min-width: 100%;
+
+  @include breakpoint(phone) {
+    grid-auto-flow: row; // vertical stack on phone, no horizontal overflow
+    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: $space-4;
+  }
 }
 
 .previewBook {
@@ -255,7 +266,7 @@
   width: 320px;
 
   @include breakpoint(phone) {
-    width: 260px;
+    width: 100%;
   }
 }
 
