@@ -137,7 +137,11 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
                     disabled={!book.inStock}
                     aria-label={getQty(book) > 0 ? 'Убрать' : 'Добавить'}
                   >
-                    {getQty(book) > 0 ? '−' : '+'}
+                    {getQty(book) > 0 ? (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    ) : '+'}
                   </button>
                 ) : (
                   <div className={styles.stepper}>
