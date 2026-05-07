@@ -4,6 +4,7 @@ import { useState, useEffect, Fragment } from 'react'
 import BoxSetCard from './BoxSetCard'
 import BoxSetPreview from './BoxSetPreview'
 import type { BoxSet } from '@/entities/boxSet/client'
+import { BREAKPOINTS } from '@/consts/breakpoints'
 import styles from './BoxSetsSection.module.scss'
 
 type Props = {
@@ -11,8 +12,8 @@ type Props = {
 }
 
 function getColumns(): number {
-  if (window.matchMedia('(max-width: 532px)').matches) return 1
-  if (window.matchMedia('(max-width: 1200px)').matches) return 2
+  if (window.matchMedia(`(max-width: ${BREAKPOINTS.phoneMax}px)`).matches) return 1
+  if (window.matchMedia(`(max-width: ${BREAKPOINTS.tabletMax}px)`).matches) return 2
   return 3
 }
 

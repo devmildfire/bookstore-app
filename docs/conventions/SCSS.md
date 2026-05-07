@@ -22,8 +22,8 @@
 
 ## Class Names
 
-- SCSS class names: `kebab-case` (e.g. `.book-card`, `.add-to-cart-btn`)
-- Access in JS/TSX as camelCase via Next.js CSS Modules transform (e.g. `css.bookCard`, `css.addToCartBtn`)
+- SCSS class names: `camelCase` (e.g. `.bookCard`, `.addToCartBtn`)
+- Access in JS/TSX as-is (e.g. `css.bookCard`, `css.addToCartBtn`)
 
 ## CSS Module Usage Pattern
 

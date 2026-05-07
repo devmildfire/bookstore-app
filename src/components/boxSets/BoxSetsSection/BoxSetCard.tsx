@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import type { BoxSet } from '@/entities/boxSet/client'
@@ -51,12 +52,15 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle() } }}
       aria-expanded={isOpen}
+      aria-label={isOpen ? `Свернуть ${boxSet.name}` : `Развернуть ${boxSet.name}`}
     >
       <div className={styles.imageWrap}>
         {boxSet.imageUrl && (
-          <img
+          <Image
             src={boxSet.imageUrl}
             alt={boxSet.name}
+            width={160}
+            height={160}
             className={styles.image}
           />
         )}

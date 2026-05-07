@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { normalizeBoxSet } from '@/entities/boxSet/normalize'
 import type { BoxSet } from '@/entities/boxSet/client'
 
+export const boxSetsQueryKey = ['box-sets'] as const
+
 export async function getBoxSets(): Promise<BoxSet[]> {
   const supabase = await createClient()
   const { data, error } = await supabase

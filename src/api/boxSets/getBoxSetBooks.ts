@@ -1,19 +1,10 @@
 import { createClient } from '@/lib/supabase/client'
 import { getCoverUrl } from '@/lib/storage'
 import type { BoxSetBook } from '@/entities/boxSet/client'
+import type { BoxSetBooksRow } from '@/entities/boxSet/server'
 
-type BookRow = {
-  position: number
-  title_id: number
-  Titles: {
-    id: number
-    name: string
-    cover: string | null
-    Titles_Authors: Array<{
-      Authors: { name: string } | null
-    }>
-  } | null
-}
+export const boxSetBooksQueryKey = (boxSetId: number) =>
+  ['box-set-books', boxSetId] as const
 
 export async function getBoxSetBooks(boxSetId: number): Promise<BoxSetBook[]> {
   const supabase = createClient()
@@ -37,7 +28,7 @@ export async function getBoxSetBooks(boxSetId: number): Promise<BoxSetBook[]> {
 
   if (error) throw new Error(`Не удалось загрузить книги бокс-сета: ${error.message}`)
 
-  return ((data ?? []) as unknown as BookRow[])
+  return ((data ?? []) as unknown as BoxSetBooksRow[])
     .filter((row) => row.Titles !== null)
     .map((row) => {
       const title = row.Titles!

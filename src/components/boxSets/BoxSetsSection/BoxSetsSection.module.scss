@@ -1,7 +1,7 @@
 @use '@/styles/common' as *;
 
 .section {
-  background: linear-gradient(180deg, $color-surface-dark 0%, #3e3e3e 50%, $color-surface-dark 100%);
+  background: linear-gradient(180deg, $color-surface-dark 0%, $color-surface-mid 50%, $color-surface-dark 100%);
   padding-bottom: 120px;
 
   @include breakpoint(tablet) {
@@ -22,7 +22,7 @@
   justify-content: center;
   margin: 100px 0 20px;
   font-family: Cheque, sans-serif;
-  font-weight: 900;
+  font-weight: $font-weight-black;
   font-size: 60px;
   text-transform: uppercase;
   line-height: 72px;
@@ -48,14 +48,14 @@
 .gridWrap {
   display: grid;
   grid-template-columns: $layout-px 1fr $layout-px;
-  row-gap: 52px;
+  row-gap: $space-13;
   width: 100%;
   max-width: $layout-max-width;
   margin: 0 auto;
 
   @include breakpoint(tablet) {
     grid-template-columns: $layout-px-tablet 1fr $layout-px-tablet;
-    row-gap: 32px;
+    row-gap: $space-8;
   }
 
   @include breakpoint(tablet-small) {
@@ -72,11 +72,11 @@
   grid-column: 2; // center column only — side columns provide padding
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: 52px;
+  column-gap: $space-13;
 
   @include breakpoint(tablet) {
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 32px;
+    column-gap: $space-8;
   }
 
   @include breakpoint(phone) {
@@ -89,15 +89,15 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(315.47deg, rgba(62, 62, 62, 0.5) -0.84%, rgba(0, 0, 0, 0.5) 100%);
-  background-color: #1a1a1a;
+  background: linear-gradient(315.47deg, rgba($color-surface-mid, 0.5) -0.84%, rgba(#000, 0.5) 100%);
+  background-color: $color-surface-card;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   outline: none;
 
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 8px 40px rgba($color-accent-on-dark, 0.25), 0 2px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 40px rgba($color-accent-on-dark, 0.25), 0 2px 12px rgba(#000, 0.5);
   }
 
   &:focus-visible {
@@ -267,12 +267,12 @@
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding-top: 2px;
+  padding-top: 2px; // optical baseline alignment with cover top
 }
 
 .previewBookTitle {
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-size: 20px;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   line-height: 1.2;
   letter-spacing: 0.03em;
@@ -281,7 +281,7 @@
 
 .previewBookAuthor {
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-size: 18px;
+  font-size: $font-size-lg;
   font-weight: $font-weight-normal;
   line-height: 1.4;
   color: rgba($color-text-on-dark, 0.65);

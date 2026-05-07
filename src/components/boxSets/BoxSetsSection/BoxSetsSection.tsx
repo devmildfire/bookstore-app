@@ -11,6 +11,8 @@ export default async function BoxSetsSection() {
       <div className={styles.inner}>
         <h2 className={styles.heading}>Бокс-сеты</h2>
       </div>
+      {/* BoxSetsGrid sits outside .inner so its expansion panel can span the full section width
+          via a 3-column outer grid (side columns = padding) without causing overflow */}
       <BoxSetsGrid boxSets={boxSets} />
     </section>
   )

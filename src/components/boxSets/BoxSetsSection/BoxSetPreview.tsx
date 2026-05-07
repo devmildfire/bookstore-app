@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import cn from 'classnames'
 import { useBoxSetBooks } from '@/hooks/useBoxSetBooks'
 import styles from './BoxSetsSection.module.scss'
 
@@ -35,7 +36,7 @@ export default function BoxSetPreview({ boxSetId }: Props) {
                 className={styles.previewCover}
               />
             ) : (
-              <div className={`${styles.previewCover} ${styles.previewCoverEmpty}`} />
+              <div className={cn(styles.previewCover, styles.previewCoverEmpty)} />
             )}
             <div className={styles.previewBookInfo}>
               <p className={styles.previewBookTitle}>{book.name}</p>
