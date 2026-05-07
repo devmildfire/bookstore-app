@@ -35,7 +35,7 @@
   }
 
   &.success {
-    border-left: 3px solid $color-success;
+    border-left: 3px solid $color-accent-on-dark;
   }
 
   &.error {
@@ -58,7 +58,7 @@
 .description {
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
+  color: $color-accent-on-dark;
   margin-top: 2px;
 }
 
