@@ -237,7 +237,6 @@
   }
 
   @include breakpoint(phone) {
-    overflow-x: visible; // no horizontal scroll on phone — books stack vertically
     padding: $space-4 $layout-px-phone;
   }
 }
@@ -251,11 +250,7 @@
   min-width: 100%;
 
   @include breakpoint(phone) {
-    grid-auto-flow: row; // vertical stack on phone, no horizontal overflow
-    grid-template-rows: auto;
-    grid-template-columns: 1fr;
-    width: 100%;
-    gap: $space-4;
+    gap: $space-4 $space-6;
   }
 }
 
@@ -266,7 +261,7 @@
   width: 320px;
 
   @include breakpoint(phone) {
-    width: 100%;
+    width: 240px;
   }
 }
 
