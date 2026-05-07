@@ -38,11 +38,12 @@ export default function BoxSetsGrid({ boxSets }: Props) {
 
   return (
     <div className={styles.gridWrap}>
-      <div className={styles.grid}>
-        {rows.map((row, rowIdx) => {
-          const openBoxSet = row.find((bs) => bs.id === openId) ?? null
-          return (
-            <Fragment key={rowIdx}>
+      {rows.map((row, rowIdx) => {
+        const openBoxSet = row.find((bs) => bs.id === openId) ?? null
+        return (
+          <Fragment key={rowIdx}>
+            {/* center column — cards respect page padding */}
+            <div className={styles.cardRow}>
               {row.map((boxSet) => (
                 <BoxSetCard
                   key={boxSet.id}
@@ -51,15 +52,16 @@ export default function BoxSetsGrid({ boxSets }: Props) {
                   onToggle={() => handleToggle(boxSet.id)}
                 />
               ))}
-              {openBoxSet && (
-                <div className={styles.expansion} key={`exp-${openBoxSet.id}`}>
-                  <BoxSetPreview boxSetId={openBoxSet.id} />
-                </div>
-              )}
-            </Fragment>
-          )
-        })}
-      </div>
+            </div>
+            {/* spans all 3 outer columns = full wrapper width, zero overflow */}
+            {openBoxSet && (
+              <div className={styles.expansion}>
+                <BoxSetPreview boxSetId={openBoxSet.id} />
+              </div>
+            )}
+          </Fragment>
+        )
+      })}
     </div>
   )
 }

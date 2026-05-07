@@ -2,7 +2,6 @@
 
 .section {
   background: linear-gradient(180deg, $color-surface-dark 0%, #3e3e3e 50%, $color-surface-dark 100%);
-  overflow-x: clip; // contain expansion panel so it never creates body horizontal scroll
   padding-bottom: 120px;
 
   @include breakpoint(tablet) {
@@ -43,41 +42,45 @@
 }
 
 // ─── Grid ─────────────────────────────────────────────────────────────────────
+// Outer grid: side columns are the page padding. Card rows sit in column 2.
+// Expansion panel spans all 3 columns = naturally full wrapper width, no overflow tricks.
 
 .gridWrap {
+  display: grid;
+  grid-template-columns: $layout-px 1fr $layout-px;
+  row-gap: 52px;
   width: 100%;
   max-width: $layout-max-width;
   margin: 0 auto;
-  padding: 0 $layout-px;
 
   @include breakpoint(tablet) {
-    padding: 0 $layout-px-tablet;
+    grid-template-columns: $layout-px-tablet 1fr $layout-px-tablet;
+    row-gap: 32px;
   }
 
   @include breakpoint(tablet-small) {
-    padding: 0 $layout-px-tablet-small;
+    grid-template-columns: $layout-px-tablet-small 1fr $layout-px-tablet-small;
   }
 
   @include breakpoint(phone) {
-    padding: 0 $layout-px-phone;
+    grid-template-columns: $layout-px-phone 1fr $layout-px-phone;
+    row-gap: $space-4;
   }
 }
 
-.grid {
+.cardRow {
+  grid-column: 2; // center column only — side columns provide padding
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 52px;
-  row-gap: 52px;
 
   @include breakpoint(tablet) {
     grid-template-columns: repeat(2, 1fr);
     column-gap: 32px;
-    row-gap: 32px;
   }
 
   @include breakpoint(phone) {
     grid-template-columns: 1fr;
-    row-gap: $space-4;
   }
 }
 
@@ -198,27 +201,9 @@
 // ─── Expansion panel ──────────────────────────────────────────────────────────
 
 .expansion {
-  grid-column: 1 / -1;
-  // Escape the gridWrap padding so the panel fills the full section width.
-  margin-left: calc(-1 * $layout-px);
-  width: calc(100% + $layout-px * 2);
+  grid-column: 1 / -1; // spans all 3 outer columns = full wrapper width, no overflow
   background: $color-surface-dark;
   animation: expandIn 0.2s ease;
-
-  @include breakpoint(tablet) {
-    margin-left: calc(-1 * $layout-px-tablet);
-    width: calc(100% + $layout-px-tablet * 2);
-  }
-
-  @include breakpoint(tablet-small) {
-    margin-left: calc(-1 * $layout-px-tablet-small);
-    width: calc(100% + $layout-px-tablet-small * 2);
-  }
-
-  @include breakpoint(phone) {
-    margin-left: calc(-1 * $layout-px-phone);
-    width: calc(100% + $layout-px-phone * 2);
-  }
 }
 
 // ─── Preview (book list inside expansion) ────────────────────────────────────
