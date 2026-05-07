@@ -69,6 +69,7 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
           subtitle: CATEGORY_LABELS[book.category] ?? book.category,
           price: book.price,
           picture: book.coverUrl,
+          discount: book.discount,
           category: book.category,
         })
         // addItem adds 1 unit; for qty>1 we call it multiple times
@@ -79,6 +80,7 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
             subtitle: CATEGORY_LABELS[book.category] ?? book.category,
             price: book.price,
             picture: book.coverUrl,
+            discount: book.discount,
             category: book.category,
           })
         }

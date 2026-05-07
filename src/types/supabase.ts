@@ -361,33 +361,45 @@ export interface Database {
       }
       Subscriptions: {
         Row: {
+          description: string | null
+          discount: number | null
           id: number
           image: string | null
           is_active: boolean
+          is_published: boolean
           name: string
           perks: string[]
           position: number
           price: number
+          publish_date: string | null
           slug: string
         }
         Insert: {
+          description?: string | null
+          discount?: number | null
           id?: number
           image?: string | null
           is_active?: boolean
+          is_published?: boolean
           name: string
           perks?: string[]
           position?: number
           price: number
+          publish_date?: string | null
           slug: string
         }
         Update: {
+          description?: string | null
+          discount?: number | null
           id?: number
           image?: string | null
           is_active?: boolean
+          is_published?: boolean
           name?: string
           perks?: string[]
           position?: number
           price?: number
+          publish_date?: string | null
           slug?: string
         }
         Relationships: []

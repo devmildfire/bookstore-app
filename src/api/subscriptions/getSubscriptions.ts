@@ -14,5 +14,5 @@ export async function getSubscriptions(): Promise<Subscription[]> {
 
   if (error) throw error
 
-  return (data as SubscriptionRow[]).map(normalizeSubscription)
+  return data.map(normalizeSubscription)
 }

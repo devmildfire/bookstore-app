@@ -1,10 +1,3 @@
-export type SubscriptionRow = {
-  id: number
-  slug: string
-  name: string
-  perks: string[]
-  price: number
-  image: string | null
-  position: number
-  is_active: boolean
-}
+import type { Database } from '@/types/supabase'
+
+export type SubscriptionRow = Database['public']['Tables']['Subscriptions']['Row']

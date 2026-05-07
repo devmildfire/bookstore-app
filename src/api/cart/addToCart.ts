@@ -12,7 +12,8 @@ export async function addToCart(item: AddToCartInput): Promise<void> {
     .single()
 
   if (existing) {
-    // Update quantity
+    if (item.category === 'Subscription') return
+
     const { error } = await supabase
       .from('Cart')
       .update({ quantity: (existing.quantity ?? 1) + 1 })
@@ -30,6 +31,7 @@ export async function addToCart(item: AddToCartInput): Promise<void> {
         price: item.price,
         quantity: 1,
         picture: item.picture ?? null,
+        discount: item.discount ?? null,
         category: item.category,
       })
 

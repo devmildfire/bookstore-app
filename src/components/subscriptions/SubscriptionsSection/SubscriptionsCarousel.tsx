@@ -3,8 +3,17 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import Image from 'next/image'
+import cn from 'classnames'
+import { useCart } from '@/contexts/cart'
+import { useToast } from '@/contexts/toast'
 import type { Subscription } from '@/entities/subscription/client'
 import styles from './SubscriptionsSection.module.scss'
+
+const fmt = new Intl.NumberFormat('ru-RU', {
+  style: 'currency',
+  currency: 'RUB',
+  maximumFractionDigits: 0,
+})
 
 export default function SubscriptionsCarousel({ items }: { items: Subscription[] }) {
   return (
@@ -24,6 +33,25 @@ export default function SubscriptionsCarousel({ items }: { items: Subscription[]
 }
 
 export function SubscriptionCard({ sub }: { sub: Subscription }) {
+  const { items, addItem, isPending } = useCart()
+  const { success } = useToast()
+
+  const inCart = items.some((item) => item.id === sub.cartId)
+
+  function handleAddToCart() {
+    if (inCart) return
+    addItem({
+      id: sub.cartId,
+      name: sub.name,
+      subtitle: 'Подписка',
+      price: sub.price,
+      picture: sub.imageUrl,
+      discount: sub.discount,
+      category: 'Subscription',
+    })
+    success('Добавлено в корзину', sub.name)
+  }
+
   return (
     <div className={styles.card}>
       <div className={styles.imageWrap}>
@@ -50,12 +78,20 @@ export function SubscriptionCard({ sub }: { sub: Subscription }) {
         </ul>
 
         <div className={styles.priceBlock}>
-          <span className={styles.price}>{sub.price.toLocaleString('ru-RU')}₽</span>
+          <span className={styles.price}>{fmt.format(sub.price)}</span>
+          {sub.originalPrice && (
+            <span className={styles.originalPrice}>{fmt.format(sub.originalPrice)}</span>
+          )}
           <span className={styles.priceLabel}>в месяц</span>
         </div>
 
-        <button type="button" className={styles.connectBtn}>
-          Подключить
+        <button
+          type="button"
+          className={cn(styles.connectBtn, inCart && styles.connectBtnInCart)}
+          onClick={handleAddToCart}
+          disabled={isPending || inCart}
+        >
+          {inCart ? 'В корзине' : 'Подключить'}
         </button>
       </div>
     </div>

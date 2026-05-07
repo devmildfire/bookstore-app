@@ -19,8 +19,6 @@ export type DbOrderInsert = Database['public']['Tables']['Orders']['Insert']
 export type DbOrderItem = Database['public']['Tables']['OrderItems']['Row']
 export type DbOrderItemInsert = Database['public']['Tables']['OrderItems']['Insert']
 
-export type DbPromocode = Database['public']['Tables']['Promocodes']['Row']
-
 // ─── Enum types ───────────────────────────────────────────────────────────────
 
 export type ProductCategory = Database['public']['Enums']['category']

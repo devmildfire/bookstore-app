@@ -36,6 +36,7 @@ export default function BookCard({ book, className }: Props) {
         name: book.name,
         price: book.price,
         picture: book.coverUrl,
+        discount: book.discount,
         category: book.category,
       })
     }

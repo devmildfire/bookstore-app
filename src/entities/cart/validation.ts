@@ -6,6 +6,7 @@ export const addToCartSchema = z.object({
   subtitle: z.string().nullable().optional(),
   price: z.number().min(0, 'Цена должна быть положительной'),
   picture: z.string().nullable().optional(),
+  discount: z.number().nullable().optional(),
   category: z.enum(['PrintBook', 'AudioBook', 'EBook', 'Book2.0', 'GiftCard', 'BoxSet', 'Subscription', 'Course']),
 })
 

@@ -20,9 +20,11 @@ export async function createOrderAction(deliveryEmail?: string): Promise<CreateO
   const items = cartRows.map(normalizeCartItem)
 
   const orderInsert: DbOrderInsert = {
+    user_id: user.id,
     status: 'paid',
-    summ: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    email: deliveryEmail ?? null,
+    total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    delivery_method: deliveryEmail ? 'email' : 'download',
+    delivery_email: deliveryEmail ?? null,
   }
 
   const { data: order, error: orderError } = await supabase
@@ -35,12 +37,11 @@ export async function createOrderAction(deliveryEmail?: string): Promise<CreateO
 
   const orderItems: DbOrderItemInsert[] = items.map((item) => ({
     order_id: order.id,
+    book_id: item.id,
     name: item.name,
     price: item.price,
     quantity: item.quantity,
-    summ: item.price * item.quantity,
-    discount: item.discount,
-    type: item.category,
+    category: item.category,
   }))
 
   const { error: itemsError } = await supabase.from('OrderItems').insert(orderItems)
