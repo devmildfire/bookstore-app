@@ -60,19 +60,6 @@ export default function CatalogControls({
     return authors.filter((author) => author.toLowerCase().includes(search))
   }, [authorSearch, authors])
 
-  const selectedChips = useMemo(
-    () => [
-      ...draft.authors.map((value) => ({ group: 'authors' as const, value, label: value })),
-      ...draft.categories.map((value) => ({
-        group: 'categories' as const,
-        value,
-        label: getCategoryLabel(value),
-      })),
-      ...draft.years.map((value) => ({ group: 'years' as const, value, label: value })),
-    ],
-    [draft],
-  )
-
   function toggleValue(group: FilterGroup, value: string) {
     setDraft((current) => {
       const values = current[group]
@@ -138,52 +125,60 @@ export default function CatalogControls({
               </div>
 
               <div className={styles.filterPanels}>
-                <FilterPanel title='Авторы'>
-                  <AuthorSearch
-                    value={authorSearch}
-                    onChange={setAuthorSearch}
-                  />
-                  <AuthorList
-                    values={filteredAuthors}
-                    selectedValues={draft.authors}
-                    onToggle={(value) => toggleValue('authors', value)}
-                  />
-                </FilterPanel>
-
-                <FilterPanel title='Тип издания'>
-                  <OptionList
-                    values={categories}
-                    selectedValues={draft.categories}
-                    getLabel={getCategoryLabel}
-                    onToggle={(value) => toggleValue('categories', value)}
-                  />
-                </FilterPanel>
-
-                <FilterPanel title='Год издания'>
-                  <OptionList
-                    values={years}
-                    selectedValues={draft.years}
+                <div>
+                  <FilterPanel title='Авторы'>
+                    <AuthorSearch
+                      value={authorSearch}
+                      onChange={setAuthorSearch}
+                    />
+                    <AuthorList
+                      values={filteredAuthors}
+                      selectedValues={draft.authors}
+                      onToggle={(value) => toggleValue('authors', value)}
+                    />
+                  </FilterPanel>
+                  <SelectedChips
+                    group='authors'
+                    values={draft.authors}
                     getLabel={(value) => value}
-                    onToggle={(value) => toggleValue('years', value)}
+                    onRemove={removeChip}
                   />
-                </FilterPanel>
-              </div>
-
-              {selectedChips.length > 0 && (
-                <div className={styles.chips} aria-label='Выбранные фильтры'>
-                  {selectedChips.map((chip) => (
-                    <button
-                      key={`${chip.group}-${chip.value}`}
-                      className={styles.chip}
-                      type='button'
-                      onClick={() => removeChip(chip.group, chip.value)}
-                    >
-                      <span>{chip.label}</span>
-                      <CloseSmallIcon />
-                    </button>
-                  ))}
                 </div>
-              )}
+
+                <div>
+                  <FilterPanel title='Тип издания'>
+                    <OptionList
+                      values={categories}
+                      selectedValues={draft.categories}
+                      getLabel={getCategoryLabel}
+                      onToggle={(value) => toggleValue('categories', value)}
+                    />
+                  </FilterPanel>
+                  <SelectedChips
+                    group='categories'
+                    values={draft.categories}
+                    getLabel={getCategoryLabel}
+                    onRemove={removeChip}
+                  />
+                </div>
+
+                <div>
+                  <FilterPanel title='Год издания'>
+                    <OptionList
+                      values={years}
+                      selectedValues={draft.years}
+                      getLabel={(value) => value}
+                      onToggle={(value) => toggleValue('years', value)}
+                    />
+                  </FilterPanel>
+                  <SelectedChips
+                    group='years'
+                    values={draft.years}
+                    getLabel={(value) => value}
+                    onRemove={removeChip}
+                  />
+                </div>
+              </div>
 
               <div className={styles.modalActions}>
                 <button className={styles.actionButton} type='button' onClick={dismissFilters} aria-label='Отменить'>
@@ -257,6 +252,36 @@ function FilterPanel({ title, children }: { title: string; children: ReactNode }
       </div>
       {children}
     </section>
+  )
+}
+
+function SelectedChips<T extends string>({
+  group,
+  values,
+  getLabel,
+  onRemove,
+}: {
+  group: FilterGroup
+  values: T[]
+  getLabel: (value: T) => string
+  onRemove: (group: FilterGroup, value: string) => void
+}) {
+  if (values.length === 0) return null
+
+  return (
+    <div className={styles.chips} aria-label='Выбранные фильтры'>
+      {values.map((value) => (
+        <button
+          key={`${group}-${value}`}
+          className={styles.chip}
+          type='button'
+          onClick={() => onRemove(group, value)}
+        >
+          <span>{getLabel(value)}</span>
+          <CloseSmallIcon />
+        </button>
+      ))}
+    </div>
   )
 }
 
