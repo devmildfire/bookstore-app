@@ -11,7 +11,7 @@ export async function getLatestBooks(limit: number): Promise<Book[]> {
   const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_books', {
     result_limit: limit,
     result_offset: 0,
-    sort_by: 'newest',
+    sort_by: 'year-desc',
   })
 
   if (error) throw new Error(`Не удалось загрузить книги: ${error.message}`)

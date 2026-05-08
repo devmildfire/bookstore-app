@@ -163,8 +163,10 @@ AS $$
       (d.type_count > 1)  AS has_multiple_products
     FROM deduped d
     ORDER BY
+      CASE WHEN sort_by = 'newest' THEN d.title_first_release END DESC NULLS LAST,
       CASE WHEN sort_by = 'year-desc' THEN d.title_first_release END DESC NULLS LAST,
       CASE WHEN sort_by = 'year-asc' THEN d.title_first_release END ASC NULLS LAST,
+      CASE WHEN sort_by = 'title' THEN d.title_name END ASC NULLS LAST,
       CASE WHEN sort_by = 'author-asc' THEN d.first_author_surname END ASC NULLS LAST,
       CASE WHEN sort_by = 'author-desc' THEN d.first_author_surname END DESC NULLS LAST,
       CASE WHEN sort_by = 'price-asc' THEN d.price END ASC NULLS LAST,

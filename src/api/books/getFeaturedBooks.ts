@@ -27,7 +27,7 @@ export async function getFeaturedBooks(): Promise<Book[]> {
     title_ids: titleIds,
     result_limit: titleIds.length,
     result_offset: 0,
-    sort_by: 'newest',
+    sort_by: 'year-desc',
   })
 
   if (error) throw new Error(`Не удалось загрузить избранные книги: ${error.message}`)

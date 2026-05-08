@@ -26,7 +26,7 @@ export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
   const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_books', {
     result_limit: limit + 1,
     result_offset: 0,
-    sort_by: 'newest',
+    sort_by: 'year-desc',
   })
 
   if (error) throw new Error(`Не удалось загрузить похожие книги: ${error.message}`)
