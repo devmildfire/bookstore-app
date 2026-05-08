@@ -280,11 +280,6 @@
   display: flex;
   gap: $space-4;
   align-items: flex-start;
-  width: 320px;
-
-  @include breakpoint(phone) {
-    width: 240px;
-  }
 }
 
 .previewCover {
@@ -305,7 +300,6 @@
   flex-direction: column;
   gap: $space-2;
   padding-top: 2px; // optical baseline alignment with cover top
-  min-width: 0; // allow flex item to shrink below text intrinsic width
 }
 
 .previewBookTitle {
@@ -315,7 +309,6 @@
   line-height: 1.2;
   letter-spacing: 0.03em;
   color: $color-text-on-dark;
-  overflow-wrap: break-word;
 }
 
 .previewBookAuthor {
