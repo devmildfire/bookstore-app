@@ -107,8 +107,8 @@ export default function CatalogControls({
   }
 
   function applyFilters() {
-    onApplyFilters(draft)
     setIsFilterOpen(false)
+    setTimeout(() => onApplyFilters(draft), 0)
   }
 
   function handleSortChange(sort: BookSort) {
