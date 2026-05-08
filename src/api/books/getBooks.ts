@@ -9,6 +9,11 @@ export const booksQueryKey = (filters: BookFilters) => ['books', filters] as con
 type CatalogRpcRow = BookServerRow & { total_count: number }
 type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
 type RpcResult = Awaited<ReturnType<RpcFn>>
+type FilterOptions = {
+  categories: ProductCategory[]
+  authors: string[]
+  years: string[]
+}
 
 const CATALOG_FILTER_OPTIONS_LIMIT = 10000
 
@@ -18,7 +23,7 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const offset = (filters.page - 1) * pageSize
 
   const rpc: RpcFn = (name, params) => supabase.rpc(name, params) as unknown as ReturnType<RpcFn>
-  const [rpcResult, filterOptionsResult] = await Promise.all([
+  const [rpcResult, filterOptions] = await Promise.all([
     getCatalogBooksWithFallback(rpc, {
       result_limit: pageSize,
       result_offset: offset,
@@ -30,35 +35,14 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
       price_to: filters.priceTo,
       sort_by: filters.sort,
     }),
-    rpc('get_catalog_books', {
-      result_limit: CATALOG_FILTER_OPTIONS_LIMIT,
-      result_offset: 0,
-      sort_by: 'newest',
-    }),
+    getCatalogFilterOptions(supabase, rpc),
   ])
 
   if (rpcResult.error) throw new Error(`Не удалось загрузить каталог книг: ${rpcResult.error.message}`)
-  if (filterOptionsResult.error) {
-    throw new Error(`Не удалось загрузить фильтры каталога: ${filterOptionsResult.error.message}`)
-  }
 
   const rows = (rpcResult.data ?? []) as CatalogRpcRow[]
-  const filterOptionRows = (filterOptionsResult.data ?? []) as BookServerRow[]
   const total = rows[0]?.total_count ?? 0
   const books = rows.map(normalizeBook)
-  const authors = Array.from(new Set(filterOptionRows.flatMap((row) => row.author_names ?? []))).sort((a, b) =>
-    a.localeCompare(b, 'ru'),
-  )
-  const categories = Array.from(new Set(filterOptionRows.map((row) => row.product_type))).sort((a, b) =>
-    a.localeCompare(b, 'ru'),
-  ) as ProductCategory[]
-  const years = Array.from(
-    new Set(
-      filterOptionRows
-        .map((row) => row.title_first_release?.slice(0, 4))
-        .filter((year): year is string => Boolean(year)),
-    ),
-  ).sort((a, b) => b.localeCompare(a, 'ru'))
 
   return {
     books,
@@ -66,10 +50,62 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
     page: filters.page,
     pageSize,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
-    categories,
-    authors,
-    years,
+    categories: filterOptions.categories,
+    authors: filterOptions.authors,
+    years: filterOptions.years,
   }
+}
+
+async function getCatalogFilterOptions(
+  supabase: ReturnType<typeof createDataClient>,
+  rpc: RpcFn,
+): Promise<FilterOptions> {
+  const [result, categoryResults] = await Promise.all([
+    rpc('get_catalog_books', {
+      result_limit: CATALOG_FILTER_OPTIONS_LIMIT,
+      result_offset: 0,
+      sort_by: 'newest',
+    }),
+    getPublishedProductCategories(supabase),
+  ])
+
+  if (result.error) {
+    throw new Error(`Не удалось загрузить фильтры каталога: ${result.error.message}`)
+  }
+
+  const rows = (result.data ?? []) as BookServerRow[]
+
+  return {
+    categories: categoryResults,
+    authors: Array.from(new Set(rows.flatMap((row) => row.author_names ?? []))).sort((a, b) =>
+      a.localeCompare(b, 'ru'),
+    ),
+    years: Array.from(
+      new Set(
+        rows
+          .map((row) => row.title_first_release?.slice(0, 4))
+          .filter((year): year is string => Boolean(year)),
+      ),
+    ).sort((a, b) => b.localeCompare(a, 'ru')),
+  }
+}
+
+async function getPublishedProductCategories(supabase: ReturnType<typeof createDataClient>): Promise<ProductCategory[]> {
+  const categoryQueries = [
+    { category: 'PrintBook' as const, query: supabase.from('PrintedBooks').select('id').eq('is_published', true).limit(1) },
+    { category: 'EBook' as const, query: supabase.from('Ebooks').select('id').eq('is_published', true).limit(1) },
+    { category: 'AudioBook' as const, query: supabase.from('Audiobooks').select('id').eq('is_published', true).limit(1) },
+    { category: 'Book2.0' as const, query: supabase.from('CardBooks').select('id').eq('is_published', true).limit(1) },
+  ]
+  const results = await Promise.all(categoryQueries.map(({ query }) => query))
+
+  results.forEach((result) => {
+    if (result.error) throw new Error(`Не удалось загрузить типы изданий: ${result.error.message}`)
+  })
+
+  return categoryQueries
+    .filter((_, index) => (results[index].data ?? []).length > 0)
+    .map(({ category }) => category)
 }
 
 async function getCatalogBooksWithFallback(rpc: RpcFn, params: Record<string, unknown>): Promise<RpcResult> {

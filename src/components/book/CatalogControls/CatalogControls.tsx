@@ -25,6 +25,7 @@ type Props = {
 }
 
 type FilterGroup = 'categories' | 'authors' | 'years'
+type PanelId = 'authors' | 'categories' | 'years'
 
 const categoryLabels: Partial<Record<ProductCategory, string>> = {
   PrintBook: 'Печатное',
@@ -51,6 +52,7 @@ export default function CatalogControls({
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isSortOpen, setIsSortOpen] = useState(false)
   const [authorSearch, setAuthorSearch] = useState('')
+  const [collapsedPanels, setCollapsedPanels] = useState<PanelId[]>([])
   const [draft, setDraft] = useState<CatalogFilterDraft>(() => getDraftFromFilters(filters))
 
   const filteredAuthors = useMemo(() => {
@@ -105,6 +107,12 @@ export default function CatalogControls({
     setIsSortOpen(false)
   }
 
+  function togglePanel(panel: PanelId) {
+    setCollapsedPanels((current) =>
+      current.includes(panel) ? current.filter((item) => item !== panel) : [...current, panel],
+    )
+  }
+
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.controlBar} aria-label='Фильтры и сортировка каталога'>
@@ -126,7 +134,11 @@ export default function CatalogControls({
 
               <div className={styles.filterPanels}>
                 <div>
-                  <FilterPanel title='Авторы'>
+                  <FilterPanel
+                    title='Авторы'
+                    isCollapsed={collapsedPanels.includes('authors')}
+                    onToggle={() => togglePanel('authors')}
+                  >
                     <AuthorSearch
                       value={authorSearch}
                       onChange={setAuthorSearch}
@@ -146,7 +158,11 @@ export default function CatalogControls({
                 </div>
 
                 <div>
-                  <FilterPanel title='Тип издания'>
+                  <FilterPanel
+                    title='Тип издания'
+                    isCollapsed={collapsedPanels.includes('categories')}
+                    onToggle={() => togglePanel('categories')}
+                  >
                     <PlainOptionList
                       values={categories}
                       selectedValues={draft.categories}
@@ -163,7 +179,11 @@ export default function CatalogControls({
                 </div>
 
                 <div>
-                  <FilterPanel title='Год издания'>
+                  <FilterPanel
+                    title='Год издания'
+                    isCollapsed={collapsedPanels.includes('years')}
+                    onToggle={() => togglePanel('years')}
+                  >
                     <PlainOptionList
                       values={years}
                       selectedValues={draft.years}
@@ -243,14 +263,24 @@ export default function CatalogControls({
   )
 }
 
-function FilterPanel({ title, children }: { title: string; children: ReactNode }) {
+function FilterPanel({
+  title,
+  isCollapsed,
+  onToggle,
+  children,
+}: {
+  title: string
+  isCollapsed: boolean
+  onToggle: () => void
+  children: ReactNode
+}) {
   return (
-    <section className={styles.filterPanel}>
-      <div className={styles.filterPanelHeader}>
+    <section className={cn(styles.filterPanel, isCollapsed && styles.collapsed)}>
+      <button className={styles.filterPanelHeader} type='button' onClick={onToggle} aria-expanded={!isCollapsed}>
         <h3>{title}</h3>
         <span aria-hidden>▾</span>
-      </div>
-      {children}
+      </button>
+      {!isCollapsed && children}
     </section>
   )
 }
