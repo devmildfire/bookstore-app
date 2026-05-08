@@ -147,7 +147,7 @@ export default function CatalogControls({
 
                 <div>
                   <FilterPanel title='Тип издания'>
-                    <OptionList
+                    <PlainOptionList
                       values={categories}
                       selectedValues={draft.categories}
                       getLabel={getCategoryLabel}
@@ -164,7 +164,7 @@ export default function CatalogControls({
 
                 <div>
                   <FilterPanel title='Год издания'>
-                    <OptionList
+                    <PlainOptionList
                       values={years}
                       selectedValues={draft.years}
                       getLabel={(value) => value}
@@ -310,10 +310,10 @@ function AuthorList({
   onToggle: (value: string) => void
 }) {
   return (
-    <div className={styles.authorList}>
+    <div className={styles.plainOptionList}>
       {values.map((value) => (
         <button
-          className={cn(styles.authorOption, selectedValues.includes(value) && styles.selected)}
+          className={cn(styles.plainOption, selectedValues.includes(value) && styles.selected)}
           key={value}
           type='button'
           onClick={() => onToggle(value)}
@@ -325,7 +325,7 @@ function AuthorList({
   )
 }
 
-function OptionList<T extends string>({
+function PlainOptionList<T extends string>({
   values,
   selectedValues,
   getLabel,
@@ -337,16 +337,16 @@ function OptionList<T extends string>({
   onToggle: (value: T) => void
 }) {
   return (
-    <div className={styles.optionList}>
+    <div className={styles.plainOptionList}>
       {values.map((value) => (
-        <label className={styles.option} key={value}>
-          <input
-            type='checkbox'
-            checked={selectedValues.includes(value)}
-            onChange={() => onToggle(value)}
-          />
-          <span>{getLabel(value)}</span>
-        </label>
+        <button
+          className={cn(styles.plainOption, selectedValues.includes(value) && styles.selected)}
+          key={value}
+          type='button'
+          onClick={() => onToggle(value)}
+        >
+          {getLabel(value)}
+        </button>
       ))}
     </div>
   )

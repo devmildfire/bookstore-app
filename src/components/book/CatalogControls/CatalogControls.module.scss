@@ -202,12 +202,12 @@
   @include visually-hidden;
 }
 
-.authorList {
+.plainOptionList {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: $space-2 72px;
   max-height: 142px;
-  margin-top: $space-2;
+  margin-top: $space-3;
   overflow: auto;
 
   @include breakpoint('phone') {
@@ -216,7 +216,7 @@
   }
 }
 
-.authorOption {
+.plainOption {
   min-width: 0;
   padding: 0;
   overflow: hidden;
@@ -238,41 +238,6 @@
 
   &:focus-visible {
     @include focus-ring;
-  }
-}
-
-.optionList {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $space-3 $space-6;
-  max-height: 170px;
-  overflow: auto;
-
-  @include breakpoint('phone') {
-    grid-template-columns: 1fr;
-  }
-}
-
-.option {
-  display: flex;
-  gap: $space-2;
-  align-items: center;
-  min-width: 0;
-  color: rgba($color-text-on-dark, 0.78);
-  font-size: $font-size-sm;
-  cursor: pointer;
-
-  input {
-    width: 15px;
-    height: 15px;
-    flex: 0 0 auto;
-    accent-color: $color-accent-hover-on-dark;
-  }
-
-  span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 
