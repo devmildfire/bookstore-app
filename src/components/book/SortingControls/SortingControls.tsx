@@ -10,10 +10,12 @@ type Props = {
 }
 
 const sortOptions = [
-  { value: 'newest', label: 'Сначала новые' },
+  { value: 'year-desc', label: 'Сначала новые' },
+  { value: 'year-asc', label: 'Сначала старые' },
+  { value: 'author-asc', label: 'Автор А-Я' },
+  { value: 'author-desc', label: 'Автор Я-А' },
   { value: 'price-asc', label: 'Сначала дешевле' },
   { value: 'price-desc', label: 'Сначала дороже' },
-  { value: 'title', label: 'По названию' },
 ]
 
 export default function SortingControls({ value }: Props) {

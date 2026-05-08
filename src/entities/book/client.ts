@@ -1,15 +1,17 @@
 import type { ProductCategory } from '@/types/database'
 
-export type BookSort = 'newest' | 'price-asc' | 'price-desc' | 'title'
+export type BookSort = 'year-desc' | 'year-asc' | 'author-asc' | 'author-desc' | 'price-asc' | 'price-desc'
 
 export type BookFilters = {
   search: string
-  category: ProductCategory | 'all'
-  author: string
+  categories: ProductCategory[]
+  authors: string[]
+  years: string[]
   priceFrom: number | null
   priceTo: number | null
   sort: BookSort
   page: number
+  limit: number
 }
 
 export type Book = {
@@ -42,4 +44,5 @@ export type BookCatalog = {
   totalPages: number
   categories: ProductCategory[]
   authors: string[]
+  years: string[]
 }

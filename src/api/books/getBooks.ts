@@ -12,6 +12,8 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const supabase = createDataClient()
   const pageSize = BOOK_CATALOG_PAGE_SIZE
   const offset = (filters.page - 1) * pageSize
+  const category = filters.categories[0] ?? null
+  const author = filters.authors[0] ?? null
 
   const [rpcResult, authorsResult] = await Promise.all([
     (supabase.rpc as unknown as (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>)(
@@ -20,8 +22,8 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
         result_limit: pageSize,
         result_offset: offset,
         search_term: filters.search || null,
-        product_type_filter: filters.category !== 'all' ? filters.category : null,
-        author_name: filters.author || null,
+        product_type_filter: category,
+        author_name: author,
         price_from: filters.priceFrom,
         price_to: filters.priceTo,
         sort_by: filters.sort,
@@ -48,5 +50,6 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
     categories,
     authors,
+    years: [],
   }
 }

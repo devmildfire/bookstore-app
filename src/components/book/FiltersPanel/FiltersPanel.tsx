@@ -60,7 +60,7 @@ export default function FiltersPanel({ filters, categories, authors }: Props) {
 
       <Select
         label='Категория'
-        value={filters.category}
+        value={filters.categories[0] ?? 'all'}
         onValueChange={(value) => updateParam('category', value)}
         options={[
           { value: 'all', label: 'Все категории' },
@@ -73,7 +73,7 @@ export default function FiltersPanel({ filters, categories, authors }: Props) {
 
       <Select
         label='Автор'
-        value={filters.author || 'all'}
+        value={filters.authors[0] ?? 'all'}
         onValueChange={(value) => updateParam('author', value)}
         options={[
           { value: 'all', label: 'Все авторы' },
