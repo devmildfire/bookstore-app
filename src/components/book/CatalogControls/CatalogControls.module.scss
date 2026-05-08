@@ -127,15 +127,13 @@
 
 .filterPanel {
   min-height: 200px;
-  padding: $space-5 28px;
+  padding: $space-4 28px $space-5;
   background: $color-panel;
   border-radius: $radius-sm;
 
   h3 {
-    margin: 0 0 $space-4;
-    padding-bottom: $space-4;
+    margin: 0;
     color: rgba($color-text-on-dark, 0.8);
-    border-bottom: 1px solid rgba($color-text-on-dark, 0.32);
     font-size: $font-size-lg;
     font-weight: $font-weight-normal;
   }
@@ -147,6 +145,99 @@
   @include breakpoint('phone') {
     min-height: 160px;
     padding: $space-4;
+  }
+}
+
+.filterPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.32);
+
+  span {
+    color: rgba($color-text-on-dark, 0.8);
+    font-size: $font-size-sm;
+    line-height: 1;
+  }
+}
+
+.authorSearch {
+  position: relative;
+  display: block;
+  margin-top: $space-2;
+
+  input {
+    width: 100%;
+    height: 28px;
+    padding: 0 36px 0 $space-5;
+    color: $color-text-on-dark;
+    background: rgba(220, 220, 220, 0.18);
+    border: 0;
+    border-radius: $radius-sm;
+    outline: none;
+    font-size: $font-size-sm;
+
+    &::placeholder {
+      color: rgba($color-text-on-dark, 0.62);
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  svg {
+    position: absolute;
+    top: 50%;
+    right: $space-4;
+    color: rgba($color-text-on-dark, 0.62);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}
+
+.visuallyHidden {
+  @include visually-hidden;
+}
+
+.authorList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-2 72px;
+  max-height: 142px;
+  margin-top: $space-2;
+  overflow: auto;
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+    gap: $space-2;
+  }
+}
+
+.authorOption {
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  color: rgba($color-text-on-dark, 0.88);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: $font-size-base;
+  line-height: 1.25;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease-out;
+
+  &:hover,
+  &.selected {
+    color: $color-text-on-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
   }
 }
 

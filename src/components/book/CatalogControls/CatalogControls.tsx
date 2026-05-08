@@ -50,7 +50,15 @@ export default function CatalogControls({
 }: Props) {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isSortOpen, setIsSortOpen] = useState(false)
+  const [authorSearch, setAuthorSearch] = useState('')
   const [draft, setDraft] = useState<CatalogFilterDraft>(() => getDraftFromFilters(filters))
+
+  const filteredAuthors = useMemo(() => {
+    const search = authorSearch.trim().toLowerCase()
+    if (!search) return authors
+
+    return authors.filter((author) => author.toLowerCase().includes(search))
+  }, [authorSearch, authors])
 
   const selectedChips = useMemo(
     () => [
@@ -88,11 +96,15 @@ export default function CatalogControls({
 
   function dismissFilters() {
     setDraft(getDraftFromFilters(filters))
+    setAuthorSearch('')
     setIsFilterOpen(false)
   }
 
   function handleFilterOpenChange(open: boolean) {
-    if (open) setDraft(getDraftFromFilters(filters))
+    if (open) {
+      setDraft(getDraftFromFilters(filters))
+      setAuthorSearch('')
+    }
     setIsFilterOpen(open)
   }
 
@@ -127,10 +139,13 @@ export default function CatalogControls({
 
               <div className={styles.filterPanels}>
                 <FilterPanel title='Авторы'>
-                  <OptionList
-                    values={authors}
+                  <AuthorSearch
+                    value={authorSearch}
+                    onChange={setAuthorSearch}
+                  />
+                  <AuthorList
+                    values={filteredAuthors}
                     selectedValues={draft.authors}
-                    getLabel={(value) => value}
                     onToggle={(value) => toggleValue('authors', value)}
                   />
                 </FilterPanel>
@@ -236,9 +251,52 @@ export default function CatalogControls({
 function FilterPanel({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className={styles.filterPanel}>
-      <h3>{title}</h3>
+      <div className={styles.filterPanelHeader}>
+        <h3>{title}</h3>
+        <span aria-hidden>▾</span>
+      </div>
       {children}
     </section>
+  )
+}
+
+function AuthorSearch({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <label className={styles.authorSearch}>
+      <span className={styles.visuallyHidden}>Поиск автора</span>
+      <input
+        type='search'
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder='А'
+      />
+      <SearchIcon />
+    </label>
+  )
+}
+
+function AuthorList({
+  values,
+  selectedValues,
+  onToggle,
+}: {
+  values: string[]
+  selectedValues: string[]
+  onToggle: (value: string) => void
+}) {
+  return (
+    <div className={styles.authorList}>
+      {values.map((value) => (
+        <button
+          className={cn(styles.authorOption, selectedValues.includes(value) && styles.selected)}
+          key={value}
+          type='button'
+          onClick={() => onToggle(value)}
+        >
+          {value}
+        </button>
+      ))}
+    </div>
   )
 }
 
@@ -312,6 +370,15 @@ function CloseSmallIcon() {
   return (
     <svg width='15' height='15' viewBox='0 0 15 15' fill='none' aria-hidden>
       <path d='M3.5 3.5L11.5 11.5M11.5 3.5L3.5 11.5' stroke='currentColor' strokeLinecap='round' />
+    </svg>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg width='16' height='16' viewBox='0 0 16 16' fill='none' aria-hidden>
+      <circle cx='7' cy='7' r='4.5' stroke='currentColor' />
+      <path d='M10.5 10.5L14 14' stroke='currentColor' strokeLinecap='round' />
     </svg>
   )
 }
