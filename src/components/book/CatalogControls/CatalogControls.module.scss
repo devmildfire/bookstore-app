@@ -1,0 +1,297 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-12;
+}
+
+.controlBar {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  width: min(766px, 100%);
+  height: 76px;
+  overflow: hidden;
+  color: rgba($color-text-on-dark, 0.45);
+  background: rgba(151, 151, 151, 0.95);
+  border-radius: $radius-full;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(3px);
+
+  @include breakpoint('phone') {
+    height: 58px;
+  }
+}
+
+.controlButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s ease-out, background-color 0.2s ease-out;
+
+  &:hover {
+    color: $color-text-on-dark;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: -6px;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba($color-text-on-dark, 0.22);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: $z-overlay;
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.filterModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: $z-modal;
+  display: flex;
+  flex-direction: column;
+  width: min(755px, calc(100vw - 32px));
+  max-height: min(1006px, calc(100vh - 32px));
+  padding: 34px 49px 40px;
+  overflow: auto;
+  color: $color-text-on-dark;
+  background: rgba(31, 31, 31, 0.8);
+  border-radius: $radius-md;
+  outline: none;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(10px);
+
+  @include breakpoint('phone') {
+    width: calc(100vw - 24px);
+    padding: $space-6 $space-4;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-8;
+}
+
+.modalTitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: Montserrat, $font-primary;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-normal;
+}
+
+.closeButton,
+.sortCloseButton,
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba($color-text-on-dark, 0.45);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s ease-out;
+
+  &:hover {
+    color: $color-text-on-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.filterPanels {
+  display: grid;
+  gap: $space-6;
+}
+
+.filterPanel {
+  min-height: 200px;
+  padding: $space-5 28px;
+  background: $color-panel;
+  border-radius: $radius-sm;
+
+  h3 {
+    margin: 0 0 $space-4;
+    padding-bottom: $space-4;
+    color: rgba($color-text-on-dark, 0.8);
+    border-bottom: 1px solid rgba($color-text-on-dark, 0.32);
+    font-size: $font-size-lg;
+    font-weight: $font-weight-normal;
+  }
+
+  &:first-child {
+    min-height: 274px;
+  }
+
+  @include breakpoint('phone') {
+    min-height: 160px;
+    padding: $space-4;
+  }
+}
+
+.optionList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3 $space-6;
+  max-height: 170px;
+  overflow: auto;
+
+  @include breakpoint('phone') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option {
+  display: flex;
+  gap: $space-2;
+  align-items: center;
+  min-width: 0;
+  color: rgba($color-text-on-dark, 0.78);
+  font-size: $font-size-sm;
+  cursor: pointer;
+
+  input {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+    accent-color: $color-accent-hover-on-dark;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 30px;
+  padding: 0 $space-2 0 $space-4;
+  color: $color-text-on-dark;
+  background: rgba($color-accent-hover-on-dark, 0.5);
+  border: 0;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-family: Montserrat, $font-primary;
+  font-size: $font-size-base;
+  gap: $space-2;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-4;
+  margin-top: $space-8;
+}
+
+.sortPopover {
+  z-index: $z-modal;
+  width: 285px;
+  padding: $space-4 $space-3;
+  color: $color-text-on-dark;
+  background: rgba(31, 31, 31, 0.8);
+  border-radius: $radius-md;
+  outline: none;
+  backdrop-filter: blur(10px);
+}
+
+.sortHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-4;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: Montserrat, $font-primary;
+  font-size: $font-size-xs;
+  position: relative;
+}
+
+.sortCloseButton {
+  position: absolute;
+  right: 0;
+}
+
+.sortList {
+  display: grid;
+  gap: $space-1;
+  padding: $space-3;
+  background: $color-panel;
+  border-radius: $radius-sm;
+}
+
+.sortRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: $space-3;
+  align-items: center;
+  min-height: 24px;
+  color: rgba($color-text-on-dark, 0.8);
+  font-size: $font-size-xs;
+}
+
+.sortButtons {
+  display: flex;
+  gap: 1px;
+}
+
+.sortDirection {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 18px;
+  padding: 0;
+  color: rgba($color-text-on-dark, 0.8);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+
+  &:hover,
+  &.active {
+    color: $color-accent-hover-on-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
