@@ -83,10 +83,19 @@ export default function CatalogControls({
     }))
   }
 
-  function dismissFilters() {
+  function closeFilters() {
     setDraft(getDraftFromFilters(filters))
     setAuthorSearch('')
     setIsFilterOpen(false)
+  }
+
+  function clearFilters() {
+    setDraft({
+      categories: [],
+      authors: [],
+      years: [],
+    })
+    setAuthorSearch('')
   }
 
   function handleFilterOpenChange(open: boolean) {
@@ -127,7 +136,7 @@ export default function CatalogControls({
             <Dialog.Content className={styles.filterModal}>
               <div className={styles.modalHeader}>
                 <Dialog.Title className={styles.modalTitle}>Фильтры</Dialog.Title>
-                <button className={styles.closeButton} type='button' onClick={dismissFilters} aria-label='Закрыть фильтры'>
+                <button className={styles.closeButton} type='button' onClick={closeFilters} aria-label='Закрыть фильтры'>
                   <CloseIcon />
                 </button>
               </div>
@@ -201,7 +210,7 @@ export default function CatalogControls({
               </div>
 
               <div className={styles.modalActions}>
-                <button className={styles.actionButton} type='button' onClick={dismissFilters} aria-label='Отменить'>
+                <button className={styles.actionButton} type='button' onClick={clearFilters} aria-label='Сбросить фильтры'>
                   <DismissIcon />
                 </button>
                 <button className={styles.actionButton} type='button' onClick={applyFilters} aria-label='Применить'>
@@ -442,7 +451,20 @@ function DismissIcon() {
   return (
     <svg width='50' height='50' viewBox='0 0 50 50' fill='none' aria-hidden>
       <circle cx='25' cy='25' r='24.5' stroke='currentColor' opacity='0.35' />
-      <path d='M17 18L33 32M33 18L17 32' stroke='currentColor' strokeWidth='1.4' strokeLinecap='round' />
+      <path
+        d='M17 23.5A8.5 8.5 0 0 1 31.3 17.3L34 20M34 20V14.5M34 20H28.5'
+        stroke='currentColor'
+        strokeWidth='1.4'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M33 26.5A8.5 8.5 0 0 1 18.7 32.7L16 30M16 30V35.5M16 30H21.5'
+        stroke='currentColor'
+        strokeWidth='1.4'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
     </svg>
   )
 }
