@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
 import CartPlusIcon from '@/components/common/icons/CartPlusIcon'
-import { useCart } from '@/contexts/cart'
 import type { Book } from '@/entities/book/client'
 import styles from './BookCard.module.scss'
 
@@ -21,25 +20,12 @@ const fmt = new Intl.NumberFormat('ru-RU', {
 })
 
 export default function BookCard({ book, className }: Props) {
-  const { addItem } = useCart()
   const [modalOpen, setModalOpen] = useState(false)
 
   function handleCartClick(e: React.MouseEvent) {
     e.preventDefault()
     if (!book.inStock) return
-
-    if (book.hasMultipleProducts) {
-      setModalOpen(true)
-    } else {
-      addItem({
-        id: book.id,
-        name: book.name,
-        price: book.price,
-        picture: book.coverUrl,
-        discount: book.discount,
-        category: book.category,
-      })
-    }
+    setModalOpen(true)
   }
 
   return (
