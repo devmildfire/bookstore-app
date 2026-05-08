@@ -126,7 +126,6 @@
 }
 
 .filterPanel {
-  min-height: 200px;
   padding: $space-4 28px $space-5;
   background: $color-panel;
   border-radius: $radius-sm;
@@ -143,7 +142,6 @@
   }
 
   @include breakpoint('phone') {
-    min-height: 160px;
     padding: $space-4;
   }
 }
