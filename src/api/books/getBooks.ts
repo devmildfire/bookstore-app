@@ -17,7 +17,7 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const pageSize = filters.limit
   const offset = (filters.page - 1) * pageSize
 
-  const rpc = supabase.rpc as unknown as RpcFn
+  const rpc: RpcFn = (name, params) => supabase.rpc(name, params) as unknown as ReturnType<RpcFn>
   const [rpcResult, filterOptionsResult] = await Promise.all([
     getCatalogBooksWithFallback(rpc, {
       result_limit: pageSize,
@@ -33,7 +33,7 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
     rpc('get_catalog_books', {
       result_limit: CATALOG_FILTER_OPTIONS_LIMIT,
       result_offset: 0,
-      sort_by: 'year-desc',
+      sort_by: 'newest',
     }),
   ])
 
