@@ -8,7 +8,7 @@ import type { BookFilters, BookSort } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import styles from './CatalogControls.module.scss'
 
-type FilterDraft = {
+export type CatalogFilterDraft = {
   categories: ProductCategory[]
   authors: string[]
   years: string[]
@@ -19,7 +19,7 @@ type Props = {
   categories: ProductCategory[]
   authors: string[]
   years: string[]
-  onApplyFilters: (draft: FilterDraft) => void
+  onApplyFilters: (draft: CatalogFilterDraft) => void
   onSortChange: (sort: BookSort) => void
   className?: string
 }
@@ -50,7 +50,7 @@ export default function CatalogControls({
 }: Props) {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isSortOpen, setIsSortOpen] = useState(false)
-  const [draft, setDraft] = useState<FilterDraft>(() => getDraftFromFilters(filters))
+  const [draft, setDraft] = useState<CatalogFilterDraft>(() => getDraftFromFilters(filters))
 
   const selectedChips = useMemo(
     () => [
@@ -99,6 +99,11 @@ export default function CatalogControls({
   function applyFilters() {
     onApplyFilters(draft)
     setIsFilterOpen(false)
+  }
+
+  function handleSortChange(sort: BookSort) {
+    onSortChange(sort)
+    setIsSortOpen(false)
   }
 
   return (
@@ -203,7 +208,7 @@ export default function CatalogControls({
                       <button
                         className={cn(styles.sortDirection, filters.sort === row.asc && styles.active)}
                         type='button'
-                        onClick={() => onSortChange(row.asc)}
+                        onClick={() => handleSortChange(row.asc)}
                         aria-label={`${row.label}: по возрастанию`}
                       >
                         △
@@ -211,7 +216,7 @@ export default function CatalogControls({
                       <button
                         className={cn(styles.sortDirection, filters.sort === row.desc && styles.active)}
                         type='button'
-                        onClick={() => onSortChange(row.desc)}
+                        onClick={() => handleSortChange(row.desc)}
                         aria-label={`${row.label}: по убыванию`}
                       >
                         ▽
@@ -264,7 +269,7 @@ function OptionList<T extends string>({
   )
 }
 
-function getDraftFromFilters(filters: BookFilters): FilterDraft {
+function getDraftFromFilters(filters: BookFilters): CatalogFilterDraft {
   return {
     categories: filters.categories,
     authors: filters.authors,

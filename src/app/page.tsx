@@ -39,7 +39,7 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <Slider items={slides} />
-      <NewProducts catalog={catalog} searchParams={resolvedSearchParams} />
+      <NewProducts catalog={catalog} filters={filters} searchParams={resolvedSearchParams} />
       <SubscriptionsSection />
       <BoxSetsSection />
     </div>

@@ -1,16 +1,18 @@
 import Link from 'next/link'
 import BookCard from '@/components/book/BookCard'
-import type { BookCatalog } from '@/entities/book/client'
+import { CatalogControlsRouter } from '@/components/book/CatalogControls'
+import type { BookCatalog, BookFilters } from '@/entities/book/client'
 import styles from './NewProducts.module.scss'
 
 type Props = {
   catalog: BookCatalog
+  filters: BookFilters
   searchParams: Record<string, string | string[] | undefined>
 }
 
 const BOOKS_LOAD_MORE_INCREMENT = 12
 
-export default function NewProducts({ catalog, searchParams }: Props) {
+export default function NewProducts({ catalog, filters, searchParams }: Props) {
   const books = catalog.books
   const hasMoreBooks = books.length < catalog.total
   const loadMoreHref = getLoadMoreHref(searchParams, catalog.pageSize + BOOKS_LOAD_MORE_INCREMENT)
@@ -20,6 +22,12 @@ export default function NewProducts({ catalog, searchParams }: Props) {
   return (
     <section className={styles.wrapper}>
       <h2 className={styles.title}>ИЗДАНИЯ</h2>
+      <CatalogControlsRouter
+        filters={filters}
+        categories={catalog.categories}
+        authors={catalog.authors}
+        years={catalog.years}
+      />
       <div className={styles.grid}>
         {books.map((book) => (
           <BookCard key={book.id} book={book} />
