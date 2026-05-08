@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getLatestBooks, getFeaturedBooks } from '@/api/books'
+import { getBooks, getFeaturedBooks, parseBookFilters } from '@/api/books'
 import Slider from '@/components/common/Slider'
 import NewProducts from '@/components/book/NewProducts'
 import SubscriptionsSection from '@/components/subscriptions/SubscriptionsSection/SubscriptionsSection'
@@ -15,9 +15,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function HomePage() {
-  const [latestBooks, featuredBooks] = await Promise.all([
-    getLatestBooks(12),
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function HomePage({ searchParams }: Props) {
+  const resolvedSearchParams = await searchParams
+  const filters = parseBookFilters(resolvedSearchParams)
+  const [catalog, featuredBooks] = await Promise.all([
+    getBooks(filters),
     getFeaturedBooks(),
   ])
 
@@ -33,7 +39,7 @@ export default async function HomePage() {
   return (
     <div className={styles.page}>
       <Slider items={slides} />
-      <NewProducts books={latestBooks} />
+      <NewProducts catalog={catalog} searchParams={resolvedSearchParams} />
       <SubscriptionsSection />
       <BoxSetsSection />
     </div>
