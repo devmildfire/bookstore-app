@@ -118,54 +118,64 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
                 key={book.id}
                 className={`${styles.row} ${!book.inStock ? styles.rowSoldOut : ''}`}
               >
-                <div className={styles.rowIcon}>
-                  <ProductTypeIcon category={book.category} size={52} />
+
+                <div className={styles.itemAndStepper}>
+
+                  <div className={styles.itemAndLabel}>
+
+                    <div className={styles.rowIcon}>
+                      <ProductTypeIcon category={book.category} size={52} />
+                    </div>
+
+                    <span className={styles.rowLabel}>
+                      {CATEGORY_LABELS[book.category] ?? book.category}
+                      {!book.inStock && (
+                        <span className={styles.soldOutTag}>нет в наличии</span>
+                      )}
+                    </span>
+
+                  </div>
+
+                  {DIGITAL_CATEGORIES.has(book.category) ? (
+                    <button
+                      type="button"
+                      className={`${styles.toggleBtn} ${getQty(book) > 0 ? styles.toggleBtnActive : ''}`}
+                      onClick={() => setQty(book.id, getQty(book) > 0 ? 0 : 1)}
+                      disabled={!book.inStock}
+                      aria-label={getQty(book) > 0 ? 'Убрать' : 'Добавить'}
+                    >
+                      {getQty(book) > 0 ? (
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                          <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                      ) : '+'}
+                    </button>
+                  ) : (
+                    <div className={styles.stepper}>
+                      <button
+                        type="button"
+                        className={styles.stepperBtn}
+                        onClick={() => setQty(book.id, getQty(book) - 1)}
+                        disabled={!book.inStock || getQty(book) === 0}
+                        aria-label="Уменьшить"
+                      >
+                        −
+                      </button>
+                      <span className={styles.stepperVal}>{getQty(book)}</span>
+                      <button
+                        type="button"
+                        className={styles.stepperBtn}
+                        onClick={() => setQty(book.id, getQty(book) + 1)}
+                        disabled={!book.inStock}
+                        aria-label="Увеличить"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
+
                 </div>
 
-                <span className={styles.rowLabel}>
-                  {CATEGORY_LABELS[book.category] ?? book.category}
-                  {!book.inStock && (
-                    <span className={styles.soldOutTag}>нет в наличии</span>
-                  )}
-                </span>
-
-                {DIGITAL_CATEGORIES.has(book.category) ? (
-                  <button
-                    type="button"
-                    className={`${styles.toggleBtn} ${getQty(book) > 0 ? styles.toggleBtnActive : ''}`}
-                    onClick={() => setQty(book.id, getQty(book) > 0 ? 0 : 1)}
-                    disabled={!book.inStock}
-                    aria-label={getQty(book) > 0 ? 'Убрать' : 'Добавить'}
-                  >
-                    {getQty(book) > 0 ? (
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    ) : '+'}
-                  </button>
-                ) : (
-                  <div className={styles.stepper}>
-                    <button
-                      type="button"
-                      className={styles.stepperBtn}
-                      onClick={() => setQty(book.id, getQty(book) - 1)}
-                      disabled={!book.inStock || getQty(book) === 0}
-                      aria-label="Уменьшить"
-                    >
-                      −
-                    </button>
-                    <span className={styles.stepperVal}>{getQty(book)}</span>
-                    <button
-                      type="button"
-                      className={styles.stepperBtn}
-                      onClick={() => setQty(book.id, getQty(book) + 1)}
-                      disabled={!book.inStock}
-                      aria-label="Увеличить"
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
 
                 <div className={styles.rowPrices}>
                   {book.originalPrice && (

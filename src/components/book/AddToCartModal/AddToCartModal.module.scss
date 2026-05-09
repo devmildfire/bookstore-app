@@ -90,10 +90,40 @@
 
 .row {
   display: grid;
-  grid-template-columns: 52px 1fr auto auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: $space-3;
-  padding: $space-1 $space-2;
+  // padding: $space-1 $space-2;
+
+  @include breakpoint(phone) {
+    align-items: start;
+  }
+
+  .itemAndStepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: $space-3;
+
+    @include breakpoint(phone) {
+      flex-direction: column;
+      gap: $space-2;
+      align-items: flex-start;
+    }
+
+    .itemAndLabel {
+      display: flex;
+      gap: $space-6;
+      align-items: center;
+
+      .rowIcon {
+        @include breakpoint(phone) {
+          display: none;
+        }
+      }
+    }
+  }
 }
 
 .rowSoldOut {
@@ -267,8 +297,9 @@
   transition: background-color 0.15s ease, border-color 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: rgba($color-text-on-dark, 0.08);
-    border-color: rgba($color-text-on-dark, 0.6);
+    // background: rgba($color-text-on-dark, 0.08);
+    border-color: $color-brand-primary-hover;
+    color: $color-brand-primary-hover;
   }
 
   &:disabled {
