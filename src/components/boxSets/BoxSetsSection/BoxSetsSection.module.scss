@@ -71,8 +71,6 @@
   grid-template-columns: $layout-px 1fr $layout-px;
   row-gap: $space-13;
   width: 100%;
-  max-width: $layout-max-width;
-  margin: 0 auto;
 
   @include breakpoint(tablet) {
     grid-template-columns: $layout-px-tablet 1fr $layout-px-tablet;

@@ -72,11 +72,10 @@
   padding: 34px 49px 40px;
   overflow: auto;
   color: $color-text-on-dark;
-  background: rgba(31, 31, 31, 0.8);
+  background: $color-panel;
   border-radius: $radius-md;
   outline: none;
   transform: translate(-50%, -50%);
-  backdrop-filter: blur(10px);
 
   @include breakpoint('phone') {
     width: calc(100vw - 24px);
@@ -127,7 +126,7 @@
 
 .filterPanel {
   padding: $space-4 28px $space-5;
-  background: $color-panel;
+  background: $color-inner-panel-dark;
   border-radius: $radius-sm;
 
   h3 {
@@ -296,7 +295,7 @@
 
 .modalActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: $space-4;
   margin-top: $space-8;
 }
