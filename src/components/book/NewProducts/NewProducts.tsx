@@ -17,8 +17,6 @@ export default function NewProducts({ catalog, filters, searchParams }: Props) {
   const hasMoreBooks = books.length < catalog.total
   const loadMoreHref = getLoadMoreHref(searchParams, catalog.pageSize + BOOKS_LOAD_MORE_INCREMENT)
 
-  if (!books || books.length === 0) return null
-
   return (
     <section className={styles.wrapper}>
       <h2 className={styles.title}>ИЗДАНИЯ</h2>
@@ -28,11 +26,15 @@ export default function NewProducts({ catalog, filters, searchParams }: Props) {
         authors={catalog.authors}
         years={catalog.years}
       />
-      <div className={styles.grid}>
-        {books.map((book) => (
-          <BookCard key={book.id} book={book} />
-        ))}
-      </div>
+
+      { books.length > 0
+        ? <div className={styles.grid}>
+          {books.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
+        : <p className={styles.subtitle}>Книги не найдены</p> }
+
       {hasMoreBooks && (
         <div className={styles.buttonContainer}>
           <Link href={loadMoreHref} className={styles.button} scroll={false}>
