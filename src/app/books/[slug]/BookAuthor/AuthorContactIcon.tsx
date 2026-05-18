@@ -1,37 +1,30 @@
 import type { AuthorContactChannel } from '@/entities/book/client'
 
-// Line-art glyphs that match the Figma "Об авторе" contact row.
-// All paths are stroke-only (fill="none" on the wrapper) so the icons take
-// their colour from `currentColor`, letting CSS handle hover styling.
-const ICON_PATHS: Record<AuthorContactChannel, React.ReactNode> = {
+// Line-art glyphs drawn inside a shared 24×24 viewBox so every icon's outer
+// circle has the exact same diameter (r=11 from center 12,12). Strokes only,
+// taking colour from `currentColor` so CSS controls hover state.
+const GLYPHS: Record<AuthorContactChannel, React.ReactNode> = {
   telegram: (
-    <>
-      <path d="M3 11.5 L21 4 L18 20 L11 15 L8 19 L8 14 L18 5" />
-    </>
+    <path d="M17.5 7.5 L6 13 L11 14.5 L13 17.2 L17.5 7.5 Z M11 14.5 L17.5 7.5" />
   ),
   instagram: (
     <>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      <rect x="7" y="7" width="10" height="10" rx="2.6" />
+      <circle cx="12" cy="12" r="2.6" />
+      <circle cx="15" cy="9" r="0.6" fill="currentColor" stroke="none" />
     </>
   ),
   facebook: (
     <>
-      <circle cx="12" cy="12" r="10" />
-      <path d="M13.5 8 H12.6 A1.5 1.5 0 0 0 11.1 9.5 V12 H9 V14.5 H11.1 V20 M11.1 12 H13.5" />
+      <path d="M12 17.5 V9.2 Q12 7.5 13.5 7.5 H14.5" />
+      <path d="M10.3 11.5 H14" />
     </>
   ),
-  twitter: (
-    <>
-      <path d="M4 4 L11 13 L4 20 M20 4 L11 13 L20 20" />
-      <path d="M4 4 L20 20" />
-    </>
-  ),
+  twitter: <path d="M8 8 L16 16 M16 8 L8 16" />,
   email: (
     <>
-      <rect x="3" y="6" width="18" height="13" rx="1" />
-      <path d="M3.5 7 L12 13 L20.5 7" />
+      <rect x="6" y="8.5" width="12" height="8" rx="1" />
+      <path d="M6.5 9 L12 13 L17.5 9" />
     </>
   ),
 }
@@ -55,14 +48,15 @@ export default function AuthorContactIcon({ channel, className }: Props) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.5}
+      strokeWidth={1}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
       role="img"
       aria-label={CHANNEL_LABELS[channel]}
     >
-      {ICON_PATHS[channel]}
+      <circle cx="12" cy="12" r="11" />
+      {GLYPHS[channel]}
     </svg>
   )
 }
