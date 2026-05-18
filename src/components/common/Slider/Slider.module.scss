@@ -1,21 +1,10 @@
 @use '@/styles/common' as *;
 
-// ─── Font Faces ───────────────────────────────────────────────────────────────
-
-@font-face {
-  font-family: 'Cheque';
-  src: url('/fonts/Chequeblack.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 // ─── Slider ──────────────────────────────────────────────────────────────────
 
 .wrapper {
   width: 100%;
   background-color: $color-surface-dark;
-  border-radius: 0;
 
   :global(.swiper-slide) {
     height: auto;
@@ -41,8 +30,6 @@
     gap: 24px;
     padding: 24px $layout-px-tablet-small;
   }
-
-  // ── Mobile: stacked column layout ────────────────────────────────────
 
   @include breakpoint(phone) {
     flex-direction: column;
@@ -106,8 +93,8 @@
 }
 
 .title {
-  font-family: 'Cheque', sans-serif;
-  font-weight: 400;
+  font-family: $font-cheque;
+  font-weight: $font-weight-normal;
   font-size: 70px;
   line-height: 1;
   letter-spacing: 0.03em;
@@ -130,8 +117,8 @@
 }
 
 .author {
-  font-family: 'Cheque', sans-serif;
-  font-weight: 400;
+  font-family: $font-cheque;
+  font-weight: $font-weight-normal;
   font-size: 40px;
   line-height: 1;
   letter-spacing: 0.08em;
@@ -158,8 +145,8 @@
 }
 
 .thesis {
-  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
-  font-weight: 500;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-medium;
   font-style: italic;
   font-size: 24px;
   line-height: 1;
@@ -191,15 +178,14 @@
   margin-top: 90px;
   background-color: $color-accent-hover-on-dark;
   color: $color-text-inverse;
-  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-family: $font-montserrat;
   font-style: normal;
-  font-weight: 400;
+  font-weight: $font-weight-normal;
   font-size: 16px;
   line-height: 140%;
   letter-spacing: 0.05em;
   text-align: center;
   text-decoration: none;
-  border-radius: 0;
   transition: background-color 0.2s ease;
 
   &:hover {
@@ -219,38 +205,5 @@
     width: 95px;
     height: 22px;
     font-size: 8px;
-  }
-}
-
-// ─── Pagination ───────────────────────────────────────────────────────────────
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 8px;
-  padding-bottom: $space-4;
-
-  @include breakpoint(phone) {
-    margin-top: 26px;
-  }
-
-  :global(.swiper-pagination-bullet) {
-    width: 4px;
-    height: 4px;
-    opacity: 1;
-    background: $color-text-on-dark;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-
-    &:not(:last-child) {
-      margin-right: 12px;
-    }
-  }
-
-  :global(.swiper-pagination-bullet-active) {
-    width: 8px;
-    height: 8px;
-    background: $color-accent-hover-on-dark;
   }
 }

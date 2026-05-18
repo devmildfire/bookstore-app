@@ -3,10 +3,8 @@
 import { memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/pagination'
+import { SwiperSlide } from 'swiper/react'
+import BaseSlider from '@/components/common/BaseSlider'
 import styles from './Slider.module.scss'
 
 type SlideItem = {
@@ -27,18 +25,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
 
   return (
     <div className={styles.wrapper}>
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        pagination={{
-          el: `.${styles.pagination}`,
-          clickable: true,
-        }}
-        autoplay={{
-          delay: 4000,
-          disableOnInteraction: false,
-        }}
-        loop={items.length > 2}
-      >
+      <BaseSlider slideCount={items.length} loop={items.length > 2} autoplay={4000}>
         {items.map((item) => (
           <SwiperSlide key={item.id}>
             <div className={styles.slide}>
@@ -69,8 +56,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
             </div>
           </SwiperSlide>
         ))}
-      </Swiper>
-      <div className={styles.pagination} />
+      </BaseSlider>
     </div>
   )
 })

@@ -1,0 +1,30 @@
+@use '@/styles/common' as *;
+
+// ─── Cover sizing (all modes share these breakpoints) ─────────────────────────
+
+.single,
+.multi,
+.placeholder {
+  width: 500px;
+
+  @include breakpoint(desktop) { width: 394px; }
+  @include breakpoint(tablet) { width: 326px; }
+  @include breakpoint(tablet-small) { width: 280px; }
+  @include breakpoint(phone) { width: 100%; max-width: 320px; }
+}
+
+// ─── Placeholder (no image available) ────────────────────────────────────────
+
+.placeholder {
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+// ─── Image ────────────────────────────────────────────────────────────────────
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}

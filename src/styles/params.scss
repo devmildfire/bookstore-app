@@ -5,7 +5,7 @@ $color-brand-primary: #c0392b;
 $color-brand-primary-hover: #a93226;
 
 // Backgrounds
-$color-bg-page: var(--color-bg-page);
+$color-bg-page: #121212;
 $color-bg-surface: var(--color-bg-surface);
 $color-bg-surface-hover: var(--color-bg-surface-hover);
 $color-bg-muted: var(--color-bg-muted);
@@ -19,6 +19,9 @@ $color-inner-panel-dark: #121212;
 $color-text-on-dark: #DCDCDC;
 $color-accent-on-dark: #A10202;
 $color-accent-hover-on-dark: #930000;
+
+// Figma design palette
+$color-gray-5: #E0E0E0; // Figma "Gray 5" — titles on dark surfaces
 
 // Gradients
 $gradient-card-body: linear-gradient(341.86deg, #121212 12.37%, #000000 87.69%);
@@ -56,9 +59,12 @@ $neutral-700: #404040;
 $neutral-800: #262626;
 $neutral-900: #171717;
 
+
 // ─── Typography ───────────────────────────────────────────────────────────────
 
 $font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-cheque: var(--font-cheque), sans-serif;
+$font-montserrat: var(--font-montserrat), sans-serif;
 $font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
 $font-size-xs: 12px;
@@ -119,6 +125,11 @@ $layout-px:              60px; // desktop  >1200px
 $layout-px-tablet:       40px; // tablet   ≤1200px
 $layout-px-tablet-small: 26px; // phone-lg ≤767px
 $layout-px-phone:        18px; // phone    ≤532px
+
+
+$bookpage-layout-max-width: 1400px;
+$bookpage-layout-max-width-desktop-small: 1060px;
+$bookpage-layout-max-width-tablet: 836px;
 
 // ─── Z-index ──────────────────────────────────────────────────────────────────
 

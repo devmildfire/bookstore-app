@@ -115,7 +115,7 @@
   justify-self: center;
   align-self: end;
   text-decoration: none;
-  font-family: 'Cheque', sans-serif;
+  font-family: $font-cheque;
   font-weight: 400;
   font-size: 62px;
   line-height: 1;
@@ -142,7 +142,7 @@
 }
 
 .wordmarkAccent {
-  font-family: 'Cheque', sans-serif;
+  font-family: $font-cheque;
   color: $color-accent-on-dark;
 }
 

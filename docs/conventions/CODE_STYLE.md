@@ -72,6 +72,38 @@ Keep `'use client'` boundaries as deep in the tree as possible — push them to 
 - Remove temporary debug logs (`console.log`) before committing
 - Never commit secrets or values from `.env*` files
 
+## Fonts
+
+All fonts **must** be loaded through `next/font` — never via `@font-face` in SCSS/CSS files.
+
+- **Google Fonts** → `next/font/google`
+- **Local font files** → `next/font/local`, with font files placed in `src/app/fonts/`
+- Each font is registered once in `src/app/layout.tsx`, exposed as a CSS custom property via `variable`, and applied to `<html className={...}>`.
+- The CSS variable is then surfaced as an SCSS token in `src/styles/params.scss` (e.g. `$font-cheque`, `$font-montserrat`).
+- All SCSS files use the token — never the raw CSS variable or a bare font-family string.
+
+```tsx
+// src/app/layout.tsx
+import localFont from 'next/font/local'
+import { Montserrat } from 'next/font/google'
+
+const cheque = localFont({ src: './fonts/Chequeblack.ttf', variable: '--font-cheque', weight: '400', display: 'swap' })
+const montserrat = Montserrat({ subsets: ['cyrillic', 'latin'], variable: '--font-montserrat', display: 'swap' })
+
+// applied: <html className={`${cheque.variable} ${montserrat.variable}`}>
+```
+
+```scss
+// src/styles/params.scss
+$font-cheque:     var(--font-cheque), sans-serif;
+$font-montserrat: var(--font-montserrat), sans-serif;
+```
+
+```scss
+// any SCSS module
+.title { font-family: $font-cheque; }
+```
+
 ## Dependency Management
 
 - **All dependencies must be pinned to exact versions** — no `^`, `~`, or `latest` in `package.json`

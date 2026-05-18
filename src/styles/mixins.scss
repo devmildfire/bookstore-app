@@ -8,7 +8,7 @@
 @mixin section-title {
   margin-bottom: 30px;
   text-align: center;
-  font-family: Cheque, sans-serif;
+  font-family: $font-cheque;
   font-weight: 900;
   font-size: 57px;
   line-height: 68px;
@@ -109,6 +109,27 @@
   @include breakpoint(phone) {
     padding-left: $layout-px-phone;
     padding-right: $layout-px-phone;
+  }
+}
+
+@mixin book-page-container {
+  @include page-container;
+  
+  display: flex;
+  flex-direction: column;
+  max-width: $bookpage-layout-max-width;
+  margin: 0 auto;
+
+  @include breakpoint(desktop) {
+    max-width: $bookpage-layout-max-width-desktop-small;
+  }
+
+  @include breakpoint(tablet) {
+    max-width: $bookpage-layout-max-width-tablet;
+  }
+
+  @include breakpoint(tablet-small) {
+    max-width: unset;
   }
 }
 

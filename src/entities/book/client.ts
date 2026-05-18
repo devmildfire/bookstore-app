@@ -2,6 +2,17 @@ import type { ProductCategory } from '@/types/database'
 
 export type BookSort = 'year-desc' | 'year-asc' | 'author-asc' | 'author-desc' | 'price-asc' | 'price-desc'
 
+export type BookAward = {
+  id: number
+  title: string
+  image: string | null
+}
+
+export type BookWorker = {
+  name: string
+  job: string
+}
+
 export type BookFilters = {
   search: string
   categories: ProductCategory[]
@@ -34,6 +45,22 @@ export type Book = {
   litForm: string | null
   ageRestriction: number | null
   year: string | null
+  awards: BookAward[]
+  // Edition-specific fields — populated only on the book detail RPC, all
+  // optional and per-category. UI components select what to read by `category`.
+  workers: BookWorker[]
+  format: string | null              // PrintBook + Book 2.0
+  paper: string | null               // PrintBook + Book 2.0
+  pageCount: number | null           // PrintBook
+  coverMaterial: string | null       // PrintBook
+  binding: string | null             // PrintBook
+  illustrations: string | null       // PrintBook
+  printingTechnique: string | null   // Book 2.0
+  packaging: string | null           // Book 2.0
+  durationSeconds: number | null     // AudioBook
+  fileSizeBytes: number | null       // AudioBook
+  formats: string[] | null           // EBook
+  characterCount: number | null      // EBook
 }
 
 export type BookCatalog = {

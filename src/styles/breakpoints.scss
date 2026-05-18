@@ -1,3 +1,5 @@
+$desktop-big-min-width: 1440px;
+$desktop-max-width: 1439px;
 $desktop-min-width: 1201px;
 $tablet-max-width: 1200px;
 $search-bar-cutoff: 1000px;
@@ -7,8 +9,12 @@ $small-tablet-min-width: 533px;
 $phone-max-width: 532px;
 
 @mixin breakpoint($point) {
-  @if $point == desktop {
-    @media screen and (min-width: $desktop-min-width) {
+  @if $point == desktop-big {
+    @media screen and (min-width: $desktop-big-min-width) {
+      @content;
+    }
+  } @else if $point == desktop {
+    @media screen and (max-width: $desktop-max-width) {
       @content;
     }
   } @else if $point == tablet {

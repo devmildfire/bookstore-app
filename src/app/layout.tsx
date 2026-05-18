@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
+import localFont from 'next/font/local'
 import { createClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
@@ -12,6 +13,14 @@ const montserrat = Montserrat({
   style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-montserrat',
+})
+
+const cheque = localFont({
+  src: './fonts/Chequeblack.ttf',
+  weight: '400',
+  style: 'normal',
+  display: 'swap',
+  variable: '--font-cheque',
 })
 
 export const metadata: Metadata = {
@@ -29,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } = await supabase.auth.getUser()
 
   return (
-    <html lang='ru' className={montserrat.variable}>
+    <html lang='ru' className={`${montserrat.variable} ${cheque.variable}`}>
       <body>
         <Providers hasSession={!!user}>
           <Header />

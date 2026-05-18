@@ -50,4 +50,18 @@ export function getBoxSetImageUrl(filename: string | null): string | null {
   return `${BOX_SETS_PUBLIC_PATH}/${filename}`
 }
 
-export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH }
+const BOOK_PHOTOS_BUCKET = 'book-photos'
+
+/**
+ * Returns an ordered list of photo URLs for a book's photo series.
+ * Photos are stored as book-photos/{slug}/{n}.jpg for n = 1..count.
+ * Falls back to an empty array if coverUrl is null.
+ */
+export function getBookPhotoUrls(slug: string, count: number): string[] {
+  if (!supabaseUrl || count === 0) return []
+  return Array.from({ length: count }, (_, i) => {
+    return `${supabaseUrl}/storage/v1/object/public/${BOOK_PHOTOS_BUCKET}/${slug}/${i + 1}.jpg`
+  })
+}
+
+export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET }

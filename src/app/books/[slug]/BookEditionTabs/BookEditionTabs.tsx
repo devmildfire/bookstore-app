@@ -1,0 +1,245 @@
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import cn from 'classnames'
+import { useCart } from '@/contexts/cart'
+import { useToast } from '@/contexts/toast'
+import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
+import Carousel from '@/components/common/Carousel'
+import type { Book, BookWorker } from '@/entities/book/client'
+import type { ProductCategory } from '@/types/database'
+import TabBarFrame from './TabBarFrame'
+import styles from './BookEditionTabs.module.scss'
+
+type Props = {
+  books: Book[]
+  /** Photos of the printed book, rendered as a carousel inside the PrintBook tab. */
+  printBookPhotos?: string[]
+  /** Used for image alt text. */
+  bookName?: string
+}
+
+const TAB_ORDER: ProductCategory[] = ['PrintBook', 'Book2.0', 'AudioBook', 'EBook']
+
+const EDITION_LABELS: Record<string, string> = {
+  PrintBook: 'ПЕЧАТНОЕ ИЗДАНИЕ',
+  'Book2.0': 'КНИГА 2.0',
+  AudioBook: 'АУДИОКНИГА MP3',
+  EBook: 'ЦИФРОВОЕ ИЗДАНИЕ',
+}
+
+const dateFmt = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
+const numFmt = new Intl.NumberFormat('ru-RU')
+
+const formatPrice = (price: number) => `${numFmt.format(price)}₽`
+
+function formatDate(value: string | null): string | null {
+  if (!value) return null
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return null
+  return dateFmt.format(d)
+}
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h === 0) return `${m}м`
+  return `${h}ч. ${m}м`
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(1)} Гб`
+  if (bytes >= 1_000_000) return `${Math.round(bytes / 1_000_000)} Мб`
+  if (bytes >= 1_000) return `${Math.round(bytes / 1_000)} Кб`
+  return `${bytes} б`
+}
+
+function formatWorkers(workers: BookWorker[]): string {
+  return workers.map((w) => `${w.job} ${w.name}`).join(', ')
+}
+
+type DetailRow = { label: string; values: (string | null)[] }
+
+// Each category contributes its own labeled rows. Null values are skipped so a
+// partially-populated edition still renders without empty rows.
+function buildRows(book: Book): DetailRow[] {
+  const rows: DetailRow[] = []
+  const releaseDate = formatDate(book.publishedAt)
+  if (releaseDate) rows.push({ label: 'Дата релиза:', values: [releaseDate] })
+
+  if (book.category === 'PrintBook') {
+    rows.push({ label: 'Формат:', values: [book.format] })
+    rows.push({ label: 'Объём:', values: [book.pageCount != null ? `${book.pageCount} стр.` : null] })
+    rows.push({ label: 'Бумага:', values: [book.paper] })
+    rows.push({ label: 'Обложка:', values: [book.coverMaterial] })
+    rows.push({ label: 'Переплёт:', values: [book.binding] })
+    rows.push({ label: 'Иллюстрации:', values: [book.illustrations] })
+  } else if (book.category === 'Book2.0') {
+    // All four sit under a single "Формат:" label per Figma.
+    rows.push({
+      label: 'Формат:',
+      values: [book.format, book.printingTechnique, book.paper, book.packaging],
+    })
+  } else if (book.category === 'AudioBook') {
+    rows.push({
+      label: 'Длительность:',
+      values: [book.durationSeconds != null ? formatDuration(book.durationSeconds) : null],
+    })
+    rows.push({
+      label: 'Вес файла:',
+      values: [book.fileSizeBytes != null ? formatFileSize(book.fileSizeBytes) : null],
+    })
+  } else if (book.category === 'EBook') {
+    rows.push({ label: 'Форматы:', values: [book.formats?.join(' ') ?? null] })
+    rows.push({
+      label: 'Кол-во символов:',
+      values: [book.characterCount != null ? numFmt.format(book.characterCount) : null],
+    })
+  }
+
+  if (book.workers.length > 0) {
+    rows.push({ label: 'Над изданием работали:', values: [formatWorkers(book.workers)] })
+  }
+
+  return rows
+    .map((row) => ({ ...row, values: row.values.filter((v): v is string => Boolean(v)) }))
+    .filter((row) => row.values.length > 0)
+}
+
+const NOTES: Partial<Record<ProductCategory, { primary?: string; secondary?: string }>> = {
+  PrintBook: {
+    primary: 'Цифровое издание в подарок.',
+    secondary: 'Условия доставки обсуждаются индивидуально.',
+  },
+  'Book2.0': {
+    primary: 'Отправка по России включена в стоимость.',
+  },
+}
+
+const HAS_DEMO_BUTTON: Partial<Record<ProductCategory, boolean>> = {
+  PrintBook: false,
+  'Book2.0': true,
+  AudioBook: true,
+  EBook: true,
+}
+
+export default function BookEditionTabs({ books, printBookPhotos = [], bookName = '' }: Props) {
+  const tabs = TAB_ORDER.filter((cat) => books.some((b) => b.category === cat))
+  const [active, setActive] = useState<ProductCategory>(tabs[0])
+  const { addItem } = useCart()
+  const { success } = useToast()
+
+  if (tabs.length === 0) return null
+
+  const book = books.find((b) => b.category === active)!
+  const rows = buildRows(book)
+  const notes = NOTES[book.category]
+
+  function handleAddToCart() {
+    addItem({
+      id: book.id,
+      name: book.name,
+      subtitle: EDITION_LABELS[book.category] ?? book.category,
+      price: book.price,
+      picture: book.coverUrl ?? undefined,
+      discount: book.discount ?? undefined,
+      category: book.category,
+    })
+    success('Добавлено в корзину')
+  }
+
+  const activeIndex = tabs.indexOf(active)
+
+  return (
+    <section className={styles.root}>
+      <div className={styles.tabBar} role="tablist" aria-label="Формат издания">
+        <TabBarFrame tabCount={tabs.length} activeIndex={activeIndex} />
+        {tabs.map((cat) => (
+          <button
+            key={cat}
+            id={`tab-${cat}`}
+            role="tab"
+            aria-selected={cat === active}
+            aria-controls="edition-panel"
+            className={cn(styles.tab, cat === active && styles.tabActive)}
+            onClick={() => setActive(cat)}
+          >
+            <ProductTypeIcon
+              category={cat}
+              size={53}
+              className={cn(styles.icon, cat === active && styles.iconActive)}
+            />
+          </button>
+        ))}
+      </div>
+
+      <div
+        id="edition-panel"
+        role="tabpanel"
+        aria-labelledby={`tab-${active}`}
+        className={styles.panel}
+      >
+        <div className={styles.panelContent}>
+          <h2 className={styles.editionTitle}>{EDITION_LABELS[active] ?? active}</h2>
+          <p className={styles.price}>{formatPrice(book.price)}</p>
+
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.addToCartBtn}
+              onClick={handleAddToCart}
+              disabled={!book.inStock}
+            >
+              {book.inStock ? 'Добавить в корзину' : 'Нет в наличии'}
+            </button>
+            {HAS_DEMO_BUTTON[book.category] && (
+              <button type="button" className={styles.demoBtn} disabled aria-label="Демо-версия (скоро)">
+                Демо-версия
+              </button>
+            )}
+            {notes && (
+              <div className={styles.notes}>
+                {notes.primary && <p className={styles.notePrimary}>{notes.primary}</p>}
+                {notes.secondary && <p className={styles.noteSecondary}>{notes.secondary}</p>}
+              </div>
+            )}
+          </div>
+
+          {rows.length > 0 && (
+            <dl className={styles.details}>
+              {rows.map((row) => (
+                <div key={row.label} className={styles.detailRow}>
+                  <dt className={styles.detailLabel}>{row.label}</dt>
+                  <dd className={styles.detailValue}>
+                    {row.values.map((v, i) => (
+                      <div key={i}>{v}</div>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {book.category === 'PrintBook' && printBookPhotos.length > 0 && (
+            <div className={styles.carouselWrap}>
+              <Carousel
+                ariaLabel={`Фотографии книги: ${bookName}`}
+                slides={printBookPhotos.map((src, i) => (
+                  <Image
+                    key={src}
+                    src={src}
+                    alt={`${bookName} — фото ${i + 1}`}
+                    width={500}
+                    height={500}
+                    sizes="(max-width: 532px) 280px, (max-width: 767px) 360px, (max-width: 1200px) 420px, 500px"
+                  />
+                ))}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

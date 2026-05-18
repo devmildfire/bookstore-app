@@ -12,6 +12,8 @@ export interface Database {
       Audiobooks: {
         Row: {
           discount: number | null
+          duration_seconds: number | null
+          file_size_bytes: number | null
           id: number
           is_published: boolean | null
           price: number | null
@@ -21,6 +23,8 @@ export interface Database {
         }
         Insert: {
           discount?: number | null
+          duration_seconds?: number | null
+          file_size_bytes?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -30,6 +34,8 @@ export interface Database {
         }
         Update: {
           discount?: number | null
+          duration_seconds?: number | null
+          file_size_bytes?: number | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -43,6 +49,42 @@ export interface Database {
             columns: ["title_id"]
             isOneToOne: true
             referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      AudiobookWorkers: {
+        Row: {
+          audiobook_id: number
+          id: number
+          sort_order: number
+          worker_id: number
+        }
+        Insert: {
+          audiobook_id: number
+          id?: number
+          sort_order?: number
+          worker_id: number
+        }
+        Update: {
+          audiobook_id?: number
+          id?: number
+          sort_order?: number
+          worker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "AudiobookWorkers_audiobook_id_fkey"
+            columns: ["audiobook_id"]
+            isOneToOne: false
+            referencedRelation: "Audiobooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "AudiobookWorkers_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "Workers"
             referencedColumns: ["id"]
           }
         ]
@@ -80,6 +122,33 @@ export interface Database {
           nonsalable?: boolean
           photo?: string | null
           phrase?: string | null
+        }
+        Relationships: []
+      }
+      Awards: {
+        Row: {
+          id: number
+          image: string | null
+          is_active: boolean
+          position: number
+          slug: string
+          title: string
+        }
+        Insert: {
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          position?: number
+          slug: string
+          title: string
+        }
+        Update: {
+          id?: number
+          image?: string | null
+          is_active?: boolean
+          position?: number
+          slug?: string
+          title?: string
         }
         Relationships: []
       }
@@ -167,9 +236,13 @@ export interface Database {
           demo: string | null
           discount: number | null
           extra: string | null
+          format: string | null
           id: number
           is_published: boolean | null
+          packaging: string | null
+          paper: string | null
           price: number | null
+          printing_technique: string | null
           publish_date: string | null
           release_date: string | null
           sold: number | null
@@ -181,9 +254,13 @@ export interface Database {
           demo?: string | null
           discount?: number | null
           extra?: string | null
+          format?: string | null
           id?: number
           is_published?: boolean | null
+          packaging?: string | null
+          paper?: string | null
           price?: number | null
+          printing_technique?: string | null
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
@@ -195,9 +272,13 @@ export interface Database {
           demo?: string | null
           discount?: number | null
           extra?: string | null
+          format?: string | null
           id?: number
           is_published?: boolean | null
+          packaging?: string | null
+          paper?: string | null
           price?: number | null
+          printing_technique?: string | null
           publish_date?: string | null
           release_date?: string | null
           sold?: number | null
@@ -210,6 +291,42 @@ export interface Database {
             columns: ["title_id"]
             isOneToOne: true
             referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      CardBookWorkers: {
+        Row: {
+          card_book_id: number
+          id: number
+          sort_order: number
+          worker_id: number
+        }
+        Insert: {
+          card_book_id: number
+          id?: number
+          sort_order?: number
+          worker_id: number
+        }
+        Update: {
+          card_book_id?: number
+          id?: number
+          sort_order?: number
+          worker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "CardBookWorkers_card_book_id_fkey"
+            columns: ["card_book_id"]
+            isOneToOne: false
+            referencedRelation: "CardBooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "CardBookWorkers_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "Workers"
             referencedColumns: ["id"]
           }
         ]
@@ -260,7 +377,9 @@ export interface Database {
       }
       Ebooks: {
         Row: {
+          character_count: number | null
           discount: number | null
+          formats: string[] | null
           id: number
           is_published: boolean | null
           price: number | null
@@ -269,7 +388,9 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          character_count?: number | null
           discount?: number | null
+          formats?: string[] | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -278,7 +399,9 @@ export interface Database {
           title_id: number
         }
         Update: {
+          character_count?: number | null
           discount?: number | null
+          formats?: string[] | null
           id?: number
           is_published?: boolean | null
           price?: number | null
@@ -292,6 +415,42 @@ export interface Database {
             columns: ["title_id"]
             isOneToOne: true
             referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      EbookWorkers: {
+        Row: {
+          ebook_id: number
+          id: number
+          sort_order: number
+          worker_id: number
+        }
+        Insert: {
+          ebook_id: number
+          id?: number
+          sort_order?: number
+          worker_id: number
+        }
+        Update: {
+          ebook_id?: number
+          id?: number
+          sort_order?: number
+          worker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "EbookWorkers_ebook_id_fkey"
+            columns: ["ebook_id"]
+            isOneToOne: false
+            referencedRelation: "Ebooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "EbookWorkers_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "Workers"
             referencedColumns: ["id"]
           }
         ]
@@ -398,9 +557,15 @@ export interface Database {
       }
       PrintedBooks: {
         Row: {
+          binding: string | null
+          cover_material: string | null
           discount: number | null
+          format: string | null
           id: number
+          illustrations: string | null
           is_published: boolean | null
+          page_count: number | null
+          paper: string | null
           price: number | null
           publish_date: string | null
           release_date: string | null
@@ -408,9 +573,15 @@ export interface Database {
           title_id: number
         }
         Insert: {
+          binding?: string | null
+          cover_material?: string | null
           discount?: number | null
+          format?: string | null
           id?: number
+          illustrations?: string | null
           is_published?: boolean | null
+          page_count?: number | null
+          paper?: string | null
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
@@ -418,9 +589,15 @@ export interface Database {
           title_id: number
         }
         Update: {
+          binding?: string | null
+          cover_material?: string | null
           discount?: number | null
+          format?: string | null
           id?: number
+          illustrations?: string | null
           is_published?: boolean | null
+          page_count?: number | null
+          paper?: string | null
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
@@ -433,6 +610,42 @@ export interface Database {
             columns: ["title_id"]
             isOneToOne: true
             referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      PrintedBookWorkers: {
+        Row: {
+          id: number
+          printed_book_id: number
+          sort_order: number
+          worker_id: number
+        }
+        Insert: {
+          id?: number
+          printed_book_id: number
+          sort_order?: number
+          worker_id: number
+        }
+        Update: {
+          id?: number
+          printed_book_id?: number
+          sort_order?: number
+          worker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "PrintedBookWorkers_printed_book_id_fkey"
+            columns: ["printed_book_id"]
+            isOneToOne: false
+            referencedRelation: "PrintedBooks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "PrintedBookWorkers_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "Workers"
             referencedColumns: ["id"]
           }
         ]
@@ -566,6 +779,60 @@ export interface Database {
           }
         ]
       }
+      Titles_Awards: {
+        Row: {
+          award_id: number
+          id: number
+          position: number
+          title_id: number
+        }
+        Insert: {
+          award_id: number
+          id?: number
+          position?: number
+          title_id: number
+        }
+        Update: {
+          award_id?: number
+          id?: number
+          position?: number
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Titles_Awards_award_id_fkey"
+            columns: ["award_id"]
+            isOneToOne: false
+            referencedRelation: "Awards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Titles_Awards_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      Workers: {
+        Row: {
+          id: number
+          job: string
+          name: string
+        }
+        Insert: {
+          id?: number
+          job: string
+          name: string
+        }
+        Update: {
+          id?: number
+          job?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -576,39 +843,51 @@ export interface Database {
           title_slug: string
         }
         Returns: {
-          title_first_release: string
-          title_age_restriction: number
-          title_lit_form: string
-          title_thesis: string
-          title_description: string
-          author_names: string[]
-          title_cover: string
-          sold_out: boolean
-          is_published: boolean
-          publish_date: string
-          release_date: string
+          title_name: string
+          product_type: string
           title_id: number
+          release_date: string
+          publish_date: string
+          is_published: boolean
+          sold_out: boolean
           discount: number
           price: number
           id: number
-          product_type: string
-          title_name: string
           title_slug: string
+          title_cover: string
+          title_description: string
+          title_thesis: string
+          title_lit_form: string
+          edition_workers: Json
+          edition_details: Json
+          title_awards: Json
+          author_names: string[]
+          title_first_release: string
+          title_age_restriction: number
         }[]
       }
       get_catalog_books: {
         Args: {
-          title_ids?: number[]
+          result_limit?: number
+          result_offset?: number
+          search_term?: string
+          product_type_filter?: string
+          author_name?: string
           sort_by?: string
           price_to?: number
           price_from?: number
-          author_name?: string
-          product_type_filter?: string
-          search_term?: string
-          result_offset?: number
-          result_limit?: number
+          year_filters?: string[]
+          author_names_filter?: string[]
+          product_type_filters?: string[]
+          title_ids?: number[]
         }
         Returns: {
+          title_cover: string
+          title_first_release: string
+          author_names: string[]
+          total_count: number
+          has_multiple_products: boolean
+          title_age_restriction: number
           title_slug: string
           title_name: string
           product_type: string
@@ -620,15 +899,9 @@ export interface Database {
           discount: number
           price: number
           id: number
-          has_multiple_products: boolean
-          total_count: number
-          author_names: string[]
-          title_first_release: string
-          title_age_restriction: number
           title_lit_form: string
           title_thesis: string
           title_description: string
-          title_cover: string
         }[]
       }
       gtrgm_compress: {
@@ -663,8 +936,8 @@ export interface Database {
       }
       migrate_cart: {
         Args: {
-          from_user_id: string
           to_user_id: string
+          from_user_id: string
         }
         Returns: undefined
       }
@@ -675,7 +948,7 @@ export interface Database {
           result_offset?: number
         }
         Returns: {
-          title_name: string
+          title_thesis: string
           id: number
           price: number
           sold_out: boolean
@@ -684,10 +957,10 @@ export interface Database {
           release_date: string
           title_id: number
           product_type: string
+          title_name: string
           title_slug: string
           title_cover: string
           title_description: string
-          title_thesis: string
           title_lit_form: string
           title_age_restriction: number
           title_first_release: string

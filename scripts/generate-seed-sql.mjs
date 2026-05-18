@@ -234,6 +234,8 @@ function main() {
   sql += `DELETE FROM "Audiobooks";\n`
   sql += `DELETE FROM "Ebooks";\n`
   sql += `DELETE FROM "CardBooks";\n`
+  sql += `DELETE FROM "Titles_Awards";\n`
+  sql += `DELETE FROM "Awards";\n`
   sql += `DELETE FROM "Titles_Authors";\n`
   sql += `DELETE FROM "Titles";\n`
   sql += `DELETE FROM "Authors";\n\n`
@@ -241,6 +243,8 @@ function main() {
   sql += `ALTER SEQUENCE "Authors_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "Titles_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "Titles_Authors_id_seq" RESTART WITH 1;\n`
+  sql += `ALTER SEQUENCE "Awards_id_seq" RESTART WITH 1;\n`
+  sql += `ALTER SEQUENCE "Titles_Awards_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "CardBooks_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "Ebooks_id_seq" RESTART WITH 1;\n`
   sql += `ALTER SEQUENCE "Audiobooks_id_seq" RESTART WITH 1;\n`
@@ -327,6 +331,60 @@ function main() {
     sql += featuredEntries.map((f) => `  (${f.title_id}, ${f.sort_order})`).join(',\n')
     sql += ';\n\n'
   }
+
+  sql += `-- Awards\n`
+  sql += `INSERT INTO "Awards" (slug, title, image, position) VALUES\n`
+  sql += [
+    ['book-of-year-2019', 'Книга года 2019', '/awards/book-of-year-2019.svg', 1],
+    ['editor-choice', 'Выбор редакции Чтива', '/awards/editor-choice.svg', 2],
+    ['reader-choice', 'Голос читателей', '/awards/reader-choice.svg', 3],
+    ['debut-shortlist', 'Дебютный список', '/awards/debut-shortlist.svg', 4],
+    ['best-prose', 'Лучшая проза', '/awards/best-prose.svg', 5],
+    ['formal-experiment', 'Формальный эксперимент', '/awards/formal-experiment.svg', 6],
+    ['literary-game', 'Литературная игра', '/awards/literary-game.svg', 7],
+  ]
+    .map(([slug, title, image, position]) => `  (${escapeSql(slug)}, ${escapeSql(title)}, ${escapeSql(image)}, ${position})`)
+    .join(',\n')
+  sql += `\nON CONFLICT (slug) DO UPDATE SET\n`
+  sql += `  title = EXCLUDED.title,\n`
+  sql += `  image = EXCLUDED.image,\n`
+  sql += `  position = EXCLUDED.position,\n`
+  sql += `  is_active = true;\n\n`
+  sql += `INSERT INTO "Titles_Awards" (title_id, award_id, position)\n`
+  sql += `SELECT t.id, a.id, awarded.position\n`
+  sql += `FROM (\n`
+  sql += `  SELECT slug, 'literary-game' AS award_slug, 1 AS position\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE slug IN ('segamegadrive', 'igra-v-mayaki')\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'book-of-year-2019', 1\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE left(first_release, 4) = '2019'\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'editor-choice', 2\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE id % 3 = 0\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'reader-choice', 3\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE id % 4 = 0\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'debut-shortlist', 4\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE id % 5 = 0\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'best-prose', 5\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE id % 6 = 0\n`
+  sql += `  UNION ALL\n`
+  sql += `  SELECT slug, 'formal-experiment', 6\n`
+  sql += `  FROM "Titles"\n`
+  sql += `  WHERE id % 7 = 0\n`
+  sql += `) awarded\n`
+  sql += `JOIN "Titles" t ON t.slug = awarded.slug\n`
+  sql += `JOIN "Awards" a ON a.slug = awarded.award_slug\n`
+  sql += `ON CONFLICT (title_id, award_id) DO UPDATE SET\n`
+  sql += `  position = EXCLUDED.position;\n\n`
 
   writeFileSync(OUTPUT_PATH, sql, 'utf-8')
   console.log(`Generated ${OUTPUT_PATH}`)

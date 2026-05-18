@@ -51,6 +51,23 @@ CREATE TABLE IF NOT EXISTS "Titles_Authors" (
   author_id INTEGER NOT NULL REFERENCES "Authors"(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS "Awards" (
+  id SERIAL PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  image TEXT,
+  position INTEGER NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+CREATE TABLE IF NOT EXISTS "Titles_Awards" (
+  id SERIAL PRIMARY KEY,
+  title_id INTEGER NOT NULL REFERENCES "Titles"(id) ON DELETE CASCADE,
+  award_id INTEGER NOT NULL REFERENCES "Awards"(id) ON DELETE CASCADE,
+  position INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (title_id, award_id)
+);
+
 CREATE TABLE IF NOT EXISTS "CardBooks" (
   id SERIAL PRIMARY KEY,
   title_id INTEGER NOT NULL UNIQUE REFERENCES "Titles"(id) ON DELETE CASCADE,
@@ -101,6 +118,26 @@ INSERT INTO "Titles_Authors" (title_id, author_id) VALUES
   (8, 4),
   (5, 5)
 ON CONFLICT DO NOTHING;
+
+-- ─── Sample Awards ───────────────────────────────────────────────────────────
+
+INSERT INTO "Awards" (id, slug, title, image, position) VALUES
+  (1, 'book-of-year-2019', 'Книга года 2019', '/awards/book-of-year-2019.svg', 1),
+  (2, 'editor-choice', 'Выбор редакции Чтива', '/awards/editor-choice.svg', 2),
+  (3, 'reader-choice', 'Голос читателей', '/awards/reader-choice.svg', 3),
+  (4, 'best-prose', 'Лучшая проза', '/awards/best-prose.svg', 4)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO "Titles_Awards" (title_id, award_id, position) VALUES
+  (1, 2, 1),
+  (2, 3, 1),
+  (3, 4, 1),
+  (4, 2, 1),
+  (5, 3, 1),
+  (6, 4, 1),
+  (7, 2, 1),
+  (8, 3, 1)
+ON CONFLICT (title_id, award_id) DO NOTHING;
 
 -- ─── Sample CardBooks ─────────────────────────────────────────────────────────
 

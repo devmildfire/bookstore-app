@@ -1,0 +1,316 @@
+@use '@/styles/common' as *;
+
+// `book-page-container` provides the same max-width + page padding that the
+// breadcrumb/main sections use, so the tabs+panel section never touches the
+// viewport edges and always respects the page's horizontal padding.
+.root {
+  @include book-page-container;
+}
+
+// ─── Tab bar ──────────────────────────────────────────────────────────────────
+
+.tabBar {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 81px;
+  background: $color-panel;
+
+  @include breakpoint(tablet) { height: 70px; }
+  @include breakpoint(tablet-small) { height: 66px; }
+  @include breakpoint(phone) {
+    height: 56px;
+    background: transparent;
+    border: 1px solid $color-text-on-dark;
+  }
+}
+
+// SVG outline: connected folder-tab shape with concave outward curves around the active tab.
+// `overflow: visible` is required for Firefox — without it, the 1px stroke at the viewBox
+// edges gets clipped (Firefox treats SVG as overflow:hidden by default).
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+
+  @include breakpoint(phone) {
+    display: none;
+  }
+}
+
+.tab {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover { background: rgba($color-text-on-dark, 0.04); }
+}
+
+.tabActive {
+  cursor: default;
+  pointer-events: none;
+
+  &:hover { background: transparent; }
+}
+
+// ─── Tab icons ────────────────────────────────────────────────────────────────
+
+// All shapes inherit color via currentColor (set inline on each SVG).
+// Inner filled elements (e.g. EBook home-button dot) use fill="currentColor" inline.
+.icon {
+  width: 53px;
+  height: 53px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) { width: 36px; height: 36px; }
+}
+
+.icon.iconActive {
+  color: $color-accent-hover-on-dark;
+}
+
+// ─── Panel ────────────────────────────────────────────────────────────────────
+
+.panel {
+  width: 100%;
+  background: $color-panel;
+  padding: $space-10 $space-12;
+  // Continuous outline: top edge is the shelf line drawn by TabBarFrame; the
+  // panel adds its own left/right/bottom borders with rounded bottom corners.
+  border: 1px solid rgba($color-text-on-dark, 0.4);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+
+  @include breakpoint(tablet) { padding: $space-10 $space-10; }
+  @include breakpoint(tablet-small) { padding: $space-6 $space-6; }
+  @include breakpoint(phone) {
+    background: transparent;
+    padding: $space-5 $space-3;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+// Grid layout: desktop puts details on the left and price/actions on the right.
+// Below tablet-small (≤767) we collapse to a single column because the right
+// column gets too narrow and the price would otherwise overflow.
+.panelContent {
+  display: grid;
+  grid-template-columns: 1fr 302px;
+  grid-template-areas:
+    "title   price"
+    "details actions";
+  column-gap: $space-8;
+  row-gap: $space-8;
+  align-items: start;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: 1fr 240px;
+  }
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title   price"
+      "actions actions"
+      "details details";
+    column-gap: $space-4;
+    row-gap: $space-5;
+  }
+  @include breakpoint(phone) {
+    column-gap: $space-3;
+    row-gap: $space-4;
+  }
+}
+
+.editionTitle {
+  grid-area: title;
+  font-family: $font-montserrat;
+  font-size: 40px;
+  font-weight: $font-weight-bold;
+  color: $color-text-on-dark;
+  line-height: normal;
+  margin: 0;
+
+  @include breakpoint(tablet) { font-size: 30px; }
+  @include breakpoint(phone) { font-size: $font-size-base; }
+}
+
+.details {
+  grid-area: details;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include breakpoint(phone) { gap: $space-2; }
+}
+
+.detailRow {
+  display: flex;
+  align-items: baseline;
+  gap: 25px;
+
+  @include breakpoint(tablet) { gap: 22px; }
+  @include breakpoint(tablet-small) { gap: 20px; }
+  @include breakpoint(phone) { gap: 20px; }
+}
+
+.detailLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: 1.4;
+  letter-spacing: 0.8px;
+  color: rgba($color-text-on-dark, 0.7);
+  flex: 0 0 160px;
+  max-width: 160px;
+
+  @include breakpoint(tablet) { flex-basis: 140px; max-width: 140px; }
+  @include breakpoint(tablet-small) { flex-basis: 120px; max-width: 120px; }
+  @include breakpoint(phone) {
+    font-size: 10px;
+    flex-basis: 90px;
+    max-width: 90px;
+  }
+}
+
+.detailValue {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.4;
+  letter-spacing: 0.8px;
+  color: $color-text-on-dark;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+
+  > div + div { margin-top: $space-2; }
+
+  @include breakpoint(phone) { font-size: 10px; }
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: $space-5;
+
+  @include breakpoint(phone) { gap: $space-3; }
+}
+
+// Spans the full panel width — appears below the details + actions rows.
+.carouselWrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: $space-10;
+
+  @include breakpoint(tablet) { margin-top: $space-8; }
+  @include breakpoint(phone) { margin-top: $space-5; }
+}
+
+.price {
+  grid-area: price;
+  font-family: $font-montserrat;
+  font-size: 40px;
+  font-weight: $font-weight-bold;
+  color: $color-gray-5;
+  line-height: normal;
+  margin: 0;
+  text-align: right;
+
+  @include breakpoint(tablet) { font-size: 30px; }
+  @include breakpoint(phone) { font-size: $font-size-base; align-self: center; }
+}
+
+.addToCartBtn {
+  height: 70px;
+  border: 1px solid transparent;
+  background: $color-accent-on-dark;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-accent-hover-on-dark;
+    border-color: $color-accent-hover-on-dark;
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  @include breakpoint(tablet) { height: 55px; }
+  // Mobile style per Figma node 2437:9542: narrow, centered, outlined (not red).
+  @include breakpoint(phone) {
+    align-self: center;
+    width: 223px;
+    height: 36px;
+    background: transparent;
+    border-color: $color-text-on-dark;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.demoBtn {
+  height: 70px;
+  border: 1px solid $color-text-on-dark;
+  background: $color-inner-panel-dark;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-text-on-dark, 0.06);
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  @include breakpoint(tablet) { height: 55px; }
+  @include breakpoint(phone) {
+    align-self: center;
+    width: 223px;
+    height: 36px;
+    background: transparent;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.notes { display: flex; flex-direction: column; gap: $space-2; }
+
+.notePrimary,
+.noteSecondary {
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+  letter-spacing: 0.6px;
+  color: rgba($color-text-on-dark, 0.8);
+  margin: 0;
+  text-align: center;
+
+  @include breakpoint(phone) {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+}

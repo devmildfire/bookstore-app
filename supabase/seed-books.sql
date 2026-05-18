@@ -9,6 +9,8 @@ DELETE FROM "PrintedBooks";
 DELETE FROM "Audiobooks";
 DELETE FROM "Ebooks";
 DELETE FROM "CardBooks";
+DELETE FROM "Titles_Awards";
+DELETE FROM "Awards";
 DELETE FROM "Titles_Authors";
 DELETE FROM "Titles";
 DELETE FROM "Authors";
@@ -16,6 +18,8 @@ DELETE FROM "Authors";
 ALTER SEQUENCE "Authors_id_seq" RESTART WITH 1;
 ALTER SEQUENCE "Titles_id_seq" RESTART WITH 1;
 ALTER SEQUENCE "Titles_Authors_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "Awards_id_seq" RESTART WITH 1;
+ALTER SEQUENCE "Titles_Awards_id_seq" RESTART WITH 1;
 ALTER SEQUENCE "CardBooks_id_seq" RESTART WITH 1;
 ALTER SEQUENCE "Ebooks_id_seq" RESTART WITH 1;
 ALTER SEQUENCE "Audiobooks_id_seq" RESTART WITH 1;
@@ -360,3 +364,160 @@ INSERT INTO "featured_books" (title_id, sort_order) VALUES
   (14, 4),
   (19, 5);
 
+-- Awards
+INSERT INTO "Awards" (slug, title, image, position) VALUES
+  ('book-of-year-2019', 'Книга года 2019', '/awards/book-of-year-2019.svg', 1),
+  ('editor-choice', 'Выбор редакции Чтива', '/awards/editor-choice.svg', 2),
+  ('reader-choice', 'Голос читателей', '/awards/reader-choice.svg', 3),
+  ('debut-shortlist', 'Дебютный список', '/awards/debut-shortlist.svg', 4),
+  ('best-prose', 'Лучшая проза', '/awards/best-prose.svg', 5),
+  ('formal-experiment', 'Формальный эксперимент', '/awards/formal-experiment.svg', 6),
+  ('literary-game', 'Литературная игра', '/awards/literary-game.svg', 7)
+ON CONFLICT (slug) DO UPDATE SET
+  title = EXCLUDED.title,
+  image = EXCLUDED.image,
+  position = EXCLUDED.position,
+  is_active = true;
+
+INSERT INTO "Titles_Awards" (title_id, award_id, position)
+SELECT t.id, a.id, awarded.position
+FROM (
+  SELECT slug, 'literary-game' AS award_slug, 1 AS position
+  FROM "Titles"
+  WHERE slug IN ('segamegadrive', 'igra-v-mayaki')
+  UNION ALL
+  SELECT slug, 'book-of-year-2019', 1
+  FROM "Titles"
+  WHERE left(first_release, 4) = '2019'
+  UNION ALL
+  SELECT slug, 'editor-choice', 2
+  FROM "Titles"
+  WHERE id % 3 = 0
+  UNION ALL
+  SELECT slug, 'reader-choice', 3
+  FROM "Titles"
+  WHERE id % 4 = 0
+  UNION ALL
+  SELECT slug, 'debut-shortlist', 4
+  FROM "Titles"
+  WHERE id % 5 = 0
+  UNION ALL
+  SELECT slug, 'best-prose', 5
+  FROM "Titles"
+  WHERE id % 6 = 0
+  UNION ALL
+  SELECT slug, 'formal-experiment', 6
+  FROM "Titles"
+  WHERE id % 7 = 0
+) awarded
+JOIN "Titles" t ON t.slug = awarded.slug
+JOIN "Awards" a ON a.slug = awarded.award_slug
+ON CONFLICT (title_id, award_id) DO UPDATE SET
+  position = EXCLUDED.position;
+
+-- ─── White Flower edition details (Figma example data) ──────────────────────
+-- Populates the new edition-specific fields + Workers join rows for the
+-- "Белый цветок" book so the detail-page tabs render fully populated.
+
+UPDATE "PrintedBooks" SET
+  format         = '145x215 мм',
+  page_count     = 200,
+  paper          = 'офсетная 80 гр/кв. м.',
+  cover_material = 'мелованная, 250 гр./кв. м., матовое ламинирование, выборочный уф-лак',
+  binding        = 'КШС (термоклей)',
+  illustrations  = 'Чёрно-белые'
+WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower');
+
+UPDATE "CardBooks" SET
+  format             = '50x70 мм',
+  printing_technique = 'Двухсторонняя шелкография белым.',
+  paper              = 'Дизайнерская бумага Sirio Black Black 0,7 мм.',
+  packaging          = 'Индивидуальная упаковка с цветной запечаткой.'
+WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower');
+
+UPDATE "Audiobooks" SET
+  duration_seconds = 19920,   -- 5ч 32м
+  file_size_bytes  = 305000000  -- ~305 МБ
+WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower');
+
+UPDATE "Ebooks" SET
+  formats         = ARRAY['PDF','FB2','HTML','Epub'],
+  character_count = 355000
+WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower');
+
+INSERT INTO "Workers" (name, job) VALUES
+  ('Сергей Иннер',         'редактор'),
+  ('Александра Яшаркина',  'верстальщик'),
+  ('Кристина Габеева',     'художник'),
+  ('Екатерина Яковлева',   'дизайнер'),
+  ('Серафим Лоза',         'веб-мастер'),
+  ('Наталья Кислова',      'редактор'),
+  ('Леон Меликьянц',       'верстальщик'),
+  ('Евгений Борщевский',   'иллюстратор'),
+  ('Ниёле Мейлуте',        'чтец'),
+  ('Anamorphic Orchestra', 'композитор')
+ON CONFLICT (name, job) DO NOTHING;
+
+-- Helper: link a worker to an edition by name+job, ordered.
+WITH pb AS (
+  SELECT id FROM "PrintedBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+), cb AS (
+  SELECT id FROM "CardBooks"    WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+), ab AS (
+  SELECT id FROM "Audiobooks"   WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+), eb AS (
+  SELECT id FROM "Ebooks"       WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+)
+INSERT INTO "PrintedBookWorkers" (printed_book_id, worker_id, sort_order)
+SELECT (SELECT id FROM pb), w.id, ord.sort_order
+FROM (VALUES
+  ('Сергей Иннер',         'редактор',     0),
+  ('Александра Яшаркина',  'верстальщик',  1),
+  ('Кристина Габеева',     'художник',     2),
+  ('Екатерина Яковлева',   'дизайнер',     3),
+  ('Серафим Лоза',         'веб-мастер',   4)
+) ord(name, job, sort_order)
+JOIN "Workers" w ON w.name = ord.name AND w.job = ord.job
+ON CONFLICT (printed_book_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order;
+
+WITH cb AS (
+  SELECT id FROM "CardBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+)
+INSERT INTO "CardBookWorkers" (card_book_id, worker_id, sort_order)
+SELECT (SELECT id FROM cb), w.id, ord.sort_order
+FROM (VALUES
+  ('Наталья Кислова',     'редактор',     0),
+  ('Серафим Лоза',        'веб-мастер',   1),
+  ('Екатерина Яковлева',  'дизайнер',     2),
+  ('Леон Меликьянц',      'верстальщик',  3),
+  ('Евгений Борщевский',  'иллюстратор',  4)
+) ord(name, job, sort_order)
+JOIN "Workers" w ON w.name = ord.name AND w.job = ord.job
+ON CONFLICT (card_book_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order;
+
+WITH ab AS (
+  SELECT id FROM "Audiobooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+)
+INSERT INTO "AudiobookWorkers" (audiobook_id, worker_id, sort_order)
+SELECT (SELECT id FROM ab), w.id, ord.sort_order
+FROM (VALUES
+  ('Ниёле Мейлуте',        'чтец',        0),
+  ('Anamorphic Orchestra', 'композитор',  1)
+) ord(name, job, sort_order)
+JOIN "Workers" w ON w.name = ord.name AND w.job = ord.job
+ON CONFLICT (audiobook_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order;
+
+WITH eb AS (
+  SELECT id FROM "Ebooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'white-flower')
+)
+INSERT INTO "EbookWorkers" (ebook_id, worker_id, sort_order)
+SELECT (SELECT id FROM eb), w.id, ord.sort_order
+FROM (VALUES
+  ('Наталья Кислова',     'редактор',     0),
+  ('Серафим Лоза',        'веб-мастер',   1),
+  ('Екатерина Яковлева',  'дизайнер',     2),
+  ('Леон Меликьянц',      'верстальщик',  3),
+  ('Евгений Борщевский',  'иллюстратор',  4)
+) ord(name, job, sort_order)
+JOIN "Workers" w ON w.name = ord.name AND w.job = ord.job
+ON CONFLICT (ebook_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order;

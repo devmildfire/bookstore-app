@@ -20,6 +20,18 @@ export async function getBook(slug: string): Promise<Book | null> {
   return rows.length > 0 ? normalizeBook(rows[0]) : null
 }
 
+export async function getBookEditions(slug: string): Promise<Book[]> {
+  const supabase = createDataClient()
+
+  const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_book_by_slug', {
+    title_slug: slug,
+  })
+
+  if (error) throw new Error(`Не удалось загрузить варианты книги: ${error.message}`)
+
+  return ((data ?? []) as BookServerRow[]).map(normalizeBook)
+}
+
 export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
   const supabase = createDataClient()
 

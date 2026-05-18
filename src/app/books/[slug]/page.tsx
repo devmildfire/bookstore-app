@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBook, getRelatedBooks } from '@/api/books'
-import Badge from '@/components/common/Badge'
+import { getBook, getRelatedBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
 import BookCard from '@/components/book/BookCard'
-import AddToCartButton from './AddToCartButton'
+import BookCoverSlider from './BookCoverSlider'
+import BookEditionTabs from './BookEditionTabs'
 import styles from './page.module.scss'
 
 type Props = {
@@ -39,76 +39,81 @@ export default async function BookDetailPage({ params }: Props) {
     notFound()
   }
 
-  const relatedBooks = await getRelatedBooks(book)
+  const [relatedBooks, bookPhotos, bookEditions] = await Promise.all([
+    getRelatedBooks(book),
+    getBookPhotoUrls(slug),
+    getBookEditions(slug),
+  ])
 
-  const priceFormatted = new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(book.price)
+  const bookMeta = [
+    book.year,
+    book.litForm,
+    book.ageRestriction != null ? `${book.ageRestriction}+` : null,
+  ]
+    .filter(Boolean)
+    .join(' | ')
 
   return (
     <article className={styles.page}>
-      <nav className={styles.breadcrumbs} aria-label='Breadcrumb'>
-        <Link href='/books'>Каталог</Link>
-        <span className={styles.separator} aria-hidden='true'>/</span>
-        <span aria-current='page'>{book.name}</span>
-      </nav>
 
-      <div className={styles.main}>
-        <div className={styles.coverSection}>
-          <div className={styles.coverWrapper}>
-            {book.coverUrl ? (
-              <Image
-                src={book.coverUrl}
-                alt={`Обложка книги: ${book.name}`}
-                fill
-                sizes='(max-width: 767px) 100vw, (max-width: 1200px) 40vw, 400px'
-                className={styles.coverImage}
-                priority
-              />
-            ) : (
-              <div className={styles.coverPlaceholder} aria-hidden />
+      <section className={styles.nav}>
+        <nav className={styles.breadcrumbs} aria-label='Breadcrumb'>
+          <Link href='/books'>Каталог</Link>
+          <span className={styles.separator} aria-hidden='true'>/</span>
+          <span aria-current='page'>{book.name}</span>
+        </nav>
+      </section>
+
+      <section className={styles.main}>
+        <div className={styles.coverInfo}>
+
+          <BookCoverSlider
+            photos={bookPhotos}
+            coverUrl={book.coverUrl}
+            bookName={book.name}
+          />
+
+          <div className={styles.info}>
+            <h1 className={styles.title}>{book.name}</h1>
+            <p className={styles.author}>{book.authorName}</p>
+
+            {bookMeta && (
+              <p className={styles.bookMeta}>{bookMeta}</p>
+            )}
+
+            {book.thesis && (
+              <p className={styles.thesis}>{book.thesis}</p>
+            )}
+
+            {book.description && (
+              <p className={styles.description}>{book.description}</p>
+            )}
+
+            {book.awards.length > 0 && (
+              <ul className={styles.awardsList} aria-label='Награды'>
+                {book.awards.map((award) => (
+                  <li key={award.id} className={styles.awardItem}>
+                    {award.image ? (
+                      <Image
+                        src={award.image}
+                        alt={award.title}
+                        width={131}
+                        height={120}
+                        className={styles.awardImage}
+                      />
+                    ) : (
+                      <span className={styles.awardTitle}>{award.title}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
+
         </div>
+      </section>
 
-        <div className={styles.infoSection}>
-          <Badge variant='default' className={styles.category}>
-            {book.category}
-          </Badge>
-
-          <h1 className={styles.title}>{book.name}</h1>
-
-          <p className={styles.author}>{book.authorName}</p>
-
-          {book.description && (
-            <p className={styles.description}>{book.description}</p>
-          )}
-
-          <div className={styles.meta}>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Цена</span>
-              <span className={styles.price}>{priceFormatted}</span>
-            </div>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Наличие</span>
-              <Badge variant={book.inStock ? 'success' : 'danger'}>
-                {book.inStock ? 'В наличии' : 'Нет в наличии'}
-              </Badge>
-            </div>
-          </div>
-
-          <AddToCartButton
-            bookId={book.id}
-            inStock={book.inStock}
-            bookName={book.name}
-            price={book.price}
-            picture={book.coverUrl}
-            category={book.category}
-          />
-        </div>
-      </div>
+      <BookEditionTabs books={bookEditions} printBookPhotos={bookPhotos} bookName={book.name} />
 
       {relatedBooks.length > 0 && (
         <section className={styles.related}>
@@ -120,6 +125,7 @@ export default async function BookDetailPage({ params }: Props) {
           </div>
         </section>
       )}
+
     </article>
   )
 }
