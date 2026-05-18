@@ -13,6 +13,12 @@ export type BookWorker = {
   job: string
 }
 
+export type BookTrailer = {
+  mp4Url: string
+  webmUrl: string
+  posterUrl: string | null
+}
+
 export type BookFilters = {
   search: string
   categories: ProductCategory[]
@@ -61,6 +67,7 @@ export type Book = {
   fileSizeBytes: number | null       // AudioBook
   formats: string[] | null           // EBook
   characterCount: number | null      // EBook
+  booktrailer: BookTrailer | null
 }
 
 export type BookCatalog = {

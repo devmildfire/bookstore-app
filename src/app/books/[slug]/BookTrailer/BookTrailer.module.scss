@@ -1,0 +1,65 @@
+@use '@/styles/common' as *;
+
+// Spacing per Figma:
+//   prev→title gap = section padding-top
+//   title→video gap = flex `gap`
+// Values are taken from the 1920 / 1440 / 1024 designs and extrapolated for
+// tablet-small and phone, which the Figma doesn't show explicitly.
+.section {
+  @include book-page-container;
+
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+
+  padding-top: 186px;
+  padding-bottom: 200px;
+  gap: 84px;
+
+  @include breakpoint(desktop) {        // ≤1439 — Figma 1440 design
+    padding-top: 160px;
+    padding-bottom: 140px;
+    gap: 40px;
+  }
+  @include breakpoint(tablet) {         // ≤1200 — Figma 1024 design
+    padding-top: 90px;
+    padding-bottom: 130px;
+    gap: 58px;
+  }
+  @include breakpoint(tablet-small) {
+    padding-top: 64px;
+    padding-bottom: 80px;
+    gap: 40px;
+  }
+  @include breakpoint(phone) {
+    padding-top: 48px;
+    padding-bottom: 60px;
+    gap: 24px;
+  }
+}
+
+.title {
+  @include section-title;
+
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+// 16:9 black stage. The aspect ratio is fixed so the layout doesn't shift
+// while metadata is loading; the video itself uses object-fit: contain so any
+// off-aspect content is letter-boxed against the black surround.
+.videoWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}

@@ -6,6 +6,7 @@ import { getBook, getRelatedBooks, getBookPhotoUrls, getBookEditions } from '@/a
 import BookCard from '@/components/book/BookCard'
 import BookCoverSlider from './BookCoverSlider'
 import BookEditionTabs from './BookEditionTabs'
+import BookTrailer from './BookTrailer'
 import styles from './page.module.scss'
 
 type Props = {
@@ -114,6 +115,8 @@ export default async function BookDetailPage({ params }: Props) {
       </section>
 
       <BookEditionTabs books={bookEditions} printBookPhotos={bookPhotos} bookName={book.name} />
+
+      {book.booktrailer && <BookTrailer trailer={book.booktrailer} bookName={book.name} />}
 
       {relatedBooks.length > 0 && (
         <section className={styles.related}>

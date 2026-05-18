@@ -1,7 +1,7 @@
 import type { ProductCategory } from '@/types/database'
-import type { Book, BookAward, BookWorker } from './client'
+import type { Book, BookAward, BookTrailer, BookWorker } from './client'
 import type { BookServerRow } from './server'
-import { getCoverUrl } from '@/lib/storage'
+import { getBooktrailerUrls, getCoverUrl } from '@/lib/storage'
 
 export function normalizeBook(raw: BookServerRow): Book {
   const authorNames = (raw.author_names ?? [])
@@ -47,7 +47,16 @@ export function normalizeBook(raw: BookServerRow): Book {
     fileSizeBytes: readNumber(details.file_size_bytes),
     formats: readStringArray(details.formats),
     characterCount: readNumber(details.character_count),
+    booktrailer: normalizeBooktrailer(raw.title_booktrailer, raw.title_slug ?? String(raw.title_id)),
   }
+}
+
+function normalizeBooktrailer(value: unknown, slug: string): BookTrailer | null {
+  if (!isRecord(value)) return null
+  const hasPoster = value.has_poster === true
+  const urls = getBooktrailerUrls(slug, hasPoster)
+  if (!urls) return null
+  return { mp4Url: urls.mp4, webmUrl: urls.webm, posterUrl: urls.poster }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

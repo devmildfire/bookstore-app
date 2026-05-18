@@ -152,6 +152,32 @@ export interface Database {
         }
         Relationships: []
       }
+      Booktrailers: {
+        Row: {
+          has_poster: boolean
+          id: number
+          title_id: number
+        }
+        Insert: {
+          has_poster?: boolean
+          id?: number
+          title_id: number
+        }
+        Update: {
+          has_poster?: boolean
+          id?: number
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Booktrailers_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: true
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       BoxSetBooks: {
         Row: {
           box_set_id: number
@@ -843,65 +869,66 @@ export interface Database {
           title_slug: string
         }
         Returns: {
+          title_description: string
+          title_cover: string
+          title_slug: string
           title_name: string
           product_type: string
           title_id: number
           release_date: string
           publish_date: string
           is_published: boolean
+          title_first_release: string
+          author_names: string[]
+          title_awards: Json
+          edition_details: Json
+          edition_workers: Json
+          title_booktrailer: Json
+          title_age_restriction: number
           sold_out: boolean
           discount: number
           price: number
           id: number
-          title_slug: string
-          title_cover: string
-          title_description: string
-          title_thesis: string
           title_lit_form: string
-          edition_workers: Json
-          edition_details: Json
-          title_awards: Json
-          author_names: string[]
-          title_first_release: string
-          title_age_restriction: number
+          title_thesis: string
         }[]
       }
       get_catalog_books: {
         Args: {
+          title_ids?: number[]
+          product_type_filters?: string[]
+          author_names_filter?: string[]
+          year_filters?: string[]
           result_limit?: number
           result_offset?: number
           search_term?: string
           product_type_filter?: string
           author_name?: string
+          price_from?: number
           sort_by?: string
           price_to?: number
-          price_from?: number
-          year_filters?: string[]
-          author_names_filter?: string[]
-          product_type_filters?: string[]
-          title_ids?: number[]
         }
         Returns: {
-          title_cover: string
           title_first_release: string
           author_names: string[]
           total_count: number
           has_multiple_products: boolean
-          title_age_restriction: number
           title_slug: string
-          title_name: string
-          product_type: string
-          title_id: number
-          release_date: string
-          publish_date: string
-          is_published: boolean
-          sold_out: boolean
-          discount: number
-          price: number
           id: number
-          title_lit_form: string
-          title_thesis: string
+          price: number
+          discount: number
+          sold_out: boolean
+          is_published: boolean
+          publish_date: string
+          release_date: string
+          title_id: number
+          product_type: string
+          title_name: string
+          title_cover: string
           title_description: string
+          title_thesis: string
+          title_lit_form: string
+          title_age_restriction: number
         }[]
       }
       gtrgm_compress: {
@@ -948,23 +975,23 @@ export interface Database {
           result_offset?: number
         }
         Returns: {
+          author_names: string[]
+          title_first_release: string
+          title_age_restriction: number
+          title_lit_form: string
           title_thesis: string
+          title_description: string
+          title_cover: string
+          title_slug: string
+          title_name: string
           id: number
           price: number
           sold_out: boolean
           is_published: boolean
           publish_date: string
+          product_type: string
           release_date: string
           title_id: number
-          product_type: string
-          title_name: string
-          title_slug: string
-          title_cover: string
-          title_description: string
-          title_lit_form: string
-          title_age_restriction: number
-          title_first_release: string
-          author_names: string[]
           total_count: number
         }[]
       }

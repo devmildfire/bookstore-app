@@ -64,4 +64,24 @@ export function getBookPhotoUrls(slug: string, count: number): string[] {
   })
 }
 
-export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET }
+const BOOKTRAILERS_BUCKET = 'booktrailers'
+
+/**
+ * URLs for a book's promotional video. The video is served in two encodings
+ * (MP4 for universal support, WebM/VP9 for browsers that prefer it) plus a
+ * poster image shown before play. Files always live at:
+ *   booktrailers/{slug}/video.mp4
+ *   booktrailers/{slug}/video.webm
+ *   booktrailers/{slug}/poster.jpg   (only when has_poster is true)
+ */
+export function getBooktrailerUrls(slug: string, hasPoster: boolean) {
+  if (!supabaseUrl) return null
+  const base = `${supabaseUrl}/storage/v1/object/public/${BOOKTRAILERS_BUCKET}/${slug}`
+  return {
+    mp4: `${base}/video.mp4`,
+    webm: `${base}/video.webm`,
+    poster: hasPoster ? `${base}/poster.jpg` : null,
+  }
+}
+
+export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET, BOOKTRAILERS_BUCKET }

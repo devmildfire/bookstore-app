@@ -2,36 +2,27 @@
 @use 'breakpoints' as *;
 
 // ─── Section Title ─────────────────────────────────────────────────────────────
-// Shared pattern across BookDescription, BookProperties, BookTrailer,
-// BookAuthor section headings. Uses Cheque display font at 57px desktop.
+// Page-level section headings (e.g. "Буктрейлер", "Об авторе", "Контекст",
+// "Познайте также"). Display-font sized down across breakpoints. Per the
+// Figma spec the value is:
+//   color: var(--main_white, #DCDCDC)
+//   font-family: Cheque
+//   font-size: 60px       (desktop)
+//   font-weight: 400      (normal)
+//   line-height: normal
+// Consumers control spacing/alignment themselves.
 
 @mixin section-title {
-  margin-bottom: 30px;
-  text-align: center;
   font-family: $font-cheque;
-  font-weight: 900;
-  font-size: 57px;
-  line-height: 68px;
+  font-weight: $font-weight-normal;
+  font-size: 60px;        // ≥1440px (Figma 1920 design)
+  line-height: normal;
+  color: $color-text-on-dark;
 
-  @media screen and (max-width: 1440px) {
-    margin-bottom: 26px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    font-size: 40px;
-    line-height: 48px;
-  }
-
-  @media screen and (max-width: 830px) {
-    margin-bottom: 15px;
-    font-size: 24px;
-    line-height: 28px;
-  }
-
-  @media screen and (max-width: 576px) {
-    font-size: 24px;
-    line-height: 28px;
-  }
+  @include breakpoint(desktop) { font-size: 50px; }       // 1201–1439 (Figma 1440 design)
+  @include breakpoint(tablet) { font-size: 40px; }        // ≤1200    (Figma 1024 design)
+  @include breakpoint(tablet-small) { font-size: 30px; }
+  @include breakpoint(phone) { font-size: 24px; }
 }
 
 // ─── Text Types ────────────────────────────────────────────────────────────────

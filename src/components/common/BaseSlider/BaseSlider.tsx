@@ -25,6 +25,13 @@ export default function BaseSlider({ children, slideCount, loop, autoplay = fals
     <div className={cn(styles.wrapper, className)}>
       <Swiper
         style={{ width: '100%' }}
+        // `autoHeight` makes Swiper measure the active slide and apply that
+        // height to the wrapper. Without it, Swiper's internal
+        // `.swiper-wrapper { height: 100% }` collapses to 0 in Firefox
+        // because the parent has no defined height (Chrome is more lenient
+        // about percentage-of-auto). User interaction was triggering a
+        // re-measure and "fixing" the height — autoHeight does that on init.
+        autoHeight
         modules={modules}
         pagination={
           showPagination

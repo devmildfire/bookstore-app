@@ -521,3 +521,12 @@ FROM (VALUES
 ) ord(name, job, sort_order)
 JOIN "Workers" w ON w.name = ord.name AND w.job = ord.job
 ON CONFLICT (ebook_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order;
+
+-- ─── Booktrailer for White Flower ────────────────────────────────────────────
+-- Existence of this row enables the booktrailer section on the book page.
+-- The video files (video.mp4, video.webm, poster.jpg) must be uploaded to
+-- the `booktrailers/{slug}/` storage path separately.
+
+INSERT INTO "Booktrailers" (title_id, has_poster)
+SELECT id, true FROM "Titles" WHERE slug = 'white-flower'
+ON CONFLICT (title_id) DO UPDATE SET has_poster = EXCLUDED.has_poster;

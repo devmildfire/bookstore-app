@@ -26,4 +26,5 @@ export type BookServerRow = {
   has_multiple_products?: boolean
   edition_details?: unknown
   edition_workers?: unknown
+  title_booktrailer?: unknown
 }
