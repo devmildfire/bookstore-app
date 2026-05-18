@@ -69,9 +69,8 @@ export default function BookAuthor({ author }: Props) {
                       target={c.channel === 'email' ? undefined : '_blank'}
                       rel={c.channel === 'email' ? undefined : 'noopener noreferrer'}
                       className={styles.contactLink}
-                      aria-label={c.channel}
                     >
-                      <AuthorContactIcon channel={c.channel} size={30} />
+                      <AuthorContactIcon channel={c.channel} className={styles.icon} />
                     </a>
                   </li>
                 ))}
