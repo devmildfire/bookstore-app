@@ -5,6 +5,7 @@ import type {
   AuthorContactChannel,
   Book,
   BookAward,
+  BookContext,
   BookTrailer,
   BookWorker,
 } from './client'
@@ -57,7 +58,22 @@ export function normalizeBook(raw: BookServerRow): Book {
     characterCount: readNumber(details.character_count),
     booktrailer: normalizeBooktrailer(raw.title_booktrailer, raw.title_slug ?? String(raw.title_id)),
     authors: normalizeAuthors(raw.title_authors),
+    contexts: normalizeContexts(raw.title_contexts),
   }
+}
+
+function normalizeContexts(value: unknown): BookContext[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((entry): BookContext | null => {
+      if (!isRecord(entry)) return null
+      const id = readNumber(entry.id)
+      const heading = readString(entry.heading)
+      const body = readString(entry.body)
+      if (id === null || !heading || !body) return null
+      return { id, heading, body, url: readString(entry.url) }
+    })
+    .filter((c): c is BookContext => c !== null)
 }
 
 const ALLOWED_CHANNELS: ReadonlySet<AuthorContactChannel> = new Set([

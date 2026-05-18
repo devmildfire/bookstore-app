@@ -1,0 +1,143 @@
+@use '@/styles/common' as *;
+
+.section {
+  @include book-page-container;
+
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+
+  padding-top: 186px;
+  padding-bottom: 200px;
+  gap: 84px;
+
+  @include breakpoint(desktop) {
+    padding-top: 160px;
+    padding-bottom: 140px;
+    gap: 40px;
+  }
+  @include breakpoint(tablet) {
+    padding-top: 90px;
+    padding-bottom: 130px;
+    gap: 58px;
+  }
+  @include breakpoint(tablet-small) {
+    padding-top: 64px;
+    padding-bottom: 80px;
+    gap: 40px;
+  }
+  @include breakpoint(phone) {
+    padding-top: 48px;
+    padding-bottom: 60px;
+    gap: 24px;
+  }
+}
+
+.sectionTitle {
+  @include section-title;
+
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+// Stacked cards separated by horizontal rules. The outer list carries the
+// top + bottom rules; each item except the last carries a bottom rule.
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba($color-text-on-dark, 0.3);
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.3);
+}
+
+.item {
+  display: block;
+  padding: 24px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba($color-text-on-dark, 0.3);
+  }
+
+  @include breakpoint(phone) {
+    padding: 18px 0;
+  }
+}
+
+// Heading row holds the title (left) and the optional arrow icon (right).
+// Hovering anywhere in this row tints the icon — matches the spec
+// "on hover of the title or link, the link turns red".
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+
+  &:hover .icon,
+  .iconLink:focus-visible .icon {
+    color: $color-accent-on-dark;
+  }
+}
+
+.heading {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 30px;
+  line-height: $line-height-tight;
+  color: $color-text-on-dark;
+  min-width: 0;
+  flex: 1 1 auto;
+
+  @include breakpoint(desktop) { font-size: 24px; }
+  @include breakpoint(tablet) { font-size: 22px; }
+  @include breakpoint(tablet-small) { font-size: 20px; }
+  @include breakpoint(phone) { font-size: 18px; }
+}
+
+.iconLink {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-on-dark;
+  text-decoration: none;
+  transition: color 0.15s ease-out;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  transition: color 0.15s ease-out;
+
+  @include breakpoint(desktop) {
+    width: 48px;
+    height: 48px;
+  }
+  @include breakpoint(tablet) {
+    width: 42px;
+    height: 42px;
+  }
+  @include breakpoint(phone) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.body {
+  margin: 16px 0 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 16px;
+  line-height: $line-height-relaxed;
+  color: $color-text-on-dark;
+  opacity: 0.7;
+  white-space: pre-line;
+
+  @include breakpoint(tablet) { font-size: 15px; }
+  @include breakpoint(phone) { font-size: 14px; }
+}

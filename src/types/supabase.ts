@@ -184,6 +184,41 @@ export interface Database {
         }
         Relationships: []
       }
+      BookContexts: {
+        Row: {
+          body: string
+          heading: string
+          id: number
+          sort_order: number
+          title_id: number
+          url: string | null
+        }
+        Insert: {
+          body: string
+          heading: string
+          id?: number
+          sort_order?: number
+          title_id: number
+          url?: string | null
+        }
+        Update: {
+          body?: string
+          heading?: string
+          id?: number
+          sort_order?: number
+          title_id?: number
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "BookContexts_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       Booktrailers: {
         Row: {
           has_poster: boolean
@@ -901,6 +936,7 @@ export interface Database {
           title_slug: string
         }
         Returns: {
+          title_lit_form: string
           title_thesis: string
           title_description: string
           title_cover: string
@@ -911,25 +947,25 @@ export interface Database {
           release_date: string
           publish_date: string
           is_published: boolean
-          author_names: string[]
           title_awards: Json
           edition_details: Json
           edition_workers: Json
           title_booktrailer: Json
           title_authors: Json
-          title_first_release: string
+          title_contexts: Json
+          author_names: string[]
           sold_out: boolean
           discount: number
           price: number
           id: number
+          title_first_release: string
           title_age_restriction: number
-          title_lit_form: string
         }[]
       }
       get_catalog_books: {
         Args: {
           price_to?: number
-          product_type_filters?: string[]
+          sort_by?: string
           author_names_filter?: string[]
           year_filters?: string[]
           result_limit?: number
@@ -938,14 +974,13 @@ export interface Database {
           product_type_filter?: string
           author_name?: string
           price_from?: number
+          product_type_filters?: string[]
           title_ids?: number[]
-          sort_by?: string
         }
         Returns: {
-          author_names: string[]
           total_count: number
           has_multiple_products: boolean
-          title_cover: string
+          title_description: string
           id: number
           price: number
           discount: number
@@ -957,11 +992,12 @@ export interface Database {
           product_type: string
           title_name: string
           title_slug: string
-          title_description: string
+          title_cover: string
           title_thesis: string
           title_lit_form: string
           title_age_restriction: number
           title_first_release: string
+          author_names: string[]
         }[]
       }
       gtrgm_compress: {
@@ -1016,15 +1052,15 @@ export interface Database {
           title_description: string
           title_cover: string
           title_slug: string
-          title_name: string
           id: number
           price: number
           sold_out: boolean
           is_published: boolean
           publish_date: string
-          product_type: string
           release_date: string
+          title_name: string
           title_id: number
+          product_type: string
           total_count: number
         }[]
       }

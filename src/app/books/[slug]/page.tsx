@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { getBook, getRelatedBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
 import BookCard from '@/components/book/BookCard'
 import BookAuthor from './BookAuthor'
+import BookContext from './BookContext'
 import BookCoverSlider from './BookCoverSlider'
 import BookEditionTabs from './BookEditionTabs'
 import BookTrailer from './BookTrailer'
@@ -124,6 +125,8 @@ export default async function BookDetailPage({ params }: Props) {
         .map((author) => (
           <BookAuthor key={author.id} author={author} />
         ))}
+
+      <BookContext contexts={book.contexts} />
 
       {relatedBooks.length > 0 && (
         <section className={styles.related}>

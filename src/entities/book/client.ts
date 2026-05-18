@@ -38,6 +38,13 @@ export type Author = {
   contacts: AuthorContact[]
 }
 
+export type BookContext = {
+  id: number
+  heading: string
+  body: string
+  url: string | null
+}
+
 export type BookFilters = {
   search: string
   categories: ProductCategory[]
@@ -88,6 +95,7 @@ export type Book = {
   characterCount: number | null      // EBook
   booktrailer: BookTrailer | null
   authors: Author[]
+  contexts: BookContext[]
 }
 
 export type BookCatalog = {
