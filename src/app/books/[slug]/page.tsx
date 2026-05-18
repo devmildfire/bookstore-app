@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getBook, getRelatedBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
 import BookCard from '@/components/book/BookCard'
+import BookAuthor from './BookAuthor'
 import BookCoverSlider from './BookCoverSlider'
 import BookEditionTabs from './BookEditionTabs'
 import BookTrailer from './BookTrailer'
@@ -117,6 +118,12 @@ export default async function BookDetailPage({ params }: Props) {
       <BookEditionTabs books={bookEditions} printBookPhotos={bookPhotos} bookName={book.name} />
 
       {book.booktrailer && <BookTrailer trailer={book.booktrailer} bookName={book.name} />}
+
+      {book.authors
+        .filter((a) => a.bio || a.photoUrl || a.contacts.length > 0)
+        .map((author) => (
+          <BookAuthor key={author.id} author={author} />
+        ))}
 
       {relatedBooks.length > 0 && (
         <section className={styles.related}>

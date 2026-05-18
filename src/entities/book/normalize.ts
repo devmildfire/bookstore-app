@@ -1,7 +1,15 @@
 import type { ProductCategory } from '@/types/database'
-import type { Book, BookAward, BookTrailer, BookWorker } from './client'
+import type {
+  Author,
+  AuthorContact,
+  AuthorContactChannel,
+  Book,
+  BookAward,
+  BookTrailer,
+  BookWorker,
+} from './client'
 import type { BookServerRow } from './server'
-import { getBooktrailerUrls, getCoverUrl } from '@/lib/storage'
+import { getAuthorPhotoUrl, getBooktrailerUrls, getCoverUrl } from '@/lib/storage'
 
 export function normalizeBook(raw: BookServerRow): Book {
   const authorNames = (raw.author_names ?? [])
@@ -48,7 +56,52 @@ export function normalizeBook(raw: BookServerRow): Book {
     formats: readStringArray(details.formats),
     characterCount: readNumber(details.character_count),
     booktrailer: normalizeBooktrailer(raw.title_booktrailer, raw.title_slug ?? String(raw.title_id)),
+    authors: normalizeAuthors(raw.title_authors),
   }
+}
+
+const ALLOWED_CHANNELS: ReadonlySet<AuthorContactChannel> = new Set([
+  'telegram',
+  'instagram',
+  'facebook',
+  'twitter',
+  'email',
+])
+
+function normalizeAuthors(value: unknown): Author[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((entry): Author | null => {
+      if (!isRecord(entry)) return null
+      const id = readNumber(entry.id)
+      const name = readString(entry.name)
+      if (id === null || !name) return null
+      return {
+        id,
+        name,
+        photoUrl: getAuthorPhotoUrl(readString(entry.photo)),
+        city: readString(entry.city),
+        birthDate: readString(entry.birth_date),
+        deathDate: readString(entry.death_date),
+        phrase: readString(entry.phrase),
+        bio: readString(entry.bio),
+        contacts: normalizeContacts(entry.contacts),
+      }
+    })
+    .filter((a): a is Author => a !== null)
+}
+
+function normalizeContacts(value: unknown): AuthorContact[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((entry): AuthorContact | null => {
+      if (!isRecord(entry)) return null
+      const channel = readString(entry.channel)
+      const url = readString(entry.url)
+      if (!channel || !url || !ALLOWED_CHANNELS.has(channel as AuthorContactChannel)) return null
+      return { channel: channel as AuthorContactChannel, url }
+    })
+    .filter((c): c is AuthorContact => c !== null)
 }
 
 function normalizeBooktrailer(value: unknown, slug: string): BookTrailer | null {

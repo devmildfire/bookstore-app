@@ -530,3 +530,23 @@ ON CONFLICT (ebook_id, worker_id) DO UPDATE SET sort_order = EXCLUDED.sort_order
 INSERT INTO "Booktrailers" (title_id, has_poster)
 SELECT id, true FROM "Titles" WHERE slug = 'white-flower'
 ON CONFLICT (title_id) DO UPDATE SET has_poster = EXCLUDED.has_poster;
+
+-- ─── Author profile for White Flower (Figma example data) ───────────────────
+-- The "Об авторе" section on the book detail page reads this. Photo filename
+-- references the `authors` storage bucket; upload nikolay-staroobryadtsev.jpg
+-- there separately if you want the round portrait to render.
+
+UPDATE "Authors"
+SET
+  photo      = 'nikolay-staroobryadtsev.jpg',
+  city       = 'Санкт-Петербург',
+  birth_date = '1983-10-12',
+  phrase     = 'Жизнь соткана из чудес. Смерть — лишь одно из них.',
+  bio        = 'Николай Старообрядцев — петербургский писатель, автор мистических романов и философских притч. Окончил филологический факультет СПбГУ, работал журналистом, редактором, преподавателем литературы. Дебютировал в 2010 году сборником рассказов «Тихие пристани». Литература для него — способ осмысления невидимой стороны мира: герои его книг ищут смысл в случайностях, чудесах и снах, балансируют на границе реальности и тайного знания. Лауреат премии «Северная звезда» (2017), финалист «Большой книги» (2019). Живёт и работает в Санкт-Петербурге.'
+WHERE id = 29;
+
+DELETE FROM "AuthorContacts" WHERE author_id = 29;
+INSERT INTO "AuthorContacts" (author_id, channel, url, sort_order) VALUES
+  (29, 'telegram',  'https://t.me/staroobryadtsev',                 0),
+  (29, 'instagram', 'https://instagram.com/nikolay.staroobryadtsev', 1),
+  (29, 'email',     'mailto:nikolay@chtivo.spb.ru',                  2);

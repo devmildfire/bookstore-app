@@ -89,6 +89,38 @@ export interface Database {
           }
         ]
       }
+      AuthorContacts: {
+        Row: {
+          author_id: number
+          channel: Database["public"]["Enums"]["author_contact_channel"]
+          id: number
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          author_id: number
+          channel: Database["public"]["Enums"]["author_contact_channel"]
+          id?: number
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          author_id?: number
+          channel?: Database["public"]["Enums"]["author_contact_channel"]
+          id?: number
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "AuthorContacts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "Authors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       Authors: {
         Row: {
           bio: string | null
@@ -869,6 +901,7 @@ export interface Database {
           title_slug: string
         }
         Returns: {
+          title_thesis: string
           title_description: string
           title_cover: string
           title_slug: string
@@ -878,24 +911,24 @@ export interface Database {
           release_date: string
           publish_date: string
           is_published: boolean
-          title_first_release: string
           author_names: string[]
           title_awards: Json
           edition_details: Json
           edition_workers: Json
           title_booktrailer: Json
-          title_age_restriction: number
+          title_authors: Json
+          title_first_release: string
           sold_out: boolean
           discount: number
           price: number
           id: number
+          title_age_restriction: number
           title_lit_form: string
-          title_thesis: string
         }[]
       }
       get_catalog_books: {
         Args: {
-          title_ids?: number[]
+          price_to?: number
           product_type_filters?: string[]
           author_names_filter?: string[]
           year_filters?: string[]
@@ -905,15 +938,14 @@ export interface Database {
           product_type_filter?: string
           author_name?: string
           price_from?: number
+          title_ids?: number[]
           sort_by?: string
-          price_to?: number
         }
         Returns: {
-          title_first_release: string
           author_names: string[]
           total_count: number
           has_multiple_products: boolean
-          title_slug: string
+          title_cover: string
           id: number
           price: number
           discount: number
@@ -924,11 +956,12 @@ export interface Database {
           title_id: number
           product_type: string
           title_name: string
-          title_cover: string
+          title_slug: string
           title_description: string
           title_thesis: string
           title_lit_form: string
           title_age_restriction: number
+          title_first_release: string
         }[]
       }
       gtrgm_compress: {
@@ -1013,6 +1046,12 @@ export interface Database {
       }
     }
     Enums: {
+      author_contact_channel:
+        | "telegram"
+        | "instagram"
+        | "facebook"
+        | "twitter"
+        | "email"
       category:
         | "PrintBook"
         | "AudioBook"

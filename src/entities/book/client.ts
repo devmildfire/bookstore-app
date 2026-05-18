@@ -19,6 +19,25 @@ export type BookTrailer = {
   posterUrl: string | null
 }
 
+export type AuthorContactChannel = 'telegram' | 'instagram' | 'facebook' | 'twitter' | 'email'
+
+export type AuthorContact = {
+  channel: AuthorContactChannel
+  url: string
+}
+
+export type Author = {
+  id: number
+  name: string
+  photoUrl: string | null
+  city: string | null
+  birthDate: string | null
+  deathDate: string | null
+  phrase: string | null
+  bio: string | null
+  contacts: AuthorContact[]
+}
+
 export type BookFilters = {
   search: string
   categories: ProductCategory[]
@@ -68,6 +87,7 @@ export type Book = {
   formats: string[] | null           // EBook
   characterCount: number | null      // EBook
   booktrailer: BookTrailer | null
+  authors: Author[]
 }
 
 export type BookCatalog = {

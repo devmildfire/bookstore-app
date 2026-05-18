@@ -64,6 +64,19 @@ export function getBookPhotoUrls(slug: string, count: number): string[] {
   })
 }
 
+const AUTHORS_BUCKET = 'authors'
+
+/**
+ * Convert an author photo filename into a public Supabase Storage URL.
+ * Mirrors the covers pattern: `Authors.photo` stores a bare filename
+ * (e.g. `staroobryadtsev.jpg`) and we build the URL at runtime.
+ */
+export function getAuthorPhotoUrl(filename: string | null): string | null {
+  if (!filename) return null
+  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
+  return `${supabaseUrl}/storage/v1/object/public/${AUTHORS_BUCKET}/${filename}`
+}
+
 const BOOKTRAILERS_BUCKET = 'booktrailers'
 
 /**
@@ -84,4 +97,4 @@ export function getBooktrailerUrls(slug: string, hasPoster: boolean) {
   }
 }
 
-export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET, BOOKTRAILERS_BUCKET }
+export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET, BOOKTRAILERS_BUCKET, AUTHORS_BUCKET }

@@ -27,4 +27,5 @@ export type BookServerRow = {
   edition_details?: unknown
   edition_workers?: unknown
   title_booktrailer?: unknown
+  title_authors?: unknown
 }
