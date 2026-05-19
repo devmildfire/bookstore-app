@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, Fragment } from 'react'
+import cn from 'classnames'
 import BoxSetCard from './BoxSetCard'
 import BoxSetPreview from './BoxSetPreview'
 import type { BoxSet } from '@/entities/boxSet/client'
@@ -43,8 +44,11 @@ export default function BoxSetsGrid({ boxSets }: Props) {
         const openBoxSet = row.find((bs) => bs.id === openId) ?? null
         return (
           <Fragment key={rowIdx}>
-            {/* center column — cards respect page padding */}
-            <div className={styles.cardRow}>
+            {/* center column — cards respect page padding. Modifier class
+                shrinks the grid + centers it when the row has fewer items
+                than the breakpoint's default column count, so a partial last
+                row doesn't sit left-aligned against empty slots. */}
+            <div className={cn(styles.cardRow, styles[`cols${row.length}`])}>
               {row.map((boxSet) => (
                 <BoxSetCard
                   key={boxSet.id}

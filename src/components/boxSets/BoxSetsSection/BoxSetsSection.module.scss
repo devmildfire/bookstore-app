@@ -103,6 +103,36 @@
   }
 }
 
+// Partial-row modifiers. Each card keeps the same width it has in a full
+// 3-up row (one-third of the row at desktop, one-half at tablet), and the
+// row is centered so a single item or a pair isn't stranded to the left.
+.cols1 {
+  grid-template-columns: minmax(0, calc((100% - 2 * #{$space-13}) / 3));
+  justify-content: center;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: minmax(0, calc((100% - #{$space-8}) / 2));
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cols2 {
+  grid-template-columns: repeat(2, minmax(0, calc((100% - 2 * #{$space-13}) / 3)));
+  justify-content: center;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: stretch;
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 .card {
