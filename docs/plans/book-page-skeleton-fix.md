@@ -61,7 +61,7 @@ deps + supply chain stance.
 | `src/components/common/Skeleton/Skeleton.module.scss` | Dark gradient, widened/slower wave, `text/rect/circle` classes, `prefers-reduced-motion` guard. |
 | `src/app/books/[slug]/loading.tsx` | Rewrite to mirror `page.tsx` section-by-section. |
 | `src/app/books/[slug]/loading.module.scss` | Rewrite to mirror `page.module.scss` (mixins, breakpoints, sizing). |
-| `src/app/books/layout.tsx` *(new)* | Pass-through layout. Without it, sibling navigation /books → /books/[slug] fires the parent /books/loading.tsx (catalog skeleton) instead of the closer [slug]/loading.tsx. The layout creates an explicit boundary so each segment's loading.tsx scopes only to its own page. |
+| `src/app/books/(catalog)/` *(new)* | Route group for the catalog. Old `/books/{page,loading,error}.tsx` and matching `.module.scss` moved into `(catalog)/`. The pass-through `/books/layout.tsx` was tried first but didn't fully separate Suspense scopes — on reload of `/books/[slug]` the catalog skeleton still flashed. A route group makes `/books` (→ `(catalog)/page.tsx`) and `/books/[slug]` siblings with no shared `loading.tsx` ancestor, so `[slug]/loading.tsx` is the only Suspense fallback for that route. |
 
 No changes expected to the catalog skeleton (`src/app/books/loading.tsx`) —
 that one already works structurally. The dark recolor of the primitive will

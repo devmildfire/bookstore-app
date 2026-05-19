@@ -68,7 +68,20 @@ in the Notes section at the bottom.
   Accept: transition screenshot shows breadcrumb + cover + info + tabs
   placeholder, not the catalog grid.
 
-- [ ] **8. Lint and commit**
+  **Note**: the pass-through layout fixed client-side nav but NOT a hard
+  reload of /books/[slug] — the catalog skeleton still flashed because the
+  parent /books/loading.tsx remained a Suspense ancestor. Superseded by
+  step 10.
+
+- [x] **10. Move catalog into `(catalog)` route group**
+  Move `/books/{page,loading,error}.tsx` + `.module.scss` into
+  `/books/(catalog)/`. Delete the pass-through `/books/layout.tsx`. Route
+  groups don't affect URLs but DO separate Suspense scopes: `/books` and
+  `/books/[slug]` become siblings with no shared `loading.tsx` ancestor.
+  Accept: hard reload of `/books/[slug]` under Slow 3G + 4× CPU shows the
+  book detail skeleton (breadcrumb + cover + info + tabs), no catalog grid.
+
+- [x] **8. Lint and commit**
   `npm run lint`, fix any issues. Check the diff for `.env` / secrets / files
   >1 MB. Commit with a short imperative slug (no AI attribution). Push
   immediately.
