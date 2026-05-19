@@ -32,20 +32,16 @@ export async function getBookEditions(slug: string): Promise<Book[]> {
   return ((data ?? []) as BookServerRow[]).map(normalizeBook)
 }
 
-export async function getRelatedBooks(book: Book, limit = 4): Promise<Book[]> {
+// Editor-curated list from the TitleSimilarTitles join table, ordered by `position`.
+// A title cannot include itself (enforced by a CHECK constraint on the table).
+export async function getSimilarBooks(titleId: number): Promise<Book[]> {
   const supabase = createDataClient()
 
-  const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_books', {
-    result_limit: limit + 1,
-    result_offset: 0,
-    sort_by: 'year-desc',
+  const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_similar_books', {
+    p_title_id: titleId,
   })
 
   if (error) throw new Error(`Не удалось загрузить похожие книги: ${error.message}`)
 
-  const rows = (data ?? []) as BookServerRow[]
-  return rows
-    .filter((r) => String(r.id) !== book.id)
-    .slice(0, limit)
-    .map(normalizeBook)
+  return ((data ?? []) as BookServerRow[]).map(normalizeBook)
 }

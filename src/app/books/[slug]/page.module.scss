@@ -212,36 +212,61 @@
   color: $color-text-on-dark;
 }
 
-// ─── Related books ─────────────────────────────────────────────────────────────
+// ─── Similar books (ПОЗНАЙТЕ ТАКЖЕ) ────────────────────────────────────────────
+// Mirrors the main page books grid (NewProducts): full-width page-container,
+// same heading typography and auto-fit grid.
 
-.related {
-  @include book-page-container;
+.similar {
+  @include page-container;
 
-  display: grid;
-  gap: $space-6;
   align-self: stretch;
-
-  padding-top: $space-16;
   padding-bottom: $space-16;
 }
 
-.relatedTitle {
-  font-family: $font-montserrat;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+.similarTitle {
+  display: flex;
+  justify-content: center;
+  margin: 100px 0 80px;
+  font-family: $font-cheque;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 60px;
+  text-transform: uppercase;
+  line-height: 72px;
   color: $color-text-on-dark;
-}
-
-.relatedGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $space-6;
 
   @include breakpoint(tablet) {
-    grid-template-columns: repeat(2, 1fr);
+    margin: 80px 0 60px;
+    font-size: 48px;
+    line-height: 58px;
   }
 
   @include breakpoint(phone) {
-    grid-template-columns: 1fr;
+    margin: 60px 0 40px;
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+.similarGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 100px;
+  row-gap: 60px;
+
+  @include breakpoint(tablet) {
+    column-gap: 60px;
+    row-gap: 40px;
+  }
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-6;
+    row-gap: $space-8;
+  }
+
+  @include breakpoint(phone) {
+    column-gap: $space-4;
+    row-gap: $space-6;
   }
 }

@@ -21,9 +21,9 @@ export default function BookDetailLoading() {
         </div>
       </div>
 
-      <div className={styles.related}>
+      <div className={styles.similar}>
         <Skeleton width={200} height={28} />
-        <div className={styles.relatedGrid}>
+        <div className={styles.similarGrid}>
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} height={360} />
           ))}
