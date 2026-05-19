@@ -40,6 +40,8 @@ export default function BookCard({ book, className }: Props) {
                 fill
                 sizes='(max-width: 767px) 45vw, (max-width: 1200px) 30vw, 220px'
                 className={styles.cover}
+                placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
+                blurDataURL={book.coverBlurDataUrl ?? undefined}
               />
             ) : (
               <div className={styles.coverPlaceholder} aria-hidden />

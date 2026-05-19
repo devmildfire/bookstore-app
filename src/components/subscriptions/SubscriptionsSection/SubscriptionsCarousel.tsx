@@ -63,6 +63,8 @@ export function SubscriptionCard({ sub }: { sub: Subscription }) {
             fill
             className={styles.image}
             sizes="(max-width: 532px) 90vw, 380px"
+            placeholder={sub.imageBlurDataUrl ? 'blur' : 'empty'}
+            blurDataURL={sub.imageBlurDataUrl ?? undefined}
           />
         ) : (
           <div className={styles.imagePlaceholder} />

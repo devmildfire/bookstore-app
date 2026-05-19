@@ -10,6 +10,7 @@ import styles from './Slider.module.scss'
 type SlideItem = {
   id: string
   coverUrl: string | null
+  coverBlurDataUrl: string | null
   title: string
   author: string
   thesis: string | null
@@ -38,6 +39,8 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                     height={533}
                     className={styles.cover}
                     priority
+                    placeholder={item.coverBlurDataUrl ? 'blur' : 'empty'}
+                    blurDataURL={item.coverBlurDataUrl ?? undefined}
                   />
                 ) : (
                   <div className={styles.coverPlaceholder} />

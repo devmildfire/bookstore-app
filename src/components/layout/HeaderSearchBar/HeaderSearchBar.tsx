@@ -96,6 +96,8 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
                         fill
                         sizes='58px'
                         className={styles.resultImage}
+                        placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
+                        blurDataURL={book.coverBlurDataUrl ?? undefined}
                       />
                     ) : (
                       <div className={styles.resultCoverPlaceholder} aria-hidden />

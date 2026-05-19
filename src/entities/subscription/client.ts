@@ -9,6 +9,7 @@ export type Subscription = {
   discount: number | null
   originalPrice: number | null
   imageUrl: string | null
+  imageBlurDataUrl: string | null
   position: number
   publishedAt: string | null
 }

@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import Carousel from '@/components/common/Carousel'
+import type { BookPhoto } from '@/api/books/getBookPhotos'
 import type { Book, BookWorker } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import TabBarFrame from './TabBarFrame'
@@ -15,7 +16,7 @@ import styles from './BookEditionTabs.module.scss'
 type Props = {
   books: Book[]
   /** Photos of the printed book, rendered as a carousel inside the PrintBook tab. */
-  printBookPhotos?: string[]
+  printBookPhotos?: BookPhoto[]
   /** Used for image alt text. */
   bookName?: string
 }
@@ -225,14 +226,16 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
             <div className={styles.carouselWrap}>
               <Carousel
                 ariaLabel={`Фотографии книги: ${bookName}`}
-                slides={printBookPhotos.map((src, i) => (
+                slides={printBookPhotos.map((photo, i) => (
                   <Image
-                    key={src}
-                    src={src}
+                    key={photo.url}
+                    src={photo.url}
                     alt={`${bookName} — фото ${i + 1}`}
                     width={500}
                     height={500}
                     sizes="(max-width: 532px) 280px, (max-width: 767px) 360px, (max-width: 1200px) 420px, 500px"
+                    placeholder={photo.blurDataURL ? 'blur' : 'empty'}
+                    blurDataURL={photo.blurDataURL ?? undefined}
                   />
                 ))}
               />

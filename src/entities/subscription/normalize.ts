@@ -17,6 +17,7 @@ export function normalizeSubscription(raw: SubscriptionRow): Subscription {
     discount,
     originalPrice,
     imageUrl: getSubscriptionImageUrl(raw.image),
+    imageBlurDataUrl: raw.image_blur ?? null,
     position: raw.position,
     publishedAt: raw.publish_date,
   }

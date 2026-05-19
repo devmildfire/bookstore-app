@@ -30,6 +30,7 @@ export default async function HomePage({ searchParams }: Props) {
   const slides = featuredBooks.map((book) => ({
     id: book.id,
     coverUrl: book.coverUrl,
+    coverBlurDataUrl: book.coverBlurDataUrl,
     title: book.name,
     author: book.authorName,
     thesis: book.thesis,

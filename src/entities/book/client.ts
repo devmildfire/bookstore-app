@@ -36,6 +36,7 @@ export type Author = {
   id: number
   name: string
   photoUrl: string | null
+  photoBlurDataUrl: string | null
   city: string | null
   birthDate: string | null
   deathDate: string | null
@@ -71,6 +72,7 @@ export type Book = {
   description: string | null
   thesis: string | null
   coverUrl: string | null
+  coverBlurDataUrl: string | null
   authorNames: string[]
   authorName: string
   price: number

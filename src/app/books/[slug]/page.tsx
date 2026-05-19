@@ -75,6 +75,7 @@ export default async function BookDetailPage({ params }: Props) {
           <BookCoverSlider
             photos={bookPhotos}
             coverUrl={book.coverUrl}
+            coverBlurDataUrl={book.coverBlurDataUrl}
             bookName={book.name}
           />
 

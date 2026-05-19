@@ -16,6 +16,7 @@ export type BookServerRow = {
   title_name: string
   title_slug: string | null
   title_cover: string | null
+  title_cover_blur: string | null
   title_description: string | null
   title_thesis: string | null
   title_lit_form: string | null

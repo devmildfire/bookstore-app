@@ -46,6 +46,8 @@ export default function BookAuthor({ author }: Props) {
               height={400}
               className={styles.photo}
               sizes="(max-width: 532px) 200px, (max-width: 767px) 240px, (max-width: 1200px) 280px, (max-width: 1439px) 300px, 400px"
+              placeholder={author.photoBlurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={author.photoBlurDataUrl ?? undefined}
             />
           </div>
         )}

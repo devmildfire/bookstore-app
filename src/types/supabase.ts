@@ -156,6 +156,7 @@ export type Database = {
           name: string
           nonsalable: boolean
           photo: string | null
+          photo_blur: string | null
           phrase: string | null
         }
         Insert: {
@@ -167,6 +168,7 @@ export type Database = {
           name: string
           nonsalable?: boolean
           photo?: string | null
+          photo_blur?: string | null
           phrase?: string | null
         }
         Update: {
@@ -178,6 +180,7 @@ export type Database = {
           name?: string
           nonsalable?: boolean
           photo?: string | null
+          photo_blur?: string | null
           phrase?: string | null
         }
         Relationships: []
@@ -766,6 +769,7 @@ export type Database = {
           discount: number | null
           id: number
           image: string | null
+          image_blur: string | null
           is_active: boolean
           is_published: boolean
           name: string
@@ -780,6 +784,7 @@ export type Database = {
           discount?: number | null
           id?: number
           image?: string | null
+          image_blur?: string | null
           is_active?: boolean
           is_published?: boolean
           name: string
@@ -794,6 +799,7 @@ export type Database = {
           discount?: number | null
           id?: number
           image?: string | null
+          image_blur?: string | null
           is_active?: boolean
           is_published?: boolean
           name?: string
@@ -808,7 +814,9 @@ export type Database = {
       Titles: {
         Row: {
           age_restriction: number | null
+          book_photos_blurs: Json | null
           cover: string | null
+          cover_blur: string | null
           demo: string | null
           description: string | null
           first_release: string | null
@@ -824,7 +832,9 @@ export type Database = {
         }
         Insert: {
           age_restriction?: number | null
+          book_photos_blurs?: Json | null
           cover?: string | null
+          cover_blur?: string | null
           demo?: string | null
           description?: string | null
           first_release?: string | null
@@ -840,7 +850,9 @@ export type Database = {
         }
         Update: {
           age_restriction?: number | null
+          book_photos_blurs?: Json | null
           cover?: string | null
+          cover_blur?: string | null
           demo?: string | null
           description?: string | null
           first_release?: string | null
@@ -1004,6 +1016,7 @@ export type Database = {
           title_booktrailer: Json
           title_contexts: Json
           title_cover: string
+          title_cover_blur: string
           title_description: string
           title_first_release: string
           title_id: number
@@ -1042,6 +1055,7 @@ export type Database = {
           sold_out: boolean
           title_age_restriction: number
           title_cover: string
+          title_cover_blur: string
           title_description: string
           title_first_release: string
           title_id: number
@@ -1067,6 +1081,7 @@ export type Database = {
           sold_out: boolean
           title_age_restriction: number
           title_cover: string
+          title_cover_blur: string
           title_description: string
           title_first_release: string
           title_id: number
@@ -1091,12 +1106,12 @@ export type Database = {
           id: number
           is_published: boolean
           price: number
-          product_type: string
           publish_date: string
           release_date: string
           sold_out: boolean
           title_age_restriction: number
           title_cover: string
+          title_cover_blur: string
           title_description: string
           title_first_release: string
           title_id: number
