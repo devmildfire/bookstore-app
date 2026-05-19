@@ -95,7 +95,7 @@ notes in the Notes section at the bottom.
   the dark void.
   Accept: blur visibly precedes the JPEG on every image listed in §11.
 
-- [ ] **13. Lint, commit, push**
+- [x] **13. Lint, commit, push**
   `npm run lint`. Check the diff for secrets / large files. One commit per
   logical chunk if it makes the diff easier; otherwise a single
   `add blur placeholders for bucket images`. Push immediately per project
