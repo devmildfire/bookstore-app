@@ -2,21 +2,34 @@
 
 @keyframes shimmer {
   0% {
-    background-position: -400px 0;
+    background-position: -800px 0;
   }
   100% {
-    background-position: 400px 0;
+    background-position: 800px 0;
   }
 }
 
 .skeleton {
   display: block;
-  border-radius: $radius-sm;
-  background: linear-gradient(90deg, $neutral-200 25%, $neutral-100 50%, $neutral-200 75%);
-  background-size: 400px 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
+  background: linear-gradient(90deg, $color-panel 25%, $neutral-800 50%, $color-panel 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
 }
 
-.rounded {
+.text {
+  border-radius: $radius-sm;
+}
+
+.rect {
+  border-radius: $radius-md;
+}
+
+.circle {
   border-radius: $radius-full;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
 }

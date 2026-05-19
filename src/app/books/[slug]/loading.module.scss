@@ -1,45 +1,310 @@
 @use '@/styles/common' as *;
 
+// Mirrors `page.module.scss` so the loading state shares the same
+// containers, widths, gaps and breakpoints as the real page.
+
 .page {
-  display: grid;
-  gap: $space-10;
-}
-
-.main {
-  display: grid;
-  grid-template-columns: 400px minmax(0, 1fr);
-  gap: $space-10;
-
-  @include breakpoint('tablet') {
-    grid-template-columns: 300px minmax(0, 1fr);
-  }
-
-  @include breakpoint('phone') {
-    grid-template-columns: 1fr;
-  }
-}
-
-.coverSection {
-  display: flex;
-  justify-content: center;
-}
-
-.coverSkeleton {
-  width: 100%;
-  max-width: 360px;
-  aspect-ratio: 2 / 3;
-  border-radius: $radius-lg;
-}
-
-.infoSection {
   display: flex;
   flex-direction: column;
-  gap: $space-5;
+  align-items: center;
 }
 
-.similar {
-  display: grid;
+// ─── Breadcrumbs ───────────────────────────────────────────────────────────────
+
+.nav {
+  @include book-page-container;
+
+  display: flex;
+  align-self: stretch;
+  justify-content: start;
+
+  padding-top: $space-5;
+  padding-bottom: $space-5;
+}
+
+// ─── Main (cover + info) ──────────────────────────────────────────────────────
+
+.main {
+  @include book-page-container;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  padding-top: $space-10;
+  padding-bottom: $space-16;
+}
+
+.coverInfo {
+  display: flex;
+  gap: $space-13;
+  align-items: flex-start;
+
+  @include breakpoint(tablet) {
+    gap: $space-8;
+  }
+
+  @include breakpoint(phone) {
+    flex-direction: column;
+    align-items: center;
+    gap: $space-6;
+  }
+}
+
+// Cover sizing mirrors `BookCoverSlider.module.scss`.
+.cover {
+  width: 500px;
+  aspect-ratio: 2 / 3;
+  border-radius: $radius-lg;
+  flex-shrink: 0;
+
+  @include breakpoint(desktop) { width: 394px; }
+  @include breakpoint(tablet) { width: 326px; }
+  @include breakpoint(tablet-small) { width: 280px; }
+  @include breakpoint(phone) {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+// Heights and margins mirror the real `.title / .author / .bookMeta /
+// .thesis / .description` rhythm in `page.module.scss`.
+
+.title {
+  height: 50px;
+  margin-bottom: $space-8;
+
+  @include breakpoint(tablet) { height: 40px; }
+  @include breakpoint(phone) { height: 24px; }
+}
+
+.author {
+  height: 24px;
+  margin-bottom: $space-8;
+
+  @include breakpoint(tablet) { height: 20px; }
+  @include breakpoint(phone) { height: 18px; }
+}
+
+.meta {
+  height: 14px;
+  margin-bottom: $space-6;
+
+  @include breakpoint(tablet) { height: 12px; }
+  @include breakpoint(phone) { height: 10px; }
+}
+
+.thesis {
+  height: 56px; // ~2 lines of italic thesis text
+  margin-bottom: $space-8;
+
+  @include breakpoint(tablet) { height: 48px; }
+  @include breakpoint(phone) { height: 36px; }
+}
+
+.descLine {
+  height: 18px;
+  margin-bottom: $space-3;
+
+  @include breakpoint(phone) { height: 14px; }
+}
+
+.descLineLast {
+  height: 18px;
+  margin-bottom: $space-8;
+
+  @include breakpoint(phone) { height: 14px; }
+}
+
+.awards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.award {
+  width: 131px;
+  height: 120px;
+
+  @include breakpoint(tablet) {
+    width: 99px;
+    height: 91px;
+  }
+
+  @include breakpoint(phone) {
+    width: 80px;
+    height: 73px;
+  }
+}
+
+// ─── Edition tabs placeholder ─────────────────────────────────────────────────
+
+.editionTabs {
+  @include book-page-container;
+
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabBar {
+  display: flex;
+  gap: $space-2;
+  height: 81px;
+  margin-bottom: $space-2;
+
+  @include breakpoint(tablet) { height: 70px; }
+  @include breakpoint(tablet-small) { height: 66px; }
+  @include breakpoint(phone) { height: 56px; }
+}
+
+.tab {
+  flex: 1;
+  height: 100%;
+}
+
+.panel {
+  width: 100%;
+  height: 320px;
+  border-radius: 0 0 20px 20px;
+
+  @include breakpoint(tablet) { height: 280px; }
+  @include breakpoint(tablet-small) { height: 240px; }
+  @include breakpoint(phone) {
+    height: 200px;
+    border-radius: $radius-md;
+  }
+}
+
+// ─── Context placeholder ──────────────────────────────────────────────────────
+
+.context {
+  @include book-page-container;
+
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 186px;
+  padding-bottom: 200px;
+  gap: 84px;
+
+  @include breakpoint(desktop) {
+    padding-top: 160px;
+    padding-bottom: 140px;
+    gap: 40px;
+  }
+  @include breakpoint(tablet) {
+    padding-top: 90px;
+    padding-bottom: 130px;
+    gap: 58px;
+  }
+  @include breakpoint(tablet-small) {
+    padding-top: 64px;
+    padding-bottom: 80px;
+    gap: 40px;
+  }
+  @include breakpoint(phone) {
+    padding-top: 48px;
+    padding-bottom: 60px;
+    gap: 24px;
+  }
+}
+
+.sectionTitle {
+  align-self: center;
+  height: 60px;
+
+  @include breakpoint(desktop) { height: 50px; }
+  @include breakpoint(tablet) { height: 40px; }
+  @include breakpoint(tablet-small) { height: 30px; }
+  @include breakpoint(phone) { height: 24px; }
+}
+
+.contextList {
+  display: flex;
+  flex-direction: column;
   gap: $space-6;
+}
+
+.contextItem {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-6 0;
+  border-top: 1px solid rgba($color-text-on-dark, 0.3);
+
+  &:last-child {
+    border-bottom: 1px solid rgba($color-text-on-dark, 0.3);
+  }
+}
+
+// ─── Box sets placeholder ─────────────────────────────────────────────────────
+
+.boxSets {
+  @include page-container;
+
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 120px;
+
+  @include breakpoint(tablet) { padding-bottom: 80px; }
+  @include breakpoint(phone) { padding-bottom: 60px; }
+}
+
+.boxSetsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-13;
+  margin-top: $space-10;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-8;
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 1fr;
+    gap: $space-6;
+  }
+}
+
+.boxSetCard {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+// ─── Similar books (ПОЗНАЙТЕ ТАКЖЕ) ────────────────────────────────────────────
+
+.similar {
+  @include page-container;
+
+  align-self: stretch;
+  padding-bottom: $space-16;
+}
+
+.similarTitle {
+  align-self: center;
+  margin: 100px auto 80px;
+  height: 60px;
+
+  @include breakpoint(tablet) {
+    margin: 80px auto 60px;
+    height: 48px;
+  }
+
+  @include breakpoint(phone) {
+    margin: 60px auto 40px;
+    height: 32px;
+  }
 }
 
 .similarGrid {
@@ -48,19 +313,24 @@
   column-gap: 100px;
   row-gap: 60px;
 
-  @include breakpoint('tablet') {
+  @include breakpoint(tablet) {
     column-gap: 60px;
     row-gap: 40px;
   }
 
-  @include breakpoint('tablet-small') {
+  @include breakpoint(tablet-small) {
     grid-template-columns: repeat(2, 1fr);
     column-gap: $space-6;
     row-gap: $space-8;
   }
 
-  @include breakpoint('phone') {
+  @include breakpoint(phone) {
     column-gap: $space-4;
     row-gap: $space-6;
   }
+}
+
+.similarCard {
+  width: 100%;
+  aspect-ratio: 2 / 3;
 }
