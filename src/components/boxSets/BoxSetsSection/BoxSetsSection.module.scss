@@ -1,7 +1,7 @@
 @use '@/styles/common' as *;
 
 .section {
-  background: linear-gradient(180deg, $color-surface-dark 0%, $color-surface-mid 50%, $color-surface-dark 100%);
+  background: linear-gradient(180deg, transparent 0%, $color-surface-mid 50%, transparent 100%);
   padding-bottom: 120px;
 
   @include breakpoint(tablet) {
