@@ -6,7 +6,32 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       Audiobooks: {
@@ -50,7 +75,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       AudiobookWorkers: {
@@ -86,7 +111,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Workers"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       AuthorContacts: {
@@ -118,7 +143,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Authors"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Authors: {
@@ -216,7 +241,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Booktrailers: {
@@ -242,7 +267,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       BoxSetBooks: {
@@ -278,7 +303,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       BoxSets: {
@@ -385,7 +410,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       CardBookWorkers: {
@@ -421,7 +446,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Workers"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Cart: {
@@ -458,15 +483,7 @@ export interface Database {
           subtitle?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "Cart_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       Ebooks: {
         Row: {
@@ -509,7 +526,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       EbookWorkers: {
@@ -545,7 +562,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Workers"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       featured_books: {
@@ -574,7 +591,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       OrderItems: {
@@ -612,7 +629,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Orders"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Orders: {
@@ -704,7 +721,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       PrintedBookWorkers: {
@@ -740,7 +757,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Workers"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Subscriptions: {
@@ -869,7 +886,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       Titles_Awards: {
@@ -905,7 +922,43 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      TitleSimilarTitles: {
+        Row: {
+          id: number
+          position: number
+          similar_title_id: number
+          title_id: number
+        }
+        Insert: {
+          id?: number
+          position?: number
+          similar_title_id: number
+          title_id: number
+        }
+        Update: {
+          id?: number
+          position?: number
+          similar_title_id?: number
+          title_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "TitleSimilarTitles_similar_title_id_fkey"
+            columns: ["similar_title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "TitleSimilarTitles_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       Workers: {
@@ -932,154 +985,130 @@ export interface Database {
     }
     Functions: {
       get_catalog_book_by_slug: {
-        Args: {
-          title_slug: string
-        }
+        Args: { title_slug: string }
         Returns: {
-          title_lit_form: string
-          title_thesis: string
-          title_description: string
-          title_cover: string
-          title_slug: string
-          title_name: string
-          product_type: string
-          title_id: number
-          release_date: string
-          publish_date: string
-          is_published: boolean
-          title_awards: Json
+          author_names: string[]
+          discount: number
           edition_details: Json
           edition_workers: Json
-          title_booktrailer: Json
-          title_authors: Json
-          title_contexts: Json
-          author_names: string[]
-          sold_out: boolean
-          discount: number
-          price: number
           id: number
-          title_first_release: string
+          is_published: boolean
+          price: number
+          product_type: string
+          publish_date: string
+          release_date: string
+          sold_out: boolean
           title_age_restriction: number
+          title_authors: Json
+          title_awards: Json
+          title_booktrailer: Json
+          title_contexts: Json
+          title_cover: string
+          title_description: string
+          title_first_release: string
+          title_id: number
+          title_is_compilation: boolean
+          title_lit_form: string
+          title_name: string
+          title_slug: string
+          title_thesis: string
         }[]
       }
       get_catalog_books: {
         Args: {
-          price_to?: number
-          sort_by?: string
+          author_name?: string
           author_names_filter?: string[]
-          year_filters?: string[]
+          price_from?: number
+          price_to?: number
+          product_type_filter?: string
+          product_type_filters?: string[]
           result_limit?: number
           result_offset?: number
           search_term?: string
-          product_type_filter?: string
-          author_name?: string
-          price_from?: number
-          product_type_filters?: string[]
+          sort_by?: string
           title_ids?: number[]
+          year_filters?: string[]
         }
         Returns: {
-          total_count: number
-          has_multiple_products: boolean
-          title_description: string
-          id: number
-          price: number
+          author_names: string[]
           discount: number
-          sold_out: boolean
+          has_multiple_products: boolean
+          id: number
           is_published: boolean
+          price: number
+          product_type: string
           publish_date: string
           release_date: string
+          sold_out: boolean
+          title_age_restriction: number
+          title_cover: string
+          title_description: string
+          title_first_release: string
           title_id: number
-          product_type: string
+          title_lit_form: string
           title_name: string
           title_slug: string
-          title_cover: string
           title_thesis: string
-          title_lit_form: string
-          title_age_restriction: number
-          title_first_release: string
-          author_names: string[]
+          total_count: number
         }[]
       }
-      gtrgm_compress: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: {
-          "": unknown
-        }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: {
-          "": unknown
-        }
-        Returns: unknown
+      get_similar_books: {
+        Args: { p_title_id: number }
+        Returns: {
+          author_names: string[]
+          discount: number
+          has_multiple_products: boolean
+          id: number
+          is_published: boolean
+          price: number
+          product_type: string
+          publish_date: string
+          release_date: string
+          sold_out: boolean
+          title_age_restriction: number
+          title_cover: string
+          title_description: string
+          title_first_release: string
+          title_id: number
+          title_lit_form: string
+          title_name: string
+          title_slug: string
+          title_thesis: string
+        }[]
       }
       migrate_cart: {
-        Args: {
-          to_user_id: string
-          from_user_id: string
-        }
+        Args: { from_user_id: string; to_user_id: string }
         Returns: undefined
       }
       search_books: {
         Args: {
-          search_term: string
           result_limit?: number
           result_offset?: number
+          search_term: string
         }
         Returns: {
           author_names: string[]
-          title_first_release: string
-          title_age_restriction: number
-          title_lit_form: string
-          title_thesis: string
-          title_description: string
-          title_cover: string
-          title_slug: string
           id: number
-          price: number
-          sold_out: boolean
           is_published: boolean
+          price: number
+          product_type: string
           publish_date: string
           release_date: string
-          title_name: string
+          sold_out: boolean
+          title_age_restriction: number
+          title_cover: string
+          title_description: string
+          title_first_release: string
           title_id: number
-          product_type: string
+          title_lit_form: string
+          title_name: string
+          title_slug: string
+          title_thesis: string
           total_count: number
         }[]
       }
-      set_limit: {
-        Args: {
-          "": number
-        }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: {
-          "": string
-        }
-        Returns: unknown
-      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       author_contact_channel:
@@ -1088,6 +1117,7 @@ export interface Database {
         | "facebook"
         | "twitter"
         | "email"
+        | "website"
       category:
         | "PrintBook"
         | "AudioBook"
@@ -1104,83 +1134,148 @@ export interface Database {
   }
 }
 
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-      Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-  : never
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {
+      author_contact_channel: [
+        "telegram",
+        "instagram",
+        "facebook",
+        "twitter",
+        "email",
+        "website",
+      ],
+      category: [
+        "PrintBook",
+        "AudioBook",
+        "EBook",
+        "Book2.0",
+        "GiftCard",
+        "BoxSet",
+        "Subscription",
+        "Course",
+      ],
+    },
+  },
+} as const
 

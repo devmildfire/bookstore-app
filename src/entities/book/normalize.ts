@@ -42,6 +42,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     litForm: raw.title_lit_form ?? null,
     ageRestriction: raw.title_age_restriction ?? null,
     year: raw.title_first_release?.slice(0, 4) ?? null,
+    isCompilation: raw.title_is_compilation === true,
     awards: normalizeAwards(raw.title_awards),
     workers: normalizeWorkers(raw.edition_workers),
     format: readString(details.format),
@@ -82,6 +83,7 @@ const ALLOWED_CHANNELS: ReadonlySet<AuthorContactChannel> = new Set([
   'facebook',
   'twitter',
   'email',
+  'website',
 ])
 
 function normalizeAuthors(value: unknown): Author[] {

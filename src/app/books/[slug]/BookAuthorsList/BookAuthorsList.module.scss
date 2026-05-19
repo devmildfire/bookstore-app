@@ -1,0 +1,113 @@
+@use '@/styles/common' as *;
+
+.section {
+  @include book-page-container;
+
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+
+  padding-top: 140px;
+  padding-bottom: 140px;
+  gap: 64px;
+  scroll-margin-top: 80px;
+
+  @include breakpoint(desktop) {
+    padding-top: 110px;
+    padding-bottom: 110px;
+    gap: 48px;
+  }
+  @include breakpoint(tablet) {
+    padding-top: 80px;
+    padding-bottom: 80px;
+    gap: 40px;
+  }
+  @include breakpoint(tablet-small) {
+    padding-top: 56px;
+    padding-bottom: 56px;
+    gap: 28px;
+  }
+  @include breakpoint(phone) {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    gap: 20px;
+  }
+}
+
+.sectionTitle {
+  @include section-title;
+
+  margin: 0;
+  text-transform: uppercase;
+}
+
+// Numbered multi-column list. CSS `columns` flows items top-to-bottom in each
+// column (column-major), which is what the source layout (image #2) uses for
+// long author lists. Three columns on wide screens, two on tablet, one on
+// phone. Items must not break across columns.
+.list {
+  columns: 3;
+  column-gap: 48px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: author;
+
+  @include breakpoint(tablet) {
+    columns: 2;
+    column-gap: 36px;
+  }
+  @include breakpoint(tablet-small) {
+    column-gap: 28px;
+  }
+  @include breakpoint(phone) {
+    columns: 1;
+  }
+}
+
+.item {
+  counter-increment: author;
+  position: relative;
+  padding-left: 2.4em;
+  margin-bottom: 18px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 22px;
+  line-height: $line-height-relaxed;
+  color: $color-text-on-dark;
+  word-break: break-word;
+  hyphens: auto;
+  break-inside: avoid;
+
+  &::before {
+    content: counter(author) '.';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: $color-text-on-dark;
+    opacity: 0.85;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @include breakpoint(desktop) {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  @include breakpoint(tablet) {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  @include breakpoint(tablet-small) {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  @include breakpoint(phone) {
+    font-size: 16px;
+    padding-left: 2em;
+    margin-bottom: 10px;
+  }
+}

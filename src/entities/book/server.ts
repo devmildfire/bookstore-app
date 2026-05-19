@@ -21,6 +21,7 @@ export type BookServerRow = {
   title_lit_form: string | null
   title_age_restriction: number | null
   title_first_release: string | null
+  title_is_compilation?: boolean | null
   author_names: string[]
   title_awards?: unknown
   has_multiple_products?: boolean

@@ -19,7 +19,13 @@ export type BookTrailer = {
   posterUrl: string | null
 }
 
-export type AuthorContactChannel = 'telegram' | 'instagram' | 'facebook' | 'twitter' | 'email'
+export type AuthorContactChannel =
+  | 'telegram'
+  | 'instagram'
+  | 'facebook'
+  | 'twitter'
+  | 'email'
+  | 'website'
 
 export type AuthorContact = {
   channel: AuthorContactChannel
@@ -77,6 +83,7 @@ export type Book = {
   litForm: string | null
   ageRestriction: number | null
   year: string | null
+  isCompilation: boolean
   awards: BookAward[]
   // Edition-specific fields — populated only on the book detail RPC, all
   // optional and per-category. UI components select what to read by `category`.

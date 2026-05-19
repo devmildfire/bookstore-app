@@ -6,6 +6,7 @@ import { getBook, getSimilarBooks, getBookPhotoUrls, getBookEditions } from '@/a
 import BookCard from '@/components/book/BookCard'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
+import BookAuthorsList, { AUTHORS_ANCHOR } from './BookAuthorsList'
 import BookContext from './BookContext'
 import BookCoverSlider from './BookCoverSlider'
 import BookEditionTabs from './BookEditionTabs'
@@ -79,7 +80,13 @@ export default async function BookDetailPage({ params }: Props) {
 
           <div className={styles.info}>
             <h1 className={styles.title}>{book.name}</h1>
-            <p className={styles.author}>{book.authorName}</p>
+            {book.isCompilation ? (
+              <a href={`#${AUTHORS_ANCHOR}`} className={styles.authorsAnchor}>
+                Авторы
+              </a>
+            ) : (
+              <p className={styles.author}>{book.authorName}</p>
+            )}
 
             {bookMeta && (
               <p className={styles.bookMeta}>{bookMeta}</p>
@@ -121,11 +128,15 @@ export default async function BookDetailPage({ params }: Props) {
 
       {book.booktrailer && <BookTrailer trailer={book.booktrailer} bookName={book.name} />}
 
-      {book.authors
-        .filter((a) => a.bio || a.photoUrl || a.contacts.length > 0)
-        .map((author) => (
-          <BookAuthor key={author.id} author={author} />
-        ))}
+      {book.isCompilation ? (
+        <BookAuthorsList authors={book.authors} />
+      ) : (
+        book.authors
+          .filter((a) => a.bio || a.photoUrl || a.contacts.length > 0)
+          .map((author) => (
+            <BookAuthor key={author.id} author={author} />
+          ))
+      )}
 
       <BookContext contexts={book.contexts} />
 

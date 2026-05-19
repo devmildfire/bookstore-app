@@ -122,6 +122,36 @@
   }
 }
 
+// Used on compilation/anthology titles in place of `.author` — the
+// comma-joined name list is replaced by a single underlined link that jumps
+// to the dedicated "Авторы" section further down the page.
+.authorsAnchor {
+  display: inline-block;
+  font-family: $font-montserrat;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  line-height: normal;
+  letter-spacing: 0.72px;
+  color: $color-text-on-dark;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  margin-bottom: $space-8;
+  transition: opacity 0.15s ease-out;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 0.75;
+  }
+
+  @include breakpoint(tablet) {
+    font-size: $font-size-xl;
+  }
+
+  @include breakpoint(phone) {
+    font-size: $font-size-lg;
+  }
+}
+
 .bookMeta {
   font-family: $font-montserrat;
   font-size: $font-size-sm;

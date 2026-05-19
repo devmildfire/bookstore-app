@@ -27,6 +27,13 @@ const GLYPHS: Record<AuthorContactChannel, React.ReactNode> = {
       <path d="M6.5 9 L12 13 L17.5 9" />
     </>
   ),
+  website: (
+    <>
+      <circle cx="12" cy="12" r="5" />
+      <path d="M7 12 H17" />
+      <path d="M12 7 Q14.5 9.5 14.5 12 Q14.5 14.5 12 17 Q9.5 14.5 9.5 12 Q9.5 9.5 12 7" />
+    </>
+  ),
 }
 
 const CHANNEL_LABELS: Record<AuthorContactChannel, string> = {
@@ -35,6 +42,7 @@ const CHANNEL_LABELS: Record<AuthorContactChannel, string> = {
   facebook: 'Facebook',
   twitter: 'Twitter / X',
   email: 'Электронная почта',
+  website: 'Веб-страница',
 }
 
 type Props = {
