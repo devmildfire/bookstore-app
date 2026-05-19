@@ -1,6 +1,11 @@
 @use '@/styles/common' as *;
 
 .section {
+  // Always span full viewport width so the background gradient runs edge-to-edge,
+  // even when the parent uses align-items: center (e.g. the book detail page).
+  // Inner content still respects page padding via .inner / .gridWrap.
+  width: 100%;
+  align-self: stretch;
   background: linear-gradient(180deg, transparent 0%, $color-surface-mid 50%, transparent 100%);
   padding-bottom: 120px;
 
