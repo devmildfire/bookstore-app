@@ -1,64 +1,54 @@
 'use client'
 
-import Link from 'next/link'
 import { useCart } from '@/contexts/cart'
 import CartItemRow from '@/components/cart/CartItemRow'
-import Button from '@/components/common/Button'
+import CartTotals from '@/components/cart/CartTotals'
+import EmptyCart from '@/components/cart/EmptyCart'
+import PromoCodeForm from '@/components/cart/PromoCodeForm'
 import styles from './page.module.scss'
 
 export default function CartPage() {
-  const { items, total, itemCount, updateQuantity, removeItem, clearItems, isPending } = useCart()
+  const { items, total, itemCount, updateQuantity, removeItem } = useCart()
 
-  const totalFormatted = new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(total)
-
-  if (items.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <h1>Корзина пуста</h1>
-        <p>Добавьте книги из каталога.</p>
-        <Link href='/books'>
-          <Button variant='primary'>Перейти в каталог</Button>
-        </Link>
-      </div>
-    )
-  }
+  const isEmpty = items.length === 0
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Корзина</h1>
-        <span className={styles.count}>{itemCount} {itemCount === 1 ? 'товар' : 'товаров'}</span>
-        <Button variant='ghost' size='sm' onClick={clearItems} disabled={isPending}>
-          Очистить корзину
-        </Button>
-      </div>
+      <h1 className={styles.title}>Корзина</h1>
 
-      <div className={styles.items}>
-        {items.map((item) => (
-          <CartItemRow
-            key={item.id}
-            item={item}
-            onUpdateQuantity={updateQuantity}
-            onRemove={removeItem}
-          />
-        ))}
-      </div>
+      {isEmpty ? (
+        <EmptyCart />
+      ) : (
+        <>
+          <div className={styles.itemsGrid}>
+            <div className={styles.headerRow} aria-hidden>
+              <span className={styles.headerCell}>Товар</span>
+              <span className={styles.headerCell}>Тип</span>
+              <span className={styles.headerCell}>Цена</span>
+              <span className={styles.headerCell}>Количество</span>
+              <span className={styles.headerCell}>Сумма</span>
+            </div>
 
-      <div className={styles.summary}>
-        <div className={styles.summaryRow}>
-          <span className={styles.summaryLabel}>Итого</span>
-          <span className={styles.summaryTotal}>{totalFormatted}</span>
-        </div>
-        <Link href='/checkout'>
-          <Button variant='primary' size='lg' className={styles.checkoutBtn} disabled={isPending}>
-            Оформить заказ
-          </Button>
-        </Link>
-      </div>
+            {items.map((item) => (
+              <CartItemRow
+                key={item.id}
+                item={item}
+                onUpdateQuantity={updateQuantity}
+                onRemove={removeItem}
+              />
+            ))}
+          </div>
+
+          <div className={styles.footer}>
+            <div className={styles.promo}>
+              <PromoCodeForm />
+            </div>
+            <div className={styles.totals}>
+              <CartTotals itemCount={itemCount} total={total} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,0 +1,108 @@
+@use '@/styles/common' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-width: 290px;
+
+  @include breakpoint(phone) {
+    min-width: 0;
+    gap: $space-3;
+  }
+}
+
+.list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.label {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  color: rgba($color-text-on-dark, 0.7);
+
+  @include breakpoint(phone) {
+    font-size: $font-size-sm;
+  }
+}
+
+.value,
+.valueStrong {
+  margin: 0;
+  font-family: $font-montserrat;
+  color: $color-text-on-dark;
+}
+
+.value {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-normal;
+
+  @include breakpoint(phone) {
+    font-size: $font-size-base;
+  }
+}
+
+.valueStrong {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+
+  @include breakpoint(phone) {
+    font-size: $font-size-base;
+  }
+}
+
+.continue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: $space-2;
+  height: 50px;
+  padding: 0 $space-4;
+  background: transparent;
+  border: 1px solid $color-text-on-dark;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  letter-spacing: 0.8px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($color-text-on-dark, 0.08);
+  }
+
+  @include breakpoint(phone) {
+    height: 32px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.caption {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+  color: rgba($color-text-on-dark, 0.6);
+  text-align: center;
+
+  @include breakpoint(phone) {
+    font-size: 10px;
+    text-align: left;
+  }
+}

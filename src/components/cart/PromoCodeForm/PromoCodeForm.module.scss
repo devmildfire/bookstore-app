@@ -1,0 +1,81 @@
+@use '@/styles/common' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.label {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  color: rgba($color-text-on-dark, 0.7);
+
+  @include breakpoint(phone) {
+    font-size: $font-size-sm;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+
+  @include breakpoint(phone) {
+    gap: $space-3;
+  }
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 300px;
+  height: 50px;
+  padding: 0 $space-4;
+  background: $color-panel;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: rgba($color-text-on-dark, 0.4);
+  }
+
+  @include breakpoint(phone) {
+    height: 32px;
+    font-size: $font-size-sm;
+  }
+}
+
+.button {
+  flex: 0 0 auto;
+  height: 50px;
+  padding: 0 $space-8;
+  background: transparent;
+  border: 1px solid $color-text-on-dark;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($color-text-on-dark, 0.08);
+  }
+
+  @include breakpoint(phone) {
+    height: 32px;
+    padding: 0 $space-5;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+}
