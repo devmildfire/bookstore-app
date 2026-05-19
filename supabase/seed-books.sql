@@ -199,6 +199,68 @@ INSERT INTO "Titles_Authors" (title_id, author_id) VALUES
   (63, 9),
   (64, 20);
 
+-- ─── Box set membership ─────────────────────────────────────────────────────
+-- Re-seeded here because the canonical INSERTs live in the box_set_books
+-- migration but BoxSetBooks.title_id has ON DELETE CASCADE — every time the
+-- seed wipes Titles_Authors / Authors above, the membership rows go with it.
+
+DELETE FROM "BoxSetBooks";
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'von-neff'),
+  ta.title_id,
+  (ROW_NUMBER() OVER (ORDER BY t.name) - 1)::integer
+FROM "Titles_Authors" ta
+JOIN "Authors" a ON a.id = ta.author_id
+JOIN "Titles"  t ON t.id = ta.title_id
+WHERE a.name ILIKE '%Нефф%'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'inner'),
+  ta.title_id,
+  (ROW_NUMBER() OVER (ORDER BY t.name) - 1)::integer
+FROM "Titles_Authors" ta
+JOIN "Authors" a ON a.id = ta.author_id
+JOIN "Titles"  t ON t.id = ta.title_id
+WHERE a.name ILIKE '%Иннер%'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'staroobryad'),
+  ta.title_id,
+  (ROW_NUMBER() OVER (ORDER BY t.name) - 1)::integer
+FROM "Titles_Authors" ta
+JOIN "Authors" a ON a.id = ta.author_id
+JOIN "Titles"  t ON t.id = ta.title_id
+WHERE a.name ILIKE '%Старообряд%'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'pankratov'),
+  ta.title_id,
+  (ROW_NUMBER() OVER (ORDER BY t.name) - 1)::integer
+FROM "Titles_Authors" ta
+JOIN "Authors" a ON a.id = ta.author_id
+JOIN "Titles"  t ON t.id = ta.title_id
+WHERE a.name ILIKE '%Панкрат%'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'novokshchenov'),
+  ta.title_id,
+  (ROW_NUMBER() OVER (ORDER BY t.name) - 1)::integer
+FROM "Titles_Authors" ta
+JOIN "Authors" a ON a.id = ta.author_id
+JOIN "Titles"  t ON t.id = ta.title_id
+WHERE a.name ILIKE '%Новокщ%' OR a.name ILIKE '%Киреев%' OR a.name ILIKE '%Горшечник%'
+ON CONFLICT DO NOTHING;
+
 -- CardBooks / Book2.0 (64)
 INSERT INTO "CardBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date) VALUES
   (1, 1, 400, false, false, '2026-01-01', '2026-03-11'),
