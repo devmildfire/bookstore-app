@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getBook, getRelatedBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
 import BookCard from '@/components/book/BookCard'
+import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
 import BookContext from './BookContext'
 import BookCoverSlider from './BookCoverSlider'
@@ -127,6 +128,8 @@ export default async function BookDetailPage({ params }: Props) {
         ))}
 
       <BookContext contexts={book.contexts} />
+
+      <BoxSetsSection titleId={book.titleId} />
 
       {relatedBooks.length > 0 && (
         <section className={styles.related}>

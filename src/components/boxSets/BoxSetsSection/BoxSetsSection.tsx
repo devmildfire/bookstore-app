@@ -1,9 +1,16 @@
-import { getBoxSets } from '@/api/boxSets/getBoxSets'
+import { getBoxSets, getBoxSetsByTitleId } from '@/api/boxSets/getBoxSets'
 import BoxSetsGrid from './BoxSetsGrid'
 import styles from './BoxSetsSection.module.scss'
 
-export default async function BoxSetsSection() {
-  const boxSets = await getBoxSets()
+type Props = {
+  // When supplied, the section renders only the box sets that contain this
+  // title — used on the book detail page so each book lists the sets it
+  // belongs to. Omit on the main page to list every active set.
+  titleId?: number
+}
+
+export default async function BoxSetsSection({ titleId }: Props = {}) {
+  const boxSets = titleId !== undefined ? await getBoxSetsByTitleId(titleId) : await getBoxSets()
   if (boxSets.length === 0) return null
 
   return (
