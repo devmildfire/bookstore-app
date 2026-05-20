@@ -32,14 +32,18 @@ export default function CheckoutPage() {
   }, [items.length, router])
 
   function buildShippingSummary(values: ShippingFormValues): string {
-    return `Доставка: ${values.name}, ${values.city}, ${values.street}, ${values.building}, ${values.postalCode}`
+    const addressParts = [values.city, values.street, values.building, values.postalCode]
+      .filter((p): p is string => Boolean(p))
+      .join(', ')
+    const recipient = values.name ?? ''
+    return recipient ? `Доставка: ${recipient}, ${addressParts}` : `Доставка: ${addressParts}`
   }
 
   function handleDeliverySubmit(values: ShippingFormValues) {
     setPending({
       input: {
-        shippingName: values.name,
-        shippingPhone: values.phone,
+        shippingName: values.name ?? null,
+        shippingPhone: values.phone ?? null,
         shippingCity: values.city,
         shippingStreet: values.street,
         shippingBuilding: values.building,
