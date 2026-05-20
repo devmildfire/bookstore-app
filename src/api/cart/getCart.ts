@@ -10,6 +10,8 @@ export async function getCart(): Promise<CartItem[]> {
   const { data, error } = await supabase
     .from('Cart')
     .select('*')
+    .order('created_at', { ascending: true })
+    .order('id', { ascending: true }) // tiebreaker for rows inserted in the same millisecond
 
   if (error) {
     throw new Error(`Не удалось загрузить корзину: ${error.message}`)

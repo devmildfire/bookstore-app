@@ -455,6 +455,7 @@ export type Database = {
       Cart: {
         Row: {
           category: Database["public"]["Enums"]["category"]
+          created_at: string
           discount: number | null
           id: string
           name: string
@@ -466,6 +467,7 @@ export type Database = {
         }
         Insert: {
           category?: Database["public"]["Enums"]["category"]
+          created_at?: string
           discount?: number | null
           id: string
           name: string
@@ -477,6 +479,7 @@ export type Database = {
         }
         Update: {
           category?: Database["public"]["Enums"]["category"]
+          created_at?: string
           discount?: number | null
           id?: string
           name?: string
