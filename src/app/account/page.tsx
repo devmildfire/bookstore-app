@@ -33,7 +33,7 @@ export default async function AccountPage({ searchParams }: Props) {
 
   return (
     <div className={styles.page}>
-      <h1>{isAnon ? 'Ваши покупки' : 'Аккаунт'}</h1>
+      <h1 className={styles.title}>{isAnon ? 'Ваши покупки' : 'Аккаунт'}</h1>
 
       {isAnon && <AnonRecoveryBanner />}
 

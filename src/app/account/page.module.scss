@@ -1,26 +1,81 @@
 @use '@/styles/common' as *;
 
 .page {
+  @include page-container;
+
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  padding-top: $space-10;
+  padding-bottom: $space-16;
+  gap: $space-10;
+
+  @include breakpoint(tablet) {
+    gap: $space-8;
+  }
+
+  @include breakpoint(phone) {
+    padding-top: $space-6;
+    padding-bottom: $space-10;
+    gap: $space-6;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: 1.2px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    font-size: 32px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 28px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 22px;
+  }
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: $space-3;
+  gap: $space-5;
 
   h2 {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
+    margin: 0;
+    font-family: $font-montserrat;
+    font-weight: $font-weight-bold;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+    color: $color-text-on-dark;
+
+    @include breakpoint(tablet) {
+      font-size: 20px;
+    }
+
+    @include breakpoint(phone) {
+      font-size: 18px;
+    }
   }
 }
 
 .email {
-  color: $color-text-secondary;
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.7);
 }
 
 .empty {
-  color: $color-text-muted;
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.6);
 }

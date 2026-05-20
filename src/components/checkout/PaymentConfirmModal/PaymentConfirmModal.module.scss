@@ -37,6 +37,8 @@
   font-size: 24px;
   font-weight: $font-weight-bold;
   letter-spacing: 0.5px;
+  color: $color-text-on-dark;
+  line-height: 1.2;
 
   @include breakpoint(phone) {
     font-size: 20px;
