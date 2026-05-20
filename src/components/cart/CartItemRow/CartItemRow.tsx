@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import Image from 'next/image'
+import { isDigitalCategory } from '@/consts/products'
 import type { CartItem } from '@/entities/cart/client'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './CartItemRow.module.scss'
@@ -20,12 +22,23 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props) {
+  const isDigital = isDigitalCategory(item.category)
+  const displayQuantity = isDigital ? 1 : item.quantity
+
+  // Heal pre-existing carts where a digital item somehow has qty>1.
+  // After this fix `addToCart` caps digital items at 1 going forward.
+  useEffect(() => {
+    if (isDigital && item.quantity > 1) {
+      onUpdateQuantity(item.id, 1)
+    }
+  }, [isDigital, item.id, item.quantity, onUpdateQuantity])
+
   const originalUnitPrice =
     item.discount != null && item.discount > 0
       ? Math.round(item.price / (1 - item.discount / 100))
       : null
 
-  const lineTotal = item.price * item.quantity
+  const lineTotal = item.price * displayQuantity
   const typeLabel = TYPE_LABELS[item.category] ?? item.category
 
   return (
@@ -58,26 +71,30 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props)
         )}
       </div>
 
-      <div className={styles.stepper} role='group' aria-label='Количество'>
-        <button
-          type='button'
-          className={styles.stepperBtn}
-          onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
-          disabled={item.quantity <= 1}
-          aria-label='Уменьшить количество'
-        >
-          −
-        </button>
-        <span className={styles.stepperValue}>{item.quantity}</span>
-        <button
-          type='button'
-          className={styles.stepperBtn}
-          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-          aria-label='Увеличить количество'
-        >
-          +
-        </button>
-      </div>
+      {isDigital ? (
+        <span className={styles.stepperPlaceholder} aria-hidden />
+      ) : (
+        <div className={styles.stepper} role='group' aria-label='Количество'>
+          <button
+            type='button'
+            className={styles.stepperBtn}
+            onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
+            disabled={item.quantity <= 1}
+            aria-label='Уменьшить количество'
+          >
+            −
+          </button>
+          <span className={styles.stepperValue}>{item.quantity}</span>
+          <button
+            type='button'
+            className={styles.stepperBtn}
+            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+            aria-label='Увеличить количество'
+          >
+            +
+          </button>
+        </div>
+      )}
 
       <p className={styles.sum}>{formatPrice(lineTotal)}</p>
 

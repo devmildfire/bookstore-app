@@ -230,6 +230,21 @@
   }
 }
 
+// Digital products (EBook, AudioBook, Book2.0) are 1-per-buyer, so no
+// quantity stepper is rendered. The placeholder keeps the subgrid column
+// occupied at desktop/tablet so the `Количество` header stays aligned;
+// on phone the row collapses to image / info / type / price+sum so the
+// placeholder is hidden.
+.stepperPlaceholder {
+  display: block;
+  width: 0;
+  height: 0;
+
+  @include breakpoint(phone) {
+    display: none;
+  }
+}
+
 // ─── Sum ──────────────────────────────────────────────────────────────────────
 
 .sum {

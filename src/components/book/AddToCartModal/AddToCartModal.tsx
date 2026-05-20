@@ -6,11 +6,10 @@ import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import { useBookProducts } from '@/hooks/useBookProducts'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
+import { DIGITAL_CATEGORIES } from '@/consts/products'
 import type { Book } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import styles from './AddToCartModal.module.scss'
-
-const DIGITAL_CATEGORIES = new Set<ProductCategory>(['EBook', 'AudioBook', 'Book2.0'])
 
 const CATEGORY_LABELS: Record<ProductCategory, string> = {
   'PrintBook':    'ПЕЧАТНОЕ ИЗДАНИЕ',

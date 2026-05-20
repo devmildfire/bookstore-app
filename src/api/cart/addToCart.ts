@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { isDigitalCategory } from '@/consts/products'
 import type { AddToCartInput } from '@/entities/cart/validation'
 
 export async function addToCart(item: AddToCartInput): Promise<void> {
@@ -12,7 +13,8 @@ export async function addToCart(item: AddToCartInput): Promise<void> {
     .single()
 
   if (existing) {
-    if (item.category === 'Subscription') return
+    // Digital products and subscriptions are 1-per-buyer — never increment.
+    if (item.category === 'Subscription' || isDigitalCategory(item.category)) return
 
     const { error } = await supabase
       .from('Cart')
