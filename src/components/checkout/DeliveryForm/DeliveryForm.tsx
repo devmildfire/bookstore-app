@@ -32,7 +32,9 @@ export default function DeliveryForm({ onSubmit, isPending }: Props) {
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className={styles.grid}>
         <div className={styles.field}>
-          <label htmlFor='ship-name' className={styles.label}>Имя и фамилия</label>
+          <label htmlFor='ship-name' className={styles.label}>
+            Имя и фамилия <span className={styles.optional}>(необязательно)</span>
+          </label>
           <input id='ship-name' className={styles.input} {...register('name')} disabled={isPending} />
           {errors.name && <p className={styles.error}>{errors.name.message}</p>}
         </div>
@@ -44,7 +46,9 @@ export default function DeliveryForm({ onSubmit, isPending }: Props) {
         </div>
 
         <div className={styles.field}>
-          <label htmlFor='ship-phone' className={styles.label}>Телефон</label>
+          <label htmlFor='ship-phone' className={styles.label}>
+            Телефон <span className={styles.optional}>(необязательно)</span>
+          </label>
           <input id='ship-phone' type='tel' className={styles.input} {...register('phone')} disabled={isPending} />
           {errors.phone && <p className={styles.error}>{errors.phone.message}</p>}
         </div>

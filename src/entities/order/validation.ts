@@ -14,9 +14,30 @@ const optionalEmail = z
     message: 'Введите корректный email',
   })
 
+// Optional name: empty allowed; otherwise trimmed length 2-100.
+const optionalName = z
+  .string()
+  .trim()
+  .transform((v) => (v === '' ? null : v))
+  .refine((v) => v === null || (v.length >= 2 && v.length <= 100), {
+    message: 'От 2 до 100 символов',
+  })
+
+// Optional phone: empty allowed; otherwise must match Russian phone format.
+const optionalPhone = z
+  .string()
+  .trim()
+  .transform((v) => (v === '' ? null : v))
+  .refine((v) => v === null || phoneRegex.test(v), {
+    message: 'Введите корректный телефон',
+  })
+
+// Only address fields are required for physical delivery. Name, phone, email
+// are accepted but optional — the buyer might want delivery without divulging
+// any of those.
 export const shippingSchema = z.object({
-  name: z.string().trim().min(2, 'Введите имя и фамилию').max(100),
-  phone: z.string().trim().regex(phoneRegex, 'Введите корректный телефон'),
+  name: optionalName,
+  phone: optionalPhone,
   email: optionalEmail,
   city: z.string().trim().min(2, 'Введите город').max(100),
   street: z.string().trim().min(2, 'Введите улицу').max(200),
