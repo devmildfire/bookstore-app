@@ -8,7 +8,16 @@ import PromoCodeForm from '@/components/cart/PromoCodeForm'
 import styles from './page.module.scss'
 
 export default function CartPage() {
-  const { items, total, itemCount, updateQuantity, removeItem } = useCart()
+  const {
+    items,
+    total,
+    itemCount,
+    updateQuantity,
+    removeItem,
+    appliedPromo,
+    discountAmount,
+    finalTotal,
+  } = useCart()
 
   const isEmpty = items.length === 0
 
@@ -44,7 +53,13 @@ export default function CartPage() {
               <PromoCodeForm />
             </div>
             <div className={styles.totals}>
-              <CartTotals itemCount={itemCount} total={total} />
+              <CartTotals
+                itemCount={itemCount}
+                subtotal={total}
+                discountAmount={discountAmount}
+                finalTotal={finalTotal}
+                appliedCode={appliedPromo?.code ?? null}
+              />
             </div>
           </div>
         </>

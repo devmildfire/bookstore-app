@@ -491,6 +491,32 @@ export type Database = {
         }
         Relationships: []
       }
+      CartPromo: {
+        Row: {
+          applied_at: string
+          promo_id: string
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string
+          promo_id: string
+          user_id: string
+        }
+        Update: {
+          applied_at?: string
+          promo_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "CartPromo_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "PromoCodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Ebooks: {
         Row: {
           character_count: number | null
@@ -766,6 +792,50 @@ export type Database = {
           },
         ]
       }
+      PromoCodes: {
+        Row: {
+          code: string
+          created_at: string
+          discount_pct: number
+          ends_at: string
+          id: string
+          kind: string
+          starts_at: string
+          target_product_id: string | null
+          target_title_id: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_pct: number
+          ends_at: string
+          id?: string
+          kind: string
+          starts_at: string
+          target_product_id?: string | null
+          target_title_id?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_pct?: number
+          ends_at?: string
+          id?: string
+          kind?: string
+          starts_at?: string
+          target_product_id?: string | null
+          target_title_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "PromoCodes_target_title_id_fkey"
+            columns: ["target_title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Subscriptions: {
         Row: {
           description: string | null
@@ -999,6 +1069,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_promo_code: { Args: { input_code: string }; Returns: Json }
+      get_cart_with_title_ids: {
+        Args: never
+        Returns: {
+          cart_id: string
+          title_id: number
+        }[]
+      }
       get_catalog_book_by_slug: {
         Args: { title_slug: string }
         Returns: {

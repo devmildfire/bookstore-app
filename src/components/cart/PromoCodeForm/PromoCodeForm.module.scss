@@ -3,6 +3,14 @@
 .root {
   display: flex;
   flex-direction: column;
+  gap: $space-3;
+}
+
+// ─── Form (no code applied) ──────────────────────────────────────────────────
+
+.form {
+  display: flex;
+  flex-direction: column;
   gap: $space-4;
 }
 
@@ -39,11 +47,17 @@
   color: $color-text-on-dark;
   font-family: $font-montserrat;
   font-size: $font-size-base;
+  text-transform: uppercase;
   outline: none;
   transition: border-color 0.15s ease;
 
   &:focus {
     border-color: rgba($color-text-on-dark, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   @include breakpoint(phone) {
@@ -67,9 +81,14 @@
   cursor: pointer;
   transition: background 0.2s ease;
 
-  &:hover,
-  &:focus-visible {
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
     background: rgba($color-text-on-dark, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
   @include breakpoint(phone) {
@@ -77,5 +96,74 @@
     padding: 0 $space-5;
     font-size: 10px;
     letter-spacing: 0.5px;
+  }
+}
+
+.error {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+  line-height: 1.4;
+
+  @include breakpoint(phone) {
+    font-size: 11px;
+  }
+}
+
+// ─── Chip (code applied) ─────────────────────────────────────────────────────
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  align-self: flex-start;
+  padding: $space-3 $space-4;
+  background: $color-panel;
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) {
+    font-size: $font-size-sm;
+    padding: $space-2 $space-3;
+  }
+}
+
+.chipLabel {
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.chipCode {
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.5px;
+}
+
+.chipPct {
+  color: $color-accent-on-dark;
+  font-weight: $font-weight-bold;
+}
+
+.chipRemove {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgba($color-text-on-dark, 0.6);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: $color-text-on-dark;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }

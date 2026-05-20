@@ -1,15 +1,25 @@
 'use client'
 
-import { createContext, useContext, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useCallback, useMemo, type ReactNode } from 'react'
 import {
   useQuery,
   useMutation,
   useQueryClient,
-  type QueryClient,
 } from '@tanstack/react-query'
 import { getCart, cartQueryKey, addToCart, removeFromCart, updateCartQuantity, clearCart } from '@/api/cart'
+import {
+  activePromoQueryKey,
+  applyPromoCode,
+  cartTitleIdsQueryKey,
+  getActivePromo,
+  getCartWithTitleIds,
+  removePromoCode,
+  type ApplyPromoResult,
+} from '@/api/promo'
+import { calculateCartTotals } from '@/lib/cartTotals'
 import type { CartItem, CartState } from '@/entities/cart/client'
 import type { AddToCartInput } from '@/entities/cart/validation'
+import type { AppliedPromo } from '@/entities/promo/client'
 
 type CartContextValue = CartState & {
   addItem: (item: AddToCartInput) => void
@@ -17,6 +27,12 @@ type CartContextValue = CartState & {
   updateQuantity: (id: string, quantity: number) => void
   clearItems: () => void
   isPending: boolean
+  // Promo
+  appliedPromo: AppliedPromo | null
+  applyPromo: (code: string) => Promise<ApplyPromoResult>
+  removePromo: () => void
+  discountAmount: number
+  finalTotal: number
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -41,10 +57,26 @@ export function CartProvider({ children }: Props) {
     queryFn: getCart,
   })
 
+  const { data: appliedPromo = null } = useQuery({
+    queryKey: activePromoQueryKey,
+    queryFn: getActivePromo,
+  })
+
+  // Only fetch title-id mapping when a title-target item code is applied —
+  // otherwise we never need it.
+  const needsTitleIds = appliedPromo?.kind === 'item' && appliedPromo.targetTitleId != null
+
+  const { data: cartTitleIds = [] } = useQuery({
+    queryKey: cartTitleIdsQueryKey,
+    queryFn: getCartWithTitleIds,
+    enabled: needsTitleIds,
+  })
+
   const addMutation = useMutation({
     mutationFn: addToCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartQueryKey })
+      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
     },
   })
 
@@ -52,6 +84,7 @@ export function CartProvider({ children }: Props) {
     mutationFn: removeFromCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartQueryKey })
+      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
     },
   })
 
@@ -67,6 +100,24 @@ export function CartProvider({ children }: Props) {
     mutationFn: clearCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartQueryKey })
+      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
+    },
+  })
+
+  const applyPromoMutation = useMutation({
+    mutationFn: applyPromoCode,
+    onSuccess: (result) => {
+      if (result.status === 'ok') {
+        queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
+        queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
+      }
+    },
+  })
+
+  const removePromoMutation = useMutation({
+    mutationFn: removePromoCode,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
     },
   })
 
@@ -90,12 +141,36 @@ export function CartProvider({ children }: Props) {
     [clearMutation]
   )
 
+  const applyPromo = useCallback(
+    (code: string) => applyPromoMutation.mutateAsync(code),
+    [applyPromoMutation]
+  )
+
+  const removePromo = useCallback(
+    () => removePromoMutation.mutate(),
+    [removePromoMutation]
+  )
+
   const state = calculateState(items)
+
+  const matchedCartIds = useMemo(() => {
+    if (!needsTitleIds || appliedPromo?.targetTitleId == null) return new Set<string>()
+    const targetTitle = appliedPromo.targetTitleId
+    return new Set(cartTitleIds.filter((r) => r.titleId === targetTitle).map((r) => r.cartId))
+  }, [needsTitleIds, appliedPromo, cartTitleIds])
+
+  const totals = useMemo(
+    () => calculateCartTotals(items, appliedPromo, matchedCartIds),
+    [items, appliedPromo, matchedCartIds]
+  )
+
   const isPending =
     addMutation.isPending ||
     removeMutation.isPending ||
     updateMutation.isPending ||
-    clearMutation.isPending
+    clearMutation.isPending ||
+    applyPromoMutation.isPending ||
+    removePromoMutation.isPending
 
   return (
     <CartContext.Provider
@@ -106,6 +181,11 @@ export function CartProvider({ children }: Props) {
         updateQuantity: updateQuantityFn,
         clearItems,
         isPending,
+        appliedPromo,
+        applyPromo,
+        removePromo,
+        discountAmount: totals.discountAmount,
+        finalTotal: totals.total,
       }}
     >
       {children}
