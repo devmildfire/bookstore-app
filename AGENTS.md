@@ -44,7 +44,11 @@ src/
   app/          Next.js App Router routes (layout.tsx, page.tsx, error.tsx per segment)
     account/    User account page
     auth/       login/ and register/ routes
-    books/      Catalog ([slug]/ for book detail)
+    books/      Catalog
+      (catalog)/  Catalog listing (page.tsx, loading.tsx, error.tsx). Route group
+                  exists so its loading.tsx is NOT a Suspense ancestor of /books/[slug]
+                  — the catalog grid skeleton would otherwise flash on book-detail loads.
+      [slug]/     Book detail (own loading.tsx mirrors the real page layout)
     cart/       Cart page
     checkout/   Checkout and success/
     subscription/ Subscription plans page
@@ -116,6 +120,13 @@ Book covers are stored in a **Supabase Storage bucket called `covers`** (public,
 - `scripts/upload-covers-to-supabase.mjs` — Creates the `covers` bucket and uploads images
 - `scripts/retry-covers.mjs` — Retries failed uploads
 - `scripts/update-cover-urls-supabase.mjs` — Generates SQL to update cover URLs in the database
+- `scripts/_blur.mjs` — Shared helper (`makeBlurDataUrl(buffer)`) — resize to 10×15, JPEG q40, base64 data URL
+- `scripts/sync-cover-blurs.mjs` — Backfill `Titles.cover_blur` for every row whose cover file exists in the `covers` bucket
+- `scripts/sync-author-photo-blurs.mjs` — Backfill `Authors.photo_blur` against the `authors` bucket
+- `scripts/sync-book-photo-blurs.mjs` — Backfill `Titles.book_photos_blurs` (JSONB map of filename → data URL) from the `book-photos/{slug}/` folders
+- `scripts/sync-subscription-blurs.mjs` — Backfill `Subscriptions.image_blur` from the `subscriptions` bucket
+
+All blur scripts are idempotent — re-running on a fully-seeded DB is a no-op.
 
 ## Conventions and Code Culture
 

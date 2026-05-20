@@ -74,6 +74,46 @@ Remote image domains must be added to `next.config.ts` `images.remotePatterns`.
 For book cover storage rules, including how `Titles.cover` maps to Supabase
 Storage URLs, see `docs/conventions/DATA.md`.
 
+## Blur Placeholders for Bucket Images
+
+Every `<Image>` that points at a Supabase Storage bucket (covers, authors,
+book-photos, subscriptions) renders a tiny base64 LQIP while the full image
+loads. Next.js auto-generates `blurDataURL` for static imports but not for
+remote URLs, so the data URL is **precomputed and stored in the database**:
+
+| Table | Column | Used for |
+|---|---|---|
+| `Titles` | `cover_blur TEXT` | `Titles.cover` |
+| `Titles` | `book_photos_blurs JSONB` | Map of filename → data URL for files under `book-photos/{slug}/` |
+| `Authors` | `photo_blur TEXT` | `Authors.photo` |
+| `Subscriptions` | `image_blur TEXT` | `Subscriptions.image` |
+
+The entity normalizers surface these as `coverBlurDataUrl`, author
+`photoBlurDataUrl`, `imageBlurDataUrl`, and `getBookPhotos()` returns
+`{ url, blurDataURL }[]`. Components never compute blur data — they read it
+from the normalized entity.
+
+Pattern at every `<Image>` callsite:
+
+```tsx
+<Image
+  src={book.coverUrl}
+  alt={`Обложка книги: ${book.title}`}
+  placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
+  blurDataURL={book.coverBlurDataUrl ?? undefined}
+  width={240}
+  height={320}
+/>
+```
+
+`placeholder={blur ? 'blur' : 'empty'}` keeps legacy rows (where the blur is
+`NULL`) rendering as before — no breakage.
+
+Adding new bucket images: upload the file, run the matching
+`scripts/sync-*-blurs.mjs` to backfill the `*_blur` column, then expose the
+field through the entity's `client.ts` / `normalize.ts` and pass it to
+`<Image>` as above. See `AGENTS.md` § Storage & Images for the script list.
+
 ## Preventing Layout Shift (CLS)
 
 - Reserve space for images before they load (handled by `next/image` with explicit dimensions)

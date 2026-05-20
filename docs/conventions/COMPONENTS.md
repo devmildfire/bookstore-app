@@ -167,20 +167,27 @@ export default function LoginForm() {
 Pages that need a shell declare layout in `app/<route>/layout.tsx`.
 Do not replicate layout markup per page — compose through layout files.
 
-Current structure (flat — no route groups yet):
+Current structure:
 
 ```
 app/
-  layout.tsx            ← root layout (fonts, providers, globals.scss, Header)
-  page.tsx              ← homepage
+  layout.tsx               ← root layout (fonts, providers, globals.scss, Header)
+  page.tsx                 ← homepage
   books/
+    (catalog)/             ← catalog listing (page/loading/error)
+    [slug]/                ← book detail (own loading.tsx)
   account/
   auth/
   cart/
   checkout/
+  subscription/
 ```
 
-Intended future structure using route groups (not yet implemented):
+The `(catalog)/` route group exists to scope its `loading.tsx` away from
+`[slug]`. See `docs/conventions/ERROR_HANDLING.md` § Suspense scope and route
+groups before adding sibling `loading.tsx` files under a shared parent.
+
+Intended future structure using shell-level route groups (not yet implemented):
 
 ```
 app/

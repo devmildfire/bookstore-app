@@ -150,10 +150,46 @@ Every route that fetches data should have a `loading.tsx` to show a skeleton dur
 streaming. This prevents blank pages:
 
 ```tsx
-// src/app/books/loading.tsx
+// src/app/books/(catalog)/loading.tsx
 import BookGridSkeleton from '@/components/books/BookGridSkeleton'
 
 export default function BooksLoading() {
   return <BookGridSkeleton />
 }
 ```
+
+### Skeleton primitive
+
+Use `src/components/common/Skeleton/Skeleton.tsx` for any placeholder bar. It is
+the only skeleton primitive in the project — do not add `react-loading-skeleton`
+or hand-roll new shimmer styles.
+
+```tsx
+import Skeleton from '@/components/common/Skeleton'
+
+<Skeleton width={200} height={20} />            // default: variant='text'
+<Skeleton width={300} height={450} variant='rect' />   // covers, cards
+<Skeleton width={64}  height={64}  variant='circle' /> // avatars
+```
+
+- `variant`: `'text'` (default, `$radius-sm`), `'rect'` (`$radius-md`), or `'circle'` (`$radius-full`)
+- Palette is a dark wave (`$color-panel` → `$neutral-800` → `$color-panel`) baked
+  into the SCSS — designed to read on the `#121212` page background
+- Honours `prefers-reduced-motion: reduce` (shimmer disabled, base colour stays)
+
+### Suspense scope and route groups
+
+A `loading.tsx` is a Suspense fallback for **everything below it in the route
+tree**, including sibling segments. If two route segments share a parent that
+has its own `loading.tsx`, navigating between them (or hard-reloading the
+child) flashes the parent's skeleton — even when the child has its own
+`loading.tsx`.
+
+Use a route group `(name)/` to break that scope without changing the URL.
+Example: `/books` and `/books/[slug]` use unrelated skeletons. Putting the
+catalog files under `src/app/books/(catalog)/` makes the catalog `loading.tsx`
+a sibling of `[slug]/loading.tsx` (not an ancestor), so each route renders only
+its own skeleton on load.
+
+Reach for a route group whenever a parent segment's `loading.tsx` would
+otherwise leak into a child segment that has a different loading shape.
