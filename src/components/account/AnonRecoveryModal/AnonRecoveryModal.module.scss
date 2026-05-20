@@ -1,0 +1,150 @@
+@use '@/styles/common' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: $space-10;
+  background: $color-bg-page;
+  border: 1px solid rgba($color-text-on-dark, 0.15);
+  border-radius: $radius-md;
+  color: $color-text-on-dark;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  z-index: 101;
+  outline: none;
+
+  @include breakpoint(phone) {
+    padding: $space-6;
+    width: calc(100vw - 24px);
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: 26px;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.5px;
+
+  @include breakpoint(phone) {
+    font-size: 20px;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  p {
+    margin: 0;
+    font-family: $font-montserrat;
+    font-size: $font-size-base;
+    line-height: 1.55;
+    color: rgba($color-text-on-dark, 0.85);
+
+    @include breakpoint(phone) {
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.emailRow {
+  display: flex;
+  gap: $space-3;
+
+  @include breakpoint(phone) {
+    flex-direction: column;
+  }
+}
+
+.emailInput {
+  flex: 1 1 auto;
+  height: 50px;
+  padding: 0 $space-4;
+  background: rgba($color-text-on-dark, 0.1);
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: rgba($color-text-on-dark, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.confirm {
+  height: 50px;
+  padding: 0 $space-6;
+  background: $color-text-on-dark;
+  border: none;
+  border-radius: $radius-sm;
+  color: $color-bg-page;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.cancel {
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: rgba($color-text-on-dark, 0.7);
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: $color-text-on-dark;
+  }
+}
+
+.error {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}

@@ -38,6 +38,7 @@ export type Database = {
         Row: {
           discount: number | null
           duration_seconds: number | null
+          file_path: string | null
           file_size_bytes: number | null
           id: number
           is_published: boolean | null
@@ -49,6 +50,7 @@ export type Database = {
         Insert: {
           discount?: number | null
           duration_seconds?: number | null
+          file_path?: string | null
           file_size_bytes?: number | null
           id?: number
           is_published?: boolean | null
@@ -60,6 +62,7 @@ export type Database = {
         Update: {
           discount?: number | null
           duration_seconds?: number | null
+          file_path?: string | null
           file_size_bytes?: number | null
           id?: number
           is_published?: boolean | null
@@ -278,18 +281,21 @@ export type Database = {
           box_set_id: number
           id: number
           position: number
+          product_id: string | null
           title_id: number
         }
         Insert: {
           box_set_id: number
           id?: number
           position?: number
+          product_id?: string | null
           title_id: number
         }
         Update: {
           box_set_id?: number
           id?: number
           position?: number
+          product_id?: string | null
           title_id?: number
         }
         Relationships: [
@@ -357,6 +363,7 @@ export type Database = {
           demo: string | null
           discount: number | null
           extra: string | null
+          file_path: string | null
           format: string | null
           id: number
           is_published: boolean | null
@@ -375,6 +382,7 @@ export type Database = {
           demo?: string | null
           discount?: number | null
           extra?: string | null
+          file_path?: string | null
           format?: string | null
           id?: number
           is_published?: boolean | null
@@ -393,6 +401,7 @@ export type Database = {
           demo?: string | null
           discount?: number | null
           extra?: string | null
+          file_path?: string | null
           format?: string | null
           id?: number
           is_published?: boolean | null
@@ -521,6 +530,7 @@ export type Database = {
         Row: {
           character_count: number | null
           discount: number | null
+          file_path: string | null
           formats: string[] | null
           id: number
           is_published: boolean | null
@@ -532,6 +542,7 @@ export type Database = {
         Insert: {
           character_count?: number | null
           discount?: number | null
+          file_path?: string | null
           formats?: string[] | null
           id?: number
           is_published?: boolean | null
@@ -543,6 +554,7 @@ export type Database = {
         Update: {
           character_count?: number | null
           discount?: number | null
+          file_path?: string | null
           formats?: string[] | null
           id?: number
           is_published?: boolean | null
@@ -666,30 +678,63 @@ export type Database = {
       }
       Orders: {
         Row: {
+          book_discount_total: number
           created_at: string
           delivery_email: string | null
           delivery_method: string | null
           id: number
+          original_total: number
+          paid_at: string | null
+          promo_code: string | null
+          promo_discount: number
+          shipping_building: string | null
+          shipping_city: string | null
+          shipping_name: string | null
+          shipping_phone: string | null
+          shipping_postal_code: string | null
+          shipping_street: string | null
           status: string
           total: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          book_discount_total?: number
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
           id?: number
+          original_total?: number
+          paid_at?: string | null
+          promo_code?: string | null
+          promo_discount?: number
+          shipping_building?: string | null
+          shipping_city?: string | null
+          shipping_name?: string | null
+          shipping_phone?: string | null
+          shipping_postal_code?: string | null
+          shipping_street?: string | null
           status?: string
           total: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          book_discount_total?: number
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
           id?: number
+          original_total?: number
+          paid_at?: string | null
+          promo_code?: string | null
+          promo_discount?: number
+          shipping_building?: string | null
+          shipping_city?: string | null
+          shipping_name?: string | null
+          shipping_phone?: string | null
+          shipping_postal_code?: string | null
+          shipping_street?: string | null
           status?: string
           total?: number
           updated_at?: string
@@ -1070,6 +1115,7 @@ export type Database = {
     }
     Functions: {
       apply_promo_code: { Args: { input_code: string }; Returns: Json }
+      box_set_is_physical: { Args: { p_box_set_id: number }; Returns: boolean }
       get_cart_with_title_ids: {
         Args: never
         Returns: {
@@ -1175,6 +1221,18 @@ export type Database = {
       migrate_cart: {
         Args: { from_user_id: string; to_user_id: string }
         Returns: undefined
+      }
+      place_order: {
+        Args: {
+          p_email: string
+          p_shipping_building: string
+          p_shipping_city: string
+          p_shipping_name: string
+          p_shipping_phone: string
+          p_shipping_postal_code: string
+          p_shipping_street: string
+        }
+        Returns: Json
       }
       search_books: {
         Args: {

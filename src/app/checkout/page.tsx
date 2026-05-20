@@ -1,196 +1,126 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, useWatch } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import cn from 'classnames'
-import Link from 'next/link'
 import { useCart } from '@/contexts/cart'
-import CartItemRow from '@/components/cart/CartItemRow'
-import Button from '@/components/common/Button'
-import { createOrderAction } from '@/lib/orders/actions'
+import DeliveryForm from '@/components/checkout/DeliveryForm'
+import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
+import PaymentConfirmModal, {
+  type PaymentModalState,
+} from '@/components/checkout/PaymentConfirmModal'
+import { placeOrderAction } from '@/lib/orders/actions'
+import type {
+  EmailOnlyFormValues,
+  ShippingFormValues,
+} from '@/entities/order/validation'
+import type { PlaceOrderInput } from '@/api/orders'
 import styles from './page.module.scss'
 
-const deliverySchema = z.object({
-  method: z.enum(['download', 'email']),
-  email: z.string(),
-}).superRefine((val, ctx) => {
-  if (val.method === 'email' && !z.string().email().safeParse(val.email).success) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Введите корректный email', path: ['email'] })
-  }
-})
-
-type DeliveryValues = z.infer<typeof deliverySchema>
+type PendingOrder = {
+  input: PlaceOrderInput
+  shippingSummary: string | null
+}
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, total, itemCount, updateQuantity, removeItem, clearItems } = useCart()
-  const [step, setStep] = useState<'review' | 'payment' | 'processing'>('review')
-  const [error, setError] = useState<string | null>(null)
+  const { items, finalTotal, appliedPromo, hasPhysicalItems } = useCart()
+  const [pending, setPending] = useState<PendingOrder | null>(null)
+  const [modalState, setModalState] = useState<PaymentModalState>({ kind: 'idle' })
 
-  const { register, handleSubmit, control, getValues, formState: { errors } } = useForm<DeliveryValues>({
-    resolver: zodResolver(deliverySchema),
-    defaultValues: { method: 'download', email: '' },
-  })
+  useEffect(() => {
+    if (items.length === 0) router.replace('/cart')
+  }, [items.length, router])
 
-  const deliveryMethod = useWatch({ control, name: 'method' })
-
-  const totalFormatted = new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(total)
-
-  if (items.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <h1>Корзина пуста</h1>
-        <p>Добавьте книги из каталога для оформления заказа.</p>
-        <Link href='/books'>
-          <Button variant='primary'>Перейти в каталог</Button>
-        </Link>
-      </div>
-    )
+  function buildShippingSummary(values: ShippingFormValues): string {
+    return `Доставка: ${values.name}, ${values.city}, ${values.street}, ${values.building}, ${values.postalCode}`
   }
 
-  const handlePayment = async () => {
-    setStep('processing')
-    setError(null)
-    const { method, email } = getValues()
+  function handleDeliverySubmit(values: ShippingFormValues) {
+    setPending({
+      input: {
+        shippingName: values.name,
+        shippingPhone: values.phone,
+        shippingCity: values.city,
+        shippingStreet: values.street,
+        shippingBuilding: values.building,
+        shippingPostalCode: values.postalCode,
+        email: values.email ?? null,
+      },
+      shippingSummary: buildShippingSummary(values),
+    })
+    setModalState({ kind: 'idle' })
+  }
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+  function handleEmailSubmit(values: EmailOnlyFormValues) {
+    setPending({
+      input: {
+        shippingName: null,
+        shippingPhone: null,
+        shippingCity: null,
+        shippingStreet: null,
+        shippingBuilding: null,
+        shippingPostalCode: null,
+        email: values.email ?? null,
+      },
+      shippingSummary: null,
+    })
+    setModalState({ kind: 'idle' })
+  }
 
-      const result = await createOrderAction(method === 'email' ? email : undefined)
-      if ('error' in result) throw new Error(result.error)
-      const { orderId } = result
-      await clearItems()
+  async function handleConfirm() {
+    if (!pending) return
+    setModalState({ kind: 'processing' })
 
-      const params = new URLSearchParams({ orderId: String(orderId), delivery: method })
-      if (method === 'email' && email) params.set('email', email)
+    // Run the Server Action and a visual delay in parallel; redirect only
+    // when both resolve. Keeps the spinner visible long enough to feel
+    // intentional and prevents flicker when the RPC returns instantly.
+    const [result] = await Promise.all([
+      placeOrderAction(pending.input),
+      new Promise((r) => setTimeout(r, 1500)),
+    ])
 
-      router.push(`/checkout/success?${params.toString()}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка при оформлении заказа')
-      setStep('payment')
+    if (result.status === 'ok') {
+      router.push(`/account?from=checkout&order=${result.orderId}`)
+      return
     }
+
+    const reasons: Record<string, string> = {
+      not_authenticated: 'Нужно войти, чтобы оформить заказ.',
+      empty_cart: 'Корзина пуста.',
+      unknown: result.message ?? 'Не удалось оформить заказ.',
+    }
+    setModalState({
+      kind: 'error',
+      message: reasons[result.reason] ?? 'Не удалось оформить заказ.',
+    })
   }
+
+  function handleCloseModal() {
+    setPending(null)
+    setModalState({ kind: 'idle' })
+  }
+
+  const isPending = modalState.kind === 'processing'
 
   return (
     <div className={styles.page}>
-      <h1>Оформление заказа</h1>
+      <h1 className={styles.title}>{hasPhysicalItems ? 'Доставка' : 'Оформление'}</h1>
 
-      {/* Step indicator */}
-      <div className={styles.steps}>
-        <div className={cn(styles.step, step === 'review' ? styles.active : styles.done)}>
-          1. Заказ
-        </div>
-        <div className={styles.stepLine} />
-        <div className={cn(styles.step, (step === 'payment' || step === 'processing') && styles.active)}>
-          2. Оплата
-        </div>
-        <div className={styles.stepLine} />
-        <div className={cn(styles.step, step === 'processing' && styles.active)}>
-          3. Доставка
-        </div>
-      </div>
-
-      {step === 'review' && (
-        <div className={styles.content}>
-          <div className={styles.itemsSection}>
-            <h2 className={styles.sectionTitle}>Товары ({itemCount})</h2>
-            <div className={styles.items}>
-              {items.map((item) => (
-                <CartItemRow
-                  key={item.id}
-                  item={item}
-                  onUpdateQuantity={updateQuantity}
-                  onRemove={removeItem}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.summary}>
-            <h2 className={styles.sectionTitle}>Доставка</h2>
-            <div className={styles.summaryCard}>
-              <form onSubmit={handleSubmit(() => setStep('payment'))}>
-                <div className={styles.deliveryOptions}>
-                  <label className={styles.radio}>
-                    <input type='radio' value='download' {...register('method')} />
-                    <span>Скачать после оплаты</span>
-                  </label>
-                  <label className={styles.radio}>
-                    <input type='radio' value='email' {...register('method')} />
-                    <span>Отправить на email</span>
-                  </label>
-                </div>
-
-                {deliveryMethod === 'email' && (
-                  <div className={styles.emailField}>
-                    <input
-                      type='email'
-                      placeholder='Ваш email'
-                      {...register('email')}
-                      className={styles.emailInput}
-                    />
-                    {errors.email && <p className={styles.fieldError}>{errors.email.message}</p>}
-                  </div>
-                )}
-
-                <div className={styles.divider} />
-
-                <div className={styles.summaryRow}>
-                  <span>Товары ({itemCount})</span>
-                  <span>{totalFormatted}</span>
-                </div>
-                <div className={styles.summaryRow}>
-                  <span className={styles.totalLabel}>К оплате</span>
-                  <span className={styles.totalPrice}>{totalFormatted}</span>
-                </div>
-
-                <Button type='submit' variant='primary' size='lg' className={styles.payBtn}>
-                  Перейти к оплате
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
+      {hasPhysicalItems ? (
+        <DeliveryForm onSubmit={handleDeliverySubmit} isPending={isPending} />
+      ) : (
+        <EmailOnlyForm onSubmit={handleEmailSubmit} isPending={isPending} />
       )}
 
-      {step === 'payment' && (
-        <div className={styles.paymentSection}>
-          <h2 className={styles.sectionTitle}>Оплата</h2>
-          <div className={styles.paymentCard}>
-            <p className={styles.paymentInfo}>
-              Сумма к оплате: <strong>{totalFormatted}</strong>
-            </p>
-            <p className={styles.paymentHint}>
-              Демо-режим. Нажмите «Оплатить» для симуляции успешного платежа.
-            </p>
-
-            {error && <p className={styles.error}>{error}</p>}
-
-            <div className={styles.paymentActions}>
-              <Button variant='secondary' onClick={() => setStep('review')}>
-                Назад
-              </Button>
-              <Button variant='primary' size='lg' onClick={handlePayment}>
-                Оплатить {totalFormatted}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 'processing' && (
-        <div className={styles.processing}>
-          <div className={styles.spinner} />
-          <p>Обработка платежа...</p>
-        </div>
-      )}
+      <PaymentConfirmModal
+        open={pending !== null}
+        state={modalState}
+        amount={finalTotal}
+        appliedCode={appliedPromo?.code ?? null}
+        summary={pending?.shippingSummary ?? null}
+        onConfirm={handleConfirm}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }

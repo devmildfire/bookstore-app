@@ -16,10 +16,14 @@ import {
   removePromoCode,
   type ApplyPromoResult,
 } from '@/api/promo'
+import { boxSetPhysicalFlagsQueryKey, getBoxSetPhysicalFlags } from '@/api/orders'
 import { calculateCartTotals } from '@/lib/cartTotals'
 import type { CartItem, CartState } from '@/entities/cart/client'
 import type { AddToCartInput } from '@/entities/cart/validation'
 import type { AppliedPromo } from '@/entities/promo/client'
+
+// Physical-on-its-face categories — no per-item lookup needed.
+const ALWAYS_PHYSICAL = new Set<string>(['PrintBook', 'Book2.0'])
 
 type CartContextValue = CartState & {
   addItem: (item: AddToCartInput) => void
@@ -33,6 +37,8 @@ type CartContextValue = CartState & {
   removePromo: () => void
   discountAmount: number
   finalTotal: number
+  // Checkout helpers
+  hasPhysicalItems: boolean
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -70,6 +76,24 @@ export function CartProvider({ children }: Props) {
     queryKey: cartTitleIdsQueryKey,
     queryFn: getCartWithTitleIds,
     enabled: needsTitleIds,
+  })
+
+  // BoxSet physicality — only fetch when the cart actually has BoxSet items.
+  const boxSetIds = useMemo(() => {
+    const ids: number[] = []
+    for (const item of items) {
+      if (item.category === 'BoxSet') {
+        const editionId = Number(item.id.split('-').slice(1).join('-'))
+        if (Number.isFinite(editionId)) ids.push(editionId)
+      }
+    }
+    return ids
+  }, [items])
+
+  const { data: boxSetFlags } = useQuery({
+    queryKey: boxSetPhysicalFlagsQueryKey(boxSetIds),
+    queryFn: () => getBoxSetPhysicalFlags(boxSetIds),
+    enabled: boxSetIds.length > 0,
   })
 
   const addMutation = useMutation({
@@ -164,6 +188,17 @@ export function CartProvider({ children }: Props) {
     [items, appliedPromo, matchedCartIds]
   )
 
+  const hasPhysicalItems = useMemo(() => {
+    for (const item of items) {
+      if (ALWAYS_PHYSICAL.has(item.category)) return true
+      if (item.category === 'BoxSet') {
+        const editionId = Number(item.id.split('-').slice(1).join('-'))
+        if (boxSetFlags?.get(editionId)) return true
+      }
+    }
+    return false
+  }, [items, boxSetFlags])
+
   const isPending =
     addMutation.isPending ||
     removeMutation.isPending ||
@@ -186,6 +221,7 @@ export function CartProvider({ children }: Props) {
         removePromo,
         discountAmount: totals.discountAmount,
         finalTotal: totals.total,
+        hasPhysicalItems,
       }}
     >
       {children}

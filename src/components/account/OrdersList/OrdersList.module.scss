@@ -1,0 +1,170 @@
+@use '@/styles/common' as *;
+
+.empty {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.card {
+  padding: $space-6;
+  background: rgba($color-text-on-dark, 0.05);
+  border: 1px solid rgba($color-text-on-dark, 0.12);
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  @include breakpoint(phone) {
+    padding: $space-4;
+  }
+}
+
+.cardHighlighted {
+  border-color: $color-accent-on-dark;
+  background: rgba($color-accent-on-dark, 0.05);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.cardTitle {
+  margin: 0 0 $space-1 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-on-dark;
+}
+
+.cardDate {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.cardTotal {
+  font-family: $font-montserrat;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-on-dark;
+}
+
+.cardPromo,
+.cardShipping {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.7);
+  line-height: 1.5;
+
+  strong {
+    color: $color-text-on-dark;
+    letter-spacing: 0.5px;
+  }
+}
+
+.items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-3;
+  border-top: 1px solid rgba($color-text-on-dark, 0.12);
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+
+  @include breakpoint(phone) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+}
+
+.itemMain {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.itemName {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+}
+
+.itemQty {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.itemAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-1;
+
+  @include breakpoint(phone) {
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+.downloadBtn {
+  height: 36px;
+  padding: 0 $space-5;
+  background: transparent;
+  border: 1px solid $color-text-on-dark;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba($color-text-on-dark, 0.08);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.itemStatus {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+  font-style: italic;
+}
+
+.itemError {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  color: $color-accent-on-dark;
+}

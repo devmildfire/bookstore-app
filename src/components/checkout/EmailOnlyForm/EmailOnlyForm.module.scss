@@ -1,0 +1,146 @@
+@use '@/styles/common' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  max-width: 640px;
+
+  @include breakpoint(phone) {
+    gap: $space-6;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include breakpoint(phone) {
+    gap: $space-2;
+  }
+}
+
+.label {
+  font-family: $font-montserrat;
+  font-size: 20px;
+  font-weight: $font-weight-normal;
+  color: $color-text-on-dark;
+  line-height: 1.4;
+
+  @include breakpoint(tablet) {
+    font-size: 18px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: $font-size-base;
+  }
+}
+
+.optional {
+  color: rgba($color-text-on-dark, 0.5);
+  font-size: 0.85em;
+}
+
+.input {
+  height: 62px;
+  padding: 0 $space-4;
+  background: rgba($color-text-on-dark, 0.2);
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: rgba($color-text-on-dark, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include breakpoint(phone) {
+    height: 44px;
+  }
+}
+
+.error {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}
+
+.hint {
+  margin: 0;
+  padding: $space-5;
+  border: 1px solid rgba($color-text-on-dark, 0.15);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: rgba($color-text-on-dark, 0.7);
+
+  @include breakpoint(phone) {
+    font-size: $font-size-sm;
+    padding: $space-4;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-3;
+
+  @include breakpoint(phone) {
+    align-items: stretch;
+  }
+}
+
+.submit {
+  height: 60px;
+  padding: 0 $space-12;
+  background: transparent;
+  border: 1px solid $color-text-on-dark;
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba($color-text-on-dark, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @include breakpoint(phone) {
+    height: 48px;
+    width: 100%;
+    font-size: $font-size-sm;
+  }
+}
+
+.caption {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+  line-height: 1.4;
+
+  @include breakpoint(phone) {
+    font-size: 12px;
+  }
+}

@@ -1,51 +1,25 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
-import { normalizeCartItem } from '@/entities/cart/normalize'
-import type { DbOrderInsert, DbOrderItemInsert } from '@/types/database'
+import { placeOrder, getDownloadUrl, setRecoveryEmail } from '@/api/orders'
+import type {
+  PlaceOrderInput,
+  PlaceOrderResult,
+  DownloadUrlResult,
+  SetRecoveryEmailResult,
+} from '@/api/orders'
 
-type CreateOrderResult = { orderId: number } | { error: string }
+export async function placeOrderAction(input: PlaceOrderInput): Promise<PlaceOrderResult> {
+  return placeOrder(input)
+}
 
-export async function createOrderAction(deliveryEmail?: string): Promise<CreateOrderResult> {
-  const supabase = await createClient()
+export async function getDownloadUrlAction(orderItemId: number): Promise<DownloadUrlResult> {
+  return getDownloadUrl(orderItemId)
+}
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Необходима авторизация' }
-
-  // Read cart from DB server-side — never trust client-provided items or prices
-  const { data: cartRows, error: cartError } = await supabase.from('Cart').select('*')
-  if (cartError) return { error: `Не удалось прочитать корзину: ${cartError.message}` }
-  if (!cartRows || cartRows.length === 0) return { error: 'Корзина пуста' }
-
-  const items = cartRows.map(normalizeCartItem)
-
-  const orderInsert: DbOrderInsert = {
-    user_id: user.id,
-    status: 'paid',
-    total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    delivery_method: deliveryEmail ? 'email' : 'download',
-    delivery_email: deliveryEmail ?? null,
+export async function setRecoveryEmailAction(email: string): Promise<SetRecoveryEmailResult> {
+  const trimmed = email.trim()
+  if (!trimmed) {
+    return { status: 'error', message: 'Введите email' }
   }
-
-  const { data: order, error: orderError } = await supabase
-    .from('Orders')
-    .insert(orderInsert)
-    .select('id')
-    .single()
-
-  if (orderError) return { error: `Не удалось создать заказ: ${orderError.message}` }
-
-  const orderItems: DbOrderItemInsert[] = items.map((item) => ({
-    order_id: order.id,
-    book_id: item.id,
-    name: item.name,
-    price: item.price,
-    quantity: item.quantity,
-    category: item.category,
-  }))
-
-  const { error: itemsError } = await supabase.from('OrderItems').insert(orderItems)
-  if (itemsError) return { error: `Не удалось сохранить товары заказа: ${itemsError.message}` }
-
-  return { orderId: order.id }
+  return setRecoveryEmail(trimmed)
 }
