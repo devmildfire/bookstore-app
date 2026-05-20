@@ -1,6 +1,8 @@
 'use server'
 
-import { placeOrder, getDownloadUrl, setRecoveryEmail } from '@/api/orders'
+import { placeOrder } from '@/api/orders/placeOrder'
+import { getDownloadUrl } from '@/api/orders/getDownloadUrl'
+import { setRecoveryEmail } from '@/api/orders/setRecoveryEmail'
 import type {
   PlaceOrderInput,
   PlaceOrderResult,
