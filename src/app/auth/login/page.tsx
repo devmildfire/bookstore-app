@@ -20,6 +20,8 @@ export default function LoginPage() {
   const [state, serverAction, pending] = useActionState(loginAction, null)
   const searchParams = useSearchParams()
   const justRegistered = searchParams.get('registered') === 'true'
+  const returnTo = searchParams.get('returnTo')
+  const guestHref = returnTo && returnTo.startsWith('/') ? returnTo : '/books'
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -64,7 +66,7 @@ export default function LoginPage() {
         Нет аккаунта? <Link href='/auth/register'>Зарегистрироваться</Link>
       </p>
       <p className={styles.link}>
-        <Link href='/books'>Продолжить как гость</Link>
+        <Link href={guestHref}>Продолжить как гость</Link>
       </p>
     </div>
   )

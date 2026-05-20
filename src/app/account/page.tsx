@@ -14,12 +14,18 @@ type Props = {
 export default async function AccountPage({ searchParams }: Props) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const params = await searchParams
 
+  // Edge case: visitor has no Supabase session at all (anon signin hasn't
+  // completed yet, or cookies were cleared). Send them to login so they
+  // can either sign in or fall back to the guest flow — but if they
+  // arrived here straight from checkout, the redirect would lose the
+  // order context, so we just bail to /books in that case.
   if (!user) {
-    redirect('/auth/login')
+    if (params.from === 'checkout') redirect('/books')
+    redirect('/auth/login?returnTo=/account')
   }
 
-  const params = await searchParams
   const isAnon = user.is_anonymous === true
   const fromCheckout = params.from === 'checkout'
   const highlightOrderId = params.order ? Number(params.order) : undefined

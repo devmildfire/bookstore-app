@@ -4,7 +4,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 const CART_COOKIE = 'bookstore_cart_id'
 
-const PROTECTED_PREFIXES = ['/account', '/admin']
+// /account is intentionally NOT protected here — anonymous users need to
+// reach their cabinet to see orders + download links. The /account page
+// itself handles the no-user fallback.
+const PROTECTED_PREFIXES = ['/admin']
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
