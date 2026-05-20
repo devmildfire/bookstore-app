@@ -143,6 +143,12 @@ All blur scripts are idempotent — re-running on a fully-seeded DB is a no-op.
 | [docs/conventions/SEO.md](docs/conventions/SEO.md) | Metadata API, accessibility (WCAG 2.1 AA), security |
 | [docs/conventions/ERROR_HANDLING.md](docs/conventions/ERROR_HANDLING.md) | Error boundaries, Server Actions, loading/not-found patterns |
 
+Test data and fixtures live in `docs/testing/`:
+
+| Document | Covers |
+|----------|--------|
+| [docs/testing/promo-codes.md](docs/testing/promo-codes.md) | Seeded promo codes (cart + item-level, expired) for manual cart-flow testing |
+
 Key rules at a glance:
 - **No Tailwind. No styled-components.** SCSS Modules only.
 - **No class components.** Functional components with hooks only.
