@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/contexts/toast'
 import { signInWithGoogleAction } from '@/lib/profile/actions'
 import GoogleIcon from '@/assets/icons/google.svg'
+import YandexIcon from '@/assets/icons/yandex.svg'
 import VkIcon from '@/assets/icons/vk.svg'
 import TelegramIcon from '@/assets/icons/telegram.svg'
 import styles from './LoginModal.module.scss'
@@ -48,6 +49,14 @@ export default function LoginModal({ open, onOpenChange }: Props) {
               aria-label='Войти через Google'
             >
               <GoogleIcon className={styles.providerIcon} />
+            </button>
+            <button
+              type='button'
+              className={styles.providerBtn}
+              onClick={() => handleStub('Яндекс')}
+              aria-label='Войти через Яндекс (скоро)'
+            >
+              <YandexIcon className={styles.providerIcon} />
             </button>
             <button
               type='button'
