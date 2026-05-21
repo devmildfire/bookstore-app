@@ -1,35 +1,32 @@
-import { redirect } from 'next/navigation'
 import { getProfileServer } from '@/api/profile/getProfileServer'
 import { createClient } from '@/lib/supabase/server'
 import { ProfileProvider } from '@/contexts/profile'
 import ProfileSideNav from '@/components/profile/ProfileSideNav'
+import type { Profile } from '@/entities/profile/client'
 import styles from './layout.module.scss'
+
+// Fallback profile when no session/profile exists — keeps the cabinet shell
+// renderable even during the auth-in-flight window after OAuth.
+const FALLBACK_PROFILE: Profile = {
+  userId: '',
+  nickname: 'Никнейм',
+  avatarPath: null,
+  fullName: null,
+  phone: null,
+  birthday: null,
+  about: null,
+  recoveryEmail: null,
+  createdAt: new Date(0).toISOString(),
+  updatedAt: new Date(0).toISOString(),
+}
 
 export default async function ProfileLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const profile = (await getProfileServer()) ?? FALLBACK_PROFILE
 
-  console.log('[profile/layout] user', {
-    id: user?.id ?? null,
-    isAnon: user?.is_anonymous ?? null,
-    email: user?.email ?? null,
-  })
-
-  // No session at all — the layout shell needs *some* user_id to anchor
-  // RLS-scoped reads. Send to /books and let providers.tsx anon-signin
-  // catch up on the next visit.
-  if (!user) {
-    redirect('/books')
-  }
-
-  const profile = await getProfileServer()
-  console.log('[profile/layout] profile', profile === null ? 'NULL' : `loaded (nickname=${profile.nickname})`)
-  if (!profile) {
-    redirect('/books')
-  }
-
-  const isAnon = user.is_anonymous === true
-  const userEmail = user.email ?? null
+  const isAnon = user?.is_anonymous === true || !user
+  const userEmail = user?.email ?? null
 
   return (
     <ProfileProvider initialProfile={profile}>
