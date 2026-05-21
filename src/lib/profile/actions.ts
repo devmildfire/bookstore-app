@@ -1,8 +1,10 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { updateProfile, setRecoveryEmail } from '@/api/profile'
 import { getProfileServer } from '@/api/profile/getProfileServer'
 import { createClient } from '@/lib/supabase/server'
+import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
 import type { Profile } from '@/entities/profile/client'
 import type { UpdateProfileInput, SetRecoveryEmailResult } from '@/api/profile'
 
@@ -35,16 +37,24 @@ export type GoogleOAuthResult =
   | { status: 'ok'; url: string }
   | { status: 'error'; message: string }
 
-// Starts a real Google OAuth round-trip via Supabase. Returns the URL the
-// client should redirect to. Requires Google to be enabled as a Supabase
-// auth provider — see docs/plans/anonymous-first-profile.md § Setup.
+// Starts a Google OAuth round-trip via Supabase and returns the URL the
+// client should redirect to. /auth/callback runs the PKCE exchange server-
+// side so session cookies are written HTTP-only on the app origin.
 //
-// We point `redirectTo` at /auth/callback (a Route Handler) so the PKCE
-// exchange happens server-side and the resulting session cookies are
-// written HTTP-only on the app origin. Letting the browser client do it
-// races against the cart query firing on /profile mount.
+// If the current session is anonymous, we stash the anon UID in a short-
+// lived cookie before the redirect. After the OAuth round-trip /auth/callback
+// reads it and calls migrate_anonymous_user(anon, new) so the anon's cart
+// and orders end up on whatever user GoTrue resolved Google to — whether
+// that's a brand-new user (signup) or an existing one (returning user on a
+// new device). See docs/conventions/DATA.md and the migration file.
+//
+// We do NOT use linkIdentity: it can't link to a Google identity that's
+// already attached to another auth.users row, which traps the multi-device
+// returning-user case (their anon session has no password to fall back to).
 export async function signInWithGoogleAction(redirectOrigin: string): Promise<GoogleOAuthResult> {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -55,5 +65,17 @@ export async function signInWithGoogleAction(redirectOrigin: string): Promise<Go
   if (error || !data?.url) {
     return { status: 'error', message: error?.message ?? 'Google OAuth не настроен' }
   }
+
+  if (user?.is_anonymous) {
+    const cookieStore = await cookies()
+    cookieStore.set(PENDING_ANON_COOKIE, user.id, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 600, // 10 min — covers the OAuth round-trip with plenty of slack
+    })
+  }
+
   return { status: 'ok', url: data.url }
 }

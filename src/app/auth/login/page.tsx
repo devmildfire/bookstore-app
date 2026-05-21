@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [state, serverAction, pending] = useActionState(loginAction, null)
   const searchParams = useSearchParams()
   const justRegistered = searchParams.get('registered') === 'true'
+  const authError = searchParams.get('auth_error')
   const returnTo = searchParams.get('returnTo')
   const guestHref = returnTo && returnTo.startsWith('/') ? returnTo : '/books'
 
@@ -41,6 +42,8 @@ export default function LoginPage() {
       {justRegistered && (
         <p className={styles.success}>Аккаунт создан. Теперь вы можете войти.</p>
       )}
+
+      {authError && <p className={styles.error}>{authError}</p>}
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {state?.error && <p className={styles.error}>{state.error}</p>}

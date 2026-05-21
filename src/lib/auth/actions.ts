@@ -34,9 +34,9 @@ export async function loginAction(_prev: AuthError | null, formData: FormData): 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: error.message }
 
-  // Best-effort cart migration — login must not fail if this errors
+  // Best-effort — login must not fail if migration errors
   if (anonId) {
-    await migrateCartAction(anonId).catch(() => {})
+    await migrateAnonymousUserAction(anonId).catch(() => {})
   }
 
   redirect('/account')
@@ -71,14 +71,16 @@ export async function logoutAction(): Promise<void> {
   redirect('/')
 }
 
-// Moves anonymous cart items to the authenticated user's cart.
-// Calls the migrate_cart SECURITY DEFINER function (migration 20260505100000).
-export async function migrateCartAction(fromUserId: string): Promise<void> {
+// Moves an anonymous user's cart + orders onto the authenticated caller,
+// then deletes the anon row. Calls migrate_anonymous_user SECURITY DEFINER
+// (migration 20260521130000). Same RPC used by /auth/callback for the
+// Google OAuth hand-off, so email/password and Google login behave the same.
+export async function migrateAnonymousUserAction(fromUserId: string): Promise<void> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user || user.is_anonymous) return
 
-  await (supabase.rpc as unknown as RpcFn)('migrate_cart', {
+  await (supabase.rpc as unknown as RpcFn)('migrate_anonymous_user', {
     from_user_id: fromUserId,
     to_user_id: user.id,
   })

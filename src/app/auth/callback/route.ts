@@ -1,6 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { Database } from '@/types/supabase'
+import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
+
+type RpcFn = (
+  name: string,
+  params: Record<string, unknown>
+) => Promise<{ data: unknown; error: { message: string } | null }>
 
 // Server-side OAuth callback. Receives the PKCE `code` from Supabase after
 // the provider flow completes, exchanges it for a session server-side, and
@@ -21,16 +27,14 @@ export async function GET(request: NextRequest) {
 
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/profile'
 
-  // Diagnostic logging — Server Action logs show in dev. Remove once stable.
-  console.log('[/auth/callback] hit', {
-    hasCode: !!code,
-    next: safeNext,
-    error: errorParam,
-    errorDescription,
-  })
-
   if (errorParam) {
-    const errorUrl = new URL('/', request.url)
+    // GoTrue redirects here with ?error=...&error_description=... (no code)
+    // when OAuth fails before token exchange. With the anon→signInWithOAuth
+    // dispatch, the identity-collision case GoTrue used to raise here no
+    // longer happens — every error reaching this branch is something we
+    // genuinely don't expect (Google denied, network, malformed request),
+    // so pass the raw description through and let the login page render it.
+    const errorUrl = new URL('/auth/login', request.url)
     errorUrl.searchParams.set('auth_error', errorDescription ?? errorParam)
     return NextResponse.redirect(errorUrl)
   }
@@ -66,16 +70,33 @@ export async function GET(request: NextRequest) {
   )
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-  console.log('[/auth/callback] exchangeCodeForSession', {
-    error: error?.message ?? null,
-    userId: data?.user?.id ?? null,
-    isAnonymous: data?.user?.is_anonymous ?? null,
-    cookieCount: response.cookies.getAll().length,
-  })
   if (error) {
-    const errorUrl = new URL('/', request.url)
+    const errorUrl = new URL('/auth/login', request.url)
     errorUrl.searchParams.set('auth_error', error.message)
     return NextResponse.redirect(errorUrl)
+  }
+
+  // Anon → OAuth handoff: if the pre-redirect anon UID differs from the
+  // resolved user, move the anon's cart/orders onto the new UID and drop the
+  // anon row. Best-effort — a failure here logs server-side and the user
+  // still completes the sign-in (mirrors loginAction → migrateAnonymousUserAction).
+  const pendingAnonId = request.cookies.get(PENDING_ANON_COOKIE)?.value
+  const resolvedUserId = data?.user?.id
+  if (pendingAnonId && resolvedUserId && pendingAnonId !== resolvedUserId) {
+    try {
+      const { error: rpcError } = await (supabase.rpc as unknown as RpcFn)(
+        'migrate_anonymous_user',
+        { from_user_id: pendingAnonId, to_user_id: resolvedUserId }
+      )
+      if (rpcError) {
+        console.error('[/auth/callback] migrate_anonymous_user failed:', rpcError.message)
+      }
+    } catch (e) {
+      console.error('[/auth/callback] migrate_anonymous_user threw:', e)
+    }
+  }
+  if (pendingAnonId) {
+    response.cookies.set(PENDING_ANON_COOKIE, '', { path: '/', maxAge: 0 })
   }
 
   return response
