@@ -37,11 +37,15 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (request.nextUrl.pathname.startsWith('/profile') || request.nextUrl.pathname.startsWith('/auth/callback')) {
-    const authCookieNames = request.cookies.getAll().filter((c) => c.name.includes('auth-token')).map((c) => c.name)
+    const authCookies = request.cookies.getAll().filter((c) => c.name.includes('auth-token'))
     console.log('[proxy]', request.nextUrl.pathname, {
       userId: user?.id ?? null,
       isAnon: user?.is_anonymous ?? null,
-      authCookies: authCookieNames,
+      authCookies: authCookies.map((c) => ({
+        name: c.name,
+        len: c.value.length,
+        startsWith: c.value.slice(0, 20),
+      })),
     })
   }
 
