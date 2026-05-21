@@ -48,16 +48,16 @@ export default function ProfileSideNav() {
 
   return (
     <aside className={styles.sidebar} aria-label='Меню кабинета'>
-      <div className={styles.header}>
+      <Link href='/profile' className={styles.header} aria-label='К профилю'>
         <div className={styles.avatar}>
           {avatarSrc ? (
-            <Image src={avatarSrc} alt='' fill sizes='77px' className={styles.avatarImg} unoptimized />
+            <Image src={avatarSrc} alt='' fill sizes='78px' className={styles.avatarImg} unoptimized />
           ) : (
             <ProfileIcon className={styles.avatarPlaceholder} />
           )}
         </div>
         <span className={styles.nickname}>{profile.nickname}</span>
-      </div>
+      </Link>
 
       <nav className={styles.nav}>
         <ul className={styles.list}>

@@ -7,11 +7,11 @@
   display: grid;
   grid-template-columns: 450px 1fr;
   align-items: stretch;
-  padding-bottom: $space-16;
+  // No vertical padding here: the sidebar should run flush from the
+  // header to the footer with no gap above or below.
 
   @include breakpoint(tablet) {
     grid-template-columns: 300px 1fr;
-    padding-bottom: $space-10;
   }
 
   @include breakpoint(tablet-small) {

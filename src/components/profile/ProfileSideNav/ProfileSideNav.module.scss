@@ -6,26 +6,26 @@
   background: $color-sidebar;
   color: $color-text-on-dark;
   min-height: 100%;
-  padding-top: $space-10;
-  padding-bottom: $space-10;
-  // Sidebar fills its grid column and is flush against the viewport's
-  // left edge. Inner content gets a left padding equal to the page's
-  // outer gutter (--layout-px) so the avatar / nav / CTA visually start
-  // at the same X as where the rest of the site's content begins. Top
-  // and bottom padding give the header bar and CTA breathing room
-  // (matches Figma 4099:10552).
+  padding-top: $space-16;
+  padding-bottom: $space-16;
+  // Sidebar fills its grid column flush to the viewport's left edge AND
+  // top→bottom (between site header and footer). Inner content gets a
+  // left padding equal to the page's outer gutter (--layout-px) so the
+  // avatar / nav / CTA visually start at the same X as where the rest
+  // of the site's content begins. Top and bottom paddings give the
+  // header bar and CTA breathing room (Figma 4099:10552).
   --sidebar-pl: #{$layout-px};
 
   @include breakpoint(tablet) {
     --sidebar-pl: #{$layout-px-tablet};
-    padding-top: $space-8;
-    padding-bottom: $space-8;
+    padding-top: $space-12;
+    padding-bottom: $space-12;
   }
 
   @include breakpoint(tablet-small) {
     --sidebar-pl: #{$layout-px-tablet-small};
-    padding-top: $space-6;
-    padding-bottom: $space-6;
+    padding-top: $space-10;
+    padding-bottom: $space-10;
   }
 
   @include breakpoint(phone) {
@@ -41,12 +41,24 @@
   gap: $space-4;
   height: 93px;
   padding: 0 $space-5 0 var(--sidebar-pl);
+  text-decoration: none;
+  color: inherit;
   background-image: linear-gradient(
     102.69deg,
     rgba(147, 0, 0, 0.2) 1.5%,
     rgba(19, 19, 19, 0.2) 43.6%,
     rgba(0, 0, 0, 0.2) 100.9%
   );
+  transition: filter 120ms ease;
+
+  &:hover {
+    filter: brightness(1.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: -4px;
+  }
 
   @include breakpoint(tablet) {
     height: 80px;
@@ -56,7 +68,7 @@
 .avatar {
   position: relative;
   flex-shrink: 0;
-  width: 77px;
+  width: 78px;
   height: 78px;
   border-radius: 50%;
   overflow: hidden;
@@ -157,6 +169,10 @@
   }
 }
 
+// Each icon's intrinsic viewBox (29×24, 30×31, 28×33) is preserved by
+// the default `preserveAspectRatio` — the SVG centers itself inside the
+// 30×30 box without distortion. fill="currentColor" makes the icon
+// inherit the link's text color, so the active red state is automatic.
 .linkIcon {
   flex-shrink: 0;
   width: 30px;
