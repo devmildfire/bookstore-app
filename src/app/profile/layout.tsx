@@ -1,4 +1,5 @@
 import { getProfileServer } from '@/api/profile/getProfileServer'
+import { createClient } from '@/lib/supabase/server'
 import { ProfileProvider } from '@/contexts/profile'
 import ProfileSideNav from '@/components/profile/ProfileSideNav'
 import type { Profile } from '@/entities/profile/client'
@@ -21,12 +22,18 @@ const FALLBACK_PROFILE: Profile = {
 }
 
 export default async function ProfileLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   const profile = (await getProfileServer()) ?? FALLBACK_PROFILE
+  // Read isAnonymous server-side: with `encode: 'tokens-only'` the browser
+  // client can't see the HttpOnly tokens, so a client-side hook would show
+  // stale state after OAuth completes server-side.
+  const isAnon = !user || user.is_anonymous === true
 
   return (
     <ProfileProvider initialProfile={profile}>
       <div className={styles.page}>
-        <ProfileSideNav />
+        <ProfileSideNav isAnon={isAnon} />
         <div className={styles.rightColumn}>
           <header className={styles.header}>
             <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>

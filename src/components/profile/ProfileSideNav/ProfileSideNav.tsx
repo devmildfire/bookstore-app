@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import { createClient } from '@/lib/supabase/client'
 import { useProfile } from '@/contexts/profile'
-import useSupabaseUser from '@/hooks/useSupabaseUser'
 import { logoutAction } from '@/lib/auth/actions'
 import LoginModal from '@/components/profile/LoginModal'
 import BookIcon from '@/assets/icons/book.svg'
@@ -36,10 +35,17 @@ function avatarPublicUrl(path: string): string {
   return data.publicUrl
 }
 
-export default function ProfileSideNav() {
+type Props = {
+  // Server-determined: layout reads the HttpOnly auth cookies in
+  // ProfileLayout and passes the resolved state down. We can't compute
+  // this client-side because `encode: 'tokens-only'` means the user is
+  // in HttpOnly cookies the browser JS cannot read.
+  isAnon: boolean
+}
+
+export default function ProfileSideNav({ isAnon }: Props) {
   const pathname = usePathname() ?? ''
   const { profile } = useProfile()
-  const { isAnonymous } = useSupabaseUser()
   const [loginOpen, setLoginOpen] = useState(false)
 
   const avatarSrc = profile.avatarPath
@@ -80,7 +86,7 @@ export default function ProfileSideNav() {
       </nav>
 
       <div className={styles.ctaSlot}>
-        {isAnonymous ? (
+        {isAnon ? (
           <button type='button' className={styles.cta} onClick={() => setLoginOpen(true)}>
             Войти
           </button>
