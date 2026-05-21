@@ -1,0 +1,188 @@
+@use '@/styles/common' as *;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-10 $space-8 $space-12;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) {
+    padding: $space-8 $space-5 $space-10;
+  }
+}
+
+// ─── Avatar ─────────────────────────────────────────────────────────────────
+// Figma node 4099:10551 — 250×253 circle, centered.
+.avatar {
+  position: relative;
+  width: 250px;
+  height: 253px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba($color-text-on-dark, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-5;
+
+  @include breakpoint(tablet) {
+    width: 180px;
+    height: 182px;
+  }
+
+  @include breakpoint(phone) {
+    width: 140px;
+    height: 142px;
+    margin-bottom: $space-4;
+  }
+}
+
+.avatarImg {
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 96px;
+  height: 96px;
+
+  @include breakpoint(phone) {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+// ─── Nickname + city ────────────────────────────────────────────────────────
+.nickname {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 50px;
+  line-height: 1.1;
+  color: #ffffff;
+  text-align: center;
+
+  @include breakpoint(tablet) {
+    font-size: 36px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 28px;
+  }
+}
+
+.city {
+  margin: $space-2 0 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 20px;
+  line-height: 1.4;
+  color: rgba($color-text-on-dark, 0.5);
+  text-align: center;
+
+  @include breakpoint(phone) {
+    font-size: 16px;
+  }
+}
+
+// ─── Edit button (outlined) ─────────────────────────────────────────────────
+// Figma node 4099:10548 — bordered 50px tall, 4px radius, generous padding.
+.editBtn {
+  margin-top: $space-5;
+  height: 50px;
+  padding: 0 $space-12;
+  background: transparent;
+  border: 1px solid $color-text-on-dark;
+  border-radius: 4px;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: 16px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($color-text-on-dark, 0.08);
+  }
+
+  @include breakpoint(phone) {
+    padding: 0 $space-8;
+    font-size: $font-size-sm;
+  }
+}
+
+// ─── Bio rows ───────────────────────────────────────────────────────────────
+// Figma — label gray (#8e8e8e) 24px, value white 24px, divider between rows.
+.list {
+  width: 100%;
+  margin: $space-12 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: $space-6;
+  padding: $space-5 0;
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.12);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @include breakpoint(tablet) {
+    grid-template-columns: 180px 1fr;
+    gap: $space-4;
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 1fr;
+    gap: $space-1;
+    padding: $space-4 0;
+  }
+}
+
+.rowLabel {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-2xl;
+  line-height: 1.4;
+  color: #8e8e8e;
+
+  @include breakpoint(tablet) {
+    font-size: $font-size-lg;
+  }
+
+  @include breakpoint(phone) {
+    font-size: $font-size-base;
+  }
+}
+
+.rowValue,
+.rowValueMulti {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-2xl;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+  word-wrap: break-word;
+  min-width: 0;
+
+  @include breakpoint(tablet) {
+    font-size: $font-size-lg;
+  }
+
+  @include breakpoint(phone) {
+    font-size: $font-size-base;
+  }
+}
+
+.rowValueMulti {
+  white-space: pre-wrap;
+}

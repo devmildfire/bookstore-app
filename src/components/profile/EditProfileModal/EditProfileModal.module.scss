@@ -1,0 +1,51 @@
+@use '@/styles/common' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: min(640px, calc(100vw - #{$space-8}));
+  max-height: calc(100vh - #{$space-10});
+  overflow-y: auto;
+  background: $color-panel;
+  border: 1px solid rgba($color-text-on-dark, 0.1);
+  border-radius: 8px;
+  padding: $space-8;
+  color: $color-text-on-dark;
+}
+
+.title {
+  margin: 0 0 $space-5;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.close {
+  position: absolute;
+  top: $space-3;
+  right: $space-4;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: rgba($color-text-on-dark, 0.7);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    color: $color-text-on-dark;
+  }
+}

@@ -30,32 +30,32 @@
   margin: 0;
   font-family: $font-montserrat;
   font-weight: $font-weight-bold;
-  font-size: 28px;
+  font-size: 40px;
   line-height: 1.2;
-  letter-spacing: 2px;
-  color: $color-text-on-dark;
+  letter-spacing: 0;
+  color: #ffffff;
 
   @include breakpoint(tablet) {
-    font-size: 24px;
-    letter-spacing: 1.5px;
+    font-size: 28px;
   }
 
   @include breakpoint(phone) {
-    font-size: 18px;
-    letter-spacing: 1px;
+    font-size: 22px;
+    letter-spacing: 0.5px;
     text-align: center;
     width: 100%;
   }
 }
 
-// Two-column shell: nav on the left, content on the right.
+// Two-column shell: 450 px sidebar stripe + main panel.
 .body {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 450px 1fr;
   gap: $space-10;
+  align-items: stretch;
 
   @include breakpoint(tablet) {
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: $space-8;
   }
 
@@ -63,10 +63,6 @@
     grid-template-columns: 1fr;
     gap: $space-6;
   }
-}
-
-.nav {
-  min-width: 0;
 }
 
 .main {

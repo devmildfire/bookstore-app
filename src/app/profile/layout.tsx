@@ -1,5 +1,4 @@
 import { getProfileServer } from '@/api/profile/getProfileServer'
-import { createClient } from '@/lib/supabase/server'
 import { ProfileProvider } from '@/contexts/profile'
 import ProfileSideNav from '@/components/profile/ProfileSideNav'
 import type { Profile } from '@/entities/profile/client'
@@ -14,6 +13,7 @@ const FALLBACK_PROFILE: Profile = {
   fullName: null,
   phone: null,
   birthday: null,
+  city: null,
   about: null,
   recoveryEmail: null,
   createdAt: new Date(0).toISOString(),
@@ -21,12 +21,7 @@ const FALLBACK_PROFILE: Profile = {
 }
 
 export default async function ProfileLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
   const profile = (await getProfileServer()) ?? FALLBACK_PROFILE
-
-  const isAnon = !user || user.is_anonymous === true
-  const userEmail = user?.email ?? null
 
   return (
     <ProfileProvider initialProfile={profile}>
@@ -36,13 +31,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
         </header>
 
         <div className={styles.body}>
-          <aside className={styles.nav}>
-            <ProfileSideNav
-              nickname={profile.nickname}
-              isAnon={isAnon}
-              userEmail={userEmail}
-            />
-          </aside>
+          <ProfileSideNav />
           <main className={styles.main}>{children}</main>
         </div>
       </div>

@@ -1,0 +1,96 @@
+@use '@/styles/common' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: min(420px, calc(100vw - #{$space-8}));
+  background: $color-panel;
+  border: 1px solid rgba($color-text-on-dark, 0.1);
+  border-radius: 8px;
+  padding: $space-8;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  color: $color-text-on-dark;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 28px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.body {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba($color-text-on-dark, 0.85);
+}
+
+.google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4 $space-6;
+  border: none;
+  border-radius: 4px;
+  background: $color-accent-hover-on-dark;
+  color: #ffffff;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 16px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: background 120ms ease;
+
+  &:hover {
+    background: $color-accent-on-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-text-on-dark;
+    outline-offset: 2px;
+  }
+}
+
+.hint {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: 13px;
+  text-align: center;
+  color: rgba($color-text-on-dark, 0.5);
+}
+
+.close {
+  position: absolute;
+  top: $space-3;
+  right: $space-4;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: rgba($color-text-on-dark, 0.7);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    color: $color-text-on-dark;
+  }
+}

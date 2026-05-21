@@ -97,14 +97,17 @@ When an anonymous user signs in (OAuth or email/password), their Cart + Orders +
 
 The user's cabinet lives at `/profile` (the old `/account` route was deleted, no back-compat redirect — project was still in dev when renamed). Reachable in one click from the header profile icon for anon **and** real users alike; the header icon never logs anyone out.
 
-Layout is multi-route: `/profile`, `/profile/orders`, `/profile/favorites` share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope.
+Layout is multi-route: `/profile`, `/profile/orders`, `/profile/favorites` share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope. The shell is a 450 px wide `$color-sidebar` (`#1A0F0F`) stripe on the left + free-flowing main panel on the right.
 
 Key invariants:
-- `Profiles` table is FK'd to `auth.users(id) ON DELETE CASCADE` with RLS scoped to owner. One row per user; default `nickname = 'Никнейм'` (literal Cyrillic — matches Figma placeholder).
+- `Profiles` table is FK'd to `auth.users(id) ON DELETE CASCADE` with RLS scoped to owner. One row per user; default `nickname = 'Никнейм'` (literal Cyrillic — matches Figma placeholder). Fields: nickname, avatar_path, full_name, phone, birthday, **city**, about, recovery_email.
 - `Profiles.recovery_email` is **distinct from** `auth.users.email`. It's opt-in, never verified, never written to `auth.users`. Future auth flows can look it up to suggest account recovery.
 - Avatars live in the `avatars` public bucket (2 MB cap, JPEG/PNG/WEBP). Path is `avatars/{user_id}.{ext}` — `Profiles.avatar_path` stores the bare object key.
-- The "Доступ и безопасность" card shows 4 OAuth provider buttons (Google, Yandex, VK, Telegram). **Only Google is wired**; the other three show a "Скоро" toast. Anon-recovery modal (post-checkout) reuses the same controls.
-- See also: `Profiles` migration `20260521120000_profile_cabinet.sql`; `get_or_create_profile` RPC; `src/components/profile/`.
+- The sidebar header strip carries avatar (77 × 78) + nickname over a red→black gradient overlay on `$color-sidebar`. The "active" nav-item color is `$color-accent-on-dark`.
+- Sidebar nav: **Мои книги** → `/profile/orders`, **Избранное** → `/profile/favorites`, **Стать автором** → `/suggest-manuscript` (existing stub, real authors page is future work).
+- The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal` with a single "Войти через Google" button; Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
+- Profile editing happens in `EditProfileModal` triggered by the outlined "Редактировать профиль" button in the main panel. Avatar upload is inside the modal, not the read-only main panel.
+- See also: `Profiles` migrations `20260521120000_profile_cabinet.sql` and `20260521140000_profile_city.sql`; `get_or_create_profile` RPC; `src/components/profile/{ProfileSideNav,ProfileMainPanel,LoginModal,EditProfileModal,ProfileEditor,AvatarUpload}/`.
 
 ### Checkout flow (`/checkout`)
 

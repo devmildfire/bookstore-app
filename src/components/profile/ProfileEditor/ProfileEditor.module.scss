@@ -1,142 +1,17 @@
 @use '@/styles/common' as *;
 
+// Form-only component used inside EditProfileModal. Display rows + edit
+// button now live in ProfileMainPanel.
 .editor {
   display: flex;
   flex-direction: column;
-  gap: $space-8;
-  padding: $space-8;
-  background: rgba($color-text-on-dark, 0.04);
-  border: 1px solid rgba($color-text-on-dark, 0.1);
-  border-radius: $radius-md;
-
-  @include breakpoint(phone) {
-    padding: $space-5;
-    gap: $space-6;
-  }
+  gap: $space-6;
 }
 
-// ─── Header row ─────────────────────────────────────────────────────────────
-
-.headRow {
+.avatarRow {
   display: flex;
-  align-items: center;
-  gap: $space-8;
-
-  @include breakpoint(phone) {
-    flex-direction: column;
-    align-items: center;
-    gap: $space-4;
-    text-align: center;
-  }
+  justify-content: center;
 }
-
-.headText {
-  display: flex;
-  flex-direction: column;
-  gap: $space-2;
-  min-width: 0;
-}
-
-.nickname {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-weight: $font-weight-bold;
-  font-size: 28px;
-  line-height: 1.2;
-  letter-spacing: 0.5px;
-  color: $color-text-on-dark;
-
-  @include breakpoint(phone) {
-    font-size: 22px;
-  }
-}
-
-.subtitle {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: rgba($color-text-on-dark, 0.6);
-}
-
-.editBtn {
-  align-self: flex-start;
-  margin-top: $space-2;
-  height: 40px;
-  padding: 0 $space-5;
-  background: transparent;
-  border: 1px solid rgba($color-text-on-dark, 0.4);
-  border-radius: $radius-sm;
-  color: $color-text-on-dark;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  &:hover,
-  &:focus-visible {
-    background: rgba($color-text-on-dark, 0.08);
-  }
-
-  @include breakpoint(phone) {
-    align-self: stretch;
-  }
-}
-
-// ─── Read-only list ─────────────────────────────────────────────────────────
-
-.list {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: $space-4;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: $space-4;
-  padding: $space-3 0;
-  border-top: 1px solid rgba($color-text-on-dark, 0.08);
-
-  &:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-
-  @include breakpoint(phone) {
-    grid-template-columns: 1fr;
-    gap: $space-1;
-  }
-}
-
-.rowLabel {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: rgba($color-text-on-dark, 0.6);
-
-  @include breakpoint(phone) {
-    font-size: $font-size-sm;
-  }
-}
-
-.rowValue,
-.rowValueMulti {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: $color-text-on-dark;
-  word-wrap: break-word;
-  min-width: 0;
-}
-
-.rowValueMulti {
-  white-space: pre-wrap;
-  line-height: 1.5;
-}
-
-// ─── Edit form ──────────────────────────────────────────────────────────────
 
 .form {
   display: flex;
@@ -198,6 +73,7 @@
 .actions {
   display: flex;
   gap: $space-3;
+  margin-top: $space-2;
 
   @include breakpoint(phone) {
     flex-direction: column;
