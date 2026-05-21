@@ -1,0 +1,76 @@
+@use '@/styles/common' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+}
+
+.avatar {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: $radius-full;
+  overflow: hidden;
+  background: rgba($color-text-on-dark, 0.08);
+  border: 1px solid rgba($color-text-on-dark, 0.15);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba($color-text-on-dark, 0.5);
+  transition: filter 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  @include breakpoint(phone) {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+.image {
+  object-fit: cover;
+}
+
+.placeholder {
+  color: rgba($color-text-on-dark, 0.4);
+}
+
+.overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: $space-2 0;
+  background: rgba(0, 0, 0, 0.6);
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  letter-spacing: 0.5px;
+  color: $color-text-on-dark;
+  text-align: center;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.error {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+  text-align: center;
+}

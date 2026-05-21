@@ -5,12 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { shippingSchema, type ShippingFormValues } from '@/entities/order/validation'
 import styles from './DeliveryForm.module.scss'
 
+type Defaults = {
+  name?: string | null
+  phone?: string | null
+  email?: string | null
+}
+
 type Props = {
   onSubmit: (values: ShippingFormValues) => void
   isPending: boolean
+  defaults?: Defaults
 }
 
-export default function DeliveryForm({ onSubmit, isPending }: Props) {
+export default function DeliveryForm({ onSubmit, isPending, defaults }: Props) {
   const {
     register,
     handleSubmit,
@@ -18,9 +25,9 @@ export default function DeliveryForm({ onSubmit, isPending }: Props) {
   } = useForm<ShippingFormValues>({
     resolver: zodResolver(shippingSchema),
     defaultValues: {
-      name: '',
-      phone: '',
-      email: '',
+      name: defaults?.name ?? '',
+      phone: defaults?.phone ?? '',
+      email: defaults?.email ?? '',
       city: '',
       street: '',
       building: '',

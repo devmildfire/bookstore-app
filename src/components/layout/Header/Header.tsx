@@ -5,8 +5,6 @@ import cn from 'classnames'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useCart } from '@/contexts/cart'
-import useSupabaseUser from '@/hooks/useSupabaseUser'
-import { logoutAction } from '@/lib/auth/actions'
 import { useState, useCallback } from 'react'
 import menu, { type SubmenuItem } from '@/consts/menuItems'
 import HeaderSearchBar from '@/components/layout/HeaderSearchBar'
@@ -20,7 +18,6 @@ import SearchIcon from '@/assets/icons/search.svg'
 
 export default function Header() {
   const { itemCount } = useCart()
-  const { isAnonymous, isLoading } = useSupabaseUser()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchExpanded, setSearchExpanded] = useState(false)
 
@@ -67,19 +64,9 @@ export default function Header() {
             )}
           </Link>
 
-          {!isLoading && (
-            isAnonymous ? (
-              <Link href='/auth/login' className={styles.iconBtn} aria-label='Войти'>
-                <Profile className={styles.profile} />
-              </Link>
-            ) : (
-              <form action={logoutAction}>
-                <button type='submit' className={styles.iconBtn} aria-label='Выйти'>
-                  <Profile className={styles.profile} />
-                </button>
-              </form>
-            )
-          )}
+          <Link href='/profile' className={styles.iconBtn} aria-label='Личный кабинет'>
+            <Profile className={styles.profile} />
+          </Link>
 
           <Dialog.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <Dialog.Trigger asChild>

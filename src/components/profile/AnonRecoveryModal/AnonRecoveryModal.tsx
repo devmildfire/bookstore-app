@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { setRecoveryEmailAction } from '@/lib/orders/actions'
+import { useToast } from '@/contexts/toast'
+import {
+  setRecoveryEmailAction,
+  signInWithGoogleAction,
+} from '@/lib/profile/actions'
 import styles from './AnonRecoveryModal.module.scss'
 
 type Props = {
@@ -17,6 +21,7 @@ type SaveState =
   | { kind: 'saved' }
 
 export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
+  const { toast, error: toastError } = useToast()
   const [showInput, setShowInput] = useState(false)
   const [email, setEmail] = useState('')
   const [state, setState] = useState<SaveState>({ kind: 'idle' })
@@ -37,6 +42,19 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
       return
     }
     setState({ kind: 'error', message: result.message })
+  }
+
+  async function handleGoogle() {
+    const result = await signInWithGoogleAction(window.location.origin)
+    if (result.status === 'ok') {
+      window.location.href = result.url
+    } else {
+      toastError('Google OAuth недоступен', result.message)
+    }
+  }
+
+  function handleStub(name: string) {
+    toast({ title: `${name}: скоро`, description: 'Этот способ входа появится позже.' })
   }
 
   return (
@@ -62,8 +80,9 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
               всё работает.
             </p>
             <p>
-              Если хочется иметь возможность вернуться когда-нибудь — оставьте email.
-              Это бесплатно, ни к чему не обязывает, и обещаем не спамить.
+              Если хочется иметь возможность вернуться когда-нибудь — оставьте email
+              или войдите через сервис. Это бесплатно, ни к чему не обязывает, и
+              обещаем не спамить.
             </p>
           </div>
 
@@ -107,6 +126,16 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
               </button>
             </div>
           )}
+
+          <div className={styles.oauthBlock}>
+            <span className={styles.oauthLabel}>Или войдите через сервис</span>
+            <div className={styles.oauthGrid}>
+              <button type='button' className={styles.oauthBtn} onClick={handleGoogle}>Google</button>
+              <button type='button' className={styles.oauthBtn} onClick={() => handleStub('Yandex')}>Yandex</button>
+              <button type='button' className={styles.oauthBtn} onClick={() => handleStub('VK')}>VK</button>
+              <button type='button' className={styles.oauthBtn} onClick={() => handleStub('Telegram')}>Telegram</button>
+            </div>
+          </div>
 
           {state.kind === 'error' && (
             <p className={styles.error}>{state.message}</p>

@@ -8,16 +8,17 @@ import styles from './EmailOnlyForm.module.scss'
 type Props = {
   onSubmit: (values: EmailOnlyFormValues) => void
   isPending: boolean
+  defaultEmail?: string | null
 }
 
-export default function EmailOnlyForm({ onSubmit, isPending }: Props) {
+export default function EmailOnlyForm({ onSubmit, isPending, defaultEmail }: Props) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<EmailOnlyFormValues>({
     resolver: zodResolver(emailOnlySchema),
-    defaultValues: { email: '' },
+    defaultValues: { email: defaultEmail ?? '' },
   })
 
   return (

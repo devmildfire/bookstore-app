@@ -144,6 +144,50 @@
   }
 }
 
+.oauthBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-top: $space-4;
+  border-top: 1px solid rgba($color-text-on-dark, 0.08);
+}
+
+.oauthLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.oauthGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-2;
+
+  @include breakpoint(phone) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.oauthBtn {
+  height: 40px;
+  padding: 0 $space-3;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.3);
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba($color-text-on-dark, 0.08);
+    border-color: rgba($color-text-on-dark, 0.5);
+  }
+}
+
 .error {
   margin: 0;
   font-family: $font-montserrat;

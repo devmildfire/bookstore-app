@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 import { useCart } from '@/contexts/cart'
+import { getProfile, profileQueryKey } from '@/api/profile'
 import DeliveryForm from '@/components/checkout/DeliveryForm'
 import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
 import PaymentConfirmModal, {
@@ -24,6 +26,7 @@ type PendingOrder = {
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, finalTotal, appliedPromo, hasPhysicalItems } = useCart()
+  const { data: profile } = useQuery({ queryKey: profileQueryKey, queryFn: getProfile })
   const [pending, setPending] = useState<PendingOrder | null>(null)
   const [modalState, setModalState] = useState<PaymentModalState>({ kind: 'idle' })
 
@@ -84,7 +87,7 @@ export default function CheckoutPage() {
     ])
 
     if (result.status === 'ok') {
-      router.push(`/account?from=checkout&order=${result.orderId}`)
+      router.push(`/profile?from=checkout&order=${result.orderId}`)
       return
     }
 
@@ -111,9 +114,21 @@ export default function CheckoutPage() {
       <h1 className={styles.title}>{hasPhysicalItems ? 'Доставка' : 'Оформление'}</h1>
 
       {hasPhysicalItems ? (
-        <DeliveryForm onSubmit={handleDeliverySubmit} isPending={isPending} />
+        <DeliveryForm
+          onSubmit={handleDeliverySubmit}
+          isPending={isPending}
+          defaults={{
+            name: profile?.fullName,
+            phone: profile?.phone,
+            email: profile?.recoveryEmail,
+          }}
+        />
       ) : (
-        <EmailOnlyForm onSubmit={handleEmailSubmit} isPending={isPending} />
+        <EmailOnlyForm
+          onSubmit={handleEmailSubmit}
+          isPending={isPending}
+          defaultEmail={profile?.recoveryEmail}
+        />
       )}
 
       <PaymentConfirmModal

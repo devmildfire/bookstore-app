@@ -1,0 +1,80 @@
+@use '@/styles/common' as *;
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-4 $space-3;
+  background: rgba($color-text-on-dark, 0.04);
+  border: 1px solid rgba($color-text-on-dark, 0.1);
+  border-radius: $radius-md;
+
+  @include breakpoint(tablet-small) {
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+  }
+}
+
+.userLine {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0 $space-3;
+
+  @include breakpoint(tablet-small) {
+    display: none;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoint(tablet-small) {
+    flex-direction: row;
+    gap: $space-2;
+  }
+}
+
+.link {
+  display: block;
+  padding: $space-3;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.7);
+  text-decoration: none;
+  border-radius: $radius-sm;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($color-text-on-dark, 0.06);
+    color: $color-text-on-dark;
+  }
+
+  @include breakpoint(phone) {
+    font-size: $font-size-sm;
+    padding: $space-2 $space-3;
+    white-space: nowrap;
+  }
+}
+
+.linkActive {
+  background: rgba($color-text-on-dark, 0.1);
+  color: $color-text-on-dark;
+  font-weight: $font-weight-bold;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($color-text-on-dark, 0.12);
+  }
+}

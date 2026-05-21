@@ -1,0 +1,11 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+
+  @include breakpoint(phone) {
+    gap: $space-6;
+  }
+}

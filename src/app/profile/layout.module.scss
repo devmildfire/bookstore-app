@@ -1,0 +1,74 @@
+@use '@/styles/common' as *;
+
+.page {
+  @include page-container;
+
+  display: flex;
+  flex-direction: column;
+  padding-top: $space-10;
+  padding-bottom: $space-16;
+  gap: $space-10;
+
+  @include breakpoint(tablet) {
+    gap: $space-8;
+  }
+
+  @include breakpoint(phone) {
+    padding-top: $space-6;
+    padding-bottom: $space-10;
+    gap: $space-6;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    font-size: 24px;
+    letter-spacing: 1.5px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+// Two-column shell: nav on the left, content on the right.
+.body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: $space-10;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: 180px 1fr;
+    gap: $space-8;
+  }
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr;
+    gap: $space-6;
+  }
+}
+
+.nav {
+  min-width: 0;
+}
+
+.main {
+  min-width: 0;
+}

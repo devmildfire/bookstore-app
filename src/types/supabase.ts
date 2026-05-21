@@ -837,6 +837,45 @@ export type Database = {
           },
         ]
       }
+      Profiles: {
+        Row: {
+          about: string | null
+          avatar_path: string | null
+          birthday: string | null
+          created_at: string
+          full_name: string | null
+          nickname: string
+          phone: string | null
+          recovery_email: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          about?: string | null
+          avatar_path?: string | null
+          birthday?: string | null
+          created_at?: string
+          full_name?: string | null
+          nickname?: string
+          phone?: string | null
+          recovery_email?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          about?: string | null
+          avatar_path?: string | null
+          birthday?: string | null
+          created_at?: string
+          full_name?: string | null
+          nickname?: string
+          phone?: string | null
+          recovery_email?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       PromoCodes: {
         Row: {
           code: string
@@ -1192,6 +1231,27 @@ export type Database = {
           title_thesis: string
           total_count: number
         }[]
+      }
+      get_or_create_profile: {
+        Args: never
+        Returns: {
+          about: string | null
+          avatar_path: string | null
+          birthday: string | null
+          created_at: string
+          full_name: string | null
+          nickname: string
+          phone: string | null
+          recovery_email: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "Profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       get_similar_books: {
         Args: { p_title_id: number }
