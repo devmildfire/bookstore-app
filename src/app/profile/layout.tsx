@@ -26,12 +26,11 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   return (
     <ProfileProvider initialProfile={profile}>
       <div className={styles.page}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>
-        </header>
-
-        <div className={styles.body}>
-          <ProfileSideNav />
+        <ProfileSideNav />
+        <div className={styles.rightColumn}>
+          <header className={styles.header}>
+            <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>
+          </header>
           <main className={styles.main}>{children}</main>
         </div>
       </div>

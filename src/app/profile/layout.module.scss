@@ -1,22 +1,45 @@
 @use '@/styles/common' as *;
 
+// Full-bleed layout: sidebar flush against the viewport's left edge.
+// Internal sidebar padding mirrors the page's outer gutter so its content
+// aligns with where a page-container would put its first column.
 .page {
-  @include page-container;
+  display: grid;
+  grid-template-columns: 450px 1fr;
+  align-items: stretch;
+  padding-bottom: $space-16;
 
+  @include breakpoint(tablet) {
+    grid-template-columns: 300px 1fr;
+    padding-bottom: $space-10;
+  }
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr;
+    gap: $space-6;
+    padding-bottom: $space-10;
+  }
+}
+
+.rightColumn {
   display: flex;
   flex-direction: column;
-  padding-top: $space-10;
-  padding-bottom: $space-16;
   gap: $space-10;
+  padding: $space-10 $layout-px $space-10 $space-10;
+  min-width: 0;
 
   @include breakpoint(tablet) {
     gap: $space-8;
+    padding: $space-8 $layout-px-tablet $space-8 $space-8;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: $space-6 $layout-px-tablet-small;
+    gap: $space-6;
   }
 
   @include breakpoint(phone) {
-    padding-top: $space-6;
-    padding-bottom: $space-10;
-    gap: $space-6;
+    padding: $space-4 $layout-px-phone;
   }
 }
 
@@ -42,26 +65,6 @@
   @include breakpoint(phone) {
     font-size: 22px;
     letter-spacing: 0.5px;
-    text-align: center;
-    width: 100%;
-  }
-}
-
-// Two-column shell: 450 px sidebar stripe + main panel.
-.body {
-  display: grid;
-  grid-template-columns: 450px 1fr;
-  gap: $space-10;
-  align-items: stretch;
-
-  @include breakpoint(tablet) {
-    grid-template-columns: 300px 1fr;
-    gap: $space-8;
-  }
-
-  @include breakpoint(tablet-small) {
-    grid-template-columns: 1fr;
-    gap: $space-6;
   }
 }
 

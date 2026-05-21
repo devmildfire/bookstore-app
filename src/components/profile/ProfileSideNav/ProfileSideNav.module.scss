@@ -6,7 +6,23 @@
   background: $color-sidebar;
   color: $color-text-on-dark;
   min-height: 100%;
-  // Fills the full sidebar grid column; layout controls column width.
+  // Sidebar fills its grid column and is flush against the viewport's
+  // left edge. Inner content gets a left padding equal to the page's
+  // outer gutter (--layout-px) so the avatar / nav / CTA visually start
+  // at the same X as where the rest of the site's content begins.
+  --sidebar-pl: #{$layout-px};
+
+  @include breakpoint(tablet) {
+    --sidebar-pl: #{$layout-px-tablet};
+  }
+
+  @include breakpoint(tablet-small) {
+    --sidebar-pl: #{$layout-px-tablet-small};
+  }
+
+  @include breakpoint(phone) {
+    --sidebar-pl: #{$layout-px-phone};
+  }
 }
 
 // ─── Header strip: avatar + nickname ─────────────────────────────────────────
@@ -16,7 +32,7 @@
   align-items: center;
   gap: $space-4;
   height: 93px;
-  padding: 0 $space-5;
+  padding: 0 $space-5 0 var(--sidebar-pl);
   background-image: linear-gradient(
     102.69deg,
     rgba(147, 0, 0, 0.2) 1.5%,
@@ -26,7 +42,6 @@
 
   @include breakpoint(tablet) {
     height: 80px;
-    padding: 0 $space-4;
   }
 }
 
@@ -77,10 +92,10 @@
 // ─── Nav list ────────────────────────────────────────────────────────────────
 .nav {
   flex-grow: 1;
-  padding: $space-10 $space-5 $space-8;
+  padding: $space-10 $space-5 $space-8 var(--sidebar-pl);
 
   @include breakpoint(tablet) {
-    padding: $space-6 $space-4 $space-6;
+    padding: $space-6 $space-4 $space-6 var(--sidebar-pl);
   }
 }
 
