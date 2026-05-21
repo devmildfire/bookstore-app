@@ -45,19 +45,22 @@ export async function proxy(request: NextRequest) {
   )
 
   // Refresh Supabase session — must run before any route checks
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const userResult = await supabase.auth.getUser()
+  const user = userResult.data.user
 
   if (request.nextUrl.pathname.startsWith('/profile') || request.nextUrl.pathname.startsWith('/auth/callback')) {
     const authCookies = request.cookies.getAll().filter((c) => c.name.includes('auth-token'))
     console.log('[proxy]', request.nextUrl.pathname, {
       userId: user?.id ?? null,
       isAnon: user?.is_anonymous ?? null,
+      errorMsg: userResult.error?.message ?? null,
+      errorName: userResult.error?.name ?? null,
+      errorStatus: (userResult.error as { status?: number } | null)?.status ?? null,
       authCookies: authCookies.map((c) => ({
         name: c.name,
         len: c.value.length,
-        startsWith: c.value.slice(0, 20),
+        startsWith: c.value.slice(0, 30),
+        endsWith: c.value.slice(-20),
       })),
     })
   }
