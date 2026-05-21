@@ -3,6 +3,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/contexts/toast'
 import { signInWithGoogleAction } from '@/lib/profile/actions'
+import GoogleIcon from '@/assets/icons/google.svg'
+import VkIcon from '@/assets/icons/vk.svg'
+import TelegramIcon from '@/assets/icons/telegram.svg'
 import styles from './LoginModal.module.scss'
 
 type Props = {
@@ -11,7 +14,7 @@ type Props = {
 }
 
 export default function LoginModal({ open, onOpenChange }: Props) {
-  const { error: toastError } = useToast()
+  const { toast, error: toastError } = useToast()
 
   async function handleGoogle() {
     const result = await signInWithGoogleAction(window.location.origin)
@@ -20,6 +23,10 @@ export default function LoginModal({ open, onOpenChange }: Props) {
       return
     }
     toastError('Google OAuth недоступен', result.message)
+  }
+
+  function handleStub(name: string) {
+    toast({ title: `${name}: скоро`, description: 'Этот способ входа появится позже.' })
   }
 
   return (
@@ -33,11 +40,32 @@ export default function LoginModal({ open, onOpenChange }: Props) {
             Войдите, чтобы привязать покупки к вашему аккаунту.
           </p>
 
-          <button type='button' className={styles.google} onClick={handleGoogle}>
-            Войти через Google
-          </button>
-
-          <p className={styles.hint}>Скоро: Яндекс, VK, Telegram</p>
+          <div className={styles.providers}>
+            <button
+              type='button'
+              className={styles.providerBtn}
+              onClick={handleGoogle}
+              aria-label='Войти через Google'
+            >
+              <GoogleIcon className={styles.providerIcon} />
+            </button>
+            <button
+              type='button'
+              className={styles.providerBtn}
+              onClick={() => handleStub('VK')}
+              aria-label='Войти через VK (скоро)'
+            >
+              <VkIcon className={styles.providerIcon} />
+            </button>
+            <button
+              type='button'
+              className={styles.providerBtn}
+              onClick={() => handleStub('Telegram')}
+              aria-label='Войти через Telegram (скоро)'
+            >
+              <TelegramIcon className={styles.providerIcon} />
+            </button>
+          </div>
 
           <Dialog.Close className={styles.close} aria-label='Закрыть'>×</Dialog.Close>
         </Dialog.Content>
