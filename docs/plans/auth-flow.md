@@ -240,6 +240,42 @@ radius: hostile callers cannot use this RPC to delete real users.
 | Set when | User is anonymous **and** OAuth URL successfully returned | If user is already authed, no anon row to migrate, so we skip |
 | Cleared when | Callback finishes (success, error, or skip) | Empty value + `Max-Age=0` |
 
+### Session cookie encoding — `tokens-only`
+
+All three supabase clients (`src/lib/supabase/server.ts`, `src/proxy.ts`,
+`src/app/auth/callback/route.ts`, `src/lib/supabase/client.ts`) are
+configured with `encode: 'tokens-only'`. This was introduced to fix a
+chunked-cookie reassembly bug in webpack dev mode when Google OAuth
+sessions ballooned past the per-cookie size limit (see commit `bccb498`).
+
+**What it does**: the `sb-{ref}-auth-token` cookie holds *only* the access
+token + refresh token (small, under the limit). The full Supabase `User`
+object goes into a separate storage:
+- **Server-side** (`createServerClient`): nowhere; the SDK re-fetches the
+  user from `/auth/v1/user` on every `getUser()` call using the token in
+  the cookie.
+- **Browser-side** (`createBrowserClient`): `localStorage` under the key
+  `sb-{ref}-auth-token-user`.
+
+**The pitfall this caused** (regression seen during the Figma profile
+redesign): the auth token cookie is `HttpOnly` — browser JS cannot read
+it. Right after `/auth/callback`'s `exchangeCodeForSession` writes new
+mildfire tokens, the **browser's `localStorage` still holds the stale
+anon `User` object** because nothing on the client ran a sign-in. A
+client-side hook like `useSupabaseUser()` reads `localStorage` first and
+returns the stale anon user, even though the cookie is correct.
+
+**Rule of thumb**: any UI state that depends on "are we signed in" must
+be resolved **server-side** in the nearest server component (typically a
+`layout.tsx`) and passed down as a prop to client components.
+`useSupabaseUser()` is fine for situations where stale-then-eventually-
+consistent is acceptable, but **not** for sign-in/out CTAs or
+auth-gated rendering immediately after an OAuth round-trip.
+
+Concretely, `src/app/profile/layout.tsx` reads `user.is_anonymous` from
+`createClient()` (server) and passes `isAnon` down to `ProfileSideNav`,
+which uses it directly to pick between **Войти** and **Выйти**.
+
 ---
 
 ## Local dev setup
