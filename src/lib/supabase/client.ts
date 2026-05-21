@@ -12,7 +12,15 @@ export function createClient() {
   if (!globalThis.__supabaseBrowserClient) {
     globalThis.__supabaseBrowserClient = createBrowserClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          // Match the server. With tokens-only, the user object lives in
+          // memory (userStorage default), and the cookies hold just access
+          // and refresh tokens — small enough to avoid chunking.
+          encode: 'tokens-only',
+        },
+      }
     )
   }
 

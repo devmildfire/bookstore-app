@@ -17,15 +17,28 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
+        // `tokens-only` keeps only the access/refresh tokens in cookies and
+        // pulls the user object via getUser() from the auth server. Keeps
+        // cookies under the per-cookie size limit (Google OAuth sessions are
+        // huge), avoiding the chunked-cookie reassembly path that's flaky
+        // under Next.js webpack dev mode.
+        // Must match the encode option used elsewhere (see lib/supabase/server.ts).
+        encode: 'tokens-only',
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+        setAll(
+          cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>,
+          headers: Record<string, string> = {}
+        ) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
+          // 0.10.3+ asks us to apply caching headers when auth cookies change
+          // so CDNs/proxies don't cache responses with auth tokens.
+          Object.entries(headers).forEach(([k, v]) => response.headers.set(k, v))
         },
       },
     }

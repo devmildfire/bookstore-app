@@ -46,17 +46,20 @@ export async function GET(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
+        // See proxy.ts for the why — keeps cookies small to avoid chunking.
+        encode: 'tokens-only',
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+        setAll(
+          cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>,
+          headers: Record<string, string> = {}
+        ) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            // Update both request and response cookies. Updating request.cookies
-            // means subsequent getAll() calls in the same request see the new
-            // state; response.cookies is what the browser actually receives.
             request.cookies.set(name, value)
             response.cookies.set(name, value, options)
           })
+          Object.entries(headers).forEach(([k, v]) => response.headers.set(k, v))
         },
       },
     }

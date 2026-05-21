@@ -12,6 +12,10 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
+        // Must match proxy.ts + /auth/callback so cookies are written and
+        // read with the same encoding (tokens-only, no user-in-cookie).
+        // See proxy.ts for the rationale.
+        encode: 'tokens-only',
         getAll() {
           try {
             return cookieStore.getAll()
@@ -19,11 +23,18 @@ export async function createClient() {
             return []
           }
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+        setAll(
+          cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>,
+          headers: Record<string, string> = {}
+        ) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
+            // No response object reachable from Server Components — these
+            // headers are informational here; the middleware applies them
+            // on its own pass.
+            void headers
           } catch {
             // Server Components cannot write cookies — the middleware handles session refresh
           }
