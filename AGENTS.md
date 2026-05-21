@@ -89,7 +89,9 @@ Layouts use the App Router convention: each route segment can have a `layout.tsx
 
 ### Auth flow
 
-On app load, `src/app/providers.tsx` checks for an existing Supabase session client-side. If none exists it calls `supabase.auth.signInAnonymously()`. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`.
+On app load, `src/app/providers.tsx` checks for an existing Supabase session client-side. If none exists it calls `supabase.auth.signInAnonymously()`. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`; Google OAuth via `signInWithGoogleAction` (`src/lib/profile/actions.ts`).
+
+When an anonymous user signs in (OAuth or email/password), their Cart + Orders + Profile are migrated onto the resolved authenticated user and the anon row is deleted, in a single atomic SQL transaction (`migrate_anonymous_user` RPC). We deliberately do **not** use `linkIdentity` — see [docs/plans/auth-flow.md](docs/plans/auth-flow.md) for the design, the multi-device case it handles, and the production deployment checklist.
 
 ## Storage & Images
 

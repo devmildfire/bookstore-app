@@ -99,11 +99,11 @@ Migration adds:
 - `user_id uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE` to `Cart`
 - Composite primary key `(user_id, id)` — multiple users can each hold the same product
 - Four explicit RLS policies (SELECT / INSERT / UPDATE / DELETE) all keyed to `user_id = auth.uid()`
-- `migrate_cart(from_user_id, to_user_id)` SECURITY DEFINER function: merges anonymous cart items into the authenticated user's cart on login, with per-call auth check (`to_user_id = auth.uid()`)
+- `migrate_cart(from_user_id, to_user_id)` SECURITY DEFINER function (cart-only). **Superseded** by `migrate_anonymous_user` — see migration `20260521130000_migrate_anonymous_user.sql` and [docs/plans/auth-flow.md](./plans/auth-flow.md). The cart-only RPC is kept in the DB for now but is no longer called from app code.
 
-`loginAction` now captures the anonymous user's ID before `signInWithPassword`, then calls `migrateCartAction` best-effort after sign-in. `registerAction` now calls `supabase.auth.updateUser({ email, password })` for anonymous sessions — upgrades in-place, keeping the same UID so the cart survives without any migration.
+`loginAction` captures the anonymous user's ID before `signInWithPassword`, then calls `migrateAnonymousUserAction` best-effort after sign-in (moves Cart + Orders + Profile + CartPromo, deletes the anon row). `registerAction` calls `supabase.auth.updateUser({ email, password })` for anonymous sessions — upgrades in-place, keeping the same UID so the cart survives without any migration.
 
-**Note:** Supabase types must be regenerated after this migration is applied to pick up the new `user_id` column and `migrate_cart` RPC in TypeScript.
+**Note:** Supabase types must be regenerated after each migration is applied to pick up the new `user_id` column and RPCs in TypeScript.
 
 ---
 
@@ -161,11 +161,11 @@ Both error boundaries now accept `error: Error & { digest?: string }` alongside 
 
 ### ~~A6~~ ✅ FIXED — Cart migration on login is a stub
 
-**Fixed in:** `src/lib/auth/actions.ts`, `supabase/migrations/20260505100000_cart_user_isolation.sql` (C6 fix)
+**Fixed in:** `src/lib/auth/actions.ts`, `supabase/migrations/20260505100000_cart_user_isolation.sql` (C6 fix), `supabase/migrations/20260521130000_migrate_anonymous_user.sql` (broadened scope)
 
-`migrateCartAction(fromUserId)` is now implemented: calls the `migrate_cart` SECURITY DEFINER RPC which merges cart items from the anonymous user into the authenticated user, merging quantities on conflict.
+Initial fix introduced `migrate_cart(from, to)` (cart-only) called via `migrateCartAction`. **Superseded** by `migrate_anonymous_user(from, to)` which also moves Orders, CartPromo, Profiles, and deletes the anon `auth.users` row — used by both email login *and* Google OAuth. See [docs/plans/auth-flow.md](./plans/auth-flow.md) for the full design.
 
-`loginAction` captures the anonymous UID before `signInWithPassword` and calls `migrateCartAction` best-effort after sign-in. `registerAction` uses `supabase.auth.updateUser()` for anonymous sessions (in-place upgrade, same UID, no migration needed) and falls back to `signUp()` for non-anonymous sessions.
+`loginAction` captures the anonymous UID before `signInWithPassword` and calls `migrateAnonymousUserAction` best-effort after sign-in. `registerAction` uses `supabase.auth.updateUser()` for anonymous sessions (in-place upgrade, same UID, no migration needed) and falls back to `signUp()` for non-anonymous sessions. `signInWithGoogleAction` stashes the anon UID in a short-lived cookie before redirect; `/auth/callback` runs `migrate_anonymous_user` after `exchangeCodeForSession`.
 
 ---
 
