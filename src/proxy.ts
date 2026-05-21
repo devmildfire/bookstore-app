@@ -45,37 +45,7 @@ export async function proxy(request: NextRequest) {
   )
 
   // Refresh Supabase session — must run before any route checks
-  const userResult = await supabase.auth.getUser()
-  const user = userResult.data.user
-
-  if (request.nextUrl.pathname.startsWith('/profile') || request.nextUrl.pathname.startsWith('/auth/callback')) {
-    const authCookies = request.cookies.getAll().filter((c) => c.name.includes('auth-token'))
-    let jwtClaims: unknown = null
-    try {
-      const tokenCookie = authCookies.find((c) => c.name === 'sb-localhost-auth-token')
-      if (tokenCookie) {
-        const stripped = tokenCookie.value.startsWith('base64-')
-          ? tokenCookie.value.slice(7)
-          : tokenCookie.value
-        const json = JSON.parse(Buffer.from(stripped, 'base64').toString('utf-8'))
-        const access = json.access_token as string | undefined
-        if (access) {
-          const payload = access.split('.')[1]
-          jwtClaims = JSON.parse(Buffer.from(payload, 'base64').toString('utf-8'))
-        }
-      }
-    } catch (e) {
-      jwtClaims = { decodeError: String(e) }
-    }
-    console.log('[proxy]', request.nextUrl.pathname, {
-      userId: user?.id ?? null,
-      isAnon: user?.is_anonymous ?? null,
-      errorMsg: userResult.error?.message ?? null,
-      errorStatus: (userResult.error as { status?: number } | null)?.status ?? null,
-      authCookies: authCookies.map((c) => ({ name: c.name, len: c.value.length })),
-      jwtClaims,
-    })
-  }
+  const { data: { user } } = await supabase.auth.getUser()
 
   // Set cart cookie on first visit (persists for 1 year)
   if (!request.cookies.has(CART_COOKIE)) {
