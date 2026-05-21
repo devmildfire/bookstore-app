@@ -13,7 +13,10 @@ export default async function ProfilePage({ searchParams }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   const params = await searchParams
 
-  const isAnon = user?.is_anonymous === true
+  // Treat null user (no session yet, e.g. mid-OAuth, just-cleared cookies) as
+  // anonymous so the cabinet shows the security-card prompts instead of the
+  // "your account is protected" real-user view.
+  const isAnon = !user || user.is_anonymous === true
   const userEmail = user?.email ?? null
   const oauthProvider = (user?.app_metadata?.provider as string | undefined) ?? null
   const showRecoveryModal = isAnon && params.from === 'checkout'

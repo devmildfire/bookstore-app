@@ -25,7 +25,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   const { data: { user } } = await supabase.auth.getUser()
   const profile = (await getProfileServer()) ?? FALLBACK_PROFILE
 
-  const isAnon = user?.is_anonymous === true || !user
+  const isAnon = !user || user.is_anonymous === true
   const userEmail = user?.email ?? null
 
   return (
