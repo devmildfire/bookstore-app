@@ -38,11 +38,19 @@ export type GoogleOAuthResult =
 // Starts a real Google OAuth round-trip via Supabase. Returns the URL the
 // client should redirect to. Requires Google to be enabled as a Supabase
 // auth provider — see docs/plans/anonymous-first-profile.md § Setup.
+//
+// We point `redirectTo` at /auth/callback (a Route Handler) so the PKCE
+// exchange happens server-side and the resulting session cookies are
+// written HTTP-only on the app origin. Letting the browser client do it
+// races against the cart query firing on /profile mount.
 export async function signInWithGoogleAction(redirectOrigin: string): Promise<GoogleOAuthResult> {
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${redirectOrigin}/profile`, skipBrowserRedirect: true },
+    options: {
+      redirectTo: `${redirectOrigin}/auth/callback?next=/profile`,
+      skipBrowserRedirect: true,
+    },
   })
   if (error || !data?.url) {
     return { status: 'error', message: error?.message ?? 'Google OAuth не настроен' }
