@@ -511,7 +511,5 @@ are being violated — investigate the same day.
 - `src/app/auth/login/page.tsx` → renders `?auth_error=…`
 - [docs/conventions/DATA.md](../conventions/DATA.md) — Supabase patterns,
   Server Actions, RLS
-- [docs/plans/anonymous-first-profile.md](./anonymous-first-profile.md) —
-  the anon-first profile cabinet this feature plugs into
-- [docs/plans/checkout-flow.md](./checkout-flow.md) — anon-checkout, the
-  source of anon `Orders` rows we migrate
+- `AGENTS.md` § "Profile cabinet (`/profile`)" — the cabinet this feature plugs into
+- `AGENTS.md` § "Checkout flow (`/checkout`)" — source of anon `Orders` rows we migrate

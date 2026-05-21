@@ -93,6 +93,50 @@ On app load, `src/app/providers.tsx` checks for an existing Supabase session cli
 
 When an anonymous user signs in (OAuth or email/password), their Cart + Orders + Profile are migrated onto the resolved authenticated user and the anon row is deleted, in a single atomic SQL transaction (`migrate_anonymous_user` RPC). We deliberately do **not** use `linkIdentity` — see [docs/plans/auth-flow.md](docs/plans/auth-flow.md) for the design, the multi-device case it handles, and the production deployment checklist.
 
+### Profile cabinet (`/profile`)
+
+The user's cabinet lives at `/profile` (the old `/account` route was deleted, no back-compat redirect — project was still in dev when renamed). Reachable in one click from the header profile icon for anon **and** real users alike; the header icon never logs anyone out.
+
+Layout is multi-route: `/profile`, `/profile/orders`, `/profile/favorites` share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope.
+
+Key invariants:
+- `Profiles` table is FK'd to `auth.users(id) ON DELETE CASCADE` with RLS scoped to owner. One row per user; default `nickname = 'Никнейм'` (literal Cyrillic — matches Figma placeholder).
+- `Profiles.recovery_email` is **distinct from** `auth.users.email`. It's opt-in, never verified, never written to `auth.users`. Future auth flows can look it up to suggest account recovery.
+- Avatars live in the `avatars` public bucket (2 MB cap, JPEG/PNG/WEBP). Path is `avatars/{user_id}.{ext}` — `Profiles.avatar_path` stores the bare object key.
+- The "Доступ и безопасность" card shows 4 OAuth provider buttons (Google, Yandex, VK, Telegram). **Only Google is wired**; the other three show a "Скоро" toast. Anon-recovery modal (post-checkout) reuses the same controls.
+- See also: `Profiles` migration `20260521120000_profile_cabinet.sql`; `get_or_create_profile` RPC; `src/components/profile/`.
+
+### Checkout flow (`/checkout`)
+
+Single-page checkout. The cart's content determines the form:
+- **Has physical items** (`PrintBook`, `Book2.0`, or a `BoxSet` containing either) → shipping address form.
+- **Digital only** → single optional email field.
+
+Confirmation modal with a fake "Подтвердить оплату" button → ~3 s processing → atomic order creation → redirect to `/profile?from=checkout&order=<id>` (modal fires every anon purchase).
+
+Key invariants:
+- `place_order(...)` RPC inserts `Orders` + `OrderItems` and wipes `Cart` + `CartPromo` in the **same transaction**. No partial state.
+- `Orders` rows are **immutable price snapshots**: `original_total`, `book_discount_total`, `promo_code`, `promo_discount`, `paid_at`, and shipping fields are written once at order time. Recomputing later from current prices is forbidden.
+- BoxSet physicality is computed by `box_set_is_physical(box_set_id)` from `BoxSetBooks` rows. Entry with `product_id` like `PrintBook-N` or `Book2.0-N` ⇒ physical; entry with `NULL product_id` ⇒ check whether the title has a row in `PrintedBooks` or `CardBooks`.
+- Digital files live in the private `digital-files` bucket. Per-edition columns: `Ebooks.file_path`, `Audiobooks.file_path`, `CardBooks.file_path`. Served via signed URLs with 1 h TTL.
+- Anonymous users complete checkout fine — `Orders.user_id` accepts the anon UID. The anon→OAuth/email migration (see auth flow above) moves those orders to the real user on sign-in.
+- Out of scope and stubbed: real SMTP, real PSP integration, BoxSet/GiftCard/Subscription/Course file downloads.
+- See also: migration `20260520160000_checkout_schema.sql`; `src/app/checkout/`; `src/api/orders/placeOrder.ts`.
+
+### Promo codes
+
+Two kinds: **cart-level** (whole-cart percent off) and **item-level** (one Title or one specific edition). Applied through the shared `PromoCodeForm` at the bottom of `/cart`.
+
+Key invariants:
+- **One code per cart at a time.** Applying a new code replaces the previous one (cart-level or item-level — doesn't matter, only one survives).
+- **DB-persisted in `CartPromo`.** Survives reload / new sessions until removed, expired, or checkout wipes it.
+- **Case-insensitive.** Codes are stored upper-cased; comparison after `trim().toUpperCase()`.
+- **Item-level codes whose target isn't in the cart** are rejected with a Russian inline error. The code is NOT saved to `CartPromo`.
+- **Max-wins pricing.** Per-row final price uses the larger of (built-in book discount, applicable promo discount). A weak promo applies silently — if the cart later changes, it may start helping.
+- **Cart-promo base** = `cart_promo_pct × sum(original_price × qty)` — the pre-book-discount sum. The `Скидка (CODE)` totals line only renders when the promo actually saves money beyond the existing book discounts.
+- Discount % range: 1–100 (100 = giveaway).
+- See also: migrations `20260520140000_promo_codes.sql` + `20260520140200_apply_promo_code_rpc.sql`; `apply_promo_code` RPC; `docs/testing/promo-codes.md` for seeded test fixtures.
+
 ## Storage & Images
 
 ### Cover images
