@@ -36,6 +36,15 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (request.nextUrl.pathname.startsWith('/profile') || request.nextUrl.pathname.startsWith('/auth/callback')) {
+    const authCookieNames = request.cookies.getAll().filter((c) => c.name.includes('auth-token')).map((c) => c.name)
+    console.log('[proxy]', request.nextUrl.pathname, {
+      userId: user?.id ?? null,
+      isAnon: user?.is_anonymous ?? null,
+      authCookies: authCookieNames,
+    })
+  }
+
   // Set cart cookie on first visit (persists for 1 year)
   if (!request.cookies.has(CART_COOKIE)) {
     response.cookies.set(CART_COOKIE, uuidv4(), {

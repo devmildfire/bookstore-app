@@ -9,6 +9,12 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  console.log('[profile/layout] user', {
+    id: user?.id ?? null,
+    isAnon: user?.is_anonymous ?? null,
+    email: user?.email ?? null,
+  })
+
   // No session at all — the layout shell needs *some* user_id to anchor
   // RLS-scoped reads. Send to /books and let providers.tsx anon-signin
   // catch up on the next visit.
@@ -17,6 +23,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   }
 
   const profile = await getProfileServer()
+  console.log('[profile/layout] profile', profile === null ? 'NULL' : `loaded (nickname=${profile.nickname})`)
   if (!profile) {
     redirect('/books')
   }
