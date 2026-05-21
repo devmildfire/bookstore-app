@@ -12,6 +12,25 @@ const PROTECTED_PREFIXES = ['/admin']
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
 
+  // /auth/callback owns its cookie writes — running getUser() here can
+  // trigger a Supabase refresh that writes anon Set-Cookie headers, which
+  // then race the route handler's mildfire Set-Cookie and sometimes win,
+  // leaving the browser with stale anon tokens after a successful OAuth.
+  // Skip the proxy's session work for this path; the route handler is the
+  // sole authority for session cookies on the OAuth return leg.
+  if (request.nextUrl.pathname.startsWith('/auth/callback')) {
+    if (!request.cookies.has(CART_COOKIE)) {
+      response.cookies.set(CART_COOKIE, uuidv4(), {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 365,
+        path: '/',
+      })
+    }
+    return response
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
