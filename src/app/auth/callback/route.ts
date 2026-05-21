@@ -15,9 +15,25 @@ import type { Database } from '@/types/supabase'
 export async function GET(request: NextRequest) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
+  const errorParam = url.searchParams.get('error')
+  const errorDescription = url.searchParams.get('error_description')
   const next = url.searchParams.get('next') ?? '/profile'
 
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/profile'
+
+  // Diagnostic logging — Server Action logs show in dev. Remove once stable.
+  console.log('[/auth/callback] hit', {
+    hasCode: !!code,
+    next: safeNext,
+    error: errorParam,
+    errorDescription,
+  })
+
+  if (errorParam) {
+    const errorUrl = new URL('/', request.url)
+    errorUrl.searchParams.set('auth_error', errorDescription ?? errorParam)
+    return NextResponse.redirect(errorUrl)
+  }
 
   if (!code) {
     return NextResponse.redirect(new URL(safeNext, request.url))
@@ -42,7 +58,13 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code)
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+  console.log('[/auth/callback] exchangeCodeForSession', {
+    error: error?.message ?? null,
+    userId: data?.user?.id ?? null,
+    isAnonymous: data?.user?.is_anonymous ?? null,
+    cookieCount: response.cookies.getAll().length,
+  })
   if (error) {
     const errorUrl = new URL('/', request.url)
     errorUrl.searchParams.set('auth_error', error.message)
