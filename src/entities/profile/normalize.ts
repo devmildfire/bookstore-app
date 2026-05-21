@@ -9,6 +9,7 @@ export function normalizeProfile(raw: ProfileServerRow): Profile {
     fullName: raw.full_name,
     phone: raw.phone,
     birthday: raw.birthday,
+    city: raw.city,
     about: raw.about,
     recoveryEmail: raw.recovery_email,
     createdAt: raw.created_at,

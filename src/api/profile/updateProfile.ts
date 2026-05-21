@@ -8,6 +8,7 @@ export type UpdateProfileInput = {
   fullName?: string | null
   phone?: string | null
   birthday?: string | null
+  city?: string | null
   about?: string | null
   avatarPath?: string | null
   recoveryEmail?: string | null
@@ -26,6 +27,7 @@ export async function updateProfile(input: UpdateProfileInput): Promise<Profile>
   if (input.fullName !== undefined) patch.full_name = input.fullName
   if (input.phone !== undefined) patch.phone = input.phone
   if (input.birthday !== undefined) patch.birthday = input.birthday
+  if (input.city !== undefined) patch.city = input.city
   if (input.about !== undefined) patch.about = input.about
   if (input.avatarPath !== undefined) patch.avatar_path = input.avatarPath
   if (input.recoveryEmail !== undefined) patch.recovery_email = input.recoveryEmail

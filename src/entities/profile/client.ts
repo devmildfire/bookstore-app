@@ -5,6 +5,7 @@ export type Profile = {
   fullName: string | null
   phone: string | null
   birthday: string | null     // ISO date 'YYYY-MM-DD' or null
+  city: string | null
   about: string | null
   recoveryEmail: string | null
   createdAt: string

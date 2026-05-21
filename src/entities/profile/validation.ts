@@ -41,6 +41,7 @@ export const profileEditSchema = z.object({
   fullName: optionalTrimmed(150, 'Не более 150 символов'),
   phone: optionalPhone,
   birthday: optionalBirthday,
+  city: optionalTrimmed(100, 'Не более 100 символов'),
   about: optionalTrimmed(1000, 'Не более 1000 символов'),
 })
 

@@ -842,6 +842,7 @@ export type Database = {
           about: string | null
           avatar_path: string | null
           birthday: string | null
+          city: string | null
           created_at: string
           full_name: string | null
           nickname: string
@@ -854,6 +855,7 @@ export type Database = {
           about?: string | null
           avatar_path?: string | null
           birthday?: string | null
+          city?: string | null
           created_at?: string
           full_name?: string | null
           nickname?: string
@@ -866,6 +868,7 @@ export type Database = {
           about?: string | null
           avatar_path?: string | null
           birthday?: string | null
+          city?: string | null
           created_at?: string
           full_name?: string | null
           nickname?: string
@@ -1238,6 +1241,7 @@ export type Database = {
           about: string | null
           avatar_path: string | null
           birthday: string | null
+          city: string | null
           created_at: string
           full_name: string | null
           nickname: string
@@ -1277,6 +1281,10 @@ export type Database = {
           title_slug: string
           title_thesis: string
         }[]
+      }
+      migrate_anonymous_user: {
+        Args: { from_user_id: string; to_user_id: string }
+        Returns: undefined
       }
       migrate_cart: {
         Args: { from_user_id: string; to_user_id: string }
