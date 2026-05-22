@@ -34,6 +34,14 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: $space-2 $space-5;
+
+  // On phone the whole order card is centered (grid above), so center
+  // the title block + price too — otherwise the header text would sit
+  // flush left while the centered cover floats in the middle.
+  @include breakpoint(phone) {
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 .orderTitle {
@@ -69,16 +77,19 @@
 
 // ─── Grid of cover tiles ────────────────────────────────────────────────────
 // Cap column width at 220 px so a single tile (or a partial last row)
-// doesn't stretch to fill the whole container — order with one item
-// would otherwise look like one massive cover.
+// doesn't stretch to fill the whole container.
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
   gap: $space-6;
 
   @include breakpoint(phone) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: $space-4;
+    // Single column on phone so the cover is large + readable. Width
+    // capped at 300 px and the column is centered so the tile sits in
+    // the middle of the screen, not flush left against the gutter.
+    grid-template-columns: minmax(0, 300px);
+    justify-content: center;
+    gap: $space-5;
   }
 }
 
