@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { normalizeProfile } from '@/entities/profile/normalize'
 import type { Profile } from '@/entities/profile/client'
 import type { ProfileServerRow, ProfileUpdate } from '@/entities/profile/server'
@@ -14,9 +14,12 @@ export type UpdateProfileInput = {
   recoveryEmail?: string | null
 }
 
-// Browser-side UPDATE — RLS scopes the row to auth.uid().
+// Server-side UPDATE — called only from Server Actions (updateProfileAction
+// + setRecoveryEmail). The browser client would crash here ("window is not
+// defined") because Server Action context has no window. RLS still scopes
+// the row to auth.uid() via the server-side session cookies.
 export async function updateProfile(input: UpdateProfileInput): Promise<Profile> {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
     throw new Error('Нет авторизации')

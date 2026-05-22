@@ -43,6 +43,12 @@ function setAll(
 }
 
 export function createClient() {
+  if (typeof window === 'undefined') {
+    throw new Error(
+      'Browser supabase client was called server-side. ' +
+        'Import createClient from @/lib/supabase/server in Server Components / Actions.'
+    )
+  }
   if (!globalThis.__supabaseBrowserClient) {
     globalThis.__supabaseBrowserClient = createBrowserClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
