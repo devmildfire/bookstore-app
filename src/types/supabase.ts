@@ -662,6 +662,7 @@ export type Database = {
       OrderItems: {
         Row: {
           book_id: string
+          box_set_name: string | null
           category: string | null
           id: number
           name: string
@@ -671,6 +672,7 @@ export type Database = {
         }
         Insert: {
           book_id: string
+          box_set_name?: string | null
           category?: string | null
           id?: number
           name: string
@@ -680,6 +682,7 @@ export type Database = {
         }
         Update: {
           book_id?: string
+          box_set_name?: string | null
           category?: string | null
           id?: number
           name?: string
@@ -1179,6 +1182,10 @@ export type Database = {
     Functions: {
       apply_promo_code: { Args: { input_code: string }; Returns: Json }
       box_set_is_physical: { Args: { p_box_set_id: number }; Returns: boolean }
+      default_edition_for_title: {
+        Args: { p_title_id: number }
+        Returns: string
+      }
       get_cart_with_title_ids: {
         Args: never
         Returns: {

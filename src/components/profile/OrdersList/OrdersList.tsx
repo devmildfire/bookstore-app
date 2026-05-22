@@ -170,6 +170,9 @@ function ItemTile({ item }: { item: OrderItem }) {
         </div>
       </Tag>
 
+      {item.boxSetName && (
+        <p className={styles.boxSetTag}>Из бокс-сета «{item.boxSetName}»</p>
+      )}
       {item.quantity > 1 && <p className={styles.qty}>× {item.quantity}</p>}
       {status && <p className={styles.status}>{status}</p>}
       {error && <p className={styles.error}>{error}</p>}

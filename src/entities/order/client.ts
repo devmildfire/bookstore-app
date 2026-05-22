@@ -19,6 +19,10 @@ export type OrderItem = {
   price: number
   quantity: number
   category: ProductCategory
+  // Snapshot of the parent BoxSets.name when this item was sold as
+  // part of a box set. NULL for standalone items. UI shows it as a
+  // small "Из бокс-сета «<name>»" label.
+  boxSetName: string | null
   // Enriched in getOrders by joining the edition table → Titles. Null
   // when the title lookup fails (e.g. title deleted after purchase).
   coverUrl: string | null

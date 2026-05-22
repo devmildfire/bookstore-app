@@ -53,6 +53,7 @@ export function normalizeOrderItem(
     price: asNumber(raw.price),
     quantity: raw.quantity,
     category: (raw.category as ProductCategory) ?? 'EBook',
+    boxSetName: raw.box_set_name ?? null,
     coverUrl: enriched?.coverUrl ?? null,
     titleSlug: enriched?.titleSlug ?? null,
   }
