@@ -9,9 +9,18 @@ type Props = {
   onSubmit: (values: EmailOnlyFormValues) => void
   isPending: boolean
   defaultEmail?: string | null
+  // When false (user is authenticated), suppress the cookie-tether
+  // email-recovery hint — logged-in users already have cross-device
+  // access and the note would be misleading.
+  isAnonymous?: boolean
 }
 
-export default function EmailOnlyForm({ onSubmit, isPending, defaultEmail }: Props) {
+export default function EmailOnlyForm({
+  onSubmit,
+  isPending,
+  defaultEmail,
+  isAnonymous = true,
+}: Props) {
   const {
     register,
     handleSubmit,
@@ -38,11 +47,13 @@ export default function EmailOnlyForm({ onSubmit, isPending, defaultEmail }: Pro
         {errors.email && <p className={styles.error}>{errors.email.message}</p>}
       </div>
 
-      <p className={styles.hint}>
-        Если оставите email — пришлём ссылки на скачивание и сохраним возможность
-        вернуться к покупкам с любого устройства. Без email доступ работает только
-        в этом браузере.
-      </p>
+      {isAnonymous && (
+        <p className={styles.hint}>
+          Если оставите email — пришлём ссылки на скачивание и сохраним возможность
+          вернуться к покупкам с любого устройства. Без email доступ работает только
+          в этом браузере.
+        </p>
+      )}
 
       <div className={styles.actions}>
         <button type='submit' className={styles.submit} disabled={isPending}>

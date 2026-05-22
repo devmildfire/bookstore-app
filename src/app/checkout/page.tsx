@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useCart } from '@/contexts/cart'
 import { getProfile, profileQueryKey } from '@/api/profile'
+import useSupabaseUser from '@/hooks/useSupabaseUser'
 import DeliveryForm from '@/components/checkout/DeliveryForm'
 import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
 import PaymentConfirmModal, {
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { items, finalTotal, appliedPromo, hasPhysicalItems } = useCart()
   const { data: profile } = useQuery({ queryKey: profileQueryKey, queryFn: getProfile })
+  const { isAnonymous } = useSupabaseUser()
   const [pending, setPending] = useState<PendingOrder | null>(null)
   const [modalState, setModalState] = useState<PaymentModalState>({ kind: 'idle' })
 
@@ -87,7 +89,7 @@ export default function CheckoutPage() {
     ])
 
     if (result.status === 'ok') {
-      router.push(`/profile?from=checkout&order=${result.orderId}`)
+      router.push(`/profile/orders?from=checkout&order=${result.orderId}`)
       return
     }
 
@@ -128,6 +130,7 @@ export default function CheckoutPage() {
           onSubmit={handleEmailSubmit}
           isPending={isPending}
           defaultEmail={profile?.recoveryEmail}
+          isAnonymous={isAnonymous}
         />
       )}
 
