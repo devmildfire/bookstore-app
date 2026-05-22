@@ -1,9 +1,13 @@
 'use server'
 
-import { updateProfile, setRecoveryEmail } from '@/api/profile'
+// Server-only imports must come from each module directly, not the
+// public barrel — see src/api/profile/index.ts. The barrel can't
+// re-export updateProfile / setRecoveryEmail without leaking
+// next/headers into any client bundle that imports from @/api/profile.
+import { updateProfile, type UpdateProfileInput } from '@/api/profile/updateProfile'
+import { setRecoveryEmail, type SetRecoveryEmailResult } from '@/api/profile/setRecoveryEmail'
 import { getProfileServer } from '@/api/profile/getProfileServer'
 import type { Profile } from '@/entities/profile/client'
-import type { UpdateProfileInput, SetRecoveryEmailResult } from '@/api/profile'
 
 export type ProfileActionResult =
   | { status: 'ok'; profile: Profile }
