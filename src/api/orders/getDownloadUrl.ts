@@ -81,9 +81,14 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
   // already been verified above, so signing under elevated privileges
   // is safe at this point.
   const admin = createAdminClient()
+  // `download: true` makes Supabase return Content-Disposition:
+  // attachment on the signed URL, so browsers save the file instead of
+  // opening it inline (default Content-Disposition: inline tries to
+  // open PDFs in the tab and pipes MP3s into the built-in audio
+  // player, which isn't a download).
   const { data: signed, error: signError } = await admin.storage
     .from('digital-files')
-    .createSignedUrl(filePath, SIGNED_URL_TTL_SECONDS)
+    .createSignedUrl(filePath, SIGNED_URL_TTL_SECONDS, { download: true })
 
   if (signError || !signed) {
     return { status: 'error', reason: 'sign_failed', message: signError?.message }

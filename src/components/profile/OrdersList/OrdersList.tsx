@@ -98,7 +98,17 @@ function ItemTile({ item }: { item: OrderItem }) {
     const result = await getDownloadUrlAction(item.id)
     setBusy(false)
     if (result.status === 'ok') {
-      window.open(result.url, '_blank', 'noopener,noreferrer')
+      // Trigger a real save via a transient <a download>. The URL
+      // already carries Content-Disposition: attachment from
+      // createSignedUrl({ download: true }) so the browser saves
+      // instead of opening a new tab.
+      const a = document.createElement('a')
+      a.href = result.url
+      a.rel = 'noopener'
+      a.download = '' // hint to the browser; server header takes precedence
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
       return
     }
     const messages: Record<string, string> = {
