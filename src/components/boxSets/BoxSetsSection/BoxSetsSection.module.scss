@@ -96,9 +96,20 @@
 // inside a padded container (e.g. /profile right column). Card rows
 // span the full wrapper width and the column count is driven by a
 // ResizeObserver in BoxSetsGrid (~300 px min card width).
+//
+// `min-width: 0` on the wrapper itself, and on every grid item via
+// `> *`, prevents the inner `previewGrid` (which is `width: max-content`)
+// from forcing the surrounding grid columns to expand beyond their
+// container — without it the expansion blowout cascades up and stretches
+// the card row too.
 .gridWrapContained {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   row-gap: $space-6;
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
 }
 
 .cardRow {
@@ -123,10 +134,28 @@
 .cardRowContained {
   grid-column: 1 / -1;
   column-gap: $space-6;
+  min-width: 0;
 
   @include breakpoint(phone) {
     column-gap: $space-3;
   }
+}
+
+// When the expansion is inside the contained-variant wrapper, swap the
+// preview's heavy page-gutter padding for a snug one and let the
+// previewInner clip the horizontally-scrolling book list at the
+// container edge instead of leaking into the rest of the layout.
+.gridWrapContained .expansion {
+  min-width: 0;
+}
+
+.gridWrapContained .previewInner {
+  padding: $space-5 $space-5;
+  min-width: 0;
+  // Belt + braces: overflow-x: auto is already declared on .previewInner,
+  // but with min-width: 0 + this max-width grid items can't push the
+  // expansion past the wrapper edge.
+  max-width: 100%;
 }
 
 // Partial-row modifiers. Each card keeps the same width it has in a full

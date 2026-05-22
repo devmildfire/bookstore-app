@@ -90,7 +90,12 @@ export default function BoxSetsGrid({ boxSets, variant = 'page' }: Props) {
                 variant === 'contained' && styles.cardRowContained
               )}
               style={variant === 'contained'
-                ? { gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))` }
+                ? {
+                    // Use the full column count (not row.length) so the
+                    // partial last row leaves empty slots instead of
+                    // stretching its single card to row width.
+                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                  }
                 : undefined}
             >
               {row.map((boxSet) => (
