@@ -35,10 +35,11 @@
   flex-wrap: wrap;
   gap: $space-2 $space-5;
 
-  // On phone the whole order card is centered (grid above), so center
-  // the title block + price too — otherwise the header text would sit
-  // flush left while the centered cover floats in the middle.
-  @include breakpoint(phone) {
+  // tablet-small is the breakpoint where the profile sidebar collapses
+  // to the top of the page (≤767px) — that's when the order card needs
+  // to look centered. Anything above keeps the original left-aligned
+  // flex header.
+  @include breakpoint(tablet-small) {
     justify-content: center;
     text-align: center;
   }
@@ -83,10 +84,10 @@
   grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
   gap: $space-6;
 
-  @include breakpoint(phone) {
-    // Single column on phone so the cover is large + readable. Width
-    // capped at 300 px and the column is centered so the tile sits in
-    // the middle of the screen, not flush left against the gutter.
+  // Below the sidebar-collapse breakpoint the right column becomes the
+  // full viewport width — use a single 300 px-max column centred on the
+  // screen so each cover gets a generous size with even side margins.
+  @include breakpoint(tablet-small) {
     grid-template-columns: minmax(0, 300px);
     justify-content: center;
     gap: $space-5;
