@@ -1,14 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
-import { logoutAction } from '@/lib/auth/actions'
-import LoginModal from '@/components/profile/LoginModal'
+import ProfileAuthSlot from '@/components/profile/ProfileAuthSlot'
 import BookIcon from '@/assets/icons/book.svg'
 import HeartIcon from '@/assets/icons/heart.svg'
 import FeatherIcon from '@/assets/icons/feather.svg'
@@ -41,23 +39,9 @@ type Props = {
   provider: string | null
 }
 
-// Map supabase provider strings to display labels for the info row.
-const PROVIDER_LABEL: Record<string, string> = {
-  google: 'Google',
-  yandex: 'Яндекс',
-  vk: 'VK',
-  telegram: 'Telegram',
-}
-
 export default function ProfileSideNav({ isAnon, userEmail, provider }: Props) {
   const pathname = usePathname() ?? ''
   const { profile } = useProfile()
-  const [loginOpen, setLoginOpen] = useState(false)
-
-  const providerLine =
-    provider && provider !== 'email'
-      ? `Вход через ${PROVIDER_LABEL[provider] ?? provider}`
-      : 'Вход по email'
 
   const avatarUrl = getAvatarUrl(profile.avatarPath)
   const avatarSrc = avatarUrl
@@ -97,36 +81,15 @@ export default function ProfileSideNav({ isAnon, userEmail, provider }: Props) {
         </ul>
       </nav>
 
-      <div className={styles.ctaSlot}>
-        {isAnon ? (
-          <>
-            <p className={styles.notice}>
-              Сейчас вы без аккаунта. Покупки и доступ к книгам живут только
-              в этом браузере — при очистке cookies или переходе на другое
-              устройство они пропадут.
-            </p>
-            <button type='button' className={styles.cta} onClick={() => setLoginOpen(true)}>
-              Войти
-            </button>
-          </>
-        ) : (
-          <>
-            <div className={styles.notice}>
-              <p className={styles.noticeMethod}>{providerLine}</p>
-              {userEmail && <p className={styles.noticeEmail}>{userEmail}</p>}
-              <p>
-                Доступ к покупкам открыт на любом устройстве, где вы войдёте
-                через этот аккаунт.
-              </p>
-            </div>
-            <form action={logoutAction}>
-              <button type='submit' className={styles.cta}>Выйти</button>
-            </form>
-          </>
-        )}
-      </div>
-
-      <LoginModal open={loginOpen} onOpenChange={setLoginOpen} />
+      {/* Auth slot inside the sidebar — visible on desktop / tablet.
+          Hidden at tablet-small via SCSS; the layout renders a separate
+          ProfileAuthSlot at the bottom of the page for mobile instead. */}
+      <ProfileAuthSlot
+        className={styles.ctaSlot}
+        isAnon={isAnon}
+        userEmail={userEmail}
+        provider={provider}
+      />
     </aside>
   )
 }

@@ -184,76 +184,19 @@
   }
 }
 
-// ─── Bottom CTA (login / logout) ─────────────────────────────────────────────
-// Figma node 4099:10557 — 449×116, accent-hover-on-dark fill, white
-// Montserrat 24 bold, letter-spacing 0.72px. Reused as the auth CTA slot.
+// ─── Bottom auth slot (notice + login/logout button) ───────────────────────
+// Shape and styling live in ProfileAuthSlot.module.scss. The sidebar
+// embeds an instance here so it sits at the bottom of the side strip on
+// desktop / tablet; on mobile the layout renders a separate instance at
+// the page bottom and this one is hidden.
 .ctaSlot {
   margin-top: auto;
 
   form {
     margin: 0;
   }
-}
 
-// Info paragraph that sits above the CTA. Anonymous: cookie-tether
-// warning. Authenticated: provider + email + portability note.
-.notice {
-  padding: 0 var(--sidebar-pl) $space-5;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  line-height: 1.45;
-  color: rgba($color-text-on-dark, 0.6);
-
-  p {
-    margin: 0;
-
-    & + p {
-      margin-top: $space-2;
-    }
-  }
-
-  @include breakpoint(tablet) {
-    padding: 0 var(--sidebar-pl) $space-4;
-    font-size: $font-size-xs;
-  }
-}
-
-.noticeMethod {
-  color: $color-text-on-dark;
-  font-weight: $font-weight-bold;
-}
-
-.noticeEmail {
-  color: $color-text-on-dark;
-  word-break: break-all;
-}
-
-.cta {
-  display: block;
-  width: 100%;
-  height: 116px;
-  border: none;
-  background: $color-accent-hover-on-dark;
-  color: #ffffff;
-  font-family: $font-montserrat;
-  font-weight: $font-weight-bold;
-  font-size: $font-size-2xl;
-  line-height: 1.2;
-  letter-spacing: 0.72px;
-  cursor: pointer;
-  transition: background 120ms ease;
-
-  &:hover {
-    background: $color-accent-on-dark;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-text-on-dark;
-    outline-offset: -4px;
-  }
-
-  @include breakpoint(tablet) {
-    height: 88px;
-    font-size: $font-size-lg;
+  @include breakpoint(tablet-small) {
+    display: none;
   }
 }

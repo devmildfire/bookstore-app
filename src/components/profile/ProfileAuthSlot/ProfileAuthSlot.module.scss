@@ -1,0 +1,83 @@
+@use '@/styles/common' as *;
+
+.notice {
+  padding: 0 var(--sidebar-pl, #{$layout-px}) $space-5;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  line-height: 1.45;
+  color: rgba($color-text-on-dark, 0.6);
+
+  p {
+    margin: 0;
+
+    & + p {
+      margin-top: $space-2;
+    }
+  }
+
+  @include breakpoint(tablet) {
+    padding: 0 var(--sidebar-pl, #{$layout-px-tablet}) $space-4;
+    font-size: $font-size-xs;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: 0 $layout-px-tablet-small $space-3;
+    font-size: $font-size-sm;
+  }
+
+  @include breakpoint(phone) {
+    padding: 0 $layout-px-phone $space-3;
+  }
+}
+
+.noticeMethod {
+  color: $color-text-on-dark;
+  font-weight: $font-weight-bold;
+}
+
+.noticeEmail {
+  color: $color-text-on-dark;
+  word-break: break-all;
+}
+
+// Bottom CTA — full width, height shrinks at mobile so it doesn't dominate.
+.cta {
+  display: block;
+  width: 100%;
+  height: 116px;
+  border: none;
+  background: $color-accent-hover-on-dark;
+  color: #ffffff;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-2xl;
+  line-height: 1.2;
+  letter-spacing: 0.72px;
+  cursor: pointer;
+  transition: background 120ms ease;
+
+  &:hover {
+    background: $color-accent-on-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-text-on-dark;
+    outline-offset: -4px;
+  }
+
+  @include breakpoint(tablet) {
+    height: 88px;
+    font-size: $font-size-lg;
+  }
+
+  @include breakpoint(tablet-small) {
+    height: 56px;
+    font-size: $font-size-lg;
+  }
+
+  @include breakpoint(phone) {
+    height: 52px;
+    font-size: $font-size-base;
+    letter-spacing: 0.5px;
+  }
+}

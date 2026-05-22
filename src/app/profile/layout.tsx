@@ -2,6 +2,7 @@ import { getProfileServer } from '@/api/profile/getProfileServer'
 import { createClient } from '@/lib/supabase/server'
 import { ProfileProvider } from '@/contexts/profile'
 import ProfileSideNav from '@/components/profile/ProfileSideNav'
+import ProfileAuthSlot from '@/components/profile/ProfileAuthSlot'
 import type { Profile } from '@/entities/profile/client'
 import styles from './layout.module.scss'
 
@@ -53,6 +54,14 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           </header>
           <div className={styles.main}>{children}</div>
         </div>
+        {/* Mobile-only auth slot. Hidden on desktop / tablet (where the
+            sidebar embeds its own copy at the bottom). */}
+        <ProfileAuthSlot
+          className={styles.mobileAuthSlot}
+          isAnon={isAnon}
+          userEmail={userEmail}
+          provider={provider}
+        />
       </div>
     </ProfileProvider>
   )

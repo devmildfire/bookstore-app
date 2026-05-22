@@ -75,3 +75,17 @@
 .main {
   min-width: 0;
 }
+
+// Mobile-only auth slot — sits at the bottom of the page, after the
+// main content. Hidden on desktop / tablet because the sidebar renders
+// its own copy at the bottom of the side strip there.
+.mobileAuthSlot {
+  display: none;
+  background: $color-sidebar;
+  padding-top: $space-6;
+  padding-bottom: $space-6;
+
+  @include breakpoint(tablet-small) {
+    display: block;
+  }
+}
