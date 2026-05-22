@@ -75,7 +75,7 @@ export default function BookCard({ book, className }: Props) {
         <AddToCartModal
           slug={book.slug}
           titleName={book.name}
-          authorName={book.authorName}
+          authorNames={book.authorNames}
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
         />

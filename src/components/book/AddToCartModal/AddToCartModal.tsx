@@ -31,12 +31,23 @@ const fmt = new Intl.NumberFormat('ru-RU', {
 type Props = {
   slug: string
   titleName: string
-  authorName: string
+  authorNames: string[]
   isOpen: boolean
   onClose: () => void
 }
 
-export default function AddToCartModal({ slug, titleName, authorName, isOpen, onClose }: Props) {
+// Max names to spell out before collapsing the rest. Anthologies (Худшее
+// etc.) carry 40+ contributors; the full list was filling the entire
+// modal body.
+const AUTHORS_PREVIEW = 3
+
+function formatAuthors(authorNames: string[]): string {
+  if (authorNames.length === 0) return 'Автор не указан'
+  if (authorNames.length <= AUTHORS_PREVIEW + 1) return authorNames.join(', ')
+  return `${authorNames.slice(0, AUTHORS_PREVIEW).join(', ')} и другие`
+}
+
+export default function AddToCartModal({ slug, titleName, authorNames, isOpen, onClose }: Props) {
   const { data: products = [], isLoading } = useBookProducts(slug, isOpen)
   const { addItem } = useCart()
   const { success } = useToast()
@@ -104,7 +115,7 @@ export default function AddToCartModal({ slug, titleName, authorName, isOpen, on
           </Dialog.Close>
 
           <Dialog.Title className={styles.title}>{titleName}</Dialog.Title>
-          <p className={styles.author}>{authorName}</p>
+          <p className={styles.author}>{formatAuthors(authorNames)}</p>
 
           <p className={styles.sectionLabel}>Выберите тип издания</p>
 
