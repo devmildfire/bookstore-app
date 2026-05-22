@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
 import type { ProductCategory } from '@/types/database'
 
 export type DownloadUrlResult =
@@ -74,7 +74,14 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
     return { status: 'error', reason: 'no_file' }
   }
 
-  const { data: signed, error: signError } = await supabase.storage
+  // Sign with the service-role client. storage.objects has no SELECT
+  // policy for authenticated users on the `digital-files` bucket
+  // (it's private — public read would defeat the point), and
+  // createSignedUrl requires SELECT to find the object. Ownership has
+  // already been verified above, so signing under elevated privileges
+  // is safe at this point.
+  const admin = createAdminClient()
+  const { data: signed, error: signError } = await admin.storage
     .from('digital-files')
     .createSignedUrl(filePath, SIGNED_URL_TTL_SECONDS)
 

@@ -63,3 +63,21 @@ export function createDataClient() {
     }
   )
 }
+
+// Admin client — uses the service-role key. ONLY use after explicit
+// server-side authorization (e.g. the caller has been validated as the
+// owner of the relevant Order). RLS does not apply — never expose this
+// client to a code path that hasn't already done its own access check.
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    }
+  )
+}
