@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
-import { createClient } from '@/lib/supabase/client'
+import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import { logoutAction } from '@/lib/auth/actions'
 import LoginModal from '@/components/profile/LoginModal'
@@ -28,12 +28,6 @@ const NAV_ITEMS: readonly NavItem[] = [
   // /suggest-manuscript is the existing "Стать автором" stub; replaced when the real page lands.
   { href: '/suggest-manuscript', exact: false, label: 'Стать автором', Icon: FeatherIcon },
 ]
-
-function avatarPublicUrl(path: string): string {
-  const supabase = createClient()
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-  return data.publicUrl
-}
 
 type Props = {
   // Server-determined: layout reads the HttpOnly auth cookies in
@@ -65,8 +59,9 @@ export default function ProfileSideNav({ isAnon, userEmail, provider }: Props) {
       ? `Вход через ${PROVIDER_LABEL[provider] ?? provider}`
       : 'Вход по email'
 
-  const avatarSrc = profile.avatarPath
-    ? `${avatarPublicUrl(profile.avatarPath)}?v=${encodeURIComponent(profile.updatedAt)}`
+  const avatarUrl = getAvatarUrl(profile.avatarPath)
+  const avatarSrc = avatarUrl
+    ? `${avatarUrl}?v=${encodeURIComponent(profile.updatedAt)}`
     : null
 
   return (

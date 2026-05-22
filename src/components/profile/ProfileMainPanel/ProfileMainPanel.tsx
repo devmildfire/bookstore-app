@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
+import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import EditProfileModal from '@/components/profile/EditProfileModal'
 import ProfileIcon from '@/assets/icons/profile.svg'
@@ -21,12 +21,6 @@ function formatDate(iso: string | null): string {
   }
 }
 
-function avatarPublicUrl(path: string): string {
-  const supabase = createClient()
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-  return data.publicUrl
-}
-
 type RowProps = { label: string; value: string; multiline?: boolean }
 
 function Row({ label, value, multiline }: RowProps) {
@@ -42,8 +36,9 @@ export default function ProfileMainPanel() {
   const { profile } = useProfile()
   const [editOpen, setEditOpen] = useState(false)
 
-  const avatarSrc = profile.avatarPath
-    ? `${avatarPublicUrl(profile.avatarPath)}?v=${encodeURIComponent(profile.updatedAt)}`
+  const avatarUrl = getAvatarUrl(profile.avatarPath)
+  const avatarSrc = avatarUrl
+    ? `${avatarUrl}?v=${encodeURIComponent(profile.updatedAt)}`
     : null
 
   return (

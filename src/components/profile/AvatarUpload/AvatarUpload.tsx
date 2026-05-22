@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'
 import {
@@ -16,12 +17,6 @@ const EXT_BY_MIME: Record<AvatarMimeType, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
-}
-
-function avatarPublicUrl(path: string): string {
-  const supabase = createClient()
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-  return data.publicUrl
 }
 
 export default function AvatarUpload() {
@@ -73,7 +68,7 @@ export default function AvatarUpload() {
     if (file) handleFile(file)
   }
 
-  const imgUrl = profile.avatarPath ? avatarPublicUrl(profile.avatarPath) : null
+  const imgUrl = getAvatarUrl(profile.avatarPath)
   // Cache-bust on changes so a re-upload with the same key replaces the cached image.
   const imgSrc = imgUrl ? `${imgUrl}?v=${encodeURIComponent(profile.updatedAt)}` : null
 

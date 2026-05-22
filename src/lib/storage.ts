@@ -35,6 +35,23 @@ export function getCoverFilename(value: string | null): string | null {
   return value
 }
 
+const AVATARS_BUCKET = 'avatars'
+
+/**
+ * Returns the public Storage URL for a user's avatar.
+ *
+ * Mirror of getCoverUrl: builds the URL deterministically from
+ * NEXT_PUBLIC_SUPABASE_URL so callers don't have to instantiate the
+ * supabase-js browser client at render time (which crashes during SSR
+ * because the browser client needs `window`). The path stored in
+ * `Profiles.avatar_path` is a bare object key like `{user_id}/avatar.jpg`.
+ */
+export function getAvatarUrl(path: string | null): string | null {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${supabaseUrl}/storage/v1/object/public/${AVATARS_BUCKET}/${path}`
+}
+
 const SUBSCRIPTIONS_BUCKET = 'subscriptions'
 
 export function getSubscriptionImageUrl(filename: string | null): string | null {
