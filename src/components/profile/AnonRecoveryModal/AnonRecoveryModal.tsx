@@ -3,10 +3,7 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/contexts/toast'
-import {
-  setRecoveryEmailAction,
-  signInWithGoogleAction,
-} from '@/lib/profile/actions'
+import { setRecoveryEmailAction } from '@/lib/profile/actions'
 import styles from './AnonRecoveryModal.module.scss'
 
 type Props = {
@@ -21,7 +18,7 @@ type SaveState =
   | { kind: 'saved' }
 
 export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
-  const { toast, error: toastError } = useToast()
+  const { toast } = useToast()
   const [showInput, setShowInput] = useState(false)
   const [email, setEmail] = useState('')
   const [state, setState] = useState<SaveState>({ kind: 'idle' })
@@ -44,22 +41,11 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
     setState({ kind: 'error', message: result.message })
   }
 
-  async function handleGoogle() {
-    try {
-      const result = await signInWithGoogleAction(window.location.origin)
-      if (result.status !== 'ok') {
-        toastError('Google OAuth недоступен', result.message)
-        return
-      }
-      // Defer navigation by one frame so React finishes draining the
-      // Server Action response stream — otherwise Firefox surfaces
-      // "Error in input stream" when the stream is aborted mid-read.
-      requestAnimationFrame(() => {
-        window.location.assign(result.url)
-      })
-    } catch (e) {
-      console.warn('[AnonRecoveryModal] navigation error (safe to ignore):', e)
-    }
+  function handleGoogle() {
+    // Top-level navigation to the OAuth Route Handler — see
+    // src/app/api/auth/google/route.ts. Bypasses Server Actions / RSC
+    // streaming so Firefox can't surface "Error in input stream".
+    window.location.assign('/api/auth/google')
   }
 
   function handleStub(name: string) {

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/contexts/toast'
-import { signInWithGoogleAction } from '@/lib/profile/actions'
 import GoogleIcon from '@/assets/icons/google.svg'
 import YandexIcon from '@/assets/icons/yandex.svg'
 import VkIcon from '@/assets/icons/vk.svg'
@@ -16,32 +15,17 @@ type Props = {
 }
 
 export default function LoginModal({ open, onOpenChange }: Props) {
-  const { toast, error: toastError } = useToast()
+  const { toast } = useToast()
   const [busy, setBusy] = useState(false)
 
-  async function handleGoogle() {
+  function handleGoogle() {
     if (busy) return
     setBusy(true)
-    try {
-      const result = await signInWithGoogleAction(window.location.origin)
-      if (result.status !== 'ok') {
-        toastError('Google OAuth недоступен', result.message)
-        setBusy(false)
-        return
-      }
-      // Defer the navigation by one animation frame so React can finish
-      // draining the Server Action's response stream before we cut it off.
-      // Without this, Firefox surfaces "Error in input stream" when its
-      // stream reader is aborted mid-read by the navigation.
-      requestAnimationFrame(() => {
-        window.location.assign(result.url)
-      })
-    } catch (e) {
-      // Swallow any stream-aborted errors that bubble up after we've
-      // already triggered navigation — they're cosmetic dev-mode noise.
-      console.warn('[LoginModal] navigation error (safe to ignore):', e)
-      setBusy(false)
-    }
+    // Plain top-level navigation to a Route Handler. The handler does
+    // signInWithOAuth + cookie writes server-side and 302s to Google.
+    // No Server Action / RSC stream is involved, so Firefox can't abort
+    // a stream mid-read and surface "Error in input stream".
+    window.location.assign('/api/auth/google')
   }
 
   function handleStub(name: string) {
