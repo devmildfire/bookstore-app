@@ -41,12 +41,29 @@ type Props = {
   // this client-side because `encode: 'tokens-only'` means the user is
   // in HttpOnly cookies the browser JS cannot read.
   isAnon: boolean
+  userEmail: string | null
+  // user.app_metadata.provider from Supabase — 'google', 'yandex', 'vk',
+  // 'telegram', or 'email' for email/password. null for anon users.
+  provider: string | null
 }
 
-export default function ProfileSideNav({ isAnon }: Props) {
+// Map supabase provider strings to display labels for the info row.
+const PROVIDER_LABEL: Record<string, string> = {
+  google: 'Google',
+  yandex: 'Яндекс',
+  vk: 'VK',
+  telegram: 'Telegram',
+}
+
+export default function ProfileSideNav({ isAnon, userEmail, provider }: Props) {
   const pathname = usePathname() ?? ''
   const { profile } = useProfile()
   const [loginOpen, setLoginOpen] = useState(false)
+
+  const providerLine =
+    provider && provider !== 'email'
+      ? `Вход через ${PROVIDER_LABEL[provider] ?? provider}`
+      : 'Вход по email'
 
   const avatarSrc = profile.avatarPath
     ? `${avatarPublicUrl(profile.avatarPath)}?v=${encodeURIComponent(profile.updatedAt)}`
@@ -87,13 +104,30 @@ export default function ProfileSideNav({ isAnon }: Props) {
 
       <div className={styles.ctaSlot}>
         {isAnon ? (
-          <button type='button' className={styles.cta} onClick={() => setLoginOpen(true)}>
-            Войти
-          </button>
+          <>
+            <p className={styles.notice}>
+              Сейчас вы без аккаунта. Покупки и доступ к книгам живут только
+              в этом браузере — при очистке cookies или переходе на другое
+              устройство они пропадут.
+            </p>
+            <button type='button' className={styles.cta} onClick={() => setLoginOpen(true)}>
+              Войти
+            </button>
+          </>
         ) : (
-          <form action={logoutAction}>
-            <button type='submit' className={styles.cta}>Выйти</button>
-          </form>
+          <>
+            <div className={styles.notice}>
+              <p className={styles.noticeMethod}>{providerLine}</p>
+              {userEmail && <p className={styles.noticeEmail}>{userEmail}</p>}
+              <p>
+                Доступ к покупкам открыт на любом устройстве, где вы войдёте
+                через этот аккаунт.
+              </p>
+            </div>
+            <form action={logoutAction}>
+              <button type='submit' className={styles.cta}>Выйти</button>
+            </form>
+          </>
         )}
       </div>
 

@@ -195,6 +195,39 @@
   }
 }
 
+// Info paragraph that sits above the CTA. Anonymous: cookie-tether
+// warning. Authenticated: provider + email + portability note.
+.notice {
+  padding: 0 var(--sidebar-pl) $space-5;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  line-height: 1.45;
+  color: rgba($color-text-on-dark, 0.6);
+
+  p {
+    margin: 0;
+
+    & + p {
+      margin-top: $space-2;
+    }
+  }
+
+  @include breakpoint(tablet) {
+    padding: 0 var(--sidebar-pl) $space-4;
+    font-size: $font-size-xs;
+  }
+}
+
+.noticeMethod {
+  color: $color-text-on-dark;
+  font-weight: $font-weight-bold;
+}
+
+.noticeEmail {
+  color: $color-text-on-dark;
+  word-break: break-all;
+}
+
 .cta {
   display: block;
   width: 100%;

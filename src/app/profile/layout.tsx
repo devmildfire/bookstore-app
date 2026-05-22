@@ -29,11 +29,14 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   // client can't see the HttpOnly tokens, so a client-side hook would show
   // stale state after OAuth completes server-side.
   const isAnon = !user || user.is_anonymous === true
+  const userEmail = (!isAnon && user?.email) || null
+  const provider =
+    (!isAnon && (user?.app_metadata?.provider as string | undefined)) || null
 
   return (
     <ProfileProvider initialProfile={profile}>
       <div className={styles.page}>
-        <ProfileSideNav isAnon={isAnon} />
+        <ProfileSideNav isAnon={isAnon} userEmail={userEmail} provider={provider} />
         <div className={styles.rightColumn}>
           <header className={styles.header}>
             <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>
