@@ -50,7 +50,7 @@ export default function ProfileFavoritesPage() {
       {boxSets.length > 0 && (
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Бокс-сеты</h3>
-          <BoxSetsGrid boxSets={boxSets} />
+          <BoxSetsGrid boxSets={boxSets} variant='contained' />
         </section>
       )}
     </section>

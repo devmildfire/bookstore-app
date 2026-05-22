@@ -92,6 +92,15 @@
   }
 }
 
+// Contained variant: no outer gutter columns — the wrapper is already
+// inside a padded container (e.g. /profile right column). Card rows
+// span the full wrapper width and the column count is driven by a
+// ResizeObserver in BoxSetsGrid (~300 px min card width).
+.gridWrapContained {
+  grid-template-columns: 1fr;
+  row-gap: $space-6;
+}
+
 .cardRow {
   grid-column: 2; // center column only — side columns provide padding
   display: grid;
@@ -105,6 +114,18 @@
 
   @include breakpoint(phone) {
     grid-template-columns: 1fr;
+  }
+}
+
+// Contained-variant card row: spans the full wrapper width (no outer
+// gutter columns) with a smaller gap. Column count is set inline via
+// `style` from the JS-driven ResizeObserver count.
+.cardRowContained {
+  grid-column: 1 / -1;
+  column-gap: $space-6;
+
+  @include breakpoint(phone) {
+    column-gap: $space-3;
   }
 }
 
