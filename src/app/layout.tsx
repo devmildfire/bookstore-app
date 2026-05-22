@@ -6,6 +6,7 @@ import Providers from './providers'
 import '@/styles/globals.scss'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import styles from './layout.module.scss'
 
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
@@ -42,7 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers hasSession={!!user}>
           <Header />
-          {children}
+          <main className={styles.main}>{children}</main>
           <Footer />
         </Providers>
       </body>

@@ -8,7 +8,11 @@
   grid-template-columns: 450px 1fr;
   align-items: stretch;
   // No vertical padding here: the sidebar should run flush from the
-  // header to the footer with no gap above or below.
+  // header to the footer with no gap above or below. `flex: 1` makes
+  // this fill the root <main> column — sidebar's `min-height: 100%`
+  // then resolves against the full available height between the site
+  // header and footer.
+  flex: 1 0 auto;
 
   @include breakpoint(tablet) {
     grid-template-columns: 300px 1fr;

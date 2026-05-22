@@ -44,6 +44,15 @@ body {
   background-color: $color-bg-page;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  // Sticky-footer foundation: header / main / footer stack vertically and
+  // body is at least the viewport tall so on short pages the footer is
+  // pushed to the screen bottom rather than sitting just below content.
+  // The route content lives in <main class="layoutMain"> which has
+  // flex: 1 0 auto.
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 // ─── Typography ───────────────────────────────────────────────────────────────

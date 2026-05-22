@@ -51,7 +51,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           <header className={styles.header}>
             <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>
           </header>
-          <main className={styles.main}>{children}</main>
+          <div className={styles.main}>{children}</div>
         </div>
       </div>
     </ProfileProvider>
