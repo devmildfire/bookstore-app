@@ -11,6 +11,16 @@ const DIGITAL_FILE_TABLE: Record<string, 'Ebooks' | 'Audiobooks' | 'CardBooks'> 
   'Book2.0': 'CardBooks',
 }
 
+// Per-category placeholder objects in the `digital-files` bucket.
+// Used when the edition's file_path is null (the real file hasn't been
+// uploaded yet) so downloads always produce something — at minimum a
+// minimal valid PDF / silent MP3 stub the user can open.
+const PLACEHOLDER_FILE: Record<string, string> = {
+  EBook: 'placeholders/ebook.pdf',
+  AudioBook: 'placeholders/audiobook.mp3',
+  'Book2.0': 'placeholders/book2.pdf',
+}
+
 const SIGNED_URL_TTL_SECONDS = 3600 // 1 hour
 
 // Given an OrderItem id, verifies ownership and issues a fresh 1 h signed URL
@@ -55,13 +65,18 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
     .eq('id', editionId)
     .single()
 
-  if (editionError || !edition?.file_path) {
+  // Fall back to the per-category placeholder when the row has no
+  // file_path yet (real files get uploaded one by one as titles are
+  // published). The placeholder is still a real object in the bucket,
+  // so the signed URL works exactly the same way.
+  const filePath = (!editionError && edition?.file_path) || PLACEHOLDER_FILE[category]
+  if (!filePath) {
     return { status: 'error', reason: 'no_file' }
   }
 
   const { data: signed, error: signError } = await supabase.storage
     .from('digital-files')
-    .createSignedUrl(edition.file_path, SIGNED_URL_TTL_SECONDS)
+    .createSignedUrl(filePath, SIGNED_URL_TTL_SECONDS)
 
   if (signError || !signed) {
     return { status: 'error', reason: 'sign_failed', message: signError?.message }

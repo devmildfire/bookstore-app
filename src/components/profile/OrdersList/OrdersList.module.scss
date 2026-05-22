@@ -7,164 +7,206 @@
   color: rgba($color-text-on-dark, 0.7);
 }
 
-.list {
+.orders {
   display: flex;
   flex-direction: column;
-  gap: $space-6;
+  gap: $space-8;
 }
 
-.card {
-  padding: $space-6;
-  background: rgba($color-text-on-dark, 0.05);
-  border: 1px solid rgba($color-text-on-dark, 0.12);
+.order {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.orderHighlighted {
+  // soft outer ring instead of a big border, so the inner grid keeps its full width
+  padding: $space-4;
+  margin: -$space-4;
+  background: rgba($color-accent-on-dark, 0.06);
   border-radius: $radius-md;
-  display: flex;
-  flex-direction: column;
-  gap: $space-4;
-
-  @include breakpoint(phone) {
-    padding: $space-4;
-  }
 }
 
-.cardHighlighted {
-  border-color: $color-accent-on-dark;
-  background: rgba($color-accent-on-dark, 0.05);
-}
-
-.cardHeader {
+.orderHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   justify-content: space-between;
   gap: $space-4;
 }
 
-.cardTitle {
-  margin: 0 0 $space-1 0;
+.orderTitle {
+  margin: 0 0 $space-1;
   font-family: $font-montserrat;
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $color-text-on-dark;
 }
 
-.cardDate {
+.orderDate {
   margin: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: rgba($color-text-on-dark, 0.6);
 }
 
-.cardTotal {
+.orderTotal {
   font-family: $font-montserrat;
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $color-text-on-dark;
+  white-space: nowrap;
 }
 
-.cardPromo,
-.cardShipping {
+.orderShipping {
   margin: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: rgba($color-text-on-dark, 0.7);
   line-height: 1.5;
-
-  strong {
-    color: $color-text-on-dark;
-    letter-spacing: 0.5px;
-  }
 }
 
-.items {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-  padding-top: $space-3;
-  border-top: 1px solid rgba($color-text-on-dark, 0.12);
-}
-
-.itemRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $space-4;
+// ─── Grid of cover tiles ────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: $space-6;
 
   @include breakpoint(phone) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $space-2;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-4;
   }
 }
 
-.itemMain {
+.tileWrap {
   display: flex;
   flex-direction: column;
   gap: $space-1;
   min-width: 0;
-  flex: 1 1 auto;
 }
 
-.itemName {
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: $color-text-on-dark;
-}
-
-.itemQty {
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
-}
-
-.itemAction {
+// The clickable card (button for digital items, div for non-digital).
+.tile {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: $space-1;
-
-  @include breakpoint(phone) {
-    align-items: flex-start;
-    width: 100%;
-  }
-}
-
-.downloadBtn {
-  height: 36px;
-  padding: 0 $space-5;
+  gap: $space-3;
+  padding: 0;
   background: transparent;
-  border: 1px solid $color-text-on-dark;
-  border-radius: $radius-sm;
+  border: none;
   color: $color-text-on-dark;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  letter-spacing: 0.5px;
+  text-align: left;
+  font: inherit;
+  width: 100%;
+}
+
+.tileClickable {
   cursor: pointer;
-  transition: background 0.15s ease;
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background: rgba($color-text-on-dark, 0.08);
+  &:hover .hoverOverlay,
+  &:focus-visible .hoverOverlay {
+    opacity: 1;
   }
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.4;
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
   }
 }
 
-.itemStatus {
+.tileBusy {
+  cursor: progress;
+}
+
+// Cover
+.cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: rgba($color-text-on-dark, 0.06);
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
+.coverImg {
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+// Hover-only overlay with a centred download glyph (Figma 4099:10343).
+// Default = invisible; .tileClickable:hover/focus flips opacity to 1.
+.hoverOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: $color-text-on-dark;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+
+.busyOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  color: $color-text-on-dark;
+  font-size: $font-size-2xl;
+  letter-spacing: 0.2em;
+}
+
+// Title + media icon below the cover (Figma 4099:10346).
+.label {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  color: rgba($color-text-on-dark, 0.85);
+}
+
+.mediaIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.labelText {
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
-  font-style: italic;
+  line-height: 1.35;
+  color: $color-text-on-dark;
+  word-break: break-word;
 }
 
-.itemError {
+.qty,
+.status,
+.error {
   margin: 0;
   font-family: $font-montserrat;
   font-size: $font-size-xs;
+  line-height: 1.4;
+}
+
+.qty,
+.status {
+  color: rgba($color-text-on-dark, 0.55);
+}
+
+.status {
+  font-style: italic;
+}
+
+.error {
   color: $color-accent-on-dark;
 }

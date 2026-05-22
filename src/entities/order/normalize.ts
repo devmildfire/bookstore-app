@@ -42,7 +42,10 @@ function buildShipping(raw: OrderServerRow): ShippingAddress | null {
   }
 }
 
-export function normalizeOrderItem(raw: OrderItemServerRow): OrderItem {
+export function normalizeOrderItem(
+  raw: OrderItemServerRow,
+  enriched?: { coverUrl: string | null; titleSlug: string | null } | null
+): OrderItem {
   return {
     id: raw.id,
     bookId: raw.book_id,
@@ -50,10 +53,16 @@ export function normalizeOrderItem(raw: OrderItemServerRow): OrderItem {
     price: asNumber(raw.price),
     quantity: raw.quantity,
     category: (raw.category as ProductCategory) ?? 'EBook',
+    coverUrl: enriched?.coverUrl ?? null,
+    titleSlug: enriched?.titleSlug ?? null,
   }
 }
 
-export function normalizeOrder(raw: OrderServerRow, items: OrderItemServerRow[]): Order {
+export function normalizeOrder(
+  raw: OrderServerRow,
+  items: OrderItemServerRow[],
+  enrichedByItemId?: Map<number, { coverUrl: string | null; titleSlug: string | null }>
+): Order {
   return {
     id: raw.id,
     status: asStatus(raw.status),
@@ -67,6 +76,6 @@ export function normalizeOrder(raw: OrderServerRow, items: OrderItemServerRow[])
     shipping: buildShipping(raw),
     paidAt: raw.paid_at,
     createdAt: raw.created_at,
-    items: items.map(normalizeOrderItem),
+    items: items.map((item) => normalizeOrderItem(item, enrichedByItemId?.get(item.id))),
   }
 }

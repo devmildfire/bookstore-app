@@ -19,6 +19,10 @@ export type OrderItem = {
   price: number
   quantity: number
   category: ProductCategory
+  // Enriched in getOrders by joining the edition table → Titles. Null
+  // when the title lookup fails (e.g. title deleted after purchase).
+  coverUrl: string | null
+  titleSlug: string | null
 }
 
 export type Order = {
