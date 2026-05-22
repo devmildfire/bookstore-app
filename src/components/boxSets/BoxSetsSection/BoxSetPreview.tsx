@@ -20,7 +20,16 @@ export default function BoxSetPreview({ boxSetId }: Props) {
     )
   }
 
-  if (books.length === 0) return null
+  // The box set exists but has no BoxSetBooks rows yet (the seed file
+  // only fills five named slugs; the rest were left empty). Render a
+  // clear empty state so the expand-on-click doesn't look broken.
+  if (books.length === 0) {
+    return (
+      <div className={styles.previewInner}>
+        <p className={styles.previewLoading}>Состав появится позже.</p>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.previewInner}>
