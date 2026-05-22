@@ -8,9 +8,17 @@ export const ordersQueryKey = ['orders'] as const
 export async function getOrders(): Promise<Order[]> {
   const supabase = createClient()
 
+  // Resolve the current user explicitly and filter by user_id in the
+  // WHERE clause as defense-in-depth. RLS on Orders / OrderItems also
+  // enforces this (migration 20260522130000), but a future regression
+  // shouldn't immediately leak.
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
   const { data: orders, error: ordersError } = await supabase
     .from('Orders')
     .select('*')
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
   if (ordersError) {
