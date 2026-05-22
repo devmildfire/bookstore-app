@@ -27,11 +27,13 @@
   border-radius: $radius-md;
 }
 
+// Title block + total sit next to each other (not pushed to opposite
+// edges) so the price stays visually anchored to the order number.
 .orderHeader {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: $space-4;
+  flex-wrap: wrap;
+  gap: $space-2 $space-5;
 }
 
 .orderTitle {
@@ -66,13 +68,16 @@
 }
 
 // ─── Grid of cover tiles ────────────────────────────────────────────────────
+// Cap column width at 220 px so a single tile (or a partial last row)
+// doesn't stretch to fill the whole container — order with one item
+// would otherwise look like one massive cover.
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
   gap: $space-6;
 
   @include breakpoint(phone) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: $space-4;
   }
 }
