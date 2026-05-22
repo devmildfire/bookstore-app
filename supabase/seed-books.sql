@@ -261,6 +261,58 @@ JOIN "Titles"  t ON t.id = ta.title_id
 WHERE a.name ILIKE '%Новокщ%' OR a.name ILIKE '%Киреев%' OR a.name ILIKE '%Горшечник%'
 ON CONFLICT DO NOTHING;
 
+-- Four originally-empty box sets — seeded by-slug since the themes don't
+-- map cleanly to a single author. See migration 20260522140000.
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'usa-literature'),
+  t.id,
+  ROW_NUMBER() OVER (ORDER BY t.id)
+FROM "Titles" t
+WHERE t.slug IN (
+  'doctor-sax', 'kolmi-press', 'podzemnie', 'v-doroge',
+  'prostitutes', 'frieda-and-gitta'
+)
+ON CONFLICT (box_set_id, title_id) DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'womens-power'),
+  t.id,
+  ROW_NUMBER() OVER (ORDER BY t.id)
+FROM "Titles" t
+WHERE t.slug IN (
+  'makintosh-dlya-bliznecov', 'unhappened', 'leshu-neubitiy-zhivoy',
+  'bog-ego-imya', 'na-zemle-zaratushtry'
+)
+ON CONFLICT (box_set_id, title_id) DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'russian-death'),
+  t.id,
+  ROW_NUMBER() OVER (ORDER BY t.id)
+FROM "Titles" t
+WHERE t.slug IN (
+  'doch-greha', 'sin-greha', 'prizrachnye-istorii',
+  'predsetatel-tomskiy', 'prizraki', 'kotlovan',
+  'rossia', 'glas-zemli', 'smerti-net'
+)
+ON CONFLICT (box_set_id, title_id) DO NOTHING;
+
+INSERT INTO "BoxSetBooks" (box_set_id, title_id, position)
+SELECT
+  (SELECT id FROM "BoxSets" WHERE slug = 'far-from-moscow'),
+  t.id,
+  ROW_NUMBER() OVER (ORDER BY t.id)
+FROM "Titles" t
+WHERE t.slug IN (
+  'amystis', 'vremyapadenie', 'my-komu-to-nujni',
+  'irokez', 'kubok-voiny-i-tanca', 'sepiya'
+)
+ON CONFLICT (box_set_id, title_id) DO NOTHING;
+
 -- CardBooks / Book2.0 (64)
 INSERT INTO "CardBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date) VALUES
   (1, 1, 400, false, false, '2026-01-01', '2026-03-11'),
