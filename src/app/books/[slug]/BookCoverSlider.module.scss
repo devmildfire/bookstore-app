@@ -6,11 +6,19 @@
 .multi,
 .placeholder {
   width: 500px;
+  position: relative;
 
   @include breakpoint(desktop) { width: 394px; }
   @include breakpoint(tablet) { width: 326px; }
   @include breakpoint(tablet-small) { width: 280px; }
   @include breakpoint(phone) { width: 100%; max-width: 320px; }
+}
+
+.likeBtn {
+  position: absolute;
+  top: $space-3;
+  right: $space-3;
+  z-index: 2;
 }
 
 // ─── Placeholder (no image available) ────────────────────────────────────────

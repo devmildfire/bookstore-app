@@ -1,0 +1,45 @@
+@use '@/styles/common' as *;
+
+// Reusable heart button. Default shape is a circular dark surface with
+// a centred icon — call sites position with `className` (top-right
+// overlay on cards, inline action in detail pages, etc.).
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: $color-text-on-dark;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba(0, 0, 0, 0.75);
+    color: $color-accent-on-dark;
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.6;
+  }
+}
+
+.btnLiked {
+  color: $color-accent-on-dark;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: $color-accent-on-dark;
+  }
+}

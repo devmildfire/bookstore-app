@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
 import CartPlusIcon from '@/components/common/icons/CartPlusIcon'
+import LikeButton from '@/components/common/LikeButton'
 import type { Book } from '@/entities/book/client'
 import styles from './BookCard.module.scss'
 
@@ -31,8 +32,8 @@ export default function BookCard({ book, className }: Props) {
   return (
     <>
       <article className={cn(styles.card, className)}>
-        <Link href={`/books/${book.slug}`} className={styles.coverLink} tabIndex={-1} aria-hidden>
-          <div className={styles.coverWrap}>
+        <div className={styles.coverWrap}>
+          <Link href={`/books/${book.slug}`} className={styles.coverLink} tabIndex={-1} aria-hidden>
             {book.coverUrl ? (
               <Image
                 src={book.coverUrl}
@@ -46,8 +47,9 @@ export default function BookCard({ book, className }: Props) {
             ) : (
               <div className={styles.coverPlaceholder} aria-hidden />
             )}
-          </div>
-        </Link>
+          </Link>
+          <LikeButton type='title' itemId={book.titleId} className={styles.likeBtn} />
+        </div>
 
         <div className={styles.footer}>
           <div className={styles.prices}>

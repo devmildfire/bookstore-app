@@ -638,6 +638,27 @@ export type Database = {
           },
         ]
       }
+      Likes: {
+        Row: {
+          created_at: string
+          item_id: number
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          item_id: number
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          item_id?: number
+          item_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       OrderItems: {
         Row: {
           book_id: string
@@ -1331,6 +1352,10 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      toggle_like: {
+        Args: { p_item_id: number; p_item_type: string }
+        Returns: boolean
+      }
     }
     Enums: {
       author_contact_channel:

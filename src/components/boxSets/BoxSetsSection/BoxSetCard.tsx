@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
+import LikeButton from '@/components/common/LikeButton'
 import type { BoxSet } from '@/entities/boxSet/client'
 import cn from 'classnames'
 import styles from './BoxSetsSection.module.scss'
@@ -23,7 +23,6 @@ type Props = {
 export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
   const { addItem, isPending } = useCart()
   const { success } = useToast()
-  const [liked, setLiked] = useState(false)
 
   function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation()
@@ -37,11 +36,6 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       category: 'BoxSet',
     })
     success('Добавлено в корзину', boxSet.name)
-  }
-
-  function handleToggleLiked(e: React.MouseEvent) {
-    e.stopPropagation()
-    setLiked((prev) => !prev)
   }
 
   return (
@@ -98,27 +92,7 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
           </svg>
         </button>
 
-        <button
-          type="button"
-          className={cn(styles.iconBtn, liked && styles.iconBtnLiked)}
-          onClick={handleToggleLiked}
-          disabled={isPending}
-          aria-label={liked ? 'Убрать из избранного' : 'Добавить в избранное'}
-        >
-          <svg
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill={liked ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-        </button>
+        <LikeButton type='box_set' itemId={boxSet.id} size={20} />
       </div>
     </div>
   )

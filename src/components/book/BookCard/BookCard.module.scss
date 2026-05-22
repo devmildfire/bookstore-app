@@ -18,6 +18,8 @@
 }
 
 .coverLink {
+  position: absolute;
+  inset: 0;
   display: block;
   text-decoration: none;
 }
@@ -32,6 +34,13 @@
   .card:hover & {
     box-shadow: 0 0 48px 14px rgba($color-accent-on-dark, 0.55);
   }
+}
+
+.likeBtn {
+  position: absolute;
+  top: $space-2;
+  right: $space-2;
+  z-index: 1;
 }
 
 .cover {

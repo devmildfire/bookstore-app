@@ -77,6 +77,7 @@ export default async function BookDetailPage({ params }: Props) {
             coverUrl={book.coverUrl}
             coverBlurDataUrl={book.coverBlurDataUrl}
             bookName={book.name}
+            titleId={book.titleId}
           />
 
           <div className={styles.info}>

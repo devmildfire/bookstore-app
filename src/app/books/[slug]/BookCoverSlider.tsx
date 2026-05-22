@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { SwiperSlide } from 'swiper/react'
 import type { BookPhoto } from '@/api/books/getBookPhotos'
 import BaseSlider from '@/components/common/BaseSlider'
+import LikeButton from '@/components/common/LikeButton'
 import styles from './BookCoverSlider.module.scss'
 
 type Props = {
@@ -11,9 +12,10 @@ type Props = {
   coverUrl: string | null
   coverBlurDataUrl: string | null
   bookName: string
+  titleId: number
 }
 
-export default function BookCoverSlider({ photos, coverUrl, coverBlurDataUrl, bookName }: Props) {
+export default function BookCoverSlider({ photos, coverUrl, coverBlurDataUrl, bookName, titleId }: Props) {
   const slides: BookPhoto[] =
     photos.length > 0
       ? photos
@@ -24,6 +26,10 @@ export default function BookCoverSlider({ photos, coverUrl, coverBlurDataUrl, bo
   if (slides.length === 0) {
     return <div className={styles.placeholder} aria-hidden />
   }
+
+  const heart = (
+    <LikeButton type='title' itemId={titleId} className={styles.likeBtn} />
+  )
 
   if (slides.length === 1) {
     return (
@@ -38,6 +44,7 @@ export default function BookCoverSlider({ photos, coverUrl, coverBlurDataUrl, bo
           placeholder={slides[0].blurDataURL ? 'blur' : 'empty'}
           blurDataURL={slides[0].blurDataURL ?? undefined}
         />
+        {heart}
       </div>
     )
   }
@@ -60,6 +67,7 @@ export default function BookCoverSlider({ photos, coverUrl, coverBlurDataUrl, bo
           </SwiperSlide>
         ))}
       </BaseSlider>
+      {heart}
     </div>
   )
 }

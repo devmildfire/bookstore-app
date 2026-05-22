@@ -3,7 +3,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-8;
 }
 
 .title {
@@ -20,9 +20,70 @@
   }
 }
 
+.muted,
 .empty {
   margin: 0;
   font-family: $font-montserrat;
   font-size: $font-size-base;
   color: rgba($color-text-on-dark, 0.6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-semibold;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  color: $color-text-on-dark;
+}
+
+// ─── Books grid ─────────────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $space-5;
+
+  @include breakpoint(phone) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-3;
+  }
+}
+
+// ─── Box-sets list (lightweight rows; full BoxSetCard is too big here) ──────
+.boxSetList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.boxSetItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  padding: $space-4;
+  background: rgba($color-text-on-dark, 0.04);
+  border: 1px solid rgba($color-text-on-dark, 0.08);
+  border-radius: $radius-md;
+}
+
+.boxSetName {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+}
+
+.boxSetPrice {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.8);
 }
