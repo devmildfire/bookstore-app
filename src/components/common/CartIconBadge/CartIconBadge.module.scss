@@ -1,0 +1,104 @@
+@use '@/styles/common' as *;
+
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: inherit;
+  line-height: 0;
+}
+
+.icon {
+  display: block;
+  color: currentColor;
+}
+
+.badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  background-color: $color-accent-on-dark;
+  color: $color-text-inverse;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  pointer-events: none;
+}
+
+// ─── Header variant ───────────────────────────────────────────────
+// Mirrors the original Header sizing so swapping in this component
+// is visually identical at every breakpoint.
+.header {
+  .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .badge {
+    top: -4px;
+    right: -10px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    font-size: $font-size-xs;
+  }
+
+  @include breakpoint(tablet) {
+    .icon { width: 18px; height: 18px; }
+    .badge {
+      top: -4px;
+      right: -8px;
+      min-width: 14px;
+      height: 14px;
+      padding: 0;
+      font-size: 8px;
+    }
+  }
+
+  @include breakpoint(tablet-small) {
+    .icon { width: 14px; height: 14px; }
+    .badge {
+      top: -4px;
+      right: -8px;
+      min-width: 12px;
+      height: 12px;
+      padding: 0;
+      font-size: 8px;
+    }
+  }
+
+  @include breakpoint(phone) {
+    .badge {
+      // Match prior phone behaviour: badge anchored to the icon's
+      // bottom-right rather than top-right.
+      top: unset;
+      bottom: -4px;
+      right: -8px;
+      min-width: 14px;
+      height: 14px;
+      padding: 0;
+      font-size: 8px;
+    }
+  }
+}
+
+// ─── Toast variant ────────────────────────────────────────────────
+// Used on the "added to cart" toast — large, prominent, red on hover.
+.toast {
+  .icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .badge {
+    top: -6px;
+    right: -10px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    font-size: $font-size-sm;
+  }
+}

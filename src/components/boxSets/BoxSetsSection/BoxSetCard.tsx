@@ -22,7 +22,7 @@ type Props = {
 
 export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
   const { addItem, isPending } = useCart()
-  const { success } = useToast()
+  const { cartSuccess } = useToast()
 
   function handleAddToCart(e: React.MouseEvent) {
     e.stopPropagation()
@@ -35,7 +35,7 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       discount: boxSet.discount,
       category: 'BoxSet',
     })
-    success('Добавлено в корзину', boxSet.name)
+    cartSuccess('Добавлено в корзину', boxSet.name)
   }
 
   return (

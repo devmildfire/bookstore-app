@@ -35,7 +35,7 @@ export default function SubscriptionsCarousel({ items }: { items: Subscription[]
 
 export function SubscriptionCard({ sub }: { sub: Subscription }) {
   const { items, addItem, isPending } = useCart()
-  const { success } = useToast()
+  const { cartSuccess } = useToast()
 
   const inCart = items.some((item) => item.id === sub.cartId)
 
@@ -50,7 +50,7 @@ export function SubscriptionCard({ sub }: { sub: Subscription }) {
       discount: sub.discount,
       category: 'Subscription',
     })
-    success('Добавлено в корзину', sub.name)
+    cartSuccess('Добавлено в корзину', sub.name)
   }
 
   return (

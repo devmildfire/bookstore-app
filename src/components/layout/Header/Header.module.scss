@@ -130,7 +130,6 @@
     color: $color-accent-on-dark;
     text-decoration: none;
 
-    .cart,
     .profile {
       color: $color-accent-on-dark;
     }
@@ -212,67 +211,6 @@
   @include breakpoint(tablet-small) {
     width: 14px;
     height: 14px;
-  }
-}
-
-.cart {
-  width: 32px;
-  height: 32px;
-  color: $color-text-on-dark;
-
-  @include breakpoint(tablet) {
-    width: 18px;
-    height: 18px;
-  }
-
-  @include breakpoint(tablet-small) {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-.cartBadge {
-  position: absolute;
-  top: 0;
-  right: -6px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: $radius-full;
-  background-color: $color-accent-on-dark;
-  color: $color-text-inverse;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-bold;
-  line-height: 1;
-
-  @include breakpoint(tablet) {
-    min-width: 14px;
-    height: 14px;
-    font-size: 8px;
-    top: 0;
-    right: -4px;
-  }
-
-  @include breakpoint(tablet-small) {
-    min-width: 12px;
-    height: 12px;
-    font-size: 8px;
-    padding: 0;
-    top: 0;
-    right: -4px;
-  }
-
-  @include breakpoint(phone) {
-    min-width: 14px;
-    height: 14px;
-    font-size: 8px;
-    padding: 0;
-    top: unset;
-    right: 5px;
   }
 }
 

@@ -21,7 +21,7 @@
 
 .toast {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: $space-3;
   padding: $space-4;
   background: linear-gradient(160deg, #1c1c1c 0%, $color-panel 65%);
@@ -67,6 +67,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  align-self: flex-start;
   width: 20px;
   height: 20px;
   color: $color-text-on-dark;
@@ -74,6 +75,29 @@
 
   &:hover {
     color: $color-accent-on-dark;
+  }
+}
+
+.cartAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: $space-2 $space-3;
+  margin-right: $space-2;
+  color: $color-text-on-dark;
+  text-decoration: none;
+  background: none;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $color-accent-on-dark;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
   }
 }
 

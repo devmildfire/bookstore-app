@@ -4,11 +4,14 @@ import { useState, useCallback } from 'react'
 
 export type ToastVariant = 'default' | 'success' | 'error'
 
+export type ToastAction = 'cart'
+
 export type ToastItem = {
   id: string
   title: string
   description?: string
   variant?: ToastVariant
+  action?: ToastAction
 }
 
 export type ToastState = {

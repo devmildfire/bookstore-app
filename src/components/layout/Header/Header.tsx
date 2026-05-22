@@ -8,9 +8,9 @@ import { useCart } from '@/contexts/cart'
 import { useState, useCallback } from 'react'
 import menu, { type SubmenuItem } from '@/consts/menuItems'
 import HeaderSearchBar from '@/components/layout/HeaderSearchBar'
+import CartIconBadge from '@/components/common/CartIconBadge'
 import styles from './Header.module.scss'
 import Logo from '@/assets/images/logo.svg'
-import Cart from '@/assets/icons/shop-cart.svg'
 import Profile from '@/assets/icons/profile.svg'
 import Burger from '@/assets/icons/burger.svg'
 import Cross from '@/assets/icons/cross.svg'
@@ -58,10 +58,7 @@ export default function Header() {
             className={styles.iconBtn}
             aria-label={`Корзина, ${itemCount} товаров`}
           >
-            <Cart className={styles.cart} />
-            {itemCount > 0 && (
-              <span className={styles.cartBadge}>{itemCount > 99 ? '99+' : itemCount}</span>
-            )}
+            <CartIconBadge variant='header' />
           </Link>
 
           <Link href='/profile' className={styles.iconBtn} aria-label='Личный кабинет'>

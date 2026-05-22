@@ -129,7 +129,7 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
   const tabs = TAB_ORDER.filter((cat) => books.some((b) => b.category === cat))
   const [active, setActive] = useState<ProductCategory>(tabs[0])
   const { addItem } = useCart()
-  const { success } = useToast()
+  const { cartSuccess } = useToast()
 
   if (tabs.length === 0) return null
 
@@ -147,7 +147,7 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
       discount: book.discount ?? undefined,
       category: book.category,
     })
-    success('Добавлено в корзину')
+    cartSuccess('Добавлено в корзину')
   }
 
   const activeIndex = tabs.indexOf(active)

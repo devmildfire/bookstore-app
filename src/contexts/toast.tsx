@@ -9,6 +9,7 @@ type ToastContextValue = {
   toast: (item: Omit<ToastItem, 'id'>) => void
   success: (title: string, description?: string) => void
   error: (title: string, description?: string) => void
+  cartSuccess: (title: string, description?: string) => void
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null)
@@ -19,9 +20,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const toast = (item: Omit<ToastItem, 'id'>) => addToast(item)
   const success = (title: string, description?: string) => addToast({ title, description, variant: 'success' })
   const error = (title: string, description?: string) => addToast({ title, description, variant: 'error' })
+  const cartSuccess = (title: string, description?: string) =>
+    addToast({ title, description, variant: 'success', action: 'cart' })
 
   return (
-    <ToastContext.Provider value={{ toast, success, error }}>
+    <ToastContext.Provider value={{ toast, success, error, cartSuccess }}>
       {children}
       <Toaster toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>

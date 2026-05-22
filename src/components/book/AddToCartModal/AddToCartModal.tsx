@@ -50,7 +50,7 @@ function formatAuthors(authorNames: string[]): string {
 export default function AddToCartModal({ slug, titleName, authorNames, isOpen, onClose }: Props) {
   const { data: products = [], isLoading } = useBookProducts(slug, isOpen)
   const { addItem } = useCart()
-  const { success } = useToast()
+  const { cartSuccess } = useToast()
   const [quantities, setQuantities] = useState<Record<string, number>>({})
 
   function handleOpenChange(open: boolean) {
@@ -98,7 +98,7 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
         }
       }
     }
-    success('Добавлено в корзину', `«${titleName}» — ${totalItems} шт.`)
+    cartSuccess('Добавлено в корзину', `«${titleName}» — ${totalItems} шт.`)
     setQuantities({})
     onClose()
   }
