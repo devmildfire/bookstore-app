@@ -45,11 +45,20 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
   }
 
   async function handleGoogle() {
-    const result = await signInWithGoogleAction(window.location.origin)
-    if (result.status === 'ok') {
-      window.location.href = result.url
-    } else {
-      toastError('Google OAuth недоступен', result.message)
+    try {
+      const result = await signInWithGoogleAction(window.location.origin)
+      if (result.status !== 'ok') {
+        toastError('Google OAuth недоступен', result.message)
+        return
+      }
+      // Defer navigation by one frame so React finishes draining the
+      // Server Action response stream — otherwise Firefox surfaces
+      // "Error in input stream" when the stream is aborted mid-read.
+      requestAnimationFrame(() => {
+        window.location.assign(result.url)
+      })
+    } catch (e) {
+      console.warn('[AnonRecoveryModal] navigation error (safe to ignore):', e)
     }
   }
 

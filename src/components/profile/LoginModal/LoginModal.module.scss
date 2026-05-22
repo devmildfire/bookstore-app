@@ -62,10 +62,10 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: color 150ms ease, transform 150ms ease;
+  transition: color 150ms ease, transform 150ms ease, opacity 150ms ease;
 
-  &:hover,
-  &:focus-visible {
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
     color: $color-accent-on-dark; // #A10202 — lines turn red on hover
     transform: scale(1.05);
   }
@@ -73,6 +73,11 @@
   &:focus-visible {
     outline: 2px solid $color-accent-on-dark;
     outline-offset: 4px;
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.5;
   }
 }
 

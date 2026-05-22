@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/contexts/toast'
 import { signInWithGoogleAction } from '@/lib/profile/actions'
@@ -16,14 +17,31 @@ type Props = {
 
 export default function LoginModal({ open, onOpenChange }: Props) {
   const { toast, error: toastError } = useToast()
+  const [busy, setBusy] = useState(false)
 
   async function handleGoogle() {
-    const result = await signInWithGoogleAction(window.location.origin)
-    if (result.status === 'ok') {
-      window.location.href = result.url
-      return
+    if (busy) return
+    setBusy(true)
+    try {
+      const result = await signInWithGoogleAction(window.location.origin)
+      if (result.status !== 'ok') {
+        toastError('Google OAuth недоступен', result.message)
+        setBusy(false)
+        return
+      }
+      // Defer the navigation by one animation frame so React can finish
+      // draining the Server Action's response stream before we cut it off.
+      // Without this, Firefox surfaces "Error in input stream" when its
+      // stream reader is aborted mid-read by the navigation.
+      requestAnimationFrame(() => {
+        window.location.assign(result.url)
+      })
+    } catch (e) {
+      // Swallow any stream-aborted errors that bubble up after we've
+      // already triggered navigation — they're cosmetic dev-mode noise.
+      console.warn('[LoginModal] navigation error (safe to ignore):', e)
+      setBusy(false)
     }
-    toastError('Google OAuth недоступен', result.message)
   }
 
   function handleStub(name: string) {
@@ -38,14 +56,15 @@ export default function LoginModal({ open, onOpenChange }: Props) {
           <Dialog.Title className={styles.title}>Вход</Dialog.Title>
 
           <p id='login-modal-body' className={styles.body}>
-            Войдите, чтобы привязать покупки к вашему аккаунту.
+            {busy ? 'Перенаправляем на Google…' : 'Войдите, чтобы привязать покупки к вашему аккаунту.'}
           </p>
 
-          <div className={styles.providers}>
+          <div className={styles.providers} aria-busy={busy}>
             <button
               type='button'
               className={styles.providerBtn}
               onClick={handleGoogle}
+              disabled={busy}
               aria-label='Войти через Google'
             >
               <GoogleIcon className={styles.providerIcon} />
@@ -54,6 +73,7 @@ export default function LoginModal({ open, onOpenChange }: Props) {
               type='button'
               className={styles.providerBtn}
               onClick={() => handleStub('Яндекс')}
+              disabled={busy}
               aria-label='Войти через Яндекс (скоро)'
             >
               <YandexIcon className={styles.providerIcon} />
@@ -62,6 +82,7 @@ export default function LoginModal({ open, onOpenChange }: Props) {
               type='button'
               className={styles.providerBtn}
               onClick={() => handleStub('VK')}
+              disabled={busy}
               aria-label='Войти через VK (скоро)'
             >
               <VkIcon className={styles.providerIcon} />
@@ -70,6 +91,7 @@ export default function LoginModal({ open, onOpenChange }: Props) {
               type='button'
               className={styles.providerBtn}
               onClick={() => handleStub('Telegram')}
+              disabled={busy}
               aria-label='Войти через Telegram (скоро)'
             >
               <TelegramIcon className={styles.providerIcon} />
