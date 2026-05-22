@@ -30,8 +30,18 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   // stale state after OAuth completes server-side.
   const isAnon = !user || user.is_anonymous === true
   const userEmail = (!isAnon && user?.email) || null
-  const provider =
-    (!isAnon && (user?.app_metadata?.provider as string | undefined)) || null
+  // user.app_metadata.provider tracks the *initial* signup method, not the
+  // current session's. For an account created via email and later linked
+  // to Google, .provider stays 'email' forever. Read user.identities and
+  // pick the most-recently-used one — that's the method this session used.
+  const provider = !isAnon && user?.identities
+    ? user.identities
+        .slice()
+        .sort((a, b) =>
+          new Date(b.last_sign_in_at ?? 0).getTime() -
+          new Date(a.last_sign_in_at ?? 0).getTime()
+        )[0]?.provider ?? null
+    : null
 
   return (
     <ProfileProvider initialProfile={profile}>
