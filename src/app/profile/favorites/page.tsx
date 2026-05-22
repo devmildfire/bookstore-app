@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { allLikesQueryKey, getLikedBoxSets, getLikedTitles } from '@/api/likes'
 import BookCard from '@/components/book/BookCard'
+import BoxSetsGrid from '@/components/boxSets/BoxSetsSection/BoxSetsGrid'
 import styles from './page.module.scss'
 
 export default function ProfileFavoritesPage() {
@@ -49,20 +50,7 @@ export default function ProfileFavoritesPage() {
       {boxSets.length > 0 && (
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Бокс-сеты</h3>
-          <ul className={styles.boxSetList}>
-            {boxSets.map((boxSet) => (
-              <li key={boxSet.id} className={styles.boxSetItem}>
-                <span className={styles.boxSetName}>{boxSet.name}</span>
-                <span className={styles.boxSetPrice}>
-                  {new Intl.NumberFormat('ru-RU', {
-                    style: 'currency',
-                    currency: 'RUB',
-                    maximumFractionDigits: 0,
-                  }).format(boxSet.price)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <BoxSetsGrid boxSets={boxSets} />
         </section>
       )}
     </section>
