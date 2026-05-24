@@ -1,0 +1,33 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  width: 100%;
+  max-width: $layout-max-width;
+  margin: 0 auto;
+  padding: $space-12 $layout-px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-10;
+
+  @include breakpoint(tablet) { padding: $space-12 $layout-px-tablet; gap: $space-8; }
+  @include breakpoint(tablet-small) { padding: $space-10 $layout-px-tablet-small; }
+  @include breakpoint(phone) { padding: $space-8 $layout-px-phone; }
+}
+
+.heading {
+  @include section-title;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.cards {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: $space-13;
+
+  @include breakpoint(tablet) { gap: $space-8; }
+  @include breakpoint(tablet-small) { flex-direction: column; align-items: center; gap: $space-10; }
+}

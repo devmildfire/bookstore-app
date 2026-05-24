@@ -1,0 +1,168 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  position: relative;
+
+  width: 100%;
+  // max-width: 1920px;
+  // margin: 0 auto;
+  // padding: $space-20 0 0;
+  padding: 124px 0 0;
+  color: $color-text-on-dark;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-8;
+
+  // @include breakpoint(phone) {
+  //   padding: 126px 0 0;
+  // }
+}
+
+.heading {
+  position: absolute;
+  top: 0px;
+  right: 50%;
+  transform: translate(50%, 124px);
+
+  @include section-title;
+
+  & {
+    text-align: center;
+    margin: 0;
+  }
+
+  @include breakpoint(tablet) {
+    transform: translate(50%, 78px);
+  }
+
+  @include breakpoint(phone) {
+    transform: translate(50%, 50px);
+  }  
+}
+
+.aboutLine1 {
+  position: absolute;
+  width: max-content;
+  top: 0px;
+  right: 50%;
+  transform: translate(calc(50% + 100px), 215px);
+
+  @include text-heading-small;
+
+  & {
+    text-transform: uppercase;
+  }
+
+  @include breakpoint(desktop) {
+    transform: translate(calc(50% + 100px), 190px);
+  }
+
+  @include breakpoint(tablet) {
+    transform: translate(calc(50% + 11.57vw	- 9px), 140px);
+  }
+
+  @include breakpoint(tablet-small) {
+    transform: translate(calc(50% + 70px), 120px);
+  }
+
+  @include breakpoint(phone) {
+    transform: translate(calc(50% - 50px), 80px);
+  }
+}
+
+.aboutLine2 {
+  position: absolute;
+  width: max-content;
+  top: 0px;
+  right: 50%;
+  transform: translate(calc(50% + 250px), 260px);
+
+  @include section-title;
+
+  & {
+    text-transform: uppercase;
+  }
+
+  @include breakpoint(desktop) {
+    transform: translate(calc(50% + 200px), 230px);
+  }
+
+  @include breakpoint(tablet) {
+    transform: translate(calc(50% + 13.89vw +	53px), 170px);
+  }
+
+  @include breakpoint(tablet-small) {
+    transform: translate(calc(50% + 21.3vw - 14px), 140px);
+  }
+
+  @include breakpoint(phone) {
+    transform: translate(50%, 98px);
+  }
+
+}
+
+.aboutLine3 {
+  position: absolute;
+  width: max-content;
+  top: 0px;
+  right: 50%;
+  transform: translate(calc(50% + 490px), 340px);
+
+  @include text-heading-small;
+
+  & {
+    text-transform: uppercase;
+  }
+
+  @include breakpoint(desktop) {
+    transform: translate(calc(50% + 390px), 295px);
+  }  
+
+  @include breakpoint(tablet) {
+    transform: translate(calc(50% + 25.46vw	+ 74px), 225px);
+  }
+
+  @include breakpoint(tablet-small) {
+    transform: translate(calc(50% + 34.19vw - 2px), 175px);
+  }
+
+  @include breakpoint(phone) {
+    transform: translate(calc(50% + 90px), 128px);
+  }  
+}
+
+
+
+
+.illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 480px;
+  min-height: 62px;
+  padding: 0 $space-8;
+  background: $color-accent-on-dark;
+  color: $color-text-on-dark;
+  border-radius: $radius-md;
+  font-family: $font-cheque;
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+
+  &:hover { background: $color-accent-hover-on-dark; }
+  &:active { transform: translateY(1px); }
+  &:focus-visible { outline: 2px solid $color-brand-primary; outline-offset: 3px; }
+
+  @include breakpoint(tablet) { min-width: 360px; font-size: 20px; }
+  @include breakpoint(tablet-small) { min-width: 280px; font-size: 18px; min-height: 52px; }
+  @include breakpoint(phone) { min-width: 100%; font-size: 16px; min-height: 48px; }
+}

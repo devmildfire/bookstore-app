@@ -766,6 +766,30 @@ export type Database = {
         }
         Relationships: []
       }
+      Partners: {
+        Row: {
+          id: number
+          logo_path: string | null
+          name: string
+          sort_order: number
+          website_url: string | null
+        }
+        Insert: {
+          id?: number
+          logo_path?: string | null
+          name: string
+          sort_order?: number
+          website_url?: string | null
+        }
+        Update: {
+          id?: number
+          logo_path?: string | null
+          name?: string
+          sort_order?: number
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       PrintedBooks: {
         Row: {
           binding: string | null
@@ -1159,19 +1183,31 @@ export type Database = {
       }
       Workers: {
         Row: {
+          city: string | null
           id: number
+          is_team_member: boolean
           job: string
           name: string
+          photo_path: string | null
+          sort_order: number
         }
         Insert: {
+          city?: string | null
           id?: number
+          is_team_member?: boolean
           job: string
           name: string
+          photo_path?: string | null
+          sort_order?: number
         }
         Update: {
+          city?: string | null
           id?: number
+          is_team_member?: boolean
           job?: string
           name?: string
+          photo_path?: string | null
+          sort_order?: number
         }
         Relationships: []
       }

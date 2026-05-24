@@ -114,4 +114,49 @@ export function getBooktrailerUrls(slug: string, hasPoster: boolean) {
   }
 }
 
-export { COVERS_BUCKET, SUBSCRIPTIONS_BUCKET, BOX_SETS_PUBLIC_PATH, BOOK_PHOTOS_BUCKET, BOOKTRAILERS_BUCKET, AUTHORS_BUCKET }
+const VIDEOS_BUCKET = 'videos'
+const PARTNERS_BUCKET = 'partners'
+const WORKERS_BUCKET = 'workers'
+
+/**
+ * URL for an object in the public `videos` bucket. Paths are bare object keys
+ * stored verbatim (e.g. `about/chtivo.mp4`).
+ */
+export function getVideoUrl(path: string | null): string | null {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${supabaseUrl}/storage/v1/object/public/${VIDEOS_BUCKET}/${path}`
+}
+
+/**
+ * Convert a worker photo filename into a public Storage URL.
+ * `Workers.photo_path` stores bare filenames; the placeholder SVG is used
+ * client-side when this returns null.
+ */
+export function getWorkerPhotoUrl(path: string | null): string | null {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${supabaseUrl}/storage/v1/object/public/${WORKERS_BUCKET}/${path}`
+}
+
+/**
+ * Convert a partner logo filename into a public Storage URL.
+ * `Partners.logo_path` is allowed to be null; component handles fallback.
+ */
+export function getPartnerLogoUrl(path: string | null): string | null {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${supabaseUrl}/storage/v1/object/public/${PARTNERS_BUCKET}/${path}`
+}
+
+export {
+  COVERS_BUCKET,
+  SUBSCRIPTIONS_BUCKET,
+  BOX_SETS_PUBLIC_PATH,
+  BOOK_PHOTOS_BUCKET,
+  BOOKTRAILERS_BUCKET,
+  AUTHORS_BUCKET,
+  VIDEOS_BUCKET,
+  PARTNERS_BUCKET,
+  WORKERS_BUCKET,
+}

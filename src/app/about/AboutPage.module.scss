@@ -1,0 +1,34 @@
+@use '@/styles/common' as *;
+
+.page {
+  position: relative;
+  width: 100%;
+  background: $color-bg-page;
+  color: $color-text-on-dark;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+// Sections 5-8 sit on top of a Rorschach inkblot backdrop.
+.darkBlock {
+  position: relative;
+  width: 100%;
+}
+
+.rorschach {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.darkBlock > :not(.rorschach) {
+  position: relative;
+  z-index: 1;
+}

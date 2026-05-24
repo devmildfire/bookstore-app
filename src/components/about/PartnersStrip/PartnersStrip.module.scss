@@ -1,0 +1,31 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  width: 100%;
+  padding: $space-10 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+
+  @include breakpoint(tablet) { padding: $space-8 0; gap: $space-6; }
+  @include breakpoint(phone) { padding: $space-6 0; gap: $space-5; }
+}
+
+.heading {
+  @include section-title;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.marquee {
+  width: 100%;
+}
+
+.row {
+  gap: 85px;
+  padding-right: 85px;
+
+  @include breakpoint(tablet) { gap: 50px; padding-right: 50px; }
+  @include breakpoint(phone) { gap: 24px; padding-right: 24px; }
+}

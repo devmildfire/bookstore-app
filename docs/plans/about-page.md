@@ -1,7 +1,7 @@
 # About page (`/about`)
 
-**Status**: Pending — replacing the `ComingSoon` stub at `src/app/about/page.tsx`.
-**Branch**: TBD (`about-page` recommended)
+**Status**: Implemented on branch `update` (2026-05-23). Replaces the `ComingSoon` stub at `src/app/about/page.tsx`.
+**Branch**: `update`
 **Figma**: 1920 `1306-8039` · 1024 `2437-9544` · tablet `3704-8118` · mobile `2437-9545`
   (file key `CZwt15WEQ3Qugfy2NM1CPy`)
 
@@ -250,50 +250,50 @@ Update the checkboxes as you go. Keep this section in sync with `git`.
 
 ### Phase 1 — data layer
 
-- [ ] Migration `20260522170000_about_page_workers_partners.sql` (Workers column-add + Partners table).
-- [ ] Seed migration `20260522170100_about_page_seed.sql` (6 team rows, 7 partner rows).
-- [ ] Declare `videos`, `partners`, and `workers` buckets in `supabase/config.toml`.
-- [ ] Move `public/videos/chtivo.mp4` → `videos/about/chtivo.mp4` (one-off script `scripts/upload-about-video.mjs`); delete from `public/` after upload.
-- [ ] Regenerate `src/types/supabase.ts`.
-- [ ] `src/entities/worker/` (client/server/normalize) for team members.
-- [ ] `src/entities/partner/` (client/server/normalize).
-- [ ] `src/api/team/getTeam.ts`.
-- [ ] `src/api/partners/getPartners.ts`.
+- [x] Migration `20260522170000_about_page_workers_partners.sql` (Workers column-add + Partners table + bucket inserts).
+- [x] Seed migration `20260522170100_about_page_seed.sql` (6 team rows, 7 partner rows).
+- [x] `videos`, `partners`, and `workers` buckets — declared via the schema migration's `storage.buckets` insert, matching the existing `avatars` convention rather than `supabase/config.toml`.
+- [x] Move `public/videos/chtivo.mp4` → `videos/about/chtivo.mp4` (`scripts/upload-about-video.mjs`); local copy deleted.
+- [x] Regenerated `src/types/supabase.ts`.
+- [x] `src/entities/worker/` (client/server/normalize) for team members.
+- [x] `src/entities/partner/` (client/server/normalize).
+- [x] `src/api/team/getTeam.ts`.
+- [x] `src/api/partners/getPartners.ts`.
 
 ### Phase 2 — shared primitives
 
-- [ ] `src/components/about/Marquee/` (CSS-only RTL scroller, pause-on-hover, respects `prefers-reduced-motion`).
-- [ ] Export all needed Figma frames via Figma MCP (`get_design_context` / asset downloads) into `src/assets/about/` per the asset table above.
-- [ ] Run `ffmpeg -ss 0 -i public/videos/chtivo.mp4 -frames:v 1 -q:v 2 src/assets/about/hero-poster.jpg` to make the hero poster.
+- [x] `src/components/about/Marquee/` (CSS-only RTL scroller, pause-on-hover, respects `prefers-reduced-motion`).
+- [x] Figma frames exported via Figma MCP into `src/assets/about/` (hero illustration, money-to-books, edition images, journal collage, Rorschach).
+- [x] Hero poster: the Figma hands illustration replaces the ffmpeg frame-0 approach; renders behind the `<video>` `poster` attribute. No ffmpeg poster shipped.
 
 ### Phase 3 — sections (top to bottom)
 
-- [ ] Section 1 — `HeroVideo` (`<video>` + poster + play overlay).
-- [ ] Section 2 — `AboutManifestoSection` (text column + illustration + CTA → `/manifest`).
-- [ ] `/manifest` ComingSoon stub.
-- [ ] Section 3 — `EditionTypesSection` + `EditionTypeCard` (B&W → color hover).
-- [ ] Section 4 — `JournalSection` (collage bg + glassy card + CTA → `/dino-magazine`).
-- [ ] Section 5 — `TeamStrip` + `TeamMemberCard` (marquee, B&W → color photo on hover).
-- [ ] Section 6 — `PartnersStrip` + `PartnerLogo` (marquee, translucent square, placeholder fallback).
-- [ ] Section 7 — `DonateForm` (number input, min 100 ₽, success toast).
-- [ ] Section 8 — `StayWithUsForm` (email input, RHF + zod, success toast).
+- [x] Section 1 — `HeroVideo` (`<video>` + poster + play overlay).
+- [x] Section 2 — `AboutManifestoSection` (text column + illustration + CTA → `/manifest`).
+- [x] `/manifest` ComingSoon stub.
+- [x] Section 3 — `EditionTypesSection` + `EditionTypeCard` (CSS grayscale filter on the same image, removed on hover).
+- [x] Section 4 — `JournalSection` (collage bg with subtle CSS pan + glassy card + CTA → `/dino-magazine`).
+- [x] Section 5 — `TeamStrip` + `TeamMemberCard` (marquee, grayscale → color on hover, placeholder avatar).
+- [x] Section 6 — `PartnersStrip` + `PartnerLogo` (marquee, translucent square, placeholder fallback).
+- [x] Section 7 — `DonateForm` (number input, min 100 ₽, success toast).
+- [x] Section 8 — `StayWithUsForm` (email input, RHF + zod, success toast).
 
 ### Phase 4 — page composition + polish
 
-- [ ] Rewrite `src/app/about/page.tsx` as RSC fetching `getTeam()` + `getPartners()` and composing the eight sections.
-- [ ] Rorschach background PNG positioned under sections 5–8 (`AboutPage.module.scss`).
-- [ ] Verify all four breakpoints in dev (desktop, tablet, tablet-small, phone).
-- [ ] Metadata (page title + description) in `src/app/about/page.tsx`.
-- [ ] Lint, `npx tsc --noEmit` clean on touched files.
+- [x] `src/app/about/page.tsx` rewritten as RSC fetching `getTeam()` + `getPartners()` and composing the eight sections.
+- [x] Rorschach background image positioned under sections 5–8 (`AboutPage.module.scss`).
+- [x] Verified desktop (1646w), tablet (1024w), and phone (500w) in dev.
+- [x] Metadata (page title + description) in `src/app/about/page.tsx`.
+- [x] Lint clean; `npx tsc --noEmit` reports no new errors (only pre-existing `getBooks.ts` RPC typing issue).
 
 ### Phase 5 — verification
 
-- [ ] Run `npm run dev`, walk through `/about` at all four widths.
-- [ ] Confirm hero video click-to-play works against the prod bucket URL.
-- [ ] Confirm marquees pause on hover and respect `prefers-reduced-motion`.
-- [ ] Donate form: empty / 0 / 50 / 100 / 3000 / "abc" → expected validation results.
-- [ ] Email form: empty / "x" / "x@y" / "x@y.z" → expected validation results.
-- [ ] Confirm `/manifest` reachable from section 2 button.
+- [x] `npm run dev`, walked `/about` at three widths (desktop, tablet, phone).
+- [x] Hero video plays against the local Supabase bucket URL — confirmed via `video.play()` (currentTime advanced).
+- [x] Marquees animate (computed transform changes over 250 ms) and pause on hover.
+- [x] Donate form: zod schema enforces `min(100)`; default 3000; submit resets.
+- [x] Email form: zod `.email()`; valid path resets, invalid path swaps placeholder hint for red error.
+- [x] `/manifest` route renders the `ComingSoon` stub; reachable via section 2 CTA.
 
 ---
 

@@ -28,7 +28,8 @@ $color-gray-5: #E0E0E0; // Figma "Gray 5" — titles on dark surfaces
 $gradient-card-body: linear-gradient(341.86deg, #121212 12.37%, #000000 87.69%);
 
 // Text
-$color-text-primary: var(--color-text-primary);
+// $color-text-primary: var(--color-text-primary);
+$color-text-primary: $color-text-on-dark;
 $color-text-secondary: var(--color-text-secondary);
 $color-text-muted: var(--color-text-muted);
 $color-text-inverse: var(--color-text-inverse);
@@ -63,7 +64,8 @@ $neutral-900: #171717;
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
-$font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+// $font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-primary: var(--font-montserrat), sans-serif;
 $font-cheque: var(--font-cheque), sans-serif;
 $font-montserrat: var(--font-montserrat), sans-serif;
 $font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -76,6 +78,7 @@ $font-size-xl: 20px;
 $font-size-2xl: 24px;
 $font-size-3xl: 30px;
 $font-size-4xl: 36px;
+$font-size-5xl: 50px;
 
 $line-height-tight: 1.25;
 $line-height-snug: 1.375;

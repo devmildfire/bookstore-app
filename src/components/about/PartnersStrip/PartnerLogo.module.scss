@@ -1,0 +1,47 @@
+@use '@/styles/common' as *;
+
+.tile {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) { width: 200px; height: 200px; }
+  @include breakpoint(tablet-small) { width: 170px; height: 170px; }
+  @include breakpoint(phone) { width: 140px; height: 140px; }
+}
+
+.logo {
+  max-width: 70%;
+  max-height: 70%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: brightness(0.95);
+  transition: filter 0.3s ease;
+}
+
+.tile:hover .logo { filter: brightness(1.1); }
+
+.label {
+  position: absolute;
+  left: $space-3;
+  right: $space-3;
+  bottom: $space-3;
+  font-family: $font-cheque;
+  font-size: 14px;
+  text-align: center;
+  text-transform: uppercase;
+  color: $color-text-on-dark;
+  pointer-events: none;
+
+  @include breakpoint(phone) { font-size: 12px; }
+}

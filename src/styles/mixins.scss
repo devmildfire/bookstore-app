@@ -34,6 +34,28 @@
   color: $color-text-primary;
 }
 
+@mixin text-heading-small {
+  font-family: $font-primary;
+  font-size: $font-size-2xl;
+  line-height: $line-height-normal;
+  color: $color-text-primary;
+
+  @include breakpoint(desktop) { font-size: 24px; }       // 1201–1439 (Figma 1440 design)
+  @include breakpoint(tablet) { font-size: 18px; }        // ≤1200    (Figma 1024 design)
+  @include breakpoint(tablet-small) { font-size: 14px; }
+  @include breakpoint(phone) { font-size: 12px; }
+}
+
+@mixin text-heading-small-line-2 {
+  color: $color-text-primary;
+  font-family:$font-cheque;
+  font-size: $font-size-5xl;
+  font-style: normal;
+  font-weight: $font-weight-normal;
+  line-height: normal;
+  letter-spacing: 1.5px;
+}
+
 @mixin text-body-lg {
   font-family: $font-primary;
   font-size: $font-size-lg;
