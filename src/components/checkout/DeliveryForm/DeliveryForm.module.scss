@@ -1,6 +1,9 @@
 @use '@/styles/common' as *;
 
 .form {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: $space-10;
@@ -14,7 +17,7 @@
 // L→R like in Figma: name | city, phone | street, email | (building+postal).
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: $space-8 $space-12;
 
   @include breakpoint(tablet) {
@@ -25,6 +28,10 @@
     grid-template-columns: 1fr;
     gap: $space-4;
   }
+}
+
+.field {
+  min-width: 0;
 }
 
 .field {
@@ -41,6 +48,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $space-4;
+  min-width: 0;
+
+  // Stack дом + индекс into a single column once the right side gets tight.
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .label {
@@ -65,6 +78,10 @@
 }
 
 .input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   height: 62px;
   padding: 0 $space-4;
   background: rgba($color-text-on-dark, 0.2);
