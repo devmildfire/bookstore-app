@@ -15,17 +15,17 @@ export default function TeamMemberCard({ member }: Props) {
           <Image
             src={member.photoUrl}
             alt={`Фото: ${member.name}`}
-            width={220}
-            height={220}
+            width={250}
+            height={250}
             className={styles.avatar}
-            sizes='220px'
+            sizes='250px'
             unoptimized
           />
         ) : (
           <TeamPlaceholder className={styles.avatar} aria-hidden='true' />
         )}
       </div>
-      <h3 className={styles.name}>{member.name}</h3>
+      <p className={styles.name}>{member.name}</p>
       <p className={styles.position}>{member.position}</p>
       {member.city && <p className={styles.city}>{member.city}</p>}
     </article>

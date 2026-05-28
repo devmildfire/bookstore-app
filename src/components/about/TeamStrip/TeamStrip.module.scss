@@ -1,14 +1,18 @@
 @use '@/styles/common' as *;
 
+// Figma 1920 — heading "Мы" (60px Cheque) at the top, then a marquee of
+// circle-headshot cards. Cards are spaced 85px apart at 1920 (instances
+// at x=171/506/841/… = 335 step, card width 250 → 85px gap).
 .wrapper {
   width: 100%;
-  padding: $space-16 0 $space-10;
+  padding: $space-20 0 $space-12;
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  gap: 60px;
 
-  @include breakpoint(tablet) { padding: $space-12 0 $space-8; gap: $space-6; }
-  @include breakpoint(phone) { padding: $space-10 0; gap: $space-5; }
+  @include breakpoint(tablet) { padding: $space-16 0 $space-10; gap: 40px; }
+  @include breakpoint(tablet-small) { padding: $space-12 0 $space-8; gap: 30px; }
+  @include breakpoint(phone) { padding: $space-10 0; gap: 24px; }
 }
 
 .heading {
@@ -26,6 +30,7 @@
   gap: 85px;
   padding-right: 85px;
 
-  @include breakpoint(tablet) { gap: 50px; padding-right: 50px; }
-  @include breakpoint(phone) { gap: 30px; padding-right: 30px; }
+  @include breakpoint(tablet) { gap: 70px; padding-right: 70px; }
+  @include breakpoint(tablet-small) { gap: 50px; padding-right: 50px; }
+  @include breakpoint(phone) { gap: 60px; padding-right: 60px; }
 }

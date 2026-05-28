@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import type { Metadata } from 'next'
 import { getTeam } from '@/api/team/getTeam'
 import { getPartners } from '@/api/partners/getPartners'
@@ -12,7 +11,6 @@ import PartnersStrip from '@/components/about/PartnersStrip'
 import DonateForm from '@/components/about/DonateForm'
 import StayWithUsForm from '@/components/about/StayWithUsForm'
 import heroPoster from '@/assets/about/hero-illustration.png'
-import rorschachBg from '@/assets/about/rorschach-bg.jpg'
 import styles from './AboutPage.module.scss'
 
 export const metadata: Metadata = {
@@ -22,7 +20,9 @@ export const metadata: Metadata = {
 }
 
 export default async function AboutPage() {
-  const [team, partners] = await Promise.all([getTeam(), getPartners()])
+  const [teamRes, partnersRes] = await Promise.allSettled([getTeam(), getPartners()])
+  const team = teamRes.status === 'fulfilled' ? teamRes.value : []
+  const partners = partnersRes.status === 'fulfilled' ? partnersRes.value : []
   const videoUrl = getVideoUrl('about/chtivo.mp4') ?? ''
 
   return (
@@ -36,14 +36,6 @@ export default async function AboutPage() {
       <JournalSection />
 
       <div className={styles.darkBlock}>
-        <Image
-          src={rorschachBg}
-          alt=''
-          aria-hidden='true'
-          className={styles.rorschach}
-          placeholder='blur'
-          sizes='100vw'
-        />
         <TeamStrip team={team} />
         <PartnersStrip partners={partners} />
         <DonateForm />

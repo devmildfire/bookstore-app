@@ -1,25 +1,27 @@
 @use '@/styles/common' as *;
 
+// ─── Section wrapper ─────────────────────────────────────────────────
+// Figma 1920 — section behind the card is the ЖУРНАЛ КАРТИНКА collage
+// (1920 × 1262) with a top fade-in gradient and a longer bottom fade-out.
 .wrapper {
   position: relative;
   width: 100%;
-  min-height: 720px;
+  min-height: 1262px;
+  margin: 100px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: $space-20 $layout-px;
   overflow: hidden;
 
-  @include breakpoint(tablet) { padding: $space-16 $layout-px-tablet; min-height: 600px; }
-  @include breakpoint(tablet-small) { padding: $space-12 $layout-px-tablet-small; min-height: 540px; }
-  @include breakpoint(phone) { padding: $space-10 $layout-px-phone; min-height: 480px; }
+  @include breakpoint(tablet) { min-height: 714px; margin: 70px 0; }
+  @include breakpoint(tablet-small) { min-height: 602px; margin: 50px 0; }
+  @include breakpoint(phone) { min-height: 480px; margin: 40px 0; }
 }
 
 .backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
 }
 
 .collage {
@@ -28,121 +30,219 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: collagePan 60s ease-in-out infinite alternate;
-
-  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 
-@keyframes collagePan {
-  from { transform: scale(1.05) translateX(-1.5%); }
-  to   { transform: scale(1.05) translateX(1.5%); }
-}
-
-.gradientTop,
-.gradientBottom {
+// Figma "Градиент журнал сер" (4121:12808): 1920 × 436 at the top
+// of the 1262-tall section ≈ 35%. Solid black → transparent.
+.gradientTop {
   position: absolute;
+  top: 0;
   left: 0;
   right: 0;
-  height: 28%;
+  height: 35%;
+  background: linear-gradient(
+    180deg,
+    $color-bg-page 0%,
+    rgba(18, 18, 18, 0) 100%
+  );
   pointer-events: none;
 }
 
-.gradientTop {
-  top: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
-}
-
+// Figma "Градиент журнал сер" (4454:11770): 1929 × 589 sitting
+// just BELOW the collage frame, so most of it overhangs into the
+// dark Rorschach section that follows. We render ≈30% of the
+// journal section height with a tight, almost-instant fade to black
+// near the bottom edge.
 .gradientBottom {
+  position: absolute;
   bottom: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0));
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(
+    0deg,
+    $color-bg-page 0%,
+    rgba(18, 18, 18, 0) 100%
+  );
+  pointer-events: none;
 }
 
+// ─── Glassy card ─────────────────────────────────────────────────────
 .card {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 1058px;
-  padding: $space-12 $space-16;
-  background: rgba(20, 20, 20, 0.55);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-lg;
-  color: $color-text-on-dark;
-  text-align: center;
+  box-sizing: border-box;
+
+  width: 1058px;
+  min-height: 603px;
+  padding: 39px 24px 65px;
+
+  border-radius: 4px;
+  background: linear-gradient(
+    126.7deg,
+    rgba(18, 18, 18, 0.6) 0%,
+    rgba(0, 0, 0, 0.6) 98.5%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $space-5;
+  text-align: center;
+  color: $color-text-on-dark;
 
-  @include breakpoint(tablet) { padding: $space-10 $space-10; gap: $space-4; }
-  @include breakpoint(tablet-small) { padding: $space-8 $space-6; }
-  @include breakpoint(phone) { padding: $space-6 $space-5; }
+  @include breakpoint(tablet) {
+    width: 633px;
+    min-height: 437px;
+    padding: 22px 20px 42px;
+  }
+  @include breakpoint(tablet-small) {
+    width: 503px;
+    min-height: 355px;
+    padding: 20px 20px 32px;
+  }
+  @include breakpoint(phone) {
+    width: 239px;
+    min-height: 377px;
+    padding: 10px 14px 14px;
+  }
 }
 
-.quote {
-  font-family: $font-cheque;
-  font-size: 64px;
-  line-height: 1;
-  color: $color-accent-on-dark;
-  margin: 0 0 (-$space-4) 0;
+// ─── Leaf icon ───────────────────────────────────────────────────────
+.leaf {
+  width: 47px;
+  height: 85px;
+  color: $color-text-on-dark;
+  flex-shrink: 0;
 
-  @include breakpoint(phone) { font-size: 44px; }
+  @include breakpoint(tablet) {
+    width: 26px;
+    height: 45px;
+  }
+  @include breakpoint(tablet-small) {
+    width: 22px;
+    height: 38px;
+  }
+  @include breakpoint(phone) {
+    width: 13px;
+    height: 25px;
+  }
 }
 
+// ─── Heading ─────────────────────────────────────────────────────────
 .heading {
+  margin: 12px 0 0;
   font-family: $font-cheque;
   font-weight: $font-weight-normal;
-  font-size: 56px;
-  line-height: 1.05;
-  margin: 0;
+  font-size: 70px;
+  line-height: 1.1;
+  letter-spacing: 2.1px;
   text-transform: uppercase;
+  color: $color-text-on-dark;
 
-  @include breakpoint(tablet) { font-size: 44px; }
-  @include breakpoint(tablet-small) { font-size: 32px; }
-  @include breakpoint(phone) { font-size: 24px; }
+  @include breakpoint(tablet) {
+    margin-top: 13px;
+    font-size: 40px;
+    letter-spacing: 1.2px;
+  }
+  @include breakpoint(tablet-small) {
+    margin-top: 14px;
+    font-size: 30px;
+    letter-spacing: 0.9px;
+  }
+  @include breakpoint(phone) {
+    margin-top: 4px;
+    font-size: 24px;
+    letter-spacing: 0.72px;
+  }
 }
 
+.headingLine {
+  display: block;
+}
+
+// ─── Body paragraphs ─────────────────────────────────────────────────
 .body {
-  @include text-body-lg;
-  max-width: 720px;
-  margin: 0;
+  margin: 20px 0 0;
+  width: 717px;
+  max-width: 100%;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 18px;
+  line-height: 1.4;
   color: $color-text-on-dark;
 
-  @include breakpoint(phone) { @include text-body; }
+  @include breakpoint(tablet) {
+    margin-top: 15px;
+    width: 467px;
+    font-size: 16px;
+  }
+  @include breakpoint(tablet-small) {
+    margin-top: 12px;
+    width: 448px;
+    font-size: 14px;
+    line-height: 1.42;
+  }
+  @include breakpoint(phone) {
+    margin-top: 20px;
+    width: 212px;
+    font-size: 12px;
+    line-height: 1.42;
+    text-align: center;
+  }
 }
 
-.bodySmall {
-  @include text-body;
-  max-width: 580px;
-  margin: 0;
+.bodySecondary {
+  margin: 12px 0 0;
+  width: 578px;
+  max-width: 100%;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 18px;
+  line-height: 1.4;
   color: $color-text-on-dark;
-  opacity: 0.85;
 
-  @include breakpoint(phone) { font-size: $font-size-sm; }
+  @include breakpoint(tablet) {
+    margin-top: 9px;
+    width: 396px;
+    font-size: 16px;
+  }
+  @include breakpoint(tablet-small) {
+    margin-top: 19px;
+    width: 356px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  @include breakpoint(phone) {
+    margin-top: 10px;
+    width: 181px;
+    font-size: 12px;
+    line-height: 1.2;
+    text-align: center;
+  }
 }
 
+// ─── CTA ─────────────────────────────────────────────────────────────
+// Styling lives in the shared OutlinedButton component. We only set
+// layout (margin, breakpoint visibility) here.
 .cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 451px;
-  min-height: 62px;
-  padding: 0 $space-8;
-  margin-top: $space-3;
-  background: $color-accent-on-dark;
-  color: $color-text-on-dark;
-  border-radius: $radius-md;
-  font-family: $font-cheque;
-  font-size: 24px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background-color 0.15s ease;
+  margin: 29px auto 0;
 
-  &:hover { background: $color-accent-hover-on-dark; }
-  &:focus-visible { outline: 2px solid $color-brand-primary; outline-offset: 3px; }
+  @include breakpoint(tablet) { margin-top: 30px; }
+  @include breakpoint(tablet-small) { margin-top: 27px; }
+  @include breakpoint(phone) { margin-top: 18px; }
+}
 
-  @include breakpoint(tablet) { min-width: 340px; font-size: 20px; }
-  @include breakpoint(tablet-small) { min-width: 260px; font-size: 18px; min-height: 52px; }
-  @include breakpoint(phone) { min-width: 100%; font-size: 16px; min-height: 48px; }
+// Button label swaps between breakpoints to match Figma.
+.ctaDesktop {
+  display: inline;
+
+  @include breakpoint(tablet) { display: none; }
+}
+
+.ctaCompact {
+  display: none;
+
+  @include breakpoint(tablet) { display: inline; }
 }

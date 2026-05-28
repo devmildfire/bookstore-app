@@ -4,18 +4,27 @@ import styles from './EditionTypeCard.module.scss'
 type Props = {
   title: string
   description: string
-  image: StaticImageData
+  imageBw: StaticImageData
+  imageColor: StaticImageData
   alt: string
 }
 
-export default function EditionTypeCard({ title, description, image, alt }: Props) {
+export default function EditionTypeCard({ title, description, imageBw, imageColor, alt }: Props) {
   return (
     <article className={styles.card}>
       <div className={styles.imageWrap}>
         <Image
-          src={image}
+          src={imageColor}
           alt={alt}
-          className={styles.image}
+          className={styles.imageColor}
+          sizes='(max-width: 532px) 100vw, (max-width: 1200px) 33vw, 400px'
+          placeholder='blur'
+        />
+        <Image
+          src={imageBw}
+          alt=''
+          aria-hidden='true'
+          className={styles.imageBw}
           sizes='(max-width: 532px) 100vw, (max-width: 1200px) 33vw, 400px'
           placeholder='blur'
         />

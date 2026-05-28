@@ -38,7 +38,7 @@
 
   @include breakpoint(phone) {
     transform: translate(50%, 50px);
-  }  
+  }
 }
 
 .aboutLine1 {
@@ -117,7 +117,7 @@
 
   @include breakpoint(desktop) {
     transform: translate(calc(50% + 390px), 295px);
-  }  
+  }
 
   @include breakpoint(tablet) {
     transform: translate(calc(50% + 25.46vw	+ 74px), 225px);
@@ -129,7 +129,7 @@
 
   @include breakpoint(phone) {
     transform: translate(calc(50% + 90px), 128px);
-  }  
+  }
 }
 
 
@@ -141,28 +141,70 @@
   display: block;
 }
 
-.cta {
-  display: inline-flex;
+// ─── Manifesto paragraph + CTA row (UNDER the illustration) ───────────
+// Figma per breakpoint:
+//   1920: paragraph (254, 1789, 713×150), button (1186, 1871, 480×62)
+//   1024: paragraph (95, 1080, 516×168),  button (627, 1184, 300×45)
+//   744:  paragraph (51, 806, 391×137),   button (413, 889, 287×32)
+//   320:  paragraph (17, 477, 285×137),   button (17, 652, 287×32) — stacks
+.manifesto {
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  min-width: 480px;
-  min-height: 62px;
-  padding: 0 $space-8;
-  background: $color-accent-on-dark;
-  color: $color-text-on-dark;
-  border-radius: $radius-md;
-  font-family: $font-cheque;
-  font-size: 24px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  justify-content: space-between;
+  gap: 40px;
+  width: 100%;
+  padding: 15px 254px 0;
 
-  &:hover { background: $color-accent-hover-on-dark; }
-  &:active { transform: translateY(1px); }
-  &:focus-visible { outline: 2px solid $color-brand-primary; outline-offset: 3px; }
+  @include breakpoint(desktop) { padding: 15px 13.2vw 0; }
+  @include breakpoint(tablet) {
+    padding: 23px 95px 0;
+    gap: 24px;
+  }
+  @include breakpoint(tablet-small) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 13px 51px 0;
+    gap: 24px;
+  }
+  @include breakpoint(phone) {
+    padding: 11px 17px 0;
+    gap: 16px;
+  }
+}
 
-  @include breakpoint(tablet) { min-width: 360px; font-size: 20px; }
-  @include breakpoint(tablet-small) { min-width: 280px; font-size: 18px; min-height: 52px; }
-  @include breakpoint(phone) { min-width: 100%; font-size: 16px; min-height: 48px; }
+.manifestoText {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: #ffffff;
+  flex: 1 1 auto;
+  max-width: 713px;
+
+  @include breakpoint(tablet) {
+    font-size: 16px;
+    max-width: 516px;
+  }
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+    max-width: 391px;
+  }
+  @include breakpoint(phone) {
+    font-size: 12px;
+    max-width: none;
+  }
+}
+
+// CTA width — visual styling lives in the shared OutlinedButton.
+.cta {
+  flex-shrink: 0;
+  width: 480px;
+
+  @include breakpoint(tablet) { width: 300px; }
+  @include breakpoint(tablet-small) { width: 287px; }
+  @include breakpoint(phone) { width: 100%; }
 }

@@ -15,7 +15,7 @@ export default function PartnersStrip({ partners }: Props) {
       <h2 id='partners-heading' className={styles.heading}>
         Наши партнёры
       </h2>
-      <Marquee speed={80} ariaLabel='Партнёры Чтива' className={styles.marquee} itemClassName={styles.row}>
+      <Marquee speed={80} reverse ariaLabel='Партнёры Чтива' className={styles.marquee} itemClassName={styles.row}>
         {partners.map((partner) => (
           <PartnerLogo key={partner.id} partner={partner} />
         ))}

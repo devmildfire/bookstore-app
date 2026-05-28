@@ -20,6 +20,10 @@
   }
 }
 
+.reverse {
+  animation-direction: reverse;
+}
+
 .row {
   display: flex;
   flex-shrink: 0;

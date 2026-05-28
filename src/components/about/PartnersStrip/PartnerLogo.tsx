@@ -8,24 +8,26 @@ type Props = {
 }
 
 export default function PartnerLogo({ partner }: Props) {
-  return (
-    <div className={styles.tile} aria-label={`Партнёр: ${partner.name}`}>
-      {partner.logoUrl ? (
+  if (partner.logoUrl) {
+    return (
+      <div className={styles.tile} aria-label={`Партнёр: ${partner.name}`}>
         <Image
           src={partner.logoUrl}
           alt={partner.name}
-          width={200}
-          height={200}
-          className={styles.logo}
-          sizes='200px'
+          width={250}
+          height={250}
+          className={styles.logoFill}
+          sizes='250px'
           unoptimized
         />
-      ) : (
-        <>
-          <PartnerPlaceholder className={styles.logo} aria-hidden='true' />
-          <span className={styles.label}>{partner.name}</span>
-        </>
-      )}
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.tile} aria-label={`Партнёр: ${partner.name}`}>
+      <PartnerPlaceholder className={styles.logoPlaceholder} aria-hidden='true' />
+      <span className={styles.label}>{partner.name}</span>
     </div>
   )
 }

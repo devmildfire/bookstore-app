@@ -10,13 +10,14 @@ type Props = {
   className?: string
   itemClassName?: string
   ariaLabel?: string
+  reverse?: boolean
 }
 
-export default function Marquee({ children, speed = 60, className, itemClassName, ariaLabel }: Props) {
+export default function Marquee({ children, speed = 60, className, itemClassName, ariaLabel, reverse = false }: Props) {
   return (
     <div className={cn(styles.viewport, className)} role='region' aria-label={ariaLabel}>
       <div
-        className={styles.track}
+        className={cn(styles.track, reverse && styles.reverse)}
         style={{ '--marquee-duration': `${speed}s` } as React.CSSProperties}
       >
         <div className={cn(styles.row, itemClassName)} aria-hidden={false}>

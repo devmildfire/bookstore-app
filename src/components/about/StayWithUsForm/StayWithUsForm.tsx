@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useToast } from '@/contexts/toast'
+import OutlinedButton from '@/components/common/OutlinedButton'
 import styles from './StayWithUsForm.module.scss'
 
 const schema = z.object({
@@ -36,20 +37,22 @@ export default function StayWithUsForm() {
         Будьте с нами
       </h2>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className={styles.inputWrap}>
-          <input
-            type='email'
-            className={styles.input}
-            placeholder='e-mail'
-            aria-label='E-mail адрес'
-            aria-invalid={!!errors.email}
-            autoComplete='email'
-            {...register('email')}
-          />
+        <div className={styles.row}>
+          <div className={styles.inputWrap}>
+            <input
+              type='email'
+              className={styles.input}
+              placeholder='e-mail'
+              aria-label='E-mail адрес'
+              aria-invalid={!!errors.email}
+              autoComplete='email'
+              {...register('email')}
+            />
+          </div>
+          <OutlinedButton type='submit' className={styles.submit} disabled={isSubmitting}>
+            {isSubmitting ? 'Отправка…' : 'Подписаться'}
+          </OutlinedButton>
         </div>
-        <button type='submit' className={styles.submit} disabled={isSubmitting}>
-          {isSubmitting ? 'Отправка…' : 'Подписаться'}
-        </button>
         <p className={errors.email ? styles.error : styles.hint}>
           {errors.email
             ? errors.email.message

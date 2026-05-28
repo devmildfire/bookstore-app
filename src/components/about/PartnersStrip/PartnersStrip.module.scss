@@ -1,14 +1,18 @@
 @use '@/styles/common' as *;
 
+// Figma 1920 — Section heading "наши партнёры" + marquee of frosted
+// squares. Cards spaced 85px (x step 335 − 250 width). At 1024 the gap
+// shrinks to 70px (step 270 − 200), at 744 to 50px (step 200 − 150).
 .wrapper {
   width: 100%;
-  padding: $space-10 0;
+  padding: $space-12 0;
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  gap: 56px;
 
-  @include breakpoint(tablet) { padding: $space-8 0; gap: $space-6; }
-  @include breakpoint(phone) { padding: $space-6 0; gap: $space-5; }
+  @include breakpoint(tablet) { padding: $space-10 0; gap: 40px; }
+  @include breakpoint(tablet-small) { padding: $space-8 0; gap: 30px; }
+  @include breakpoint(phone) { padding: $space-6 0; gap: 24px; }
 }
 
 .heading {
@@ -26,6 +30,7 @@
   gap: 85px;
   padding-right: 85px;
 
-  @include breakpoint(tablet) { gap: 50px; padding-right: 50px; }
-  @include breakpoint(phone) { gap: 24px; padding-right: 24px; }
+  @include breakpoint(tablet) { gap: 70px; padding-right: 70px; }
+  @include breakpoint(tablet-small) { gap: 50px; padding-right: 50px; }
+  @include breakpoint(phone) { gap: 50px; padding-right: 50px; }
 }

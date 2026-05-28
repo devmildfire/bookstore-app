@@ -1,52 +1,69 @@
 @use '@/styles/common' as *;
 
+// Figma 1920 — Heading + form row (263 input + 23.5 gap + 263 button)
+// centred inside the section. Stacks vertically only at 320.
 .wrapper {
   width: 100%;
-  max-width: 700px;
   margin: 0 auto;
   padding: $space-12 $layout-px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $space-6;
+  gap: 48px;
 
-  @include breakpoint(tablet) { padding: $space-10 $layout-px-tablet; }
-  @include breakpoint(tablet-small) { padding: $space-8 $layout-px-tablet-small; }
-  @include breakpoint(phone) { padding: $space-6 $layout-px-phone; gap: $space-4; }
+  @include breakpoint(tablet) { padding: $space-10 $layout-px-tablet; gap: 30px; }
+  @include breakpoint(tablet-small) { padding: $space-8 $layout-px-tablet-small; gap: 20px; }
+  @include breakpoint(phone) { padding: $space-6 $layout-px-phone; gap: 14px; }
 }
 
 .heading {
   @include section-title;
   text-align: center;
   text-transform: uppercase;
+  letter-spacing: 1.8px;
   margin: 0;
 }
 
 .form {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: $space-3;
-  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 23.5px;
+  flex-wrap: wrap;
 
-  @include breakpoint(phone) { grid-template-columns: 1fr; }
+  @include breakpoint(tablet) { gap: 13px; }
+  @include breakpoint(tablet-small) { gap: 12px; }
+  @include breakpoint(phone) {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
 }
 
 .inputWrap {
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 263px;
+  height: 63px;
+
+  @include breakpoint(tablet) { width: 185px; height: 45px; }
+  @include breakpoint(tablet-small) { width: 150px; height: 32px; }
+  @include breakpoint(phone) { width: 150px; height: 32px; }
 }
 
 .input {
   width: 100%;
-  height: 63px;
-  padding: 0 $space-10 0 $space-5;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: $radius-md;
+  height: 100%;
+  padding: 0 16px;
+  background: rgba(220, 220, 220, 0.2);
+  border: 0;
+  border-radius: 4px;
   color: $color-text-on-dark;
-  font-family: $font-primary;
-  font-size: $font-size-lg;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0.8px;
+  text-align: center;
   -moz-appearance: textfield;
   appearance: textfield;
 
@@ -57,46 +74,50 @@
   }
 
   &:focus {
-    outline: 2px solid $color-brand-primary;
-    outline-offset: 2px;
-    border-color: $color-brand-primary;
+    outline: 1px solid $color-text-on-dark;
+    outline-offset: 1px;
   }
+
+  @include breakpoint(tablet) { font-size: 12px; letter-spacing: 0.6px; padding: 0 12px; }
+  @include breakpoint(tablet-small) { font-size: 10px; letter-spacing: 0.5px; padding: 0 8px; }
+  @include breakpoint(phone) { font-size: 10px; letter-spacing: 0.5px; padding: 0 8px; }
 }
 
+// "₽" overlays the right side of the value so the number sits flush
+// against it (Figma renders "3000" and "₽" as two adjacent text nodes).
 .suffix {
   position: absolute;
-  right: $space-5;
-  font-family: $font-primary;
-  font-size: $font-size-lg;
+  top: 50%;
+  left: 50%;
+  transform: translate(28px, -50%);
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0.8px;
   color: $color-text-on-dark;
   pointer-events: none;
+
+  @include breakpoint(tablet) { font-size: 12px; transform: translate(22px, -50%); }
+  @include breakpoint(tablet-small) { font-size: 10px; transform: translate(18px, -50%); }
+  @include breakpoint(phone) { font-size: 10px; transform: translate(18px, -50%); }
 }
 
+// Styling lives in OutlinedButton — here we only fix the dimensions
+// (input/button row stays a uniform height).
 .submit {
-  min-width: 263px;
+  width: 263px;
   height: 63px;
-  padding: 0 $space-8;
-  background: $color-accent-on-dark;
-  color: $color-text-on-dark;
-  border: 0;
-  border-radius: $radius-md;
-  font-family: $font-cheque;
-  font-size: 20px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
 
-  &:hover:not(:disabled) { background: $color-accent-hover-on-dark; }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
-  &:focus-visible { outline: 2px solid $color-brand-primary; outline-offset: 3px; }
-
-  @include breakpoint(tablet) { min-width: 220px; font-size: 18px; }
-  @include breakpoint(phone) { min-width: 100%; }
+  @include breakpoint(tablet) { width: 185px; height: 45px; }
+  @include breakpoint(tablet-small) { width: 150px; height: 32px; padding: 10px 30px; }
+  @include breakpoint(phone) { width: 150px; height: 32px; padding: 10px 30px; }
 }
 
 .error {
-  grid-column: 1 / -1;
+  width: 100%;
   margin: 0;
   color: $color-danger;
   font-size: $font-size-sm;
+  text-align: center;
 }

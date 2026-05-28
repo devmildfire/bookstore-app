@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import OutlinedButton from '@/components/common/OutlinedButton'
 import moneyToBooks from '@/assets/about/money-to-books.png'
 import styles from './AboutManifestoSection.module.scss'
 
@@ -38,9 +38,9 @@ export default function AboutManifestoSection() {
           произведениями и считаем, что книгоиздание не должно быть бизнесом.
         </p>
 
-        <Link href='/manifest' className={styles.cta}>
-          Манифест
-        </Link>
+        <OutlinedButton href='/manifest' className={styles.cta}>
+          Манифест Чтива
+        </OutlinedButton>
       </div>
 
     </section>

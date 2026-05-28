@@ -10,9 +10,9 @@
   align-items: center;
   gap: $space-10;
 
-  @include breakpoint(tablet) { padding: $space-12 $layout-px-tablet; gap: $space-8; }
-  @include breakpoint(tablet-small) { padding: $space-10 $layout-px-tablet-small; }
-  @include breakpoint(phone) { padding: $space-8 $layout-px-phone; }
+  @include breakpoint(tablet) { padding: $space-12 $layout-px-tablet 100px; gap: $space-8; }
+  @include breakpoint(tablet-small) { padding: 80px $layout-px-tablet-small 90px; }
+  @include breakpoint(phone) { padding: 70px $layout-px-phone 80px; }
 }
 
 .heading {
@@ -29,5 +29,9 @@
   gap: $space-13;
 
   @include breakpoint(tablet) { gap: $space-8; }
-  @include breakpoint(tablet-small) { flex-direction: column; align-items: center; gap: $space-10; }
+  @include breakpoint(tablet-small) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 25px;
+  }
 }

@@ -1,7 +1,10 @@
 import EditionTypeCard from './EditionTypeCard'
-import editionPrint from '@/assets/about/edition-print.jpg'
-import editionBook20 from '@/assets/about/edition-book20.jpg'
-import editionDigital from '@/assets/about/edition-digital.jpg'
+import editionPrintBw from '@/assets/about/edition-print-bw.png'
+import editionPrintColor from '@/assets/about/edition-print-color.jpg'
+import editionBook20Bw from '@/assets/about/edition-book20-bw.png'
+import editionBook20Color from '@/assets/about/edition-book20-color.jpg'
+import editionDigitalBw from '@/assets/about/edition-digital-bw.png'
+import editionDigitalColor from '@/assets/about/edition-digital-color.jpg'
 import styles from './EditionTypesSection.module.scss'
 
 const CARDS = [
@@ -9,21 +12,24 @@ const CARDS = [
     key: 'print',
     title: 'Печатные издания',
     description: 'Нестареющая классика — книги из деревьев',
-    image: editionPrint,
+    imageBw: editionPrintBw,
+    imageColor: editionPrintColor,
     alt: 'Печатное издание на тёмном столе',
   },
   {
     key: 'book20',
     title: 'Книги 2.0',
     description: 'Компактная эстетика — материальный носитель цифрового издания',
-    image: editionBook20,
+    imageBw: editionBook20Bw,
+    imageColor: editionBook20Color,
     alt: 'Издание Книги 2.0 у грифа гитары',
   },
   {
     key: 'digital',
     title: 'Цифровые и аудио издания',
     description: 'Экология и скорость — издания будущего',
-    image: editionDigital,
+    imageBw: editionDigitalBw,
+    imageColor: editionDigitalColor,
     alt: 'Цифровое издание с кассетной плёнкой',
   },
 ]
@@ -40,7 +46,8 @@ export default function EditionTypesSection() {
             key={card.key}
             title={card.title}
             description={card.description}
-            image={card.image}
+            imageBw={card.imageBw}
+            imageColor={card.imageColor}
             alt={card.alt}
           />
         ))}

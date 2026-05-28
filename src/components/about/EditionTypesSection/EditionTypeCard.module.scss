@@ -7,9 +7,20 @@
   gap: $space-4;
 
   @include breakpoint(tablet) { width: 320px; }
-  @include breakpoint(tablet-small) { width: 100%; max-width: 400px; }
+
+  // Tablet-small + mobile: two-column row — image on the left, title +
+  // description on the right.
+  @include breakpoint(tablet-small) {
+    width: 100%;
+    max-width: none;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+  }
 }
 
+// Two images stacked. The B&W layer sits on top by default and fades
+// out on hover, revealing the color layer underneath.
 .imageWrap {
   position: relative;
   width: 100%;
@@ -17,19 +28,48 @@
   border-radius: $radius-md;
   overflow: hidden;
   background: $color-panel;
+
+  @include breakpoint(tablet-small) {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 280px;
+    height: 420px;
+    aspect-ratio: auto;
+  }
+  @include breakpoint(phone) {
+    flex: 0 0 127px;
+    width: 127px;
+    min-width: 127px;
+    height: 190px;
+  }
 }
 
-.image {
+.imageColor,
+.imageBw {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) brightness(0.85);
-  transition: filter 0.4s ease, transform 0.6s ease;
   display: block;
+  transition: opacity 0.4s ease, transform 0.6s ease;
 }
 
-.card:hover .image {
-  filter: grayscale(0) brightness(1);
+.imageBw {
+  z-index: 1;
+  opacity: 1;
+}
+
+.imageColor {
+  z-index: 0;
+  opacity: 1;
+}
+
+.card:hover .imageBw {
+  opacity: 0;
+}
+
+.card:hover .imageColor {
   transform: scale(1.03);
 }
 
@@ -38,6 +78,11 @@
   flex-direction: column;
   gap: $space-3;
   color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    flex: 1 1 auto;
+    gap: 10px;
+  }
 }
 
 .title {
@@ -48,7 +93,14 @@
   text-transform: uppercase;
   margin: 0;
 
-  @include breakpoint(phone) { font-size: 20px; }
+  // Figma 320: Montserrat Bold 16 px, 0.48 ls, leading 1.2
+  @include breakpoint(tablet-small) {
+    font-family: $font-montserrat;
+    font-weight: $font-weight-bold;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: 0.48px;
+  }
 }
 
 .description {
@@ -56,5 +108,11 @@
   margin: 0;
   color: $color-text-on-dark;
 
-  @include breakpoint(phone) { font-size: $font-size-sm; }
+  // Figma 320: Montserrat Regular 14 px, leading 1.4
+  @include breakpoint(tablet-small) {
+    font-family: $font-montserrat;
+    font-weight: $font-weight-normal;
+    font-size: 14px;
+    line-height: 1.4;
+  }
 }
