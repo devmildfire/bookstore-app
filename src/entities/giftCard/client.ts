@@ -5,6 +5,7 @@ export type GiftCard = {
   code: string
   productId: number
   productName: string
+  productImageUrl: string | null
   faceValue: number
   balance: number
   status: GiftCardStatus

@@ -5,4 +5,5 @@ export type GiftCardProduct = {
   name: string
   faceValue: number
   sortOrder: number
+  imageUrl: string | null
 }

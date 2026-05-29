@@ -123,8 +123,13 @@
   }
 }
 
+// Holds the promo-code form and the gift-card picker stacked together —
+// they share the same "left column" footer slot.
 .promo {
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
   max-width: 540px;
 
   @media screen and (max-width: 989px) {

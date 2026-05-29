@@ -4,6 +4,7 @@ import { useCart } from '@/contexts/cart'
 import CartItemRow from '@/components/cart/CartItemRow'
 import CartTotals from '@/components/cart/CartTotals'
 import EmptyCart from '@/components/cart/EmptyCart'
+import GiftCardPicker from '@/components/cart/GiftCardPicker'
 import PromoCodeForm from '@/components/cart/PromoCodeForm'
 import styles from './page.module.scss'
 
@@ -17,6 +18,8 @@ export default function CartPage() {
     appliedPromo,
     discountAmount,
     finalTotal,
+    giftCardAppliedTotal,
+    amountDue,
   } = useCart()
 
   const isEmpty = items.length === 0
@@ -51,6 +54,7 @@ export default function CartPage() {
           <div className={styles.footer}>
             <div className={styles.promo}>
               <PromoCodeForm />
+              <GiftCardPicker />
             </div>
             <div className={styles.totals}>
               <CartTotals
@@ -59,6 +63,8 @@ export default function CartPage() {
                 discountAmount={discountAmount}
                 finalTotal={finalTotal}
                 appliedCode={appliedPromo?.code ?? null}
+                giftCardAppliedTotal={giftCardAppliedTotal}
+                amountDue={amountDue}
               />
             </div>
           </div>

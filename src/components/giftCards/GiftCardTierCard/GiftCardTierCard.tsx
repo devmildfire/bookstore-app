@@ -1,10 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { addGiftCardToCart } from '@/api/giftCards/addGiftCardToCart'
-import { cartQueryKey } from '@/api/cart'
-import { useToast } from '@/contexts/toast'
+import Image from 'next/image'
+import GiftCardAddToCartModal from '@/components/giftCards/GiftCardAddToCartModal'
 import { formatPrice } from '@/lib/formatPrice'
 import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
 import styles from './GiftCardTierCard.module.scss'
@@ -14,56 +12,43 @@ type Props = {
 }
 
 export default function GiftCardTierCard({ product }: Props) {
-  const queryClient = useQueryClient()
-  const { cartSuccess, error } = useToast()
-  const [quantity, setQuantity] = useState(1)
-  const [isPending, setIsPending] = useState(false)
-
-  async function handleAdd() {
-    setIsPending(true)
-    try {
-      for (let i = 0; i < quantity; i += 1) {
-        await addGiftCardToCart(product)
-      }
-      await queryClient.invalidateQueries({ queryKey: cartQueryKey })
-      cartSuccess('Добавлено в корзину', `${product.name} × ${quantity}`)
-    } catch (e) {
-      error('Не удалось добавить карту', e instanceof Error ? e.message : undefined)
-    } finally {
-      setIsPending(false)
-    }
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <article className={styles.card}>
-      <div className={styles.body}>
-        <h3 className={styles.name}>{product.name}</h3>
-        <p className={styles.value}>{formatPrice(product.faceValue)}</p>
-        <div className={styles.stepper} role='group' aria-label='Количество'>
+    <>
+      <article className={styles.card}>
+        <div className={styles.imageWrap}>
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              className={styles.image}
+              sizes='(max-width: 532px) 90vw, (max-width: 1200px) 33vw, 380px'
+            />
+          ) : (
+            <div className={styles.imagePlaceholder} aria-hidden />
+          )}
+        </div>
+
+        <div className={styles.body}>
+          <h3 className={styles.name}>{product.name}</h3>
+          <p className={styles.value}>{formatPrice(product.faceValue)}</p>
           <button
             type='button'
-            className={styles.stepperBtn}
-            onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-            disabled={quantity <= 1 || isPending}
-            aria-label='Уменьшить количество'
+            className={styles.button}
+            onClick={() => setIsModalOpen(true)}
           >
-            −
-          </button>
-          <span className={styles.stepperValue}>{quantity}</span>
-          <button
-            type='button'
-            className={styles.stepperBtn}
-            onClick={() => setQuantity((current) => current + 1)}
-            disabled={isPending}
-            aria-label='Увеличить количество'
-          >
-            +
+            Купить
           </button>
         </div>
-        <button type='button' className={styles.button} onClick={handleAdd} disabled={isPending}>
-          {isPending ? 'Добавляем…' : 'Купить'}
-        </button>
-      </div>
-    </article>
+      </article>
+
+      <GiftCardAddToCartModal
+        product={product}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   )
 }

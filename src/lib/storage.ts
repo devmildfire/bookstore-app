@@ -60,6 +60,14 @@ export function getSubscriptionImageUrl(filename: string | null): string | null 
   return `${supabaseUrl}/storage/v1/object/public/${SUBSCRIPTIONS_BUCKET}/${filename}`
 }
 
+const GIFT_CARDS_BUCKET = 'gift-cards'
+
+export function getGiftCardImageUrl(filename: string | null): string | null {
+  if (!filename) return null
+  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
+  return `${supabaseUrl}/storage/v1/object/public/${GIFT_CARDS_BUCKET}/${filename}`
+}
+
 const BOX_SETS_PUBLIC_PATH = '/boxsets'
 
 export function getBoxSetImageUrl(filename: string | null): string | null {
@@ -152,6 +160,7 @@ export function getPartnerLogoUrl(path: string | null): string | null {
 export {
   COVERS_BUCKET,
   SUBSCRIPTIONS_BUCKET,
+  GIFT_CARDS_BUCKET,
   BOX_SETS_PUBLIC_PATH,
   BOOK_PHOTOS_BUCKET,
   BOOKTRAILERS_BUCKET,

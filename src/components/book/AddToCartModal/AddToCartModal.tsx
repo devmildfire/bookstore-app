@@ -74,8 +74,9 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
   function handleConfirm() {
     for (const book of products) {
       const qty = quantities[book.id] ?? 0
-      if (qty > 0) {
-        addItem({
+      if (qty <= 0) continue
+      addItem(
+        {
           id: book.id,
           name: book.name,
           subtitle: CATEGORY_LABELS[book.category] ?? book.category,
@@ -83,20 +84,9 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
           picture: book.coverUrl,
           discount: book.discount,
           category: book.category,
-        })
-        // addItem adds 1 unit; for qty>1 we call it multiple times
-        for (let i = 1; i < qty; i++) {
-          addItem({
-            id: book.id,
-            name: book.name,
-            subtitle: CATEGORY_LABELS[book.category] ?? book.category,
-            price: book.price,
-            picture: book.coverUrl,
-            discount: book.discount,
-            category: book.category,
-          })
-        }
-      }
+        },
+        qty,
+      )
     }
     cartSuccess('Добавлено в корзину', `«${titleName}» — ${totalItems} шт.`)
     setQuantities({})

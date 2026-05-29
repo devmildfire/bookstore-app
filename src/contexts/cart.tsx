@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useCallback, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useCallback, useMemo, useState, type ReactNode } from 'react'
 import {
   useQuery,
   useMutation,
@@ -17,16 +17,23 @@ import {
   type ApplyPromoResult,
 } from '@/api/promo'
 import { boxSetPhysicalFlagsQueryKey, getBoxSetPhysicalFlags } from '@/api/orders'
+import { getUserGiftCards, userGiftCardsQueryKey } from '@/api/giftCards/getUserGiftCards'
 import { calculateCartTotals } from '@/lib/cartTotals'
 import type { CartItem, CartState } from '@/entities/cart/client'
 import type { AddToCartInput } from '@/entities/cart/validation'
 import type { AppliedPromo } from '@/entities/promo/client'
+import type { GiftCard } from '@/entities/giftCard/client'
 
 // Physical-on-its-face categories — no per-item lookup needed.
 const ALWAYS_PHYSICAL = new Set<string>(['PrintBook', 'Book2.0'])
 
+export type SelectedGiftCardPayment = {
+  id: string
+  amount: number
+}
+
 type CartContextValue = CartState & {
-  addItem: (item: AddToCartInput) => void
+  addItem: (item: AddToCartInput, quantity?: number) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearItems: () => void
@@ -38,6 +45,15 @@ type CartContextValue = CartState & {
   discountAmount: number
   finalTotal: number
   giftCardEligibleTotal: number
+  // Gift cards — selection lives in the cart so it survives navigation
+  // from /cart → /checkout and feeds straight into place_order.
+  availableGiftCards: GiftCard[]
+  selectedGiftCardIds: ReadonlySet<string>
+  toggleGiftCard: (cardId: string) => void
+  clearGiftCardSelection: () => void
+  giftCardPayments: SelectedGiftCardPayment[]
+  giftCardAppliedTotal: number
+  amountDue: number
   // Checkout helpers
   hasPhysicalItems: boolean
 }
@@ -69,6 +85,16 @@ export function CartProvider({ children }: Props) {
     queryFn: getActivePromo,
   })
 
+  // User's gift-card wallet — used by the cart-page picker. Empty for users
+  // with no purchased/claimed cards; tiny payload either way.
+  const { data: userGiftCardsData } = useQuery({
+    queryKey: userGiftCardsQueryKey,
+    queryFn: getUserGiftCards,
+  })
+  const userGiftCards = useMemo<GiftCard[]>(() => userGiftCardsData ?? [], [userGiftCardsData])
+
+  const [selectedGiftCardIds, setSelectedGiftCardIds] = useState<ReadonlySet<string>>(() => new Set())
+
   // Only fetch title-id mapping when a title-target item code is applied —
   // otherwise we never need it.
   const needsTitleIds = appliedPromo?.kind === 'item' && appliedPromo.targetTitleId != null
@@ -98,7 +124,8 @@ export function CartProvider({ children }: Props) {
   })
 
   const addMutation = useMutation({
-    mutationFn: addToCart,
+    mutationFn: ({ item, quantity }: { item: AddToCartInput; quantity: number }) =>
+      addToCart(item, quantity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartQueryKey })
       queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
@@ -147,7 +174,7 @@ export function CartProvider({ children }: Props) {
   })
 
   const addItem = useCallback(
-    (item: AddToCartInput) => addMutation.mutate(item),
+    (item: AddToCartInput, quantity = 1) => addMutation.mutate({ item, quantity }),
     [addMutation]
   )
 
@@ -189,6 +216,52 @@ export function CartProvider({ children }: Props) {
     [items, appliedPromo, matchedCartIds]
   )
 
+  // Only `active` cards with balance > 0 can pay; cards already pending/depleted
+  // are filtered out so the UI never offers them.
+  const availableGiftCards = useMemo(
+    () => userGiftCards.filter((card) => card.status === 'active' && card.balance > 0),
+    [userGiftCards]
+  )
+
+  // Largest-balance-first so a single selected card consumes as much of the
+  // eligible total as possible; mirrors the previous picker behaviour.
+  const giftCardPayments = useMemo<SelectedGiftCardPayment[]>(() => {
+    const eligible = Math.min(totals.giftCardEligibleTotal, totals.total)
+    if (eligible <= 0) return []
+
+    const selected = availableGiftCards
+      .filter((card) => selectedGiftCardIds.has(card.id))
+      .sort((a, b) => b.balance - a.balance)
+
+    let remaining = eligible
+    const payments: SelectedGiftCardPayment[] = []
+    for (const card of selected) {
+      if (remaining <= 0) break
+      const amount = Math.min(card.balance, remaining)
+      if (amount > 0) {
+        payments.push({ id: card.id, amount })
+        remaining -= amount
+      }
+    }
+    return payments
+  }, [availableGiftCards, selectedGiftCardIds, totals.giftCardEligibleTotal, totals.total])
+
+  const giftCardAppliedTotal = giftCardPayments.reduce((sum, payment) => sum + payment.amount, 0)
+  const amountDue = Math.max(0, totals.total - giftCardAppliedTotal)
+
+  const toggleGiftCard = useCallback((cardId: string) => {
+    setSelectedGiftCardIds((current) => {
+      const next = new Set(current)
+      if (next.has(cardId)) next.delete(cardId)
+      else next.add(cardId)
+      return next
+    })
+  }, [])
+
+  const clearGiftCardSelection = useCallback(() => {
+    setSelectedGiftCardIds(new Set())
+  }, [])
+
   const hasPhysicalItems = useMemo(() => {
     for (const item of items) {
       if (ALWAYS_PHYSICAL.has(item.category)) return true
@@ -223,6 +296,13 @@ export function CartProvider({ children }: Props) {
         discountAmount: totals.discountAmount,
         finalTotal: totals.total,
         giftCardEligibleTotal: totals.giftCardEligibleTotal,
+        availableGiftCards,
+        selectedGiftCardIds,
+        toggleGiftCard,
+        clearGiftCardSelection,
+        giftCardPayments,
+        giftCardAppliedTotal,
+        amountDue,
         hasPhysicalItems,
       }}
     >

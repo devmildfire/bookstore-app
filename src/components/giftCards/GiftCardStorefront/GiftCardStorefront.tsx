@@ -1,4 +1,5 @@
 import GiftCardTierCard from '@/components/giftCards/GiftCardTierCard'
+import GiftCardCarousel from './GiftCardCarousel'
 import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
 import styles from './GiftCardStorefront.module.scss'
 
@@ -19,6 +20,9 @@ export default function GiftCardStorefront({ products }: Props) {
           {products.map((product) => (
             <GiftCardTierCard key={product.id} product={product} />
           ))}
+        </div>
+        <div className={styles.mobileCarousel}>
+          <GiftCardCarousel products={products} />
         </div>
       </div>
     </section>

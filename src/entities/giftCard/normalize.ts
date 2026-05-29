@@ -1,3 +1,4 @@
+import { getGiftCardImageUrl } from '@/lib/storage'
 import type { GiftCard, GiftCardStatus } from './client'
 import type { GiftCardRow } from './server'
 
@@ -14,6 +15,7 @@ export function normalizeGiftCard(raw: GiftCardRow): GiftCard {
     code: raw.code,
     productId: raw.product_id,
     productName: product?.name ?? 'Карта даров',
+    productImageUrl: getGiftCardImageUrl(product?.image_path ?? null),
     faceValue: product?.face_value ?? raw.initial_value,
     balance: raw.balance,
     status: normalizeStatus(raw.status),

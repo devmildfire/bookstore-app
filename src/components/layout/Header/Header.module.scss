@@ -166,15 +166,14 @@
   padding: $space-1 0;
   cursor: pointer;
   transition: color 0.15s ease;
+  outline: none;
 
-  &:hover {
+  &:hover,
+  &:focus,
+  &:focus-visible {
     color: $color-accent-on-dark;
     text-decoration: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 2px;
+    outline: none;
   }
 }
 
@@ -186,16 +185,15 @@
   padding-left: $space-4;
   cursor: pointer;
   transition: color 0.15s ease, opacity 0.15s ease;
+  outline: none;
 
-  &:hover {
+  &:hover,
+  &:focus,
+  &:focus-visible {
     color: $color-accent-on-dark;
     opacity: 1;
     text-decoration: none;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 2px;
+    outline: none;
   }
 }
 

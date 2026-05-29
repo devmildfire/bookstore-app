@@ -642,6 +642,7 @@ export type Database = {
         Row: {
           face_value: number
           id: number
+          image_path: string | null
           name: string
           slug: string
           sort_order: number
@@ -649,6 +650,7 @@ export type Database = {
         Insert: {
           face_value: number
           id?: number
+          image_path?: string | null
           name: string
           slug: string
           sort_order?: number
@@ -656,6 +658,7 @@ export type Database = {
         Update: {
           face_value?: number
           id?: number
+          image_path?: string | null
           name?: string
           slug?: string
           sort_order?: number
