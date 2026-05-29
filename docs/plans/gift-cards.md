@@ -497,7 +497,7 @@ amount due, the confirmation modal uses `amount_due` to swap
 
 ## Out of scope (deferred)
 
-- Real SMTP / email delivery (sender only gets a copyable URL for now)
+- Real SMTP / email delivery — UI is in place (email form + "Отправить" button in `SendGiftCardDialog`); the server action persists `pending_recipient_email` but does not yet ship a message. See [Email delivery (follow-up)](#email-delivery-follow-up) for the rollout plan.
 - "Cancel send" button on pending cards (locked-forever-until-claimed is the rule)
 - Claim-token expiry / cleanup job
 - Refunds / cancellations / chargebacks of orders
@@ -507,6 +507,137 @@ amount due, the confirmation modal uses `amount_due` to swap
 - Home-page section showcasing gift cards
 - Gift-card balance shown in cart header (e.g. «Доступно X ₽ на ваших картах»)
 - Notifying the sender when a recipient claims (no claim event log yet)
+
+---
+
+## Email delivery (follow-up)
+
+The dialog already exposes the "send by email" path — when picked it calls
+`send_gift_card(card_id, recipient_email)` which persists
+`pending_recipient_email` and mints the `claim_token`, but does NOT ship a
+message. The follow-up phase wires real transactional email so that
+choosing the email form actually delivers the claim link to the
+recipient.
+
+### Provider choice — Resend vs Brevo
+
+Both are SaaS, both have a free tier, both can be swapped behind the
+same internal wrapper (`src/lib/email/`), so the decision is reversible.
+
+| Aspect | **Resend** (recommended) | **Brevo** (ex-Sendinblue) |
+|---|---|---|
+| Developer ergonomics | Single REST endpoint, official `resend` npm SDK, React-Email JSX templates work out of the box | REST API + Node SDK, templates managed in dashboard or HTML strings |
+| Free tier | 3 000 emails / month, 100 / day | 300 / day (≈ 9 000 / month) |
+| EU residency | EU region toggle (Frankfurt) | Headquartered in France, EU-first |
+| Webhooks | Delivered / bounced / complained | Same + read / click tracking |
+| Domain setup | SPF + DKIM (no MX needed); ~10 min | SPF + DKIM (no MX needed); ~10 min |
+| Lock-in risk | Lowest — small surface, easy to migrate | Slightly higher — heavier dashboard tooling |
+
+**Recommendation:** start with **Resend** because the JSX template story
+matches the rest of the React codebase and the transactional surface is
+the smallest. If volume grows past the free tier or the customer wants
+EU-by-default contracts, Brevo is the fallback — the wrapper below
+makes that a one-file change.
+
+### Architecture
+
+```
+src/lib/email/
+  client.ts            // single function: sendTransactionalEmail({ to, subject, html, text })
+                       //   - reads RESEND_API_KEY + EMAIL_FROM from env
+                       //   - returns { ok: true, id } | { ok: false, error }
+                       //   - never throws; caller always gets a tagged result
+  templates/
+    giftCard.ts        // buildGiftCardEmail({ recipientEmail, senderName, productName, faceValue, claimUrl })
+                       //   returns { subject, html, text }
+```
+
+- **Server-only.** `'use server'` modules and the existing `sendGiftCard`
+  server action import `client.ts` directly. No client-bundle risk
+  because the API key never leaves the server.
+- **Result type, not throws.** The wrapper returns
+  `{ ok: false, error }` on provider failure so the server action can
+  decide whether to surface "письмо не отправлено, вот ссылка" instead
+  of failing the whole flow.
+- **Internationalisation.** Templates are Russian only (matches the rest
+  of the site).
+
+### `sendGiftCard` server action change
+
+```ts
+const { data: token, error } = await supabase.rpc('send_gift_card', { … })
+if (error || !token) return { status: 'error', message: … }
+
+const claimUrl = `${origin}/redeem/${token}`
+
+if (recipientEmail) {
+  const email = buildGiftCardEmail({ recipientEmail, senderName, productName, faceValue, claimUrl })
+  const send  = await sendTransactionalEmail({ to: recipientEmail, ...email })
+  if (!send.ok) {
+    // Token was minted; degrade gracefully — caller copies the URL by hand.
+    return { status: 'ok', claimUrl, claimToken: token, emailStatus: 'failed', emailError: send.error }
+  }
+  return { status: 'ok', claimUrl, claimToken: token, emailStatus: 'sent' }
+}
+
+return { status: 'ok', claimUrl, claimToken: token, emailStatus: 'skipped' }
+```
+
+The dialog reads `emailStatus` to pick the toast copy:
+
+| `emailStatus` | Toast |
+|---|---|
+| `sent` | «Письмо отправлено» + recipient email as description |
+| `failed` | «Письмо не отправлено», description = error. Surface the claim URL inline so the sender can share manually. |
+| `skipped` | Existing claim-URL panel (link flow). |
+
+### Env vars
+
+```
+# .env.local (dev) + production env
+RESEND_API_KEY=re_...
+EMAIL_FROM="Чтиво <noreply@chtivo.spb.ru>"
+EMAIL_REPLY_TO=hello@chtivo.spb.ru        # optional
+```
+
+The wrapper hard-fails (`ok: false`) if either var is missing rather
+than 500-ing the server action; the dialog then falls back to the
+claim-URL panel.
+
+### DNS
+
+- Add SPF record for the chosen provider on `chtivo.spb.ru`.
+- Add the DKIM CNAME triplet the provider gives you.
+- Confirm `noreply@chtivo.spb.ru` exists as a verified sender in the
+  provider dashboard before flipping the env vars in production.
+- No MX record changes — we are sending only, not receiving.
+
+### Template content (Russian)
+
+- **Subject:** «Вам подарили карту «{productName}» — {faceValue} ₽».
+- **Body (html + text):**
+  - Greeting using `recipientEmail` (no name — we don't collect one).
+  - One sentence explaining what Чтиво is.
+  - The claim URL as a button + as plain text fallback.
+  - Footer: «Если письмо пришло по ошибке, просто проигнорируйте его — ссылку можно открыть только один раз.»
+- Keep the design plain HTML, no external assets — fewer spam triggers
+  and no broken images in dark-mode clients.
+
+### Failure & abuse considerations
+
+- **Idempotency.** `send_gift_card` already flips the card to `pending`
+  in a single UPDATE; running the action twice on the same card raises
+  the existing "card not found / already pending" error, so the email
+  send is naturally one-shot.
+- **Rate limiting.** Resend / Brevo enforce per-account throughput;
+  Supabase RLS already restricts the RPC to the card owner. No extra
+  app-side limiter needed in the follow-up.
+- **Bounce handling.** Out of scope for the first pass. If a bounce
+  webhook fires, surface it later — for now the sender still has the
+  claim URL.
+- **Privacy.** `pending_recipient_email` is already persisted; the
+  email send adds no new PII. Provider logs should be configured with
+  the minimal retention the dashboard allows.
 
 ---
 
@@ -577,6 +708,18 @@ Update the checkboxes as you go.
 - [ ] Promo-code applied to a cart containing both a book and a gift card → only the book line is discounted.
 - [ ] Wallet gift card applied to a cart containing both a book and a new gift card → wallet application is capped to the non-gift-card eligible total.
 - [ ] Lint + tsc clean.
+
+### Phase 7 — email delivery (follow-up)
+
+- [ ] Provider account created (Resend by default; Brevo if EU-residency requirement comes up).
+- [ ] DNS: SPF + DKIM records added on `chtivo.spb.ru`; sender verified in provider dashboard.
+- [ ] `RESEND_API_KEY` + `EMAIL_FROM` (and optional `EMAIL_REPLY_TO`) added to `.env.local` and the production env.
+- [ ] `src/lib/email/client.ts` — `sendTransactionalEmail({ to, subject, html, text })`; returns `{ ok, id } | { ok: false, error }`; reads env, never throws.
+- [ ] `src/lib/email/templates/giftCard.ts` — `buildGiftCardEmail(...)` → `{ subject, html, text }` (Russian copy, plain HTML, no external assets).
+- [ ] `sendGiftCard` server action invokes the wrapper when `recipientEmail` is non-null; returns `emailStatus: 'sent' | 'failed' | 'skipped'` alongside the existing `claimUrl`.
+- [ ] `SendGiftCardDialog` branches its toast / inline panel on `emailStatus` (`sent` → success toast; `failed` → fallback to claim-URL panel + error toast; `skipped` → existing link-flow panel).
+- [ ] Verification: send to a real inbox → arrives within ~30 s → link claims correctly.
+- [ ] Verification: provider key removed temporarily → email flow degrades to the claim-URL fallback (no 500, no orphan state).
 
 ---
 

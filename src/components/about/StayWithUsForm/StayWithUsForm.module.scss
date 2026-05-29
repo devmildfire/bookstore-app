@@ -104,25 +104,20 @@
   @include breakpoint(phone) { width: 150px; height: 32px; padding: 10px 30px; }
 }
 
-.hint,
 .error {
   width: 100%;
   margin: 0;
-  padding: 14px 16px;
+  padding: 6px 16px;
   background: transparent;
-  border-radius: 4px;
   font-family: $font-montserrat;
   font-weight: $font-weight-normal;
   font-size: 14px;
   line-height: 1.4;
   letter-spacing: 0.7px;
   text-align: center;
-  color: $color-text-on-dark;
+  color: $color-danger;
 
-  @include breakpoint(tablet) { padding: 8px 16px; font-size: 12px; letter-spacing: 0.6px; }
-  @include breakpoint(tablet-small) { padding: 6px 16px; font-size: 10px; letter-spacing: 0.5px; }
-  @include breakpoint(phone) { padding: 6px 8px; font-size: 8px; letter-spacing: 0.4px; }
+  @include breakpoint(tablet) { font-size: 12px; letter-spacing: 0.6px; }
+  @include breakpoint(tablet-small) { font-size: 10px; letter-spacing: 0.5px; }
+  @include breakpoint(phone) { font-size: 10px; letter-spacing: 0.5px; padding: 4px 8px; }
 }
-
-.hint { background: rgba(220, 220, 220, 0.08); }
-.error { color: $color-danger; }

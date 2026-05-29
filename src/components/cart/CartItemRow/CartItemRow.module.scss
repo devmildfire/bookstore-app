@@ -34,7 +34,8 @@
 
 .imageWrap {
   position: relative;
-  width: 114px;
+  width: 100%;
+  max-width: 114px;
   aspect-ratio: 2 / 3;
   border-radius: $radius-sm;
   overflow: hidden;

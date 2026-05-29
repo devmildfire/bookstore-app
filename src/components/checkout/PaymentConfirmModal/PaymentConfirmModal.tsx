@@ -13,6 +13,7 @@ type Props = {
   open: boolean
   state: PaymentModalState
   amount: number
+  isFullyCovered?: boolean
   appliedCode: string | null
   summary?: string | null // shipping summary string for physical orders
   onConfirm: () => void
@@ -23,6 +24,7 @@ export default function PaymentConfirmModal({
   open,
   state,
   amount,
+  isFullyCovered = false,
   appliedCode,
   summary,
   onConfirm,
@@ -39,11 +41,13 @@ export default function PaymentConfirmModal({
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content className={styles.content} aria-describedby={undefined}>
-          <Dialog.Title className={styles.title}>Подтверждение оплаты</Dialog.Title>
+          <Dialog.Title className={styles.title}>
+            {isFullyCovered ? 'Подтверждение заказа' : 'Подтверждение оплаты'}
+          </Dialog.Title>
 
           <div className={styles.body}>
             <div className={styles.amountRow}>
-              <span className={styles.amountLabel}>К оплате:</span>
+              <span className={styles.amountLabel}>{isFullyCovered ? 'Осталось оплатить:' : 'К оплате:'}</span>
               <span className={styles.amountValue}>{formatPrice(amount)}</span>
             </div>
 
@@ -65,7 +69,9 @@ export default function PaymentConfirmModal({
               onClick={onConfirm}
               disabled={processing}
             >
-              {processing ? 'Обработка платежа…' : 'Подтвердить оплату'}
+              {processing
+                ? (isFullyCovered ? 'Оформляем заказ…' : 'Обработка платежа…')
+                : (isFullyCovered ? 'Оформить заказ' : 'Подтвердить оплату')}
             </button>
             <button
               type='button'

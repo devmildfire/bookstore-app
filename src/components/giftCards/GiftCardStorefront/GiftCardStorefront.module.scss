@@ -1,0 +1,60 @@
+@use '@/styles/common' as *;
+
+.section {
+  background-color: $color-surface-dark;
+  padding: 90px 0 120px;
+
+  @include breakpoint(phone) {
+    padding: 56px 0 72px;
+  }
+}
+
+.inner {
+  @include page-container;
+}
+
+.heading {
+  margin: 0 0 $space-8;
+  font-family: $font-cheque;
+  font-size: 60px;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) {
+    font-size: 34px;
+  }
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-10;
+  max-width: 960px;
+  margin: 0 auto 64px;
+  color: rgba($color-text-on-dark, 0.82);
+  font-family: $font-montserrat;
+  font-size: 16px;
+  line-height: 1.55;
+
+  p {
+    margin: 0;
+  }
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+    margin-bottom: 40px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-8;
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: 1fr;
+  }
+}

@@ -18,6 +18,7 @@ const TYPE_LABELS: Record<string, string> = {
   PrintBook: 'Печатное издание',
   AudioBook: 'Аудиокнига',
   'Book2.0': 'Книга 2.0',
+  GiftCard: 'Карта даров',
   Subscription: 'Подписка',
 }
 

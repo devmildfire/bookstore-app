@@ -22,6 +22,8 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const pageSize = filters.limit
   const offset = (filters.page - 1) * pageSize
 
+  // Keep `this` bound to the supabase instance — the SDK's rpc() reaches into
+  // `this.rest` internally, so an unbound reference crashes at call time.
   const rpc: RpcFn = (name, params) => supabase.rpc(name, params) as unknown as ReturnType<RpcFn>
   const [rpcResult, filterOptions] = await Promise.all([
     getCatalogBooksWithFallback(rpc, {

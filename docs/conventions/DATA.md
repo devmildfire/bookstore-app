@@ -270,6 +270,18 @@ export async function loginAction(formData: FormData) {
 - Return `{ error: string }` on failure — do not throw to the client
 - Call them from React Hook Form's `handleSubmit` or directly from `<form action={...}>`
 
+## Gift Cards and Promo Totals
+
+Gift-card cart rows use the existing `Cart.category = 'GiftCard'` enum value.
+They count toward the amount owed, but never toward promo-code discount bases.
+
+Pricing code must apply this invariant in both places:
+- client totals (`src/lib/cartTotals.ts`)
+- server checkout totals (`place_order` RPC)
+
+Wallet gift cards can pay only for the non-gift-card portion of the cart. A
+buyer cannot use a gift-card balance to buy new gift cards.
+
 ## Client State
 
 Most state is server state managed by TanStack Query.

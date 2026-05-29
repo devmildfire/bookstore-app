@@ -8,16 +8,28 @@ export type PlaceOrderInput = {
   shippingBuilding: string | null
   shippingPostalCode: string | null
   email: string | null
+  giftCards?: Array<{ id: string; amount: number }>
 }
 
-export type PlaceOrderErrorReason = 'not_authenticated' | 'empty_cart' | 'unknown'
+export type PlaceOrderErrorReason =
+  | 'not_authenticated'
+  | 'empty_cart'
+  | 'invalid_gift_cards'
+  | 'gift_card_over_limit'
+  | 'unknown'
 
 export type PlaceOrderResult =
-  | { status: 'ok'; orderId: number; finalTotal: number }
+  | { status: 'ok'; orderId: number; finalTotal: number; giftCardTotalApplied: number; amountDue: number }
   | { status: 'error'; reason: PlaceOrderErrorReason; message?: string }
 
 type RpcPayload =
-  | { status: 'ok'; orderId: number; finalTotal: number }
+  | {
+      status: 'ok'
+      orderId: number
+      finalTotal: number
+      giftCardTotalApplied?: number
+      amountDue?: number
+    }
   | { status: 'error'; reason: PlaceOrderErrorReason }
 
 // Server-side only — uses the cookie-bound Supabase client. Re-validates and
@@ -34,6 +46,7 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
     p_shipping_building: input.shippingBuilding ?? '',
     p_shipping_postal_code: input.shippingPostalCode ?? '',
     p_email: input.email ?? '',
+    p_gift_cards: input.giftCards ?? [],
   })
 
   if (error) {
@@ -42,7 +55,13 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
 
   const payload = data as RpcPayload
   if (payload.status === 'ok') {
-    return { status: 'ok', orderId: payload.orderId, finalTotal: payload.finalTotal }
+    return {
+      status: 'ok',
+      orderId: payload.orderId,
+      finalTotal: payload.finalTotal,
+      giftCardTotalApplied: payload.giftCardTotalApplied ?? 0,
+      amountDue: payload.amountDue ?? payload.finalTotal,
+    }
   }
   return { status: 'error', reason: payload.reason }
 }

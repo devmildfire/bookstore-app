@@ -22,7 +22,7 @@ export default function LoginPage() {
   const justRegistered = searchParams.get('registered') === 'true'
   const authError = searchParams.get('auth_error')
   const returnTo = searchParams.get('returnTo')
-  const guestHref = returnTo && returnTo.startsWith('/') ? returnTo : '/books'
+  const guestHref = returnTo && returnTo.startsWith('/') ? returnTo : '/'
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),

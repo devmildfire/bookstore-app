@@ -53,7 +53,7 @@ export default function FiltersPanel({ filters, categories, authors }: Props) {
     <aside className={styles.panel} aria-label='Фильтры каталога'>
       <div className={styles.header}>
         <h2>Фильтры</h2>
-        <Link href='/books' className={styles.resetLink}>
+        <Link href='/' className={styles.resetLink}>
           Сбросить
         </Link>
       </div>

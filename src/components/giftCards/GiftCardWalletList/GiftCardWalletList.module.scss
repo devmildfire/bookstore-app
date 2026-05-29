@@ -1,0 +1,22 @@
+@use '@/styles/common' as *;
+
+.list {
+  display: grid;
+  gap: $space-5;
+}
+
+.empty {
+  display: grid;
+  gap: $space-4;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+
+  p {
+    margin: 0;
+    color: rgba($color-text-on-dark, 0.76);
+  }
+
+  a {
+    color: $color-accent-on-dark;
+  }
+}

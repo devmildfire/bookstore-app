@@ -115,7 +115,9 @@
     gap: $space-6;
   }
 
-  @include breakpoint(phone) {
+  // Promo input + button + totals (min 290px) overflow the row below ~990px;
+  // stack them above the phone breakpoint so the promo sits above the totals.
+  @media screen and (max-width: 989px) {
     flex-direction: column;
     gap: $space-6;
   }
@@ -125,7 +127,7 @@
   flex: 1 1 auto;
   max-width: 540px;
 
-  @include breakpoint(phone) {
+  @media screen and (max-width: 989px) {
     width: 100%;
     max-width: none;
   }
@@ -134,7 +136,7 @@
 .totals {
   flex: 0 0 auto;
 
-  @include breakpoint(phone) {
+  @media screen and (max-width: 989px) {
     width: 100%;
   }
 }

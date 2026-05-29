@@ -638,6 +638,90 @@ export type Database = {
           },
         ]
       }
+      GiftCardProducts: {
+        Row: {
+          face_value: number
+          id: number
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          face_value: number
+          id?: number
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          face_value?: number
+          id?: number
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      GiftCards: {
+        Row: {
+          balance: number
+          claim_token: string | null
+          code: string
+          created_at: string
+          id: string
+          initial_value: number
+          order_id: number | null
+          owner_user_id: string | null
+          pending_recipient_email: string | null
+          product_id: number
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          balance: number
+          claim_token?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          initial_value: number
+          order_id?: number | null
+          owner_user_id?: string | null
+          pending_recipient_email?: string | null
+          product_id: number
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          balance?: number
+          claim_token?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          initial_value?: number
+          order_id?: number | null
+          owner_user_id?: string | null
+          pending_recipient_email?: string | null
+          product_id?: number
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "GiftCards_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "Orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "GiftCards_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "GiftCardProducts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Likes: {
         Row: {
           created_at: string
@@ -658,6 +742,45 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      OrderGiftCardApplications: {
+        Row: {
+          amount: number
+          created_at: string
+          gift_card_id: string
+          id: number
+          order_id: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          gift_card_id: string
+          id?: number
+          order_id: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          gift_card_id?: string
+          id?: number
+          order_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "OrderGiftCardApplications_gift_card_id_fkey"
+            columns: ["gift_card_id"]
+            isOneToOne: false
+            referencedRelation: "GiftCards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "OrderGiftCardApplications_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "Orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       OrderItems: {
         Row: {
@@ -702,10 +825,12 @@ export type Database = {
       }
       Orders: {
         Row: {
+          amount_due: number
           book_discount_total: number
           created_at: string
           delivery_email: string | null
           delivery_method: string | null
+          gift_card_total_applied: number
           id: number
           original_total: number
           paid_at: string | null
@@ -723,10 +848,12 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          amount_due?: number
           book_discount_total?: number
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
+          gift_card_total_applied?: number
           id?: number
           original_total?: number
           paid_at?: string | null
@@ -744,10 +871,12 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          amount_due?: number
           book_discount_total?: number
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
+          gift_card_total_applied?: number
           id?: number
           original_total?: number
           paid_at?: string | null
@@ -1222,6 +1351,7 @@ export type Database = {
         Args: { p_title_id: number }
         Returns: string
       }
+      generate_gift_card_code: { Args: never; Returns: string }
       get_cart_with_title_ids: {
         Args: never
         Returns: {
@@ -1354,18 +1484,33 @@ export type Database = {
         Args: { from_user_id: string; to_user_id: string }
         Returns: undefined
       }
-      place_order: {
-        Args: {
-          p_email: string
-          p_shipping_building: string
-          p_shipping_city: string
-          p_shipping_name: string
-          p_shipping_phone: string
-          p_shipping_postal_code: string
-          p_shipping_street: string
-        }
-        Returns: Json
-      }
+      place_order:
+        | {
+            Args: {
+              p_email: string
+              p_shipping_building: string
+              p_shipping_city: string
+              p_shipping_name: string
+              p_shipping_phone: string
+              p_shipping_postal_code: string
+              p_shipping_street: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_email: string
+              p_gift_cards?: Json
+              p_shipping_building: string
+              p_shipping_city: string
+              p_shipping_name: string
+              p_shipping_phone: string
+              p_shipping_postal_code: string
+              p_shipping_street: string
+            }
+            Returns: Json
+          }
+      redeem_gift_card_token: { Args: { p_token: string }; Returns: string }
       search_books: {
         Args: {
           result_limit?: number
@@ -1392,6 +1537,10 @@ export type Database = {
           title_thesis: string
           total_count: number
         }[]
+      }
+      send_gift_card: {
+        Args: { p_card_id: string; p_recipient_email: string }
+        Returns: string
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

@@ -18,10 +18,6 @@ const forReaders: SubmenuItem[] = [
     subtitle: 'Книжная лавка',
     items: [
       {
-        title: 'Издания',
-        link: '/books',
-      },
-      {
         title: 'Карты даров',
         link: '/gift-cards',
       },

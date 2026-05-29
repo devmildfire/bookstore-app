@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import OutlinedButton from '@/components/common/OutlinedButton'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './CartTotals.module.scss'
 
@@ -38,9 +38,9 @@ export default function CartTotals({ itemCount, subtotal, discountAmount, finalT
         </div>
       </dl>
 
-      <Link href='/checkout' className={styles.continue}>
+      <OutlinedButton href='/checkout' className={styles.continue} fitContainer>
         Продолжить
-      </Link>
+      </OutlinedButton>
 
       <p className={styles.caption}>
         После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.

@@ -8,6 +8,7 @@ import { getProfile, profileQueryKey } from '@/api/profile'
 import useSupabaseUser from '@/hooks/useSupabaseUser'
 import DeliveryForm from '@/components/checkout/DeliveryForm'
 import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
+import GiftCardPicker, { type SelectedGiftCardPayment } from '@/components/checkout/GiftCardPicker'
 import PaymentConfirmModal, {
   type PaymentModalState,
 } from '@/components/checkout/PaymentConfirmModal'
@@ -26,11 +27,12 @@ type PendingOrder = {
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, finalTotal, appliedPromo, hasPhysicalItems } = useCart()
+  const { items, finalTotal, giftCardEligibleTotal, appliedPromo, hasPhysicalItems } = useCart()
   const { data: profile } = useQuery({ queryKey: profileQueryKey, queryFn: getProfile })
   const { isAnonymous } = useSupabaseUser()
   const [pending, setPending] = useState<PendingOrder | null>(null)
   const [modalState, setModalState] = useState<PaymentModalState>({ kind: 'idle' })
+  const [selectedGiftCards, setSelectedGiftCards] = useState<SelectedGiftCardPayment[]>([])
 
   useEffect(() => {
     if (items.length === 0) router.replace('/cart')
@@ -49,11 +51,12 @@ export default function CheckoutPage() {
       input: {
         shippingName: values.name ?? null,
         shippingPhone: values.phone ?? null,
-        shippingCity: values.city,
-        shippingStreet: values.street,
-        shippingBuilding: values.building,
-        shippingPostalCode: values.postalCode,
-        email: values.email ?? null,
+	        shippingCity: values.city,
+	        shippingStreet: values.street,
+	        shippingBuilding: values.building,
+	        shippingPostalCode: values.postalCode,
+	        email: values.email ?? null,
+	        giftCards: selectedGiftCards,
       },
       shippingSummary: buildShippingSummary(values),
     })
@@ -66,10 +69,11 @@ export default function CheckoutPage() {
         shippingName: null,
         shippingPhone: null,
         shippingCity: null,
-        shippingStreet: null,
-        shippingBuilding: null,
-        shippingPostalCode: null,
-        email: values.email ?? null,
+	        shippingStreet: null,
+	        shippingBuilding: null,
+	        shippingPostalCode: null,
+	        email: values.email ?? null,
+	        giftCards: selectedGiftCards,
       },
       shippingSummary: null,
     })
@@ -80,23 +84,23 @@ export default function CheckoutPage() {
     if (!pending) return
     setModalState({ kind: 'processing' })
 
-    // Run the Server Action and a visual delay in parallel; redirect only
-    // when both resolve. Keeps the spinner visible long enough to feel
-    // intentional and prevents flicker when the RPC returns instantly.
-    const [result] = await Promise.all([
-      placeOrderAction(pending.input),
-      new Promise((r) => setTimeout(r, 1500)),
-    ])
+    const orderGiftCards = pending.input.giftCards ?? []
+    const amountDue = Math.max(0, finalTotal - orderGiftCards.reduce((sum, card) => sum + card.amount, 0))
+    const tasks: Array<Promise<unknown>> = [placeOrderAction(pending.input)]
+    if (amountDue > 0) tasks.push(new Promise((r) => setTimeout(r, 1500)))
+    const [result] = (await Promise.all(tasks)) as [Awaited<ReturnType<typeof placeOrderAction>>, ...unknown[]]
 
     if (result.status === 'ok') {
       router.push(`/profile/orders?from=checkout&order=${result.orderId}`)
       return
     }
 
-    const reasons: Record<string, string> = {
-      not_authenticated: 'Нужно войти, чтобы оформить заказ.',
-      empty_cart: 'Корзина пуста.',
-      unknown: result.message ?? 'Не удалось оформить заказ.',
+	    const reasons: Record<string, string> = {
+	      not_authenticated: 'Нужно войти, чтобы оформить заказ.',
+	      empty_cart: 'Корзина пуста.',
+	      invalid_gift_cards: 'Не удалось применить выбранные карты даров.',
+	      gift_card_over_limit: 'Сумма по картам даров превышает доступный лимит.',
+	      unknown: result.message ?? 'Не удалось оформить заказ.',
     }
     setModalState({
       kind: 'error',
@@ -110,10 +114,17 @@ export default function CheckoutPage() {
   }
 
   const isPending = modalState.kind === 'processing'
+  const giftCardAppliedTotal = selectedGiftCards.reduce((sum, card) => sum + card.amount, 0)
+  const amountDue = Math.max(0, finalTotal - giftCardAppliedTotal)
 
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>{hasPhysicalItems ? 'Доставка' : 'Оформление'}</h1>
+
+      <GiftCardPicker
+        eligibleTotal={Math.min(giftCardEligibleTotal, finalTotal)}
+        onChange={setSelectedGiftCards}
+      />
 
       {hasPhysicalItems ? (
         <DeliveryForm
@@ -137,7 +148,8 @@ export default function CheckoutPage() {
       <PaymentConfirmModal
         open={pending !== null}
         state={modalState}
-        amount={finalTotal}
+        amount={amountDue}
+        isFullyCovered={amountDue === 0}
         appliedCode={appliedPromo?.code ?? null}
         summary={pending?.shippingSummary ?? null}
         onConfirm={handleConfirm}

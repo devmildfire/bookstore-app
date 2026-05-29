@@ -32,11 +32,13 @@ export type OrderItem = {
 export type Order = {
   id: number
   status: OrderStatus
-  total: number              // what was paid
+  total: number              // order value after built-in/promo discounts
   originalTotal: number      // sum of original (pre-discount) prices
   bookDiscountTotal: number  // sum of intrinsic book discounts
   promoCode: string | null
   promoDiscount: number      // additional savings beyond book discounts (≥ 0)
+  giftCardTotalApplied: number
+  amountDue: number          // cash/PSP amount after wallet cards
   deliveryMethod: DeliveryMethod | null
   deliveryEmail: string | null
   shipping: ShippingAddress | null

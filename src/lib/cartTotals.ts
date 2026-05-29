@@ -5,6 +5,7 @@ export type CartTotals = {
   subtotal: number       // Σ (price × qty) — post-book-discount, shown as "Сумма"
   discountAmount: number // additional savings from the promo beyond book discounts (≥ 0)
   total: number          // = subtotal − discountAmount, shown as "Итого"
+  giftCardEligibleTotal: number // max wallet amount: total excluding new gift-card rows
 }
 
 function originalUnitPrice(item: CartItem): number {
@@ -21,6 +22,10 @@ function isPromoActive(promo: AppliedPromo, now: Date): boolean {
   return t >= start && t <= end
 }
 
+function isGiftCardItem(item: CartItem): boolean {
+  return item.category === 'GiftCard'
+}
+
 // Pure: computes the totals for a cart and an optional applied promo.
 // `matchedCartIds` is the set of Cart row ids whose product belongs to the
 // promo's target Title (resolved server-side via the get_cart_with_title_ids
@@ -34,14 +39,18 @@ export function calculateCartTotals(
 ): CartTotals {
   let subtotal = 0
   let originalSum = 0
+  let discountableSubtotal = 0
   for (const item of items) {
     subtotal += item.price * item.quantity
-    originalSum += originalUnitPrice(item) * item.quantity
+    if (!isGiftCardItem(item)) {
+      originalSum += originalUnitPrice(item) * item.quantity
+      discountableSubtotal += item.price * item.quantity
+    }
   }
-  const bookDiscountTotal = originalSum - subtotal
+  const bookDiscountTotal = originalSum - discountableSubtotal
 
   if (!promo || !isPromoActive(promo, now)) {
-    return { subtotal, discountAmount: 0, total: subtotal }
+    return { subtotal, discountAmount: 0, total: subtotal, giftCardEligibleTotal: discountableSubtotal }
   }
 
   let totalDiscount = 0
@@ -52,6 +61,8 @@ export function calculateCartTotals(
   } else {
     // item-level: per-row max(bookDiscOnLine, promoOnLine) when matching
     for (const item of items) {
+      if (isGiftCardItem(item)) continue
+
       const origLine = originalUnitPrice(item) * item.quantity
       const bookDiscOnLine = origLine - item.price * item.quantity
 
@@ -72,5 +83,6 @@ export function calculateCartTotals(
     subtotal,
     discountAmount,
     total: subtotal - discountAmount,
+    giftCardEligibleTotal: Math.max(0, discountableSubtotal - discountAmount),
   }
 }

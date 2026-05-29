@@ -72,6 +72,8 @@ export function normalizeOrder(
     bookDiscountTotal: asNumber(raw.book_discount_total),
     promoCode: raw.promo_code,
     promoDiscount: asNumber(raw.promo_discount),
+    giftCardTotalApplied: asNumber(raw.gift_card_total_applied),
+    amountDue: asNumber(raw.amount_due),
     deliveryMethod: asDeliveryMethod(raw.delivery_method),
     deliveryEmail: raw.delivery_email,
     shipping: buildShipping(raw),

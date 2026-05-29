@@ -8,6 +8,7 @@ import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import ProfileAuthSlot from '@/components/profile/ProfileAuthSlot'
 import BookIcon from '@/assets/icons/book.svg'
+import GiftCardIcon from '@/assets/icons/gift-card.svg'
 import HeartIcon from '@/assets/icons/heart.svg'
 import FeatherIcon from '@/assets/icons/feather.svg'
 import ProfileIcon from '@/assets/icons/profile.svg'
@@ -22,6 +23,7 @@ type NavItem = {
 
 const NAV_ITEMS: readonly NavItem[] = [
   { href: '/profile/orders', exact: false, label: 'Мои книги', Icon: BookIcon },
+  { href: '/profile/gift-cards', exact: false, label: 'Карты даров', Icon: GiftCardIcon },
   { href: '/profile/favorites', exact: false, label: 'Избранное', Icon: HeartIcon },
   // /suggest-manuscript is the existing "Стать автором" stub; replaced when the real page lands.
   { href: '/suggest-manuscript', exact: false, label: 'Стать автором', Icon: FeatherIcon },

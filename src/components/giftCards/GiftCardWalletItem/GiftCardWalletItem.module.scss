@@ -1,0 +1,89 @@
+@use '@/styles/common' as *;
+
+.card {
+  width: min(720px, 100%);
+  border: 1px solid rgba($color-text-on-dark, 0.14);
+  background: rgba($color-panel, 0.96);
+  padding: $space-6;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+
+  &[data-status='depleted'] {
+    opacity: 0.58;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-4;
+  align-items: flex-start;
+}
+
+.name,
+.meta,
+.balance,
+.pending p {
+  margin: 0;
+}
+
+.name {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.meta,
+.balance,
+.pending {
+  color: rgba($color-text-on-dark, 0.72);
+}
+
+.badge {
+  border: 1px solid rgba($color-accent-on-dark, 0.45);
+  color: $color-accent-on-dark;
+  padding: 4px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.balance,
+.codeRow,
+.pending {
+  margin-top: $space-4;
+}
+
+.codeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  align-items: center;
+
+  button {
+    border: 0;
+    background: transparent;
+    color: $color-accent-on-dark;
+    cursor: pointer;
+  }
+}
+
+.copyLine {
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  color: $color-accent-on-dark;
+  padding: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+  cursor: pointer;
+}
+
+.send {
+  margin-top: $space-5;
+  min-height: 44px;
+  border: 1px solid rgba($color-text-on-dark, 0.32);
+  background: transparent;
+  color: $color-text-on-dark;
+  padding: 0 $space-5;
+  font-family: $font-montserrat;
+  cursor: pointer;
+}

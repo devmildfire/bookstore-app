@@ -37,6 +37,7 @@ type CartContextValue = CartState & {
   removePromo: () => void
   discountAmount: number
   finalTotal: number
+  giftCardEligibleTotal: number
   // Checkout helpers
   hasPhysicalItems: boolean
 }
@@ -221,6 +222,7 @@ export function CartProvider({ children }: Props) {
         removePromo,
         discountAmount: totals.discountAmount,
         finalTotal: totals.total,
+        giftCardEligibleTotal: totals.giftCardEligibleTotal,
         hasPhysicalItems,
       }}
     >

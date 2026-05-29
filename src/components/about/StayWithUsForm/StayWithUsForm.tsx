@@ -53,11 +53,7 @@ export default function StayWithUsForm() {
             {isSubmitting ? 'Отправка…' : 'Подписаться'}
           </OutlinedButton>
         </div>
-        <p className={errors.email ? styles.error : styles.hint}>
-          {errors.email
-            ? errors.email.message
-            : 'Русский Динозавр может писать только на валидные адреса электронной почты'}
-        </p>
+        {errors.email && <p className={styles.error}>{errors.email.message}</p>}
       </form>
     </section>
   )

@@ -1,0 +1,32 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: grid;
+  gap: $space-6;
+  padding-bottom: $space-10;
+}
+
+.title {
+  margin: 0;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.notice,
+.error {
+  width: min(720px, 100%);
+  margin: 0;
+  padding: $space-4;
+  font-family: $font-montserrat;
+  border: 1px solid rgba($color-text-on-dark, 0.16);
+}
+
+.notice {
+  color: $color-accent-on-dark;
+}
+
+.error {
+  color: $color-accent-on-dark;
+}

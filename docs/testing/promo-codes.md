@@ -28,6 +28,12 @@ Plus negative paths:
 - `NOPE` (or any random string) → `Промокод не найден`
 - Empty / whitespace input → `Введите корректный промокод`
 
+Gift-card interaction:
+- Add a 1000 ₽ book and a 500 ₽ card даров to the cart.
+- Apply `SUMMER25`.
+- Expected total: 750 ₽ book + 500 ₽ gift card = 1250 ₽. Gift-card rows are
+  excluded from promo discounts.
+
 ---
 
 ## What "Белый цветок" needs in the cart

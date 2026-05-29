@@ -56,7 +56,7 @@ export default function RegisterPage() {
         Уже есть аккаунт? <Link href='/auth/login'>Войти</Link>
       </p>
       <p className={styles.link}>
-        <Link href='/books'>Продолжить как гость</Link>
+        <Link href='/'>Продолжить как гость</Link>
       </p>
     </div>
   )

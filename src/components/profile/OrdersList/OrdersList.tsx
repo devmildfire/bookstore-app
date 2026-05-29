@@ -74,6 +74,12 @@ function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean 
         </p>
       )}
 
+      {order.giftCardTotalApplied > 0 && (
+        <p className={styles.orderShipping}>
+          Картами даров: {formatPrice(order.giftCardTotalApplied)} · к оплате: {formatPrice(order.amountDue)}
+        </p>
+      )}
+
       <div className={styles.grid}>
         {order.items.map((item) => (
           <ItemTile key={item.id} item={item} />
