@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import Image from 'next/image'
 import SendGiftCardDialog from '@/components/giftCards/SendGiftCardDialog'
 import { useToast } from '@/contexts/toast'
 import { formatPrice } from '@/lib/formatPrice'
@@ -11,6 +11,12 @@ type Props = {
   card: GiftCard
 }
 
+const STATUS_LABEL: Record<GiftCard['status'], string> = {
+  active: 'активна',
+  pending: 'отправлено',
+  depleted: 'использовано',
+}
+
 function formatDate(value: string | null): string | null {
   if (!value) return null
   return new Date(value).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' })
@@ -18,58 +24,63 @@ function formatDate(value: string | null): string | null {
 
 export default function GiftCardWalletItem({ card }: Props) {
   const { success } = useToast()
-  const [isCodeVisible, setIsCodeVisible] = useState(false)
   const claimUrl = card.claimToken ? `/redeem/${card.claimToken}` : null
 
-  async function copy(value: string) {
-    await navigator.clipboard.writeText(value)
-    success('Скопировано')
+  async function copyClaim() {
+    if (!claimUrl) return
+    await navigator.clipboard.writeText(`${window.location.origin}${claimUrl}`)
+    success('Ссылка скопирована')
   }
 
   return (
     <article className={styles.card} data-status={card.status}>
-      <header className={styles.header}>
-        <div>
-          <h3 className={styles.name}>{card.productName}</h3>
-          <p className={styles.meta}>{formatPrice(card.faceValue)}</p>
-        </div>
-        <span className={styles.badge}>
-          {card.status === 'pending' ? 'отправлено' : card.status === 'depleted' ? 'использовано' : 'активна'}
-        </span>
-      </header>
+      <div className={styles.imageWrap}>
+        {card.productImageUrl ? (
+          <Image
+            src={card.productImageUrl}
+            alt={card.productName}
+            fill
+            className={styles.image}
+            sizes='(max-width: 532px) 80vw, 220px'
+          />
+        ) : (
+          <div className={styles.imagePlaceholder} aria-hidden />
+        )}
+      </div>
 
-      <p className={styles.balance}>Остаток: {formatPrice(card.balance)}</p>
+      <div className={styles.body}>
+        <h3 className={styles.name}>{card.productName}</h3>
 
-      {card.status === 'pending' ? (
-        <div className={styles.pending}>
-          {card.recipientEmail && <p>Получатель: {card.recipientEmail}</p>}
-          {formatDate(card.sentAt) && <p>Дата: {formatDate(card.sentAt)}</p>}
-          {claimUrl && (
-            <button type='button' className={styles.copyLine} onClick={() => copy(claimUrl)}>
-              {claimUrl}
-            </button>
-          )}
+        <div className={styles.balanceRow}>
+          <p className={styles.balance}>
+            {formatPrice(card.balance)} / {formatPrice(card.faceValue)}
+          </p>
+          <span className={styles.badge}>{STATUS_LABEL[card.status]}</span>
         </div>
-      ) : (
-        <div className={styles.codeRow}>
-          <span>Код: {isCodeVisible ? card.code : '••••-••••-••••-••••'}</span>
-          <button type='button' onClick={() => setIsCodeVisible((value) => !value)}>
-            {isCodeVisible ? 'Скрыть' : 'Показать'}
-          </button>
-          {isCodeVisible && (
-            <button type='button' onClick={() => copy(card.code)}>
-              Скопировать
-            </button>
-          )}
-        </div>
-      )}
 
-      {card.status === 'active' && card.balance > 0 && (
-        <SendGiftCardDialog
-          cardId={card.id}
-          trigger={<button type='button' className={styles.send}>Отправить в подарок</button>}
-        />
-      )}
+        {card.status === 'pending' && (
+          <div className={styles.pending}>
+            {card.recipientEmail && <p>Получатель: {card.recipientEmail}</p>}
+            {formatDate(card.sentAt) && <p>Отправлено: {formatDate(card.sentAt)}</p>}
+            {claimUrl && (
+              <button type='button' className={styles.copyLink} onClick={copyClaim}>
+                Скопировать ссылку
+              </button>
+            )}
+          </div>
+        )}
+
+        {card.status === 'active' && card.balance > 0 && (
+          <SendGiftCardDialog
+            cardId={card.id}
+            trigger={
+              <button type='button' className={styles.sendBtn}>
+                Отправить в подарок
+              </button>
+            }
+          />
+        )}
+      </div>
     </article>
   )
 }

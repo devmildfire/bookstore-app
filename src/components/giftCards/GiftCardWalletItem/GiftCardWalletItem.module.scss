@@ -2,43 +2,93 @@
 
 .card {
   width: min(720px, 100%);
-  border: 1px solid rgba($color-text-on-dark, 0.14);
-  background: rgba($color-panel, 0.96);
-  padding: $space-6;
+  display: grid;
+  // Image + content stays side-by-side at every breakpoint; on phone we
+  // just narrow the image track so a 320px viewport still gets readable
+  // room for the name + balance + button.
+  grid-template-columns: 180px minmax(0, 1fr);
+  background: $gradient-card-body;
+  border: 1px solid rgba($color-text-on-dark, 0.16);
   color: $color-text-on-dark;
   font-family: $font-montserrat;
+  overflow: hidden;
 
   &[data-status='depleted'] {
     opacity: 0.58;
   }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
 }
 
-.header {
+.imageWrap {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.imagePlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+.body {
   display: flex;
-  justify-content: space-between;
-  gap: $space-4;
-  align-items: flex-start;
-}
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-6;
+  min-width: 0;
 
-.name,
-.meta,
-.balance,
-.pending p {
-  margin: 0;
+  @include breakpoint(phone) {
+    padding: $space-4 $space-3;
+    gap: $space-2;
+  }
 }
 
 .name {
+  margin: 0;
   font-size: 22px;
-  line-height: 1.2;
+  font-weight: $font-weight-bold;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) {
+    font-size: 16px;
+  }
 }
 
-.meta,
-.balance,
-.pending {
+// One flex row: "{balance} / {faceValue}" on the left, status badge to the
+// right. Inline layout (no absolute positioning) so the badge can't drift
+// over the name at narrow widths.
+.balanceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.balance {
+  margin: 0;
   color: rgba($color-text-on-dark, 0.72);
+  font-size: 15px;
+  white-space: nowrap;
+
+  @include breakpoint(phone) {
+    font-size: 13px;
+  }
 }
 
 .badge {
+  flex-shrink: 0;
   border: 1px solid rgba($color-accent-on-dark, 0.45);
   color: $color-accent-on-dark;
   padding: 4px 10px;
@@ -46,44 +96,59 @@
   white-space: nowrap;
 }
 
-.balance,
-.codeRow,
 .pending {
-  margin-top: $space-4;
-}
-
-.codeRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: $space-3;
-  align-items: center;
+  flex-direction: column;
+  gap: $space-1;
+  color: rgba($color-text-on-dark, 0.72);
+  font-size: 14px;
 
-  button {
-    border: 0;
-    background: transparent;
-    color: $color-accent-on-dark;
-    cursor: pointer;
+  p {
+    margin: 0;
   }
 }
 
-.copyLine {
-  max-width: 100%;
+.copyLink {
+  align-self: flex-start;
   border: 0;
   background: transparent;
   color: $color-accent-on-dark;
   padding: 0;
-  overflow-wrap: anywhere;
-  text-align: left;
+  font: inherit;
   cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 0.8;
+    outline: none;
+  }
 }
 
-.send {
-  margin-top: $space-5;
-  min-height: 44px;
-  border: 1px solid rgba($color-text-on-dark, 0.32);
-  background: transparent;
-  color: $color-text-on-dark;
+.sendBtn {
+  align-self: flex-start;
+  min-width: 220px;
+  height: 44px;
+  margin-top: $space-2;
   padding: 0 $space-5;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.3);
+  color: $color-text-on-dark;
   font-family: $font-montserrat;
+  font-size: 14px;
+  letter-spacing: 0.5px;
   cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+    outline: none;
+  }
+
+  @include breakpoint(phone) {
+    width: 100%;
+    min-width: 0;
+  }
 }
