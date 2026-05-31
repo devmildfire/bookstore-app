@@ -87,6 +87,12 @@ const ALLOWED_CHANNELS: ReadonlySet<AuthorContactChannel> = new Set([
   'website',
 ])
 
+// Normalize a single Authors row (with a nested `contacts` array) to the
+// client Author shape. Used by the standalone author page.
+export function normalizeAuthor(entry: unknown): Author | null {
+  return normalizeAuthors([entry])[0] ?? null
+}
+
 function normalizeAuthors(value: unknown): Author[] {
   if (!Array.isArray(value)) return []
   return value

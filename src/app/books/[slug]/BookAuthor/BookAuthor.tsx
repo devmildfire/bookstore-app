@@ -1,9 +1,15 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Author } from '@/entities/book/client'
 import AuthorContactIcon from './AuthorContactIcon'
 import styles from './BookAuthor.module.scss'
 
-type Props = { author: Author }
+type Props = {
+  author: Author
+  // Section heading. Defaults to "Об авторе" on the book page; the standalone
+  // author page passes "Страница автора".
+  heading?: string
+}
 
 const dateFmt = new Intl.DateTimeFormat('ru-RU', {
   day: '2-digit',
@@ -23,7 +29,7 @@ function formatDate(iso: string | null): string | null {
  * parent page hides this entirely when none of the visible fields are
  * populated.
  */
-export default function BookAuthor({ author }: Props) {
+export default function BookAuthor({ author, heading = 'Об авторе' }: Props) {
   const birth = formatDate(author.birthDate)
   const death = formatDate(author.deathDate)
   const dateLine =
@@ -33,12 +39,16 @@ export default function BookAuthor({ author }: Props) {
   return (
     <section className={styles.section} aria-labelledby={`author-title-${author.id}`}>
       <h2 id={`author-title-${author.id}`} className={styles.sectionTitle}>
-        Об авторе
+        {heading}
       </h2>
 
       <div className={styles.content}>
         {author.photoUrl && (
-          <div className={styles.photoWrap}>
+          <Link
+            href={`/authors/${author.id}`}
+            className={styles.photoWrap}
+            aria-label={`Страница автора: ${author.name}`}
+          >
             <Image
               src={author.photoUrl}
               alt={author.name}
@@ -49,11 +59,15 @@ export default function BookAuthor({ author }: Props) {
               placeholder={author.photoBlurDataUrl ? 'blur' : 'empty'}
               blurDataURL={author.photoBlurDataUrl ?? undefined}
             />
-          </div>
+          </Link>
         )}
 
         <div className={styles.textCol}>
-          <p className={styles.name}>{author.name}</p>
+          <p className={styles.name}>
+            <Link href={`/authors/${author.id}`} className={styles.nameLink}>
+              {author.name}
+            </Link>
+          </p>
           {cityDate && <p className={styles.cityDate}>{cityDate}</p>}
           {author.phrase && (
             <p className={styles.phrase}>{`«${author.phrase}»`}</p>

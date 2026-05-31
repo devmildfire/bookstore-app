@@ -1,0 +1,46 @@
+@use '@/styles/common' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-top: 120px;
+
+  @include breakpoint(tablet) {
+    padding-top: 80px;
+    gap: 40px;
+  }
+  @include breakpoint(phone) {
+    padding-top: 56px;
+    gap: 28px;
+  }
+}
+
+.heading {
+  @include section-title;
+
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+// Full-bleed so the side slides clip at the viewport edges (matches Figma).
+.fullBleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+}
+
+.swiper {
+  width: 100%;
+
+  :global(.swiper-wrapper) {
+    align-items: stretch;
+    // Linear timing makes the autoplay glide rather than ease per slide.
+    transition-timing-function: linear;
+  }
+}
+
+.slide {
+  height: auto;
+}

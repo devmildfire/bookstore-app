@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { ArticleAuthor } from '@/entities/article/client'
 import styles from './ArticleAuthorCard.module.scss'
 
@@ -17,7 +18,11 @@ export default function ArticleAuthorCard({ author }: Props) {
     <section className={styles.section}>
       <h2 className={styles.heading}>Об авторе</h2>
       <div className={styles.card}>
-        <div className={styles.photoWrap}>
+        <Link
+          href={`/authors/${author.id}`}
+          className={styles.photoWrap}
+          aria-label={`Страница автора: ${author.name}`}
+        >
           {author.photoUrl ? (
             <Image
               src={author.photoUrl}
@@ -31,9 +36,13 @@ export default function ArticleAuthorCard({ author }: Props) {
           ) : (
             <div className={styles.photoPlaceholder} aria-hidden />
           )}
-        </div>
+        </Link>
         <div className={styles.text}>
-          <h3 className={styles.name}>{author.name}</h3>
+          <h3 className={styles.name}>
+            <Link href={`/authors/${author.id}`} className={styles.nameLink}>
+              {author.name}
+            </Link>
+          </h3>
           {meta && <p className={styles.meta}>{meta}</p>}
           {author.bio && <p className={styles.bio}>{author.bio}</p>}
         </div>

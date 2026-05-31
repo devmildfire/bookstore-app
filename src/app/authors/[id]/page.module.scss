@@ -1,0 +1,62 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  background-color: #131313;
+  color: $color-text-on-dark;
+  padding-bottom: 120px;
+
+  @include breakpoint(tablet) {
+    padding-bottom: 80px;
+  }
+  @include breakpoint(phone) {
+    padding-bottom: 56px;
+  }
+}
+
+// ─── Издания ────────────────────────────────────────────────────────
+.works {
+  @include page-container;
+
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+
+  @include breakpoint(tablet) {
+    gap: 40px;
+  }
+  @include breakpoint(phone) {
+    gap: 28px;
+  }
+}
+
+.worksHeading {
+  @include section-title;
+
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+// Centered fixed-width cells so the row stays centered with fewer than 3
+// books, mirroring AuthorBooksRow on the article page.
+.worksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 355px);
+  gap: 40px;
+  justify-content: center;
+
+  @include breakpoint(desktop) {
+    grid-template-columns: repeat(auto-fit, 300px);
+  }
+  @include breakpoint(tablet) {
+    grid-template-columns: repeat(auto-fit, 240px);
+    gap: 24px;
+  }
+  @include breakpoint(phone) {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Author } from '@/entities/book/client'
 import styles from './BookAuthorsList.module.scss'
 
@@ -28,7 +29,9 @@ export default function BookAuthorsList({ authors }: Props) {
       <ol className={styles.list}>
         {authors.map((author) => (
           <li key={author.id} className={styles.item}>
-            {author.name}
+            <Link href={`/authors/${author.id}`} className={styles.itemLink}>
+              {author.name}
+            </Link>
           </li>
         ))}
       </ol>

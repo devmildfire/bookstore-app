@@ -68,9 +68,17 @@
 }
 
 .photoWrap {
+  display: block;
   width: 560px;
   height: 560px;
   flex-shrink: 0;
+  transition: opacity 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 0.85;
+    outline: none;
+  }
 
   @include breakpoint(desktop) {
     width: 385px;
@@ -128,6 +136,19 @@
   @include breakpoint(tablet) { font-size: 22px; }
   @include breakpoint(tablet-small) { font-size: 20px; }
   @include breakpoint(phone) { font-size: 18px; }
+}
+
+.nameLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $color-accent-on-dark;
+    text-decoration: none;
+    outline: none;
+  }
 }
 
 .cityDate {
