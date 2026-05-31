@@ -1,0 +1,65 @@
+@use '@/styles/common' as *;
+
+// Solid red CTA. Same geometry/typography as OutlinedButton, but a filled
+// $color-accent-on-dark background that darkens to $color-accent-hover-on-dark
+// on hover (matches the Figma button hover state, #930000).
+.button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 80px;
+  background: $color-accent-on-dark;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0.8px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-accent-hover-on-dark;
+    color: $color-text-on-dark;
+    text-decoration: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-text-on-dark;
+    outline-offset: 3px;
+  }
+
+  @include breakpoint(tablet) {
+    padding: 15px 50px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+  @include breakpoint(tablet-small) {
+    padding: 12px 50px;
+    font-size: 12px;
+  }
+  @include breakpoint(phone) {
+    padding: 12px 40px;
+    font-size: 12px;
+  }
+}
+
+// Stretch to fill a narrow parent at the phone breakpoint.
+.fitContainer {
+  @include breakpoint(phone) {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

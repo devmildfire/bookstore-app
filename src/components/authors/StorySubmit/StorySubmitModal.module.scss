@@ -1,0 +1,293 @@
+@use '@/styles/common' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+// 786 × 894 dark gradient card, centred. Exact gradient from Figma node
+// 4099:14220.
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  box-sizing: border-box;
+  width: min(786px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 72px 40px;
+  border-radius: 4px;
+  background: linear-gradient(-48.208131924394195deg, rgb(48, 47, 47) 0.84022%, rgb(17, 17, 17) 100%);
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    padding: 56px 24px 40px;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 36px;
+  right: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $color-text-on-dark;
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $color-accent-on-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-text-on-dark;
+    outline-offset: 3px;
+  }
+
+  @include breakpoint(tablet-small) {
+    top: 20px;
+    right: 20px;
+    width: 22px;
+    height: 22px;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+}
+
+// 480-wide form column, centred inside the 786 card (matches the Figma
+// 153px horizontal inset at full width, collapsing gracefully when narrow).
+.form,
+.success {
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.title {
+  margin: 0 0 48px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1.1;
+  color: #fff;
+
+  @include breakpoint(tablet) {
+    font-size: 32px;
+    margin-bottom: 36px;
+  }
+  @include breakpoint(tablet-small) {
+    font-size: 24px;
+    margin-bottom: 28px;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.label {
+  margin-bottom: 12px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #fff;
+
+  @include breakpoint(tablet) {
+    font-size: 20px;
+  }
+  @include breakpoint(tablet-small) {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+.input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 70px;
+  padding: 0 18px;
+  background: #121212;
+  border: 1px solid rgba(220, 220, 220, 0.2);
+  border-radius: 4px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: #fff;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: rgba(220, 220, 220, 0.5);
+  }
+
+  @include breakpoint(tablet) {
+    height: 60px;
+    font-size: 20px;
+  }
+  @include breakpoint(tablet-small) {
+    height: 52px;
+    font-size: 16px;
+  }
+}
+
+// Cover-letter / feedback channel: ~5 lines tall, fixed height, scrolls when
+// the message grows (up to the 5000-char cap).
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px 18px;
+  background: #121212;
+  border: 1px solid rgba(220, 220, 220, 0.2);
+  border-radius: 4px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #fff;
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: #fff;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: rgba(220, 220, 220, 0.5);
+  }
+
+  @include breakpoint(tablet) {
+    font-size: 20px;
+  }
+  @include breakpoint(tablet-small) {
+    font-size: 16px;
+  }
+}
+
+// "Загрузить рассказ" — secondary (outlined) file-picker button, centred,
+// with a small plain subtitle listing accepted formats + size cap.
+.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 48px;
+
+  @include breakpoint(tablet-small) {
+    margin-bottom: 32px;
+  }
+}
+
+.uploadButton {
+  max-width: 100%;
+}
+
+.hint {
+  margin: 14px 0 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba($color-text-on-dark, 0.7);
+
+  @include breakpoint(tablet-small) {
+    font-size: 12px;
+  }
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileName {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 0;
+  font-family: $font-montserrat;
+  font-size: 16px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+  }
+}
+
+.fileNameText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileRemove {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: rgba($color-text-on-dark, 0.7);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    color: $color-accent-on-dark;
+  }
+}
+
+.error {
+  margin: 0 0 20px;
+  font-family: $font-montserrat;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #ff6b6b;
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+  }
+}
+
+.submit {
+  align-self: center;
+}
+
+.successText {
+  margin: 0 0 40px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 20px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    font-size: 16px;
+    margin-bottom: 28px;
+  }
+}
