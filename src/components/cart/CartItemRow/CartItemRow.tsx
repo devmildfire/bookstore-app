@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import Image from 'next/image'
-import { isDigitalCategory } from '@/consts/products'
+import { isSinglePurchaseCategory } from '@/consts/products'
 import type { CartItem } from '@/entities/cart/client'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './CartItemRow.module.scss'
@@ -20,19 +20,20 @@ const TYPE_LABELS: Record<string, string> = {
   'Book2.0': 'Книга 2.0',
   GiftCard: 'Карта даров',
   Subscription: 'Подписка',
+  Course: 'Курс',
 }
 
 export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props) {
-  const isDigital = isDigitalCategory(item.category)
-  const displayQuantity = isDigital ? 1 : item.quantity
+  const isSingle = isSinglePurchaseCategory(item.category)
+  const displayQuantity = isSingle ? 1 : item.quantity
 
-  // Heal pre-existing carts where a digital item somehow has qty>1.
-  // After this fix `addToCart` caps digital items at 1 going forward.
+  // Heal pre-existing carts where a 1-per-buyer item somehow has qty>1.
+  // After this fix `addToCart` caps these items at 1 going forward.
   useEffect(() => {
-    if (isDigital && item.quantity > 1) {
+    if (isSingle && item.quantity > 1) {
       onUpdateQuantity(item.id, 1)
     }
-  }, [isDigital, item.id, item.quantity, onUpdateQuantity])
+  }, [isSingle, item.id, item.quantity, onUpdateQuantity])
 
   const originalUnitPrice =
     item.discount != null && item.discount > 0
@@ -72,7 +73,7 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props)
         )}
       </div>
 
-      {isDigital ? (
+      {isSingle ? (
         <span className={styles.stepperPlaceholder} aria-hidden />
       ) : (
         <div className={styles.stepper} role='group' aria-label='Количество'>

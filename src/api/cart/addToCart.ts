@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-import { isDigitalCategory } from '@/consts/products'
+import { isSinglePurchaseCategory } from '@/consts/products'
 import type { AddToCartInput } from '@/entities/cart/validation'
 
 // `quantity` is the number of units to add in a single call. Callers used to
@@ -20,8 +20,8 @@ export async function addToCart(item: AddToCartInput, quantity = 1): Promise<voi
     .maybeSingle()
 
   if (existing) {
-    // Digital products and subscriptions are 1-per-buyer — never increment.
-    if (item.category === 'Subscription' || isDigitalCategory(item.category)) return
+    // Digital products, subscriptions and courses are 1-per-buyer — never increment.
+    if (isSinglePurchaseCategory(item.category)) return
 
     const { error } = await supabase
       .from('Cart')
@@ -32,9 +32,8 @@ export async function addToCart(item: AddToCartInput, quantity = 1): Promise<voi
     return
   }
 
-  // Digital items + subscriptions are always 1-per-buyer on first add.
-  const insertQty =
-    item.category === 'Subscription' || isDigitalCategory(item.category) ? 1 : quantity
+  // 1-per-buyer items always insert a single unit.
+  const insertQty = isSinglePurchaseCategory(item.category) ? 1 : quantity
 
   const { error } = await supabase
     .from('Cart')

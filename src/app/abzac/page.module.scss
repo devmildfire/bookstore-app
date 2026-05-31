@@ -1,0 +1,247 @@
+@use '@/styles/common' as *;
+
+// Sidebar + main side-by-side; sidebar collapses to a top strip at
+// tablet-small (handled by AuthorsSidebar).
+.page {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 auto;
+  background-color: #121212;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    flex-direction: column;
+  }
+}
+
+.main {
+  flex: 1 1 auto;
+  min-width: 0;
+  // Symmetric, fluid inset — collapses to the Figma 96px (content-left 546 −
+  // sidebar 450) at 1920 and stays balanced on either side as it narrows.
+  padding: 100px clamp(24px, 5vw, 96px) 80px;
+
+  @include breakpoint(tablet-small) {
+    padding: 32px 24px 56px;
+  }
+}
+
+// Every block is capped at the Figma content width (1278) and left-anchored.
+.banner,
+.intro,
+.heading,
+.teachers,
+.lessons,
+.tail {
+  max-width: 1278px;
+}
+
+// ─── Hero banner ────────────────────────────────────────────────────
+.banner {
+  margin-bottom: 48px;
+
+  @include breakpoint(tablet-small) {
+    margin-bottom: 32px;
+  }
+}
+
+.bannerImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+// ─── Intro / tail copy ──────────────────────────────────────────────
+.intro {
+  margin: 0 0 64px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1440px) { font-size: 20px; }
+  @media (max-width: 1199px) { font-size: 18px; margin-bottom: 48px; }
+  @include breakpoint(tablet-small) { font-size: 14px; margin-bottom: 40px; }
+}
+
+.tail {
+  margin: 0 0 64px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1440px) { font-size: 20px; }
+  @media (max-width: 1199px) { font-size: 18px; margin-bottom: 48px; }
+  @include breakpoint(tablet-small) { font-size: 14px; margin-bottom: 32px; }
+}
+
+// ─── Section headings ───────────────────────────────────────────────
+.heading {
+  margin: 0 0 57px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 30px; margin-bottom: 44px; }
+  @media (max-width: 1199px) { font-size: 30px; margin-bottom: 40px; }
+  @include breakpoint(tablet-small) { font-size: 20px; margin-bottom: 24px; }
+}
+
+// ─── Teachers ───────────────────────────────────────────────────────
+.teachers {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-bottom: 98px;
+
+  @media (max-width: 1199px) { gap: 32px; margin-bottom: 72px; }
+  @include breakpoint(tablet-small) { gap: 32px; margin-bottom: 48px; }
+}
+
+.teacher {
+  display: flex;
+  align-items: flex-start;
+  gap: 49px;
+
+  @media (max-width: 1199px) { gap: 32px; }
+
+  // At ≤1000px the bio drops under the photo instead of sitting beside it.
+  @include breakpoint(search-bar) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  @include breakpoint(tablet-small) {
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+.teacherPhoto {
+  flex-shrink: 0;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  @media (max-width: 1199px) { width: 200px; height: 200px; }
+  @include breakpoint(tablet-small) { width: 160px; height: 160px; }
+}
+
+.teacherText {
+  min-width: 0;
+  padding-top: 3px;
+}
+
+.teacherName {
+  margin: 0 0 18px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0.72px;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1199px) { font-size: 20px; margin-bottom: 12px; }
+  @include breakpoint(tablet-small) { font-size: 16px; margin-bottom: 8px; }
+}
+
+.teacherBio {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 20px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1199px) { font-size: 16px; }
+  @include breakpoint(tablet-small) { font-size: 14px; }
+}
+
+// ─── Lessons (directions of study) ──────────────────────────────────
+.lessons {
+  list-style: none;
+  margin: 0 0 64px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 1199px) { margin-bottom: 48px; }
+  @include breakpoint(tablet-small) { margin-bottom: 40px; }
+}
+
+.lesson {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.3);
+
+  @include breakpoint(tablet-small) {
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+.lessonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lessonTitle {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 30px;
+  line-height: 1.15;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 24px; }
+  @media (max-width: 1199px) { font-size: 20px; }
+  @include breakpoint(tablet-small) { font-size: 16px; }
+}
+
+.lessonSubtitle {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 20px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1440px) { font-size: 16px; }
+  @media (max-width: 1199px) { font-size: 14px; }
+  @include breakpoint(tablet-small) { font-size: 12px; }
+}
+
+.lessonTeacher {
+  flex-shrink: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 30px;
+  line-height: 1.15;
+  color: #fff;
+  text-align: right;
+
+  @media (max-width: 1440px) { font-size: 24px; }
+  @media (max-width: 1199px) { font-size: 20px; }
+  @include breakpoint(tablet-small) { font-size: 16px; }
+}
+
+// ─── CTA ────────────────────────────────────────────────────────────
+.ctaWrap {
+  display: flex;
+  justify-content: center;
+  max-width: 1278px;
+}

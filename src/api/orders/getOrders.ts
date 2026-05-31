@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { normalizeOrder } from '@/entities/order/normalize'
-import { getCoverUrl, getGiftCardImageUrl } from '@/lib/storage'
+import { getCoverUrl, getGiftCardImageUrl, getSubscriptionImageUrl } from '@/lib/storage'
+import { ABZAC_COURSE } from '@/consts/abzacCourse'
 import type { Order } from '@/entities/order/client'
 import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server'
 
@@ -19,6 +20,17 @@ const EDITION_TABLE: Record<string, 'CardBooks' | 'Ebooks' | 'Audiobooks' | 'Pri
 // bookId is `GiftCard-<GiftCardProducts.id>` and the cover image lives
 // in the `articles` bucket via `GiftCardProducts.image_path`.
 const GIFT_CARD_CATEGORY = 'GiftCard'
+
+// Subscriptions resolve like gift cards: bookId is `Subscription-<Subscriptions.id>`
+// and the cover lives in the `subscriptions` bucket via `Subscriptions.image`.
+const SUBSCRIPTION_CATEGORY = 'Subscription'
+
+// Courses are standalone cart products (no edition/title row); their cover is a
+// static asset keyed by the full bookId. Single source of truth: the const.
+const COURSE_CATEGORY = 'Course'
+const COURSE_COVERS: Record<string, string | null> = {
+  [ABZAC_COURSE.id]: ABZAC_COURSE.picture ?? null,
+}
 
 type Enriched = { coverUrl: string | null; titleSlug: string | null }
 
@@ -77,8 +89,15 @@ async function fetchItemEnrichments(
 ): Promise<Map<number, Enriched>> {
   const byEdition = new Map<string, { itemIds: number[]; editionId: number; table: string }>()
   const giftCardItemsByProductId = new Map<number, number[]>()
+  const subscriptionItemsByProductId = new Map<number, number[]>()
+  const courseItemCovers: Array<{ itemId: number; coverUrl: string | null }> = []
   for (const item of items) {
     const [category, editionIdStr] = item.book_id.split('-', 2)
+
+    if (category === COURSE_CATEGORY) {
+      courseItemCovers.push({ itemId: item.id, coverUrl: COURSE_COVERS[item.book_id] ?? null })
+      continue
+    }
 
     if (category === GIFT_CARD_CATEGORY) {
       const productId = Number(editionIdStr)
@@ -86,6 +105,15 @@ async function fetchItemEnrichments(
       const list = giftCardItemsByProductId.get(productId) ?? []
       list.push(item.id)
       giftCardItemsByProductId.set(productId, list)
+      continue
+    }
+
+    if (category === SUBSCRIPTION_CATEGORY) {
+      const productId = Number(editionIdStr)
+      if (!Number.isFinite(productId)) continue
+      const list = subscriptionItemsByProductId.get(productId) ?? []
+      list.push(item.id)
+      subscriptionItemsByProductId.set(productId, list)
       continue
     }
 
@@ -142,6 +170,11 @@ async function fetchItemEnrichments(
     for (const itemId of itemIds) enrichedByItemId.set(itemId, value)
   }
 
+  // Courses: static cover, resolved without any DB query.
+  for (const { itemId, coverUrl } of courseItemCovers) {
+    enrichedByItemId.set(itemId, { coverUrl, titleSlug: null })
+  }
+
   // Gift cards: lookup product images in a single query.
   if (giftCardItemsByProductId.size > 0) {
     const productIds = Array.from(giftCardItemsByProductId.keys())
@@ -154,6 +187,25 @@ async function fetchItemEnrichments(
       coverByProductId.set(row.id, getGiftCardImageUrl(row.image_path))
     }
     for (const [productId, itemIds] of giftCardItemsByProductId.entries()) {
+      const coverUrl = coverByProductId.get(productId) ?? null
+      for (const itemId of itemIds) {
+        enrichedByItemId.set(itemId, { coverUrl, titleSlug: null })
+      }
+    }
+  }
+
+  // Subscriptions: lookup cover images in a single query.
+  if (subscriptionItemsByProductId.size > 0) {
+    const productIds = Array.from(subscriptionItemsByProductId.keys())
+    const { data } = await supabase
+      .from('Subscriptions')
+      .select('id, image')
+      .in('id', productIds)
+    const coverByProductId = new Map<number, string | null>()
+    for (const row of (data ?? []) as Array<{ id: number; image: string | null }>) {
+      coverByProductId.set(row.id, getSubscriptionImageUrl(row.image))
+    }
+    for (const [productId, itemIds] of subscriptionItemsByProductId.entries()) {
       const coverUrl = coverByProductId.get(productId) ?? null
       for (const itemId of itemIds) {
         enrichedByItemId.set(itemId, { coverUrl, titleSlug: null })
