@@ -1,0 +1,371 @@
+@use '@/styles/common' as *;
+
+// ─── Page shell ─────────────────────────────────────────────────────
+// Sidebar + main run side-by-side and stretch so the gradient panel
+// always reaches the bottom of the visible content. On tablet-small
+// the sidebar collapses to a full-width strip stacked above the body.
+//
+// Breakpoint map (each mirrors a Figma frame):
+//   base               → 1920 frame
+//   @media ≤1440px     → 1440 frame
+//   @media ≤1199px     → 1024 frame
+//   breakpoint(tablet-small ≤767) → 320 frame
+//
+// padding-top is the Figma gap below the header (titleTop − headerTop),
+// NOT the absolute title-top — the in-flow sticky header already
+// consumes its own height.
+.page {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 auto;
+  background-color: #121212;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet-small) {
+    flex-direction: column;
+  }
+}
+
+.main {
+  flex: 1 1 auto;
+  min-width: 0;
+  // Horizontal inset is symmetric and fluid: it collapses to the exact
+  // Figma value at each frame (235 @1920, 151 @1440, 106 @1024) and scales
+  // with the viewport in between, so the content column never goes
+  // lopsided (large left / tiny right) or overflows at off-frame widths.
+  padding: 100px clamp(60px, 12.24vw, 235px) 80px;
+
+  @media (max-width: 1440px) {
+    padding: 90px clamp(48px, 10.49vw, 151px) 80px;
+  }
+
+  @media (max-width: 1199px) {
+    padding: 90px clamp(40px, 10.35vw, 106px) 80px;
+  }
+
+  @include breakpoint(search-bar) {
+    padding: 90px clamp(24px, 4vw, 40px) 80px;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: 49px 24px 48px;
+  }
+}
+
+// ─── Title ──────────────────────────────────────────────────────────
+.title {
+  margin: 0 0 61px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 60px;
+  line-height: 1;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 50px; margin-bottom: 58px; }
+  @media (max-width: 1199px) { font-size: 40px; margin-bottom: 57px; }
+  @include breakpoint(tablet-small) {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+// ─── Intro paragraph ────────────────────────────────────────────────
+.intro {
+  margin: 0 0 32px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 20px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+  max-width: 1000px;
+
+  @media (max-width: 1440px) {
+    max-width: 800px;
+    margin-bottom: 49px;
+  }
+
+  @media (max-width: 1199px) {
+    font-size: 18px;
+    letter-spacing: 0.9px;
+    max-width: 500px;
+    margin-bottom: 27px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+    letter-spacing: 0;
+    max-width: none;
+    margin-bottom: 42px;
+  }
+}
+
+// ─── Royalty line ───────────────────────────────────────────────────
+.royalty {
+  margin: 0 0 92px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 20px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+  max-width: 1000px;
+
+  @media (max-width: 1440px) {
+    max-width: 800px;
+    margin-bottom: 48px;
+  }
+
+  @media (max-width: 1199px) {
+    font-size: 18px;
+    letter-spacing: 0.9px;
+    max-width: 500px;
+    margin-bottom: 32px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+    letter-spacing: 0;
+    max-width: none;
+    margin-bottom: 36px;
+  }
+}
+
+// ─── Format badges row ──────────────────────────────────────────────
+// Fixed-width cards centred within the text column so the icon pitch
+// matches the Figma frames exactly: 1920 → 350px, 1440 → 289px,
+// 1024 → 196px (card width + gap).
+.formats {
+  display: flex;
+  justify-content: center;
+  // The gap derives from the row's own width: it is the Figma value when
+  // the column is wide enough and shrinks as the column narrows, so the
+  // fixed-width cards never overflow. 375 = 3 × 125px card, 300 = 3 × 100px.
+  gap: min(224px, calc((100% - 375px) / 2));
+  max-width: 1000px;
+  margin-bottom: 113px;
+
+  @media (max-width: 1440px) { gap: min(164px, calc((100% - 375px) / 2)); max-width: 800px; margin-bottom: 121px; }
+  @media (max-width: 1199px) { gap: min(96px, calc((100% - 300px) / 2)); max-width: 500px; margin-bottom: 44px; }
+
+  @include breakpoint(tablet-small) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: none;
+    margin-bottom: 48px;
+  }
+}
+
+.format {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 125px;
+
+  @media (max-width: 1440px) { gap: 24px; }
+  @media (max-width: 1199px) { gap: 16px; width: 100px; }
+
+  @include breakpoint(tablet-small) {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    width: auto;
+  }
+}
+
+.formatIcon {
+  width: 85px;
+  height: 85px;
+  flex-shrink: 0;
+  color: $color-text-on-dark;
+}
+
+.formatLabel {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 20px; }
+  @media (max-width: 1199px) { font-size: 16px; letter-spacing: 0.8px; }
+  @include breakpoint(tablet-small) {
+    font-size: 16px;
+    letter-spacing: 0.8px;
+  }
+}
+
+// ─── Section heading "Требования к рукописи:" ───────────────────────
+.sectionHeading {
+  margin: 0 0 57px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 30px; margin-bottom: 67px; }
+  @media (max-width: 1199px) { font-size: 30px; margin-bottom: 39px; }
+  @include breakpoint(tablet-small) {
+    font-size: 20px;
+    margin-bottom: 33px;
+  }
+}
+
+// ─── Closing heading "Верим в вас" ──────────────────────────────────
+// Always one type-step smaller than the requirements heading (Figma:
+// 30/30/20/20 vs the section heading's 40/30/30/20).
+.tailHeading {
+  margin: 0 0 70px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 30px;
+  line-height: 1;
+  color: #fff;
+
+  @media (max-width: 1440px) { margin-bottom: 55px; }
+  @media (max-width: 1199px) { font-size: 20px; margin-bottom: 36px; }
+  @include breakpoint(tablet-small) {
+    font-size: 20px;
+    margin-bottom: 36px;
+  }
+}
+
+// ─── Requirements bullet list ───────────────────────────────────────
+.requirements {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (max-width: 1440px) { gap: 24px; }
+  @media (max-width: 1199px) { gap: 27px; margin-bottom: 35px; }
+
+  @include breakpoint(tablet-small) {
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+}
+
+.requirement {
+  position: relative;
+  padding-left: 35px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+  max-width: 800px;
+
+  // Red dot bullet — sits ~12px in from the left edge, centered with the line.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: $color-accent-on-dark;
+  }
+
+  @media (max-width: 1440px) {
+    font-size: 20px;
+    padding-left: 31px;
+
+    &::before { top: 0.5em; }
+  }
+
+  @media (max-width: 1199px) {
+    font-size: 18px;
+    letter-spacing: 0.9px;
+    padding-left: 30px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+    letter-spacing: 0;
+    padding-left: 28px;
+
+    &::before {
+      width: 11px;
+      height: 11px;
+      top: 0.45em;
+    }
+  }
+}
+
+// ─── Free-form copy ─────────────────────────────────────────────────
+.note {
+  margin: 0 0 36px;
+  text-align: center;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  color: $color-text-on-dark;
+
+  @media (max-width: 1440px) { font-size: 20px; margin-bottom: 30px; }
+  @media (max-width: 1199px) { font-size: 18px; letter-spacing: 0.9px; margin-bottom: 24px; }
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+    letter-spacing: 0;
+    margin-bottom: 21px;
+  }
+}
+
+.email {
+  margin: 0 0 35px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0.72px;
+  color: #fff;
+
+  @media (max-width: 1440px) { font-size: 20px; margin-bottom: 30px; }
+  @media (max-width: 1199px) { font-size: 16px; letter-spacing: 0; margin-bottom: 25px; }
+  @include breakpoint(tablet-small) {
+    font-size: 10px;
+    margin-bottom: 36px;
+  }
+}
+
+.emailLink {
+  color: $color-accent-on-dark;
+  text-decoration: none;
+
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    color: #ca0000;
+    text-decoration: none;
+    outline: none;
+  }
+}
+
+.tail {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0.72px;
+  color: $color-text-on-dark;
+  max-width: 1000px;
+
+  @media (max-width: 1440px) { font-size: 20px; max-width: 800px; }
+  @media (max-width: 1199px) { font-size: 16px; letter-spacing: 0; max-width: 500px; }
+  @include breakpoint(tablet-small) {
+    font-size: 10px;
+    max-width: none;
+  }
+}
+
+.tailRed {
+  color: $color-accent-on-dark;
+}

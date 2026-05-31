@@ -1,0 +1,181 @@
+@use '@/styles/common' as *;
+
+// Vertical author-section panel. Desktop = fixed-width left column;
+// tablet-small (≤767) reflows to a full-width header strip stacked
+// above the main content.
+//
+// The Figma frame applies opacity: 0.3 to the entire panel, so the
+// gradient is rendered at 30% alpha against the page #121212 underneath.
+// We put the gradient on a ::before with that 0.3 opacity so heading/
+// link text stays fully opaque (applying opacity to the panel itself
+// would wash out everything inside).
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 450px;
+  min-height: 100%;
+  padding: 100px 0 60px;
+  color: $color-text-on-dark;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    // Exact gradients copied from Figma node 4099:12418 ("Panel/Bg"):
+    //   linear-gradient(-38.00316deg, rgba(147,0,0,0.5) 1.0812%, rgba(0,0,0,0.5) 41.582%)
+    //   linear-gradient(135.43253deg, rgb(202,0,0) 0%, rgb(19,19,19) 31.8%, rgb(0,0,0) 55.093%)
+    background:
+      linear-gradient(-38.00316deg, rgba(147, 0, 0, 0.5) 1.0812%, rgba(0, 0, 0, 0.5) 41.582%),
+      linear-gradient(135.43253deg, rgb(202, 0, 0) 0%, rgb(19, 19, 19) 31.8%, rgb(0, 0, 0) 55.093%);
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (max-width: 1440px) {
+    width: 338px;
+    padding-top: 90px;
+  }
+
+  @media (max-width: 1199px) {
+    width: 314px;
+    padding-top: 90px;
+  }
+
+  @include breakpoint(tablet-small) {
+    width: 100%;
+    min-height: 0;
+    padding: 50px 0 0;
+  }
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 57px;
+  padding: 0 64px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1;
+  color: #fff;
+
+  @media (max-width: 1440px) {
+    font-size: 30px;
+    margin-bottom: 55px;
+    padding: 0 50px;
+  }
+
+  @media (max-width: 1199px) {
+    padding: 0 41px;
+    margin-bottom: 31px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 20px;
+    padding: 0 23px;
+    margin-bottom: 36px;
+  }
+}
+
+.list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// Inactive nav item — flat row. Vertical padding sets the item pitch
+// (text-to-text) to match the Figma frames: 66 / 60 / 59 / 41 px.
+.item {
+  padding: 16px 64px;
+
+  @media (max-width: 1440px) {
+    padding: 16px 50px;
+  }
+
+  @media (max-width: 1199px) {
+    padding: 17px 41px;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding: 10px 23px;
+  }
+}
+
+// Active item gradient — exact values from Figma node 4099:12421:
+//   linear-gradient(103.88329deg, rgba(147,0,0,0.2) 1.511%, rgba(19,19,19,0.2) 43.577%, rgba(0,0,0,0.2) 100.87%)
+//   linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.3) 100%)
+// On mobile (Figma node 4099:12873) the primary angle shifts to 108.70425°.
+.itemActive {
+  composes: item;
+  position: relative;
+  z-index: 1;
+  // The highlight rect is taller than the item pitch in Figma (e.g. 1920:
+  // 84px bg over a 66px pitch). We give it the Figma bg padding and pull
+  // the following item back up with a negative margin so the row rhythm
+  // stays exact.
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-bottom: -9px;
+  background:
+    linear-gradient(103.88329deg, rgba(147, 0, 0, 0.2) 1.511%, rgba(19, 19, 19, 0.2) 43.577%, rgba(0, 0, 0, 0.2) 100.87%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%);
+
+  @media (max-width: 1440px) {
+    padding-top: 17px;
+    padding-bottom: 17px;
+    margin-bottom: -1px;
+  }
+
+  @media (max-width: 1199px) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 0;
+  }
+
+  @include breakpoint(tablet-small) {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    margin-bottom: -2px;
+    background:
+      linear-gradient(108.70425deg, rgba(147, 0, 0, 0.2) 1.511%, rgba(19, 19, 19, 0.2) 43.577%, rgba(0, 0, 0, 0.2) 100.87%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%);
+  }
+}
+
+.link {
+  display: block;
+  color: $color-text-on-dark;
+  text-decoration: none;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 24px;
+  line-height: 1.4;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    color: $color-accent-on-dark;
+    text-decoration: none;
+    outline: none;
+  }
+
+  @media (max-width: 1440px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 1199px) {
+    font-size: 20px;
+  }
+
+  @include breakpoint(tablet-small) {
+    font-size: 14px;
+  }
+}
