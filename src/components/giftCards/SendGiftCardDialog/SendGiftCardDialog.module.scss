@@ -1,38 +1,6 @@
 @use '@/styles/common' as *;
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: rgba(0, 0, 0, 0.64);
-}
-
-.content {
-  position: fixed;
-  z-index: 51;
-  top: 50%;
-  left: 50%;
-  width: min(520px, calc(100vw - 32px));
-  transform: translate(-50%, -50%);
-  background: $color-panel;
-  border: 1px solid rgba($color-text-on-dark, 0.16);
-  padding: $space-8;
-  color: $color-text-on-dark;
-}
-
-.title {
-  margin: 0 0 $space-3;
-  font-family: $font-montserrat;
-  font-size: 24px;
-}
-
-.description {
-  margin: 0 0 $space-6;
-  color: rgba($color-text-on-dark, 0.72);
-  font-family: $font-montserrat;
-  line-height: 1.45;
-}
-
+// Modal chrome (overlay/panel/title/description/close) comes from common/Modal.
 .form {
   display: grid;
   gap: $space-3;
@@ -94,15 +62,4 @@
   color: $color-accent-on-dark;
   font-family: $font-montserrat;
   font-size: 14px;
-}
-
-.close {
-  position: absolute;
-  top: $space-4;
-  right: $space-4;
-  border: 0;
-  background: transparent;
-  color: $color-text-on-dark;
-  font-size: 26px;
-  cursor: pointer;
 }

@@ -1,48 +1,10 @@
 @use '@/styles/common' as *;
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  z-index: 100;
-}
-
-.content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90vw;
-  max-width: 480px;
-  padding: $space-10;
-  background: $color-bg-page;
-  border: 1px solid rgba($color-text-on-dark, 0.15);
-  border-radius: $radius-md;
-  color: $color-text-on-dark;
+// Modal chrome (overlay/panel/title/close) comes from common/Modal.
+.stack {
   display: flex;
   flex-direction: column;
   gap: $space-6;
-  z-index: 101;
-  outline: none;
-
-  @include breakpoint(phone) {
-    padding: $space-6;
-    width: calc(100vw - 32px);
-  }
-}
-
-.title {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: 24px;
-  font-weight: $font-weight-bold;
-  letter-spacing: 0.5px;
-  color: $color-text-on-dark;
-  line-height: 1.2;
-
-  @include breakpoint(phone) {
-    font-size: 20px;
-  }
 }
 
 .body {

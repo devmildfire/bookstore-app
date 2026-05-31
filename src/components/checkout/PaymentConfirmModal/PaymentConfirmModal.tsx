@@ -1,6 +1,6 @@
 'use client'
 
-import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './PaymentConfirmModal.module.scss'
 
@@ -37,15 +37,15 @@ export default function PaymentConfirmModal({
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby={undefined}>
-          <Dialog.Title className={styles.title}>
-            {isFullyCovered ? 'Подтверждение заказа' : 'Подтверждение оплаты'}
-          </Dialog.Title>
-
-          <div className={styles.body}>
+    <Modal
+      open={open}
+      onOpenChange={handleOpenChange}
+      title={isFullyCovered ? 'Подтверждение заказа' : 'Подтверждение оплаты'}
+      showClose={false}
+      size='sm'
+    >
+      <div className={styles.stack}>
+        <div className={styles.body}>
             <div className={styles.amountRow}>
               <span className={styles.amountLabel}>{isFullyCovered ? 'Осталось оплатить:' : 'К оплате:'}</span>
               <span className={styles.amountValue}>{formatPrice(amount)}</span>
@@ -82,8 +82,7 @@ export default function PaymentConfirmModal({
               Отмена
             </button>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+      </div>
+    </Modal>
   )
 }

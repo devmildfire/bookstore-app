@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import { useQueryClient } from '@tanstack/react-query'
 import { sendGiftCard } from '@/api/giftCards/sendGiftCard'
 import { userGiftCardsQueryKey } from '@/api/giftCards/getUserGiftCards'
@@ -76,16 +76,14 @@ export default function SendGiftCardDialog({ cardId, trigger }: Props) {
   const disabled = isPending || claimUrl !== null
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
-          <Dialog.Title className={styles.title}>Отправить карту</Dialog.Title>
-          <Dialog.Description className={styles.description}>
-            Отправьте карту по email или создайте ссылку и поделитесь ей сами.
-          </Dialog.Description>
-
+    <Modal
+      open={open}
+      onOpenChange={handleOpenChange}
+      trigger={trigger}
+      title='Отправить карту'
+      description='Отправьте карту по email или создайте ссылку и поделитесь ей сами.'
+      size='md'
+    >
           {claimUrl ? (
             <div className={styles.claimBox}>
               <span className={styles.claimUrl}>{claimUrl}</span>
@@ -123,10 +121,6 @@ export default function SendGiftCardDialog({ cardId, trigger }: Props) {
               </form>
             </>
           )}
-
-          <Dialog.Close className={styles.close} aria-label='Закрыть'>×</Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    </Modal>
   )
 }

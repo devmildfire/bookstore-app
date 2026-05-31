@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import PrimaryButton from '@/components/common/PrimaryButton'
 import OutlinedButton from '@/components/common/OutlinedButton'
 import { submitStorySubmission } from '@/api/stories/submitStorySubmission'
@@ -48,26 +49,14 @@ function feedbackPlaceholder(isAnon: boolean, userEmail: string | null): string 
 
 export default function StorySubmitModal({ open, onOpenChange, isAnon, userEmail }: Props) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby={undefined}>
-          {/* Mounted only while open, so its state resets on every open.
-              Rendered before the close button so the first form field (not
-              the × ) receives focus when the dialog opens. */}
-          <StoryForm
-            onClose={() => onOpenChange(false)}
-            feedbackPrompt={feedbackPlaceholder(isAnon, userEmail)}
-          />
-
-          <Dialog.Close className={styles.close} aria-label='Закрыть'>
-            <svg width='28' height='28' viewBox='0 0 28 28' fill='none' aria-hidden>
-              <path d='M5 5l18 18M23 5L5 23' stroke='currentColor' strokeWidth='2' />
-            </svg>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Modal open={open} onOpenChange={onOpenChange} size='xl'>
+      {/* StoryForm is mounted only while open, so its state resets on every
+          open. It renders its own Dialog.Title (form vs success heading). */}
+      <StoryForm
+        onClose={() => onOpenChange(false)}
+        feedbackPrompt={feedbackPlaceholder(isAnon, userEmail)}
+      />
+    </Modal>
   )
 }
 

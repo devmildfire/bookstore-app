@@ -1,52 +1,12 @@
 @use '@/styles/common' as *;
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: rgba(0, 0, 0, 0.7);
-}
-
-.content {
-  position: fixed;
-  z-index: 51;
-  top: 50%;
-  left: 50%;
-  width: min(440px, calc(100vw - 32px));
-  transform: translate(-50%, -50%);
-  background: $color-panel;
-  border: 1px solid rgba($color-text-on-dark, 0.16);
-  color: $color-text-on-dark;
-  padding: $space-8 $space-8 $space-6;
+// Modal chrome (overlay/panel/close) comes from common/Modal. This is a
+// centred card layout, so it keeps its own (centred) Dialog.Title.
+.center {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-4;
-
-  @include breakpoint(phone) {
-    padding: $space-6 $space-5 $space-5;
-  }
-}
-
-.closeBtn {
-  position: absolute;
-  top: $space-4;
-  right: $space-4;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  background: transparent;
-  color: rgba($color-text-on-dark, 0.7);
-  cursor: pointer;
-  transition: color 0.15s ease;
-
-  &:hover,
-  &:focus-visible {
-    color: $color-text-on-dark;
-  }
 }
 
 .imageWrap {

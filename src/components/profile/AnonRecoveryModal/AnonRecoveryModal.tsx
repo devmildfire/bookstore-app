@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import { useToast } from '@/contexts/toast'
 import { setRecoveryEmailAction } from '@/lib/profile/actions'
 import styles from './AnonRecoveryModal.module.scss'
@@ -53,13 +53,15 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby='anon-modal-body'>
-          <Dialog.Title className={styles.title}>Между нами говоря…</Dialog.Title>
-
-          <div id='anon-modal-body' className={styles.body}>
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title='Между нами говоря…'
+      showClose={false}
+      size='md'
+    >
+      <div className={styles.stack}>
+        <div className={styles.body}>
             <p>
               У вас на руках заказ под анонимным аккаунтом. Это нормально — сайт ваш,
               правила ваши, мы здесь просто помогаем читать.
@@ -132,11 +134,10 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
             </div>
           </div>
 
-          {state.kind === 'error' && (
-            <p className={styles.error}>{state.message}</p>
-          )}
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        {state.kind === 'error' && (
+          <p className={styles.error}>{state.message}</p>
+        )}
+      </div>
+    </Modal>
   )
 }

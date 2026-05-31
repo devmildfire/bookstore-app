@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import { useToast } from '@/contexts/toast'
 import GoogleIcon from '@/assets/icons/google.svg'
 import YandexIcon from '@/assets/icons/yandex.svg'
@@ -33,58 +33,55 @@ export default function LoginModal({ open, onOpenChange }: Props) {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby='login-modal-body'>
-          <Dialog.Title className={styles.title}>Вход</Dialog.Title>
-
-          <p id='login-modal-body' className={styles.body}>
-            {busy ? 'Перенаправляем на Google…' : 'Войдите, чтобы привязать покупки к вашему аккаунту.'}
-          </p>
-
-          <div className={styles.providers} aria-busy={busy}>
-            <button
-              type='button'
-              className={styles.providerBtn}
-              onClick={handleGoogle}
-              disabled={busy}
-              aria-label='Войти через Google'
-            >
-              <GoogleIcon className={styles.providerIcon} />
-            </button>
-            <button
-              type='button'
-              className={styles.providerBtn}
-              onClick={() => handleStub('Яндекс')}
-              disabled={busy}
-              aria-label='Войти через Яндекс (скоро)'
-            >
-              <YandexIcon className={styles.providerIcon} />
-            </button>
-            <button
-              type='button'
-              className={styles.providerBtn}
-              onClick={() => handleStub('VK')}
-              disabled={busy}
-              aria-label='Войти через VK (скоро)'
-            >
-              <VkIcon className={styles.providerIcon} />
-            </button>
-            <button
-              type='button'
-              className={styles.providerBtn}
-              onClick={() => handleStub('Telegram')}
-              disabled={busy}
-              aria-label='Войти через Telegram (скоро)'
-            >
-              <TelegramIcon className={styles.providerIcon} />
-            </button>
-          </div>
-
-          <Dialog.Close className={styles.close} aria-label='Закрыть'>×</Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title='Вход'
+      description={
+        busy
+          ? 'Перенаправляем на Google…'
+          : 'Войдите, чтобы привязать покупки к вашему аккаунту.'
+      }
+      size='sm'
+    >
+      <div className={styles.providers} aria-busy={busy}>
+        <button
+          type='button'
+          className={styles.providerBtn}
+          onClick={handleGoogle}
+          disabled={busy}
+          aria-label='Войти через Google'
+        >
+          <GoogleIcon className={styles.providerIcon} />
+        </button>
+        <button
+          type='button'
+          className={styles.providerBtn}
+          onClick={() => handleStub('Яндекс')}
+          disabled={busy}
+          aria-label='Войти через Яндекс (скоро)'
+        >
+          <YandexIcon className={styles.providerIcon} />
+        </button>
+        <button
+          type='button'
+          className={styles.providerBtn}
+          onClick={() => handleStub('VK')}
+          disabled={busy}
+          aria-label='Войти через VK (скоро)'
+        >
+          <VkIcon className={styles.providerIcon} />
+        </button>
+        <button
+          type='button'
+          className={styles.providerBtn}
+          onClick={() => handleStub('Telegram')}
+          disabled={busy}
+          aria-label='Войти через Telegram (скоро)'
+        >
+          <TelegramIcon className={styles.providerIcon} />
+        </button>
+      </div>
+    </Modal>
   )
 }

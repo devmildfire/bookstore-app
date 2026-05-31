@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
+import Modal from '@/components/common/Modal'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import { useBookProducts } from '@/hooks/useBookProducts'
@@ -94,17 +94,7 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
   }
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby={undefined}>
-          <Dialog.Close className={styles.closeBtn} aria-label="Закрыть">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </Dialog.Close>
-
-          <Dialog.Title className={styles.title}>{titleName}</Dialog.Title>
+    <Modal open={isOpen} onOpenChange={handleOpenChange} title={titleName} size='md'>
           <p className={styles.author}>{formatAuthors(authorNames)}</p>
 
           <p className={styles.sectionLabel}>Выберите тип издания</p>
@@ -205,8 +195,6 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
               Добавить в корзину
             </button>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    </Modal>
   )
 }

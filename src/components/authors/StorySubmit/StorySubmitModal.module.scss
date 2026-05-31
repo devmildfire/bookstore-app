@@ -1,74 +1,8 @@
 @use '@/styles/common' as *;
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
-}
-
-// 786 × 894 dark gradient card, centred. Exact gradient from Figma node
-// 4099:14220.
-.content {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1001;
-  box-sizing: border-box;
-  width: min(786px, calc(100vw - 32px));
-  max-height: calc(100vh - 48px);
-  overflow-y: auto;
-  padding: 72px 40px;
-  border-radius: 4px;
-  background: linear-gradient(-48.208131924394195deg, rgb(48, 47, 47) 0.84022%, rgb(17, 17, 17) 100%);
-  color: $color-text-on-dark;
-
-  @include breakpoint(tablet-small) {
-    padding: 56px 24px 40px;
-  }
-}
-
-.close {
-  position: absolute;
-  top: 36px;
-  right: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: $color-text-on-dark;
-  cursor: pointer;
-  transition: color 0.15s ease;
-
-  &:hover {
-    color: $color-accent-on-dark;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-text-on-dark;
-    outline-offset: 3px;
-  }
-
-  @include breakpoint(tablet-small) {
-    top: 20px;
-    right: 20px;
-    width: 22px;
-    height: 22px;
-
-    svg {
-      width: 22px;
-      height: 22px;
-    }
-  }
-}
-
-// 480-wide form column, centred inside the 786 card (matches the Figma
-// 153px horizontal inset at full width, collapsing gracefully when narrow).
+// Modal chrome (overlay/panel/close) comes from common/Modal. This form
+// keeps its own Dialog.Title because the heading changes (form ↔ success).
+// 480-wide form column, centred inside the panel.
 .form,
 .success {
   display: flex;
@@ -78,20 +12,17 @@
 }
 
 .title {
-  margin: 0 0 48px;
+  margin: 0 0 28px;
+  padding-right: 36px;
   font-family: $font-montserrat;
   font-weight: $font-weight-bold;
-  font-size: 40px;
-  line-height: 1.1;
+  font-size: 24px;
+  line-height: 1.2;
   color: #fff;
 
-  @include breakpoint(tablet) {
-    font-size: 32px;
-    margin-bottom: 36px;
-  }
   @include breakpoint(tablet-small) {
-    font-size: 24px;
-    margin-bottom: 28px;
+    font-size: 20px;
+    margin-bottom: 24px;
   }
 }
 
