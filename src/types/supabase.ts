@@ -34,6 +34,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      Articles: {
+        Row: {
+          author_id: number
+          content_blocks: Json
+          cover_blur: string | null
+          cover_height: number | null
+          cover_path: string | null
+          cover_width: number | null
+          created_at: string
+          excerpt: string | null
+          id: number
+          published_at: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          author_id: number
+          content_blocks?: Json
+          cover_blur?: string | null
+          cover_height?: number | null
+          cover_path?: string | null
+          cover_width?: number | null
+          created_at?: string
+          excerpt?: string | null
+          id?: number
+          published_at?: string
+          slug: string
+          title: string
+        }
+        Update: {
+          author_id?: number
+          content_blocks?: Json
+          cover_blur?: string | null
+          cover_height?: number | null
+          cover_path?: string | null
+          cover_width?: number | null
+          created_at?: string
+          excerpt?: string | null
+          id?: number
+          published_at?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Articles_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "Authors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Audiobooks: {
         Row: {
           discount: number | null

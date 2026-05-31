@@ -1,0 +1,51 @@
+@use '@/styles/common' as *;
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.empty {
+  margin: 0;
+  padding: 60px 16px;
+  text-align: center;
+  color: rgba($color-text-on-dark, 0.6);
+  font-family: $font-montserrat;
+  font-size: 16px;
+}
+
+.loadingRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 0;
+
+  @media (max-width: 1199px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeleton {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: linear-gradient(
+    90deg,
+    rgba($color-text-on-dark, 0.04) 0%,
+    rgba($color-text-on-dark, 0.08) 50%,
+    rgba($color-text-on-dark, 0.04) 100%
+  );
+  animation: shimmer 1.6s linear infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

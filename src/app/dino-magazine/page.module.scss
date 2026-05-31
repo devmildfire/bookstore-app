@@ -1,0 +1,30 @@
+@use '@/styles/common' as *;
+
+// Outer wrapper carries the full-width dark surface and flex-grows to
+// fill the layout's <main> so the background always reaches the footer.
+.page {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-surface-dark;
+  padding-bottom: 120px;
+
+  @include breakpoint(tablet) {
+    padding-bottom: 80px;
+  }
+
+  @include breakpoint(phone) {
+    padding-bottom: 60px;
+  }
+}
+
+// Inner wrapper applies the standard page container so the hero +
+// masonry honour the same max-width / horizontal padding as the rest of
+// the site's sections (mirrors the SubscriptionsSection pattern).
+.inner {
+  @include page-container;
+
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}

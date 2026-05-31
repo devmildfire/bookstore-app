@@ -1,0 +1,120 @@
+@use '@/styles/common' as *;
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  background-color: #000;
+  overflow: hidden;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.cover {
+  position: relative;
+  width: 100%;
+  background-color: #000;
+}
+
+// Slightly brighten the artwork on hover. The card itself stays put;
+// only the image lights up, signalling interactivity without shifting
+// the masonry layout.
+.image {
+  object-fit: cover;
+  transition: filter 0.2s ease;
+
+  .card:hover &,
+  .card:focus-visible & {
+    filter: brightness(1.15);
+  }
+}
+
+.coverPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+// Bottom overlay — title is always visible, excerpt expands in on
+// hover. Padding is intentionally tight so the title strip takes as
+// little vertical real estate as possible while the artwork's at rest.
+.overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: $space-3 $space-5;
+  background-color: rgba(0, 0, 0, 0.85);
+
+  @include breakpoint(tablet) {
+    padding: $space-3 $space-4;
+  }
+
+  @include breakpoint(phone) {
+    padding: $space-2 $space-3;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 16px;
+  line-height: 1.3;
+  color: #fff;
+
+  @include breakpoint(tablet) {
+    font-size: 14px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 13px;
+  }
+}
+
+.separator,
+.author {
+  font-weight: $font-weight-bold;
+  color: #fff;
+}
+
+// Excerpt is hidden by default and slides into view on card hover. We
+// transition max-height + opacity (no padding shift) so the card body
+// doesn't jump as the excerpt appears.
+.excerpt {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 13px;
+  line-height: 1.5;
+  color: $color-text-on-dark;
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.25s ease;
+
+  @include breakpoint(tablet) {
+    font-size: 12px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 11px;
+  }
+
+  .card:hover &,
+  .card:focus-visible & {
+    max-height: 8em;
+    margin-top: $space-2;
+    opacity: 1;
+  }
+}

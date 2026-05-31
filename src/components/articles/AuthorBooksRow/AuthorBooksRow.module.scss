@@ -1,0 +1,58 @@
+@use '@/styles/common' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  padding: 96px 16px 0;
+
+  @include breakpoint(tablet) {
+    padding-top: 72px;
+    gap: $space-6;
+  }
+
+  @include breakpoint(phone) {
+    padding-top: 48px;
+    gap: $space-5;
+  }
+}
+
+.heading {
+  margin: 0;
+  text-align: center;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: 1.2px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    font-size: 32px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 24px;
+  }
+}
+
+// Sized to match the main-page BookGrid cards (~300px on desktop,
+// matching `repeat(4, 1fr)` at 1400px page-container). Uses a fixed
+// cell width + auto-fit so the row stays centered when there are fewer
+// than 4 books, instead of left-aligning like a regular grid.
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px);
+  gap: $space-6;
+  justify-content: center;
+
+  @include breakpoint(tablet) {
+    grid-template-columns: repeat(auto-fit, 240px);
+    gap: $space-4;
+  }
+
+  @include breakpoint(phone) {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: $space-3;
+  }
+}

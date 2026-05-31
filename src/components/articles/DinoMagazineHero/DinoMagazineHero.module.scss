@@ -1,0 +1,57 @@
+@use '@/styles/common' as *;
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-5;
+  padding: 114px 0 60px;
+  text-align: center;
+
+  @include breakpoint(tablet) {
+    padding: 86px 0 48px;
+    gap: $space-4;
+  }
+
+  @include breakpoint(phone) {
+    padding: 58px 0 32px;
+    gap: $space-3;
+  }
+}
+
+.icon {
+  width: 52px;
+  height: 74px;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    width: 40px;
+    height: 57px;
+  }
+
+  @include breakpoint(phone) {
+    width: 30px;
+    height: 42px;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: $font-cheque;
+  font-weight: 900;
+  font-size: 60px;
+  line-height: 1.1;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) {
+    font-size: 40px;
+    letter-spacing: 1.2px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 30px;
+    letter-spacing: 0.9px;
+  }
+}

@@ -1,0 +1,59 @@
+@use '@/styles/common' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  padding-top: 96px;
+
+  @include breakpoint(tablet) {
+    padding-top: 72px;
+    gap: $space-6;
+  }
+
+  @include breakpoint(phone) {
+    padding-top: 48px;
+    gap: $space-5;
+  }
+}
+
+.heading {
+  margin: 0;
+  text-align: center;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: 1.2px;
+  color: $color-text-on-dark;
+  padding: 0 16px;
+
+  @include breakpoint(tablet) {
+    font-size: 32px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 24px;
+  }
+}
+
+// Escapes the page-container so the carousel runs from viewport edge
+// to viewport edge, matching the Figma where side slides are clipped.
+.fullBleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+}
+
+.swiper {
+  width: 100%;
+  padding-bottom: 0 !important;
+
+  :global(.swiper-wrapper) {
+    align-items: stretch;
+  }
+}
+
+.slide {
+  height: auto;
+}

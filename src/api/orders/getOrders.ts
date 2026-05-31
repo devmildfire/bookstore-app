@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { normalizeOrder } from '@/entities/order/normalize'
-import { getCoverUrl } from '@/lib/storage'
+import { getCoverUrl, getGiftCardImageUrl } from '@/lib/storage'
 import type { Order } from '@/entities/order/client'
 import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server'
 
@@ -14,6 +14,11 @@ const EDITION_TABLE: Record<string, 'CardBooks' | 'Ebooks' | 'Audiobooks' | 'Pri
   'Book2.0': 'CardBooks',
   PrintBook: 'PrintedBooks',
 }
+
+// Gift card items don't go through the title/edition lookup — their
+// bookId is `GiftCard-<GiftCardProducts.id>` and the cover image lives
+// in the `articles` bucket via `GiftCardProducts.image_path`.
+const GIFT_CARD_CATEGORY = 'GiftCard'
 
 type Enriched = { coverUrl: string | null; titleSlug: string | null }
 
@@ -64,14 +69,26 @@ export async function getOrders(): Promise<Order[]> {
 
 // For each OrderItem, look up the title (and its cover) by walking
 // bookId → edition row → title row. One query per edition table + one
-// query for Titles, no matter how many items.
+// query for Titles, no matter how many items. Gift card items are
+// resolved separately against GiftCardProducts.
 async function fetchItemEnrichments(
   supabase: ReturnType<typeof createClient>,
   items: OrderItemServerRow[]
 ): Promise<Map<number, Enriched>> {
   const byEdition = new Map<string, { itemIds: number[]; editionId: number; table: string }>()
+  const giftCardItemsByProductId = new Map<number, number[]>()
   for (const item of items) {
     const [category, editionIdStr] = item.book_id.split('-', 2)
+
+    if (category === GIFT_CARD_CATEGORY) {
+      const productId = Number(editionIdStr)
+      if (!Number.isFinite(productId)) continue
+      const list = giftCardItemsByProductId.get(productId) ?? []
+      list.push(item.id)
+      giftCardItemsByProductId.set(productId, list)
+      continue
+    }
+
     const table = EDITION_TABLE[category]
     const editionId = Number(editionIdStr)
     if (!table || !Number.isFinite(editionId)) continue
@@ -124,5 +141,25 @@ async function fetchItemEnrichments(
     const value: Enriched = info ?? { coverUrl: null, titleSlug: null }
     for (const itemId of itemIds) enrichedByItemId.set(itemId, value)
   }
+
+  // Gift cards: lookup product images in a single query.
+  if (giftCardItemsByProductId.size > 0) {
+    const productIds = Array.from(giftCardItemsByProductId.keys())
+    const { data } = await supabase
+      .from('GiftCardProducts')
+      .select('id, image_path')
+      .in('id', productIds)
+    const coverByProductId = new Map<number, string | null>()
+    for (const row of (data ?? []) as Array<{ id: number; image_path: string | null }>) {
+      coverByProductId.set(row.id, getGiftCardImageUrl(row.image_path))
+    }
+    for (const [productId, itemIds] of giftCardItemsByProductId.entries()) {
+      const coverUrl = coverByProductId.get(productId) ?? null
+      for (const itemId of itemIds) {
+        enrichedByItemId.set(itemId, { coverUrl, titleSlug: null })
+      }
+    }
+  }
+
   return enrichedByItemId
 }

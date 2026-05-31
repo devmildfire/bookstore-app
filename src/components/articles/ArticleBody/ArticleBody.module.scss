@@ -1,0 +1,96 @@
+@use '@/styles/common' as *;
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @include breakpoint(tablet) {
+    gap: $space-4;
+  }
+}
+
+.paragraph {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #fff;
+
+  @include breakpoint(tablet) {
+    font-size: 16px;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 14px;
+  }
+}
+
+// Portrait illustrations would otherwise tower above the viewport. The
+// figure is a centring container at full body width; the inner wrap
+// shrinks to the image's rendered size so the caption sits on the
+// image edges (not the figure's), and the height cap keeps tall art
+// from blowing past the viewport.
+.figure {
+  display: flex;
+  justify-content: center;
+  margin: $space-6 0;
+
+  @include breakpoint(phone) {
+    margin: $space-4 0;
+  }
+}
+
+.imageWrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  max-height: calc(100vh - 120px);
+  line-height: 0;
+
+  @include breakpoint(phone) {
+    max-height: calc(100vh - 80px);
+  }
+}
+
+.image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: inherit;
+  object-fit: contain;
+  background-color: #000;
+}
+
+// Caption strip overlaid on the bottom of the image — matches Figma:
+// translucent black bar, right-aligned text.
+.caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: $space-3 $space-6;
+  background-color: rgba(0, 0, 0, 0.8);
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #fff;
+  text-align: right;
+
+  @include breakpoint(tablet) {
+    font-size: 14px;
+    padding: $space-2 $space-4;
+  }
+
+  @include breakpoint(phone) {
+    font-size: 12px;
+    padding: $space-2 $space-3;
+  }
+}
