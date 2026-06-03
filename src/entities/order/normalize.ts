@@ -1,6 +1,7 @@
 import type { ProductCategory } from '@/types/database'
 import type {
   DeliveryMethod,
+  FulfillmentStatus,
   Order,
   OrderItem,
   OrderStatus,
@@ -17,11 +18,23 @@ function asStatus(raw: string): OrderStatus {
   switch (raw) {
     case 'pending':
     case 'paid':
-    case 'shipped':
+    case 'failed':
     case 'cancelled':
       return raw
     default:
       return 'pending'
+  }
+}
+
+function asFulfillment(raw: string | null | undefined): FulfillmentStatus {
+  switch (raw) {
+    case 'processing':
+    case 'shipped':
+    case 'delivered':
+    case 'completed':
+      return raw
+    default:
+      return 'processing'
   }
 }
 
@@ -62,11 +75,14 @@ export function normalizeOrderItem(
 export function normalizeOrder(
   raw: OrderServerRow,
   items: OrderItemServerRow[],
-  enrichedByItemId?: Map<number, { coverUrl: string | null; titleSlug: string | null }>
+  enrichedByItemId?: Map<number, { coverUrl: string | null; titleSlug: string | null }>,
+  subscriptionStatus?: string | null
 ): Order {
   return {
     id: raw.id,
     status: asStatus(raw.status),
+    fulfillmentStatus: asFulfillment(raw.fulfillment_status),
+    subscriptionStatus: subscriptionStatus ?? null,
     total: asNumber(raw.total),
     originalTotal: asNumber(raw.original_total),
     bookDiscountTotal: asNumber(raw.book_discount_total),

@@ -77,8 +77,24 @@ export async function getOrders(): Promise<Order[]> {
     itemsByOrder.set(item.order_id, list)
   }
 
+  // Map each subscription-anchoring order → its recurring status, so the order
+  // history can show «Активна / Отменена» on the subscription line.
+  const subscriptionStatusByOrder = new Map<number, string>()
+  const { data: subs } = await supabase
+    .from('UserSubscriptions')
+    .select('anchor_order_id, status')
+    .in('anchor_order_id', orderIds)
+  for (const row of (subs ?? []) as Array<{ anchor_order_id: number; status: string }>) {
+    subscriptionStatusByOrder.set(row.anchor_order_id, row.status)
+  }
+
   return (orders as OrderServerRow[]).map((row) =>
-    normalizeOrder(row, itemsByOrder.get(row.id) ?? [], enrichedByItemId)
+    normalizeOrder(
+      row,
+      itemsByOrder.get(row.id) ?? [],
+      enrichedByItemId,
+      subscriptionStatusByOrder.get(row.id) ?? null
+    )
   )
 }
 

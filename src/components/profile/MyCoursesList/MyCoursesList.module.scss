@@ -1,0 +1,101 @@
+@use '@/styles/common' as *;
+
+.empty {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+// Courses use a wider, landscape-leaning tile than books — capped at 320px so
+// a single course doesn't stretch across the panel.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
+  gap: $space-6;
+
+  @include breakpoint(tablet-small) {
+    grid-template-columns: minmax(0, 360px);
+    justify-content: center;
+    gap: $space-5;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: rgba($color-text-on-dark, 0.06);
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
+.coverImg {
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+.coverLink {
+  display: block;
+  border-radius: $radius-sm;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 4px;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.name {
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.35;
+  color: $color-text-on-dark;
+  word-break: break-word;
+}
+
+.action {
+  align-self: flex-start;
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-accent-on-dark, 0.6);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+  text-decoration: none;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: rgba($color-accent-on-dark, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 2px;
+  }
+}
+
+.owned {
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  font-style: italic;
+  color: rgba($color-text-on-dark, 0.55);
+}

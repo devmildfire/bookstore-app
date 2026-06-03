@@ -1,0 +1,124 @@
+@use '@/styles/common' as *;
+
+.empty {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+// Cap column width at 220px so a single tile (or a partial last row) doesn't
+// stretch to fill the whole container.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+  gap: $space-6;
+
+  // Below the sidebar-collapse breakpoint the right column becomes the full
+  // viewport width — switch to a single centred column with generous covers.
+  @include breakpoint(tablet-small) {
+    grid-template-columns: minmax(0, 300px);
+    justify-content: center;
+    gap: $space-5;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: rgba($color-text-on-dark, 0.06);
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
+.coverImg {
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+.coverLink {
+  display: block;
+  border-radius: $radius-sm;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 4px;
+  }
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  line-height: 1.35;
+  color: $color-text-on-dark;
+  word-break: break-word;
+}
+
+// The category icon acting as the action button. Its strokes inherit
+// currentColor, so colouring the element recolours the glyph.
+.iconBtn,
+.iconStatic {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+.iconBtn {
+  cursor: pointer;
+  transition: color 150ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $color-accent-on-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 3px;
+    border-radius: $radius-sm;
+  }
+}
+
+.iconBtnBusy {
+  cursor: progress;
+  opacity: 0.5;
+}
+
+.icon {
+  display: block;
+}
+
+.error {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+  color: $color-accent-on-dark;
+}

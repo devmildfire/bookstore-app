@@ -8,6 +8,8 @@ import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import ProfileAuthSlot from '@/components/profile/ProfileAuthSlot'
 import BookIcon from '@/assets/icons/book.svg'
+import CourseIcon from '@/assets/icons/courses.svg'
+import OrdersIcon from '@/assets/icons/shop-cart.svg'
 import GiftCardIcon from '@/assets/icons/gift-card.svg'
 import SubscriptionIcon from '@/assets/icons/subscription.svg'
 import HeartIcon from '@/assets/icons/heart.svg'
@@ -23,8 +25,10 @@ type NavItem = {
 }
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { href: '/profile/orders', exact: false, label: 'Мои книги', Icon: BookIcon },
+  { href: '/profile/books', exact: false, label: 'Мои книги', Icon: BookIcon },
+  { href: '/profile/courses', exact: false, label: 'Мои курсы', Icon: CourseIcon },
   { href: '/profile/subscriptions', exact: false, label: 'Мои подписки', Icon: SubscriptionIcon },
+  { href: '/profile/orders', exact: false, label: 'Заказы', Icon: OrdersIcon },
   { href: '/profile/gift-cards', exact: false, label: 'Карты даров', Icon: GiftCardIcon },
   { href: '/profile/favorites', exact: false, label: 'Избранное', Icon: HeartIcon },
   // /suggest-manuscript is the existing "Стать автором" stub; replaced when the real page lands.

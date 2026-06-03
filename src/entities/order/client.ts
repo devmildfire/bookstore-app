@@ -1,6 +1,9 @@
 import type { ProductCategory } from '@/types/database'
 
-export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'cancelled'
+export type OrderStatus = 'pending' | 'paid' | 'failed' | 'cancelled'
+// Fulfillment is tracked separately from payment: a physical order moves
+// processing → shipped → delivered; digital/course/subscription = completed.
+export type FulfillmentStatus = 'processing' | 'shipped' | 'delivered' | 'completed'
 export type DeliveryMethod = 'shipping' | 'email' | 'download'
 
 export type ShippingAddress = {
@@ -32,6 +35,10 @@ export type OrderItem = {
 export type Order = {
   id: number
   status: OrderStatus
+  fulfillmentStatus: FulfillmentStatus
+  // Status of the recurring subscription this order anchors (if any), looked up
+  // from UserSubscriptions. 'active' | 'cancelled' | 'past_due' | null.
+  subscriptionStatus: string | null
   total: number              // order value after built-in/promo discounts
   originalTotal: number      // sum of original (pre-discount) prices
   bookDiscountTotal: number  // sum of intrinsic book discounts

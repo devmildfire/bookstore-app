@@ -886,6 +886,7 @@ export type Database = {
           created_at: string
           delivery_email: string | null
           delivery_method: string | null
+          fulfillment_status: string
           gift_card_total_applied: number
           id: number
           original_total: number
@@ -913,6 +914,7 @@ export type Database = {
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
+          fulfillment_status?: string
           gift_card_total_applied?: number
           id?: number
           original_total?: number
@@ -940,6 +942,7 @@ export type Database = {
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
+          fulfillment_status?: string
           gift_card_total_applied?: number
           id?: number
           original_total?: number

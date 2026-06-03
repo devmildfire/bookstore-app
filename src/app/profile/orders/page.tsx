@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import OrdersList from '@/components/profile/OrdersList'
+import OrderHistoryList from '@/components/profile/OrderHistoryList'
 import AccountPostCheckoutModal from '@/components/profile/AccountPostCheckoutModal'
 import styles from './page.module.scss'
 
@@ -20,8 +20,8 @@ export default async function ProfileOrdersPage({ searchParams }: Props) {
 
   return (
     <section className={styles.page}>
-      <h2 className={styles.title}>Мои книги</h2>
-      <OrdersList highlightOrderId={highlightOrderId} />
+      <h2 className={styles.title}>Заказы</h2>
+      <OrderHistoryList highlightOrderId={highlightOrderId} />
       {showRecoveryModal && <AccountPostCheckoutModal />}
     </section>
   )
