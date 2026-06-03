@@ -352,6 +352,11 @@ export async function deleteBookAction(_prev: AdminActionResult | null, formData
     const { data: photos } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(title.slug)
     const paths = (photos ?? []).filter((f) => f.name).map((f) => `${title.slug}/${f.name}`)
     if (paths.length > 0) await admin.storage.from(BOOK_PHOTOS_BUCKET).remove(paths).catch(() => {})
+    // Trailer assets (Booktrailers row cascade-deletes with the Title).
+    await admin.storage
+      .from(BOOKTRAILERS_BUCKET)
+      .remove([`${title.slug}/video.mp4`, `${title.slug}/video.webm`, `${title.slug}/poster.jpg`])
+      .catch(() => {})
   }
   // Digital files of each edition (editions themselves cascade-delete with the Title).
   const digitalPaths: string[] = []
@@ -642,5 +647,73 @@ export async function removeWorkerAction(formData: FormData): Promise<AdminActio
   }
 
   await revalidateBookBySlug(admin, titleId)
+  return { status: 'ok' }
+}
+
+// ─── Booktrailer (public booktrailers bucket) ───────────────────────────────
+
+const BOOKTRAILERS_BUCKET = 'booktrailers'
+const TRAILER_FILE: Record<string, { name: string; type: string }> = {
+  mp4: { name: 'video.mp4', type: 'video/mp4' },
+  webm: { name: 'video.webm', type: 'video/webm' },
+  poster: { name: 'poster.jpg', type: 'image/jpeg' },
+}
+
+// Upload one trailer asset (mp4 / webm / poster) to booktrailers/{slug}/ and
+// ensure a Booktrailers row exists. Uploading a poster sets has_poster.
+export async function uploadTrailerFileAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const kind = formData.get('kind') as string | null
+  const file = formData.get('file')
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!kind || !TRAILER_FILE[kind]) return { status: 'error', message: 'Неверный тип файла.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  if (file.size > MAX_DIGITAL_BYTES) return { status: 'error', message: 'Файл больше 1 ГБ.' }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
+  if (!title?.slug) return { status: 'error', message: 'Сначала задайте slug книги.' }
+
+  const spec = TRAILER_FILE[kind]
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error: uploadError } = await admin.storage
+    .from(BOOKTRAILERS_BUCKET)
+    .upload(`${title.slug}/${spec.name}`, buffer, { contentType: file.type || spec.type, upsert: true })
+  if (uploadError) return { status: 'error', message: uploadError.message }
+
+  // Ensure a Booktrailers row, and set has_poster when uploading a poster.
+  const { data: existing } = await admin.from('Booktrailers').select('id').eq('title_id', titleId).maybeSingle()
+  if (existing) {
+    if (kind === 'poster') await admin.from('Booktrailers').update({ has_poster: true }).eq('id', existing.id)
+  } else {
+    const id = await nextId(admin, 'Booktrailers')
+    const writer = admin.from('Booktrailers') as unknown as LooseWriter
+    const { error } = await writer.insert({ id, title_id: titleId, has_poster: kind === 'poster' })
+    if (error) return { status: 'error', message: error.message }
+  }
+
+  revalidatePath(`/admin/books/${titleId}`)
+  revalidatePath(`/books/${title.slug}`)
+  return { status: 'ok' }
+}
+
+// Remove the whole trailer: delete the three files + the Booktrailers row.
+export async function removeTrailerAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
+  if (title?.slug) {
+    const paths = Object.values(TRAILER_FILE).map((f) => `${title.slug}/${f.name}`)
+    await admin.storage.from(BOOKTRAILERS_BUCKET).remove(paths).catch(() => {})
+  }
+  const { error } = await admin.from('Booktrailers').delete().eq('title_id', titleId)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/books/${titleId}`)
+  if (title?.slug) revalidatePath(`/books/${title.slug}`)
   return { status: 'ok' }
 }

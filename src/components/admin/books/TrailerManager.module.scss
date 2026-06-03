@@ -1,0 +1,88 @@
+@use '@/styles/common' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.55);
+}
+
+.preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+  align-items: flex-start;
+}
+
+.video {
+  width: min(420px, 100%);
+  border-radius: $radius-sm;
+  background: #000;
+}
+
+.posterThumb {
+  position: relative;
+  width: 120px;
+  aspect-ratio: 2 / 3;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $color-sidebar;
+}
+
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.slot {
+  display: inline-flex;
+}
+
+.input {
+  display: none;
+}
+
+.slotButton {
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.25);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}
+
+.remove {
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-accent-on-dark, 0.5);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($color-accent-on-dark, 0.1);
+  }
+}
+
+.err {
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  color: $color-accent-on-dark;
+}

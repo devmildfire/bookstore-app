@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminBook, getAdminBookPhotos, getAwardsCatalog } from '@/api/admin/books'
 import { uploadBookCoverAction } from '@/lib/admin/books/actions'
+import { getBooktrailerUrls } from '@/lib/storage'
 import ImageUploader from '@/components/admin/ImageUploader'
 import {
   BookEditForm,
@@ -10,6 +11,7 @@ import {
   ProductsManager,
   BookStatusBar,
   AwardsManager,
+  TrailerManager,
 } from '@/components/admin/books'
 import styles from './page.module.scss'
 
@@ -29,6 +31,7 @@ export default async function AdminBookEditPage({ params }: Props) {
     book.slug ? getAdminBookPhotos(book.slug) : Promise.resolve([]),
     getAwardsCatalog(),
   ])
+  const trailerUrls = book.slug ? getBooktrailerUrls(book.slug, book.trailer.hasPoster) : null
 
   return (
     <section className={styles.page}>
@@ -88,6 +91,11 @@ export default async function AdminBookEditPage({ params }: Props) {
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Награды</h2>
             <AwardsManager titleId={book.id} attached={book.awards} catalog={awardsCatalog} />
+          </section>
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Трейлер</h2>
+            <TrailerManager titleId={book.id} hasSlug={!!book.slug} trailer={book.trailer} urls={trailerUrls} />
           </section>
         </div>
       </div>

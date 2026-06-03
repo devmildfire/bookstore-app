@@ -19,9 +19,10 @@ as work proceeds so an interrupted session can resume without re-deriving state.
   the GET-form list + pagination pattern, `src/lib/admin/bookProducts.ts`
   (client-safe constants pattern — keep server-only imports out of anything a
   client component imports).
-- **Scope note:** Title.status + storefront filtering shipped; the full Title
-  graph (awards, workers, contexts, trailers, digital-file upload) beyond
-  core+editions+cover+photos is still partial — revisit per need.
+- **Scope note:** Title graph now covers awards (attach/detach), per-product
+  digital files (upload/remove → digital-files bucket), per-product contributors
+  (workers), and the booktrailer (mp4/webm/poster + remove). Still not in the
+  editor: book **contexts** (`BookContexts`) and `similar_titles`. Revisit per need.
 - **Branch:** work is landing on `update` (the active integration branch).
 - **Chrome:** resolved — storefront chrome moved into the `(site)` route group;
   `/admin` has its own header-free chrome. Root layout = html/body/Providers only.

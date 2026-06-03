@@ -52,6 +52,7 @@ export type AdminBook = {
   authors: { id: number; name: string }[]
   awards: AdminAward[]
   editions: AdminEdition[]
+  trailer: { exists: boolean; hasPoster: boolean }
 }
 
 const EDITION_TABLES: EditionTable[] = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks']
@@ -110,6 +111,14 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     .filter((a): a is { id: number; title: string } => !!a)
     .map((a) => ({ id: a.id, title: a.title }))
 
+  // Booktrailer presence.
+  const { data: trailerRow } = await admin
+    .from('Booktrailers')
+    .select('has_poster')
+    .eq('title_id', id)
+    .maybeSingle()
+  const trailer = { exists: !!trailerRow, hasPoster: trailerRow?.has_poster ?? false }
+
   // Editions: one query per edition table.
   const editions: AdminEdition[] = []
   for (const table of EDITION_TABLES) {
@@ -152,5 +161,6 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     authors,
     awards,
     editions,
+    trailer,
   }
 }
