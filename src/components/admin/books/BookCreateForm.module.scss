@@ -1,0 +1,51 @@
+@use '@/styles/common' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 480px;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.85);
+}
+
+.input {
+  padding: $space-3;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 1px;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.err {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}

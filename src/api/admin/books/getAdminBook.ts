@@ -1,13 +1,18 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl } from '@/lib/storage'
+import {
+  EDITION_LABEL,
+  ALL_EDITION_TABLES,
+  type EditionTable,
+  type BookStatus,
+  type AdminEdition,
+} from '@/lib/admin/bookProducts'
 
-export type EditionTable = 'Ebooks' | 'Audiobooks' | 'PrintedBooks' | 'CardBooks'
+export { EDITION_LABEL, ALL_EDITION_TABLES }
+export type { EditionTable, BookStatus, AdminEdition }
 
-export const EDITION_LABEL: Record<EditionTable, string> = {
-  Ebooks: 'Электронная книга',
-  Audiobooks: 'Аудиокнига',
-  PrintedBooks: 'Печатная книга',
-  CardBooks: 'Карточная книга (Книга 2.0)',
+function asBookStatus(raw: string | null | undefined): BookStatus {
+  return raw === 'draft' || raw === 'archived' ? raw : 'published'
 }
 
 // Which edition tables carry a sold_out column.
@@ -18,21 +23,11 @@ const HAS_SOLD_OUT: Record<EditionTable, boolean> = {
   CardBooks: true,
 }
 
-export type AdminEdition = {
-  table: EditionTable
-  id: number
-  label: string
-  price: number | null
-  discount: number | null
-  isPublished: boolean
-  soldOut: boolean | null
-  hasSoldOut: boolean
-}
-
 export type AdminBook = {
   id: number
   name: string
   slug: string | null
+  status: BookStatus
   cover: string | null
   coverUrl: string | null
   description: string | null
@@ -90,6 +85,7 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     id: title.id,
     name: title.name,
     slug: title.slug,
+    status: asBookStatus(title.status),
     cover: title.cover,
     coverUrl: getCoverUrl(title.cover),
     description: title.description,

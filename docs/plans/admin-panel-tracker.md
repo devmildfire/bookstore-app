@@ -9,16 +9,19 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 4 (Books: full create + lifecycle).
-- **Next action:** migration adding `Titles.status` ('draft'|'published'|
-  'archived', default 'published', backfill existing) + same on BoxSets/
-  Subscriptions/GiftCardProducts; filter the public catalog read paths to
-  `published`. Then a create-Title flow across the full graph (authors link,
-  awards, editions incl. file upload to `digital-files`, workers, contexts,
-  trailers, photo galleries) + draft/publish/archive controls in the book editor.
-- **Reusable bits now available:** `ImageUploader` (action-as-prop),
-  `src/lib/admin/blur.ts`, `StatusBadge`, `logAdminAction`, the GET-form list +
-  pagination pattern. Cover upload + edition editing already work.
+- **Current phase:** Phase 5 (Authors & Box Sets).
+- **Next action:** author CRUD (list/create/edit/delete + photo upload/blur via
+  the reusable `ImageUploader`, contacts) and box-set composition editor
+  (`BoxSetBooks`, pricing, image, physicality). Follow the Title/editor patterns
+  from Phase 4.
+- **Reusable bits available:** `ImageUploader`, `src/lib/admin/blur.ts`,
+  `StatusBadge`, `logAdminAction`, `ProductsManager`/`BookStatusBar` patterns,
+  the GET-form list + pagination pattern, `src/lib/admin/bookProducts.ts`
+  (client-safe constants pattern — keep server-only imports out of anything a
+  client component imports).
+- **Scope note:** Title.status + storefront filtering shipped; the full Title
+  graph (awards, workers, contexts, trailers, digital-file upload) beyond
+  core+editions+cover+photos is still partial — revisit per need.
 - **Branch:** work is landing on `update` (the active integration branch).
 - **Chrome:** resolved — storefront chrome moved into the `(site)` route group;
   `/admin` has its own header-free chrome. Root layout = html/body/Providers only.
@@ -37,7 +40,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 1 | Admin shell + `/admin/login` | ✅ | `(site)` route-group split (storefront chrome moved off root layout); `/admin/login` + `adminLoginAction`/`adminLogoutAction`; guarded `(panel)` layout + `AdminSideNav` + dashboard; section stubs via `ComingSoon`. Heavy primitives (DataTable etc.) deferred to the phase that first needs them. |
 | 2 | Orders management | ✅ | Migration `20260603160000` (tracking/carrier/note cols + `AdminAuditLog` + `admin_set_order_fulfillment` RPC) **applied to local DB + types regenerated**. Orders list (`/admin/orders`, filters + pagination), detail (`/admin/orders/[id]`), `setOrderFulfillmentAction`, `FulfillmentForm`, `StatusBadge`, audit timeline. `logAdminAction` helper added for later phases. |
 | 3 | Books: list + edit existing | ✅ | `/admin/books` (search + pagination), `/admin/books/[id]` editor: core Title fields + featured/compilation + per-edition price/discount/published/sold_out + cover upload (sharp blur → `Titles.cover_blur`) + **gallery photos manager** (list/upload/remove against `book-photos/{slug}/` + `Titles.book_photos_blurs`). `BookEditForm`, `BookPhotosManager`, `ImageUploader` (reusable), `src/lib/admin/blur.ts`, `updateBookAction`/`uploadBookCoverAction`/`uploadBookPhotoAction`/`deleteBookPhotoAction`. **Verified live** (edit→save→DB+audit; photo upload/delete→bucket+blur map). Create deferred to Phase 4. |
-| 4 | Books: full create + lifecycle | ⬜ | migration (`Titles.status` + storefront filter + backfill), full create graph, draft/publish/archive |
+| 4 | Books: full create + lifecycle | ✅ | Editor restructured into **Тайтл** + **Продукты** sections. Products: per-type add/edit/remove (one of each; hard-delete row). Create book (`/admin/books/new` → draft), `BookStatusBar` (publish/archive/draft + hard-delete, blocked while published), status badges + filter on the list. Actions: create/setStatus/delete/addProduct/removeProduct/updateProduct. `Titles.status` migration + storefront RPC filter (committed `14f33eb`). Client-safe `bookProducts.ts` to keep server imports out of the client bundle. **Verified live** end-to-end (create→product→publish→storefront→archive→delete, all audit-logged). Full Title graph (awards/workers/contexts/trailers/digital files) still partial. |
 | 5 | Authors & Box Sets | ⬜ | author CRUD + photo/blur; box-set composition |
 | 6 | Gift cards, Subscriptions, Promo codes | ⬜ | product CRUD; promo constraints per AGENTS.md |
 | 7 | Editorial (Articles, Dino-magazine, Submissions) | ⬜ | content CRUD; submission review (view/status/delete) |

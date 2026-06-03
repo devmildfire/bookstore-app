@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { makeBlurDataUrl } from '@/lib/admin/blur'
@@ -40,7 +41,15 @@ function numOrNull(v: FormDataEntryValue | null): number | null {
 
 type EditionUpdate = { price: number | null; discount: number | null; is_published: boolean; sold_out?: boolean }
 
-// Save core Title fields + per-edition pricing in one submit.
+// A bound, loosely-typed write handle for an edition table (the table name is
+// dynamic, so supabase-js can't infer the row type).
+type EditionWriter = {
+  update: (v: EditionUpdate) => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
+  insert: (v: Record<string, unknown>) => Promise<{ error: { message: string } | null }>
+  delete: () => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
+}
+
+// Save the Title's own fields. Products (editions) are managed separately.
 export async function updateBookAction(_prev: AdminActionResult | null, formData: FormData): Promise<AdminActionResult> {
   const user = await requireAdmin()
 
@@ -76,33 +85,6 @@ export async function updateBookAction(_prev: AdminActionResult | null, formData
     })
     .eq('id', d.id)
   if (titleError) return { status: 'error', message: titleError.message }
-
-  // Editions: the form sends a JSON list of {table,id}; read each one's fields.
-  // NB: call admin.from(table) directly (bound) — detaching `from` breaks its
-  // internal `this`. The select string is dynamic, so cast the builder.
-  type EditionWriter = {
-    update: (v: EditionUpdate) => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
-  }
-  let editionKeys: Array<{ table: string; id: number }> = []
-  try {
-    editionKeys = JSON.parse((formData.get('editionKeys') as string) || '[]')
-  } catch {
-    editionKeys = []
-  }
-  for (const key of editionKeys) {
-    if (!EDITION_TABLES.includes(key.table as EditionTable)) continue
-    const table = key.table as EditionTable
-    const prefix = `ed_${table}_${key.id}_`
-    const payload: EditionUpdate = {
-      price: numOrNull(formData.get(`${prefix}price`)),
-      discount: numOrNull(formData.get(`${prefix}discount`)),
-      is_published: formData.get(`${prefix}isPublished`) === 'on',
-    }
-    if (HAS_SOLD_OUT.has(table)) payload.sold_out = formData.get(`${prefix}soldOut`) === 'on'
-    const writer = admin.from(table) as unknown as EditionWriter
-    const { error } = await writer.update(payload).eq('id', key.id)
-    if (error) return { status: 'error', message: `${table}: ${error.message}` }
-  }
 
   await logAdminAction({
     actorUserId: user.id,
@@ -262,4 +244,199 @@ export async function deleteBookPhotoAction(formData: FormData): Promise<PhotosR
   revalidatePath(`/admin/books/${titleId}`)
   revalidatePath(`/books/${slug}`)
   return { status: 'ok', photos: await getAdminBookPhotos(slug) }
+}
+
+// ─── Title lifecycle + products ─────────────────────────────────────────────
+
+// Next id for a table whose sequence may be stale from seeded explicit-id
+// inserts — compute max(id)+1 explicitly to avoid PK collisions.
+async function nextId(
+  admin: ReturnType<typeof createAdminClient>,
+  table: string
+): Promise<number> {
+  const builder = admin.from(table as 'Titles') as unknown as {
+    select: (c: string) => {
+      order: (c: string, o: { ascending: boolean }) => { limit: (n: number) => Promise<{ data: Array<{ id: number }> | null }> }
+    }
+  }
+  const res = await builder.select('id').order('id', { ascending: false }).limit(1)
+  return (res.data?.[0]?.id ?? 0) + 1
+}
+
+const createSchema = z.object({
+  name: z.string().trim().min(1, 'Введите название'),
+  slug: z
+    .string()
+    .trim()
+    .min(1, 'Введите slug')
+    .regex(/^[a-z0-9-]+$/, 'Slug: только латиница, цифры и дефис'),
+})
+
+// Create a new Title as a draft (hidden from the storefront until published).
+// Redirects to its editor so products can be added.
+export async function createBookAction(_prev: AdminActionResult | null, formData: FormData): Promise<AdminActionResult> {
+  const user = await requireAdmin()
+  const parsed = createSchema.safeParse({ name: formData.get('name'), slug: formData.get('slug') })
+  if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
+
+  const admin = createAdminClient()
+  const id = await nextId(admin, 'Titles')
+  const { error } = await admin
+    .from('Titles')
+    .insert({ id, name: parsed.data.name, slug: parsed.data.slug, status: 'draft', is_compilation: false })
+  if (error) {
+    const msg = error.message.includes('duplicate') ? 'Книга с таким slug уже существует.' : error.message
+    return { status: 'error', message: msg }
+  }
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'book.create',
+    entityType: 'book',
+    entityId: String(id),
+    summary: `Создана книга «${parsed.data.name}» (черновик)`,
+  })
+  revalidatePath('/admin/books')
+  redirect(`/admin/books/${id}`)
+}
+
+const statusSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  status: z.enum(['draft', 'published', 'archived']),
+})
+
+// Publish / archive / unpublish a title.
+export async function setBookStatusAction(_prev: AdminActionResult | null, formData: FormData): Promise<AdminActionResult> {
+  const user = await requireAdmin()
+  const parsed = statusSchema.safeParse({ id: formData.get('id'), status: formData.get('status') })
+  if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin.from('Titles').select('slug').eq('id', parsed.data.id).maybeSingle()
+  const { error } = await admin.from('Titles').update({ status: parsed.data.status }).eq('id', parsed.data.id)
+  if (error) return { status: 'error', message: error.message }
+
+  const labels: Record<string, string> = { draft: 'черновик', published: 'опубликована', archived: 'в архиве' }
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'book.status',
+    entityType: 'book',
+    entityId: String(parsed.data.id),
+    summary: `Статус книги: ${labels[parsed.data.status]}`,
+  })
+  revalidatePath(`/admin/books/${parsed.data.id}`)
+  revalidatePath('/admin/books')
+  if (title?.slug) revalidatePath(`/books/${title.slug}`)
+  return { status: 'ok' }
+}
+
+// Hard-delete a title and everything cascading from it (products, links,
+// photos-blurs column), plus its storage objects. Allowed only for draft or
+// archived titles — publish must be archived first.
+export async function deleteBookAction(_prev: AdminActionResult | null, formData: FormData): Promise<AdminActionResult> {
+  const user = await requireAdmin()
+  const id = Number(formData.get('id'))
+  if (!Number.isInteger(id) || id <= 0) return { status: 'error', message: 'Неверный id.' }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin.from('Titles').select('status, slug, cover, name').eq('id', id).maybeSingle()
+  if (!title) return { status: 'error', message: 'Книга не найдена.' }
+  if (title.status === 'published') {
+    return { status: 'error', message: 'Сначала переведите книгу в архив или черновик.' }
+  }
+
+  // Storage cleanup (best effort).
+  if (title.cover) await admin.storage.from('covers').remove([title.cover]).catch(() => {})
+  if (title.slug) {
+    const { data: photos } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(title.slug)
+    const paths = (photos ?? []).filter((f) => f.name).map((f) => `${title.slug}/${f.name}`)
+    if (paths.length > 0) await admin.storage.from(BOOK_PHOTOS_BUCKET).remove(paths).catch(() => {})
+  }
+
+  const { error } = await admin.from('Titles').delete().eq('id', id)
+  if (error) return { status: 'error', message: error.message }
+
+  await logAdminAction({
+    actorUserId: user.id,
+    action: 'book.delete',
+    entityType: 'book',
+    entityId: String(id),
+    summary: `Удалена книга «${title.name}»`,
+  })
+  revalidatePath('/admin/books')
+  redirect('/admin/books')
+}
+
+function asEditionTable(v: FormDataEntryValue | null): EditionTable | null {
+  return EDITION_TABLES.includes(v as EditionTable) ? (v as EditionTable) : null
+}
+
+// Add a product (edition) of a given type to a title. One per type (UNIQUE
+// title_id), created unpublished with no price.
+export async function addProductAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const table = asEditionTable(formData.get('table'))
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+
+  const admin = createAdminClient()
+  const id = await nextId(admin, table)
+  const row: Record<string, unknown> = { id, title_id: titleId, price: null, is_published: false }
+  if (HAS_SOLD_OUT.has(table)) row.sold_out = false
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.insert(row)
+  if (error) {
+    const msg = error.message.includes('duplicate') ? 'Такой продукт уже есть у книги.' : error.message
+    return { status: 'error', message: msg }
+  }
+  revalidatePath(`/admin/books/${titleId}`)
+  return { status: 'ok' }
+}
+
+// Remove a product (edition) from a title. Past orders keep their snapshots.
+export async function removeProductAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+
+  const admin = createAdminClient()
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.delete().eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
+  revalidatePath(`/admin/books/${titleId}`)
+  if (title?.slug) revalidatePath(`/books/${title.slug}`)
+  return { status: 'ok' }
+}
+
+// Save one product's price / discount / published / sold_out.
+export async function updateProductAction(_prev: AdminActionResult | null, formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+
+  const payload: EditionUpdate = {
+    price: numOrNull(formData.get('price')),
+    discount: numOrNull(formData.get('discount')),
+    is_published: formData.get('isPublished') === 'on',
+  }
+  if (HAS_SOLD_OUT.has(table)) payload.sold_out = formData.get('soldOut') === 'on'
+
+  const admin = createAdminClient()
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.update(payload).eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
+  revalidatePath(`/admin/books/${titleId}`)
+  if (title?.slug) revalidatePath(`/books/${title.slug}`)
+  return { status: 'ok' }
 }

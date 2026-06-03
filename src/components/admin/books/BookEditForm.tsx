@@ -10,12 +10,10 @@ type Props = { book: AdminBook }
 
 export default function BookEditForm({ book }: Props) {
   const [state, action, pending] = useActionState(updateBookAction, null)
-  const editionKeys = JSON.stringify(book.editions.map((e) => ({ table: e.table, id: e.id })))
 
   return (
     <form action={action} className={styles.form}>
       <input type='hidden' name='id' value={book.id} />
-      <input type='hidden' name='editionKeys' value={editionKeys} />
 
       <div className={styles.grid}>
         <label className={styles.label}>
@@ -70,52 +68,6 @@ export default function BookEditForm({ book }: Props) {
           Сборник
         </label>
       </div>
-
-      {book.editions.length > 0 && (
-        <fieldset className={styles.editions}>
-          <legend className={styles.legend}>Издания</legend>
-          {book.editions.map((ed) => {
-            const prefix = `ed_${ed.table}_${ed.id}_`
-            return (
-              <div key={`${ed.table}-${ed.id}`} className={styles.edition}>
-                <span className={styles.editionLabel}>{ed.label}</span>
-                <div className={styles.editionFields}>
-                  <label className={styles.smallLabel}>
-                    Цена ₽
-                    <input
-                      name={`${prefix}price`}
-                      type='number'
-                      step='0.01'
-                      defaultValue={ed.price ?? ''}
-                      className={styles.smallInput}
-                    />
-                  </label>
-                  <label className={styles.smallLabel}>
-                    Скидка %
-                    <input
-                      name={`${prefix}discount`}
-                      type='number'
-                      step='1'
-                      defaultValue={ed.discount ?? ''}
-                      className={styles.smallInput}
-                    />
-                  </label>
-                  <label className={styles.check}>
-                    <input type='checkbox' name={`${prefix}isPublished`} defaultChecked={ed.isPublished} />
-                    Опубликовано
-                  </label>
-                  {ed.hasSoldOut && (
-                    <label className={styles.check}>
-                      <input type='checkbox' name={`${prefix}soldOut`} defaultChecked={ed.soldOut ?? false} />
-                      Распродано
-                    </label>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </fieldset>
-      )}
 
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

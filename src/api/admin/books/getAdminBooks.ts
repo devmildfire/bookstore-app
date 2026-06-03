@@ -1,10 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl } from '@/lib/storage'
+import type { BookStatus } from './getAdminBook'
 
 export type AdminBookListItem = {
   id: number
   name: string
   slug: string | null
+  status: BookStatus
   coverUrl: string | null
   isFeatured: boolean
 }
@@ -19,7 +21,9 @@ export type AdminBooksResult = {
 export const ADMIN_BOOKS_PAGE_SIZE = 30
 
 // All titles, newest first, with name search + pagination. Service-role read.
-export async function getAdminBooks(filters: { q?: string; page?: number } = {}): Promise<AdminBooksResult> {
+export async function getAdminBooks(
+  filters: { q?: string; status?: string; page?: number } = {}
+): Promise<AdminBooksResult> {
   const admin = createAdminClient()
   const page = Math.max(1, filters.page ?? 1)
   const pageSize = ADMIN_BOOKS_PAGE_SIZE
@@ -28,11 +32,14 @@ export async function getAdminBooks(filters: { q?: string; page?: number } = {})
 
   let query = admin
     .from('Titles')
-    .select('id, name, slug, cover, is_featured', { count: 'exact' })
+    .select('id, name, slug, status, cover, is_featured', { count: 'exact' })
     .order('id', { ascending: false })
 
   const q = filters.q?.trim()
   if (q) query = query.ilike('name', `%${q}%`)
+  if (filters.status === 'draft' || filters.status === 'published' || filters.status === 'archived') {
+    query = query.eq('status', filters.status)
+  }
 
   const { data, error, count } = await query.range(from, to)
   if (error) throw new Error(`Не удалось загрузить книги: ${error.message}`)
@@ -41,6 +48,7 @@ export async function getAdminBooks(filters: { q?: string; page?: number } = {})
     id: row.id,
     name: row.name,
     slug: row.slug,
+    status: (row.status as BookStatus) ?? 'published',
     coverUrl: getCoverUrl(row.cover),
     isFeatured: row.is_featured ?? false,
   }))

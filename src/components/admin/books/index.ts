@@ -1,2 +1,5 @@
 export { default as BookEditForm } from './BookEditForm'
 export { default as BookPhotosManager } from './BookPhotosManager'
+export { default as ProductsManager } from './ProductsManager'
+export { default as BookStatusBar } from './BookStatusBar'
+export { default as BookCreateForm } from './BookCreateForm'
