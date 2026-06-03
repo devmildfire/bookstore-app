@@ -1,0 +1,97 @@
+@use '@/styles/common' as *;
+
+.empty {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: 18px;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: $space-4;
+}
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  width: min(720px, 100%);
+  padding: $space-5;
+  border: 1px solid rgba($color-text-on-dark, 0.16);
+  border-radius: $radius-sm;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.name {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 18px;
+  color: $color-gray-5;
+}
+
+.meta {
+  font-family: $font-montserrat;
+  font-size: 14px;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+.next {
+  font-family: $font-montserrat;
+  font-size: 13px;
+  color: rgba($color-text-on-dark, 0.5);
+}
+
+.actions {
+  display: flex;
+  gap: $space-3;
+}
+
+.chargeBtn,
+.cancelBtn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-medium;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.chargeBtn {
+  background: $color-accent-on-dark;
+  border: none;
+  color: $color-text-inverse;
+
+  &:hover:not(:disabled) {
+    background: $color-accent-hover-on-dark;
+  }
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.4);
+  color: $color-text-on-dark;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}

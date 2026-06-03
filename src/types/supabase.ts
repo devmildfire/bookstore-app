@@ -890,8 +890,12 @@ export type Database = {
           id: number
           original_total: number
           paid_at: string | null
+          payment_provider: string
           promo_code: string | null
           promo_discount: number
+          recurring: boolean
+          recurring_amount: number
+          recurring_subscription_id: number | null
           shipping_building: string | null
           shipping_city: string | null
           shipping_name: string | null
@@ -913,8 +917,12 @@ export type Database = {
           id?: number
           original_total?: number
           paid_at?: string | null
+          payment_provider?: string
           promo_code?: string | null
           promo_discount?: number
+          recurring?: boolean
+          recurring_amount?: number
+          recurring_subscription_id?: number | null
           shipping_building?: string | null
           shipping_city?: string | null
           shipping_name?: string | null
@@ -936,8 +944,12 @@ export type Database = {
           id?: number
           original_total?: number
           paid_at?: string | null
+          payment_provider?: string
           promo_code?: string | null
           promo_discount?: number
+          recurring?: boolean
+          recurring_amount?: number
+          recurring_subscription_id?: number | null
           shipping_building?: string | null
           shipping_city?: string | null
           shipping_name?: string | null
@@ -949,7 +961,15 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Orders_recurring_subscription_id_fkey"
+            columns: ["recurring_subscription_id"]
+            isOneToOne: false
+            referencedRelation: "UserSubscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       Partners: {
         Row: {
@@ -1366,6 +1386,63 @@ export type Database = {
           },
         ]
       }
+      UserSubscriptions: {
+        Row: {
+          amount: number
+          anchor_order_id: number
+          cancelled_at: string | null
+          created_at: string
+          current_period_start: string
+          id: number
+          next_charge_at: string
+          payment_provider: string
+          status: string
+          subscription_id: number
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          anchor_order_id: number
+          cancelled_at?: string | null
+          created_at?: string
+          current_period_start?: string
+          id?: number
+          next_charge_at: string
+          payment_provider?: string
+          status?: string
+          subscription_id: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          anchor_order_id?: number
+          cancelled_at?: string | null
+          created_at?: string
+          current_period_start?: string
+          id?: number
+          next_charge_at?: string
+          payment_provider?: string
+          status?: string
+          subscription_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "UserSubscriptions_anchor_order_id_fkey"
+            columns: ["anchor_order_id"]
+            isOneToOne: false
+            referencedRelation: "Orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "UserSubscriptions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "Subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Workers: {
         Row: {
           city: string | null
@@ -1403,6 +1480,29 @@ export type Database = {
     Functions: {
       apply_promo_code: { Args: { input_code: string }; Returns: Json }
       box_set_is_physical: { Args: { p_box_set_id: number }; Returns: boolean }
+      cancel_pending_order: { Args: { p_order_id: number }; Returns: Json }
+      cancel_subscription: {
+        Args: { p_user_subscription_id: number }
+        Returns: Json
+      }
+      create_pending_order: {
+        Args: {
+          p_email: string
+          p_gift_cards?: Json
+          p_provider: string
+          p_shipping_building: string
+          p_shipping_city: string
+          p_shipping_name: string
+          p_shipping_phone: string
+          p_shipping_postal_code: string
+          p_shipping_street: string
+        }
+        Returns: Json
+      }
+      create_recurring_order: {
+        Args: { p_provider: string; p_user_subscription_id: number }
+        Returns: Json
+      }
       default_edition_for_title: {
         Args: { p_title_id: number }
         Returns: string
@@ -1531,6 +1631,10 @@ export type Database = {
           title_slug: string
           title_thesis: string
         }[]
+      }
+      mark_order_paid: {
+        Args: { p_inv_id: number; p_out_sum: string }
+        Returns: Json
       }
       migrate_anonymous_user: {
         Args: { from_user_id: string; to_user_id: string }

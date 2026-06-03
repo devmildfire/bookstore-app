@@ -44,10 +44,13 @@ export async function getOrders(): Promise<Order[]> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
+  // Only settled orders belong in "Мои книги" — pending/failed/cancelled orders
+  // (created up-front for the payment lifecycle) must not surface here.
   const { data: orders, error: ordersError } = await supabase
     .from('Orders')
     .select('*')
     .eq('user_id', user.id)
+    .eq('status', 'paid')
     .order('created_at', { ascending: false })
 
   if (ordersError) {

@@ -34,7 +34,7 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
   // RLS-friendly read: join OrderItems → Orders, scope to user.
   const { data: item, error: itemError } = await supabase
     .from('OrderItems')
-    .select('id, book_id, category, order_id, Orders!inner(user_id)')
+    .select('id, book_id, category, order_id, Orders!inner(user_id, status)')
     .eq('id', orderItemId)
     .single()
 
@@ -42,8 +42,12 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
     return { status: 'error', reason: 'not_owner' }
   }
 
-  const ownerId = Array.isArray(item.Orders) ? item.Orders[0]?.user_id : item.Orders?.user_id
-  if (ownerId !== user.id) {
+  const order = Array.isArray(item.Orders) ? item.Orders[0] : item.Orders
+  if (order?.user_id !== user.id) {
+    return { status: 'error', reason: 'not_owner' }
+  }
+  // Never hand out files for an unpaid (pending/failed/cancelled) order.
+  if (order?.status !== 'paid') {
     return { status: 'error', reason: 'not_owner' }
   }
 

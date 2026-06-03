@@ -11,13 +11,31 @@ import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
 import PaymentConfirmModal, {
   type PaymentModalState,
 } from '@/components/checkout/PaymentConfirmModal'
-import { placeOrderAction } from '@/lib/orders/actions'
+import { startCheckoutAction } from '@/lib/orders/actions'
+import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
 import type {
   EmailOnlyFormValues,
   ShippingFormValues,
 } from '@/entities/order/validation'
 import type { PlaceOrderInput } from '@/api/orders'
 import styles from './page.module.scss'
+
+// Build a hidden form and POST the buyer to the payment gateway (mock or real
+// Robokassa) — a full-page navigation, exactly like Robokassa's own redirect.
+function submitPaymentRedirect(redirect: PaymentRedirect) {
+  const form = document.createElement('form')
+  form.method = redirect.method
+  form.action = redirect.url
+  for (const [name, value] of Object.entries(redirect.fields)) {
+    const field = document.createElement('input')
+    field.type = 'hidden'
+    field.name = name
+    field.value = value
+    form.appendChild(field)
+  }
+  document.body.appendChild(form)
+  form.submit()
+}
 
 type PendingOrder = {
   input: PlaceOrderInput
@@ -91,24 +109,29 @@ export default function CheckoutPage() {
     if (!pending) return
     setModalState({ kind: 'processing' })
 
-    const tasks: Array<Promise<unknown>> = [placeOrderAction(pending.input)]
-    // Fake PSP latency only when the user still has something to pay; orders
-    // fully covered by gift cards skip the stubbed payment step.
-    if (amountDue > 0) tasks.push(new Promise((r) => setTimeout(r, 1500)))
-    const [result] = (await Promise.all(tasks)) as [Awaited<ReturnType<typeof placeOrderAction>>, ...unknown[]]
+    const result = await startCheckoutAction(pending.input)
 
-    if (result.status === 'ok') {
+    // Fully covered by gift cards → already settled, go straight to the order.
+    if (result.status === 'paid') {
       clearGiftCardSelection()
       router.push(`/profile/orders?from=checkout&order=${result.orderId}`)
       return
     }
 
-	    const reasons: Record<string, string> = {
-	      not_authenticated: 'Нужно войти, чтобы оформить заказ.',
-	      empty_cart: 'Корзина пуста.',
-	      invalid_gift_cards: 'Не удалось применить выбранные карты даров.',
-	      gift_card_over_limit: 'Сумма по картам даров превышает доступный лимит.',
-	      unknown: result.message ?? 'Не удалось оформить заказ.',
+    // Needs payment → hand off to the gateway (full-page POST). The processing
+    // modal stays up until the browser navigates away.
+    if (result.status === 'redirect') {
+      clearGiftCardSelection()
+      submitPaymentRedirect(result.redirect)
+      return
+    }
+
+    const reasons: Record<string, string> = {
+      not_authenticated: 'Нужно войти, чтобы оформить заказ.',
+      empty_cart: 'Корзина пуста.',
+      invalid_gift_cards: 'Не удалось применить выбранные карты даров.',
+      gift_card_over_limit: 'Сумма по картам даров превышает доступный лимит.',
+      unknown: result.message ?? 'Не удалось оформить заказ.',
     }
     setModalState({
       kind: 'error',
