@@ -1,0 +1,89 @@
+@use '@/styles/common' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.55);
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: $space-3;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.12);
+}
+
+.img {
+  object-fit: cover;
+}
+
+.remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: $radius-full;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    background: $color-accent-on-dark;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.input {
+  display: none;
+}
+
+.addButton {
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.25);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}
+
+.error {
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  color: $color-accent-on-dark;
+}

@@ -6,10 +6,13 @@ import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { makeBlurDataUrl } from '@/lib/admin/blur'
 import { createAdminClient } from '@/lib/supabase/server'
-import { getCoverUrl } from '@/lib/storage'
+import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
+import { getAdminBookPhotos, type AdminBookPhoto } from '@/api/admin/books'
+import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
 export type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
+export type PhotosResult = { status: 'ok'; photos: AdminBookPhoto[] } | { status: 'error'; message: string }
 
 const EDITION_TABLES = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks'] as const
 type EditionTable = (typeof EDITION_TABLES)[number]
@@ -162,4 +165,101 @@ export async function uploadBookCoverAction(formData: FormData): Promise<UploadR
   revalidatePath(`/admin/books/${titleId}`)
   revalidatePath('/admin/books')
   return { status: 'ok', url: `${getCoverUrl(filename)}?v=${Date.now()}` }
+}
+
+const MAX_PHOTO_BYTES = 20 * 1024 * 1024
+
+function asStringMap(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const out: Record<string, string> = {}
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (typeof v === 'string') out[k] = v
+  }
+  return out
+}
+
+// Next numeric filename index in the book-photos/{slug}/ folder.
+function nextPhotoIndex(names: string[]): number {
+  let max = 0
+  for (const n of names) {
+    const m = n.match(/^(\d+)/)
+    if (m) max = Math.max(max, Number(m[1]))
+  }
+  return max + 1
+}
+
+// Add a photo to the book's gallery (book-photos/{slug}/), generate its blur
+// into Titles.book_photos_blurs, and return the refreshed gallery.
+export async function uploadBookPhotoAction(formData: FormData): Promise<PhotosResult> {
+  await requireAdmin()
+
+  const titleId = Number(formData.get('titleId'))
+  const file = formData.get('file')
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  const ext = MIME_EXT[file.type]
+  if (!ext) return { status: 'error', message: 'Только JPEG, PNG или WEBP.' }
+  if (file.size > MAX_PHOTO_BYTES) return { status: 'error', message: 'Файл больше 20 МБ.' }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin
+    .from('Titles')
+    .select('slug, book_photos_blurs')
+    .eq('id', titleId)
+    .maybeSingle()
+  const slug = title?.slug
+  if (!slug) return { status: 'error', message: 'Сначала задайте slug книги и сохраните.' }
+
+  const { data: existing } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(slug)
+  const names = (existing ?? []).map((f) => f.name).filter((n) => n && !n.startsWith('.'))
+  const filename = `${nextPhotoIndex(names)}.${ext}`
+
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error: uploadError } = await admin.storage
+    .from(BOOK_PHOTOS_BUCKET)
+    .upload(`${slug}/${filename}`, buffer, { contentType: file.type, upsert: true })
+  if (uploadError) return { status: 'error', message: uploadError.message }
+
+  const blurs = asStringMap(title?.book_photos_blurs)
+  try {
+    blurs[filename] = await makeBlurDataUrl(buffer)
+  } catch {
+    // leave blur out; the carousel falls back to no placeholder
+  }
+  await admin.from('Titles').update({ book_photos_blurs: blurs as unknown as Json }).eq('id', titleId)
+
+  revalidatePath(`/admin/books/${titleId}`)
+  revalidatePath(`/books/${slug}`)
+  return { status: 'ok', photos: await getAdminBookPhotos(slug) }
+}
+
+// Remove a gallery photo + its blur entry; return the refreshed gallery.
+export async function deleteBookPhotoAction(formData: FormData): Promise<PhotosResult> {
+  await requireAdmin()
+
+  const titleId = Number(formData.get('titleId'))
+  const name = (formData.get('name') as string | null)?.trim()
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  // Basename only — never let a path escape the title's folder.
+  if (!name || name.includes('/') || name.includes('..')) return { status: 'error', message: 'Неверное имя файла.' }
+
+  const admin = createAdminClient()
+  const { data: title } = await admin
+    .from('Titles')
+    .select('slug, book_photos_blurs')
+    .eq('id', titleId)
+    .maybeSingle()
+  const slug = title?.slug
+  if (!slug) return { status: 'error', message: 'У книги нет slug.' }
+
+  const { error: removeError } = await admin.storage.from(BOOK_PHOTOS_BUCKET).remove([`${slug}/${name}`])
+  if (removeError) return { status: 'error', message: removeError.message }
+
+  const blurs = asStringMap(title?.book_photos_blurs)
+  delete blurs[name]
+  await admin.from('Titles').update({ book_photos_blurs: blurs as unknown as Json }).eq('id', titleId)
+
+  revalidatePath(`/admin/books/${titleId}`)
+  revalidatePath(`/books/${slug}`)
+  return { status: 'ok', photos: await getAdminBookPhotos(slug) }
 }

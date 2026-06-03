@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAdminBook } from '@/api/admin/books'
+import { getAdminBook, getAdminBookPhotos } from '@/api/admin/books'
 import { uploadBookCoverAction } from '@/lib/admin/books/actions'
 import ImageUploader from '@/components/admin/ImageUploader'
-import { BookEditForm } from '@/components/admin/books'
+import { BookEditForm, BookPhotosManager } from '@/components/admin/books'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книга' }
@@ -18,6 +18,8 @@ export default async function AdminBookEditPage({ params }: Props) {
 
   const book = await getAdminBook(bookId)
   if (!book) notFound()
+
+  const photos = book.slug ? await getAdminBookPhotos(book.slug) : []
 
   return (
     <section className={styles.page}>
@@ -54,6 +56,11 @@ export default async function AdminBookEditPage({ params }: Props) {
           <BookEditForm book={book} />
         </div>
       </div>
+
+      <section className={styles.photos}>
+        <h2 className={styles.sideTitle}>Фотографии (карусель на странице книги)</h2>
+        <BookPhotosManager titleId={book.id} hasSlug={!!book.slug} initialPhotos={photos} />
+      </section>
     </section>
   )
 }
