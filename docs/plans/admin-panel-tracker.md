@@ -9,12 +9,13 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 2 (Orders management).
-- **Next action:** create the migration (`Orders.tracking_number/tracking_carrier/
-  admin_note` + `AdminAuditLog` table + RLS), then build the orders list
-  (filters), order detail, the fulfillment-advance Server Action with tracking
-  inputs, and the audit timeline. Reads of all orders use `createAdminClient()`
-  in `src/api/admin/orders/`.
+- **Current phase:** Phase 3 (Books: list + edit existing).
+- **Next action:** build the books list (status/author/search filters via the
+  same GET-form + table pattern as orders) and an edit form for core Title
+  fields + per-edition price/discount/sold_out/is_published, plus cover upload.
+  Introduce the shared `ImageUploader` primitive and `src/lib/admin/blur.ts`
+  (sharp, server-side blur → `Titles.cover_blur`). Admin reads/writes via
+  `createAdminClient()` in `src/api/admin/books/` + gated actions.
 - **Branch:** work is landing on `update` (the active integration branch).
 - **Chrome:** resolved — storefront chrome moved into the `(site)` route group;
   `/admin` has its own header-free chrome. Root layout = html/body/Providers only.
@@ -31,7 +32,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 |---|-------|--------|--------------------------|
 | 0 | Roles & auth foundation | ✅ | `src/lib/admin/auth.ts` (`isAdmin`/`requireAdmin`/`getCurrentUser`); proxy `/admin` gate requires `app_metadata.role==='admin'`, `/admin/login` exempt. Bootstrap SQL in plan §9. |
 | 1 | Admin shell + `/admin/login` | ✅ | `(site)` route-group split (storefront chrome moved off root layout); `/admin/login` + `adminLoginAction`/`adminLogoutAction`; guarded `(panel)` layout + `AdminSideNav` + dashboard; section stubs via `ComingSoon`. Heavy primitives (DataTable etc.) deferred to the phase that first needs them. |
-| 2 | Orders management | ⬜ | migration (tracking/note cols + AdminAuditLog), list+detail, fulfillment action, audit timeline |
+| 2 | Orders management | ✅ | Migration `20260603160000` (tracking/carrier/note cols + `AdminAuditLog` + `admin_set_order_fulfillment` RPC) **applied to local DB + types regenerated**. Orders list (`/admin/orders`, filters + pagination), detail (`/admin/orders/[id]`), `setOrderFulfillmentAction`, `FulfillmentForm`, `StatusBadge`, audit timeline. `logAdminAction` helper added for later phases. |
 | 3 | Books: list + edit existing | ⬜ | edit Title core + per-edition price/stock + cover upload/blur |
 | 4 | Books: full create + lifecycle | ⬜ | migration (`Titles.status` + storefront filter + backfill), full create graph, draft/publish/archive |
 | 5 | Authors & Box Sets | ⬜ | author CRUD + photo/blur; box-set composition |
@@ -45,7 +46,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 | File (proposed) | Phase | Contents | Applied to local? |
 |---|---|---|---|
-| `..._order_tracking_and_audit.sql` | 2 | `Orders.tracking_number/tracking_carrier/admin_note`; `AdminAuditLog` table + RLS | ⬜ |
+| `20260603160000_order_tracking_and_audit.sql` | 2 | `Orders.tracking_number/tracking_carrier/admin_note`; `AdminAuditLog` table + RLS; `admin_set_order_fulfillment` RPC | ✅ (local; types regenerated) |
 | `..._title_publish_status.sql` | 4 | `Titles.status` (+ BoxSets/Subscriptions/GiftCardProducts); backfill `published`; storefront RPC filters | ⬜ |
 
 > After any schema change, regenerate types per AGENTS.md and commit

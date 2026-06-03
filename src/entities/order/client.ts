@@ -49,6 +49,10 @@ export type Order = {
   deliveryMethod: DeliveryMethod | null
   deliveryEmail: string | null
   shipping: ShippingAddress | null
+  // Logistics fields, set from the admin panel when a physical order ships.
+  trackingNumber: string | null
+  trackingCarrier: string | null
+  adminNote: string | null
   paidAt: string | null
   createdAt: string
   items: OrderItem[]

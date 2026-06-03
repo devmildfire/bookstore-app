@@ -34,6 +34,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      AdminAuditLog: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: number
+          metadata: Json
+          summary: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: never
+          metadata?: Json
+          summary: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: never
+          metadata?: Json
+          summary?: string
+        }
+        Relationships: []
+      }
       Articles: {
         Row: {
           author_id: number
@@ -881,6 +914,7 @@ export type Database = {
       }
       Orders: {
         Row: {
+          admin_note: string | null
           amount_due: number
           book_discount_total: number
           created_at: string
@@ -905,10 +939,13 @@ export type Database = {
           shipping_street: string | null
           status: string
           total: number
+          tracking_carrier: string | null
+          tracking_number: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          admin_note?: string | null
           amount_due?: number
           book_discount_total?: number
           created_at?: string
@@ -933,10 +970,13 @@ export type Database = {
           shipping_street?: string | null
           status?: string
           total: number
+          tracking_carrier?: string | null
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          admin_note?: string | null
           amount_due?: number
           book_discount_total?: number
           created_at?: string
@@ -961,6 +1001,8 @@ export type Database = {
           shipping_street?: string | null
           status?: string
           total?: number
+          tracking_carrier?: string | null
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -1481,6 +1523,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_set_order_fulfillment: {
+        Args: {
+          p_actor: string
+          p_carrier: string
+          p_note: string
+          p_order_id: number
+          p_status: string
+          p_tracking_number: string
+        }
+        Returns: Json
+      }
       apply_promo_code: { Args: { input_code: string }; Returns: Json }
       box_set_is_physical: { Args: { p_box_set_id: number }; Returns: boolean }
       cancel_pending_order: { Args: { p_order_id: number }; Returns: Json }
