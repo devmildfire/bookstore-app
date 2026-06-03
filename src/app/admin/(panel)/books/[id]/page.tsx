@@ -42,25 +42,28 @@ export default async function AdminBookEditPage({ params }: Props) {
 
       <div className={styles.layout}>
         <aside className={styles.side}>
-          <h2 className={styles.sideTitle}>Обложка</h2>
-          <ImageUploader
-            initialUrl={book.coverUrl}
-            action={uploadBookCoverAction}
-            fields={{ titleId: String(book.id) }}
-            aspect='cover'
-            label={`Обложка: ${book.name}`}
-          />
+          <div className={styles.mediaBlock}>
+            <h2 className={styles.sideTitle}>Обложка</h2>
+            <ImageUploader
+              initialUrl={book.coverUrl}
+              action={uploadBookCoverAction}
+              fields={{ titleId: String(book.id) }}
+              aspect='cover'
+              label={`Обложка: ${book.name}`}
+            />
+          </div>
+
+          <div className={styles.mediaBlock}>
+            <h2 className={styles.sideTitle}>Фотографии</h2>
+            <p className={styles.sideNote}>Карусель на странице книги</p>
+            <BookPhotosManager titleId={book.id} hasSlug={!!book.slug} initialPhotos={photos} />
+          </div>
         </aside>
 
         <div className={styles.main}>
           <BookEditForm book={book} />
         </div>
       </div>
-
-      <section className={styles.photos}>
-        <h2 className={styles.sideTitle}>Фотографии (карусель на странице книги)</h2>
-        <BookPhotosManager titleId={book.id} hasSlug={!!book.slug} initialPhotos={photos} />
-      </section>
     </section>
   )
 }
