@@ -1284,6 +1284,7 @@ export type Database = {
           lit_form: string | null
           name: string
           slug: string | null
+          status: string
           thesis: string | null
           trailer: string | null
           trailer_poster: string | null
@@ -1302,6 +1303,7 @@ export type Database = {
           lit_form?: string | null
           name: string
           slug?: string | null
+          status?: string
           thesis?: string | null
           trailer?: string | null
           trailer_poster?: string | null
@@ -1320,6 +1322,7 @@ export type Database = {
           lit_form?: string | null
           name?: string
           slug?: string | null
+          status?: string
           thesis?: string | null
           trailer?: string | null
           trailer_poster?: string | null
