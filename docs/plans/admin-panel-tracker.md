@@ -9,11 +9,14 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 0 (nothing implemented yet)
-- **Next action:** Phase 0 — add `src/lib/admin/auth.ts` (`isAdmin`/`requireAdmin`)
-  and extend the `/admin` gate in `src/proxy.ts` to require
-  `app_metadata.role === 'admin'`.
-- **Branch:** create `admin-panel` off `main` (or current working branch).
+- **Current phase:** Phase 1 (admin shell + `/admin/login`).
+- **Next action:** build `/admin/login` + `adminLoginAction`, the guarded
+  `/admin` layout/chrome, `AdminSideNav`, and the dashboard. **Blocked on a
+  chrome decision:** the storefront `<Header>`/`<Footer>` are in the *root*
+  layout, so they currently render on `/admin` too. Decide route-group split
+  (`(site)` group for storefront chrome) vs. temporary shared header before
+  finalizing the layout.
+- **Branch:** work is landing on `update` (the active integration branch).
 - **Before testing any phase:** seed an admin via the SQL in
   [plan §9](./admin-panel.md#9-provisioning-the-first-admin-sql), then sign out/in.
 
@@ -23,7 +26,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 | # | Phase | Status | Notes / left-off pointer |
 |---|-------|--------|--------------------------|
-| 0 | Roles & auth foundation | ⬜ | `lib/admin/auth.ts`, proxy gate, bootstrap SQL |
+| 0 | Roles & auth foundation | ✅ | `src/lib/admin/auth.ts` (`isAdmin`/`requireAdmin`/`getCurrentUser`); proxy `/admin` gate requires `app_metadata.role==='admin'`, `/admin/login` exempt. Bootstrap SQL in plan §9. |
 | 1 | Admin shell + `/admin/login` | ⬜ | layout guard, AdminSideNav, dashboard, shared primitives (DataTable/StatusBadge/ConfirmDialog/FormField/ImageUploader) |
 | 2 | Orders management | ⬜ | migration (tracking/note cols + AdminAuditLog), list+detail, fulfillment action, audit timeline |
 | 3 | Books: list + edit existing | ⬜ | edit Title core + per-edition price/stock + cover upload/blur |

@@ -4,10 +4,13 @@ import { v4 as uuidv4 } from 'uuid'
 
 const CART_COOKIE = 'bookstore_cart_id'
 
-// /account is intentionally NOT protected here — anonymous users need to
-// reach their cabinet to see orders + download links. The /account page
-// itself handles the no-user fallback.
-const PROTECTED_PREFIXES = ['/admin']
+// /profile is intentionally NOT protected here — anonymous users need to
+// reach their cabinet to see orders + download links. The page itself
+// handles the no-user fallback.
+//
+// /admin is admin-only and gated below on app_metadata.role; /admin/login is
+// the gate-exempt entry point.
+const ADMIN_LOGIN_PATH = '/admin/login'
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
@@ -77,14 +80,20 @@ export async function proxy(request: NextRequest) {
     })
   }
 
-  // Protect /account and /admin — redirect unauthenticated users to login
+  // Gate the admin area: only users whose JWT carries app_metadata.role ===
+  // 'admin' may pass. Everyone else is sent to the admin login. /admin/login
+  // itself stays open so admins can sign in.
   const { pathname } = request.nextUrl
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/')
+  const isAdminLogin = pathname === ADMIN_LOGIN_PATH
 
-  if (!user && isProtected) {
-    const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('returnTo', pathname)
-    return NextResponse.redirect(loginUrl)
+  if (isAdminArea && !isAdminLogin) {
+    const role = (user?.app_metadata as { role?: unknown } | undefined)?.role
+    if (role !== 'admin') {
+      const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url)
+      if (pathname !== '/admin') loginUrl.searchParams.set('returnTo', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   return response
