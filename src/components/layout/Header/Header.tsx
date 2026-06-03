@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import cn from 'classnames'
+import { usePathname } from 'next/navigation'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useCart } from '@/contexts/cart'
 import { useState, useCallback } from 'react'
-import menu, { type SubmenuItem } from '@/consts/menuItems'
+import menu, { type MenuItem, type SubmenuItem } from '@/consts/menuItems'
 import HeaderSearchBar from '@/components/layout/HeaderSearchBar'
 import CartIconBadge from '@/components/common/CartIconBadge'
 import styles from './Header.module.scss'
@@ -104,10 +105,33 @@ export default function Header() {
   )
 }
 
-function HeaderNavItem({ item }: { item: typeof menu[number] }) {
+// Every route a top-level menu item points at — its own link, or every link
+// inside its dropdown — so the item highlights while you're on any of them.
+function collectLinks(item: MenuItem): string[] {
+  if (item.link) return [item.link]
+  const links: string[] = []
+  for (const section of item.submenu ?? []) {
+    if (section.link) links.push(section.link)
+    for (const sub of section.items ?? []) links.push(sub.link)
+  }
+  return links
+}
+
+function isPathActive(pathname: string, link: string): boolean {
+  return pathname === link || pathname.startsWith(`${link}/`)
+}
+
+function HeaderNavItem({ item }: { item: MenuItem }) {
+  const pathname = usePathname()
+  const active = collectLinks(item).some((link) => isPathActive(pathname, link))
+
   if (item.link) {
     return (
-      <Link href={item.link} className={styles.navLink}>
+      <Link
+        href={item.link}
+        className={cn(styles.navLink, active && styles.navLinkActive)}
+        aria-current={active ? 'page' : undefined}
+      >
         {item.title}
       </Link>
     )
@@ -116,7 +140,10 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className={styles.navTrigger} aria-haspopup='menu'>
+        <button
+          className={cn(styles.navTrigger, active && styles.navLinkActive)}
+          aria-haspopup='menu'
+        >
           {item.title}
         </button>
       </DropdownMenu.Trigger>
@@ -150,7 +177,7 @@ function HeaderNavItem({ item }: { item: typeof menu[number] }) {
   )
 }
 
-function MobileNavItem({ item, onNavigate }: { item: typeof menu[number]; onNavigate: () => void }) {
+function MobileNavItem({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
   const [expanded, setExpanded] = useState(false)
 
   if (item.link) {

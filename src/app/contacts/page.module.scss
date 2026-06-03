@@ -1,0 +1,374 @@
+@use '@/styles/common' as *;
+
+// The whole page sits on one continuous near-black surface; the hero is
+// transparent over it, the newsletter band lifts with the card gradient.
+.page {
+  // Fluid horizontal gutter — drives the hero (via PageHero) and every band.
+  --gx: 60px;
+  @media (max-width: 1100px) { --gx: 40px; }
+  @media (max-width: 420px) { --gx: 18px; }
+
+  flex: 1 1 auto;
+  background-color: $color-surface-dark; // #0A0A0A
+  color: $color-text-on-dark;
+  overflow-x: clip; // safety net against display-font width on tiny screens
+}
+
+// ─── Body column ────────────────────────────────────────────────────
+.body {
+  padding-top: 84px;
+
+  @media (max-width: 920px) { padding-top: 60px; }
+}
+
+// max-width keeps a 760px text measure on desktop while always preserving the
+// gutter so content never touches the screen edge below 760px.
+.col {
+  max-width: calc(760px + 2 * var(--gx));
+  margin: 0 auto;
+  padding: 0 var(--gx);
+}
+
+.kicker {
+  margin: 0 0 26px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-normal;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $color-accent-on-dark;
+}
+
+// ─── Direct contacts ────────────────────────────────────────────────
+.direct {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 16px;
+  border: 1px solid rgba($color-text-on-dark, 0.4);
+  border-radius: $radius-sm;
+  overflow: hidden;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.directCell {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  min-width: 0;
+  padding: 30px 32px;
+  text-decoration: none;
+  border-right: 1px solid rgba($color-text-on-dark, 0.12);
+  transition: background 0.2s ease, color 0.15s ease;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background: rgba(161, 2, 2, 0.06);
+
+    .directIcon {
+      color: $color-accent-on-dark;
+    }
+  }
+
+  @media (max-width: 620px) {
+    padding: 24px;
+    border-right: none;
+    border-bottom: 1px solid rgba($color-text-on-dark, 0.12);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    gap: 16px;
+    padding: 22px 18px;
+  }
+}
+
+.directIcon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  color: $color-text-on-dark;
+  transition: color 0.15s ease;
+
+  @media (max-width: 420px) { width: 40px; height: 40px; }
+}
+
+.meta {
+  min-width: 0;
+
+  small {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba($color-text-on-dark, 0.5);
+  }
+
+  span {
+    font-size: clamp(17px, 4.6vw, 21px);
+    color: $color-gray-5;
+    overflow-wrap: break-word;
+  }
+}
+
+.addr {
+  margin: 0 0 70px;
+  padding: 22px 2px 0;
+  font-size: clamp(16px, 4vw, 18px);
+  line-height: 1.65;
+  color: rgba($color-text-on-dark, 0.7);
+
+  b {
+    font-weight: $font-weight-bold;
+    color: $color-text-on-dark;
+  }
+
+  @media (max-width: 620px) { margin-bottom: 56px; }
+}
+
+// ─── Socials ────────────────────────────────────────────────────────
+.socials {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin: 0 0 28px;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.socialCard {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  min-width: 0;
+  padding: 26px 30px;
+  text-decoration: none;
+  border: 1px solid rgba($color-text-on-dark, 0.4);
+  border-radius: $radius-sm;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.25s ease,
+    color 0.15s ease;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    background: rgba(161, 2, 2, 0.05);
+    transform: translateY(-2px);
+
+    .socialIcon {
+      color: $color-accent-on-dark;
+    }
+  }
+
+  @media (max-width: 420px) {
+    gap: 16px;
+    padding: 22px 18px;
+  }
+}
+
+.socialIcon {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  color: $color-text-on-dark;
+  transition: color 0.15s ease;
+
+  @media (max-width: 420px) { width: 44px; height: 44px; }
+}
+
+.socialText {
+  min-width: 0;
+
+  b {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 20px;
+    font-weight: $font-weight-bold;
+    color: $color-gray-5;
+  }
+
+  span {
+    font-size: 16px;
+    color: rgba($color-text-on-dark, 0.7);
+    overflow-wrap: break-word;
+  }
+}
+
+// ─── Pull quote ─────────────────────────────────────────────────────
+.pull {
+  margin: 80px 0 0;
+  text-align: center;
+
+  @media (max-width: 920px) { margin-top: 64px; }
+}
+
+.feather {
+  display: block;
+  width: 30px;
+  height: auto;
+  margin: 0 auto 26px;
+  color: $color-accent-on-dark;
+}
+
+.quote {
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: $font-cheque;
+  font-weight: $font-weight-normal;
+  font-size: clamp(24px, 6vw, 38px);
+  line-height: 1.15;
+  color: $color-text-inverse;
+}
+
+// ─── Newsletter CTA band ────────────────────────────────────────────
+.news {
+  margin-top: 96px;
+  background: $gradient-card-body;
+  border-top: 1px solid rgba($color-text-on-dark, 0.12);
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.12);
+
+  @media (max-width: 920px) { margin-top: 72px; }
+}
+
+.newsIn {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 86px var(--gx);
+
+  @media (max-width: 920px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-block: 64px;
+  }
+}
+
+.newsCopy {
+  min-width: 0;
+}
+
+.newsTitle {
+  margin: 0 0 22px;
+  font-family: $font-cheque;
+  font-weight: $font-weight-black;
+  text-transform: uppercase;
+  font-size: clamp(34px, 8.5vw, 52px);
+  line-height: 1.02;
+  color: $color-gray-5;
+}
+
+.newsSub {
+  max-width: 460px;
+  margin: 0;
+  font-size: clamp(16px, 4.4vw, 19px);
+  line-height: 1.6;
+  color: rgba($color-text-on-dark, 0.7);
+}
+
+.newsForm {
+  min-width: 0;
+}
+
+.newsLabel {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 14px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba($color-text-on-dark, 0.5);
+}
+
+.newsRow {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 620px) {
+    flex-direction: column;
+  }
+}
+
+.newsInput {
+  flex: 1;
+  min-width: 0;
+  height: 58px;
+  padding: 0 20px;
+  background: $color-surface-dark;
+  border: 1px solid rgba($color-text-on-dark, 0.4);
+  border-radius: $radius-sm;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: 17px;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: rgba($color-text-on-dark, 0.5);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent-on-dark;
+  }
+
+  // When the row stacks, drop flex:1 — flex-basis:0 would collapse the height
+  // along the new vertical main axis and shrink the field to one line.
+  @media (max-width: 620px) {
+    flex: none;
+    width: 100%;
+    height: 60px;
+  }
+}
+
+.newsButton {
+  flex-shrink: 0;
+  height: 58px;
+  padding: 0 34px;
+  background: $color-accent-on-dark;
+  color: $color-text-inverse;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $color-accent-hover-on-dark; // #930000
+  }
+
+  @media (max-width: 620px) {
+    height: 60px;
+    padding: 0 24px;
+  }
+}
+
+.newsNote {
+  margin: 16px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba($color-text-on-dark, 0.4);
+}
+
+.newsOk {
+  margin: 18px 0 0;
+  font-size: 17px;
+  color: $color-gray-5;
+
+  b {
+    font-weight: $font-weight-bold;
+    color: $color-accent-on-dark;
+  }
+}
