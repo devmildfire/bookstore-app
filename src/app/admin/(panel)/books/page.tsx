@@ -1,10 +1,86 @@
 import type { Metadata } from 'next'
-import ComingSoon from '@/components/admin/ComingSoon'
+import Link from 'next/link'
+import Image from 'next/image'
+import { getAdminBooks } from '@/api/admin/books'
+import StatusBadge from '@/components/admin/StatusBadge'
+import styles from './page.module.scss'
 
-export const metadata: Metadata = {
-  title: 'Книги',
-}
+export const metadata: Metadata = { title: 'Книги' }
 
-export default function AdminSectionPage() {
-  return <ComingSoon title='Книги' />
+type Props = { searchParams: Promise<{ q?: string; page?: string }> }
+
+export default async function AdminBooksPage({ searchParams }: Props) {
+  const sp = await searchParams
+  const page = sp.page ? Math.max(1, Number(sp.page) || 1) : 1
+  const { books, total, pageSize } = await getAdminBooks({ q: sp.q, page })
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams()
+    if (sp.q) params.set('q', sp.q)
+    if (p > 1) params.set('page', String(p))
+    const qs = params.toString()
+    return qs ? `/admin/books?${qs}` : '/admin/books'
+  }
+
+  return (
+    <section className={styles.page}>
+      <header className={styles.head}>
+        <h1 className={styles.title}>Книги</h1>
+        <span className={styles.count}>{total} всего</span>
+      </header>
+
+      <form className={styles.filters} method='get'>
+        <input
+          type='search'
+          name='q'
+          defaultValue={sp.q ?? ''}
+          placeholder='Поиск по названию'
+          className={styles.search}
+          aria-label='Поиск книг'
+        />
+        <button type='submit' className={styles.apply}>
+          Найти
+        </button>
+        <Link href='/admin/books' className={styles.reset}>
+          Сбросить
+        </Link>
+      </form>
+
+      {books.length === 0 ? (
+        <p className={styles.empty}>Книги не найдены.</p>
+      ) : (
+        <ul className={styles.list}>
+          {books.map((b) => (
+            <li key={b.id} className={styles.item}>
+              <Link href={`/admin/books/${b.id}`} className={styles.itemLink}>
+                <span className={styles.cover}>
+                  {b.coverUrl ? (
+                    <Image src={b.coverUrl} alt='' fill sizes='48px' className={styles.coverImg} unoptimized />
+                  ) : (
+                    <span className={styles.coverPlaceholder} aria-hidden />
+                  )}
+                </span>
+                <span className={styles.info}>
+                  <span className={styles.name}>{b.name}</span>
+                  <span className={styles.slug}>{b.slug ?? '—'}</span>
+                </span>
+                {b.isFeatured && <StatusBadge tone='accent'>На главной</StatusBadge>}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {totalPages > 1 && (
+        <nav className={styles.pager} aria-label='Страницы'>
+          {page > 1 && <Link href={pageHref(page - 1)}>← Назад</Link>}
+          <span className={styles.pageInfo}>
+            {page} / {totalPages}
+          </span>
+          {page < totalPages && <Link href={pageHref(page + 1)}>Вперёд →</Link>}
+        </nav>
+      )}
+    </section>
+  )
 }

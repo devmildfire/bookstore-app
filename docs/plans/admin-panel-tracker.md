@@ -9,13 +9,16 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 3 (Books: list + edit existing).
-- **Next action:** build the books list (status/author/search filters via the
-  same GET-form + table pattern as orders) and an edit form for core Title
-  fields + per-edition price/discount/sold_out/is_published, plus cover upload.
-  Introduce the shared `ImageUploader` primitive and `src/lib/admin/blur.ts`
-  (sharp, server-side blur → `Titles.cover_blur`). Admin reads/writes via
-  `createAdminClient()` in `src/api/admin/books/` + gated actions.
+- **Current phase:** Phase 4 (Books: full create + lifecycle).
+- **Next action:** migration adding `Titles.status` ('draft'|'published'|
+  'archived', default 'published', backfill existing) + same on BoxSets/
+  Subscriptions/GiftCardProducts; filter the public catalog read paths to
+  `published`. Then a create-Title flow across the full graph (authors link,
+  awards, editions incl. file upload to `digital-files`, workers, contexts,
+  trailers, photo galleries) + draft/publish/archive controls in the book editor.
+- **Reusable bits now available:** `ImageUploader` (action-as-prop),
+  `src/lib/admin/blur.ts`, `StatusBadge`, `logAdminAction`, the GET-form list +
+  pagination pattern. Cover upload + edition editing already work.
 - **Branch:** work is landing on `update` (the active integration branch).
 - **Chrome:** resolved — storefront chrome moved into the `(site)` route group;
   `/admin` has its own header-free chrome. Root layout = html/body/Providers only.
@@ -33,7 +36,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 0 | Roles & auth foundation | ✅ | `src/lib/admin/auth.ts` (`isAdmin`/`requireAdmin`/`getCurrentUser`); proxy `/admin` gate requires `app_metadata.role==='admin'`, `/admin/login` exempt. Bootstrap SQL in plan §9. |
 | 1 | Admin shell + `/admin/login` | ✅ | `(site)` route-group split (storefront chrome moved off root layout); `/admin/login` + `adminLoginAction`/`adminLogoutAction`; guarded `(panel)` layout + `AdminSideNav` + dashboard; section stubs via `ComingSoon`. Heavy primitives (DataTable etc.) deferred to the phase that first needs them. |
 | 2 | Orders management | ✅ | Migration `20260603160000` (tracking/carrier/note cols + `AdminAuditLog` + `admin_set_order_fulfillment` RPC) **applied to local DB + types regenerated**. Orders list (`/admin/orders`, filters + pagination), detail (`/admin/orders/[id]`), `setOrderFulfillmentAction`, `FulfillmentForm`, `StatusBadge`, audit timeline. `logAdminAction` helper added for later phases. |
-| 3 | Books: list + edit existing | ⬜ | edit Title core + per-edition price/stock + cover upload/blur |
+| 3 | Books: list + edit existing | ✅ | `/admin/books` (search + pagination), `/admin/books/[id]` editor: core Title fields + featured/compilation + per-edition price/discount/published/sold_out + cover upload (sharp blur → `Titles.cover_blur`). `BookEditForm`, `ImageUploader` (reusable), `src/lib/admin/blur.ts`, `updateBookAction`/`uploadBookCoverAction`. **Verified live** (login→edit→save→DB+audit). Create deferred to Phase 4. |
 | 4 | Books: full create + lifecycle | ⬜ | migration (`Titles.status` + storefront filter + backfill), full create graph, draft/publish/archive |
 | 5 | Authors & Box Sets | ⬜ | author CRUD + photo/blur; box-set composition |
 | 6 | Gift cards, Subscriptions, Promo codes | ⬜ | product CRUD; promo constraints per AGENTS.md |

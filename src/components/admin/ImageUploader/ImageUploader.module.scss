@@ -1,0 +1,78 @@
+@use '@/styles/common' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.preview {
+  position: relative;
+  width: 160px;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.15);
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
+.cover {
+  aspect-ratio: 2 / 3;
+}
+
+.square {
+  aspect-ratio: 1 / 1;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
+}
+
+.busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.input {
+  display: none;
+}
+
+.button {
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.25);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}
+
+.error {
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  color: $color-accent-on-dark;
+}

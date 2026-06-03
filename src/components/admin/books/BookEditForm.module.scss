@@ -1,0 +1,127 @@
+@use '@/styles/common' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $space-4;
+}
+
+.label,
+.smallLabel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.8);
+}
+
+.input,
+.textarea,
+.smallInput {
+  padding: $space-3;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 1px;
+  }
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.smallInput {
+  width: 110px;
+  padding: $space-2;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-5;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.85);
+  cursor: pointer;
+}
+
+.editions {
+  margin: 0;
+  padding: $space-4;
+  border: 1px solid rgba($color-text-on-dark, 0.15);
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.legend {
+  padding: 0 $space-2;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+}
+
+.edition {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid rgba($color-text-on-dark, 0.08);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.editionLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}
+
+.editionFields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: $space-4;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.ok {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: #4caf7d;
+}
+
+.err {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}
