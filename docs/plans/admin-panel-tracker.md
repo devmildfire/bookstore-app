@@ -9,16 +9,19 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 1 (admin shell + `/admin/login`).
-- **Next action:** build `/admin/login` + `adminLoginAction`, the guarded
-  `/admin` layout/chrome, `AdminSideNav`, and the dashboard. **Blocked on a
-  chrome decision:** the storefront `<Header>`/`<Footer>` are in the *root*
-  layout, so they currently render on `/admin` too. Decide route-group split
-  (`(site)` group for storefront chrome) vs. temporary shared header before
-  finalizing the layout.
+- **Current phase:** Phase 2 (Orders management).
+- **Next action:** create the migration (`Orders.tracking_number/tracking_carrier/
+  admin_note` + `AdminAuditLog` table + RLS), then build the orders list
+  (filters), order detail, the fulfillment-advance Server Action with tracking
+  inputs, and the audit timeline. Reads of all orders use `createAdminClient()`
+  in `src/api/admin/orders/`.
 - **Branch:** work is landing on `update` (the active integration branch).
+- **Chrome:** resolved — storefront chrome moved into the `(site)` route group;
+  `/admin` has its own header-free chrome. Root layout = html/body/Providers only.
 - **Before testing any phase:** seed an admin via the SQL in
   [plan §9](./admin-panel.md#9-provisioning-the-first-admin-sql), then sign out/in.
+- **Dev note:** don't run `next build` while `next dev` is running — they share
+  `.next` and it wedges the dev server (restart fixes it).
 
 ---
 
@@ -27,7 +30,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | # | Phase | Status | Notes / left-off pointer |
 |---|-------|--------|--------------------------|
 | 0 | Roles & auth foundation | ✅ | `src/lib/admin/auth.ts` (`isAdmin`/`requireAdmin`/`getCurrentUser`); proxy `/admin` gate requires `app_metadata.role==='admin'`, `/admin/login` exempt. Bootstrap SQL in plan §9. |
-| 1 | Admin shell + `/admin/login` | ⬜ | layout guard, AdminSideNav, dashboard, shared primitives (DataTable/StatusBadge/ConfirmDialog/FormField/ImageUploader) |
+| 1 | Admin shell + `/admin/login` | ✅ | `(site)` route-group split (storefront chrome moved off root layout); `/admin/login` + `adminLoginAction`/`adminLogoutAction`; guarded `(panel)` layout + `AdminSideNav` + dashboard; section stubs via `ComingSoon`. Heavy primitives (DataTable etc.) deferred to the phase that first needs them. |
 | 2 | Orders management | ⬜ | migration (tracking/note cols + AdminAuditLog), list+detail, fulfillment action, audit timeline |
 | 3 | Books: list + edit existing | ⬜ | edit Title core + per-edition price/stock + cover upload/blur |
 | 4 | Books: full create + lifecycle | ⬜ | migration (`Titles.status` + storefront filter + backfill), full create graph, draft/publish/archive |

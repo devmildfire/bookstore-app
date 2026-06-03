@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import BookAuthor from '@/app/books/[slug]/BookAuthor'
+import BookAuthor from '@/app/(site)/books/[slug]/BookAuthor'
 import BookCard from '@/components/book/BookCard/BookCard'
 import AuthorArticlesCarousel from '@/components/authors/AuthorArticlesCarousel'
 import { getAuthor } from '@/api/authors'

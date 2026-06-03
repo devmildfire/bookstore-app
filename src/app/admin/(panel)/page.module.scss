@@ -1,0 +1,52 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 28px;
+  color: $color-text-on-dark;
+}
+
+.lede {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.65);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $space-4;
+  max-width: 760px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-5;
+  background: $color-panel;
+  border: 1px solid rgba($color-text-on-dark, 0.1);
+  border-radius: $radius-md;
+}
+
+.cardLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.cardValue {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 32px;
+  color: $color-text-on-dark;
+}

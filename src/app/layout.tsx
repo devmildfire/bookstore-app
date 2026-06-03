@@ -4,9 +4,6 @@ import localFont from 'next/font/local'
 import { createClient } from '@/lib/supabase/server'
 import Providers from './providers'
 import '@/styles/globals.scss'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import styles from './layout.module.scss'
 
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
@@ -41,11 +38,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='ru' className={`${montserrat.variable} ${cheque.variable}`}>
       <body>
-        <Providers hasSession={!!user}>
-          <Header />
-          <main className={styles.main}>{children}</main>
-          <Footer />
-        </Providers>
+        {/* Storefront chrome (Header/Footer) lives in the (site) route group,
+            not here — so /admin can render its own header-free layout. */}
+        <Providers hasSession={!!user}>{children}</Providers>
       </body>
     </html>
   )

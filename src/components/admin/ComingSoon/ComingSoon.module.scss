@@ -1,0 +1,25 @@
+@use '@/styles/common' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-8;
+  border: 1px dashed rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-md;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 22px;
+  color: $color-text-on-dark;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.6);
+}
