@@ -3,6 +3,7 @@ import { getCoverUrl } from '@/lib/storage'
 import {
   EDITION_LABEL,
   ALL_EDITION_TABLES,
+  EDITION_FILE_FOLDER,
   type EditionTable,
   type BookStatus,
   type AdminEdition,
@@ -63,10 +64,11 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
   // Editions: one query per edition table.
   const editions: AdminEdition[] = []
   for (const table of EDITION_TABLES) {
-    const { data: rows } = await admin
-      .from(table)
-      .select('id, price, discount, is_published, ' + (HAS_SOLD_OUT[table] ? 'sold_out' : 'id'))
-      .eq('title_id', id)
+    const hasFile = !!EDITION_FILE_FOLDER[table]
+    const cols = ['id', 'price', 'discount', 'is_published']
+    if (HAS_SOLD_OUT[table]) cols.push('sold_out')
+    if (hasFile) cols.push('file_path')
+    const { data: rows } = await admin.from(table).select(cols.join(', ')).eq('title_id', id)
     for (const row of (rows ?? []) as unknown as Array<Record<string, unknown>>) {
       editions.push({
         table,
@@ -77,6 +79,8 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
         isPublished: (row.is_published as boolean | null) ?? true,
         soldOut: HAS_SOLD_OUT[table] ? ((row.sold_out as boolean | null) ?? false) : null,
         hasSoldOut: HAS_SOLD_OUT[table],
+        hasFile,
+        filePath: hasFile ? ((row.file_path as string | null) ?? null) : null,
       })
     }
   }

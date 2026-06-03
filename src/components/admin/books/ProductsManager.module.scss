@@ -103,6 +103,56 @@
   color: $color-accent-on-dark;
 }
 
+.fileSlot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+  padding-top: $space-3;
+  border-top: 1px dashed rgba($color-text-on-dark, 0.12);
+}
+
+.fileLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.fileName {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+  word-break: break-all;
+}
+
+.fileNone {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  font-style: italic;
+  color: rgba($color-text-on-dark, 0.45);
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileButton,
+.fileRemove {
+  padding: $space-1 $space-3;
+  background: transparent;
+  border: 1px solid rgba($color-text-on-dark, 0.25);
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  color: $color-text-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-accent-on-dark;
+    color: $color-accent-on-dark;
+  }
+}
+
 .add {
   display: flex;
   flex-wrap: wrap;

@@ -1,11 +1,13 @@
 'use client'
 
-import { useActionState, useState, useTransition } from 'react'
+import { useActionState, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   updateProductAction,
   addProductAction,
   removeProductAction,
+  uploadProductFileAction,
+  removeProductFileAction,
 } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
 import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
@@ -60,11 +62,7 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
   }
 
   return (
-    <form action={action} className={styles.row}>
-      <input type='hidden' name='titleId' value={titleId} />
-      <input type='hidden' name='editionId' value={edition.id} />
-      <input type='hidden' name='table' value={edition.table} />
-
+    <div className={styles.row}>
       <div className={styles.rowHead}>
         <span className={styles.label}>{edition.label}</span>
         <button type='button' className={styles.remove} onClick={handleRemove} disabled={removing}>
@@ -72,7 +70,10 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
         </button>
       </div>
 
-      <div className={styles.fields}>
+      <form action={action} className={styles.fields}>
+        <input type='hidden' name='titleId' value={titleId} />
+        <input type='hidden' name='editionId' value={edition.id} />
+        <input type='hidden' name='table' value={edition.table} />
         <label className={styles.field}>
           Цена ₽
           <input name='price' type='number' step='0.01' defaultValue={edition.price ?? ''} className={styles.input} />
@@ -97,8 +98,67 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
         {state?.status === 'ok' && <span className={styles.ok}>✓</span>}
         {state?.status === 'error' && <span className={styles.err}>{state.message}</span>}
         {removeError && <span className={styles.err}>{removeError}</span>}
-      </div>
-    </form>
+      </form>
+
+      {edition.hasFile && <FileSlot titleId={titleId} edition={edition} />}
+    </div>
+  )
+}
+
+function FileSlot({ titleId, edition }: { titleId: number; edition: AdminEdition }) {
+  const [busy, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+  const currentName = edition.filePath?.split('/').pop() ?? null
+
+  function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setError(null)
+      startTransition(async () => {
+        const fd = new FormData()
+        fd.set('titleId', String(titleId))
+        fd.set('editionId', String(edition.id))
+        fd.set('table', edition.table)
+        fd.set('file', file)
+        const res = await uploadProductFileAction(fd)
+        if (res.status === 'error') setError(res.message)
+        else router.refresh()
+      })
+    }
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  function handleRemoveFile() {
+    setError(null)
+    startTransition(async () => {
+      const fd = new FormData()
+      fd.set('titleId', String(titleId))
+      fd.set('editionId', String(edition.id))
+      fd.set('table', edition.table)
+      fd.set('filePath', edition.filePath ?? '')
+      const res = await removeProductFileAction(fd)
+      if (res.status === 'error') setError(res.message)
+      else router.refresh()
+    })
+  }
+
+  return (
+    <div className={styles.fileSlot}>
+      <span className={styles.fileLabel}>Файл для скачивания:</span>
+      {currentName ? <span className={styles.fileName}>{currentName}</span> : <span className={styles.fileNone}>нет</span>}
+      <input ref={inputRef} type='file' onChange={handleUpload} className={styles.fileInput} disabled={busy} />
+      <button type='button' className={styles.fileButton} onClick={() => inputRef.current?.click()} disabled={busy}>
+        {busy ? '…' : currentName ? 'Заменить' : 'Загрузить'}
+      </button>
+      {currentName && (
+        <button type='button' className={styles.fileRemove} onClick={handleRemoveFile} disabled={busy}>
+          Удалить файл
+        </button>
+      )}
+      {error && <span className={styles.err}>{error}</span>}
+    </div>
   )
 }
 

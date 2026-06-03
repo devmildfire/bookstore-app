@@ -9,6 +9,7 @@ import { makeBlurDataUrl } from '@/lib/admin/blur'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
 import { getAdminBookPhotos, type AdminBookPhoto } from '@/api/admin/books'
+import { EDITION_FILE_FOLDER } from '@/lib/admin/bookProducts'
 import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
@@ -352,6 +353,15 @@ export async function deleteBookAction(_prev: AdminActionResult | null, formData
     const paths = (photos ?? []).filter((f) => f.name).map((f) => `${title.slug}/${f.name}`)
     if (paths.length > 0) await admin.storage.from(BOOK_PHOTOS_BUCKET).remove(paths).catch(() => {})
   }
+  // Digital files of each edition (editions themselves cascade-delete with the Title).
+  const digitalPaths: string[] = []
+  for (const [t] of Object.entries(EDITION_FILE_FOLDER)) {
+    const { data } = await admin.from(t as 'Ebooks').select('file_path').eq('title_id', id)
+    for (const r of (data ?? []) as Array<{ file_path: string | null }>) {
+      if (r.file_path) digitalPaths.push(r.file_path)
+    }
+  }
+  if (digitalPaths.length > 0) await admin.storage.from(DIGITAL_FILES_BUCKET).remove(digitalPaths).catch(() => {})
 
   const { error } = await admin.from('Titles').delete().eq('id', id)
   if (error) return { status: 'error', message: error.message }
@@ -438,5 +448,62 @@ export async function updateProductAction(_prev: AdminActionResult | null, formD
   const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
   revalidatePath(`/admin/books/${titleId}`)
   if (title?.slug) revalidatePath(`/books/${title.slug}`)
+  return { status: 'ok' }
+}
+
+// ─── Digital files (private digital-files bucket) ───────────────────────────
+
+const DIGITAL_FILES_BUCKET = 'digital-files'
+const MAX_DIGITAL_BYTES = 1024 * 1024 * 1024 // 1 GB
+
+// Upload a product's downloadable file to digital-files/{folder}/{id}.{ext}
+// and set its file_path. Only e-book / audiobook / card-book have files.
+export async function uploadProductFileAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  const file = formData.get('file')
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  const folder = EDITION_FILE_FOLDER[table]
+  if (!folder) return { status: 'error', message: 'У этого типа продукта нет файла.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  if (file.size > MAX_DIGITAL_BYTES) return { status: 'error', message: 'Файл больше 1 ГБ.' }
+  const ext = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : 'bin'
+
+  const admin = createAdminClient()
+  const key = `${folder}/${editionId}.${ext}`
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error: uploadError } = await admin.storage
+    .from(DIGITAL_FILES_BUCKET)
+    .upload(key, buffer, { contentType: file.type || 'application/octet-stream', upsert: true })
+  if (uploadError) return { status: 'error', message: uploadError.message }
+
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.update({ file_path: key } as unknown as EditionUpdate).eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/books/${titleId}`)
+  return { status: 'ok' }
+}
+
+// Clear a product's file (remove the object + null the file_path).
+export async function removeProductFileAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  const filePath = (formData.get('filePath') as string | null)?.trim()
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+
+  const admin = createAdminClient()
+  if (filePath) await admin.storage.from(DIGITAL_FILES_BUCKET).remove([filePath]).catch(() => {})
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.update({ file_path: null } as unknown as EditionUpdate).eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/books/${titleId}`)
   return { status: 'ok' }
 }

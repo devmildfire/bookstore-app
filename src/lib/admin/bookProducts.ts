@@ -15,6 +15,14 @@ export const EDITION_LABEL: Record<EditionTable, string> = {
 // All product types, in display order — used to offer "add product".
 export const ALL_EDITION_TABLES: EditionTable[] = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks']
 
+// Edition tables that hold a downloadable digital file (in the private
+// `digital-files` bucket). PrintedBook is physical — no file.
+export const EDITION_FILE_FOLDER: Partial<Record<EditionTable, string>> = {
+  Ebooks: 'ebooks',
+  Audiobooks: 'audiobooks',
+  CardBooks: 'cardbooks',
+}
+
 export type AdminEdition = {
   table: EditionTable
   id: number
@@ -24,4 +32,8 @@ export type AdminEdition = {
   isPublished: boolean
   soldOut: boolean | null
   hasSoldOut: boolean
+  // Digital file (download). null for PrintedBooks and for editions without an
+  // uploaded file yet.
+  hasFile: boolean
+  filePath: string | null
 }
