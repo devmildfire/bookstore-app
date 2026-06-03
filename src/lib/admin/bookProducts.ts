@@ -5,6 +5,8 @@
 export type EditionTable = 'Ebooks' | 'Audiobooks' | 'PrintedBooks' | 'CardBooks'
 export type BookStatus = 'draft' | 'published' | 'archived'
 
+export type AdminAward = { id: number; title: string }
+
 export const EDITION_LABEL: Record<EditionTable, string> = {
   Ebooks: 'Электронная книга',
   Audiobooks: 'Аудиокнига',

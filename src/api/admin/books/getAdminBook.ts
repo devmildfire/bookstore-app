@@ -7,10 +7,18 @@ import {
   type EditionTable,
   type BookStatus,
   type AdminEdition,
+  type AdminAward,
 } from '@/lib/admin/bookProducts'
 
 export { EDITION_LABEL, ALL_EDITION_TABLES }
-export type { EditionTable, BookStatus, AdminEdition }
+export type { EditionTable, BookStatus, AdminEdition, AdminAward }
+
+// The full Awards catalogue (for the attach picker).
+export async function getAwardsCatalog(): Promise<AdminAward[]> {
+  const admin = createAdminClient()
+  const { data } = await admin.from('Awards').select('id, title').order('position', { ascending: true })
+  return (data ?? []).map((a) => ({ id: a.id, title: a.title }))
+}
 
 function asBookStatus(raw: string | null | undefined): BookStatus {
   return raw === 'draft' || raw === 'archived' ? raw : 'published'
@@ -39,6 +47,7 @@ export type AdminBook = {
   isCompilation: boolean
   isFeatured: boolean
   authors: { id: number; name: string }[]
+  awards: AdminAward[]
   editions: AdminEdition[]
 }
 
@@ -60,6 +69,17 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     .map((l) => l.Authors)
     .filter((a): a is { id: number; name: string } => !!a)
     .map((a) => ({ id: a.id, name: a.name }))
+
+  // Attached awards via the link table.
+  const { data: awardLinks } = await admin
+    .from('Titles_Awards')
+    .select('position, Awards(id, title)')
+    .eq('title_id', id)
+    .order('position', { ascending: true })
+  const awards = (awardLinks ?? [])
+    .map((l) => l.Awards)
+    .filter((a): a is { id: number; title: string } => !!a)
+    .map((a) => ({ id: a.id, title: a.title }))
 
   // Editions: one query per edition table.
   const editions: AdminEdition[] = []
@@ -100,6 +120,7 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     isCompilation: title.is_compilation,
     isFeatured: title.is_featured ?? false,
     authors,
+    awards,
     editions,
   }
 }

@@ -507,3 +507,49 @@ export async function removeProductFileAction(formData: FormData): Promise<Admin
   revalidatePath(`/admin/books/${titleId}`)
   return { status: 'ok' }
 }
+
+// ─── Awards (Titles_Awards link) ────────────────────────────────────────────
+
+async function revalidateBookBySlug(admin: ReturnType<typeof createAdminClient>, titleId: number) {
+  const { data } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
+  revalidatePath(`/admin/books/${titleId}`)
+  if (data?.slug) revalidatePath(`/books/${data.slug}`)
+}
+
+export async function addAwardAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const awardId = Number(formData.get('awardId'))
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!Number.isInteger(awardId) || awardId <= 0) return { status: 'error', message: 'Выберите награду.' }
+
+  const admin = createAdminClient()
+  const { count } = await admin
+    .from('Titles_Awards')
+    .select('id', { count: 'exact', head: true })
+    .eq('title_id', titleId)
+  const id = await nextId(admin, 'Titles_Awards')
+  const { error } = await admin
+    .from('Titles_Awards')
+    .insert({ id, title_id: titleId, award_id: awardId, position: count ?? 0 })
+  if (error) {
+    const msg = error.message.includes('duplicate') ? 'Награда уже добавлена.' : error.message
+    return { status: 'error', message: msg }
+  }
+  await revalidateBookBySlug(admin, titleId)
+  return { status: 'ok' }
+}
+
+export async function removeAwardAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const awardId = Number(formData.get('awardId'))
+  if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!Number.isInteger(awardId) || awardId <= 0) return { status: 'error', message: 'Неверная награда.' }
+
+  const admin = createAdminClient()
+  const { error } = await admin.from('Titles_Awards').delete().eq('title_id', titleId).eq('award_id', awardId)
+  if (error) return { status: 'error', message: error.message }
+  await revalidateBookBySlug(admin, titleId)
+  return { status: 'ok' }
+}
