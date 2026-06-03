@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { startTransition, useActionState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -26,7 +26,11 @@ export default function AdminLoginPage() {
     const formData = new FormData()
     formData.set('email', data.email)
     formData.set('password', data.password)
-    serverAction(formData)
+    // useActionState's dispatch must run inside a transition, or React warns
+    // and `pending` won't update. RHF's handleSubmit calls this outside one.
+    startTransition(() => {
+      serverAction(formData)
+    })
   }
 
   return (
