@@ -153,6 +153,71 @@
   }
 }
 
+.workers {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding-top: $space-3;
+  border-top: 1px dashed rgba($color-text-on-dark, 0.12);
+}
+
+.workersLabel {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.workerList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.workerItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+
+  button {
+    background: transparent;
+    border: none;
+    color: rgba($color-text-on-dark, 0.55);
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      color: $color-accent-on-dark;
+    }
+  }
+}
+
+.workerJob {
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.workerAdd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  align-items: center;
+}
+
+.workerInput {
+  padding: $space-1 $space-2;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+}
+
 .add {
   display: flex;
   flex-wrap: wrap;

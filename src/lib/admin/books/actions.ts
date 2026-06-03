@@ -9,7 +9,7 @@ import { makeBlurDataUrl } from '@/lib/admin/blur'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
 import { getAdminBookPhotos, type AdminBookPhoto } from '@/api/admin/books'
-import { EDITION_FILE_FOLDER } from '@/lib/admin/bookProducts'
+import { EDITION_FILE_FOLDER, EDITION_WORKERS_TABLE, EDITION_WORKERS_FK } from '@/lib/admin/bookProducts'
 import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
@@ -550,6 +550,97 @@ export async function removeAwardAction(formData: FormData): Promise<AdminAction
   const admin = createAdminClient()
   const { error } = await admin.from('Titles_Awards').delete().eq('title_id', titleId).eq('award_id', awardId)
   if (error) return { status: 'error', message: error.message }
+  await revalidateBookBySlug(admin, titleId)
+  return { status: 'ok' }
+}
+
+// ─── Per-edition contributors (workers) ─────────────────────────────────────
+
+// Loose, bound write handle for an arbitrary table (dynamic name).
+type LooseWriter = {
+  insert: (v: Record<string, unknown>) => Promise<{ error: { message: string } | null }>
+  delete: () => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
+}
+
+const workerSchema = z.object({
+  titleId: z.coerce.number().int().positive(),
+  editionId: z.coerce.number().int().positive(),
+  name: z.string().trim().min(1, 'Введите имя'),
+  job: z.string().trim().min(1, 'Введите роль'),
+})
+
+// Add a contributor to one edition: create a Workers row (book contributor,
+// not a team member) + the join row.
+export async function addWorkerAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const table = asEditionTable(formData.get('table'))
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  const parsed = workerSchema.safeParse({
+    titleId: formData.get('titleId'),
+    editionId: formData.get('editionId'),
+    name: formData.get('name'),
+    job: formData.get('job'),
+  })
+  if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
+  const { titleId, editionId, name, job } = parsed.data
+
+  const admin = createAdminClient()
+  const workerId = await nextId(admin, 'Workers')
+  const workersWriter = admin.from('Workers') as unknown as LooseWriter
+  const { error: workerError } = await workersWriter.insert({
+    id: workerId,
+    name,
+    job,
+    is_team_member: false,
+    sort_order: 0,
+  })
+  if (workerError) return { status: 'error', message: workerError.message }
+
+  const joinTable = EDITION_WORKERS_TABLE[table]
+  const fk = EDITION_WORKERS_FK[table]
+  const { count } = await admin
+    .from(joinTable as 'EbookWorkers')
+    .select('id', { count: 'exact', head: true })
+    .eq(fk, editionId)
+  const linkId = await nextId(admin, joinTable)
+  const joinWriter = admin.from(joinTable as 'EbookWorkers') as unknown as LooseWriter
+  const { error: linkError } = await joinWriter.insert({
+    id: linkId,
+    [fk]: editionId,
+    worker_id: workerId,
+    sort_order: count ?? 0,
+  })
+  if (linkError) return { status: 'error', message: linkError.message }
+
+  await revalidateBookBySlug(admin, titleId)
+  return { status: 'ok' }
+}
+
+// Remove a contributor from an edition: drop the join row + the Workers row
+// (only if it's a book contributor, never a team member).
+export async function removeWorkerAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const linkId = Number(formData.get('linkId'))
+  const workerId = Number(formData.get('workerId'))
+  const table = asEditionTable(formData.get('table'))
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  if (!Number.isInteger(linkId) || linkId <= 0) return { status: 'error', message: 'Неверная связь.' }
+
+  const admin = createAdminClient()
+  const joinTable = EDITION_WORKERS_TABLE[table]
+  const joinWriter = admin.from(joinTable as 'EbookWorkers') as unknown as LooseWriter
+  const { error } = await joinWriter.delete().eq('id', linkId)
+  if (error) return { status: 'error', message: error.message }
+
+  if (Number.isInteger(workerId) && workerId > 0) {
+    const { data: worker } = await admin.from('Workers').select('is_team_member').eq('id', workerId).maybeSingle()
+    if (worker && worker.is_team_member === false) {
+      const workersWriter = admin.from('Workers') as unknown as LooseWriter
+      await workersWriter.delete().eq('id', workerId)
+    }
+  }
+
   await revalidateBookBySlug(admin, titleId)
   return { status: 'ok' }
 }

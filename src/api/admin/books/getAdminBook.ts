@@ -4,10 +4,13 @@ import {
   EDITION_LABEL,
   ALL_EDITION_TABLES,
   EDITION_FILE_FOLDER,
+  EDITION_WORKERS_TABLE,
+  EDITION_WORKERS_FK,
   type EditionTable,
   type BookStatus,
   type AdminEdition,
   type AdminAward,
+  type AdminWorker,
 } from '@/lib/admin/bookProducts'
 
 export { EDITION_LABEL, ALL_EDITION_TABLES }
@@ -52,6 +55,32 @@ export type AdminBook = {
 }
 
 const EDITION_TABLES: EditionTable[] = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks']
+
+// Contributors linked to a single edition, ordered by sort_order.
+async function fetchEditionWorkers(
+  admin: ReturnType<typeof createAdminClient>,
+  table: EditionTable,
+  editionId: number
+): Promise<AdminWorker[]> {
+  const joinTable = EDITION_WORKERS_TABLE[table]
+  const fk = EDITION_WORKERS_FK[table]
+  const builder = admin.from(joinTable as 'EbookWorkers') as unknown as {
+    select: (c: string) => {
+      eq: (col: string, val: number) => {
+        order: (col: string, o: { ascending: boolean }) => Promise<{
+          data: Array<{ id: number; worker_id: number; Workers: { name: string; job: string } | null }> | null
+        }>
+      }
+    }
+  }
+  const { data } = await builder
+    .select('id, worker_id, Workers(name, job)')
+    .eq(fk, editionId)
+    .order('sort_order', { ascending: true })
+  return (data ?? [])
+    .filter((r) => r.Workers)
+    .map((r) => ({ linkId: r.id, workerId: r.worker_id, name: r.Workers!.name, job: r.Workers!.job }))
+}
 
 export async function getAdminBook(id: number): Promise<AdminBook | null> {
   const admin = createAdminClient()
@@ -101,6 +130,7 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
         hasSoldOut: HAS_SOLD_OUT[table],
         hasFile,
         filePath: hasFile ? ((row.file_path as string | null) ?? null) : null,
+        workers: await fetchEditionWorkers(admin, table, row.id as number),
       })
     }
   }

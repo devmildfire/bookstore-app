@@ -25,6 +25,22 @@ export const EDITION_FILE_FOLDER: Partial<Record<EditionTable, string>> = {
   CardBooks: 'cardbooks',
 }
 
+// Per-edition contributor join tables + their FK column to the edition row.
+export const EDITION_WORKERS_TABLE: Record<EditionTable, string> = {
+  Ebooks: 'EbookWorkers',
+  Audiobooks: 'AudiobookWorkers',
+  PrintedBooks: 'PrintedBookWorkers',
+  CardBooks: 'CardBookWorkers',
+}
+export const EDITION_WORKERS_FK: Record<EditionTable, string> = {
+  Ebooks: 'ebook_id',
+  Audiobooks: 'audiobook_id',
+  PrintedBooks: 'printed_book_id',
+  CardBooks: 'card_book_id',
+}
+
+export type AdminWorker = { linkId: number; workerId: number; name: string; job: string }
+
 export type AdminEdition = {
   table: EditionTable
   id: number
@@ -38,4 +54,6 @@ export type AdminEdition = {
   // uploaded file yet.
   hasFile: boolean
   filePath: string | null
+  // Per-edition contributors (translator, narrator, illustrator, …).
+  workers: AdminWorker[]
 }

@@ -8,6 +8,8 @@ import {
   removeProductAction,
   uploadProductFileAction,
   removeProductFileAction,
+  addWorkerAction,
+  removeWorkerAction,
 } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
 import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
@@ -101,6 +103,90 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
       </form>
 
       {edition.hasFile && <FileSlot titleId={titleId} edition={edition} />}
+
+      <WorkersSlot titleId={titleId} edition={edition} />
+    </div>
+  )
+}
+
+function WorkersSlot({ titleId, edition }: { titleId: number; edition: AdminEdition }) {
+  const [busy, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const jobRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+
+  function handleAdd() {
+    const name = nameRef.current?.value.trim()
+    const job = jobRef.current?.value.trim()
+    if (!name || !job) {
+      setError('Введите имя и роль.')
+      return
+    }
+    setError(null)
+    startTransition(async () => {
+      const fd = new FormData()
+      fd.set('titleId', String(titleId))
+      fd.set('editionId', String(edition.id))
+      fd.set('table', edition.table)
+      fd.set('name', name)
+      fd.set('job', job)
+      const res = await addWorkerAction(fd)
+      if (res.status === 'error') setError(res.message)
+      else {
+        if (nameRef.current) nameRef.current.value = ''
+        if (jobRef.current) jobRef.current.value = ''
+        router.refresh()
+      }
+    })
+  }
+
+  function handleRemove(linkId: number, workerId: number) {
+    setError(null)
+    startTransition(async () => {
+      const fd = new FormData()
+      fd.set('titleId', String(titleId))
+      fd.set('table', edition.table)
+      fd.set('linkId', String(linkId))
+      fd.set('workerId', String(workerId))
+      const res = await removeWorkerAction(fd)
+      if (res.status === 'error') setError(res.message)
+      else router.refresh()
+    })
+  }
+
+  return (
+    <div className={styles.workers}>
+      <span className={styles.workersLabel}>Над изданием работали:</span>
+      {edition.workers.length === 0 ? (
+        <span className={styles.fileNone}>пока никто</span>
+      ) : (
+        <ul className={styles.workerList}>
+          {edition.workers.map((w) => (
+            <li key={w.linkId} className={styles.workerItem}>
+              <span>
+                {w.name} — <span className={styles.workerJob}>{w.job}</span>
+              </span>
+              <button
+                type='button'
+                onClick={() => handleRemove(w.linkId, w.workerId)}
+                disabled={busy}
+                aria-label={`Убрать ${w.name}`}
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className={styles.workerAdd}>
+        <input ref={nameRef} className={styles.workerInput} placeholder='Имя' disabled={busy} />
+        <input ref={jobRef} className={styles.workerInput} placeholder='Роль (напр. Переводчик)' disabled={busy} />
+        <button type='button' className={styles.fileButton} onClick={handleAdd} disabled={busy}>
+          + Добавить
+        </button>
+      </div>
+      {error && <span className={styles.err}>{error}</span>}
     </div>
   )
 }
