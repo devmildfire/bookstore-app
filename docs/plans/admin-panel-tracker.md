@@ -9,11 +9,14 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 5 (Authors & Box Sets).
-- **Next action:** author CRUD (list/create/edit/delete + photo upload/blur via
-  the reusable `ImageUploader`, contacts) and box-set composition editor
-  (`BoxSetBooks`, pricing, image, physicality). Follow the Title/editor patterns
-  from Phase 4.
+- **Current phase:** Phase 6 (Gift cards, Subscriptions, Promo codes).
+- **Next action:** CRUD for `GiftCardProducts`, `Subscriptions` (plan fields +
+  image), and `PromoCodes` (cart/item kinds, target validation, window, %;
+  respect AGENTS.md “Promo codes”). Follow the list/create/[id] + manager
+  patterns from Phases 4–5.
+- **Box-set image note:** box-set images are static files under `public/boxsets/`
+  (not a storage bucket), so the editor exposes the image as a filename field,
+  not an uploader. Real upload would need a `box-sets` bucket migration.
 - **Reusable bits available:** `ImageUploader`, `src/lib/admin/blur.ts`,
   `StatusBadge`, `logAdminAction`, `ProductsManager`/`BookStatusBar` patterns,
   the GET-form list + pagination pattern, `src/lib/admin/bookProducts.ts`
@@ -42,7 +45,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 2 | Orders management | ✅ | Migration `20260603160000` (tracking/carrier/note cols + `AdminAuditLog` + `admin_set_order_fulfillment` RPC) **applied to local DB + types regenerated**. Orders list (`/admin/orders`, filters + pagination), detail (`/admin/orders/[id]`), `setOrderFulfillmentAction`, `FulfillmentForm`, `StatusBadge`, audit timeline. `logAdminAction` helper added for later phases. |
 | 3 | Books: list + edit existing | ✅ | `/admin/books` (search + pagination), `/admin/books/[id]` editor: core Title fields + featured/compilation + per-edition price/discount/published/sold_out + cover upload (sharp blur → `Titles.cover_blur`) + **gallery photos manager** (list/upload/remove against `book-photos/{slug}/` + `Titles.book_photos_blurs`). `BookEditForm`, `BookPhotosManager`, `ImageUploader` (reusable), `src/lib/admin/blur.ts`, `updateBookAction`/`uploadBookCoverAction`/`uploadBookPhotoAction`/`deleteBookPhotoAction`. **Verified live** (edit→save→DB+audit; photo upload/delete→bucket+blur map). Create deferred to Phase 4. |
 | 4 | Books: full create + lifecycle | ✅ | Editor restructured into **Тайтл** + **Продукты** sections. Products: per-type add/edit/remove (one of each; hard-delete row). Create book (`/admin/books/new` → draft), `BookStatusBar` (publish/archive/draft + hard-delete, blocked while published), status badges + filter on the list. Actions: create/setStatus/delete/addProduct/removeProduct/updateProduct. `Titles.status` migration + storefront RPC filter (committed `14f33eb`). Client-safe `bookProducts.ts` to keep server imports out of the client bundle. **Verified live** end-to-end (create→product→publish→storefront→archive→delete, all audit-logged). Full Title graph (awards/workers/contexts/trailers/digital files) still partial. |
-| 5 | Authors & Box Sets | ⬜ | author CRUD + photo/blur; box-set composition |
+| 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image filename), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image is a filename field — box-set images are static `/boxsets/` files, not a bucket. **Verified live** both (create→edit→relation→delete). |
 | 6 | Gift cards, Subscriptions, Promo codes | ⬜ | product CRUD; promo constraints per AGENTS.md |
 | 7 | Editorial (Articles, Dino-magazine, Submissions) | ⬜ | content CRUD; submission review (view/status/delete) |
 | 8 | Audit surfacing + polish | ⬜ | audit viewer, dashboard counts, a11y/responsive |
