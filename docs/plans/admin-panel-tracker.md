@@ -9,10 +9,13 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 8 (Audit surfacing + polish) — the final phase.
-- **Next action:** an audit-log viewer (read `AdminAuditLog`), wire the
-  dashboard counts to real data (orders awaiting fulfillment, draft books, new
-  submissions), and an a11y/responsive/empty-state pass.
+- **Status: ALL PHASES COMPLETE (0–8).** The admin panel covers auth/roles,
+  orders, the full book graph, featured curation, authors, box sets, gift cards,
+  subscriptions, promo codes, editorial (articles + submissions), the audit
+  viewer, and a live dashboard. Remaining optional/deferred items are listed
+  under "Deferred / future" below.
+- **Last phase:** Phase 8 — live dashboard counts (clickable), `/admin/audit`
+  log viewer + activity feed on the dashboard, panel loading/error states.
 - **Editorial note:** «Динозавр» magazine == the `Articles` collection (no
   separate table), so `/admin/articles` manages both; `/admin/dino-magazine`
   redirects there. Story submissions are files in the private
@@ -53,7 +56,11 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image filename), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image is a filename field — box-set images are static `/boxsets/` files, not a bucket. **Verified live** both (create→edit→relation→delete). |
 | 6 | Gift cards, Subscriptions, Promo codes | ✅ | **Gift cards**: `GiftCardProducts` CRUD + image (gift-cards bucket), delete blocked if issued. **Subscriptions**: CRUD + perks (one-per-line → text[]) + image (subscriptions bucket + blur), delete blocked if subscribers. **Promo codes**: create/edit/delete with cart/item target constraint enforced server-side + uppercased codes, computed active flag. **Verified live** (lists render; promo create→uppercase+cart-null constraint→delete). |
 | 7 | Editorial (Articles, Dino-magazine, Submissions) | ✅ | **Articles**: `/admin/articles` list + create→edit (title, slug, author, excerpt, published_at, cover upload → articles bucket + blur + dimensions, `content_blocks` as raw JSON) + delete. **Dino-magazine** == Articles (no separate table) → `/admin/dino-magazine` redirects to articles; nav consolidated to «Статьи (Динозавр)». **Submissions**: `/admin/submissions` lists the private `story-submissions` bucket (download via signed URL + delete; no DB table/status). **Verified live** (articles create→content-JSON save→delete; redirect; submissions render). |
-| 8 | Audit surfacing + polish | ⬜ | audit viewer, dashboard counts, a11y/responsive |
+| 8 | Audit surfacing + polish | ✅ | Live dashboard counts (clickable → filtered lists) for orders-to-ship / draft books / submissions, plus a recent-activity feed. `/admin/audit` full log viewer (reads `AdminAuditLog`, resolves actor emails). Panel `loading.tsx` + `error.tsx`. **Verified live** (counts real, feed shows session actions, audit page 13 rows). |
+
+**Featured curation (refinement, post Phase 7):** homepage featured is the
+`featured_books` table; removed the dead per-title `is_featured` toggle and added
+`/admin/featured` (ordered add/remove/reorder). Nav «На главной». Verified live.
 
 ---
 

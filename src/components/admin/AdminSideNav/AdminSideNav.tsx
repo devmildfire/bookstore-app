@@ -21,6 +21,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { href: '/admin/promo-codes', label: 'Промокоды' },
   { href: '/admin/articles', label: 'Статьи (Динозавр)' },
   { href: '/admin/submissions', label: 'Заявки' },
+  { href: '/admin/audit', label: 'Журнал' },
 ]
 
 export default function AdminSideNav() {
