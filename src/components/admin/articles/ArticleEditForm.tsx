@@ -3,6 +3,7 @@
 import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateArticleAction, deleteArticleAction } from '@/lib/admin/articles/actions'
+import { blocksToText } from '@/lib/admin/articleContent'
 import Button from '@/components/common/Button'
 import type { AdminArticle } from '@/api/admin/articles'
 import styles from './ArticleEditForm.module.scss'
@@ -69,13 +70,16 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
       </label>
 
       <label className={styles.label}>
-        Контент (блоки, JSON-массив)
+        Текст статьи
+        <span className={styles.hint}>
+          Абзацы разделяйте пустой строкой. Картинку вставляйте отдельной строкой:
+          <code> [img: файл.png | подпись]</code>
+        </span>
         <textarea
-          name='contentBlocks'
-          defaultValue={JSON.stringify(article.contentBlocks ?? [], null, 2)}
-          className={styles.code}
-          rows={14}
-          spellCheck={false}
+          name='content'
+          defaultValue={blocksToText(article.contentBlocks)}
+          className={styles.text}
+          rows={18}
         />
       </label>
 

@@ -8,7 +8,11 @@
   &:focus-visible { outline: 2px solid $color-accent-on-dark; outline-offset: 1px; }
 }
 .textarea { resize: vertical; }
-.code { resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.5; white-space: pre; }
+.text { resize: vertical; font-family: $font-montserrat; font-size: $font-size-base; line-height: 1.6; }
+.hint {
+  font-family: $font-montserrat; font-size: $font-size-xs; color: rgba($color-text-on-dark, 0.5);
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: $color-accent-on-dark; }
+}
 .actions { display: flex; align-items: center; gap: $space-4; }
 .ok { font-family: $font-montserrat; font-size: $font-size-sm; color: #4caf7d; }
 .err { font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; }

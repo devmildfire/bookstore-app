@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { makeBlurDataUrl } from '@/lib/admin/blur'
+import { textToBlocks } from '@/lib/admin/articleContent'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getArticleImageUrl } from '@/lib/storage'
 import type { Json } from '@/types/supabase'
@@ -75,7 +76,7 @@ const updateSchema = z.object({
   authorId: z.coerce.number().int().positive(),
   excerpt: z.string().optional(),
   publishedAt: z.string().min(1, 'Укажите дату публикации'),
-  contentBlocks: z.string().optional(),
+  content: z.string().optional(),
 })
 
 export async function updateArticleAction(_prev: ArticleActionResult | null, formData: FormData): Promise<ArticleActionResult> {
@@ -87,21 +88,13 @@ export async function updateArticleAction(_prev: ArticleActionResult | null, for
     authorId: formData.get('authorId'),
     excerpt: (formData.get('excerpt') as string) || undefined,
     publishedAt: formData.get('publishedAt'),
-    contentBlocks: (formData.get('contentBlocks') as string) || undefined,
+    content: (formData.get('content') as string) || undefined,
   })
   if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
   const d = parsed.data
 
-  // content_blocks: edited as raw JSON; must be a JSON array.
-  let blocks: unknown = []
-  if (d.contentBlocks?.trim()) {
-    try {
-      blocks = JSON.parse(d.contentBlocks)
-    } catch {
-      return { status: 'error', message: 'Контент: неверный JSON.' }
-    }
-    if (!Array.isArray(blocks)) return { status: 'error', message: 'Контент должен быть JSON-массивом блоков.' }
-  }
+  // Editor text → content_blocks (paragraphs split on blank lines; image markers).
+  const blocks = textToBlocks(d.content ?? '')
   const publishedAt = new Date(d.publishedAt)
   if (Number.isNaN(publishedAt.getTime())) return { status: 'error', message: 'Неверная дата.' }
 
