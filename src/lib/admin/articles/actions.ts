@@ -180,3 +180,27 @@ export async function uploadArticleCoverAction(formData: FormData): Promise<Uplo
   revalidatePath('/admin/articles')
   return { status: 'ok', url: `${getArticleImageUrl(filename)}?v=${Date.now()}` }
 }
+
+export type ContentImageResult = { status: 'ok'; path: string } | { status: 'error'; message: string }
+
+// Upload an inline content image to the articles bucket; returns the bare
+// object name (the editor inserts it into the text as an [img: …] marker).
+export async function uploadArticleContentImageAction(formData: FormData): Promise<ContentImageResult> {
+  await requireAdmin()
+  const id = Number(formData.get('articleId'))
+  const file = formData.get('file')
+  if (!Number.isInteger(id) || id <= 0) return { status: 'error', message: 'Неверный id.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  const ext = MIME_EXT[file.type]
+  if (!ext) return { status: 'error', message: 'Только JPEG, PNG или WEBP.' }
+  if (file.size > MAX_IMAGE_BYTES) return { status: 'error', message: 'Файл больше 20 МБ.' }
+
+  const admin = createAdminClient()
+  const filename = `article-${id}-content-${Date.now()}.${ext}`
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error } = await admin.storage
+    .from(ARTICLES_BUCKET)
+    .upload(filename, buffer, { contentType: file.type, upsert: true })
+  if (error) return { status: 'error', message: error.message }
+  return { status: 'ok', path: filename }
+}

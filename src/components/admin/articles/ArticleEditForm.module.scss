@@ -8,7 +8,23 @@
   &:focus-visible { outline: 2px solid $color-accent-on-dark; outline-offset: 1px; }
 }
 .textarea { resize: vertical; }
-.text { resize: vertical; font-family: $font-montserrat; font-size: $font-size-base; line-height: 1.6; }
+.text {
+  width: 100%;
+  resize: vertical;
+  padding: $space-3;
+  background: $color-sidebar;
+  border: 1px solid rgba($color-text-on-dark, 0.2);
+  border-radius: $radius-sm;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: $color-text-on-dark;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 1px;
+  }
+}
 .hint {
   font-family: $font-montserrat; font-size: $font-size-xs; color: rgba($color-text-on-dark, 0.5);
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: $color-accent-on-dark; }

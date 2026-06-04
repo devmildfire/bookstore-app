@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { updateArticleAction, deleteArticleAction } from '@/lib/admin/articles/actions'
 import { blocksToText } from '@/lib/admin/articleContent'
 import Button from '@/components/common/Button'
+import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
 import styles from './ArticleEditForm.module.scss'
 
@@ -69,19 +70,11 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
         <textarea name='excerpt' defaultValue={article.excerpt ?? ''} className={styles.textarea} rows={2} />
       </label>
 
-      <label className={styles.label}>
+      <div className={styles.label}>
         Текст статьи
-        <span className={styles.hint}>
-          Абзацы разделяйте пустой строкой. Картинку вставляйте отдельной строкой:
-          <code> [img: файл.png | подпись]</code>
-        </span>
-        <textarea
-          name='content'
-          defaultValue={blocksToText(article.contentBlocks)}
-          className={styles.text}
-          rows={18}
-        />
-      </label>
+        <span className={styles.hint}>Абзацы разделяйте пустой строкой.</span>
+        <ArticleContentEditor articleId={article.id} initialText={blocksToText(article.contentBlocks)} />
+      </div>
 
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>
