@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminBoxSet, getTitleOptions } from '@/api/admin/boxSets'
 import { BoxSetEditForm, BoxSetBooksManager } from '@/components/admin/boxSets'
+import ImageUploader from '@/components/admin/ImageUploader'
+import { uploadBoxSetImageAction } from '@/lib/admin/boxSets/actions'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Бокс-сет' }
@@ -28,6 +30,18 @@ export default async function AdminBoxSetEditPage({ params }: Props) {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Бокс-сет</h2>
         <BoxSetEditForm boxSet={boxSet} />
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Картинка</h2>
+        <p className={styles.sectionNote}>SVG, PNG, JPEG или WEBP. SVG встраивается в код на витрине.</p>
+        <ImageUploader
+          initialUrl={boxSet.imageUrl}
+          action={uploadBoxSetImageAction}
+          fields={{ boxSetId: String(boxSet.id) }}
+          aspect='square'
+          accept='image/svg+xml,image/png,image/jpeg,image/webp'
+        />
       </section>
 
       <section className={styles.section}>

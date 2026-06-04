@@ -6,8 +6,18 @@ import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { createAdminClient } from '@/lib/supabase/server'
+import { getBoxSetImageUrl } from '@/lib/storage'
 
 export type BoxSetActionResult = { status: 'ok' } | { status: 'error'; message: string }
+export type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
+
+const BOX_SETS_BUCKET = 'box-sets'
+const IMAGE_EXT: Record<string, string> = {
+  'image/svg+xml': 'svg',
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/webp': 'webp',
+}
 
 type LooseWriter = {
   insert: (v: Record<string, unknown>) => Promise<{ error: { message: string } | null }>
@@ -71,7 +81,6 @@ const updateSchema = z.object({
   description: z.string().optional(),
   price: z.coerce.number().int().min(0),
   discount: z.coerce.number().int().min(0).max(100).optional(),
-  image: z.string().optional(),
   isPublished: z.boolean(),
   isActive: z.boolean(),
 })
@@ -85,7 +94,6 @@ export async function updateBoxSetAction(_prev: BoxSetActionResult | null, formD
     description: (formData.get('description') as string) || undefined,
     price: formData.get('price'),
     discount: (formData.get('discount') as string) || undefined,
-    image: (formData.get('image') as string) || undefined,
     isPublished: formData.get('isPublished') === 'on',
     isActive: formData.get('isActive') === 'on',
   })
@@ -101,7 +109,6 @@ export async function updateBoxSetAction(_prev: BoxSetActionResult | null, formD
       description: d.description ?? null,
       price: d.price,
       discount: d.discount ?? null,
-      image: d.image ?? null,
       is_published: d.isPublished,
       is_active: d.isActive,
     })
@@ -181,4 +188,33 @@ export async function removeBoxSetBookAction(formData: FormData): Promise<BoxSet
 
   revalidatePath(`/admin/box-sets/${boxSetId}`)
   return { status: 'ok' }
+}
+
+// Upload a box-set image (SVG/PNG/JPG/WEBP) to the box-sets bucket and store its
+// bare filename on the box set. SVGs are inlined by the storefront.
+export async function uploadBoxSetImageAction(formData: FormData): Promise<UploadResult> {
+  await requireAdmin()
+  const id = Number(formData.get('boxSetId'))
+  const file = formData.get('file')
+  if (!Number.isInteger(id) || id <= 0) return { status: 'error', message: 'Неверный id.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  const ext = IMAGE_EXT[file.type]
+  if (!ext) return { status: 'error', message: 'Только SVG, PNG, JPEG или WEBP.' }
+  if (file.size > 5 * 1024 * 1024) return { status: 'error', message: 'Файл больше 5 МБ.' }
+
+  const admin = createAdminClient()
+  const filename = `boxset-${id}.${ext}`
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error: uploadError } = await admin.storage
+    .from(BOX_SETS_BUCKET)
+    .upload(filename, buffer, { contentType: file.type, upsert: true })
+  if (uploadError) return { status: 'error', message: uploadError.message }
+
+  const { error } = await admin.from('BoxSets').update({ image: filename }).eq('id', id)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/box-sets/${id}`)
+  revalidatePath('/admin/box-sets')
+  revalidatePath('/')
+  return { status: 'ok', url: `${getBoxSetImageUrl(filename)}?v=${Date.now()}` }
 }

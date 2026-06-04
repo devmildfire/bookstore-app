@@ -49,14 +49,19 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       aria-label={isOpen ? `Свернуть ${boxSet.name}` : `Развернуть ${boxSet.name}`}
     >
       <div className={styles.imageWrap}>
-        {boxSet.imageUrl && (
-          <Image
-            src={boxSet.imageUrl}
-            alt={boxSet.name}
-            width={160}
-            height={160}
-            className={styles.image}
+        {boxSet.imageSvg ? (
+          // Trusted, admin-uploaded SVG from the box-sets bucket — inlined so it
+          // scales and themes cleanly.
+          <span
+            className={styles.imageSvg}
+            role="img"
+            aria-label={boxSet.name}
+            dangerouslySetInnerHTML={{ __html: boxSet.imageSvg }}
           />
+        ) : (
+          boxSet.imageUrl && (
+            <Image src={boxSet.imageUrl} alt={boxSet.name} width={160} height={160} className={styles.image} />
+          )
         )}
       </div>
 

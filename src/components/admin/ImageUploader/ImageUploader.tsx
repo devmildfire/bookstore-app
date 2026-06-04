@@ -7,6 +7,10 @@ import styles from './ImageUploader.module.scss'
 
 type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
 
+function isSvg(url: string): boolean {
+  return url.split('?')[0].toLowerCase().endsWith('.svg')
+}
+
 type Props = {
   initialUrl: string | null
   // Server action that receives the FormData (file + merged `fields`) and
@@ -16,9 +20,17 @@ type Props = {
   fields?: Record<string, string>
   aspect?: 'cover' | 'square'
   label?: string
+  accept?: string
 }
 
-export default function ImageUploader({ initialUrl, action, fields, aspect = 'cover', label }: Props) {
+export default function ImageUploader({
+  initialUrl,
+  action,
+  fields,
+  aspect = 'cover',
+  label,
+  accept = 'image/jpeg,image/png,image/webp',
+}: Props) {
   const [url, setUrl] = useState(initialUrl)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +54,13 @@ export default function ImageUploader({ initialUrl, action, fields, aspect = 'co
     <div className={styles.wrap}>
       <div className={cn(styles.preview, styles[aspect])}>
         {url ? (
-          <Image src={url} alt={label ?? 'Изображение'} fill sizes='200px' className={styles.img} unoptimized />
+          isSvg(url) ? (
+            // next/image can't render remote SVG; show it as a plain element.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={url} alt={label ?? 'Изображение'} className={styles.svg} />
+          ) : (
+            <Image src={url} alt={label ?? 'Изображение'} fill sizes='200px' className={styles.img} unoptimized />
+          )
         ) : (
           <div className={styles.placeholder} aria-hidden />
         )}
@@ -52,7 +70,7 @@ export default function ImageUploader({ initialUrl, action, fields, aspect = 'co
         <input
           ref={inputRef}
           type='file'
-          accept='image/jpeg,image/png,image/webp'
+          accept={accept}
           onChange={handleChange}
           className={styles.input}
           disabled={busy}

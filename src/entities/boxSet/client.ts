@@ -16,6 +16,9 @@ export type BoxSet = {
   discount: number | null
   originalPrice: number | null
   imageUrl: string | null
+  // Inline SVG markup when the image is an SVG (fetched from storage); null for
+  // raster images, which render via imageUrl instead.
+  imageSvg: string | null
   position: number
   publishedAt: string | null
 }

@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/server'
+import { getBoxSetImageUrl } from '@/lib/storage'
 
 export type AdminBoxSetBook = {
   linkId: number
@@ -16,6 +17,7 @@ export type AdminBoxSet = {
   price: number
   discount: number | null
   image: string | null
+  imageUrl: string | null
   isPublished: boolean
   isActive: boolean
   books: AdminBoxSetBook[]
@@ -53,6 +55,7 @@ export async function getAdminBoxSet(id: number): Promise<AdminBoxSet | null> {
     price: bs.price,
     discount: bs.discount,
     image: bs.image,
+    imageUrl: getBoxSetImageUrl(bs.image),
     isPublished: bs.is_published,
     isActive: bs.is_active,
     books,

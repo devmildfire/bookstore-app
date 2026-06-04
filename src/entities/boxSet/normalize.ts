@@ -15,6 +15,7 @@ export function normalizeBoxSet(raw: BoxSetRow): BoxSet {
     discount,
     originalPrice,
     imageUrl: getBoxSetImageUrl(raw.image),
+    imageSvg: null, // populated by the loader for SVG images (fetched markup)
     position: raw.position,
     publishedAt: raw.publish_date,
   }

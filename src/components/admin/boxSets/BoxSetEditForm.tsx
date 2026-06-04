@@ -54,10 +54,6 @@ export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
           Скидка %
           <input name='discount' type='number' min={0} max={100} defaultValue={boxSet.discount ?? ''} className={styles.input} />
         </label>
-        <label className={styles.label}>
-          Картинка (файл в /boxsets/)
-          <input name='image' defaultValue={boxSet.image ?? ''} className={styles.input} placeholder='напр. set-1.jpg' />
-        </label>
       </div>
 
       <div className={styles.checks}>
