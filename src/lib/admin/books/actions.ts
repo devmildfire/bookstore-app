@@ -30,7 +30,6 @@ const coreSchema = z.object({
   firstRelease: z.string().optional(),
   litForm: z.string().optional(),
   isCompilation: z.boolean(),
-  isFeatured: z.boolean(),
 })
 
 function numOrNull(v: FormDataEntryValue | null): number | null {
@@ -64,7 +63,6 @@ export async function updateBookAction(_prev: AdminActionResult | null, formData
     firstRelease: (formData.get('firstRelease') as string) || undefined,
     litForm: (formData.get('litForm') as string) || undefined,
     isCompilation: formData.get('isCompilation') === 'on',
-    isFeatured: formData.get('isFeatured') === 'on',
   })
   if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
   const d = parsed.data
@@ -82,7 +80,6 @@ export async function updateBookAction(_prev: AdminActionResult | null, formData
       first_release: d.firstRelease ?? null,
       lit_form: d.litForm ?? null,
       is_compilation: d.isCompilation,
-      is_featured: d.isFeatured,
     })
     .eq('id', d.id)
   if (titleError) return { status: 'error', message: titleError.message }

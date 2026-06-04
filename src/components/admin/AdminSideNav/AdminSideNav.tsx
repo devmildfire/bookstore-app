@@ -13,6 +13,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { href: '/admin', label: 'Сводка', exact: true },
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/books', label: 'Книги' },
+  { href: '/admin/featured', label: 'На главной' },
   { href: '/admin/authors', label: 'Авторы' },
   { href: '/admin/box-sets', label: 'Бокс-сеты' },
   { href: '/admin/gift-cards', label: 'Карты даров' },

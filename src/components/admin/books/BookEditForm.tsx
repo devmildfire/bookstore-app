@@ -60,10 +60,6 @@ export default function BookEditForm({ book }: Props) {
 
       <div className={styles.checks}>
         <label className={styles.check}>
-          <input type='checkbox' name='isFeatured' defaultChecked={book.isFeatured} />
-          Рекомендуемая (на главной)
-        </label>
-        <label className={styles.check}>
           <input type='checkbox' name='isCompilation' defaultChecked={book.isCompilation} />
           Сборник
         </label>

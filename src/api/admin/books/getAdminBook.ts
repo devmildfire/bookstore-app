@@ -48,7 +48,6 @@ export type AdminBook = {
   firstRelease: string | null
   litForm: string | null
   isCompilation: boolean
-  isFeatured: boolean
   authors: { id: number; name: string }[]
   awards: AdminAward[]
   editions: AdminEdition[]
@@ -157,7 +156,6 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     firstRelease: title.first_release,
     litForm: title.lit_form,
     isCompilation: title.is_compilation,
-    isFeatured: title.is_featured ?? false,
     authors,
     awards,
     editions,

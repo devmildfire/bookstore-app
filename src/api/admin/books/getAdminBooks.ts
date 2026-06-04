@@ -32,7 +32,7 @@ export async function getAdminBooks(
 
   let query = admin
     .from('Titles')
-    .select('id, name, slug, status, cover, is_featured', { count: 'exact' })
+    .select('id, name, slug, status, cover', { count: 'exact' })
     .order('id', { ascending: false })
 
   const q = filters.q?.trim()
@@ -44,13 +44,21 @@ export async function getAdminBooks(
   const { data, error, count } = await query.range(from, to)
   if (error) throw new Error(`Не удалось загрузить книги: ${error.message}`)
 
+  // "На главной" reflects membership in featured_books (the homepage source).
+  const pageTitleIds = (data ?? []).map((r) => r.id)
+  const featuredIds = new Set<number>()
+  if (pageTitleIds.length > 0) {
+    const { data: feat } = await admin.from('featured_books').select('title_id').in('title_id', pageTitleIds)
+    for (const f of feat ?? []) featuredIds.add(f.title_id as number)
+  }
+
   const books: AdminBookListItem[] = (data ?? []).map((row) => ({
     id: row.id,
     name: row.name,
     slug: row.slug,
     status: (row.status as BookStatus) ?? 'published',
     coverUrl: getCoverUrl(row.cover),
-    isFeatured: row.is_featured ?? false,
+    isFeatured: featuredIds.has(row.id),
   }))
   return { books, total: count ?? 0, page, pageSize }
 }
