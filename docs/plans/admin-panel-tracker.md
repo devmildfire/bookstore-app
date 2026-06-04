@@ -9,11 +9,10 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 6 (Gift cards, Subscriptions, Promo codes).
-- **Next action:** CRUD for `GiftCardProducts`, `Subscriptions` (plan fields +
-  image), and `PromoCodes` (cart/item kinds, target validation, window, %;
-  respect AGENTS.md “Promo codes”). Follow the list/create/[id] + manager
-  patterns from Phases 4–5.
+- **Current phase:** Phase 7 (Editorial: Articles, Dino-magazine, Story submissions).
+- **Next action:** Articles CRUD (+ cover upload/dimensions), Dino-magazine
+  management, and a Story-submission review queue (view + status + delete).
+  Follow the list/create/[id] + manager patterns from Phases 4–6.
 - **Box-set image note:** box-set images are static files under `public/boxsets/`
   (not a storage bucket), so the editor exposes the image as a filename field,
   not an uploader. Real upload would need a `box-sets` bucket migration.
@@ -46,7 +45,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 3 | Books: list + edit existing | ✅ | `/admin/books` (search + pagination), `/admin/books/[id]` editor: core Title fields + featured/compilation + per-edition price/discount/published/sold_out + cover upload (sharp blur → `Titles.cover_blur`) + **gallery photos manager** (list/upload/remove against `book-photos/{slug}/` + `Titles.book_photos_blurs`). `BookEditForm`, `BookPhotosManager`, `ImageUploader` (reusable), `src/lib/admin/blur.ts`, `updateBookAction`/`uploadBookCoverAction`/`uploadBookPhotoAction`/`deleteBookPhotoAction`. **Verified live** (edit→save→DB+audit; photo upload/delete→bucket+blur map). Create deferred to Phase 4. |
 | 4 | Books: full create + lifecycle | ✅ | Editor restructured into **Тайтл** + **Продукты** sections. Products: per-type add/edit/remove (one of each; hard-delete row). Create book (`/admin/books/new` → draft), `BookStatusBar` (publish/archive/draft + hard-delete, blocked while published), status badges + filter on the list. Actions: create/setStatus/delete/addProduct/removeProduct/updateProduct. `Titles.status` migration + storefront RPC filter (committed `14f33eb`). Client-safe `bookProducts.ts` to keep server imports out of the client bundle. **Verified live** end-to-end (create→product→publish→storefront→archive→delete, all audit-logged). Full Title graph (awards/workers/contexts/trailers/digital files) still partial. |
 | 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image filename), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image is a filename field — box-set images are static `/boxsets/` files, not a bucket. **Verified live** both (create→edit→relation→delete). |
-| 6 | Gift cards, Subscriptions, Promo codes | ⬜ | product CRUD; promo constraints per AGENTS.md |
+| 6 | Gift cards, Subscriptions, Promo codes | ✅ | **Gift cards**: `GiftCardProducts` CRUD + image (gift-cards bucket), delete blocked if issued. **Subscriptions**: CRUD + perks (one-per-line → text[]) + image (subscriptions bucket + blur), delete blocked if subscribers. **Promo codes**: create/edit/delete with cart/item target constraint enforced server-side + uppercased codes, computed active flag. **Verified live** (lists render; promo create→uppercase+cart-null constraint→delete). |
 | 7 | Editorial (Articles, Dino-magazine, Submissions) | ⬜ | content CRUD; submission review (view/status/delete) |
 | 8 | Audit surfacing + polish | ⬜ | audit viewer, dashboard counts, a11y/responsive |
 
