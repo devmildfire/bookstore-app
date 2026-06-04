@@ -1,0 +1,14 @@
+@use '@/styles/common' as *;
+.wrap { display: flex; flex-direction: column; gap: $space-3; }
+.empty { margin: 0; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }
+.err { margin: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: $radius-md; overflow: hidden; }
+.item { display: flex; align-items: center; gap: $space-4; padding: $space-3 $space-4; border-bottom: 1px solid rgba($color-text-on-dark, 0.07); &:last-child { border-bottom: none; } }
+.info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.name { font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; word-break: break-all; }
+.meta { font-family: $font-montserrat; font-size: 12px; color: rgba($color-text-on-dark, 0.5); }
+.download, .delete {
+  padding: $space-1 $space-3; border-radius: 100px; font-family: $font-montserrat; font-size: $font-size-xs; cursor: pointer; background: transparent;
+}
+.download { border: 1px solid rgba($color-text-on-dark, 0.25); color: $color-text-on-dark; &:hover { border-color: $color-accent-on-dark; color: $color-accent-on-dark; } }
+.delete { border: 1px solid rgba($color-accent-on-dark, 0.5); color: $color-accent-on-dark; &:hover { background: rgba($color-accent-on-dark, 0.1); } }

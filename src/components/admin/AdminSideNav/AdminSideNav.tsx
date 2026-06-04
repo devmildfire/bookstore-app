@@ -7,8 +7,8 @@ import styles from './AdminSideNav.module.scss'
 
 type NavItem = { href: string; label: string; exact?: boolean }
 
-// Sections in build order. Items beyond Orders/Books are placeholders until
-// their phase lands (see docs/plans/admin-panel-tracker.md).
+// Admin sections. «Статьи» covers the «Динозавр» magazine (same Articles data),
+// so there's no separate Динозавр entry — /admin/dino-magazine redirects there.
 const NAV_ITEMS: readonly NavItem[] = [
   { href: '/admin', label: 'Сводка', exact: true },
   { href: '/admin/orders', label: 'Заказы' },
@@ -18,8 +18,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { href: '/admin/gift-cards', label: 'Карты даров' },
   { href: '/admin/subscriptions', label: 'Подписки' },
   { href: '/admin/promo-codes', label: 'Промокоды' },
-  { href: '/admin/articles', label: 'Статьи' },
-  { href: '/admin/dino-magazine', label: 'Динозавр' },
+  { href: '/admin/articles', label: 'Статьи (Динозавр)' },
   { href: '/admin/submissions', label: 'Заявки' },
 ]
 

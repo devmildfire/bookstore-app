@@ -1,10 +1,6 @@
-import type { Metadata } from 'next'
-import ComingSoon from '@/components/admin/ComingSoon'
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = {
-  title: 'Динозавр',
-}
-
-export default function AdminSectionPage() {
-  return <ComingSoon title='Динозавр' />
+// The «Динозавр» magazine is the Articles collection — managed under /admin/articles.
+export default function AdminDinoMagazineRedirect() {
+  redirect('/admin/articles')
 }

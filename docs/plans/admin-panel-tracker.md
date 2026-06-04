@@ -9,10 +9,16 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 
 ## ▶️ Resume here
 
-- **Current phase:** Phase 7 (Editorial: Articles, Dino-magazine, Story submissions).
-- **Next action:** Articles CRUD (+ cover upload/dimensions), Dino-magazine
-  management, and a Story-submission review queue (view + status + delete).
-  Follow the list/create/[id] + manager patterns from Phases 4–6.
+- **Current phase:** Phase 8 (Audit surfacing + polish) — the final phase.
+- **Next action:** an audit-log viewer (read `AdminAuditLog`), wire the
+  dashboard counts to real data (orders awaiting fulfillment, draft books, new
+  submissions), and an a11y/responsive/empty-state pass.
+- **Editorial note:** «Динозавр» magazine == the `Articles` collection (no
+  separate table), so `/admin/articles` manages both; `/admin/dino-magazine`
+  redirects there. Story submissions are files in the private
+  `story-submissions` bucket (no DB table, no status) — the queue is
+  list/download/delete. Article `content_blocks` is edited as raw JSON
+  (no rich block editor).
 - **Box-set image note:** box-set images are static files under `public/boxsets/`
   (not a storage bucket), so the editor exposes the image as a filename field,
   not an uploader. Real upload would need a `box-sets` bucket migration.
@@ -46,7 +52,7 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 4 | Books: full create + lifecycle | ✅ | Editor restructured into **Тайтл** + **Продукты** sections. Products: per-type add/edit/remove (one of each; hard-delete row). Create book (`/admin/books/new` → draft), `BookStatusBar` (publish/archive/draft + hard-delete, blocked while published), status badges + filter on the list. Actions: create/setStatus/delete/addProduct/removeProduct/updateProduct. `Titles.status` migration + storefront RPC filter (committed `14f33eb`). Client-safe `bookProducts.ts` to keep server imports out of the client bundle. **Verified live** end-to-end (create→product→publish→storefront→archive→delete, all audit-logged). Full Title graph (awards/workers/contexts/trailers/digital files) still partial. |
 | 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image filename), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image is a filename field — box-set images are static `/boxsets/` files, not a bucket. **Verified live** both (create→edit→relation→delete). |
 | 6 | Gift cards, Subscriptions, Promo codes | ✅ | **Gift cards**: `GiftCardProducts` CRUD + image (gift-cards bucket), delete blocked if issued. **Subscriptions**: CRUD + perks (one-per-line → text[]) + image (subscriptions bucket + blur), delete blocked if subscribers. **Promo codes**: create/edit/delete with cart/item target constraint enforced server-side + uppercased codes, computed active flag. **Verified live** (lists render; promo create→uppercase+cart-null constraint→delete). |
-| 7 | Editorial (Articles, Dino-magazine, Submissions) | ⬜ | content CRUD; submission review (view/status/delete) |
+| 7 | Editorial (Articles, Dino-magazine, Submissions) | ✅ | **Articles**: `/admin/articles` list + create→edit (title, slug, author, excerpt, published_at, cover upload → articles bucket + blur + dimensions, `content_blocks` as raw JSON) + delete. **Dino-magazine** == Articles (no separate table) → `/admin/dino-magazine` redirects to articles; nav consolidated to «Статьи (Динозавр)». **Submissions**: `/admin/submissions` lists the private `story-submissions` bucket (download via signed URL + delete; no DB table/status). **Verified live** (articles create→content-JSON save→delete; redirect; submissions render). |
 | 8 | Audit surfacing + polish | ⬜ | audit viewer, dashboard counts, a11y/responsive |
 
 ---
