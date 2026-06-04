@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { makeBlurDataUrl } from '@/lib/admin/blur'
-import { textToBlocks } from '@/lib/admin/articleContent'
+import { parseContentBlocks } from '@/lib/admin/articleContent'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getArticleImageUrl } from '@/lib/storage'
 import type { Json } from '@/types/supabase'
@@ -93,8 +93,8 @@ export async function updateArticleAction(_prev: ArticleActionResult | null, for
   if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
   const d = parsed.data
 
-  // Editor text → content_blocks (paragraphs split on blank lines; image markers).
-  const blocks = textToBlocks(d.content ?? '')
+  // The Lexical editor serializes content_blocks as a JSON string.
+  const blocks = parseContentBlocks(d.content ?? '')
   const publishedAt = new Date(d.publishedAt)
   if (Number.isNaN(publishedAt.getTime())) return { status: 'error', message: 'Неверная дата.' }
 

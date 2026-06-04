@@ -1,38 +1,29 @@
 @use '@/styles/common' as *;
 
-.wrap { display: flex; flex-direction: column; gap: $space-4; }
-.text {
-  width: 100%; resize: vertical; padding: $space-3;
-  background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2); border-radius: $radius-sm;
-  font-family: $font-montserrat; font-size: $font-size-base; line-height: 1.6; color: $color-text-on-dark;
-  &:focus-visible { outline: 2px solid $color-accent-on-dark; outline-offset: 1px; }
-}
-.images { display: flex; flex-direction: column; gap: $space-3; }
-.imagesLabel { font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: $font-size-sm; color: $color-text-on-dark; }
-.note { margin: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
-.grid { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: $space-3; }
-.tile {
-  position: relative; width: 140px; display: flex; flex-direction: column; gap: $space-1;
-}
-.thumb { position: relative; width: 140px; aspect-ratio: 4 / 3; border-radius: $radius-sm; overflow: hidden; background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.15); }
-.thumbImg { object-fit: cover; }
-.thumbPlaceholder { display: block; width: 100%; height: 100%; }
-.caption { font-family: $font-montserrat; font-size: 12px; line-height: 1.3; color: rgba($color-text-on-dark, 0.6); word-break: break-word; }
-.remove {
-  position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.6); border: none; border-radius: $radius-full; color: #fff; font-size: 13px; cursor: pointer;
-  &:hover { background: $color-accent-on-dark; }
-}
-.add { display: flex; flex-wrap: wrap; gap: $space-3; align-items: center; }
-.captionInput {
-  padding: $space-2 $space-3; background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2); border-radius: $radius-sm;
-  font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; min-width: 220px;
-}
+.wrap { display: flex; flex-direction: column; gap: $space-3; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: $space-3; }
 .fileInput { display: none; }
-.addButton {
+.imageButton {
   padding: $space-2 $space-4; background: transparent; border: 1px dashed rgba($color-accent-on-dark, 0.6); border-radius: 100px;
   font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; cursor: pointer;
   &:hover { background: rgba($color-accent-on-dark, 0.1); }
 }
-.hint { margin: 0; font-family: $font-montserrat; font-size: $font-size-xs; color: rgba($color-text-on-dark, 0.45); code { font-family: ui-monospace, monospace; color: $color-accent-on-dark; } }
+.toolbarHint { font-family: $font-montserrat; font-size: $font-size-xs; color: rgba($color-text-on-dark, 0.45); }
 .err { font-family: $font-montserrat; font-size: $font-size-xs; color: $color-accent-on-dark; }
+
+.editorBox {
+  position: relative;
+  background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2); border-radius: $radius-sm;
+}
+.editable {
+  min-height: 280px; padding: $space-4; outline: none;
+  font-family: $font-montserrat; font-size: $font-size-base; line-height: 1.6; color: $color-text-on-dark;
+  &:focus-visible { outline: none; }
+}
+.editorBox:focus-within { border-color: rgba($color-accent-on-dark, 0.6); }
+.placeholder {
+  position: absolute; top: $space-4; left: $space-4; pointer-events: none;
+  font-family: $font-montserrat; font-size: $font-size-base; color: rgba($color-text-on-dark, 0.4);
+}
+.paragraph { margin: 0 0 $space-3; &:last-child { margin-bottom: 0; } }

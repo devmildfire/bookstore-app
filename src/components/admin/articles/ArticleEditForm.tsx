@@ -3,7 +3,6 @@
 import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateArticleAction, deleteArticleAction } from '@/lib/admin/articles/actions'
-import { blocksToText } from '@/lib/admin/articleContent'
 import Button from '@/components/common/Button'
 import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
@@ -72,8 +71,8 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
 
       <div className={styles.label}>
         Текст статьи
-        <span className={styles.hint}>Абзацы разделяйте пустой строкой.</span>
-        <ArticleContentEditor articleId={article.id} initialText={blocksToText(article.contentBlocks)} />
+        <span className={styles.hint}>Печатайте абзацы как обычно. Картинки добавляйте кнопкой выше редактора.</span>
+        <ArticleContentEditor articleId={article.id} initialContent={article.contentBlocks} />
       </div>
 
       <div className={styles.actions}>
