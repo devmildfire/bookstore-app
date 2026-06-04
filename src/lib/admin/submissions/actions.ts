@@ -34,7 +34,8 @@ export async function deleteSubmissionAction(formData: FormData): Promise<Submis
   if (!path) return { status: 'error', message: 'Неверный путь.' }
 
   const admin = createAdminClient()
-  const { error } = await admin.storage.from(STORY_SUBMISSIONS_BUCKET).remove([path])
+  // Remove the manuscript and its `.meta.json` sidecar (if any) together.
+  const { error } = await admin.storage.from(STORY_SUBMISSIONS_BUCKET).remove([path, `${path}.meta.json`])
   if (error) return { status: 'error', message: error.message }
 
   await logAdminAction({

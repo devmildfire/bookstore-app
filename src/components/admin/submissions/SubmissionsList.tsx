@@ -54,9 +54,18 @@ export default function SubmissionsList({ submissions }: { submissions: AdminSub
             <span className={styles.info}>
               <span className={styles.name}>{s.name}</span>
               <span className={styles.meta}>
-                {formatSize(s.sizeBytes)} · автор {s.userId.slice(0, 8)}…
+                {formatSize(s.sizeBytes)}
+                {s.authorName ? ` · ${s.authorName}` : ` · автор ${s.userId.slice(0, 8)}…`}
                 {s.createdAt ? ` · ${new Date(s.createdAt).toLocaleDateString('ru-RU')}` : ''}
               </span>
+              {s.coverLetter ? (
+                <span className={styles.letter}>
+                  <span className={styles.letterLabel}>Сопроводительное письмо</span>
+                  {s.coverLetter}
+                </span>
+              ) : (
+                <span className={styles.noLetter}>Без сопроводительного письма</span>
+              )}
             </span>
             <button type='button' className={styles.download} onClick={() => handleDownload(s.path)} disabled={busy}>
               Скачать

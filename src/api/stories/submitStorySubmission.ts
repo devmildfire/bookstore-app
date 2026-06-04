@@ -33,14 +33,15 @@ function slug(value: string, fallback: string): string {
  * so the first folder segment is the owner (matches the bucket RLS). The
  * author name slug is carried in the key for at-a-glance identification.
  *
- * Author name / cover-letter persistence beyond the filename is out of scope
- * for now (no submissions table yet) — the file lands in storage and is
- * validated by type + size; the rest of the metadata is collected for when a
- * review workflow is built.
+ * There is no submissions DB table; the manuscript lives in storage and is
+ * validated by type + size. The author name and cover letter are persisted as
+ * a small `{path}.meta.json` sidecar in the same folder (the upload RLS already
+ * scopes the folder to the owner), so the editorial panel can show them.
  */
 export async function submitStorySubmission({
   file,
   authorName,
+  coverLetter,
 }: StorySubmissionInput): Promise<StorySubmissionResult> {
   const fileError = validateStoryFile(file)
   if (fileError) {
@@ -66,6 +67,21 @@ export async function submitStorySubmission({
   if (error) {
     return { status: 'error', message: `Не удалось отправить: ${error.message}` }
   }
+
+  // Persist the author's name + cover letter alongside the manuscript. Best
+  // effort: the manuscript is already saved, so a sidecar failure must not fail
+  // the submission.
+  const sidecar = JSON.stringify({
+    authorName,
+    coverLetter: coverLetter ?? '',
+    submittedAt: new Date().toISOString(),
+  })
+  await supabase.storage
+    .from(STORY_BUCKET)
+    .upload(`${path}.meta.json`, new Blob([sidecar], { type: 'application/json' }), {
+      contentType: 'application/json',
+      upsert: true,
+    })
 
   return { status: 'ok', path }
 }
