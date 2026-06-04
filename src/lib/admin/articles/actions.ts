@@ -112,11 +112,35 @@ export async function updateArticleAction(_prev: ArticleActionResult | null, for
     .eq('id', d.id)
   if (error) return { status: 'error', message: error.message }
 
+  // Remove this article's uploaded content images that are no longer used.
+  const referenced = new Set(blocks.filter((b) => b.kind === 'image').map((b) => b.path))
+  await cleanupContentImages(admin, d.id, referenced)
+
   revalidatePath(`/admin/articles/${d.id}`)
   revalidatePath('/admin/articles')
   revalidatePath(`/dino-magazine/${d.slug}`)
   revalidatePath('/dino-magazine')
   return { status: 'ok' }
+}
+
+// Delete `article-{id}-content-*` objects in the articles bucket that aren't in
+// `keep`. Scoped to our own upload naming, so covers and legacy/shared images
+// are never touched. Best effort — never blocks the save.
+async function cleanupContentImages(
+  admin: ReturnType<typeof createAdminClient>,
+  articleId: number,
+  keep: Set<string>
+): Promise<void> {
+  try {
+    const prefix = `article-${articleId}-content-`
+    const { data: objects } = await admin.storage.from(ARTICLES_BUCKET).list('', { limit: 1000, search: prefix })
+    const orphans = (objects ?? [])
+      .map((o) => o.name)
+      .filter((name) => name.startsWith(prefix) && !keep.has(name))
+    if (orphans.length > 0) await admin.storage.from(ARTICLES_BUCKET).remove(orphans)
+  } catch {
+    // ignore — cleanup must not break the operation
+  }
 }
 
 export async function deleteArticleAction(_prev: ArticleActionResult | null, formData: FormData): Promise<ArticleActionResult> {
@@ -127,6 +151,7 @@ export async function deleteArticleAction(_prev: ArticleActionResult | null, for
   const admin = createAdminClient()
   const { data: art } = await admin.from('Articles').select('title, cover_path').eq('id', id).maybeSingle()
   if (art?.cover_path) await admin.storage.from(ARTICLES_BUCKET).remove([art.cover_path]).catch(() => {})
+  await cleanupContentImages(admin, id, new Set())
   const { error } = await admin.from('Articles').delete().eq('id', id)
   if (error) return { status: 'error', message: error.message }
 
