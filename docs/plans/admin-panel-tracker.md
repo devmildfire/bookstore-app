@@ -20,11 +20,17 @@ as work proceeds so an interrupted session can resume without re-deriving state.
   separate table), so `/admin/articles` manages both; `/admin/dino-magazine`
   redirects there. Story submissions are files in the private
   `story-submissions` bucket (no DB table, no status) — the queue is
-  list/download/delete. Article `content_blocks` is edited as raw JSON
-  (no rich block editor).
-- **Box-set image note:** box-set images are static files under `public/boxsets/`
-  (not a storage bucket), so the editor exposes the image as a filename field,
-  not an uploader. Real upload would need a `box-sets` bucket migration.
+  list/download/delete; the author name + cover letter are persisted as a
+  `{path}.meta.json` sidecar and shown in the list (no email yet — see
+  [story-submission-notifications.md](./story-submission-notifications.md)).
+  Article `content_blocks` is edited in a **minimal Lexical** rich-text editor
+  (paragraphs + inline images via a custom `ImageNode`; serialized back to the
+  `paragraph`/`image` block JSON, with orphaned content images cleaned up on
+  save) — `src/components/admin/articles/ArticleContentEditor.tsx` + `lexical/`.
+- **Box-set image note (resolved):** box-set images now live in the `box-sets`
+  Storage bucket (migration `20260604120000_box_sets_bucket.sql`); the editor
+  uses the reusable `ImageUploader` (SVG/PNG/JPEG/WEBP). SVGs are fetched and
+  inlined server-side on the storefront so they theme/scale.
 - **Reusable bits available:** `ImageUploader`, `src/lib/admin/blur.ts`,
   `StatusBadge`, `logAdminAction`, `ProductsManager`/`BookStatusBar` patterns,
   the GET-form list + pagination pattern, `src/lib/admin/bookProducts.ts`
@@ -53,9 +59,9 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | 2 | Orders management | ✅ | Migration `20260603160000` (tracking/carrier/note cols + `AdminAuditLog` + `admin_set_order_fulfillment` RPC) **applied to local DB + types regenerated**. Orders list (`/admin/orders`, filters + pagination), detail (`/admin/orders/[id]`), `setOrderFulfillmentAction`, `FulfillmentForm`, `StatusBadge`, audit timeline. `logAdminAction` helper added for later phases. |
 | 3 | Books: list + edit existing | ✅ | `/admin/books` (search + pagination), `/admin/books/[id]` editor: core Title fields + featured/compilation + per-edition price/discount/published/sold_out + cover upload (sharp blur → `Titles.cover_blur`) + **gallery photos manager** (list/upload/remove against `book-photos/{slug}/` + `Titles.book_photos_blurs`). `BookEditForm`, `BookPhotosManager`, `ImageUploader` (reusable), `src/lib/admin/blur.ts`, `updateBookAction`/`uploadBookCoverAction`/`uploadBookPhotoAction`/`deleteBookPhotoAction`. **Verified live** (edit→save→DB+audit; photo upload/delete→bucket+blur map). Create deferred to Phase 4. |
 | 4 | Books: full create + lifecycle | ✅ | Editor restructured into **Тайтл** + **Продукты** sections. Products: per-type add/edit/remove (one of each; hard-delete row). Create book (`/admin/books/new` → draft), `BookStatusBar` (publish/archive/draft + hard-delete, blocked while published), status badges + filter on the list. Actions: create/setStatus/delete/addProduct/removeProduct/updateProduct. `Titles.status` migration + storefront RPC filter (committed `14f33eb`). Client-safe `bookProducts.ts` to keep server imports out of the client bundle. **Verified live** end-to-end (create→product→publish→storefront→archive→delete, all audit-logged). Full Title graph (awards/workers/contexts/trailers/digital files) still partial. |
-| 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image filename), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image is a filename field — box-set images are static `/boxsets/` files, not a bucket. **Verified live** both (create→edit→relation→delete). |
+| 5 | Authors & Box Sets | ✅ | **Authors**: `/admin/authors` list+search, create→edit, photo upload (authors bucket + blur), core fields, contacts (channel+url), delete (blocked if linked to titles). **Box Sets**: `/admin/box-sets` list, create→edit (fields + publish/active + image upload), composition manager (`BoxSetBooks` add/remove with optional product_id), delete (cascade). Image upload → `box-sets` bucket via `ImageUploader` (migration `20260604120000`); SVGs inlined on the storefront. **Verified live** both (create→edit→relation→delete; image upload + inline SVG render). |
 | 6 | Gift cards, Subscriptions, Promo codes | ✅ | **Gift cards**: `GiftCardProducts` CRUD + image (gift-cards bucket), delete blocked if issued. **Subscriptions**: CRUD + perks (one-per-line → text[]) + image (subscriptions bucket + blur), delete blocked if subscribers. **Promo codes**: create/edit/delete with cart/item target constraint enforced server-side + uppercased codes, computed active flag. **Verified live** (lists render; promo create→uppercase+cart-null constraint→delete). |
-| 7 | Editorial (Articles, Dino-magazine, Submissions) | ✅ | **Articles**: `/admin/articles` list + create→edit (title, slug, author, excerpt, published_at, cover upload → articles bucket + blur + dimensions, `content_blocks` as raw JSON) + delete. **Dino-magazine** == Articles (no separate table) → `/admin/dino-magazine` redirects to articles; nav consolidated to «Статьи (Динозавр)». **Submissions**: `/admin/submissions` lists the private `story-submissions` bucket (download via signed URL + delete; no DB table/status). **Verified live** (articles create→content-JSON save→delete; redirect; submissions render). |
+| 7 | Editorial (Articles, Dino-magazine, Submissions) | ✅ | **Articles**: `/admin/articles` list + create→edit (title, slug, author, excerpt, published_at, cover upload → articles bucket + blur + dimensions, `content_blocks` via a minimal **Lexical** editor — paragraphs + inline images, orphan-image cleanup on save) + delete. **Dino-magazine** == Articles (no separate table) → `/admin/dino-magazine` redirects to articles; nav consolidated to «Статьи (Динозавр)». **Submissions**: `/admin/submissions` lists the private `story-submissions` bucket (download via signed URL + delete; no DB table/status); author name + cover letter persisted as a `.meta.json` sidecar and shown. **Verified live** (articles create→Lexical save→delete; redirect; submissions show cover letter end-to-end). |
 | 8 | Audit surfacing + polish | ✅ | Live dashboard counts (clickable → filtered lists) for orders-to-ship / draft books / submissions, plus a recent-activity feed. `/admin/audit` full log viewer (reads `AdminAuditLog`, resolves actor emails). Panel `loading.tsx` + `error.tsx`. **Verified live** (counts real, feed shows session actions, audit page 13 rows). |
 
 **Featured curation (refinement, post Phase 7):** homepage featured is the
@@ -69,7 +75,9 @@ as work proceeds so an interrupted session can resume without re-deriving state.
 | File (proposed) | Phase | Contents | Applied to local? |
 |---|---|---|---|
 | `20260603160000_order_tracking_and_audit.sql` | 2 | `Orders.tracking_number/tracking_carrier/admin_note`; `AdminAuditLog` table + RLS; `admin_set_order_fulfillment` RPC | ✅ (local; types regenerated) |
-| `..._title_publish_status.sql` | 4 | `Titles.status` (+ BoxSets/Subscriptions/GiftCardProducts); backfill `published`; storefront RPC filters | ⬜ |
+| `20260603140000_order_fulfillment_status.sql` | 2 | `Orders` fulfillment status enum/column | ✅ (local) |
+| `20260603170000_title_status.sql` | 4 | `Titles.status`; backfill `published`; storefront RPC filters | ✅ (local; types regenerated) |
+| `20260604120000_box_sets_bucket.sql` | 5 (refinement) | `box-sets` Storage bucket for box-set images | ✅ (local) |
 
 > After any schema change, regenerate types per AGENTS.md and commit
 > `src/types/supabase.ts`.

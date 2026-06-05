@@ -348,7 +348,9 @@ export default async function ArticleDetailPage({ params }) {
 
 ## Out of scope (deferred)
 
-- Editorial CMS / admin UI — articles seeded via Supabase Studio or SQL inserts for V1.
+- ~~Editorial CMS / admin UI — articles seeded via Supabase Studio or SQL inserts for V1.~~
+  **Now built:** `/admin/articles` (create/edit/delete, cover upload, minimal
+  Lexical body editor). See [admin-panel-tracker.md](./admin-panel-tracker.md) Phase 7.
 - View-count tracking and the "Популярные" tab.
 - Comments, likes, share buttons.
 - Tags / categories / topic filters.
@@ -362,6 +364,14 @@ export default async function ArticleDetailPage({ params }) {
 ---
 
 ## Tracker
+
+> **Status: Shipped.** All phases below landed — storefront `/dino-magazine`
+> index (masonry feed) + `/dino-magazine/[slug]` detail, the `Articles` table +
+> `articles` bucket (migration `20260530120000_articles.sql`), the full
+> `src/api/articles/*` + `src/components/articles/*` layers, and the blur
+> scripts. Editing is now via `/admin/articles` (see Phase 7 of the admin
+> tracker). The unchecked boxes below are the original build checklist, left as
+> the historical breakdown.
 
 Update the checkboxes as work progresses. Each phase is shippable on its
 own; a half-complete tracker is enough context to resume in a fresh

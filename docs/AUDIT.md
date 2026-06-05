@@ -1,5 +1,20 @@
 # Codebase Audit — chtivo-next
 
+> ⚠️ **Historical snapshot (2026-05-05). Do not treat as current state.**
+> Several items below have since shipped and are no longer accurate:
+> - **G4 (admin section)** — built: a full `/admin` panel exists (auth/roles,
+>   orders, book graph, authors, box sets, gift cards, subscriptions, promo
+>   codes, articles, submissions, audit, dashboard). See
+>   [plans/admin-panel.md](./plans/admin-panel.md) + tracker.
+> - **G5 (order history)** — built: the `/profile` cabinet has order history
+>   (Мои книги / Заказы). The `/account` route referenced throughout this doc
+>   was **deleted and renamed `/profile`** (no back-compat redirect).
+> - **G3 (payment gateway)** — Robokassa is now integrated with a swappable mock
+>   gateway. See [plans/robokassa-payments.md](./plans/robokassa-payments.md).
+> - **G2 (email)** — still stubbed. **S1 (rotate credentials)** — still open.
+>
+> Treat this file as the record of the 2026-05-05 fix pass, not a live audit.
+
 **Audited:** 2026-05-05  
 **Branch:** `update` (commit `8d26e64`)  
 **Stack:** Next.js 16.2.4, App Router, TypeScript strict, Supabase, TanStack Query, SCSS Modules, Radix UI

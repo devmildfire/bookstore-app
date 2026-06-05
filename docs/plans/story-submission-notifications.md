@@ -74,12 +74,18 @@ becomes important.
   (email + provider, or "не зарегистрирован"); the author's feedback text
   verbatim; file name + signed URL (1 h TTL); submission time.
 
-## Optional: persist submissions
+## Persisting submissions (partly done)
 
-The notification carries everything an editor needs, but a `StorySubmissions`
-table (`id, user_id, author_name, feedback, object_path, created_at`) would give
-a durable record, an admin list view, and a clean source for option (2). Out of
-scope for the first cut; add when a review workflow is built.
+**Already implemented (2026-06-05):** the author name + cover letter are now
+persisted as a `{path}.meta.json` sidecar next to the manuscript (written by
+`submitStorySubmission`, read back by `getStorySubmissions`) and shown in
+`/admin/submissions`. This is a lightweight, storage-only durable record — no DB
+table — and the admin list is the review view.
+
+Still optional: a real `StorySubmissions` table (`id, user_id, author_name,
+feedback, object_path, created_at`) would add queryability and a clean source
+for option (2). The sidecar covers the durable-record + admin-list needs for
+now; revisit a table when a status/review workflow is built.
 
 ## Security / correctness notes
 

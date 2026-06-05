@@ -33,7 +33,7 @@ export async function loginAction(
 ): Promise<ActionState> {
   const { error } = await supabase.auth.signInWithPassword({ ... })
   if (error) return { status: 'error', message: error.message }
-  redirect('/account')
+  redirect('/profile')
 }
 
 type ActionState =

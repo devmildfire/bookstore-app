@@ -262,7 +262,7 @@ export async function loginAction(formData: FormData) {
   const password = formData.get('password') as string
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: error.message }
-  redirect('/account')
+  redirect('/profile')
 }
 ```
 

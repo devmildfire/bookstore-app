@@ -41,18 +41,23 @@ This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
 ```
 src/
-  app/          Next.js App Router routes (layout.tsx, page.tsx, error.tsx per segment)
-    account/    User account page
-    auth/       login/ and register/ routes
-    books/      Catalog
-      (catalog)/  Catalog listing (page.tsx, loading.tsx, error.tsx). Route group
-                  exists so its loading.tsx is NOT a Suspense ancestor of /books/[slug]
-                  — the catalog grid skeleton would otherwise flash on book-detail loads.
-      [slug]/     Book detail (own loading.tsx mirrors the real page layout)
-    cart/       Cart page
-    checkout/   Checkout and success/
-    subscription/ Subscription plans page
-  api/          Supabase API modules — one directory per domain (books/, cart/, orders/, subscriptions/)
+  app/          Next.js App Router. Root layout = html/body/Providers ONLY (no chrome).
+    (site)/     Storefront route group — owns the Header/Footer chrome via its layout.
+      auth/       login/ and register/ routes
+      profile/    User cabinet (books/, courses/, subscriptions/, orders/, gift-cards/, favorites/)
+      books/      Catalog
+        (catalog)/  Catalog listing (page.tsx, loading.tsx, error.tsx). Nested route group
+                    so its loading.tsx is NOT a Suspense ancestor of /books/[slug]
+                    — the catalog grid skeleton would otherwise flash on book-detail loads.
+        [slug]/     Book detail (own loading.tsx mirrors the real page layout)
+      cart/       Cart page
+      checkout/   Checkout and success/
+      payments/   In-app mock payment gateway (mock/)
+      dino-magazine/, gift-cards/, subscription/, authors/, abzac/, about/, …  (storefront pages)
+    admin/      Admin panel — header-free chrome. login/ + guarded (panel)/ route group
+      (panel)/    orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/
+                  articles/ featured/ submissions/ audit/ + dashboard
+  api/          Supabase API modules — one directory per domain (books/, cart/, orders/, …, admin/)
   assets/       SVGs, images (SVGs imported via @svgr/webpack)
   components/   UI components, grouped by domain; common/ for shared; subscriptions/ for subscription UI
   consts/       Named constant exports, one file per domain
@@ -97,14 +102,14 @@ When an anonymous user signs in (OAuth or email/password), their Cart + Orders +
 
 The user's cabinet lives at `/profile` (the old `/account` route was deleted, no back-compat redirect — project was still in dev when renamed). Reachable in one click from the header profile icon for anon **and** real users alike; the header icon never logs anyone out.
 
-Layout is multi-route: `/profile`, `/profile/orders`, `/profile/favorites` share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope. The shell is a 450 px wide `$color-sidebar` (`#1A0F0F`) stripe on the left + free-flowing main panel on the right.
+Layout is multi-route: `/profile`, `/profile/books`, `/profile/courses`, `/profile/subscriptions`, `/profile/orders`, `/profile/gift-cards`, `/profile/favorites` all share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope. The shell is a 450 px wide `$color-sidebar` (`#1A0F0F`) stripe on the left + free-flowing main panel on the right.
 
 Key invariants:
 - `Profiles` table is FK'd to `auth.users(id) ON DELETE CASCADE` with RLS scoped to owner. One row per user; default `nickname = 'Никнейм'` (literal Cyrillic — matches Figma placeholder). Fields: nickname, avatar_path, full_name, phone, birthday, **city**, about, recovery_email.
 - `Profiles.recovery_email` is **distinct from** `auth.users.email`. It's opt-in, never verified, never written to `auth.users`. Future auth flows can look it up to suggest account recovery.
 - Avatars live in the `avatars` public bucket (2 MB cap, JPEG/PNG/WEBP). Path is `avatars/{user_id}.{ext}` — `Profiles.avatar_path` stores the bare object key.
 - The sidebar header strip carries avatar (77 × 78) + nickname over a red→black gradient overlay on `$color-sidebar`. The "active" nav-item color is `$color-accent-on-dark`.
-- Sidebar nav: **Мои книги** → `/profile/orders`, **Избранное** → `/profile/favorites`, **Стать автором** → `/suggest-manuscript` (existing stub, real authors page is future work).
+- Sidebar nav: **Мои книги** → `/profile/books`, **Мои курсы** → `/profile/courses`, **Мои подписки** → `/profile/subscriptions`, **Заказы** → `/profile/orders`, **Карты даров** → `/profile/gift-cards`, **Избранное** → `/profile/favorites`, **Стать автором** → `/suggest-manuscript` (existing stub, real authors page is future work). Items + icons live in `ProfileSideNav` `NAV_ITEMS`.
 - The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal` with four line-art OAuth icons — Google is wired, Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
 - **`isAnon` must be resolved server-side and passed down as a prop.** With `encode: 'tokens-only'` the live session tokens are in HttpOnly cookies the browser cannot read; `localStorage` only holds a cached `User` object that goes stale after a server-side OAuth exchange. `ProfileLayout` reads `user.is_anonymous` from `createClient()` (server) and passes `isAnon` to `ProfileSideNav`. Do not use `useSupabaseUser()` for sign-in CTAs. See `docs/plans/auth-flow.md § Session cookie encoding`.
 - Profile editing happens in `EditProfileModal` triggered by the outlined "Редактировать профиль" button in the main panel. Avatar upload is inside the modal, not the read-only main panel.
@@ -116,16 +121,17 @@ Single-page checkout. The cart's content determines the form:
 - **Has physical items** (`PrintBook`, `Book2.0`, or a `BoxSet` containing either) → shipping address form.
 - **Digital only** → single optional email field.
 
-Confirmation modal with a fake "Подтвердить оплату" button → ~3 s processing → atomic order creation → redirect to `/profile?from=checkout&order=<id>` (modal fires every anon purchase).
+Confirmation modal → `startCheckoutAction` → two-phase payment via Robokassa (with a swappable in-app **mock** gateway). The processing modal stays up while the browser is handed off to the gateway by full-page POST.
 
 Key invariants:
-- `place_order(...)` RPC inserts `Orders` + `OrderItems` and wipes `Cart` + `CartPromo` in the **same transaction**. No partial state.
-- `Orders` rows are **immutable price snapshots**: `original_total`, `book_discount_total`, `promo_code`, `promo_discount`, `paid_at`, and shipping fields are written once at order time. Recomputing later from current prices is forbidden.
+- **Two-phase order, not atomic.** `create_pending_order(...)` writes `Orders` (status `'pending'`, `paid_at=null`) + `OrderItems` and **does not** wipe the cart. The buyer is POSTed to the gateway; on a valid payment callback, `mark_order_paid(p_inv_id, p_out_sum)` — **idempotent** — verifies the amount, sets `status='paid'`/`paid_at=now()`, wipes that user's `Cart`+`CartPromo`, and (for recurring/subscription lines) creates the `UserSubscriptions` anchor. An order fully covered by gift cards settles immediately (`startCheckoutAction` returns `paid`).
+- **Provider** is chosen by `PAYMENT_PROVIDER` (`mock` default, `robokassa` in prod) in `src/lib/payments/config.ts`; `mock` flips the gateway URLs to in-app endpoints (`/payments/mock`). Signature/receipt/recurring logic in `src/lib/payments/robokassa/`.
+- `Orders` rows are **immutable price snapshots**: `original_total`, `book_discount_total`, `promo_code`, `promo_discount`, and shipping fields are written once at order time. Recomputing later from current prices is forbidden.
 - BoxSet physicality is computed by `box_set_is_physical(box_set_id)` from `BoxSetBooks` rows. Entry with `product_id` like `PrintBook-N` or `Book2.0-N` ⇒ physical; entry with `NULL product_id` ⇒ check whether the title has a row in `PrintedBooks` or `CardBooks`.
 - Digital files live in the private `digital-files` bucket. Per-edition columns: `Ebooks.file_path`, `Audiobooks.file_path`, `CardBooks.file_path`. Served via signed URLs with 1 h TTL.
 - Anonymous users complete checkout fine — `Orders.user_id` accepts the anon UID. The anon→OAuth/email migration (see auth flow above) moves those orders to the real user on sign-in.
-- Out of scope and stubbed: real SMTP, real PSP integration, BoxSet/GiftCard/Subscription/Course file downloads.
-- See also: migration `20260520160000_checkout_schema.sql`; `src/app/checkout/`; `src/api/orders/placeOrder.ts`.
+- Out of scope and stubbed: real SMTP, BoxSet/GiftCard/Subscription/Course file downloads. (The legacy single-shot `place_order` RPC + `src/api/orders/placeOrder.ts` are superseded by the two-phase flow.)
+- See also: migrations `20260520160000_checkout_schema.sql` + `20260603120000_robokassa_payments.sql`; `src/app/(site)/checkout/`; `src/api/orders/createPendingOrder.ts`; `src/lib/payments/`; [docs/plans/robokassa-payments.md](docs/plans/robokassa-payments.md).
 
 ### Promo codes
 

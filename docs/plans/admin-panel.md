@@ -70,8 +70,8 @@ orders and advance their fulfillment when physical/non-digital items ship.
 - **`/admin/login`**: email+password form → `adminLoginAction`:
   `signInWithPassword`, then re-read the user; if not admin → `signOut()` and
   return an error; if admin → redirect to `/admin`. No anon-migration, no OAuth.
-- Side note: the existing storefront `loginAction` redirects to `/account`
-  (dead route — now `/profile`). Out of scope here; fix opportunistically.
+- Side note: the storefront `loginAction` now redirects to `/profile` (it used
+  to point at the dead `/account` route — fixed 2026-06-05).
 
 ### 4.2 Authorization / write path
 

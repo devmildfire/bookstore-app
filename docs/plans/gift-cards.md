@@ -1,6 +1,11 @@
 # Gift cards (`/gift-cards`, wallet, payment integration)
 
-**Status**: Planned
+**Status**: Shipped — storefront `/gift-cards` (tier strip + buy via cart),
+wallet at `/profile/gift-cards` (balance, redeem token, send), and admin CRUD at
+`/admin/gift-cards`. Code: `src/api/giftCards/*`, `src/entities/giftCard*`,
+`src/components/giftCards/*`. Migrations `20260529120000_gift_cards.sql` +
+`20260529130000_gift_card_images.sql`. Purchase rides the shared checkout (now
+Robokassa, mockable). The sections below are the original design.
 **Branch**: `update`
 **Figma**: 1119:10288 (storefront tier strip) — only the visual reference is
 in Figma. Wallet UI is a new component family that mirrors `/profile`'s
