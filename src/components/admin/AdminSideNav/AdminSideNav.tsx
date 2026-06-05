@@ -16,7 +16,9 @@ import {
   ArticlesIcon,
   SubmissionsIcon,
   AuditIcon,
+  LogoutIcon,
 } from '@/components/admin/icons'
+import { adminLogoutAction } from '@/lib/admin/actions'
 import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminSideNav.module.scss'
 
@@ -121,6 +123,11 @@ export default function AdminSideNav({ userEmail, counts, open = false, onNaviga
             <span className={styles.userName}>{userEmail ?? 'Администратор'}</span>
             <span className={styles.userRole}>Администратор</span>
           </span>
+          <form action={adminLogoutAction}>
+            <button type='submit' className={styles.logout} aria-label='Выйти'>
+              <LogoutIcon />
+            </button>
+          </form>
         </div>
       </div>
     </aside>

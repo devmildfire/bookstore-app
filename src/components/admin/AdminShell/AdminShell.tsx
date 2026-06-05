@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import AdminSideNav from '@/components/admin/AdminSideNav'
-import { BurgerIcon } from '@/components/admin/icons'
-import { adminLogoutAction } from '@/lib/admin/actions'
+import { BurgerIcon, BellIcon } from '@/components/admin/icons'
 import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminShell.module.scss'
 
@@ -67,14 +66,9 @@ export default function AdminShell({ userEmail, navCounts, children }: Props) {
             )}
           </nav>
           <div className={styles.spacer} />
-          <div className={styles.account}>
-            <span className={styles.email}>{userEmail}</span>
-            <form action={adminLogoutAction}>
-              <button type='submit' className={styles.logout}>
-                Выйти
-              </button>
-            </form>
-          </div>
+          <Link href='/admin/audit' className={styles.bell} aria-label='Журнал действий'>
+            <BellIcon />
+          </Link>
         </header>
         <main className={styles.main}>{children}</main>
       </div>
