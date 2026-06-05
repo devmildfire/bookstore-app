@@ -3,30 +3,34 @@
 .wrapper {
   display: inline-flex;
   align-items: center;
-  gap: $space-2;
+  gap: 11px;
 }
 
 .root {
-  width: 18px;
-  height: 18px;
-  border-radius: $radius-sm;
-  border: 1.5px solid $color-border;
-  background-color: $color-bg-surface;
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
+  border: 1px solid $color-border-strong;
+  background-color: $color-bg-inset;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
   cursor: pointer;
 
+  &:hover {
+    border-color: $color-text-on-dark;
+  }
+
   &[data-state='checked'] {
-    background-color: $color-brand-primary;
-    border-color: $color-brand-primary;
+    background-color: $color-accent-on-dark;
+    border-color: $color-accent-on-dark;
   }
 
   &:focus-visible {
-    outline: 2px solid $color-brand-primary;
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(161, 2, 2, 0.4);
   }
 
   &[disabled] {
@@ -39,12 +43,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $color-text-inverse;
+  color: #fff;
 }
 
 .label {
+  font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: $color-text-primary;
+  color: $color-text-on-dark;
   cursor: pointer;
   user-select: none;
 }

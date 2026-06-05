@@ -92,6 +92,19 @@ select {
   font: inherit;
 }
 
+// Enforce the design system: no native number spinners anywhere. Number values
+// are stepped via the custom NumberStepper component.
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 ul,
 ol {
   list-style: none;

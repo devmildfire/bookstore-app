@@ -1,22 +1,22 @@
 @use '@/styles/common' as *;
 .wrap { display: flex; flex-direction: column; gap: $space-4; }
 .empty { margin: 0; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }
-.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: $radius-md; overflow: hidden; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: 0; overflow: hidden; }
 .item { display: flex; align-items: center; gap: $space-4; padding: $space-3 $space-4; border-bottom: 1px solid rgba($color-text-on-dark, 0.07); &:last-child { border-bottom: none; } }
 .pos { width: 20px; font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.5); }
-.cover { position: relative; flex-shrink: 0; width: 36px; height: 52px; border-radius: 3px; overflow: hidden; background: rgba($color-text-on-dark, 0.08); }
+.cover { position: relative; flex-shrink: 0; width: 36px; height: 52px; border-radius: 0; overflow: hidden; background: rgba($color-text-on-dark, 0.08); }
 .coverImg { object-fit: cover; }
 .coverPlaceholder { display: block; width: 100%; height: 100%; }
 .name { flex: 1; min-width: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; }
 .controls { display: flex; align-items: center; gap: $space-2; }
 .controls button {
   min-width: 28px; padding: $space-1 $space-2; background: transparent; border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; cursor: pointer;
+  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; cursor: pointer;
   &:hover:not(:disabled) { border-color: $color-accent-on-dark; color: $color-accent-on-dark; }
   &:disabled { opacity: 0.35; cursor: default; }
 }
 .remove { color: $color-accent-on-dark !important; border-color: rgba($color-accent-on-dark, 0.5) !important; }
 .add { display: flex; flex-wrap: wrap; gap: $space-3; align-items: center; }
-.select { padding: $space-2 $space-3; background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2); border-radius: $radius-sm; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; min-width: 240px; }
-.addButton { padding: $space-2 $space-4; background: transparent; border: 1px dashed rgba($color-accent-on-dark, 0.6); border-radius: 100px; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; cursor: pointer; &:hover { background: rgba($color-accent-on-dark, 0.1); } }
+.select { padding: $space-2 $space-3; background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2); border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-dark; min-width: 240px; }
+.addButton { padding: $space-2 $space-4; background: transparent; border: 1px dashed rgba($color-accent-on-dark, 0.6); border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; cursor: pointer; &:hover { background: rgba($color-accent-on-dark, 0.1); } }
 .err { font-family: $font-montserrat; font-size: $font-size-xs; color: $color-accent-on-dark; }

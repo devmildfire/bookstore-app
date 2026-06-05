@@ -3,6 +3,9 @@
 import { useActionState } from 'react'
 import { updateBookAction } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
+import Checkbox from '@/components/common/Checkbox'
+import NumberStepper from '@/components/common/NumberStepper'
+import { CheckIcon } from '@/components/admin/icons'
 import type { AdminBook } from '@/api/admin/books'
 import styles from './BookEditForm.module.scss'
 
@@ -37,17 +40,10 @@ export default function BookEditForm({ book }: Props) {
       </label>
 
       <div className={styles.grid}>
-        <label className={styles.label}>
-          Возрастное ограничение
-          <input
-            name='ageRestriction'
-            type='number'
-            min={0}
-            max={21}
-            defaultValue={book.ageRestriction ?? ''}
-            className={styles.input}
-          />
-        </label>
+        <div className={styles.label}>
+          <span>Возрастное ограничение</span>
+          <NumberStepper name='ageRestriction' defaultValue={book.ageRestriction ?? ''} min={0} max={21} />
+        </div>
         <label className={styles.label}>
           Год первого издания
           <input name='firstRelease' defaultValue={book.firstRelease ?? ''} className={styles.input} />
@@ -59,17 +55,18 @@ export default function BookEditForm({ book }: Props) {
       </div>
 
       <div className={styles.checks}>
-        <label className={styles.check}>
-          <input type='checkbox' name='isCompilation' defaultChecked={book.isCompilation} />
-          Сборник
-        </label>
+        <Checkbox name='isCompilation' defaultChecked={book.isCompilation} label='Сборник' />
       </div>
 
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>
           {pending ? 'Сохранение…' : 'Сохранить'}
         </Button>
-        {state?.status === 'ok' && <span className={styles.ok}>Сохранено</span>}
+        {state?.status === 'ok' && (
+          <span className={styles.ok}>
+            <CheckIcon /> Сохранено
+          </span>
+        )}
         {state?.status === 'error' && <span className={styles.err}>{state.message}</span>}
       </div>
     </form>

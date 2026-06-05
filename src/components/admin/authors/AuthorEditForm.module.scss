@@ -26,7 +26,7 @@
   padding: $space-3;
   background: $color-sidebar;
   border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-base;
   color: $color-text-on-dark;
@@ -81,7 +81,7 @@
   padding: $space-2 $space-4;
   background: transparent;
   border: 1px solid rgba($color-accent-on-dark, 0.5);
-  border-radius: 100px;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-accent-on-dark;

@@ -38,7 +38,7 @@
   padding: $space-2 $space-3;
   background: $color-panel;
   border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-on-dark;
@@ -57,7 +57,7 @@
   padding: $space-2 $space-4;
   background: $color-accent-on-dark;
   border: none;
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: #fff;
@@ -84,7 +84,7 @@
 .tableWrap {
   overflow-x: auto;
   border: 1px solid rgba($color-text-on-dark, 0.1);
-  border-radius: $radius-md;
+  border-radius: 0;
 }
 
 .table {

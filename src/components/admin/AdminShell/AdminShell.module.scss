@@ -1,0 +1,166 @@
+@use '@/styles/common' as *;
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: $admin-topbar-h;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: $color-bg-header;
+  border-bottom: 1px solid $color-border-faint;
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  padding: 0 28px;
+
+  @media (max-width: 600px) {
+    padding: 0 14px;
+    gap: 12px;
+  }
+}
+
+.burger {
+  display: none;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-on-dark;
+  border: 1px solid $color-border-faint;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    color: $color-accent-on-dark;
+    border-color: $color-accent-on-dark;
+  }
+
+  @media (max-width: 920px) {
+    display: flex;
+  }
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: $font-montserrat;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: $color-text-faint;
+  min-width: 0;
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.14s ease;
+
+    &:hover {
+      color: $color-text-on-dark;
+    }
+  }
+}
+
+.sep {
+  color: $color-text-ghost;
+}
+
+.cur {
+  color: $color-text-on-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.email {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-muted-on-dark;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.logout {
+  height: 34px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid $color-border-strong;
+  border-radius: 0;
+  font-family: $font-montserrat;
+  font-size: 13px;
+  color: $color-text-on-dark;
+  cursor: pointer;
+  transition: border-color 0.14s ease, color 0.14s ease, background 0.14s ease;
+
+  &:hover {
+    border-color: $color-text-on-dark;
+    background: rgba(220, 220, 220, 0.05);
+  }
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px 80px;
+
+  @media (max-width: 1080px) {
+    padding: 28px 28px 70px;
+  }
+  @media (max-width: 600px) {
+    padding: 22px 16px 64px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  @media (max-width: 360px) {
+    padding: 18px 12px 56px;
+  }
+}
+
+// Mobile drawer scrim
+.scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  z-index: 39;
+  cursor: pointer;
+}
+
+@media (max-width: 920px) {
+  .navOpen .scrim {
+    display: block;
+  }
+}

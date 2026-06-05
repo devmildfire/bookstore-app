@@ -1,7 +1,7 @@
 @use '@/styles/common' as *;
 .wrap { display: flex; align-items: center; gap: $space-3; padding: $space-8; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }
 .spinner {
-  width: 18px; height: 18px; border-radius: $radius-full;
+  width: 18px; height: 18px; border-radius: 0;
   border: 2px solid rgba($color-text-on-dark, 0.25); border-top-color: $color-accent-on-dark;
   animation: spin 0.7s linear infinite;
   @media (prefers-reduced-motion: reduce) { animation: none; }

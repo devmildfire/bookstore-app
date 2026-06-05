@@ -12,10 +12,21 @@ import {
   removeWorkerAction,
 } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
+import Checkbox from '@/components/common/Checkbox'
+import NumberStepper from '@/components/common/NumberStepper'
+import StatusBadge from '@/components/admin/StatusBadge'
+import { PaperIcon, DigitalIcon, AudioIcon, PlusIcon, TrashIcon, UploadIcon, CheckIcon } from '@/components/admin/icons'
 import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
 import styles from './ProductsManager.module.scss'
 
 const HAS_SOLD_OUT = new Set<EditionTable>(['PrintedBooks', 'CardBooks'])
+
+const EDITION_ICON: Record<EditionTable, React.FC<React.SVGProps<SVGSVGElement>>> = {
+  PrintedBooks: PaperIcon,
+  CardBooks: PaperIcon,
+  Ebooks: DigitalIcon,
+  Audiobooks: AudioIcon,
+}
 
 type Props = { titleId: number; editions: AdminEdition[] }
 
@@ -63,48 +74,60 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
     })
   }
 
+  const Icon = EDITION_ICON[edition.table]
+
   return (
-    <div className={styles.row}>
-      <div className={styles.rowHead}>
+    <div className={styles.product}>
+      <div className={styles.productHead}>
+        <Icon className={styles.productIcon} />
         <span className={styles.label}>{edition.label}</span>
-        <button type='button' className={styles.remove} onClick={handleRemove} disabled={removing}>
-          {removing ? 'Удаление…' : 'Удалить'}
+        <StatusBadge tone={edition.isPublished ? 'positive' : 'neutral'}>
+          {edition.isPublished ? 'В продаже' : 'Скрыт'}
+        </StatusBadge>
+        <span className={styles.spacer} />
+        <button type='button' className={styles.remove} onClick={handleRemove} disabled={removing} aria-label='Удалить продукт'>
+          <TrashIcon />
         </button>
       </div>
 
-      <form action={action} className={styles.fields}>
-        <input type='hidden' name='titleId' value={titleId} />
-        <input type='hidden' name='editionId' value={edition.id} />
-        <input type='hidden' name='table' value={edition.table} />
-        <label className={styles.field}>
-          Цена ₽
-          <input name='price' type='number' step='0.01' defaultValue={edition.price ?? ''} className={styles.input} />
-        </label>
-        <label className={styles.field}>
-          Скидка %
-          <input name='discount' type='number' step='1' defaultValue={edition.discount ?? ''} className={styles.input} />
-        </label>
-        <label className={styles.check}>
-          <input type='checkbox' name='isPublished' defaultChecked={edition.isPublished} />
-          Опубликовано
-        </label>
-        {edition.hasSoldOut && (
-          <label className={styles.check}>
-            <input type='checkbox' name='soldOut' defaultChecked={edition.soldOut ?? false} />
-            Распродано
-          </label>
-        )}
-        <Button type='submit' variant='secondary' size='sm' loading={pending}>
-          {pending ? '…' : 'Сохранить'}
-        </Button>
-        {state?.status === 'ok' && <span className={styles.ok}>✓</span>}
-        {state?.status === 'error' && <span className={styles.err}>{state.message}</span>}
-        {removeError && <span className={styles.err}>{removeError}</span>}
-      </form>
+      <div className={styles.productBody}>
+        <form action={action} className={styles.fields}>
+          <input type='hidden' name='titleId' value={titleId} />
+          <input type='hidden' name='editionId' value={edition.id} />
+          <input type='hidden' name='table' value={edition.table} />
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Цена</span>
+            <div className={styles.affix}>
+              <input name='price' type='number' step='0.01' defaultValue={edition.price ?? ''} className={styles.input} />
+              <span className={styles.affixUnit}>₽</span>
+            </div>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Скидка %</span>
+            <NumberStepper name='discount' defaultValue={edition.discount ?? ''} min={0} max={100} />
+          </div>
+          <div className={styles.checks}>
+            <Checkbox name='isPublished' defaultChecked={edition.isPublished} label='Опубликовано' />
+            {edition.hasSoldOut && <Checkbox name='soldOut' defaultChecked={edition.soldOut ?? false} label='Распродано' />}
+          </div>
+          <div className={styles.actions}>
+            <Button type='submit' variant='secondary' size='sm' loading={pending}>
+              {pending ? '…' : 'Сохранить'}
+            </Button>
+            {state?.status === 'ok' && (
+              <span className={styles.ok}>
+                <CheckIcon /> Сохранено
+              </span>
+            )}
+            {state?.status === 'error' && <span className={styles.err}>{state.message}</span>}
+            {removeError && <span className={styles.err}>{removeError}</span>}
+          </div>
+        </form>
 
-      {edition.hasFile && <FileSlot titleId={titleId} edition={edition} />}
+        {edition.hasFile && <FileSlot titleId={titleId} edition={edition} />}
 
-      <WorkersSlot titleId={titleId} edition={edition} />
+        <WorkersSlot titleId={titleId} edition={edition} />
+      </div>
     </div>
   )
 }

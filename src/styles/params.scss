@@ -25,8 +25,48 @@ $color-accent-bright: #C20000;     // brighter red — inline-link hover (Figma 
 // Figma design palette
 $color-gray-5: #E0E0E0; // Figma "Gray 5" — titles on dark surfaces
 
+// ─── Admin design system (handoff: /admin re-skin) ──────────────────────────────
+// One enforced dark, hard-edged system shared across the site. Surfaces, text
+// tones, borders, status tones, and gradients distilled from the design handoff.
+
+// Surfaces
+$color-bg-deep:    #0A0A0A; // deep well (footer/hero)
+$color-bg-card:    #1A1A1A; // card base
+$color-bg-header:  #151515; // topbar fill
+$color-bg-inset:   #121212; // inset wells (inputs)
+
+// Accent aliases (oxblood). Hover is the brighter $color-accent-bright (#C20000),
+// pressed is $color-accent-hover-on-dark (#930000).
+$color-brand-pressed: #930000;
+
+// Text tones (warm white #DCDCDC at decreasing alpha — never pure #FFF for body)
+$color-text-title:  #E0E0E0;
+$color-text-muted-on-dark: rgba(220, 220, 220, 0.7);
+$color-text-faint:  rgba(220, 220, 220, 0.5);
+$color-text-ghost:  rgba(220, 220, 220, 0.4);
+
+// Borders
+$color-border-strong:   rgba(220, 220, 220, 0.4);
+$color-border-hairline: rgba(220, 220, 220, 0.2);
+$color-border-faint:    rgba(220, 220, 220, 0.12);
+
+// Status tones — desaturated to sit on near-black, never neon.
+// Each tone = text color + 0.12 alpha bg + ~0.28 alpha border.
+$tone-positive: #5FB87E; $tone-positive-bg: rgba(95, 184, 126, 0.12);  $tone-positive-border: rgba(95, 184, 126, 0.28);
+$tone-warning:  #D8A24A; $tone-warning-bg:  rgba(216, 162, 74, 0.12);  $tone-warning-border:  rgba(216, 162, 74, 0.28);
+$tone-neutral:  #9A9A9A; $tone-neutral-bg:  rgba(220, 220, 220, 0.07); $tone-neutral-border:  rgba(220, 220, 220, 0.16);
+$tone-accent-text: #E66; $tone-accent-bg:   rgba(161, 2, 2, 0.16);     $tone-accent-border:   rgba(161, 2, 2, 0.5);
+
 // Gradients
 $gradient-card-body: linear-gradient(341.86deg, #121212 12.37%, #000000 87.69%);
+$gradient-sidebar: linear-gradient(180deg, rgba(161, 2, 2, 0.45) 0%, rgba(26, 15, 15, 0) 60%);
+
+// Strong popover shadow (handoff: 0.5 alpha vs storefront's lighter $shadow-popup)
+$shadow-popup-strong: 0 20px 60px 0 rgba(0, 0, 0, 0.5);
+
+// Admin layout
+$admin-nav-w: 248px;
+$admin-topbar-h: 64px;
 
 // Text
 // $color-text-primary: var(--color-text-primary);

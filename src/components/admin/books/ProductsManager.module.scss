@@ -3,133 +3,232 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: 14px;
 }
 
 .empty {
   margin: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.55);
+  color: $color-text-faint;
 }
 
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: $space-3;
-  padding: $space-4;
-  border: 1px solid rgba($color-text-on-dark, 0.15);
-  border-radius: $radius-md;
+// ── Edition block ─────────────────────────────────────────────────────────
+.product {
+  border: 1px solid $color-border-faint;
+  border-radius: 0;
+  overflow: hidden;
 }
 
-.rowHead {
+.productHead {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: $space-3;
+  gap: 12px;
+  padding: 13px 18px;
+  background: rgba(220, 220, 220, 0.025);
+  border-bottom: 1px solid $color-border-faint;
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 8px 10px;
+  }
+}
+
+.productIcon {
+  width: 18px;
+  height: 18px;
+  color: $color-accent-bright;
+  opacity: 0.85;
+  flex-shrink: 0;
 }
 
 .label {
   font-family: $font-montserrat;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-semibold;
   font-size: $font-size-sm;
-  color: $color-accent-on-dark;
+  letter-spacing: 0.3px;
+  color: $color-text-title;
+}
+
+.spacer {
+  flex: 1;
 }
 
 .remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   background: transparent;
   border: none;
-  font-family: $font-montserrat;
-  font-size: $font-size-xs;
-  color: rgba($color-text-on-dark, 0.6);
+  color: $color-text-ghost;
   cursor: pointer;
+  border-radius: 0;
+  transition: color 0.14s ease, background 0.14s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 
   &:hover {
-    color: $color-accent-on-dark;
+    color: #fff;
+    background: $color-accent-on-dark;
   }
+}
+
+.productBody {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .fields {
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-end;
-  gap: $space-4;
+  gap: 18px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: $space-2;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.8);
-}
+  gap: 7px;
+  min-width: 0;
 
-.input {
-  width: 110px;
-  padding: $space-2;
-  background: $color-sidebar;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: $color-text-on-dark;
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 1px;
+  @media (max-width: 600px) {
+    width: 100%;
   }
 }
 
-.check {
-  display: flex;
-  align-items: center;
-  gap: $space-2;
+.fieldLabel {
+  font-family: $font-montserrat;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: $color-text-muted-on-dark;
+  font-weight: $font-weight-medium;
+}
+
+.input {
+  width: 100%;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  color: $color-text-on-dark;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.85);
-  cursor: pointer;
+  padding: 0 14px;
+  height: 44px;
+  outline: none;
+  transition: border-color 0.16s ease, background 0.16s ease;
+
+  &:focus {
+    border-color: $color-accent-on-dark;
+    background: $color-bg-header;
+  }
+}
+
+// price ₽ affix
+.affix {
+  display: flex;
+  align-items: center;
+  width: 140px;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
+
+  .input {
+    border-right: none;
+  }
+}
+
+.affixUnit {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: rgba(220, 220, 220, 0.04);
+  border: 1px solid $color-border-hairline;
+  border-left: none;
+  color: $color-text-faint;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  padding-bottom: 4px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: #4caf7d;
+  font-size: 13px;
+  color: $tone-positive;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 }
 
 .err {
   font-family: $font-montserrat;
   font-size: $font-size-xs;
-  color: $color-accent-on-dark;
+  color: $color-accent-bright;
 }
 
+// ── File slot ─────────────────────────────────────────────────────────────
 .fileSlot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: $space-3;
-  padding-top: $space-3;
-  border-top: 1px dashed rgba($color-text-on-dark, 0.12);
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid $color-border-faint;
 }
 
 .fileLabel {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: $color-text-faint;
 }
 
 .fileName {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
+  font-size: 13px;
   color: $color-text-on-dark;
   word-break: break-all;
 }
 
 .fileNone {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
+  font-size: 13px;
   font-style: italic;
-  color: rgba($color-text-on-dark, 0.45);
+  color: $color-text-ghost;
 }
 
 .fileInput {
@@ -138,33 +237,38 @@
 
 .fileButton,
 .fileRemove {
-  padding: $space-1 $space-3;
+  height: 34px;
+  padding: 0 13px;
   background: transparent;
-  border: 1px solid rgba($color-text-on-dark, 0.25);
-  border-radius: 100px;
+  border: 1px solid $color-border-strong;
+  border-radius: 0;
   font-family: $font-montserrat;
-  font-size: $font-size-xs;
-  color: $color-text-on-dark;
+  font-size: 13px;
+  color: $color-text-muted-on-dark;
   cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease;
 
   &:hover {
+    color: $color-accent-bright;
     border-color: $color-accent-on-dark;
-    color: $color-accent-on-dark;
   }
 }
 
+// ── Workers ───────────────────────────────────────────────────────────────
 .workers {
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding-top: $space-3;
-  border-top: 1px dashed rgba($color-text-on-dark, 0.12);
+  padding-top: 16px;
+  border-top: 1px solid $color-border-faint;
 }
 
 .workersLabel {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: $color-text-faint;
 }
 
 .workerList {
@@ -173,63 +277,87 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: $space-1;
+  gap: 7px;
 }
 
 .workerItem {
   display: flex;
   align-items: center;
-  gap: $space-3;
+  gap: 10px;
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
+  font-size: 13px;
   color: $color-text-on-dark;
 
   button {
+    margin-left: auto;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     border: none;
-    color: rgba($color-text-on-dark, 0.55);
+    color: $color-text-ghost;
     cursor: pointer;
-    font-size: 12px;
+    border-radius: 0;
+    transition: color 0.14s ease, background 0.14s ease;
 
     &:hover {
-      color: $color-accent-on-dark;
+      color: #fff;
+      background: $color-accent-on-dark;
     }
   }
 }
 
 .workerJob {
-  color: rgba($color-text-on-dark, 0.6);
+  color: $color-text-faint;
 }
 
 .workerAdd {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-2;
+  gap: 8px;
   align-items: center;
 }
 
 .workerInput {
-  padding: $space-1 $space-2;
-  background: $color-sidebar;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  height: 38px;
+  flex: 1;
+  min-width: 120px;
+  padding: 0 12px;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-on-dark;
+  outline: none;
+
+  &:focus {
+    border-color: $color-accent-on-dark;
+  }
+
+  @media (max-width: 600px) {
+    min-width: 0;
+  }
 }
 
+// ── Add product ───────────────────────────────────────────────────────────
 .add {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: $space-3;
-  padding-top: $space-2;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px dashed $color-border-faint;
 }
 
 .addLabel {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.6);
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  color: $color-text-faint;
 }
 
 .addItem {
@@ -239,16 +367,23 @@
 }
 
 .addButton {
-  padding: $space-2 $space-4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
   background: transparent;
-  border: 1px dashed rgba($color-accent-on-dark, 0.6);
-  border-radius: 100px;
+  border: 1px dashed $color-border-strong;
+  border-radius: 0;
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: $color-accent-on-dark;
+  font-size: 13px;
+  color: $color-text-muted-on-dark;
   cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease;
 
   &:hover {
-    background: rgba($color-accent-on-dark, 0.1);
+    color: $color-accent-bright;
+    border-color: $color-accent-on-dark;
+    background: rgba(161, 2, 2, 0.06);
   }
 }

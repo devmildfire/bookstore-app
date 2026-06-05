@@ -3,62 +3,77 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: $space-1;
+  gap: $space-2;
 }
 
 .label {
-  font-size: $font-size-sm;
+  font-family: $font-montserrat;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   font-weight: $font-weight-medium;
-  color: $color-text-primary;
+  color: $color-text-muted-on-dark;
 }
 
 .trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-2;
+  gap: $space-3;
   width: 100%;
-  padding: $space-2 $space-3;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $color-text-primary;
-  background-color: $color-bg-surface;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-on-dark;
+  background-color: $color-bg-inset;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  white-space: nowrap;
+  transition: border-color 0.16s ease;
 
-  &:focus-visible {
+  &:hover {
+    border-color: $color-border-strong;
+  }
+
+  &:focus-visible,
+  &[data-state='open'] {
     outline: none;
-    border-color: $color-border-focus;
+    border-color: $color-accent-on-dark;
   }
 
   &[data-placeholder] {
-    color: $color-text-muted;
+    color: $color-text-faint;
   }
 
   &[disabled] {
-    background-color: $color-bg-muted;
-    cursor: not-allowed;
     opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
 .hasError .trigger {
-  border-color: $color-danger;
+  border-color: $color-accent-on-dark;
 }
 
 .icon {
   display: flex;
   align-items: center;
-  color: $color-text-muted;
+  color: $color-text-faint;
   flex-shrink: 0;
+  transition: transform 0.16s ease;
+}
+
+.trigger[data-state='open'] .icon {
+  transform: rotate(180deg);
 }
 
 .content {
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-lg;
+  background-color: $color-panel;
+  border: 1px solid $color-border-strong;
+  border-radius: 0;
+  box-shadow: $shadow-popup-strong;
   min-width: var(--radix-select-trigger-width);
   max-height: var(--radix-select-content-available-height);
   z-index: $z-dropdown;
@@ -66,28 +81,31 @@
 }
 
 .viewport {
-  padding: $space-1;
+  padding: 5px;
 }
 
 .item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: $space-2 $space-3;
-  border-radius: $radius-sm;
-  font-size: $font-size-base;
-  color: $color-text-primary;
+  gap: $space-2;
+  padding: 9px 12px;
+  border-radius: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-muted-on-dark;
   cursor: pointer;
   user-select: none;
   outline: none;
+  transition: background 0.12s ease, color 0.12s ease;
 
   &[data-highlighted] {
-    background-color: $color-bg-muted;
+    background-color: rgba(220, 220, 220, 0.05);
+    color: $color-text-on-dark;
   }
 
   &[data-state='checked'] {
-    font-weight: $font-weight-medium;
-    color: $color-brand-primary;
+    color: #fff;
   }
 
   &[data-disabled] {
@@ -99,10 +117,11 @@
 .itemIndicator {
   display: flex;
   align-items: center;
-  color: $color-brand-primary;
+  color: $color-accent-bright;
 }
 
 .error {
-  font-size: $font-size-sm;
-  color: $color-danger;
+  font-family: $font-montserrat;
+  font-size: 12px;
+  color: $color-accent-bright;
 }

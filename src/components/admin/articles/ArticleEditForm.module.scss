@@ -4,7 +4,7 @@
 .label { display: flex; flex-direction: column; gap: $space-2; font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.8); }
 .input, .textarea, .code {
   padding: $space-3; background: $color-sidebar; border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm; font-family: $font-montserrat; font-size: $font-size-base; color: $color-text-on-dark;
+  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-base; color: $color-text-on-dark;
   &:focus-visible { outline: 2px solid $color-accent-on-dark; outline-offset: 1px; }
 }
 .textarea { resize: vertical; }
@@ -14,7 +14,7 @@
   padding: $space-3;
   background: $color-sidebar;
   border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-base;
   line-height: 1.6;
@@ -35,6 +35,6 @@
 .danger { display: flex; align-items: center; gap: $space-3; padding-top: $space-4; border-top: 1px solid rgba($color-text-on-dark, 0.1); }
 .delete {
   padding: $space-2 $space-4; background: transparent; border: 1px solid rgba($color-accent-on-dark, 0.5);
-  border-radius: 100px; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; cursor: pointer;
+  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; cursor: pointer;
   &:hover { background: rgba($color-accent-on-dark, 0.1); }
 }

@@ -30,7 +30,7 @@
   margin-left: auto;
   padding: $space-2 $space-4;
   background: $color-accent-on-dark;
-  border-radius: 100px;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: #fff;
@@ -52,7 +52,7 @@
   padding: $space-2 $space-3;
   background: $color-panel;
   border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-on-dark;
@@ -62,7 +62,7 @@
   padding: $space-2 $space-4;
   background: $color-accent-on-dark;
   border: none;
-  border-radius: $radius-sm;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: #fff;
@@ -94,7 +94,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid rgba($color-text-on-dark, 0.1);
-  border-radius: $radius-md;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -124,7 +124,7 @@
   flex-shrink: 0;
   width: 44px;
   height: 44px;
-  border-radius: $radius-full;
+  border-radius: 0;
   overflow: hidden;
   background: rgba($color-text-on-dark, 0.08);
 }

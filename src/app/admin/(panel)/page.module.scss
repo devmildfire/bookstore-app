@@ -7,7 +7,7 @@
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: $space-4; max-width: 760px; }
 .card {
   display: flex; flex-direction: column; gap: $space-2; padding: $space-5;
-  background: $color-panel; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: $radius-md;
+  background: $color-panel; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: 0;
   text-decoration: none; transition: border-color 150ms ease;
   &:hover { border-color: rgba($color-accent-on-dark, 0.6); }
 }

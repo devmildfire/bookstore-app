@@ -8,7 +8,7 @@
   padding: $space-3 $space-4;
   background: $color-panel;
   border: 1px solid rgba($color-text-on-dark, 0.1);
-  border-radius: $radius-md;
+  border-radius: 0;
 }
 
 .actions {
@@ -21,7 +21,7 @@
 .ghost,
 .danger {
   padding: $space-2 $space-4;
-  border-radius: 100px;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   cursor: pointer;

@@ -18,28 +18,45 @@
   flex-direction: column;
   gap: $space-2;
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: rgba($color-text-on-dark, 0.8);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: $color-text-muted-on-dark;
+  font-weight: $font-weight-medium;
 }
 
 .input,
 .textarea,
 .smallInput {
-  padding: $space-3;
-  background: $color-sidebar;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: $radius-sm;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
   font-family: $font-montserrat;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
+  text-transform: none;
+  letter-spacing: normal;
   color: $color-text-on-dark;
+  outline: none;
+  transition: border-color 0.16s ease, background 0.16s ease;
 
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 1px;
+  &::placeholder {
+    color: $color-text-ghost;
+  }
+
+  &:focus {
+    border-color: $color-accent-on-dark;
+    background: $color-bg-header;
   }
 }
 
 .textarea {
+  height: auto;
+  min-height: 96px;
+  padding: 12px 14px;
+  line-height: 1.5;
   resize: vertical;
 }
 
@@ -68,7 +85,7 @@
   margin: 0;
   padding: $space-4;
   border: 1px solid rgba($color-text-on-dark, 0.15);
-  border-radius: $radius-md;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   gap: $space-4;
@@ -115,13 +132,21 @@
 }
 
 .ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: #4caf7d;
+  font-size: 13px;
+  color: $tone-positive;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
 }
 
 .err {
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: $color-accent-on-dark;
+  color: $color-accent-bright;
 }

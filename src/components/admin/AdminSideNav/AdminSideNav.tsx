@@ -3,56 +3,115 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
+import {
+  DashboardIcon,
+  OrdersIcon,
+  BooksIcon,
+  FeaturedIcon,
+  AuthorsIcon,
+  BoxSetIcon,
+  GiftCardIcon,
+  SubscriptionsIcon,
+  PromoIcon,
+  ArticlesIcon,
+  SubmissionsIcon,
+  AuditIcon,
+} from '@/components/admin/icons'
 import styles from './AdminSideNav.module.scss'
 
-type NavItem = { href: string; label: string; exact?: boolean }
+type NavItem = { href: string; label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>>; exact?: boolean }
+type NavGroup = { label?: string; items: readonly NavItem[] }
 
-// Admin sections. «Статьи» covers the «Динозавр» magazine (same Articles data),
-// so there's no separate Динозавр entry — /admin/dino-magazine redirects there.
-const NAV_ITEMS: readonly NavItem[] = [
-  { href: '/admin', label: 'Сводка', exact: true },
-  { href: '/admin/orders', label: 'Заказы' },
-  { href: '/admin/books', label: 'Книги' },
-  { href: '/admin/featured', label: 'На главной' },
-  { href: '/admin/authors', label: 'Авторы' },
-  { href: '/admin/box-sets', label: 'Бокс-сеты' },
-  { href: '/admin/gift-cards', label: 'Карты даров' },
-  { href: '/admin/subscriptions', label: 'Подписки' },
-  { href: '/admin/promo-codes', label: 'Промокоды' },
-  { href: '/admin/articles', label: 'Статьи (Динозавр)' },
-  { href: '/admin/submissions', label: 'Заявки' },
-  { href: '/admin/audit', label: 'Журнал' },
+// Admin sections, grouped. «Статьи» covers the «Динозавр» magazine (same Articles
+// data), so /admin/dino-magazine redirects there.
+const NAV_GROUPS: readonly NavGroup[] = [
+  {
+    items: [{ href: '/admin', label: 'Сводка', Icon: DashboardIcon, exact: true }],
+  },
+  {
+    label: 'Каталог',
+    items: [
+      { href: '/admin/books', label: 'Книги', Icon: BooksIcon },
+      { href: '/admin/featured', label: 'На главной', Icon: FeaturedIcon },
+      { href: '/admin/authors', label: 'Авторы', Icon: AuthorsIcon },
+      { href: '/admin/box-sets', label: 'Бокс-сеты', Icon: BoxSetIcon },
+      { href: '/admin/gift-cards', label: 'Карты даров', Icon: GiftCardIcon },
+      { href: '/admin/subscriptions', label: 'Подписки', Icon: SubscriptionsIcon },
+    ],
+  },
+  {
+    label: 'Продажи',
+    items: [
+      { href: '/admin/orders', label: 'Заказы', Icon: OrdersIcon },
+      { href: '/admin/promo-codes', label: 'Промокоды', Icon: PromoIcon },
+    ],
+  },
+  {
+    label: 'Редакция',
+    items: [
+      { href: '/admin/articles', label: 'Статьи (Динозавр)', Icon: ArticlesIcon },
+      { href: '/admin/submissions', label: 'Заявки', Icon: SubmissionsIcon },
+      { href: '/admin/audit', label: 'Журнал', Icon: AuditIcon },
+    ],
+  },
 ]
 
-export default function AdminSideNav() {
+type Props = {
+  userEmail: string | null
+  open?: boolean
+  onNavigate?: () => void
+}
+
+export default function AdminSideNav({ userEmail, open = false, onNavigate }: Props) {
   const pathname = usePathname() ?? ''
+  const initial = (userEmail?.[0] ?? 'A').toUpperCase()
 
   return (
-    <aside className={styles.sidebar} aria-label='Разделы админ-панели'>
-      <Link href='/admin' className={styles.brand}>
-        Чтиво
+    <aside className={cn(styles.sidebar, open && styles.sidebarOpen)} aria-label='Разделы админ-панели'>
+      <Link href='/admin' className={styles.brand} onClick={onNavigate}>
+        <span className={styles.brandMark}>
+          ЧТИ<b>ВО</b>
+        </span>
+        <span className={styles.brandTag}>Админ‑панель</span>
       </Link>
+
       <nav className={styles.nav}>
-        <ul className={styles.list}>
-          {NAV_ITEMS.map(({ href, label, exact }) => {
-            const active = exact ? pathname === href : pathname.startsWith(href)
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={cn(styles.link, active && styles.linkActive)}
-                  aria-current={active ? 'page' : undefined}
-                >
-                  {label}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+        {NAV_GROUPS.map((group, gi) => (
+          <div key={group.label ?? gi} className={styles.group}>
+            {group.label && <p className={styles.groupLabel}>{group.label}</p>}
+            <ul className={styles.list}>
+              {group.items.map(({ href, label, Icon, exact }) => {
+                const active = exact ? pathname === href : pathname.startsWith(href)
+                return (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className={cn(styles.item, active && styles.itemActive)}
+                      aria-current={active ? 'page' : undefined}
+                      onClick={onNavigate}
+                    >
+                      <Icon className={styles.icon} />
+                      <span className={styles.itemLabel}>{label}</span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
       </nav>
-      <Link href='/' className={styles.backToSite}>
-        ← На сайт
-      </Link>
+
+      <div className={styles.foot}>
+        <div className={styles.user}>
+          <span className={styles.avatar} aria-hidden>
+            {initial}
+          </span>
+          <span className={styles.userMeta}>
+            <span className={styles.userName}>{userEmail ?? 'Администратор'}</span>
+            <span className={styles.userRole}>Администратор</span>
+          </span>
+        </div>
+      </div>
     </aside>
   )
 }

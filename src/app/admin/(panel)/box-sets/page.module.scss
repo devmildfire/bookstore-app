@@ -6,13 +6,13 @@
 .count { font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
 .create {
   margin-left: auto; padding: $space-2 $space-4; background: $color-accent-on-dark;
-  border-radius: 100px; font-family: $font-montserrat; font-size: $font-size-sm; color: #fff; text-decoration: none;
+  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: #fff; text-decoration: none;
   &:hover { opacity: 0.9; }
 }
 .empty { margin: 0; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }
 .list {
   list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column;
-  border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: $radius-md; overflow: hidden;
+  border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: 0; overflow: hidden;
 }
 .item { border-bottom: 1px solid rgba($color-text-on-dark, 0.07); &:last-child { border-bottom: none; } }
 .itemLink {
@@ -20,7 +20,7 @@
   &:hover { background: rgba($color-text-on-dark, 0.03); }
 }
 .cover {
-  position: relative; flex-shrink: 0; width: 48px; height: 40px; border-radius: 3px; overflow: hidden;
+  position: relative; flex-shrink: 0; width: 48px; height: 40px; border-radius: 0; overflow: hidden;
   background: rgba($color-text-on-dark, 0.08);
 }
 .coverImg { object-fit: cover; }

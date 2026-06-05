@@ -25,7 +25,7 @@
 .tile {
   position: relative;
   aspect-ratio: 4 / 3;
-  border-radius: $radius-sm;
+  border-radius: 0;
   overflow: hidden;
   background: $color-sidebar;
   border: 1px solid rgba($color-text-on-dark, 0.12);
@@ -46,7 +46,7 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.6);
   border: none;
-  border-radius: $radius-full;
+  border-radius: 0;
   color: #fff;
   font-size: 13px;
   cursor: pointer;
@@ -70,7 +70,7 @@
   padding: $space-2 $space-4;
   background: transparent;
   border: 1px solid rgba($color-text-on-dark, 0.25);
-  border-radius: 100px;
+  border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-on-dark;

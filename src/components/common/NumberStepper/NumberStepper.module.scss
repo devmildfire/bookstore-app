@@ -1,0 +1,79 @@
+@use '@/styles/common' as *;
+
+.stepper {
+  display: inline-flex;
+  align-items: stretch;
+  height: 44px;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  overflow: hidden;
+  background: $color-bg-inset;
+  width: fit-content;
+
+  button {
+    width: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: $color-text-muted-on-dark;
+    cursor: pointer;
+    transition: color 0.14s ease, background 0.14s ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover:not(:disabled) {
+      color: $color-accent-bright;
+      background: rgba(161, 2, 2, 0.1);
+    }
+    &:active:not(:disabled) {
+      background: rgba(161, 2, 2, 0.2);
+    }
+    &:disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  }
+
+  input {
+    width: 64px;
+    text-align: center;
+    background: none;
+    border: none;
+    outline: none;
+    color: $color-text-on-dark;
+    font-family: $font-montserrat;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    border-left: 1px solid $color-border-faint;
+    border-right: 1px solid $color-border-faint;
+  }
+}
+
+.focus {
+  border-color: $color-accent-on-dark;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.wide input {
+  width: 88px;
+}
+
+@media (max-width: 600px) {
+  .stepper {
+    width: 100%;
+
+    input {
+      flex: 1;
+      width: auto;
+    }
+  }
+}

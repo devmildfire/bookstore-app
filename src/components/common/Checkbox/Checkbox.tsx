@@ -8,6 +8,7 @@ import styles from './Checkbox.module.scss'
 type Props = {
   label?: string
   checked?: boolean
+  defaultChecked?: boolean
   onCheckedChange?: (checked: boolean) => void
   disabled?: boolean
   id?: string
@@ -15,7 +16,16 @@ type Props = {
   className?: string
 }
 
-export default function Checkbox({ label, checked, onCheckedChange, disabled, id, name, className }: Props) {
+export default function Checkbox({
+  label,
+  checked,
+  defaultChecked,
+  onCheckedChange,
+  disabled,
+  id,
+  name,
+  className,
+}: Props) {
   const generatedId = useId()
   const checkboxId = id ?? generatedId
 
@@ -25,6 +35,7 @@ export default function Checkbox({ label, checked, onCheckedChange, disabled, id
         id={checkboxId}
         name={name}
         checked={checked}
+        defaultChecked={defaultChecked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
         className={styles.root}
