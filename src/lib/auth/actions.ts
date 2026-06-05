@@ -39,7 +39,7 @@ export async function loginAction(_prev: AuthError | null, formData: FormData): 
     await migrateAnonymousUserAction(anonId).catch(() => {})
   }
 
-  redirect('/account')
+  redirect('/profile')
 }
 
 export async function registerAction(_prev: AuthError | null, formData: FormData): Promise<AuthError | null> {
