@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getAdminSubscriptions } from '@/api/admin/subscriptions'
 import { formatPrice } from '@/lib/formatPrice'
 import StatusBadge from '@/components/admin/StatusBadge'
+import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Подписки' }
@@ -24,29 +24,24 @@ export default async function AdminSubscriptionsPage() {
       {subscriptions.length === 0 ? (
         <p className={styles.empty}>Подписки не найдены.</p>
       ) : (
-        <ul className={styles.list}>
+        <AdminList>
           {subscriptions.map((s) => (
-            <li key={s.id} className={styles.item}>
-              <Link href={`/admin/subscriptions/${s.id}`} className={styles.itemLink}>
-                <span className={styles.cover}>
-                  {s.imageUrl ? (
-                    <Image src={s.imageUrl} alt='' fill sizes='48px' className={styles.coverImg} unoptimized />
-                  ) : (
-                    <span className={styles.coverPlaceholder} aria-hidden />
-                  )}
-                </span>
-                <span className={styles.info}>
-                  <span className={styles.name}>{s.name}</span>
-                  <span className={styles.slug}>{s.slug}</span>
-                </span>
-                <span className={styles.value}>{formatPrice(s.price)}</span>
+            <AdminRow
+              key={s.id}
+              href={`/admin/subscriptions/${s.id}`}
+              coverUrl={s.imageUrl}
+              coverAlt={s.name}
+              name={s.name}
+              sub={`/${s.slug}`}
+              value={formatPrice(s.price)}
+              badges={
                 <StatusBadge tone={s.isPublished ? 'positive' : 'warning'}>
                   {s.isPublished ? 'Опубл.' : 'Черновик'}
                 </StatusBadge>
-              </Link>
-            </li>
+              }
+            />
           ))}
-        </ul>
+        </AdminList>
       )}
     </section>
   )

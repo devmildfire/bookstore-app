@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getAdminAuthors } from '@/api/admin/authors'
+import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Авторы' }
@@ -44,30 +44,21 @@ export default async function AdminAuthorsPage({ searchParams }: Props) {
         <button type='submit' className={styles.apply}>
           Найти
         </button>
-        <Link href='/admin/authors' className={styles.reset}>
-          Сбросить
-        </Link>
+        {sp.q && (
+          <Link href='/admin/authors' className={styles.reset}>
+            Сбросить
+          </Link>
+        )}
       </form>
 
       {authors.length === 0 ? (
         <p className={styles.empty}>Авторы не найдены.</p>
       ) : (
-        <ul className={styles.list}>
+        <AdminList>
           {authors.map((a) => (
-            <li key={a.id} className={styles.item}>
-              <Link href={`/admin/authors/${a.id}`} className={styles.itemLink}>
-                <span className={styles.avatar}>
-                  {a.photoUrl ? (
-                    <Image src={a.photoUrl} alt='' fill sizes='44px' className={styles.avatarImg} unoptimized />
-                  ) : (
-                    <span className={styles.avatarPlaceholder} aria-hidden />
-                  )}
-                </span>
-                <span className={styles.name}>{a.name}</span>
-              </Link>
-            </li>
+            <AdminRow key={a.id} href={`/admin/authors/${a.id}`} coverUrl={a.photoUrl} coverAlt={a.name} name={a.name} />
           ))}
-        </ul>
+        </AdminList>
       )}
 
       {totalPages > 1 && (

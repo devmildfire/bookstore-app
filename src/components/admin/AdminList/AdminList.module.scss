@@ -1,0 +1,138 @@
+@use '@/styles/common' as *;
+
+// Verbatim from the handoff admin.css .rows/.row: connected bordered container,
+// hairline dividers, no gaps.
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-border-faint;
+  border-radius: 0;
+  overflow: hidden;
+  background: $color-panel;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 20px;
+  border-bottom: 1px solid $color-border-faint;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.14s ease;
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 11px 13px;
+    padding: 14px;
+  }
+}
+
+.item:last-child .row {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: rgba(220, 220, 220, 0.03);
+}
+
+.cover {
+  position: relative;
+  width: 44px;
+  height: 62px;
+  flex-shrink: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: $gradient-card-body;
+  border: 1px solid $color-border-faint;
+
+  @media (max-width: 600px) {
+    width: 40px;
+    height: 56px;
+  }
+}
+
+.coverImg {
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  @media (max-width: 600px) {
+    flex: 1 1 0;
+  }
+}
+
+.name {
+  font-family: $font-montserrat;
+  font-size: 15px;
+  color: $color-text-on-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 600px) {
+    white-space: normal;
+  }
+}
+
+.sub {
+  font-family: $font-montserrat;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: $color-text-faint;
+  overflow-wrap: anywhere;
+}
+
+.value {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  color: $color-text-title;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+.chev {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: $color-text-ghost;
+  transition: color 0.14s ease, transform 0.14s ease;
+
+  .row:hover & {
+    color: $color-accent-bright;
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}

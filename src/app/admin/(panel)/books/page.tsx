@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
-import { SearchIcon, ChevronRightIcon } from '@/components/admin/icons'
+import { AdminList, AdminRow } from '@/components/admin/AdminList'
+import { SearchIcon } from '@/components/admin/icons'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -76,33 +76,24 @@ export default async function AdminBooksPage({ searchParams }: Props) {
       {books.length === 0 ? (
         <p className={styles.empty}>Книги не найдены.</p>
       ) : (
-        <ul className={styles.list}>
+        <AdminList>
           {books.map((b) => (
-            <li key={b.id} className={styles.item}>
-              <Link href={`/admin/books/${b.id}`} className={styles.itemLink}>
-                <span className={styles.cover}>
-                  {b.coverUrl ? (
-                    <Image src={b.coverUrl} alt='' fill sizes='48px' className={styles.coverImg} unoptimized />
-                  ) : (
-                    <span className={styles.coverPlaceholder} aria-hidden />
-                  )}
-                </span>
-                <span className={styles.info}>
-                  <span className={styles.name}>{b.name}</span>
-                  <span className={styles.sub}>
-                    {b.authorName ? `${b.authorName} · ` : ''}
-                    {b.slug ? `/${b.slug}` : '—'}
-                  </span>
-                </span>
-                <span className={styles.badges}>
+            <AdminRow
+              key={b.id}
+              href={`/admin/books/${b.id}`}
+              coverUrl={b.coverUrl}
+              coverAlt={b.name}
+              name={b.name}
+              sub={`${b.authorName ? `${b.authorName} · ` : ''}${b.slug ? `/${b.slug}` : '—'}`}
+              badges={
+                <>
                   <StatusBadge tone={STATUS_TONE[b.status]}>{STATUS_LABEL[b.status]}</StatusBadge>
                   {b.isFeatured && <StatusBadge tone='accent'>На главной</StatusBadge>}
-                </span>
-                <ChevronRightIcon className={styles.chevron} />
-              </Link>
-            </li>
+                </>
+              }
+            />
           ))}
-        </ul>
+        </AdminList>
       )}
 
       {totalPages > 1 && (
