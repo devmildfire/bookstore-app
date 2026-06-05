@@ -4,6 +4,20 @@
   display: flex;
   min-height: 100vh;
   background: $color-bg-page;
+
+  // The admin matches the handoff's compact rhythm (default ~normal line-height),
+  // not the storefront's reading line-height of 1.5 that the global body sets.
+  line-height: 1.25;
+
+  // Admin links never underline (the storefront globals add a hover underline
+  // that would otherwise apply to nav items and list rows).
+  :global(a) {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .body {
