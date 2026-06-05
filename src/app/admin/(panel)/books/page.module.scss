@@ -108,6 +108,11 @@
   display: flex;
   gap: $space-2;
   flex-shrink: 0;
+
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
 }
 
 .apply {
@@ -151,40 +156,49 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba($color-text-on-dark, 0.1);
-  border-radius: 0;
-  overflow: hidden;
+  gap: 10px;
 }
 
 .item {
-  border-bottom: 1px solid rgba($color-text-on-dark, 0.07);
+  border: 1px solid $color-border-faint;
+  border-radius: 0;
+  background: $color-panel;
+  transition: border-color 0.14s ease, background 0.14s ease;
 
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    background: rgba(220, 220, 220, 0.03);
   }
 }
 
 .itemLink {
   display: flex;
   align-items: center;
-  gap: $space-4;
-  padding: $space-3 $space-4;
+  gap: 18px;
+  padding: 14px 20px;
   text-decoration: none;
   color: inherit;
 
-  &:hover {
-    background: rgba($color-text-on-dark, 0.03);
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 11px 13px;
+    padding: 14px;
   }
 }
 
 .cover {
   position: relative;
   flex-shrink: 0;
-  width: 36px;
-  height: 52px;
+  width: 44px;
+  height: 62px;
   border-radius: 0;
   overflow: hidden;
-  background: rgba($color-text-on-dark, 0.08);
+  background: $gradient-card-body;
+  border: 1px solid $color-border-faint;
+
+  @media (max-width: 600px) {
+    width: 40px;
+    height: 56px;
+  }
 }
 
 .coverImg {
@@ -200,21 +214,51 @@
 .info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
   min-width: 0;
+
+  @media (max-width: 600px) {
+    flex: 1 1 0;
+  }
 }
 
 .name {
   font-family: $font-montserrat;
   font-size: 15px;
   color: $color-text-on-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 600px) {
+    white-space: normal;
+  }
 }
 
-.slug {
+.sub {
   font-family: $font-montserrat;
   font-size: 12px;
+  letter-spacing: 0.3px;
   color: $color-text-faint;
+  overflow-wrap: anywhere;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: $color-text-ghost;
+  transition: color 0.14s ease, transform 0.14s ease;
+
+  .itemLink:hover & {
+    color: $color-accent-bright;
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .pager {

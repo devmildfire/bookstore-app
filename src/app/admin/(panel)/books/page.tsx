@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
-import { SearchIcon } from '@/components/admin/icons'
+import { SearchIcon, ChevronRightIcon } from '@/components/admin/icons'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -66,9 +66,11 @@ export default async function AdminBooksPage({ searchParams }: Props) {
         <button type='submit' className={styles.apply}>
           Найти
         </button>
-        <Link href='/admin/books' className={styles.reset}>
-          Сбросить
-        </Link>
+        {(sp.q || sp.status) && (
+          <Link href='/admin/books' className={styles.reset}>
+            Сбросить
+          </Link>
+        )}
       </form>
 
       {books.length === 0 ? (
@@ -87,12 +89,16 @@ export default async function AdminBooksPage({ searchParams }: Props) {
                 </span>
                 <span className={styles.info}>
                   <span className={styles.name}>{b.name}</span>
-                  <span className={styles.slug}>{b.slug ?? '—'}</span>
+                  <span className={styles.sub}>
+                    {b.authorName ? `${b.authorName} · ` : ''}
+                    {b.slug ? `/${b.slug}` : '—'}
+                  </span>
                 </span>
                 <span className={styles.badges}>
                   <StatusBadge tone={STATUS_TONE[b.status]}>{STATUS_LABEL[b.status]}</StatusBadge>
                   {b.isFeatured && <StatusBadge tone='accent'>На главной</StatusBadge>}
                 </span>
+                <ChevronRightIcon className={styles.chevron} />
               </Link>
             </li>
           ))}
