@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
+import { SearchIcon } from '@/components/admin/icons'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -46,14 +47,16 @@ export default async function AdminBooksPage({ searchParams }: Props) {
       </header>
 
       <form className={styles.filters} method='get'>
-        <input
-          type='search'
-          name='q'
-          defaultValue={sp.q ?? ''}
-          placeholder='Поиск по названию'
-          className={styles.search}
-          aria-label='Поиск книг'
-        />
+        <div className={styles.searchField}>
+          <SearchIcon className={styles.searchIcon} />
+          <input
+            type='search'
+            name='q'
+            defaultValue={sp.q ?? ''}
+            placeholder='Поиск по названию'
+            aria-label='Поиск книг'
+          />
+        </div>
         <select name='status' defaultValue={sp.status ?? ''} className={styles.select} aria-label='Статус'>
           <option value=''>Статус: все</option>
           <option value='published'>Опубликованные</option>

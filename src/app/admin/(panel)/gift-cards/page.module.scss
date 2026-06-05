@@ -2,7 +2,9 @@
 
 .page { display: flex; flex-direction: column; gap: $space-5; }
 .head { display: flex; align-items: baseline; gap: $space-3; }
-.title { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 28px; color: $color-text-on-dark; }
+.title {
+  @include admin-page-title;
+}
 .count { font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
 .create {
   margin-left: auto; padding: $space-2 $space-4; background: $color-accent-on-dark;

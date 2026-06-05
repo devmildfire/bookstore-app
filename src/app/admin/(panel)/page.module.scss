@@ -1,7 +1,9 @@
 @use '@/styles/common' as *;
 
 .page { display: flex; flex-direction: column; gap: $space-5; }
-.title { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 28px; color: $color-text-on-dark; }
+.title {
+  @include admin-page-title;
+}
 .lede { margin: 0; font-family: $font-montserrat; font-size: $font-size-base; color: rgba($color-text-on-dark, 0.65); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: $space-4; max-width: 760px; }

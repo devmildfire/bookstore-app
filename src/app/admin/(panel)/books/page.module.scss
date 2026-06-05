@@ -13,11 +13,7 @@
 }
 
 .title {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-weight: $font-weight-bold;
-  font-size: 28px;
-  color: $color-text-on-dark;
+  @include admin-page-title;
 }
 
 .count {
@@ -43,18 +39,69 @@
 
 .filters {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: $space-3;
 }
 
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: $space-2 + 2px;
+  height: 42px;
+  padding: 0 14px;
+  flex: 1;
+  min-width: 200px;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  transition: border-color 0.16s ease;
+
+  &:focus-within {
+    border-color: $color-accent-on-dark;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: $font-montserrat;
+    font-size: $font-size-sm;
+    color: $color-text-on-dark;
+
+    &::placeholder {
+      color: $color-text-faint;
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+  }
+}
+
+.searchIcon {
+  width: 17px;
+  height: 17px;
+  color: $color-text-faint;
+  flex-shrink: 0;
+}
+
 .select {
-  padding: $space-2 $space-3;
-  background: $color-panel;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
+  height: 42px;
+  padding: 0 14px;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
   border-radius: 0;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-on-dark;
+
+  &:focus-visible {
+    outline: none;
+    border-color: $color-accent-on-dark;
+  }
 }
 
 .badges {
@@ -63,24 +110,9 @@
   flex-shrink: 0;
 }
 
-.search {
-  min-width: 240px;
-  padding: $space-2 $space-3;
-  background: $color-panel;
-  border: 1px solid rgba($color-text-on-dark, 0.2);
-  border-radius: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: $color-text-on-dark;
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 1px;
-  }
-}
-
 .apply {
-  padding: $space-2 $space-4;
+  height: 42px;
+  padding: 0 22px;
   background: $color-accent-on-dark;
   border: none;
   border-radius: 0;
@@ -88,6 +120,11 @@
   font-size: $font-size-sm;
   color: #fff;
   cursor: pointer;
+  transition: background 0.16s ease;
+
+  &:hover {
+    background: $color-accent-bright;
+  }
 }
 
 .reset {
@@ -170,14 +207,14 @@
 
 .name {
   font-family: $font-montserrat;
-  font-size: $font-size-sm;
+  font-size: 15px;
   color: $color-text-on-dark;
 }
 
 .slug {
   font-family: $font-montserrat;
   font-size: 12px;
-  color: rgba($color-text-on-dark, 0.5);
+  color: $color-text-faint;
 }
 
 .pager {

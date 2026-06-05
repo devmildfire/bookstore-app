@@ -21,9 +21,5 @@
 }
 
 .title {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-weight: $font-weight-bold;
-  font-size: 28px;
-  color: $color-text-on-dark;
+  @include admin-page-title;
 }

@@ -1,7 +1,9 @@
 @use '@/styles/common' as *;
 .page { display: flex; flex-direction: column; gap: $space-4; }
 .breadcrumb { font-family: $font-montserrat; font-size: $font-size-sm; a { color: rgba($color-text-on-dark, 0.65); text-decoration: none; &:hover { color: $color-text-on-dark; } } }
-.title { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 26px; color: $color-text-on-dark; }
+.title {
+  @include admin-page-title;
+}
 .layout { display: grid; grid-template-columns: 220px 1fr; gap: $space-6; align-items: start; @include breakpoint(tablet) { grid-template-columns: 1fr; } }
 .side { display: flex; flex-direction: column; gap: $space-3; }
 .sideTitle { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 15px; color: $color-text-on-dark; }

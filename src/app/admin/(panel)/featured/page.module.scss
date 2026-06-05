@@ -1,4 +1,6 @@
 @use '@/styles/common' as *;
 .page { display: flex; flex-direction: column; gap: $space-4; }
-.title { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 28px; color: $color-text-on-dark; }
+.title {
+  @include admin-page-title;
+}
 .note { margin: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }

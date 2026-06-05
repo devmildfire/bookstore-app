@@ -25,6 +25,28 @@
   @include breakpoint(phone) { font-size: 24px; }
 }
 
+// ─── Admin page title ──────────────────────────────────────────────────────────
+// Admin section page titles are uppercase Cheque (display face), per the /admin
+// design handoff: 38px desktop → 28px ≤600 → 25px ≤360.
+
+@mixin admin-page-title {
+  margin: 0;
+  font-family: $font-cheque;
+  font-weight: $font-weight-normal;
+  font-size: 38px;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: $color-text-title;
+
+  @media (max-width: 600px) {
+    font-size: 28px;
+  }
+  @media (max-width: 360px) {
+    font-size: 25px;
+  }
+}
+
 // ─── Text Types ────────────────────────────────────────────────────────────────
 
 @mixin text-body {
