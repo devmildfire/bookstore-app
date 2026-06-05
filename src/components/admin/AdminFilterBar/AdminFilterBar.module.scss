@@ -1,0 +1,109 @@
+@use '@/styles/common' as *;
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  // Native <select> filter controls passed as children, styled uniformly.
+  :global(select) {
+    height: 42px;
+    padding: 0 14px;
+    background: $color-bg-inset;
+    border: 1px solid $color-border-hairline;
+    border-radius: 0;
+    font-family: $font-montserrat;
+    font-size: $font-size-sm;
+    color: $color-text-on-dark;
+    cursor: pointer;
+    transition: border-color 0.16s ease;
+
+    &:hover {
+      border-color: $color-border-strong;
+    }
+    &:focus-visible {
+      outline: none;
+      border-color: $color-accent-on-dark;
+    }
+
+    @media (max-width: 600px) {
+      flex-basis: 100%;
+      width: 100%;
+    }
+  }
+}
+
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 14px;
+  flex: 1;
+  min-width: 200px;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  transition: border-color 0.16s ease;
+
+  &:focus-within {
+    border-color: $color-accent-on-dark;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: $font-montserrat;
+    font-size: $font-size-sm;
+    color: $color-text-on-dark;
+
+    &::placeholder {
+      color: $color-text-faint;
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+  }
+}
+
+.searchIcon {
+  width: 17px;
+  height: 17px;
+  color: $color-text-faint;
+  flex-shrink: 0;
+}
+
+.apply {
+  height: 42px;
+  padding: 0 22px;
+  background: $color-accent-on-dark;
+  border: none;
+  border-radius: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.16s ease;
+
+  &:hover {
+    background: $color-accent-bright;
+  }
+}
+
+.reset {
+  align-self: center;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-faint;
+  text-decoration: none;
+  transition: color 0.14s ease;
+
+  &:hover {
+    color: $color-text-on-dark;
+  }
+}

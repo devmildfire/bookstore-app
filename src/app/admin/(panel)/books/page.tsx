@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
-import { SearchIcon } from '@/components/admin/icons'
+import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -46,32 +46,19 @@ export default async function AdminBooksPage({ searchParams }: Props) {
         </Link>
       </header>
 
-      <form className={styles.filters} method='get'>
-        <div className={styles.searchField}>
-          <SearchIcon className={styles.searchIcon} />
-          <input
-            type='search'
-            name='q'
-            defaultValue={sp.q ?? ''}
-            placeholder='Поиск по названию'
-            aria-label='Поиск книг'
-          />
-        </div>
-        <select name='status' defaultValue={sp.status ?? ''} className={styles.select} aria-label='Статус'>
+      <AdminFilterBar
+        resetHref='/admin/books'
+        hasFilters={Boolean(sp.q || sp.status)}
+        searchDefaultValue={sp.q ?? ''}
+        searchPlaceholder='Поиск по названию'
+      >
+        <select name='status' defaultValue={sp.status ?? ''} aria-label='Статус'>
           <option value=''>Статус: все</option>
           <option value='published'>Опубликованные</option>
           <option value='draft'>Черновики</option>
           <option value='archived'>В архиве</option>
         </select>
-        <button type='submit' className={styles.apply}>
-          Найти
-        </button>
-        {(sp.q || sp.status) && (
-          <Link href='/admin/books' className={styles.reset}>
-            Сбросить
-          </Link>
-        )}
-      </form>
+      </AdminFilterBar>
 
       {books.length === 0 ? (
         <p className={styles.empty}>Книги не найдены.</p>

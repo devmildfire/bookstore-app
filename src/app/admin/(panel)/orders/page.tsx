@@ -4,6 +4,7 @@ import { getAdminOrders } from '@/api/admin/orders'
 import { formatPrice } from '@/lib/formatPrice'
 import { fulfillmentLabel, formatOrderDate, paymentStatusLabel } from '@/lib/orderDisplay'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
+import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import type { OrderStatus, FulfillmentStatus } from '@/entities/order/client'
 import styles from './page.module.scss'
 
@@ -67,16 +68,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <span className={styles.count}>{total} всего</span>
       </header>
 
-      <form className={styles.filters} method='get'>
-        <input
-          type='search'
-          name='q'
-          defaultValue={sp.q ?? ''}
-          placeholder='№ заказа или email'
-          className={styles.search}
-          aria-label='Поиск заказов'
-        />
-        <select name='status' defaultValue={sp.status ?? ''} className={styles.select} aria-label='Статус оплаты'>
+      <AdminFilterBar
+        resetHref='/admin/orders'
+        hasFilters={Boolean(sp.q || sp.status || sp.fulfillment)}
+        searchDefaultValue={sp.q ?? ''}
+        searchPlaceholder='№ заказа или email'
+      >
+        <select name='status' defaultValue={sp.status ?? ''} aria-label='Статус оплаты'>
           <option value=''>Оплата: все</option>
           {STATUS_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -84,12 +82,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             </option>
           ))}
         </select>
-        <select
-          name='fulfillment'
-          defaultValue={sp.fulfillment ?? ''}
-          className={styles.select}
-          aria-label='Статус доставки'
-        >
+        <select name='fulfillment' defaultValue={sp.fulfillment ?? ''} aria-label='Статус доставки'>
           <option value=''>Доставка: все</option>
           {FULFILLMENT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -97,13 +90,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             </option>
           ))}
         </select>
-        <button type='submit' className={styles.apply}>
-          Применить
-        </button>
-        <Link href='/admin/orders' className={styles.reset}>
-          Сбросить
-        </Link>
-      </form>
+      </AdminFilterBar>
 
       {orders.length === 0 ? (
         <p className={styles.empty}>Заказы не найдены.</p>

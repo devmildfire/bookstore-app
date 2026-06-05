@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAdminAuthors } from '@/api/admin/authors'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
+import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Авторы' }
@@ -32,24 +33,12 @@ export default async function AdminAuthorsPage({ searchParams }: Props) {
         </Link>
       </header>
 
-      <form className={styles.filters} method='get'>
-        <input
-          type='search'
-          name='q'
-          defaultValue={sp.q ?? ''}
-          placeholder='Поиск по имени'
-          className={styles.search}
-          aria-label='Поиск авторов'
-        />
-        <button type='submit' className={styles.apply}>
-          Найти
-        </button>
-        {sp.q && (
-          <Link href='/admin/authors' className={styles.reset}>
-            Сбросить
-          </Link>
-        )}
-      </form>
+      <AdminFilterBar
+        resetHref='/admin/authors'
+        hasFilters={Boolean(sp.q)}
+        searchDefaultValue={sp.q ?? ''}
+        searchPlaceholder='Поиск по имени'
+      />
 
       {authors.length === 0 ? (
         <p className={styles.empty}>Авторы не найдены.</p>
