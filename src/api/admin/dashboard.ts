@@ -28,3 +28,48 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
     newSubmissions: submissions.length,
   }
 }
+
+export type AdminNavCounts = {
+  books: number
+  authors: number
+  boxSets: number
+  featured: number
+  ordersToShip: number
+  promoCodes: number
+  articles: number
+  submissions: number
+}
+
+// Counts shown as chips on the sidebar nav items. Totals for catalog/editorial
+// entities; actionable counts (orders to ship, new submissions) for the rest.
+export async function getAdminNavCounts(): Promise<AdminNavCounts> {
+  const admin = createAdminClient()
+  const headCount = (table: string) =>
+    admin.from(table as 'Titles').select('id', { count: 'exact', head: true })
+
+  const [books, authors, boxSets, featured, orders, promo, articles, submissions] = await Promise.all([
+    headCount('Titles'),
+    headCount('Authors'),
+    headCount('BoxSets'),
+    headCount('featured_books'),
+    admin
+      .from('Orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'paid')
+      .eq('fulfillment_status', 'processing'),
+    headCount('PromoCodes'),
+    headCount('Articles'),
+    getStorySubmissions(),
+  ])
+
+  return {
+    books: books.count ?? 0,
+    authors: authors.count ?? 0,
+    boxSets: boxSets.count ?? 0,
+    featured: featured.count ?? 0,
+    ordersToShip: orders.count ?? 0,
+    promoCodes: promo.count ?? 0,
+    articles: articles.count ?? 0,
+    submissions: submissions.length,
+  }
+}

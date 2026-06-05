@@ -7,6 +7,7 @@ import cn from 'classnames'
 import AdminSideNav from '@/components/admin/AdminSideNav'
 import { BurgerIcon } from '@/components/admin/icons'
 import { adminLogoutAction } from '@/lib/admin/actions'
+import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminShell.module.scss'
 
 // Top-level section labels for the breadcrumb trail.
@@ -26,10 +27,11 @@ const SECTION_LABELS: Record<string, string> = {
 
 type Props = {
   userEmail: string | null
+  navCounts?: AdminNavCounts
   children: React.ReactNode
 }
 
-export default function AdminShell({ userEmail, children }: Props) {
+export default function AdminShell({ userEmail, navCounts, children }: Props) {
   const [navOpen, setNavOpen] = useState(false)
   const pathname = usePathname() ?? ''
   const section = pathname.split('/')[2] // /admin/<section>/...
@@ -37,7 +39,7 @@ export default function AdminShell({ userEmail, children }: Props) {
 
   return (
     <div className={cn(styles.shell, navOpen && styles.navOpen)}>
-      <AdminSideNav userEmail={userEmail} open={navOpen} onNavigate={() => setNavOpen(false)} />
+      <AdminSideNav userEmail={userEmail} counts={navCounts} open={navOpen} onNavigate={() => setNavOpen(false)} />
       <button
         type='button'
         className={styles.scrim}

@@ -17,9 +17,17 @@ import {
   SubmissionsIcon,
   AuditIcon,
 } from '@/components/admin/icons'
+import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminSideNav.module.scss'
 
-type NavItem = { href: string; label: string; Icon: React.FC<React.SVGProps<SVGSVGElement>>; exact?: boolean }
+type CountKey = keyof AdminNavCounts
+type NavItem = {
+  href: string
+  label: string
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>
+  exact?: boolean
+  countKey?: CountKey
+}
 type NavGroup = { label?: string; items: readonly NavItem[] }
 
 // Admin sections, grouped. «Статьи» covers the «Динозавр» magazine (same Articles
@@ -31,26 +39,26 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Каталог',
     items: [
-      { href: '/admin/books', label: 'Книги', Icon: BooksIcon },
-      { href: '/admin/featured', label: 'На главной', Icon: FeaturedIcon },
-      { href: '/admin/authors', label: 'Авторы', Icon: AuthorsIcon },
-      { href: '/admin/box-sets', label: 'Бокс-сеты', Icon: BoxSetIcon },
-      { href: '/admin/gift-cards', label: 'Карты даров', Icon: GiftCardIcon },
-      { href: '/admin/subscriptions', label: 'Подписки', Icon: SubscriptionsIcon },
+      { href: '/admin/books', label: 'Книги', Icon: BooksIcon, countKey: 'books' },
+      { href: '/admin/authors', label: 'Авторы', Icon: AuthorsIcon, countKey: 'authors' },
+      { href: '/admin/box-sets', label: 'Бокс-сеты', Icon: BoxSetIcon, countKey: 'boxSets' },
+      { href: '/admin/featured', label: 'На главной', Icon: FeaturedIcon, countKey: 'featured' },
     ],
   },
   {
     label: 'Продажи',
     items: [
-      { href: '/admin/orders', label: 'Заказы', Icon: OrdersIcon },
-      { href: '/admin/promo-codes', label: 'Промокоды', Icon: PromoIcon },
+      { href: '/admin/orders', label: 'Заказы', Icon: OrdersIcon, countKey: 'ordersToShip' },
+      { href: '/admin/promo-codes', label: 'Промокоды', Icon: PromoIcon, countKey: 'promoCodes' },
+      { href: '/admin/gift-cards', label: 'Карты даров', Icon: GiftCardIcon },
+      { href: '/admin/subscriptions', label: 'Подписки', Icon: SubscriptionsIcon },
     ],
   },
   {
     label: 'Редакция',
     items: [
-      { href: '/admin/articles', label: 'Статьи (Динозавр)', Icon: ArticlesIcon },
-      { href: '/admin/submissions', label: 'Заявки', Icon: SubmissionsIcon },
+      { href: '/admin/articles', label: 'Статьи', Icon: ArticlesIcon, countKey: 'articles' },
+      { href: '/admin/submissions', label: 'Заявки', Icon: SubmissionsIcon, countKey: 'submissions' },
       { href: '/admin/audit', label: 'Журнал', Icon: AuditIcon },
     ],
   },
@@ -58,11 +66,12 @@ const NAV_GROUPS: readonly NavGroup[] = [
 
 type Props = {
   userEmail: string | null
+  counts?: AdminNavCounts
   open?: boolean
   onNavigate?: () => void
 }
 
-export default function AdminSideNav({ userEmail, open = false, onNavigate }: Props) {
+export default function AdminSideNav({ userEmail, counts, open = false, onNavigate }: Props) {
   const pathname = usePathname() ?? ''
   const initial = (userEmail?.[0] ?? 'A').toUpperCase()
 
@@ -80,8 +89,9 @@ export default function AdminSideNav({ userEmail, open = false, onNavigate }: Pr
           <div key={group.label ?? gi} className={styles.group}>
             {group.label && <p className={styles.groupLabel}>{group.label}</p>}
             <ul className={styles.list}>
-              {group.items.map(({ href, label, Icon, exact }) => {
+              {group.items.map(({ href, label, Icon, exact, countKey }) => {
                 const active = exact ? pathname === href : pathname.startsWith(href)
+                const count = countKey && counts ? counts[countKey] : 0
                 return (
                   <li key={href}>
                     <Link
@@ -92,6 +102,7 @@ export default function AdminSideNav({ userEmail, open = false, onNavigate }: Pr
                     >
                       <Icon className={styles.icon} />
                       <span className={styles.itemLabel}>{label}</span>
+                      {count > 0 && <span className={styles.count}>{count}</span>}
                     </Link>
                   </li>
                 )
