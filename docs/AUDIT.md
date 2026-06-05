@@ -5,7 +5,7 @@
 > - **G4 (admin section)** — built: a full `/admin` panel exists (auth/roles,
 >   orders, book graph, authors, box sets, gift cards, subscriptions, promo
 >   codes, articles, submissions, audit, dashboard). See
->   [plans/admin-panel.md](./plans/admin-panel.md) + tracker.
+>   [plans/admin-panel.md](./plans/admin-panel.md).
 > - **G5 (order history)** — built: the `/profile` cabinet has order history
 >   (Мои книги / Заказы). The `/account` route referenced throughout this doc
 >   was **deleted and renamed `/profile`** (no back-compat redirect).

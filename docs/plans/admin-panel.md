@@ -1,7 +1,9 @@
 # Admin Panel — Implementation Plan
 
-Status: **planned** (not started). Companion tracker: [admin-panel-tracker.md](./admin-panel-tracker.md).
-Created: 2026-06-03.
+Status: **shipped** (all phases). Kept as the admin design + provisioning
+reference (see §9 for seeding the first admin — `src/lib/admin/auth.ts` points
+here). The phase-by-phase build tracker was removed once complete; see git
+history for it. Created: 2026-06-03.
 
 A back-office for staff to manage everything sellable and editorial on the site:
 add/edit/remove books and related products, and let the logistics team track
@@ -140,7 +142,7 @@ src/api/admin/**               # per-domain read/write modules (service-role)
 
 ## 5. Build phases
 
-Each phase is a self-contained, shippable unit; the tracker tracks them. Order is
+Each phase is a self-contained, shippable unit (all now shipped). Order was
 chosen so the highest-value, lowest-risk pieces (auth + orders) land first.
 
 - **Phase 0 — Roles & auth foundation.** `isAdmin`/`requireAdmin` helpers;
