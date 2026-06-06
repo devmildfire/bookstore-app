@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { addFeaturedTitleAction, removeFeaturedAction, moveFeaturedAction } from '@/lib/admin/featured/actions'
+import AdminSelect from '@/components/admin/AdminSelect'
 import type { FeaturedTitle } from '@/api/admin/featured'
 import styles from './FeaturedManager.module.scss'
 
@@ -12,7 +13,7 @@ type Props = { featured: FeaturedTitle[]; titleOptions: { id: number; name: stri
 export default function FeaturedManager({ featured, titleOptions }: Props) {
   const [busy, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const selectRef = useRef<HTMLSelectElement>(null)
+  const [selected, setSelected] = useState('')
   const router = useRouter()
 
   const featuredTitleIds = new Set(featured.map((f) => f.titleId))
@@ -28,10 +29,10 @@ export default function FeaturedManager({ featured, titleOptions }: Props) {
   }
 
   function handleAdd() {
-    const titleId = selectRef.current?.value
-    if (!titleId) return
+    if (!selected) return
     const fd = new FormData()
-    fd.set('titleId', titleId)
+    fd.set('titleId', selected)
+    setSelected('')
     run(() => addFeaturedTitleAction(fd))
   }
 
@@ -88,16 +89,17 @@ export default function FeaturedManager({ featured, titleOptions }: Props) {
 
       {available.length > 0 && (
         <div className={styles.add}>
-          <select ref={selectRef} className={styles.select} defaultValue='' disabled={busy} aria-label='Книга'>
-            <option value='' disabled>
-              Выберите книгу…
-            </option>
-            {available.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
+          <AdminSelect
+            key={featured.length}
+            name='titleId'
+            defaultValue=''
+            ariaLabel='Книга'
+            onChange={setSelected}
+            options={[
+              { value: '', label: 'Выберите книгу…' },
+              ...available.map((t) => ({ value: String(t.id), label: t.name })),
+            ]}
+          />
           <button type='button' className={styles.addButton} onClick={handleAdd} disabled={busy}>
             Добавить на главную
           </button>

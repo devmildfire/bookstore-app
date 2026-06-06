@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateArticleAction, deleteArticleAction } from '@/lib/admin/articles/actions'
 import Button from '@/components/common/Button'
+import AdminSelect from '@/components/admin/AdminSelect'
 import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
 import styles from './ArticleEditForm.module.scss'
@@ -48,16 +49,15 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
           Slug
           <input name='slug' defaultValue={article.slug} className={styles.input} required />
         </label>
-        <label className={styles.label}>
-          Автор
-          <select name='authorId' defaultValue={article.authorId} className={styles.input}>
-            {authorOptions.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className={styles.label}>
+          <span>Автор</span>
+          <AdminSelect
+            name='authorId'
+            defaultValue={String(article.authorId)}
+            ariaLabel='Автор'
+            options={authorOptions.map((a) => ({ value: String(a.id), label: a.name }))}
+          />
+        </div>
         <label className={styles.label}>
           Дата публикации
           <input name='publishedAt' type='datetime-local' defaultValue={toLocalInput(article.publishedAt)} className={styles.input} required />

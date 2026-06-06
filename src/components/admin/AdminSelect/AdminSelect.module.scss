@@ -3,6 +3,7 @@
 .select {
   position: relative;
   display: inline-block;
+  max-width: 100%;
 
   @media (max-width: 600px) {
     display: block;
@@ -25,13 +26,22 @@
   color: $color-text-on-dark;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  white-space: nowrap;
   cursor: pointer;
   transition: border-color 0.16s ease;
 
   &:hover {
     border-color: $color-border-strong;
   }
+}
+
+// Selected label truncates so a long value never widens/overflows the trigger.
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }
 
 .open .trigger {
@@ -56,6 +66,10 @@
   top: calc(100% + 6px);
   left: 0;
   min-width: 100%;
+  // Grow to fit the longest option, but never past the trigger's container or
+  // the viewport — beyond that, option text wraps.
+  width: max-content;
+  max-width: min(420px, calc(100vw - 32px));
   z-index: 50;
   list-style: none;
   margin: 0;
@@ -76,7 +90,8 @@
   font-family: $font-montserrat;
   font-size: $font-size-sm;
   color: $color-text-muted-on-dark;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease;
 

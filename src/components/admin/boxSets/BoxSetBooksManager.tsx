@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addBoxSetBookAction, removeBoxSetBookAction } from '@/lib/admin/boxSets/actions'
+import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminBoxSetBook } from '@/api/admin/boxSets'
 import styles from './BoxSetBooksManager.module.scss'
 
@@ -15,12 +16,11 @@ type Props = {
 export default function BoxSetBooksManager({ boxSetId, books, titleOptions }: Props) {
   const [busy, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const titleRef = useRef<HTMLSelectElement>(null)
+  const [titleId, setTitleId] = useState('')
   const productRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   function handleAdd() {
-    const titleId = titleRef.current?.value
     if (!titleId) return
     setError(null)
     startTransition(async () => {
@@ -32,6 +32,7 @@ export default function BoxSetBooksManager({ boxSetId, books, titleOptions }: Pr
       if (res.status === 'error') setError(res.message)
       else {
         if (productRef.current) productRef.current.value = ''
+        setTitleId('')
         router.refresh()
       }
     })
@@ -68,16 +69,17 @@ export default function BoxSetBooksManager({ boxSetId, books, titleOptions }: Pr
       )}
 
       <div className={styles.add}>
-        <select ref={titleRef} className={styles.select} defaultValue='' disabled={busy} aria-label='Книга'>
-          <option value='' disabled>
-            Выберите книгу…
-          </option>
-          {titleOptions.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
+        <AdminSelect
+          key={books.length}
+          name='titleId'
+          defaultValue=''
+          ariaLabel='Книга'
+          onChange={setTitleId}
+          options={[
+            { value: '', label: 'Выберите книгу…' },
+            ...titleOptions.map((t) => ({ value: String(t.id), label: t.name })),
+          ]}
+        />
         <input
           ref={productRef}
           className={styles.input}

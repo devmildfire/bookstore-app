@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addAuthorContactAction, removeAuthorContactAction } from '@/lib/admin/authors/actions'
+import AdminSelect from '@/components/admin/AdminSelect'
 import {
   AUTHOR_CONTACT_CHANNELS,
   CONTACT_CHANNEL_LABEL,
@@ -15,12 +16,11 @@ type Props = { authorId: number; contacts: AdminAuthorContact[] }
 export default function ContactsManager({ authorId, contacts }: Props) {
   const [busy, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const channelRef = useRef<HTMLSelectElement>(null)
+  const [channel, setChannel] = useState<string>(AUTHOR_CONTACT_CHANNELS[0])
   const urlRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   function handleAdd() {
-    const channel = channelRef.current?.value
     const url = urlRef.current?.value.trim()
     if (!channel || !url) {
       setError('Выберите канал и введите ссылку.')
@@ -72,13 +72,13 @@ export default function ContactsManager({ authorId, contacts }: Props) {
       )}
 
       <div className={styles.add}>
-        <select ref={channelRef} className={styles.select} defaultValue={AUTHOR_CONTACT_CHANNELS[0]} disabled={busy}>
-          {AUTHOR_CONTACT_CHANNELS.map((ch) => (
-            <option key={ch} value={ch}>
-              {CONTACT_CHANNEL_LABEL[ch]}
-            </option>
-          ))}
-        </select>
+        <AdminSelect
+          name='channel'
+          defaultValue={AUTHOR_CONTACT_CHANNELS[0]}
+          ariaLabel='Канал'
+          onChange={setChannel}
+          options={AUTHOR_CONTACT_CHANNELS.map((ch) => ({ value: ch, label: CONTACT_CHANNEL_LABEL[ch] }))}
+        />
         <input ref={urlRef} className={styles.input} placeholder='https://… или email' disabled={busy} />
         <button type='button' className={styles.addButton} onClick={handleAdd} disabled={busy}>
           Добавить

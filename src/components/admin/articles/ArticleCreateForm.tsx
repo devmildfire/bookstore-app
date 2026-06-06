@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { createArticleAction } from '@/lib/admin/articles/actions'
 import Button from '@/components/common/Button'
+import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './ArticleCreateForm.module.scss'
 
 type Props = { authorOptions: { id: number; name: string }[] }
@@ -20,19 +21,18 @@ export default function ArticleCreateForm({ authorOptions }: Props) {
         Slug (латиница, цифры, дефис)
         <input name='slug' className={styles.input} required />
       </label>
-      <label className={styles.label}>
-        Автор
-        <select name='authorId' className={styles.input} defaultValue=''>
-          <option value='' disabled>
-            Выберите автора…
-          </option>
-          {authorOptions.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className={styles.label}>
+        <span>Автор</span>
+        <AdminSelect
+          name='authorId'
+          defaultValue=''
+          ariaLabel='Автор'
+          options={[
+            { value: '', label: 'Выберите автора…' },
+            ...authorOptions.map((a) => ({ value: String(a.id), label: a.name })),
+          ]}
+        />
+      </div>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>
           {pending ? 'Создание…' : 'Создать'}

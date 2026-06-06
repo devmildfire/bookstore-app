@@ -8,6 +8,7 @@ import {
   deletePromoCodeAction,
 } from '@/lib/admin/promoCodes/actions'
 import Button from '@/components/common/Button'
+import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminPromoCode } from '@/api/admin/promoCodes'
 import styles from './PromoCodeForm.module.scss'
 
@@ -66,33 +67,35 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
             required
           />
         </label>
-        <label className={styles.label}>
-          Тип
-          <select
+        <div className={styles.label}>
+          <span>Тип</span>
+          <AdminSelect
             name='kind'
-            value={kind}
-            onChange={(e) => setKind(e.target.value as 'cart' | 'item')}
-            className={styles.input}
-          >
-            <option value='cart'>На всю корзину</option>
-            <option value='item'>На товар</option>
-          </select>
-        </label>
+            defaultValue={kind}
+            ariaLabel='Тип'
+            onChange={(v) => setKind(v as 'cart' | 'item')}
+            options={[
+              { value: 'cart', label: 'На всю корзину' },
+              { value: 'item', label: 'На товар' },
+            ]}
+          />
+        </div>
       </div>
 
       {kind === 'item' && (
         <div className={styles.grid}>
-          <label className={styles.label}>
-            Книга (target_title_id)
-            <select name='targetTitleId' defaultValue={promo?.targetTitleId ?? ''} className={styles.input}>
-              <option value=''>—</option>
-              {titleOptions.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className={styles.label}>
+            <span>Книга (target_title_id)</span>
+            <AdminSelect
+              name='targetTitleId'
+              defaultValue={promo?.targetTitleId ? String(promo.targetTitleId) : ''}
+              ariaLabel='Книга'
+              options={[
+                { value: '', label: '—' },
+                ...titleOptions.map((t) => ({ value: String(t.id), label: t.name })),
+              ]}
+            />
+          </div>
           <label className={styles.label}>
             …или product_id
             <input
