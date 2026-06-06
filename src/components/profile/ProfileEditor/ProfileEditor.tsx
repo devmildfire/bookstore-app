@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'
 import { profileEditSchema, type ProfileEditValues } from '@/entities/profile/validation'
 import AvatarUpload from '@/components/profile/AvatarUpload'
+import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './ProfileEditor.module.scss'
 
 type Props = {
@@ -18,7 +19,7 @@ export default function ProfileEditor({ onDone }: Props) {
   const { profile, setProfile } = useProfile()
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ProfileEditValues>({
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm<ProfileEditValues>({
     resolver: zodResolver(profileEditSchema),
     defaultValues: {
       nickname: profile.nickname,
@@ -91,10 +92,16 @@ export default function ProfileEditor({ onDone }: Props) {
         </div>
 
         <div className={styles.field}>
-          <label htmlFor='profile-birthday' className={styles.label}>
+          <span className={styles.label}>
             Дата рождения <span className={styles.optional}>(необязательно)</span>
-          </label>
-          <input id='profile-birthday' type='date' className={styles.input} {...register('birthday')} />
+          </span>
+          <Controller
+            name='birthday'
+            control={control}
+            render={({ field }) => (
+              <AdminDatePicker value={field.value ?? ''} onChange={field.onChange} ariaLabel='Дата рождения' />
+            )}
+          />
           {errors.birthday && <p className={styles.error}>{errors.birthday.message}</p>}
         </div>
 

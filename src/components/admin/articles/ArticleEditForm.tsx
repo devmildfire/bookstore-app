@@ -9,6 +9,7 @@ import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
+import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './ArticleEditForm.module.scss'
 
 function toLocalInput(iso: string): string {
@@ -60,10 +61,10 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
             options={authorOptions.map((a) => ({ value: String(a.id), label: a.name }))}
           />
         </div>
-        <label className={styles.label}>
-          Дата публикации
-          <AdminInput name='publishedAt' type='datetime-local' defaultValue={toLocalInput(article.publishedAt)} required />
-        </label>
+        <div className={styles.label}>
+          <span>Дата публикации</span>
+          <AdminDatePicker name='publishedAt' withTime defaultValue={toLocalInput(article.publishedAt)} ariaLabel='Дата публикации' />
+        </div>
       </div>
 
       <label className={styles.label}>

@@ -5,11 +5,12 @@ import cn from 'classnames'
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '@/components/admin/icons'
 import styles from './AdminDatePicker.module.scss'
 
-// Custom date picker (Radix ships no calendar primitive). Built on the same
+// Custom date / date-time picker (Radix ships no calendar primitive). Same
 // open/outside-click/Escape pattern as AdminSelect, styled like AdminInput.
-// Stores/submits an ISO `YYYY-MM-DD` string via a hidden input, so it drops into
-// plain forms over a text column. A years view allows fast jumps for historical
-// dates; the value can be cleared (for optional dates like death date).
+// Works uncontrolled (defaultValue + hidden input for plain forms) or controlled
+// (value + onChange, e.g. with react-hook-form). With `withTime` it also edits a
+// HH:MM time and the value is `YYYY-MM-DDTHH:MM` (datetime-local); otherwise the
+// value is `YYYY-MM-DD`.
 
 const MONTHS = [
   'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
@@ -20,32 +21,51 @@ const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
+function datePart(v: string): string {
+  return v.split('T')[0] ?? ''
+}
+function timePart(v: string): string {
+  return v.includes('T') ? (v.split('T')[1] ?? '') : ''
+}
 function toISO(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 function parseISO(s: string): Date | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s)
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
   if (!m) return null
   const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
   return Number.isNaN(d.getTime()) ? null : d
 }
-function formatDisplay(s: string): string {
-  const d = parseISO(s)
-  return d ? `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}` : ''
+function clampNum(n: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Number.isNaN(n) ? min : n))
 }
 
 type Props = {
-  name: string
+  name?: string
+  value?: string
   defaultValue?: string
+  onChange?: (value: string) => void
+  withTime?: boolean
   ariaLabel?: string
   placeholder?: string
 }
 
-export default function AdminDatePicker({ name, defaultValue = '', ariaLabel, placeholder = 'дд.мм.гггг' }: Props) {
-  const [value, setValue] = useState(defaultValue)
+export default function AdminDatePicker({
+  name,
+  value,
+  defaultValue = '',
+  onChange,
+  withTime = false,
+  ariaLabel,
+  placeholder,
+}: Props) {
+  const controlled = value !== undefined
+  const [inner, setInner] = useState(defaultValue)
+  const v = controlled ? (value ?? '') : inner
+
   const [open, setOpen] = useState(false)
   const [view, setView] = useState<'days' | 'years'>('days')
-  const start = parseISO(defaultValue) ?? new Date()
+  const start = parseISO(v) ?? new Date()
   const [cursor, setCursor] = useState(() => new Date(start.getFullYear(), start.getMonth(), 1))
   const ref = useRef<HTMLDivElement>(null)
 
@@ -65,33 +85,54 @@ export default function AdminDatePicker({ name, defaultValue = '', ariaLabel, pl
     }
   }, [open])
 
-  const selected = parseISO(value)
+  function commit(next: string) {
+    if (!controlled) setInner(next)
+    onChange?.(next)
+  }
+
+  const selected = parseISO(v)
+  const time = timePart(v) || (withTime ? '00:00' : '')
+  const [hh, mm] = time ? time.split(':') : ['00', '00']
+
   const year = cursor.getFullYear()
   const month = cursor.getMonth()
-
-  // Day grid: 6 weeks, Monday-first.
   const firstDay = new Date(year, month, 1)
-  const offset = (firstDay.getDay() + 6) % 7 // 0 = Monday
+  const offset = (firstDay.getDay() + 6) % 7
   const gridStart = new Date(year, month, 1 - offset)
   const days = Array.from({ length: 42 }, (_, i) => {
     const d = new Date(gridStart)
     d.setDate(gridStart.getDate() + i)
     return d
   })
-
-  function pick(d: Date) {
-    setValue(toISO(d))
-    setOpen(false)
-    setView('days')
-  }
-
-  // Years view: 12-year grid around the cursor year.
   const decadeStart = year - (((year % 12) + 12) % 12)
   const years = Array.from({ length: 12 }, (_, i) => decadeStart + i)
 
+  function pickDay(d: Date) {
+    const iso = toISO(d)
+    if (withTime) {
+      commit(`${iso}T${time || '00:00'}`)
+    } else {
+      commit(iso)
+      setOpen(false)
+    }
+    setView('days')
+  }
+
+  function setTime(nextHH: string, nextMM: string) {
+    const iso = datePart(v) || toISO(new Date())
+    commit(`${iso}T${nextHH}:${nextMM}`)
+  }
+
+  function display(): string {
+    const d = parseISO(v)
+    if (!d) return placeholder ?? (withTime ? 'дд.мм.гггг чч:мм' : 'дд.мм.гггг')
+    const date = `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`
+    return withTime ? `${date} ${hh}:${mm}` : date
+  }
+
   return (
     <div className={cn(styles.picker, open && styles.open)} ref={ref}>
-      <input type='hidden' name={name} value={value} />
+      {name && <input type='hidden' name={name} value={v} />}
       <button
         type='button'
         className={styles.trigger}
@@ -100,7 +141,7 @@ export default function AdminDatePicker({ name, defaultValue = '', ariaLabel, pl
         aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
       >
-        <span className={cn(styles.value, !value && styles.placeholder)}>{value ? formatDisplay(value) : placeholder}</span>
+        <span className={cn(styles.value, !v && styles.placeholder)}>{display()}</span>
         <CalendarIcon className={styles.icon} />
       </button>
 
@@ -133,23 +174,54 @@ export default function AdminDatePicker({ name, defaultValue = '', ariaLabel, pl
                       type='button'
                       key={toISO(d)}
                       className={cn(styles.day, outside && styles.outside, isSel && styles.selected)}
-                      onClick={() => pick(d)}
+                      onClick={() => pickDay(d)}
                     >
                       {d.getDate()}
                     </button>
                   )
                 })}
               </div>
+
+              {withTime && (
+                <div className={styles.time}>
+                  <span className={styles.timeLabel}>Время</span>
+                  <input
+                    type='number'
+                    min={0}
+                    max={23}
+                    value={hh}
+                    aria-label='Часы'
+                    className={styles.timeField}
+                    onChange={(e) => setTime(pad(clampNum(Number(e.target.value), 0, 23)), mm)}
+                  />
+                  <span className={styles.timeColon}>:</span>
+                  <input
+                    type='number'
+                    min={0}
+                    max={59}
+                    value={mm}
+                    aria-label='Минуты'
+                    className={styles.timeField}
+                    onChange={(e) => setTime(hh, pad(clampNum(Number(e.target.value), 0, 59)))}
+                  />
+                </div>
+              )}
+
               <div className={styles.foot}>
-                <button type='button' className={styles.footBtn} onClick={() => pick(new Date())}>
+                <button type='button' className={styles.footBtn} onClick={() => pickDay(new Date())}>
                   Сегодня
                 </button>
-                {value && (
+                {withTime && (
+                  <button type='button' className={styles.footBtn} onClick={() => setOpen(false)}>
+                    Готово
+                  </button>
+                )}
+                {v && (
                   <button
                     type='button'
                     className={styles.footBtn}
                     onClick={() => {
-                      setValue('')
+                      commit('')
                       setOpen(false)
                     }}
                   >
