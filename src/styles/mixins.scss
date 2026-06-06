@@ -44,6 +44,36 @@
   }
 }
 
+// ─── Admin field (input / textarea) ─────────────────────────────────────────────
+// Shared base for the standard admin text controls (AdminInput / AdminTextarea):
+// dark inset, hairline border, hard edges, accent focus.
+
+@mixin admin-field {
+  width: 100%;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-hairline;
+  border-radius: 0;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  outline: none;
+  transition: border-color 0.16s ease, background 0.16s ease;
+
+  &::placeholder {
+    color: $color-text-ghost;
+  }
+
+  &:focus {
+    border-color: $color-accent-on-dark;
+    background: $color-bg-header;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // ─── Text Types ────────────────────────────────────────────────────────────────
 
 @mixin text-body {

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { updateAuthorAction, deleteAuthorAction } from '@/lib/admin/authors/actions'
 import Button from '@/components/common/Button'
 import type { AdminAuthor } from '@/api/admin/authors'
+import AdminInput from '@/components/admin/AdminInput'
+import AdminTextarea from '@/components/admin/AdminTextarea'
 import styles from './AuthorEditForm.module.scss'
 
 export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
@@ -31,32 +33,32 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
 
       <label className={styles.label}>
         Имя
-        <input name='name' defaultValue={author.name} className={styles.input} required />
+        <AdminInput name='name' defaultValue={author.name} required />
       </label>
 
       <label className={styles.label}>
         Биография
-        <textarea name='bio' defaultValue={author.bio ?? ''} className={styles.textarea} rows={5} />
+        <AdminTextarea name='bio' defaultValue={author.bio ?? ''} rows={5} />
       </label>
 
       <div className={styles.grid}>
         <label className={styles.label}>
           Дата рождения
-          <input name='birthDate' defaultValue={author.birthDate ?? ''} className={styles.input} placeholder='напр. 1965' />
+          <AdminInput name='birthDate' defaultValue={author.birthDate ?? ''} placeholder='напр. 1965' />
         </label>
         <label className={styles.label}>
           Дата смерти
-          <input name='deathDate' defaultValue={author.deathDate ?? ''} className={styles.input} />
+          <AdminInput name='deathDate' defaultValue={author.deathDate ?? ''} />
         </label>
         <label className={styles.label}>
           Город
-          <input name='city' defaultValue={author.city ?? ''} className={styles.input} />
+          <AdminInput name='city' defaultValue={author.city ?? ''} />
         </label>
       </div>
 
       <label className={styles.label}>
         Фраза / цитата
-        <input name='phrase' defaultValue={author.phrase ?? ''} className={styles.input} />
+        <AdminInput name='phrase' defaultValue={author.phrase ?? ''} />
       </label>
 
       <label className={styles.check}>

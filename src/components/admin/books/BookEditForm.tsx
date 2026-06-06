@@ -7,6 +7,8 @@ import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
 import { CheckIcon } from '@/components/admin/icons'
 import type { AdminBook } from '@/api/admin/books'
+import AdminInput from '@/components/admin/AdminInput'
+import AdminTextarea from '@/components/admin/AdminTextarea'
 import styles from './BookEditForm.module.scss'
 
 type Props = { book: AdminBook }
@@ -21,22 +23,22 @@ export default function BookEditForm({ book }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <input name='name' defaultValue={book.name} className={styles.input} required />
+          <AdminInput name='name' defaultValue={book.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <input name='slug' defaultValue={book.slug ?? ''} className={styles.input} required />
+          <AdminInput name='slug' defaultValue={book.slug ?? ''} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <textarea name='description' defaultValue={book.description ?? ''} className={styles.textarea} rows={5} />
+        <AdminTextarea name='description' defaultValue={book.description ?? ''} rows={5} />
       </label>
 
       <label className={styles.label}>
         Тезис
-        <textarea name='thesis' defaultValue={book.thesis ?? ''} className={styles.textarea} rows={2} />
+        <AdminTextarea name='thesis' defaultValue={book.thesis ?? ''} rows={2} />
       </label>
 
       <div className={styles.grid}>
@@ -46,11 +48,11 @@ export default function BookEditForm({ book }: Props) {
         </div>
         <label className={styles.label}>
           Год первого издания
-          <input name='firstRelease' defaultValue={book.firstRelease ?? ''} className={styles.input} />
+          <AdminInput name='firstRelease' defaultValue={book.firstRelease ?? ''} />
         </label>
         <label className={styles.label}>
           Литературная форма
-          <input name='litForm' defaultValue={book.litForm ?? ''} className={styles.input} />
+          <AdminInput name='litForm' defaultValue={book.litForm ?? ''} />
         </label>
       </div>
 

@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { createAuthorAction } from '@/lib/admin/authors/actions'
 import Button from '@/components/common/Button'
+import AdminInput from '@/components/admin/AdminInput'
 import styles from './AuthorCreateForm.module.scss'
 
 export default function AuthorCreateForm() {
@@ -11,7 +12,7 @@ export default function AuthorCreateForm() {
     <form action={action} className={styles.form}>
       <label className={styles.label}>
         Имя автора
-        <input name='name' className={styles.input} required placeholder='Например: Фёдор Достоевский' />
+        <AdminInput name='name' required placeholder='Например: Фёдор Достоевский' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

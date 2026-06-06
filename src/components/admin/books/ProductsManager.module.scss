@@ -118,26 +118,8 @@
   font-weight: $font-weight-medium;
 }
 
-.input {
-  width: 100%;
-  background: $color-bg-inset;
-  border: 1px solid $color-border-hairline;
-  border-radius: 0;
-  color: $color-text-on-dark;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  padding: 0 14px;
-  height: 44px;
-  outline: none;
-  transition: border-color 0.16s ease, background 0.16s ease;
-
-  &:focus {
-    border-color: $color-accent-on-dark;
-    background: $color-bg-header;
-  }
-}
-
-// price ₽ affix
+// price ₽ affix — AdminInput provides the field base; this only merges it with
+// the unit cell on the right.
 .affix {
   display: flex;
   align-items: center;
@@ -146,10 +128,12 @@
   @include breakpoint(phone) {
     width: 100%;
   }
+}
 
-  .input {
-    border-right: none;
-  }
+.affixInput {
+  flex: 1;
+  min-width: 0;
+  border-right: none;
 }
 
 .affixUnit {
@@ -326,25 +310,18 @@
   }
 }
 
-.workerInput {
-  height: 38px;
+// Flex sizing only — AdminInput supplies the standard field styling + height.
+// On desktop the two inputs share the row; on mobile the column stacks them, so
+// flex:1 must be cleared (it would otherwise grow along the vertical axis and
+// collapse the field height).
+.workerField {
   flex: 1;
   min-width: 120px;
-  padding: 0 12px;
-  background: $color-bg-inset;
-  border: 1px solid $color-border-hairline;
-  border-radius: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: $color-text-on-dark;
-  outline: none;
-
-  &:focus {
-    border-color: $color-accent-on-dark;
-  }
 
   @include breakpoint(phone) {
+    flex: none;
     min-width: 0;
+    width: 100%;
   }
 }
 

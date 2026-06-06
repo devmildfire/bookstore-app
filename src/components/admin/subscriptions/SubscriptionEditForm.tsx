@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { updateSubscriptionAction, deleteSubscriptionAction } from '@/lib/admin/subscriptions/actions'
 import Button from '@/components/common/Button'
 import type { AdminSubscription } from '@/api/admin/subscriptions'
+import AdminInput from '@/components/admin/AdminInput'
+import AdminTextarea from '@/components/admin/AdminTextarea'
 import styles from './SubscriptionEditForm.module.scss'
 
 export default function SubscriptionEditForm({ subscription }: { subscription: AdminSubscription }) {
@@ -32,30 +34,30 @@ export default function SubscriptionEditForm({ subscription }: { subscription: A
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <input name='name' defaultValue={subscription.name} className={styles.input} required />
+          <AdminInput name='name' defaultValue={subscription.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <input name='slug' defaultValue={subscription.slug} className={styles.input} required />
+          <AdminInput name='slug' defaultValue={subscription.slug} required />
         </label>
         <label className={styles.label}>
           Цена ₽
-          <input name='price' type='number' min={0} defaultValue={subscription.price} className={styles.input} />
+          <AdminInput name='price' type='number' min={0} defaultValue={subscription.price} />
         </label>
         <label className={styles.label}>
           Скидка %
-          <input name='discount' type='number' min={0} max={100} defaultValue={subscription.discount ?? ''} className={styles.input} />
+          <AdminInput name='discount' type='number' min={0} max={100} defaultValue={subscription.discount ?? ''} />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <textarea name='description' defaultValue={subscription.description ?? ''} className={styles.textarea} rows={3} />
+        <AdminTextarea name='description' defaultValue={subscription.description ?? ''} rows={3} />
       </label>
 
       <label className={styles.label}>
         Преимущества (по одному в строке)
-        <textarea name='perks' defaultValue={subscription.perks.join('\n')} className={styles.textarea} rows={5} />
+        <AdminTextarea name='perks' defaultValue={subscription.perks.join('\n')} rows={5} />
       </label>
 
       <div className={styles.checks}>

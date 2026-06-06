@@ -10,6 +10,7 @@ import {
 import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminPromoCode } from '@/api/admin/promoCodes'
+import AdminInput from '@/components/admin/AdminInput'
 import styles from './PromoCodeForm.module.scss'
 
 type Props = {
@@ -53,17 +54,16 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Код
-          <input name='code' defaultValue={promo?.code ?? ''} className={styles.input} required placeholder='SUMMER25' />
+          <AdminInput name='code' defaultValue={promo?.code ?? ''} required placeholder='SUMMER25' />
         </label>
         <label className={styles.label}>
           Скидка %
-          <input
+          <AdminInput
             name='discountPct'
             type='number'
             min={1}
             max={100}
             defaultValue={promo?.discountPct ?? ''}
-            className={styles.input}
             required
           />
         </label>
@@ -98,10 +98,9 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
           </div>
           <label className={styles.label}>
             …или product_id
-            <input
+            <AdminInput
               name='targetProductId'
               defaultValue={promo?.targetProductId ?? ''}
-              className={styles.input}
               placeholder='напр. AudioBook-4'
             />
           </label>
@@ -111,11 +110,11 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Начало действия
-          <input name='startsAt' type='datetime-local' defaultValue={toLocalInput(promo?.startsAt)} className={styles.input} required />
+          <AdminInput name='startsAt' type='datetime-local' defaultValue={toLocalInput(promo?.startsAt)} required />
         </label>
         <label className={styles.label}>
           Окончание
-          <input name='endsAt' type='datetime-local' defaultValue={toLocalInput(promo?.endsAt)} className={styles.input} required />
+          <AdminInput name='endsAt' type='datetime-local' defaultValue={toLocalInput(promo?.endsAt)} required />
         </label>
       </div>
 

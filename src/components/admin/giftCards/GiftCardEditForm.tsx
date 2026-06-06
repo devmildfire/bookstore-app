@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { updateGiftCardAction, deleteGiftCardAction } from '@/lib/admin/giftCards/actions'
 import Button from '@/components/common/Button'
 import type { AdminGiftCard } from '@/api/admin/giftCards'
+import AdminInput from '@/components/admin/AdminInput'
 import styles from './GiftCardEditForm.module.scss'
 
 export default function GiftCardEditForm({ giftCard }: { giftCard: AdminGiftCard }) {
@@ -31,19 +32,19 @@ export default function GiftCardEditForm({ giftCard }: { giftCard: AdminGiftCard
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <input name='name' defaultValue={giftCard.name} className={styles.input} required />
+          <AdminInput name='name' defaultValue={giftCard.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <input name='slug' defaultValue={giftCard.slug} className={styles.input} required />
+          <AdminInput name='slug' defaultValue={giftCard.slug} required />
         </label>
         <label className={styles.label}>
           Номинал ₽
-          <input name='faceValue' type='number' min={1} defaultValue={giftCard.faceValue} className={styles.input} required />
+          <AdminInput name='faceValue' type='number' min={1} defaultValue={giftCard.faceValue} required />
         </label>
         <label className={styles.label}>
           Порядок
-          <input name='sortOrder' type='number' min={0} defaultValue={giftCard.sortOrder} className={styles.input} />
+          <AdminInput name='sortOrder' type='number' min={0} defaultValue={giftCard.sortOrder} />
         </label>
       </div>
 

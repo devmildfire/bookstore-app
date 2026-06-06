@@ -9,6 +9,7 @@ import {
   CONTACT_CHANNEL_LABEL,
   type AdminAuthorContact,
 } from '@/lib/admin/authorContacts'
+import AdminInput from '@/components/admin/AdminInput'
 import styles from './ContactsManager.module.scss'
 
 type Props = { authorId: number; contacts: AdminAuthorContact[] }
@@ -79,7 +80,7 @@ export default function ContactsManager({ authorId, contacts }: Props) {
           onChange={setChannel}
           options={AUTHOR_CONTACT_CHANNELS.map((ch) => ({ value: ch, label: CONTACT_CHANNEL_LABEL[ch] }))}
         />
-        <input ref={urlRef} className={styles.input} placeholder='https://… или email' disabled={busy} />
+        <AdminInput ref={urlRef} placeholder='https://… или email' disabled={busy} />
         <button type='button' className={styles.addButton} onClick={handleAdd} disabled={busy}>
           Добавить
         </button>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { updateBoxSetAction, deleteBoxSetAction } from '@/lib/admin/boxSets/actions'
 import Button from '@/components/common/Button'
 import type { AdminBoxSet } from '@/api/admin/boxSets'
+import AdminInput from '@/components/admin/AdminInput'
+import AdminTextarea from '@/components/admin/AdminTextarea'
 import styles from './BoxSetEditForm.module.scss'
 
 export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
@@ -32,27 +34,27 @@ export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <input name='name' defaultValue={boxSet.name} className={styles.input} required />
+          <AdminInput name='name' defaultValue={boxSet.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <input name='slug' defaultValue={boxSet.slug} className={styles.input} required />
+          <AdminInput name='slug' defaultValue={boxSet.slug} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <textarea name='description' defaultValue={boxSet.description ?? ''} className={styles.textarea} rows={4} />
+        <AdminTextarea name='description' defaultValue={boxSet.description ?? ''} rows={4} />
       </label>
 
       <div className={styles.grid}>
         <label className={styles.label}>
           Цена ₽
-          <input name='price' type='number' min={0} defaultValue={boxSet.price} className={styles.input} />
+          <AdminInput name='price' type='number' min={0} defaultValue={boxSet.price} />
         </label>
         <label className={styles.label}>
           Скидка %
-          <input name='discount' type='number' min={0} max={100} defaultValue={boxSet.discount ?? ''} className={styles.input} />
+          <AdminInput name='discount' type='number' min={0} max={100} defaultValue={boxSet.discount ?? ''} />
         </label>
       </div>
 

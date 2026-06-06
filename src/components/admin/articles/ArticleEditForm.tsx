@@ -7,6 +7,8 @@ import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
+import AdminInput from '@/components/admin/AdminInput'
+import AdminTextarea from '@/components/admin/AdminTextarea'
 import styles from './ArticleEditForm.module.scss'
 
 function toLocalInput(iso: string): string {
@@ -43,11 +45,11 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Заголовок
-          <input name='title' defaultValue={article.title} className={styles.input} required />
+          <AdminInput name='title' defaultValue={article.title} required />
         </label>
         <label className={styles.label}>
           Slug
-          <input name='slug' defaultValue={article.slug} className={styles.input} required />
+          <AdminInput name='slug' defaultValue={article.slug} required />
         </label>
         <div className={styles.label}>
           <span>Автор</span>
@@ -60,13 +62,13 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
         </div>
         <label className={styles.label}>
           Дата публикации
-          <input name='publishedAt' type='datetime-local' defaultValue={toLocalInput(article.publishedAt)} className={styles.input} required />
+          <AdminInput name='publishedAt' type='datetime-local' defaultValue={toLocalInput(article.publishedAt)} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Анонс (excerpt)
-        <textarea name='excerpt' defaultValue={article.excerpt ?? ''} className={styles.textarea} rows={2} />
+        <AdminTextarea name='excerpt' defaultValue={article.excerpt ?? ''} rows={2} />
       </label>
 
       <div className={styles.label}>
