@@ -63,6 +63,15 @@
   border: 1px solid $color-border-strong;
   border-radius: 0;
   box-shadow: $shadow-popup-strong;
+
+  // On phones the trigger can sit near the right edge, so the anchored popover
+  // would overflow. Center it on the screen instead.
+  @include breakpoint(phone) {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .head {
