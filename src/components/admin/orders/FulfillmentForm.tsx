@@ -1,9 +1,9 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState } from 'react'
 import { setOrderFulfillmentAction } from '@/lib/admin/orders/actions'
 import Button from '@/components/common/Button'
-import Select from '@/components/common/Select'
+import AdminSelect from '@/components/admin/AdminSelect'
 import { CheckIcon } from '@/components/admin/icons'
 import type { FulfillmentStatus } from '@/entities/order/client'
 import styles from './FulfillmentForm.module.scss'
@@ -25,20 +25,14 @@ type Props = {
 
 export default function FulfillmentForm({ orderId, current, trackingNumber, trackingCarrier, adminNote }: Props) {
   const [state, action, pending] = useActionState(setOrderFulfillmentAction, null)
-  const [status, setStatus] = useState<FulfillmentStatus>(current)
 
   return (
     <form action={action} className={styles.form}>
       <input type='hidden' name='orderId' value={orderId} />
-      <input type='hidden' name='status' value={status} />
 
       <div className={styles.label}>
         <span>Статус доставки</span>
-        <Select
-          value={status}
-          onValueChange={(v) => setStatus(v as FulfillmentStatus)}
-          options={OPTIONS}
-        />
+        <AdminSelect name='status' defaultValue={current} options={OPTIONS} ariaLabel='Статус доставки' />
       </div>
 
       <div className={styles.row}>

@@ -7,6 +7,7 @@ import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import AdminPager from '@/components/admin/AdminPager'
+import AdminSelect from '@/components/admin/AdminSelect'
 import type { OrderStatus, FulfillmentStatus } from '@/entities/order/client'
 import styles from './page.module.scss'
 
@@ -73,22 +74,18 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         searchDefaultValue={sp.q ?? ''}
         searchPlaceholder='№ заказа или email'
       >
-        <select name='status' defaultValue={sp.status ?? ''} aria-label='Статус оплаты'>
-          <option value=''>Оплата: все</option>
-          {STATUS_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-        <select name='fulfillment' defaultValue={sp.fulfillment ?? ''} aria-label='Статус доставки'>
-          <option value=''>Доставка: все</option>
-          {FULFILLMENT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
+        <AdminSelect
+          name='status'
+          defaultValue={sp.status ?? ''}
+          ariaLabel='Статус оплаты'
+          options={[{ value: '', label: 'Оплата: все' }, ...STATUS_OPTIONS]}
+        />
+        <AdminSelect
+          name='fulfillment'
+          defaultValue={sp.fulfillment ?? ''}
+          ariaLabel='Статус доставки'
+          options={[{ value: '', label: 'Доставка: все' }, ...FULFILLMENT_OPTIONS]}
+        />
       </AdminFilterBar>
 
       {orders.length === 0 ? (

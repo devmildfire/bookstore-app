@@ -5,6 +5,7 @@ import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import AdminPager from '@/components/admin/AdminPager'
+import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -52,12 +53,17 @@ export default async function AdminBooksPage({ searchParams }: Props) {
         searchDefaultValue={sp.q ?? ''}
         searchPlaceholder='Поиск по названию'
       >
-        <select name='status' defaultValue={sp.status ?? ''} aria-label='Статус'>
-          <option value=''>Статус: все</option>
-          <option value='published'>Опубликованные</option>
-          <option value='draft'>Черновики</option>
-          <option value='archived'>В архиве</option>
-        </select>
+        <AdminSelect
+          name='status'
+          defaultValue={sp.status ?? ''}
+          ariaLabel='Статус'
+          options={[
+            { value: '', label: 'Статус: все' },
+            { value: 'published', label: 'Опубликованные' },
+            { value: 'draft', label: 'Черновики' },
+            { value: 'archived', label: 'В архиве' },
+          ]}
+        />
       </AdminFilterBar>
 
       {books.length === 0 ? (
