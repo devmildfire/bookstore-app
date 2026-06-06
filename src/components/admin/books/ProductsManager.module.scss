@@ -149,11 +149,19 @@
   font-size: $font-size-sm;
 }
 
+// Match the 44px field height so the checkboxes' centres line up with the
+// price/discount inputs (the labelled fields sit on the same bottom band via
+// `.fields { align-items: flex-end }`).
 .checks {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 22px;
-  padding-bottom: 4px;
+  height: 44px;
+
+  @include breakpoint(phone) {
+    height: auto;
+  }
 }
 
 .actions {
@@ -161,6 +169,12 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+// Force the shared Button to the 44px field height so it lines up with the
+// price/discount inputs (Button's size classes only offer 34/42/50).
+.save {
+  height: 44px !important;
 }
 
 .ok {

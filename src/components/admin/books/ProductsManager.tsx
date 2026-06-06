@@ -112,7 +112,7 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
             {edition.hasSoldOut && <Checkbox name='soldOut' defaultChecked={edition.soldOut ?? false} label='Распродано' />}
           </div>
           <div className={styles.actions}>
-            <Button type='submit' variant='secondary' size='sm' loading={pending}>
+            <Button type='submit' variant='secondary' size='md' className={styles.save} loading={pending}>
               {pending ? '…' : 'Сохранить'}
             </Button>
             {state?.status === 'ok' && (
