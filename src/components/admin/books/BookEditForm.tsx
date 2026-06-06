@@ -48,7 +48,15 @@ export default function BookEditForm({ book }: Props) {
         </div>
         <label className={styles.label}>
           Год первого издания
-          <AdminInput name='firstRelease' defaultValue={book.firstRelease ?? ''} />
+          <AdminInput
+            name='firstRelease'
+            type='number'
+            min={1}
+            max={new Date().getFullYear() + 1}
+            step={1}
+            defaultValue={book.firstRelease ?? ''}
+            placeholder='напр. 2020'
+          />
         </label>
         <label className={styles.label}>
           Литературная форма
