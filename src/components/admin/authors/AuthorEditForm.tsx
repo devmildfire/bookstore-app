@@ -8,6 +8,7 @@ import Checkbox from '@/components/common/Checkbox'
 import type { AdminAuthor } from '@/api/admin/authors'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
+import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './AuthorEditForm.module.scss'
 
 export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
@@ -43,14 +44,14 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
       </label>
 
       <div className={styles.grid}>
-        <label className={styles.label}>
-          Дата рождения
-          <AdminInput name='birthDate' defaultValue={author.birthDate ?? ''} placeholder='напр. 1965' />
-        </label>
-        <label className={styles.label}>
-          Дата смерти
-          <AdminInput name='deathDate' defaultValue={author.deathDate ?? ''} />
-        </label>
+        <div className={styles.label}>
+          <span>Дата рождения</span>
+          <AdminDatePicker name='birthDate' defaultValue={author.birthDate ?? ''} ariaLabel='Дата рождения' />
+        </div>
+        <div className={styles.label}>
+          <span>Дата смерти</span>
+          <AdminDatePicker name='deathDate' defaultValue={author.deathDate ?? ''} ariaLabel='Дата смерти' />
+        </div>
         <label className={styles.label}>
           Город
           <AdminInput name='city' defaultValue={author.city ?? ''} />

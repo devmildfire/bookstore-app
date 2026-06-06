@@ -59,6 +59,8 @@ export const CheckIcon = make(['M5 12.5l4.5 4.5L19 6.5'])
 // Proportionate chevron (fills a 12×8 box) so it reads clearly at any CSS size.
 export const ChevronDownIcon = make(['M1 1.5l5 5 5-5'], '0 0 12 8')
 export const ChevronRightIcon = make(['M9 6l6 6-6 6'])
+export const ChevronLeftIcon = make(['M15 6l-6 6 6 6'])
+export const CalendarIcon = make(['M5 4h14v16H5V4Z', 'M5 9h14', 'M8 2.5v3M16 2.5v3'])
 export const ArrowLeftIcon = make(['M19 12H5M11 6l-6 6 6 6'])
 export const BurgerIcon = make(['M4 6h16M4 12h16M4 18h16'])
 export const BellIcon = make(['M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z', 'M10 19a2 2 0 0 0 4 0'])
