@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateBoxSetAction, deleteBoxSetAction } from '@/lib/admin/boxSets/actions'
 import Button from '@/components/common/Button'
+import Checkbox from '@/components/common/Checkbox'
 import type { AdminBoxSet } from '@/api/admin/boxSets'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
@@ -59,14 +60,8 @@ export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
       </div>
 
       <div className={styles.checks}>
-        <label className={styles.check}>
-          <input type='checkbox' name='isPublished' defaultChecked={boxSet.isPublished} />
-          Опубликован
-        </label>
-        <label className={styles.check}>
-          <input type='checkbox' name='isActive' defaultChecked={boxSet.isActive} />
-          Активен
-        </label>
+        <Checkbox name='isPublished' defaultChecked={boxSet.isPublished} label='Опубликован' />
+        <Checkbox name='isActive' defaultChecked={boxSet.isActive} label='Активен' />
       </div>
 
       <div className={styles.actions}>

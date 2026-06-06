@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateSubscriptionAction, deleteSubscriptionAction } from '@/lib/admin/subscriptions/actions'
 import Button from '@/components/common/Button'
+import Checkbox from '@/components/common/Checkbox'
 import type { AdminSubscription } from '@/api/admin/subscriptions'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
@@ -61,14 +62,8 @@ export default function SubscriptionEditForm({ subscription }: { subscription: A
       </label>
 
       <div className={styles.checks}>
-        <label className={styles.check}>
-          <input type='checkbox' name='isPublished' defaultChecked={subscription.isPublished} />
-          Опубликована
-        </label>
-        <label className={styles.check}>
-          <input type='checkbox' name='isActive' defaultChecked={subscription.isActive} />
-          Активна
-        </label>
+        <Checkbox name='isPublished' defaultChecked={subscription.isPublished} label='Опубликована' />
+        <Checkbox name='isActive' defaultChecked={subscription.isActive} label='Активна' />
       </div>
 
       <div className={styles.actions}>

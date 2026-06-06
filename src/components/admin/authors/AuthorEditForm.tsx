@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateAuthorAction, deleteAuthorAction } from '@/lib/admin/authors/actions'
 import Button from '@/components/common/Button'
+import Checkbox from '@/components/common/Checkbox'
 import type { AdminAuthor } from '@/api/admin/authors'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
@@ -61,10 +62,7 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
         <AdminInput name='phrase' defaultValue={author.phrase ?? ''} />
       </label>
 
-      <label className={styles.check}>
-        <input type='checkbox' name='nonsalable' defaultChecked={author.nonsalable} />
-        Непродаваемый (служебный автор)
-      </label>
+      <Checkbox name='nonsalable' defaultChecked={author.nonsalable} label='Непродаваемый (служебный автор)' />
 
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>
