@@ -5,6 +5,8 @@ import { formatPrice } from '@/lib/formatPrice'
 import { fulfillmentLabel, formatOrderDate, paymentStatusLabel } from '@/lib/orderDisplay'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import AdminPager from '@/components/admin/AdminPager'
 import type { OrderStatus, FulfillmentStatus } from '@/entities/order/client'
 import styles from './page.module.scss'
 
@@ -63,10 +65,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Заказы</h1>
-        <span className={styles.count}>{total} всего</span>
-      </header>
+      <AdminPageHeader title='Заказы' count={`${total} всего`} />
 
       <AdminFilterBar
         resetHref='/admin/orders'
@@ -133,15 +132,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <nav className={styles.pager} aria-label='Страницы'>
-          {page > 1 && <Link href={buildHref({ page: page - 1 })}>← Назад</Link>}
-          <span className={styles.pageInfo}>
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && <Link href={buildHref({ page: page + 1 })}>Вперёд →</Link>}
-        </nav>
-      )}
+      <AdminPager page={page} totalPages={totalPages} hrefForPage={(p) => buildHref({ page: p })} />
     </section>
   )
 }

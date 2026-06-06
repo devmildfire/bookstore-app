@@ -1,0 +1,63 @@
+@use '@/styles/common' as *;
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+
+  @media (max-width: 600px) {
+    gap: 10px 14px;
+    margin-bottom: 20px;
+  }
+}
+
+.title {
+  @include admin-page-title;
+}
+
+.count {
+  font-family: $font-montserrat;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: $color-text-faint;
+  padding-bottom: 5px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 22px;
+  background: $color-accent-on-dark;
+  color: #fff;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  letter-spacing: 0.4px;
+  border-radius: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.16s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: $color-accent-bright;
+  }
+
+  // On mobile the create button takes its own full-width line.
+  @media (max-width: 600px) {
+    flex-basis: 100%;
+    width: 100%;
+  }
+}

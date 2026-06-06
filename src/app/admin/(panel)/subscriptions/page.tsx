@@ -4,6 +4,7 @@ import { getAdminSubscriptions } from '@/api/admin/subscriptions'
 import { formatPrice } from '@/lib/formatPrice'
 import StatusBadge from '@/components/admin/StatusBadge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Подписки' }
@@ -13,13 +14,12 @@ export default async function AdminSubscriptionsPage() {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Подписки</h1>
-        <span className={styles.count}>{subscriptions.length} всего</span>
-        <Link href='/admin/subscriptions/new' className={styles.create}>
-          + Создать подписку
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Подписки'
+        count={`${subscriptions.length} всего`}
+        createHref='/admin/subscriptions/new'
+        createLabel='Создать подписку'
+      />
 
       {subscriptions.length === 0 ? (
         <p className={styles.empty}>Подписки не найдены.</p>

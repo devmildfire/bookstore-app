@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getAdminPromoCodes } from '@/api/admin/promoCodes'
 import { formatOrderDate } from '@/lib/orderDisplay'
 import StatusBadge from '@/components/admin/StatusBadge'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Промокоды' }
@@ -12,13 +13,12 @@ export default async function AdminPromoCodesPage() {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Промокоды</h1>
-        <span className={styles.count}>{codes.length} всего</span>
-        <Link href='/admin/promo-codes/new' className={styles.create}>
-          + Создать промокод
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Промокоды'
+        count={`${codes.length} всего`}
+        createHref='/admin/promo-codes/new'
+        createLabel='Создать промокод'
+      />
 
       {codes.length === 0 ? (
         <p className={styles.empty}>Промокоды не найдены.</p>

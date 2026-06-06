@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { getAdminAuthors } from '@/api/admin/authors'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import AdminPager from '@/components/admin/AdminPager'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Авторы' }
@@ -25,13 +26,12 @@ export default async function AdminAuthorsPage({ searchParams }: Props) {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Авторы</h1>
-        <span className={styles.count}>{total} всего</span>
-        <Link href='/admin/authors/new' className={styles.create}>
-          + Создать автора
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Авторы'
+        count={`${total} всего`}
+        createHref='/admin/authors/new'
+        createLabel='Создать автора'
+      />
 
       <AdminFilterBar
         resetHref='/admin/authors'
@@ -50,15 +50,7 @@ export default async function AdminAuthorsPage({ searchParams }: Props) {
         </AdminList>
       )}
 
-      {totalPages > 1 && (
-        <nav className={styles.pager} aria-label='Страницы'>
-          {page > 1 && <Link href={pageHref(page - 1)}>← Назад</Link>}
-          <span className={styles.pageInfo}>
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && <Link href={pageHref(page + 1)}>Вперёд →</Link>}
-        </nav>
-      )}
+      <AdminPager page={page} totalPages={totalPages} hrefForPage={pageHref} />
     </section>
   )
 }

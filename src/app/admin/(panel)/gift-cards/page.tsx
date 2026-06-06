@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getAdminGiftCards } from '@/api/admin/giftCards'
 import { formatPrice } from '@/lib/formatPrice'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Карты даров' }
@@ -12,13 +13,12 @@ export default async function AdminGiftCardsPage() {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Карты даров</h1>
-        <span className={styles.count}>{giftCards.length} всего</span>
-        <Link href='/admin/gift-cards/new' className={styles.create}>
-          + Создать карту
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Карты даров'
+        count={`${giftCards.length} всего`}
+        createHref='/admin/gift-cards/new'
+        createLabel='Создать карту'
+      />
 
       {giftCards.length === 0 ? (
         <p className={styles.empty}>Карты даров не найдены.</p>

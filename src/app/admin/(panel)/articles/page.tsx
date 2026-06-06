@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { getAdminArticles } from '@/api/admin/articles'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import { formatOrderDate } from '@/lib/orderDisplay'
 import styles from './page.module.scss'
 
@@ -12,13 +12,12 @@ export default async function AdminArticlesPage() {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Статьи</h1>
-        <span className={styles.count}>{articles.length} всего</span>
-        <Link href='/admin/articles/new' className={styles.create}>
-          + Создать статью
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Статьи'
+        count={`${articles.length} всего`}
+        createHref='/admin/articles/new'
+        createLabel='Создать статью'
+      />
       <p className={styles.note}>Статьи журнала «Динозавр» — то, что показывается на /dino-magazine.</p>
 
       {articles.length === 0 ? (

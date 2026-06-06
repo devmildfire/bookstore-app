@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
 import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
+import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import AdminPager from '@/components/admin/AdminPager'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Книги' }
@@ -38,13 +39,12 @@ export default async function AdminBooksPage({ searchParams }: Props) {
 
   return (
     <section className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>Книги</h1>
-        <span className={styles.count}>{total} всего</span>
-        <Link href='/admin/books/new' className={styles.create}>
-          + Создать книгу
-        </Link>
-      </header>
+      <AdminPageHeader
+        title='Книги'
+        count={`${total} всего`}
+        createHref='/admin/books/new'
+        createLabel='Создать книгу'
+      />
 
       <AdminFilterBar
         resetHref='/admin/books'
@@ -83,15 +83,7 @@ export default async function AdminBooksPage({ searchParams }: Props) {
         </AdminList>
       )}
 
-      {totalPages > 1 && (
-        <nav className={styles.pager} aria-label='Страницы'>
-          {page > 1 && <Link href={pageHref(page - 1)}>← Назад</Link>}
-          <span className={styles.pageInfo}>
-            {page} / {totalPages}
-          </span>
-          {page < totalPages && <Link href={pageHref(page + 1)}>Вперёд →</Link>}
-        </nav>
-      )}
+      <AdminPager page={page} totalPages={totalPages} hrefForPage={pageHref} />
     </section>
   )
 }
