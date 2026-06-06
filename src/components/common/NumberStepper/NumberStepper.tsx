@@ -62,22 +62,23 @@ export default function NumberStepper({
       >
         <MinusIcon />
       </button>
+      {/* Text input with a numeric filter rather than type=number: type=number
+          keeps an invalid-input buffer that can still display typed letters. We
+          strip non-digits on every change so only digits ever appear. */}
       <input
         id={id}
         name={name}
-        type='number'
+        type='text'
+        inputMode='numeric'
         value={v}
-        min={min}
-        max={max}
-        step={step}
         disabled={disabled}
         required={required}
         aria-label={ariaLabel}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onChange={(e) => {
-          const s = e.target.value
-          commit(s === '' ? '' : clamp(Number(s)))
+          const digits = e.target.value.replace(/\D/g, '')
+          commit(digits === '' ? '' : clamp(Number(digits)))
         }}
       />
       <button
