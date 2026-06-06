@@ -318,6 +318,12 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+
+  // On mobile the name/role inputs + add button stack full-width (too narrow side-by-side).
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .workerInput {
