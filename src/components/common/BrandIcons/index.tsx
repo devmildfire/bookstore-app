@@ -80,3 +80,14 @@ export function TwitterIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function WebsiteIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox='0 0 64 64' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' aria-hidden>
+      <circle cx='32' cy='32' r='29' />
+      <circle cx='32' cy='32' r='15' />
+      <line x1='17' y1='32' x2='47' y2='32' />
+      <path d='M32 17c5 4 7.5 9.5 7.5 15s-2.5 11-7.5 15c-5-4-7.5-9.5-7.5-15s2.5-11 7.5-15Z' />
+    </svg>
+  )
+}

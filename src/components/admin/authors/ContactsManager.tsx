@@ -8,9 +8,27 @@ import {
   AUTHOR_CONTACT_CHANNELS,
   CONTACT_CHANNEL_LABEL,
   type AdminAuthorContact,
+  type AuthorContactChannel,
 } from '@/lib/admin/authorContacts'
 import AdminInput from '@/components/admin/AdminInput'
+import {
+  TelegramIcon,
+  InstagramIcon,
+  FacebookIcon,
+  TwitterIcon,
+  EmailIcon,
+  WebsiteIcon,
+} from '@/components/common/BrandIcons'
 import styles from './ContactsManager.module.scss'
+
+const CHANNEL_ICON: Record<AuthorContactChannel, React.FC<{ className?: string }>> = {
+  telegram: TelegramIcon,
+  instagram: InstagramIcon,
+  facebook: FacebookIcon,
+  twitter: TwitterIcon,
+  email: EmailIcon,
+  website: WebsiteIcon,
+}
 
 type Props = { authorId: number; contacts: AdminAuthorContact[] }
 
@@ -60,15 +78,20 @@ export default function ContactsManager({ authorId, contacts }: Props) {
         <p className={styles.empty}>Контакты не добавлены.</p>
       ) : (
         <ul className={styles.list}>
-          {contacts.map((c) => (
+          {contacts.map((c) => {
+            const Icon = CHANNEL_ICON[c.channel]
+            return (
             <li key={c.id} className={styles.item}>
-              <span className={styles.channel}>{CONTACT_CHANNEL_LABEL[c.channel]}</span>
+              <span className={styles.channelIcon} title={CONTACT_CHANNEL_LABEL[c.channel]} aria-label={CONTACT_CHANNEL_LABEL[c.channel]}>
+                <Icon />
+              </span>
               <span className={styles.url}>{c.url}</span>
               <button type='button' onClick={() => handleRemove(c.id)} disabled={busy} aria-label='Удалить контакт'>
                 ✕
               </button>
             </li>
-          ))}
+            )
+          })}
         </ul>
       )}
 
