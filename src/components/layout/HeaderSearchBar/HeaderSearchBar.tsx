@@ -21,6 +21,19 @@ function formatAgeRestriction(age: number | null): string {
   return `${age}+`
 }
 
+// Anthologies can list dozens of authors — show the first few and collapse the
+// rest into "и другие" so a result row doesn't take half the dropdown.
+const MAX_AUTHORS = 2
+function formatAuthors(authorName: string | null): string {
+  if (!authorName) return ''
+  const authors = authorName
+    .split(',')
+    .map((a) => a.trim())
+    .filter(Boolean)
+  if (authors.length <= MAX_AUTHORS) return authors.join(', ')
+  return `${authors.slice(0, MAX_AUTHORS).join(', ')} и другие`
+}
+
 function formatMetaLine(book: {
   year: string | null
   litForm: string | null
@@ -104,7 +117,7 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
                 </div>
                 <div className={styles.resultInfo}>
                   <span className={styles.resultTitle}>{book.name}</span>
-                  <span className={styles.resultAuthor}>{book.authorName}</span>
+                  <span className={styles.resultAuthor}>{formatAuthors(book.authorName)}</span>
                   <span className={styles.resultMeta}>{formatMetaLine(book)}</span>
                 </div>
               </Link>
