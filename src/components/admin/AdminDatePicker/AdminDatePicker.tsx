@@ -46,6 +46,8 @@ type Props = {
   defaultValue?: string
   onChange?: (value: string) => void
   withTime?: boolean
+  /** Year-only picker: value is `YYYY`, the popover shows only the year grid. */
+  yearOnly?: boolean
   ariaLabel?: string
   placeholder?: string
 }
@@ -56,6 +58,7 @@ export default function AdminDatePicker({
   defaultValue = '',
   onChange,
   withTime = false,
+  yearOnly = false,
   ariaLabel,
   placeholder,
 }: Props) {
@@ -64,9 +67,10 @@ export default function AdminDatePicker({
   const v = controlled ? (value ?? '') : inner
 
   const [open, setOpen] = useState(false)
-  const [view, setView] = useState<'days' | 'years'>('days')
-  const start = parseISO(v) ?? new Date()
-  const [cursor, setCursor] = useState(() => new Date(start.getFullYear(), start.getMonth(), 1))
+  const [view, setView] = useState<'days' | 'years'>(yearOnly ? 'years' : 'days')
+  const startYear = yearOnly ? Number(v) || new Date().getFullYear() : (parseISO(v) ?? new Date()).getFullYear()
+  const startMonth = yearOnly ? 0 : (parseISO(v) ?? new Date()).getMonth()
+  const [cursor, setCursor] = useState(() => new Date(startYear, startMonth, 1))
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -91,6 +95,7 @@ export default function AdminDatePicker({
   }
 
   const selected = parseISO(v)
+  const selectedYear = yearOnly ? Number(v) || null : null
   const time = timePart(v) || (withTime ? '00:00' : '')
   const [hh, mm] = time ? time.split(':') : ['00', '00']
 
@@ -124,6 +129,7 @@ export default function AdminDatePicker({
   }
 
   function display(): string {
+    if (yearOnly) return v || (placeholder ?? 'гггг')
     const d = parseISO(v)
     if (!d) return placeholder ?? (withTime ? 'дд.мм.гггг чч:мм' : 'дд.мм.гггг')
     const date = `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`
@@ -248,8 +254,14 @@ export default function AdminDatePicker({
                   <button
                     type='button'
                     key={y}
-                    className={cn(styles.year, y === year && styles.selected)}
+                    className={cn(styles.year, (yearOnly ? y === selectedYear : y === year) && styles.selected)}
                     onClick={() => {
+                      if (yearOnly) {
+                        commit(String(y))
+                        setCursor(new Date(y, 0, 1))
+                        setOpen(false)
+                        return
+                      }
                       setCursor(new Date(y, month, 1))
                       setView('days')
                     }}
@@ -258,6 +270,20 @@ export default function AdminDatePicker({
                   </button>
                 ))}
               </div>
+              {yearOnly && v && (
+                <div className={styles.foot}>
+                  <button
+                    type='button'
+                    className={styles.footBtn}
+                    onClick={() => {
+                      commit('')
+                      setOpen(false)
+                    }}
+                  >
+                    Очистить
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

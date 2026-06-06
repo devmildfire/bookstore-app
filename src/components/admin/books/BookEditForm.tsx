@@ -9,6 +9,7 @@ import { CheckIcon } from '@/components/admin/icons'
 import type { AdminBook } from '@/api/admin/books'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
+import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './BookEditForm.module.scss'
 
 type Props = { book: AdminBook }
@@ -46,18 +47,10 @@ export default function BookEditForm({ book }: Props) {
           <span>Возрастное ограничение</span>
           <NumberStepper name='ageRestriction' defaultValue={book.ageRestriction ?? ''} min={0} max={21} />
         </div>
-        <label className={styles.label}>
-          Год первого издания
-          <AdminInput
-            name='firstRelease'
-            type='number'
-            min={1}
-            max={new Date().getFullYear() + 1}
-            step={1}
-            defaultValue={book.firstRelease ?? ''}
-            placeholder='напр. 2020'
-          />
-        </label>
+        <div className={styles.label}>
+          <span>Год первого издания</span>
+          <AdminDatePicker name='firstRelease' yearOnly defaultValue={book.firstRelease ?? ''} ariaLabel='Год первого издания' />
+        </div>
         <label className={styles.label}>
           Литературная форма
           <AdminInput name='litForm' defaultValue={book.litForm ?? ''} />
