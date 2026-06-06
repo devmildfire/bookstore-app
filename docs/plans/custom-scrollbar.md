@@ -175,6 +175,7 @@ Excluded: `<textarea>` (keeps native resize/scroll), the main window, and the
 - ⬜ Storefront — fixed-height long-text panels (audit which)
 - ✅ Admin — `AdminSelect` options popover (max-height 240px, vertical-only Scroller)
 - ✅ Admin — shared `Modal` tall body (flex column + Scroller body)
+- ✅ Storefront — box-set preview book row (horizontal, main page)
 - ⬜ Admin — other `overflow:auto` lists / horizontal tables
 
 ### HeaderSearchBar refactor notes (2026-06-06)

@@ -152,9 +152,8 @@
 .gridWrapContained .previewInner {
   padding: $space-5 $space-5;
   min-width: 0;
-  // Belt + braces: overflow-x: auto is already declared on .previewInner,
-  // but with min-width: 0 + this max-width grid items can't push the
-  // expansion past the wrapper edge.
+  // Constrain the Scroller host so the wide book grid scrolls inside it
+  // rather than pushing the expansion past the wrapper edge.
   max-width: 100%;
 }
 
@@ -344,8 +343,8 @@
 // ─── Preview (book list inside expansion) ────────────────────────────────────
 
 .previewInner {
-  overflow-x: auto;
-  overscroll-behavior-x: contain; // stop horizontal scroll from propagating to page
+  // Horizontal scrolling is owned by the <Scroller> (OverlayScrollbars) wrapper;
+  // this just supplies the padding around the book grid.
   padding: $space-8 $layout-px;
 
   @include breakpoint(tablet) {

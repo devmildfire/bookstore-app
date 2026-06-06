@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import cn from 'classnames'
 import { useBoxSetBooks } from '@/hooks/useBoxSetBooks'
+import Scroller from '@/components/common/Scroller'
 import styles from './BoxSetsSection.module.scss'
 
 type Props = {
@@ -32,7 +33,7 @@ export default function BoxSetPreview({ boxSetId }: Props) {
   }
 
   return (
-    <div className={styles.previewInner}>
+    <Scroller className={styles.previewInner} axis='horizontal'>
       <div className={styles.previewGrid}>
         {books.map((book) => (
           <div key={book.titleId} className={styles.previewBook}>
@@ -54,6 +55,6 @@ export default function BoxSetPreview({ boxSetId }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </Scroller>
   )
 }
