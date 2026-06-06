@@ -70,6 +70,7 @@ export default function NumberStepper({
         name={name}
         type='text'
         inputMode='numeric'
+        size={1}
         value={v}
         disabled={disabled}
         required={required}
