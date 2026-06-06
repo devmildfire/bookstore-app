@@ -3,9 +3,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import * as ScrollArea from '@radix-ui/react-scroll-area'
 import cn from 'classnames'
 import { useSearch } from '@/hooks/useSearch'
+import Scroller from '@/components/common/Scroller/Scroller'
 import SearchIcon from '@/assets/icons/search.svg'
 import CrossIcon from '@/assets/icons/cross.svg'
 import styles from './HeaderSearchBar.module.scss'
@@ -41,7 +41,7 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
   const hasQuery = query.length >= 3
   const isDropdownOpen = hasQuery && (results.length > 0 || isLoading)
   const mobileInputRef = useRef<HTMLInputElement>(null)
-  const scrollViewportRef = useRef<HTMLDivElement>(null)
+  const scrollViewportRef = useRef<HTMLElement>(null)
   const sentinelRef = useRef<HTMLLIElement>(null)
 
   useEffect(() => {
@@ -75,49 +75,44 @@ export default function HeaderSearchBar({ expanded, onExpand, onCollapse }: Prop
 
   function renderResults(onClickResult: () => void) {
     return (
-      <ScrollArea.Root className={styles.scrollArea} type='hover'>
-        <ScrollArea.Viewport className={styles.scrollViewport} ref={scrollViewportRef}>
-          <ul className={styles.resultsList}>
-            <li className={styles.resultsHeading}>
-              Издания{total > 0 ? ` \u00B7 ${total}` : ''}
+      <Scroller className={styles.scrollViewport} ref={scrollViewportRef}>
+        <ul className={styles.resultsList}>
+          <li className={styles.resultsHeading}>
+            Издания{total > 0 ? ` \u00B7 ${total}` : ''}
+          </li>
+          {results.map((book) => (
+            <li key={book.id}>
+              <Link
+                href={`/books/${book.slug}`}
+                className={styles.resultItem}
+                onClick={onClickResult}
+              >
+                <div className={styles.resultCover}>
+                  {book.coverUrl ? (
+                    <Image
+                      src={book.coverUrl}
+                      alt={book.name}
+                      fill
+                      sizes='58px'
+                      className={styles.resultImage}
+                      placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
+                      blurDataURL={book.coverBlurDataUrl ?? undefined}
+                    />
+                  ) : (
+                    <div className={styles.resultCoverPlaceholder} aria-hidden />
+                  )}
+                </div>
+                <div className={styles.resultInfo}>
+                  <span className={styles.resultTitle}>{book.name}</span>
+                  <span className={styles.resultAuthor}>{book.authorName}</span>
+                  <span className={styles.resultMeta}>{formatMetaLine(book)}</span>
+                </div>
+              </Link>
             </li>
-            {results.map((book) => (
-              <li key={book.id}>
-                <Link
-                  href={`/books/${book.slug}`}
-                  className={styles.resultItem}
-                  onClick={onClickResult}
-                >
-                  <div className={styles.resultCover}>
-                    {book.coverUrl ? (
-                      <Image
-                        src={book.coverUrl}
-                        alt={book.name}
-                        fill
-                        sizes='58px'
-                        className={styles.resultImage}
-                        placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
-                        blurDataURL={book.coverBlurDataUrl ?? undefined}
-                      />
-                    ) : (
-                      <div className={styles.resultCoverPlaceholder} aria-hidden />
-                    )}
-                  </div>
-                  <div className={styles.resultInfo}>
-                    <span className={styles.resultTitle}>{book.name}</span>
-                    <span className={styles.resultAuthor}>{book.authorName}</span>
-                    <span className={styles.resultMeta}>{formatMetaLine(book)}</span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-            {hasMore && <li ref={sentinelRef} className={styles.loadingMore}>Загрузка...</li>}
-          </ul>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar className={styles.scrollbar} orientation='vertical'>
-          <ScrollArea.Thumb className={styles.scrollThumb} />
-        </ScrollArea.Scrollbar>
-      </ScrollArea.Root>
+          ))}
+          {hasMore && <li ref={sentinelRef} className={styles.loadingMore}>Загрузка...</li>}
+        </ul>
+      </Scroller>
     )
   }
 

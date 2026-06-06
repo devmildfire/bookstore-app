@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import cn from 'classnames'
 import { ChevronDownIcon, CheckIcon } from '@/components/admin/icons'
+import Scroller from '@/components/common/Scroller/Scroller'
 import styles from './AdminSelect.module.scss'
 
 // Custom admin dropdown, ported from the handoff `.cselect`: a styled trigger
@@ -64,20 +65,22 @@ export default function AdminSelect({ name, options, defaultValue = '', ariaLabe
         <ChevronDownIcon className={styles.chev} />
       </button>
       {open && (
-        <ul className={styles.menu} role='listbox'>
-          {options.map((o) => (
-            <li
-              key={o.value}
-              role='option'
-              aria-selected={o.value === value}
-              className={cn(styles.option, o.value === value && styles.selected)}
-              onClick={() => pick(o.value)}
-            >
-              <span>{o.label}</span>
-              <CheckIcon className={styles.check} />
-            </li>
-          ))}
-        </ul>
+        <Scroller className={styles.menu} axis='vertical'>
+          <ul className={styles.menuList} role='listbox'>
+            {options.map((o) => (
+              <li
+                key={o.value}
+                role='option'
+                aria-selected={o.value === value}
+                className={cn(styles.option, o.value === value && styles.selected)}
+                onClick={() => pick(o.value)}
+              >
+                <span>{o.label}</span>
+                <CheckIcon className={styles.check} />
+              </li>
+            ))}
+          </ul>
+        </Scroller>
       )}
     </div>
   )

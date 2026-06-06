@@ -109,3 +109,28 @@ ul,
 ol {
   list-style: none;
 }
+
+// ─── OverlayScrollbars theme ──────────────────────────────────────────────
+// The theme class is applied directly to the `.os-scrollbar` element, and
+// OverlayScrollbars' base CSS sets these vars to 0/none on `.os-scrollbar` with
+// equal specificity — so the theme must be `.os-scrollbar.os-theme-chtivo` to
+// reliably win regardless of stylesheet load order.
+
+.os-scrollbar.os-theme-chtivo {
+  --os-size: 10px;
+  --os-padding-perpendicular: 3px;
+  --os-padding-axis: 4px;
+  --os-track-bg: rgba(220, 220, 220, 0.1);
+  --os-track-bg-hover: rgba(220, 220, 220, 0.14);
+  --os-handle-bg: rgba(220, 220, 220, 0.35);
+  --os-handle-bg-hover: rgba(220, 220, 220, 0.55);
+  --os-handle-bg-active: rgba(220, 220, 220, 0.65);
+  --os-handle-border-radius: 999px;
+  --os-handle-min-size: 24px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .os-scrollbar.os-theme-chtivo {
+    display: none;
+  }
+}

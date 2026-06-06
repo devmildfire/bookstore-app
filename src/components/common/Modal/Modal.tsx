@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from 'react'
 import cn from 'classnames'
 import * as Dialog from '@radix-ui/react-dialog'
+import Scroller from '@/components/common/Scroller/Scroller'
 import styles from './Modal.module.scss'
 
 type Size = 'sm' | 'md' | 'lg' | 'xl'
@@ -66,7 +67,9 @@ export default function Modal({
             </Dialog.Description>
           )}
 
-          {children}
+          <Scroller className={styles.body}>
+            {children}
+          </Scroller>
 
           {showClose && (
             <Dialog.Close className={styles.close} aria-label='Закрыть'>

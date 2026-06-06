@@ -1,0 +1,8 @@
+@use '@/styles/common' as *;
+
+// Host element: the consumer sets max-height/max-width via the passed className.
+// min-height:0 keeps it shrinkable inside flex parents.
+.scroller {
+  min-height: 0;
+  min-width: 0;
+}

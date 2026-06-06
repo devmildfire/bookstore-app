@@ -71,10 +71,8 @@
   // the viewport — beyond that, option text wraps.
   width: max-content;
   max-width: min(420px, calc(100vw - 32px));
+  max-height: 240px;
   z-index: 50;
-  list-style: none;
-  margin: 0;
-  padding: 5px;
   background: $color-panel;
   border: 1px solid $color-border-strong;
   border-radius: 0;
@@ -85,6 +83,12 @@
     width: 100%;
     max-width: 100%;
   }
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
 }
 
 .option {

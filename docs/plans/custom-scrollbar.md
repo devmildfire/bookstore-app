@@ -1,6 +1,13 @@
 # Custom scrollbar (`<Scroller>`)
 
-**Status:** Planned (not started). Created 2026-06-06.
+**Status:** Implementation complete; verified in Chrome. Created 2026-06-06. Updated 2026-06-06.
+
+> Verification fix (2026-06-06): the theme was defined as `.os-theme-chtivo`, but
+> OverlayScrollbars applies that class **onto** the `.os-scrollbar` element and its
+> base CSS sets the same vars on `.os-scrollbar` with equal specificity — so the
+> bar rendered at **0px** (invisible). Corrected to `.os-scrollbar.os-theme-chtivo`
+> (and the touch-hide rule likewise). Thumb now renders (10px track, 4px rounded
+> grey handle). Cross-browser (Firefox/Safari) QA still pending.
 
 Today every scrollable surface uses the browser's native scrollbar, so the UI
 looks different per browser — Chrome paints a bulky always-on bar, Firefox an
@@ -153,20 +160,37 @@ Excluded: `<textarea>` (keeps native resize/scroll), the main window, and the
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Add `overlayscrollbars` + `overlayscrollbars-react` (pinned); import base CSS once | ⬜ |
-| 2 | Define `os-theme-chtivo` theme (tokens) in a global stylesheet | ⬜ |
-| 3 | Build `src/components/common/Scroller/` (component + scss + index) | ⬜ |
-| 4 | Pilot: wrap `AdminSelect` menu + storefront search results; verify Chrome/FF/Safari + touch | ⬜ |
-| 5 | Roll out to remaining target containers; strip redundant raw `overflow` | ⬜ |
-| 6 | Cross-browser/touch/reduced-motion QA; tune theme px; lint+build | ⬜ |
+| 1 | Add `overlayscrollbars` (`2.16.0`) + `overlayscrollbars-react` (`0.5.6`) (pinned); import base CSS once | ✅ |
+| 2 | Define `os-theme-chtivo` theme (tokens) in a global stylesheet | ✅ |
+| 3 | Build `src/components/common/Scroller/` (component + scss + index) — now with `forwardRef` for viewport access | ✅ |
+| 4 | Refactor `HeaderSearchBar` from Radix `ScrollArea` → `<Scroller>` (remove Radix scrollbar styles) | ✅ |
+| 5 | Pilot: wrap `AdminSelect` menu with `<Scroller>` | ✅ |
+| 6 | Roll out to remaining target containers — `Modal` body wrapped with `<Scroller>` | ✅ |
+| 7 | Cross-browser/touch/reduced-motion QA; tune theme px; lint+build | 🟡 |
 
 **Container checklist (fill as discovered):**
 
-- ⬜ Storefront — main-page search results dropdown
+- ✅ Storefront — main-page search results dropdown (`HeaderSearchBar` — refactored to `<Scroller>`)
 - ⬜ Storefront — header nav dropdowns (if overflowing)
 - ⬜ Storefront — fixed-height long-text panels (audit which)
-- ⬜ Admin — `AdminSelect` options popover
-- ⬜ Admin — shared `Modal` tall body
+- ✅ Admin — `AdminSelect` options popover (max-height 240px, vertical-only Scroller)
+- ✅ Admin — shared `Modal` tall body (flex column + Scroller body)
 - ⬜ Admin — other `overflow:auto` lists / horizontal tables
+
+### HeaderSearchBar refactor notes (2026-06-06)
+
+`src/components/layout/HeaderSearchBar/HeaderSearchBar.tsx` currently uses
+`@radix-ui/react-scroll-area` with hand-rolled `.scrollbar` / `.scrollThumb`
+styles in `HeaderSearchBar.module.scss`. To complete the `<Scroller>` rollout:
+
+1. Replace `ScrollArea.Root` / `ScrollArea.Viewport` / `ScrollArea.Scrollbar` /
+   `ScrollArea.Thumb` with a single `<Scroller className={styles.scrollViewport}>`.
+2. Move the `max-height` constraint from `.scrollViewport` to the Scroller's
+   `className`.
+3. Remove the Radix `ScrollArea` import and the `.scrollbar` / `.scrollThumb`
+   SCSS classes (OverlayScrollbars + `os-theme-chtivo` own the visuals).
+4. Verify infinite-scroll `IntersectionObserver` still works (it currently
+   observes `scrollViewportRef` — Scroller's viewport element is accessible via
+   the OverlayScrollbars instance or a `ref` callback).
 
 Append scope changes here with a date.
