@@ -60,7 +60,7 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
 
       <label className={styles.label}>
         Фраза / цитата
-        <AdminInput name='phrase' defaultValue={author.phrase ?? ''} />
+        <AdminTextarea name='phrase' defaultValue={author.phrase ?? ''} rows={3} />
       </label>
 
       <Checkbox name='nonsalable' defaultChecked={author.nonsalable} label='Непродаваемый (служебный автор)' />
