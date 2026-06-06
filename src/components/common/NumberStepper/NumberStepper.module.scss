@@ -67,7 +67,7 @@
   width: 88px;
 }
 
-@media (max-width: 600px) {
+@include breakpoint(phone) {
   .stepper {
     width: 100%;
 

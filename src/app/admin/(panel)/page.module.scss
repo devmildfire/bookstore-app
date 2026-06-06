@@ -12,7 +12,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
 
-  @media (max-width: 920px) { grid-template-columns: 1fr; }
+  @include breakpoint(search-bar) { grid-template-columns: 1fr; }
 }
 
 .card {
@@ -56,8 +56,7 @@
   line-height: 0.9;
   color: $color-text-title;
 
-  @media (max-width: 600px) { font-size: 42px; }
-  @media (max-width: 360px) { font-size: 38px; }
+  @include breakpoint(phone) { font-size: 42px; }
 }
 .cardFoot {
   display: flex;
@@ -83,7 +82,7 @@
   padding: 16px 24px;
   border-bottom: 1px solid $color-border-faint;
 
-  @media (max-width: 600px) { padding: 14px; }
+  @include breakpoint(phone) { padding: 14px; }
 }
 .activityTitle {
   display: flex;
@@ -117,7 +116,7 @@
   border-bottom: 1px solid $color-border-faint;
   &:last-child { border-bottom: none; }
 
-  @media (max-width: 600px) {
+  @include breakpoint(phone) {
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-areas: 'dot summary' '. meta';
@@ -132,7 +131,7 @@
   border-radius: 1px;
   background: $color-accent-on-dark;
   flex-shrink: 0;
-  @media (max-width: 600px) { grid-area: dot; margin-top: 7px; }
+  @include breakpoint(phone) { grid-area: dot; margin-top: 7px; }
 }
 .eventSummary {
   flex: 1;
@@ -141,7 +140,7 @@
   font-size: $font-size-sm;
   color: $color-text-on-dark;
   overflow-wrap: anywhere;
-  @media (max-width: 600px) { grid-area: summary; }
+  @include breakpoint(phone) { grid-area: summary; }
 }
 .eventMeta {
   font-family: $font-montserrat;
@@ -149,5 +148,5 @@
   color: $color-text-faint;
   white-space: nowrap;
   flex-shrink: 0;
-  @media (max-width: 600px) { grid-area: meta; white-space: normal; }
+  @include breakpoint(phone) { grid-area: meta; white-space: normal; }
 }

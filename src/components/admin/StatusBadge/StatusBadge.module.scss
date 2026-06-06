@@ -25,7 +25,7 @@
     flex-shrink: 0;
   }
 
-  @media (max-width: 360px) {
+  @include breakpoint(phone) {
     height: 22px;
     padding: 0 7px;
     font-size: 10px;

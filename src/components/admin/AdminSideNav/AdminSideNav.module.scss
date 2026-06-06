@@ -27,7 +27,7 @@
     z-index: 1;
   }
 
-  @media (max-width: 920px) {
+  @include breakpoint(search-bar) {
     position: fixed;
     left: 0;
     top: 0;
@@ -37,7 +37,7 @@
   }
 }
 
-@media (max-width: 920px) {
+@include breakpoint(search-bar) {
   .sidebarOpen {
     transform: translateX(0);
   }

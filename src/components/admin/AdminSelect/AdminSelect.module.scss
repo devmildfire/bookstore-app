@@ -5,7 +5,7 @@
   display: inline-block;
   max-width: 100%;
 
-  @media (max-width: 600px) {
+  @include breakpoint(phone) {
     display: block;
     flex-basis: 100%;
     width: 100%;
@@ -81,7 +81,7 @@
   box-shadow: $shadow-popup-strong;
 
   // On mobile the trigger is full-width, so the menu matches it exactly.
-  @media (max-width: 600px) {
+  @include breakpoint(phone) {
     width: 100%;
     max-width: 100%;
   }

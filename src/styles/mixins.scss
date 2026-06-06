@@ -27,7 +27,7 @@
 
 // ─── Admin page title ──────────────────────────────────────────────────────────
 // Admin section page titles are uppercase Cheque (display face), per the /admin
-// design handoff: 38px desktop → 28px ≤600 → 25px ≤360.
+// design handoff: 38px desktop → 26px on phones.
 
 @mixin admin-page-title {
   margin: 0;
@@ -39,11 +39,8 @@
   text-transform: uppercase;
   color: $color-text-title;
 
-  @media (max-width: 600px) {
-    font-size: 28px;
-  }
-  @media (max-width: 360px) {
-    font-size: 25px;
+  @include breakpoint(phone) {
+    font-size: 26px;
   }
 }
 
