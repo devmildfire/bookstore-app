@@ -56,7 +56,8 @@ export const SearchIcon = make(['M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z', 'M21 21
 export const PlusIcon = make(['M12 5v14M5 12h14'])
 export const MinusIcon = make(['M5 12h14'])
 export const CheckIcon = make(['M5 12.5l4.5 4.5L19 6.5'])
-export const ChevronDownIcon = make(['M6 9l6 6 6-6'])
+// Proportionate chevron (fills a 12×8 box) so it reads clearly at any CSS size.
+export const ChevronDownIcon = make(['M1 1.5l5 5 5-5'], '0 0 12 8')
 export const ChevronRightIcon = make(['M9 6l6 6-6 6'])
 export const ArrowLeftIcon = make(['M19 12H5M11 6l-6 6 6 6'])
 export const BurgerIcon = make(['M4 6h16M4 12h16M4 18h16'])

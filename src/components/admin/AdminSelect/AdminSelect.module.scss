@@ -48,12 +48,13 @@
   border-color: $color-accent-on-dark;
 }
 
-// Chevron sits at the trigger's right padding and matches the label size.
+// Chevron sits at the trigger's right padding. Sized purely by CSS (the icon
+// has no intrinsic dimensions); height follows its 12×8 aspect from the width.
 .chev {
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: auto;
   flex-shrink: 0;
-  color: $color-text-faint;
+  color: $color-text-muted-on-dark;
   transition: transform 0.16s ease;
 }
 
@@ -78,6 +79,12 @@
   border: 1px solid $color-border-strong;
   border-radius: 0;
   box-shadow: $shadow-popup-strong;
+
+  // On mobile the trigger is full-width, so the menu matches it exactly.
+  @media (max-width: 600px) {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .option {
