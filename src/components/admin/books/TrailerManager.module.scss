@@ -28,11 +28,15 @@
 
 .posterThumb {
   position: relative;
-  width: 120px;
-  aspect-ratio: 2 / 3;
+  width: min(420px, 100%);
+  aspect-ratio: 16 / 9;
   border-radius: 0;
   overflow: hidden;
   background: $color-sidebar;
+
+  img {
+    object-fit: cover;
+  }
 }
 
 .slots {

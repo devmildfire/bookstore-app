@@ -63,7 +63,7 @@ export default function TrailerManager({ titleId, hasSlug, trailer, urls }: Prop
           </video>
           {trailer.hasPoster && urls.poster && (
             <div className={styles.posterThumb}>
-              <Image src={urls.poster} alt='Постер' fill sizes='120px' unoptimized />
+              <Image src={urls.poster} alt='Постер' fill sizes='420px' unoptimized />
             </div>
           )}
         </div>
