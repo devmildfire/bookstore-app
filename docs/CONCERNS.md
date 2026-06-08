@@ -70,7 +70,7 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `Articles` table + `articles` bucket | **0 rows** — `/dino-magazine` is empty (`scripts/upload-articles-to-supabase.mjs`) |
 | `TitleSimilarTitles` | ✅ **done** — mined "Познайте также" from book-page footers: 184 links across 62 books (`get_similar_books` verified) |
 | `BookContexts` | **0 rows** — book "context" cards empty |
-| `PromoCodes` | **0 rows** — promo test fixtures gone (`docs/testing/promo-codes.md`) |
+| `PromoCodes` | ✅ **done** — re-seeded 5 fixtures via `supabase/seed-promo-codes.sql` (SUMMER25/FREECART/WHITE30/AUDIO50/OLDCODE); apply/expired/not-found paths verified |
 | `booktrailers` bucket | empty — 1 `Booktrailers` row but no video/poster objects |
 | `partners` bucket | empty (7 `Partners` rows reference logos) |
 | `workers` bucket | empty (worker photos) |
