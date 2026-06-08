@@ -50,27 +50,7 @@
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  column-gap: 100px;
-  row-gap: 60px;
-  @include breakpoint('tablet') {
-    column-gap: 60px;
-    row-gap: 40px;
-  }
-
-  @include breakpoint('tablet-small') {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: $space-6;
-    row-gap: $space-8;
-  }
-
-  @include breakpoint('phone') {
-    column-gap: $space-4;
-    row-gap: $space-6;
-  }
-}
+// Book-card grid now lives in the shared <BookGrid> component.
 
 .buttonContainer {
   display: flex;

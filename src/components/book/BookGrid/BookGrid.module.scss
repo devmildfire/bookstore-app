@@ -2,34 +2,31 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: $space-6;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 100px;
+  row-gap: 60px;
 
   @include breakpoint('tablet') {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: $space-4;
+    column-gap: 60px;
+    row-gap: 40px;
+  }
+
+  @include breakpoint('tablet-small') {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-6;
+    row-gap: $space-8;
   }
 
   @include breakpoint('phone') {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: $space-3;
+    column-gap: $space-4;
+    row-gap: $space-6;
   }
 }
 
-.empty {
-  display: grid;
-  gap: $space-2;
-  padding: $space-12;
-  text-align: center;
-  background-color: $color-bg-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-
-  h2 {
-    font-size: $font-size-xl;
-  }
-
-  p {
-    color: $color-text-muted;
-  }
+// Centered variant for short related-book strips: cap each track to the card's
+// own max-width (350px) and center the row, so 1–2 cards sit centered instead
+// of stretching/left-aligning in wide tracks.
+.center {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
+  justify-content: center;
 }

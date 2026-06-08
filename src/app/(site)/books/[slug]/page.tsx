@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getBook, getSimilarBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
-import BookCard from '@/components/book/BookCard'
+import BookGrid from '@/components/book/BookGrid'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
 import BookAuthorsList, { AUTHORS_ANCHOR } from './BookAuthorsList'
@@ -147,11 +147,7 @@ export default async function BookDetailPage({ params }: Props) {
       {similarBooks.length > 0 && (
         <section className={styles.similar}>
           <h2 className={styles.similarTitle}>ПОЗНАЙТЕ ТАКЖЕ</h2>
-          <div className={styles.similarGrid}>
-            {similarBooks.map((similar) => (
-              <BookCard key={similar.id} book={similar} />
-            ))}
-          </div>
+          <BookGrid books={similarBooks} center />
         </section>
       )}
 

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import BookCard from '@/components/book/BookCard'
+import BookGrid from '@/components/book/BookGrid'
 import { CatalogControlsRouter } from '@/components/book/CatalogControls'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 import styles from './NewProducts.module.scss'
@@ -28,11 +28,7 @@ export default function NewProducts({ catalog, filters, searchParams }: Props) {
       />
 
       { books.length > 0
-        ? <div className={styles.grid}>
-          {books.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
+        ? <BookGrid books={books} />
         : <p className={styles.subtitle}>Книги не найдены</p> }
 
       {hasMoreBooks && (

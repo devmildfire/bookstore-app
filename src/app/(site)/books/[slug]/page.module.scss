@@ -278,28 +278,4 @@
   }
 }
 
-.similarGrid {
-  display: grid;
-  // Cap tracks to the card's own max-width and center the row, so a partial
-  // row (1–2 related books) sits centered instead of stretched/left-aligned.
-  grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
-  justify-content: center;
-  column-gap: 100px;
-  row-gap: 60px;
-
-  @include breakpoint(tablet) {
-    column-gap: 60px;
-    row-gap: 40px;
-  }
-
-  @include breakpoint(tablet-small) {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: $space-6;
-    row-gap: $space-8;
-  }
-
-  @include breakpoint(phone) {
-    column-gap: $space-4;
-    row-gap: $space-6;
-  }
-}
+// .similarGrid removed — the related-books strip now uses <BookGrid center />.
