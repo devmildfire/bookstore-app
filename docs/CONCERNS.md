@@ -76,7 +76,7 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `workers` bucket | empty (worker photos) |
 | `subscriptions` / gift-card / `avatars` buckets | empty |
 | `digital-files` bucket | placeholders missing (`scripts/seed-placeholder-pdf.mjs`) |
-| Edition demo files | `demo_path` null everywhere (mined data has the demo URLs) |
+| Edition demo files | ✅ **done** — 34 editions: demo zips downloaded, extracted (own sample, not cross-promo), stored as `demos/<slug>/demo.{epub,mp3}`, `demo_path` set. Pending: 5 **shared/mislabeled** source zips (`kotlovan`, `svehderzhava`, `DoctorSaxDemo`, `BogImyaDemo`, `Frieda-and-Gitta`) skipped to avoid wrong attachments + 1 source 404 (`unhappened`) — attach manually if wanted |
 
 A couple of source files 404 on the live site: `murlo/04.jpg`, `nikolay-staroobryadtsev.jpg`.
 
