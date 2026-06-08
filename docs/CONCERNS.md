@@ -37,12 +37,48 @@ no clean way to rebuild — recovery had to reconstruct `OrderItems`/`Cart` DDL 
    document the real bootstrap: load schema, then `migration up`).
 3. Keep `seed.sql` regenerated whenever the base schema changes; treat
    `src/types/supabase.ts` and the live DB as needing to agree.
-4. Known still-divergent bits to fold in while doing this: `Orders.delivery_method`
-   (referenced by the fulfillment `mark_order_paid` but missing), and confirm every
-   table's RLS read policy exists (the storefront broke twice from missing
-   public-read policies — see `20260608140000_edition_tables_public_read.sql`).
+4. The wipe was patched with a series of corrective migrations (all applied +
+   committed); fold their effect into the consolidated schema:
+   - `20260606120000_edition_demo_path` (demo columns/bucket)
+   - `20260608130000_author_contact_vk` (vk enum value)
+   - `20260608140000_edition_tables_public_read` (RLS read on Ebooks/Audiobooks/PrintedBooks)
+   - `20260608150000_rebuild_cart_orderitems` (Cart + OrderItems → code schema)
+   - `20260608160000_orders_delivery_columns` (delivery_method/delivery_email/updated_at)
+   - `20260608170000_orders_rls_policies` (Orders owner RLS, lost in the wipe)
+
+   The commerce path (cart → `create_pending_order` → Orders + OrderItems →
+   `mark_order_paid`) is now verified working end-to-end, and **no table remains
+   RLS-enabled-with-zero-policies**. The `Orders` table still carries 8 stale legacy
+   columns (`full_name`, `email`, `address`, …) not in the intended schema; they're
+   nullable/defaulted so harmless, but should be dropped during consolidation.
 
 See also [docs/DATABASE_BACKUP.md](DATABASE_BACKUP.md) (backup-before-destructive rule).
+
+---
+
+## D2 🟠 Post-wipe content & storage not fully restored
+
+The 2026-06-06 wipe emptied all storage buckets and some catalog content. Restored
+so far (from the Firefox cache + re-scrape of `chtivo.spb.ru`, see the book-mining
+work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), and
+**book descriptions/editions/workers/authors/contacts** (mined into the DB).
+
+**Still empty / not restored:**
+
+| Item | State |
+|------|-------|
+| `Articles` table + `articles` bucket | **0 rows** — `/dino-magazine` is empty (`scripts/upload-articles-to-supabase.mjs`) |
+| `TitleSimilarTitles` | **0 rows** — "Познайте также" empty on book pages (mineable from page footers) |
+| `BookContexts` | **0 rows** — book "context" cards empty |
+| `PromoCodes` | **0 rows** — promo test fixtures gone (`docs/testing/promo-codes.md`) |
+| `booktrailers` bucket | empty — 1 `Booktrailers` row but no video/poster objects |
+| `partners` bucket | empty (7 `Partners` rows reference logos) |
+| `workers` bucket | empty (worker photos) |
+| `subscriptions` / gift-card / `avatars` buckets | empty |
+| `digital-files` bucket | placeholders missing (`scripts/seed-placeholder-pdf.mjs`) |
+| Edition demo files | `demo_path` null everywhere (mined data has the demo URLs) |
+
+A couple of source files 404 on the live site: `murlo/04.jpg`, `nikolay-staroobryadtsev.jpg`.
 
 ---
 
