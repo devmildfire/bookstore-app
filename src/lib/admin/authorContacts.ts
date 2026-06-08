@@ -1,5 +1,6 @@
 // Client-safe author types/constants (no server imports).
 export const AUTHOR_CONTACT_CHANNELS = [
+  'vk',
   'telegram',
   'instagram',
   'facebook',
@@ -10,6 +11,7 @@ export const AUTHOR_CONTACT_CHANNELS = [
 export type AuthorContactChannel = (typeof AUTHOR_CONTACT_CHANNELS)[number]
 
 export const CONTACT_CHANNEL_LABEL: Record<AuthorContactChannel, string> = {
+  vk: 'ВКонтакте',
   telegram: 'Telegram',
   instagram: 'Instagram',
   facebook: 'Facebook',

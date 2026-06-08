@@ -20,6 +20,7 @@ export type BookTrailer = {
 }
 
 export type AuthorContactChannel =
+  | 'vk'
   | 'telegram'
   | 'instagram'
   | 'facebook'

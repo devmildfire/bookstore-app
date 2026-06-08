@@ -12,6 +12,7 @@ import {
 } from '@/lib/admin/authorContacts'
 import AdminInput from '@/components/admin/AdminInput'
 import {
+  VkIcon,
   TelegramIcon,
   InstagramIcon,
   FacebookIcon,
@@ -22,6 +23,7 @@ import {
 import styles from './ContactsManager.module.scss'
 
 const CHANNEL_ICON: Record<AuthorContactChannel, React.FC<{ className?: string }>> = {
+  vk: VkIcon,
   telegram: TelegramIcon,
   instagram: InstagramIcon,
   facebook: FacebookIcon,

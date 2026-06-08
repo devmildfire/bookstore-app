@@ -1776,6 +1776,7 @@ export type Database = {
         | "twitter"
         | "email"
         | "website"
+        | "vk"
       category:
         | "PrintBook"
         | "AudioBook"
@@ -1922,6 +1923,7 @@ export const Constants = {
         "twitter",
         "email",
         "website",
+        "vk",
       ],
       category: [
         "PrintBook",

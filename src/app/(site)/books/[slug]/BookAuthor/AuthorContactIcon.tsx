@@ -4,6 +4,12 @@ import type { AuthorContactChannel } from '@/entities/book/client'
 // circle has the exact same diameter (r=11 from center 12,12). Strokes only,
 // taking colour from `currentColor` so CSS controls hover state.
 const GLYPHS: Record<AuthorContactChannel, React.ReactNode> = {
+  vk: (
+    <>
+      <path d="M7 9 L9 15 L11 9" />
+      <path d="M13 9 V15 M13 12 L16 9 M13 12 L16 15" />
+    </>
+  ),
   telegram: (
     <path d="M17.5 7.5 L6 13 L11 14.5 L13 17.2 L17.5 7.5 Z M11 14.5 L17.5 7.5" />
   ),
@@ -37,6 +43,7 @@ const GLYPHS: Record<AuthorContactChannel, React.ReactNode> = {
 }
 
 const CHANNEL_LABELS: Record<AuthorContactChannel, string> = {
+  vk: 'ВКонтакте',
   telegram: 'Telegram',
   instagram: 'Instagram',
   facebook: 'Facebook',

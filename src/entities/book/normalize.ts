@@ -80,6 +80,7 @@ function normalizeContexts(value: unknown): BookContext[] {
 }
 
 const ALLOWED_CHANNELS: ReadonlySet<AuthorContactChannel> = new Set([
+  'vk',
   'telegram',
   'instagram',
   'facebook',
