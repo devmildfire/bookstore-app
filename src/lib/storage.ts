@@ -166,6 +166,18 @@ export function getPartnerLogoUrl(path: string | null): string | null {
   return `${supabaseUrl}/storage/v1/object/public/${PARTNERS_BUCKET}/${path}`
 }
 
+const DEMOS_BUCKET = 'demos'
+
+/**
+ * Convert a demo_path bare key into a public Supabase Storage URL.
+ * Demo files live in the public `demos` bucket — no signed URL needed.
+ */
+export function getDemoUrl(path: string | null): string | null {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${supabaseUrl}/storage/v1/object/public/${DEMOS_BUCKET}/${path}`
+}
+
 export {
   COVERS_BUCKET,
   SUBSCRIPTIONS_BUCKET,
@@ -178,4 +190,5 @@ export {
   VIDEOS_BUCKET,
   PARTNERS_BUCKET,
   WORKERS_BUCKET,
+  DEMOS_BUCKET,
 }

@@ -102,6 +102,7 @@ export type Book = {
   fileSizeBytes: number | null       // AudioBook
   formats: string[] | null           // EBook
   characterCount: number | null      // EBook
+  demoUrl: string | null             // EBook / AudioBook / Book2.0
   booktrailer: BookTrailer | null
   authors: Author[]
   contexts: BookContext[]

@@ -41,6 +41,13 @@ export const EDITION_WORKERS_FK: Record<EditionTable, string> = {
 
 export type AdminWorker = { linkId: number; workerId: number; name: string; job: string }
 
+// Edition tables that support a demo file (public sample in `demos` bucket).
+export const EDITION_HAS_DEMO: Partial<Record<EditionTable, boolean>> = {
+  Ebooks: true,
+  Audiobooks: true,
+  CardBooks: true,
+}
+
 export type AdminEdition = {
   table: EditionTable
   id: number
@@ -54,6 +61,9 @@ export type AdminEdition = {
   // uploaded file yet.
   hasFile: boolean
   filePath: string | null
+  // Demo file (public sample). Only Ebooks / Audiobooks / CardBooks have demos.
+  hasDemo: boolean
+  demoPath: string | null
   // Per-edition contributors (translator, narrator, illustrator, …).
   workers: AdminWorker[]
 }

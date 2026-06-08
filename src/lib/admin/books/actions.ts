@@ -9,7 +9,7 @@ import { makeBlurDataUrl } from '@/lib/admin/blur'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
 import { getAdminBookPhotos, type AdminBookPhoto } from '@/api/admin/books'
-import { EDITION_FILE_FOLDER, EDITION_WORKERS_TABLE, EDITION_WORKERS_FK } from '@/lib/admin/bookProducts'
+import { EDITION_FILE_FOLDER, EDITION_HAS_DEMO, EDITION_WORKERS_TABLE, EDITION_WORKERS_FK } from '@/lib/admin/bookProducts'
 import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
@@ -504,6 +504,62 @@ export async function removeProductFileAction(formData: FormData): Promise<Admin
   if (filePath) await admin.storage.from(DIGITAL_FILES_BUCKET).remove([filePath]).catch(() => {})
   const writer = admin.from(table) as unknown as EditionWriter
   const { error } = await writer.update({ file_path: null } as unknown as EditionUpdate).eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/books/${titleId}`)
+  return { status: 'ok' }
+}
+
+// ─── Demo files (public demos bucket) ──────────────────────────────────────
+
+const DEMOS_BUCKET = 'demos'
+const MAX_DEMO_BYTES = 50 * 1024 * 1024
+
+// Upload a demo file for an edition to the public `demos` bucket.
+// Only Ebooks / Audiobooks / CardBooks have demos.
+export async function uploadDemoFileAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  const file = formData.get('file')
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  if (!EDITION_HAS_DEMO[table]) return { status: 'error', message: 'У этого типа продукта нет демо.' }
+  if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
+  if (file.size > MAX_DEMO_BYTES) return { status: 'error', message: 'Файл больше 50 МБ.' }
+
+  const ext = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : 'bin'
+  const admin = createAdminClient()
+  const key = `${EDITION_FILE_FOLDER[table]}/demo-${editionId}.${ext}`
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const { error: uploadError } = await admin.storage
+    .from(DEMOS_BUCKET)
+    .upload(key, buffer, { contentType: file.type || 'application/octet-stream', upsert: true })
+  if (uploadError) return { status: 'error', message: uploadError.message }
+
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.update({ demo_path: key } as unknown as EditionUpdate).eq('id', editionId)
+  if (error) return { status: 'error', message: error.message }
+
+  revalidatePath(`/admin/books/${titleId}`)
+  return { status: 'ok' }
+}
+
+// Remove a demo file from storage + clear the demo_path column.
+export async function removeDemoFileAction(formData: FormData): Promise<AdminActionResult> {
+  await requireAdmin()
+  const titleId = Number(formData.get('titleId'))
+  const editionId = Number(formData.get('editionId'))
+  const table = asEditionTable(formData.get('table'))
+  const demoPath = (formData.get('demoPath') as string | null)?.trim()
+  if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
+  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+
+  const admin = createAdminClient()
+  if (demoPath) await admin.storage.from(DEMOS_BUCKET).remove([demoPath]).catch(() => {})
+  const writer = admin.from(table) as unknown as EditionWriter
+  const { error } = await writer.update({ demo_path: null } as unknown as EditionUpdate).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   revalidatePath(`/admin/books/${titleId}`)

@@ -23,11 +23,17 @@ CREATE POLICY "Authenticated users can modify featured books"
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);
 
--- Seed: the 5 highlighted books for the homepage slider
-INSERT INTO "featured_books" (title_id, sort_order) VALUES
-  (65, 1),  -- Deleted
+-- Seed: the highlighted books for the homepage slider.
+-- Defensive: only seed titles that actually exist (title 65 was later removed
+-- from seed.sql), and ignore re-runs, so a clean rebuild never FK-fails here.
+INSERT INTO "featured_books" (title_id, sort_order)
+SELECT v.title_id, v.sort_order
+FROM (VALUES
+  (65, 1),  -- Deleted (skipped if absent)
   (55, 2),  -- Ирокез
   (2,  3),  -- Архив барона Унгерна
   (41, 4),  -- Глас земли
   (49, 5)   -- Двойник
-;
+) AS v(title_id, sort_order)
+WHERE EXISTS (SELECT 1 FROM "Titles" t WHERE t.id = v.title_id)
+ON CONFLICT (title_id) DO NOTHING;

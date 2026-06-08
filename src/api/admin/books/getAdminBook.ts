@@ -4,6 +4,7 @@ import {
   EDITION_LABEL,
   ALL_EDITION_TABLES,
   EDITION_FILE_FOLDER,
+  EDITION_HAS_DEMO,
   EDITION_WORKERS_TABLE,
   EDITION_WORKERS_FK,
   type EditionTable,
@@ -122,9 +123,11 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
   const editions: AdminEdition[] = []
   for (const table of EDITION_TABLES) {
     const hasFile = !!EDITION_FILE_FOLDER[table]
+    const hasDemo = !!EDITION_HAS_DEMO[table]
     const cols = ['id', 'price', 'discount', 'is_published']
     if (HAS_SOLD_OUT[table]) cols.push('sold_out')
     if (hasFile) cols.push('file_path')
+    if (hasDemo) cols.push('demo_path')
     const { data: rows } = await admin.from(table).select(cols.join(', ')).eq('title_id', id)
     for (const row of (rows ?? []) as unknown as Array<Record<string, unknown>>) {
       editions.push({
@@ -138,6 +141,8 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
         hasSoldOut: HAS_SOLD_OUT[table],
         hasFile,
         filePath: hasFile ? ((row.file_path as string | null) ?? null) : null,
+        hasDemo,
+        demoPath: hasDemo ? ((row.demo_path as string | null) ?? null) : null,
         workers: await fetchEditionWorkers(admin, table, row.id as number),
       })
     }

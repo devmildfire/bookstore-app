@@ -194,11 +194,21 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
             >
               {book.inStock ? 'Добавить в корзину' : 'Нет в наличии'}
             </button>
-            {HAS_DEMO_BUTTON[book.category] && (
-              <button type="button" className={styles.demoBtn} disabled aria-label="Демо-версия (скоро)">
-                Демо-версия
-              </button>
-            )}
+            {HAS_DEMO_BUTTON[book.category] && (() => {
+              // Book2.0 resolves its demo from the sibling EBook if it has no own demo.
+              const demoUrl = book.demoUrl ?? (book.category === 'Book2.0' ? books.find((b) => b.category === 'EBook')?.demoUrl : null)
+              return (
+                <button
+                  type="button"
+                  className={styles.demoBtn}
+                  disabled={!demoUrl}
+                  aria-label={demoUrl ? 'Скачать демо-версию' : 'Демо-версия (скоро)'}
+                  onClick={() => { if (demoUrl) window.open(demoUrl, '_blank') }}
+                >
+                  Демо-версия
+                </button>
+              )
+            })()}
             {notes && (
               <div className={styles.notes}>
                 {notes.primary && <p className={styles.notePrimary}>{notes.primary}</p>}

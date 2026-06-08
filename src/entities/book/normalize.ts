@@ -10,7 +10,7 @@ import type {
   BookWorker,
 } from './client'
 import type { BookServerRow } from './server'
-import { getAuthorPhotoUrl, getBooktrailerUrls, getCoverUrl } from '@/lib/storage'
+import { getAuthorPhotoUrl, getBooktrailerUrls, getCoverUrl, getDemoUrl } from '@/lib/storage'
 
 export function normalizeBook(raw: BookServerRow): Book {
   const authorNames = (raw.author_names ?? [])
@@ -58,6 +58,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     fileSizeBytes: readNumber(details.file_size_bytes),
     formats: readStringArray(details.formats),
     characterCount: readNumber(details.character_count),
+    demoUrl: getDemoUrl(readString(details.demo_path)),
     booktrailer: normalizeBooktrailer(raw.title_booktrailer, raw.title_slug ?? String(raw.title_id)),
     authors: normalizeAuthors(raw.title_authors),
     contexts: normalizeContexts(raw.title_contexts),

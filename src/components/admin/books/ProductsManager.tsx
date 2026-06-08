@@ -8,6 +8,8 @@ import {
   removeProductAction,
   uploadProductFileAction,
   removeProductFileAction,
+  uploadDemoFileAction,
+  removeDemoFileAction,
   addWorkerAction,
   removeWorkerAction,
 } from '@/lib/admin/books/actions'
@@ -126,6 +128,8 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
         </form>
 
         {edition.hasFile && <FileSlot titleId={titleId} edition={edition} />}
+
+        {edition.hasDemo && <DemoSlot titleId={titleId} edition={edition} />}
 
         <WorkersSlot titleId={titleId} edition={edition} />
       </div>
@@ -265,6 +269,63 @@ function FileSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
       {currentName && (
         <button type='button' className={styles.fileRemove} onClick={handleRemoveFile} disabled={busy}>
           Удалить файл
+        </button>
+      )}
+      {error && <span className={styles.err}>{error}</span>}
+    </div>
+  )
+}
+
+function DemoSlot({ titleId, edition }: { titleId: number; edition: AdminEdition }) {
+  const [busy, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+  const currentName = edition.demoPath?.split('/').pop() ?? null
+
+  function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setError(null)
+      startTransition(async () => {
+        const fd = new FormData()
+        fd.set('titleId', String(titleId))
+        fd.set('editionId', String(edition.id))
+        fd.set('table', edition.table)
+        fd.set('file', file)
+        const res = await uploadDemoFileAction(fd)
+        if (res.status === 'error') setError(res.message)
+        else router.refresh()
+      })
+    }
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  function handleRemove() {
+    setError(null)
+    startTransition(async () => {
+      const fd = new FormData()
+      fd.set('titleId', String(titleId))
+      fd.set('editionId', String(edition.id))
+      fd.set('table', edition.table)
+      fd.set('demoPath', edition.demoPath ?? '')
+      const res = await removeDemoFileAction(fd)
+      if (res.status === 'error') setError(res.message)
+      else router.refresh()
+    })
+  }
+
+  return (
+    <div className={styles.fileSlot}>
+      <span className={styles.fileLabel}>Демо-файл:</span>
+      {currentName ? <span className={styles.fileName}>{currentName}</span> : <span className={styles.fileNone}>нет</span>}
+      <input ref={inputRef} type='file' onChange={handleUpload} className={styles.fileInput} disabled={busy} />
+      <button type='button' className={styles.fileButton} onClick={() => inputRef.current?.click()} disabled={busy}>
+        {busy ? '…' : currentName ? 'Заменить' : 'Загрузить'}
+      </button>
+      {currentName && (
+        <button type='button' className={styles.fileRemove} onClick={handleRemove} disabled={busy}>
+          Удалить демо
         </button>
       )}
       {error && <span className={styles.err}>{error}</span>}
