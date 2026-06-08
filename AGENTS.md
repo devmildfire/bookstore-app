@@ -27,12 +27,19 @@ supabase gen types typescript --db-url "postgresql://postgres:<password>@<vps-ip
 
 This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
-### Database backups (REQUIRED before destructive operations)
+### Destructive DB/storage ops — STOP and ask first (HARD RULE)
 
-**Always create a fresh DB backup before ANY destructive database operation**
-(`supabase db reset`, `DROP`/`TRUNCATE`, bulk `DELETE`/`UPDATE`, destructive
-migrations, restoring a dump over a live DB). Backups go in the gitignored
-`backups/` dir:
+**NEVER run a destructive database or storage operation autonomously. ALWAYS get
+explicit user approval first, AND take a fresh backup first.** This applies to:
+`supabase db reset`, `DROP`/`TRUNCATE`, bulk `DELETE`/`UPDATE`, destructive
+migrations, `pg_restore`/restoring a dump over a live DB, and any storage bucket
+or object deletion (`storage … remove/emptyBucket/deleteBucket`, `delete from
+storage.*`). When in doubt, treat it as destructive and ask. (A local Claude Code
+PreToolUse guard in `.claude/hooks/` also intercepts these and forces a prompt —
+do not try to bypass it.)
+
+**Always create a fresh DB backup before ANY destructive database operation.**
+Backups go in the gitignored `backups/` dir:
 
 ```bash
 mkdir -p backups

@@ -1,12 +1,24 @@
 # Database backups & destructive-operation safety
 
-> **DIRECTIVE (all agents, no exceptions):** **Always create a fresh database
-> backup before ANY destructive database operation.** Destructive = `supabase db
-> reset`, `DROP TABLE/SCHEMA/DATABASE`, `TRUNCATE`, bulk `DELETE`/`UPDATE`,
-> destructive migrations, restoring a dump over a live DB, or anything that can
-> lose rows. If you are unsure whether an operation is destructive, back up first.
-> This rule exists because a database was wiped during dev (admin user + several
-> tables lost) on 2026-06-06 — see `docs/plans/edition-demo-button.md` history.
+> **DIRECTIVE (all agents, no exceptions):**
+> 1. **NEVER run a destructive database/storage operation autonomously — STOP and
+>    get explicit user approval first.**
+> 2. **Always take a fresh backup before running it.**
+>
+> Destructive = `supabase db reset`, `DROP TABLE/SCHEMA/DATABASE`, `TRUNCATE`,
+> bulk `DELETE`/`UPDATE`, destructive migrations, `pg_restore`/restoring a dump
+> over a live DB, **and any storage deletion** (bucket/object `remove`,
+> `emptyBucket`, `deleteBucket`, `delete from storage.*`) — or anything that can
+> lose rows or files. If unsure, treat it as destructive: ask, then back up.
+>
+> This rule exists because an agent wiped the local DB **and storage** during dev
+> (admin user + tables + every storage bucket lost) on 2026-06-06.
+>
+> **Enforcement:** a local Claude Code PreToolUse hook
+> (`.claude/hooks/guard-destructive-db.sh`, registered in `.claude/settings.json`)
+> intercepts destructive DB/storage Bash commands and forces an approval prompt.
+> It is machine-local (the `.claude/` dir is gitignored) — set it up on each dev
+> box; it is a safety net, not a substitute for asking.
 
 ---
 
