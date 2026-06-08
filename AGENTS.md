@@ -27,6 +27,25 @@ supabase gen types typescript --db-url "postgresql://postgres:<password>@<vps-ip
 
 This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
+### Database backups (REQUIRED before destructive operations)
+
+**Always create a fresh DB backup before ANY destructive database operation**
+(`supabase db reset`, `DROP`/`TRUNCATE`, bulk `DELETE`/`UPDATE`, destructive
+migrations, restoring a dump over a live DB). Backups go in the gitignored
+`backups/` dir:
+
+```bash
+mkdir -p backups
+docker exec supabase_db_chtivo-next pg_dump -U postgres -d postgres \
+  --no-owner --no-privileges \
+  > "backups/chtivo-db-backup-$(date +%Y%m%d-%H%M%S).sql"
+```
+
+Full how-to + restore + rationale: [docs/DATABASE_BACKUP.md](docs/DATABASE_BACKUP.md).
+Note: `supabase db reset` does NOT restore auth users (re-run
+`scripts/seed-admin.mjs`) or storage objects (re-run the `scripts/upload-*` +
+`sync-*-blurs` scripts).
+
 ## Architecture
 
 ### Stack
@@ -35,6 +54,7 @@ This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 - **Supabase** for database + auth (anonymous login on first visit, promoting to real user on account creation)
 - **TanStack Query v5** for server-state caching and client-side data fetching
 - **SCSS Modules** for all styling; **Radix UI** primitives for accessible components
+- **OverlayScrollbars** v2 (`overlayscrollbars` + `overlayscrollbars-react`) for custom scrollbars via the shared `<Scroller>` wrapper
 - No MobX, no Tailwind, no styled-components, no Redux in the codebase
 
 ### Directory layout
@@ -59,7 +79,7 @@ src/
                   articles/ featured/ submissions/ audit/ + dashboard
   api/          Supabase API modules — one directory per domain (books/, cart/, orders/, …, admin/)
   assets/       SVGs, images (SVGs imported via @svgr/webpack)
-  components/   UI components, grouped by domain; common/ for shared; subscriptions/ for subscription UI
+  components/   UI components, grouped by domain; common/ for shared primitives (Modal, Scroller, Skeleton, etc.); admin/ for admin UI
   consts/       Named constant exports, one file per domain
   contexts/     React contexts — context.ts + provider.ts + index.ts per context
   entities/     Domain types split into client.ts / server.ts / normalize.ts / validation.ts
@@ -199,6 +219,8 @@ All blur scripts are idempotent — re-running on a fully-seeded DB is a no-op.
 | [docs/conventions/SEO.md](docs/conventions/SEO.md) | Metadata API, accessibility (WCAG 2.1 AA), security |
 | [docs/conventions/ERROR_HANDLING.md](docs/conventions/ERROR_HANDLING.md) | Error boundaries, Server Actions, loading/not-found patterns |
 
+Open issues and deferred concerns live in [docs/CONCERNS.md](docs/CONCERNS.md).
+
 Test data and fixtures live in `docs/testing/`:
 
 | Document | Covers |
@@ -207,6 +229,7 @@ Test data and fixtures live in `docs/testing/`:
 
 Key rules at a glance:
 - **No Tailwind. No styled-components.** SCSS Modules only.
+- **Custom scrollbars via `<Scroller>`.** Wrap overflow containers with `<Scroller>` from `@/components/common/Scroller` instead of raw `overflow: auto`. Uses the `os-theme-chtivo` theme (thin grey thumb, hidden on touch). See [docs/plans/custom-scrollbar.md](docs/plans/custom-scrollbar.md).
 - **No class components.** Functional components with hooks only.
 - **No `any`.** Use `unknown` at unsafe boundaries, then narrow.
 - **Server Components by default.** Add `'use client'` only when required.

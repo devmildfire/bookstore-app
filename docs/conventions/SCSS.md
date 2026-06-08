@@ -144,6 +144,31 @@ Available breakpoints (defined in `src/styles/breakpoints.scss`):
 
 Keep responsive overrides adjacent to their base selector — do not collect all responsive rules at the bottom of the file.
 
+## Custom Scrollbar Theme (`os-theme-chtivo`)
+
+The project uses **OverlayScrollbars v2** via the shared `<Scroller>` component
+(`@/components/common/Scroller`). The custom theme `os-theme-chtivo` is defined
+in `globals.scss` and provides:
+
+- Thin grey scrollbar thumb (6px wide, rounded)
+- No scrollbar on touch devices (native inertia scroll)
+- Track background only on hover
+
+**Usage:** never write raw `overflow: auto` on a container. Wrap it with `<Scroller>` instead.
+
+```tsx
+import Scroller from '@/components/common/Scroller'
+
+<Scroller style={{ maxHeight: 400 }}>
+  {longContent}
+</Scroller>
+```
+
+The theme CSS lives in `globals.scss` under the `os-theme-chtivo` class selectors.
+Do not override OverlayScrollbars inline styles directly — edit the theme in `globals.scss`.
+
+See [docs/plans/custom-scrollbar.md](../plans/custom-scrollbar.md) for the full design.
+
 ## Specificity and Overrides
 
 - Avoid `!important` unless required to override a third-party stylesheet

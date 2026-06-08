@@ -58,3 +58,6 @@ tsconfig.tsbuildinfo
 
 # Local IDE / MCP config
 .cursor/
+
+# Local database backups (pg_dump artifacts — never commit; can be large / contain data)
+backups/

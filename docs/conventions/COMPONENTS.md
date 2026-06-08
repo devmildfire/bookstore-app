@@ -162,6 +162,33 @@ export default function LoginForm() {
 - Zod schemas live in `src/entities/<domain>/validation.ts`
 - `z.infer<typeof schema>` derives the TypeScript type — do not duplicate it manually
 
+## Shared UI Primitives
+
+### `<Scroller>` — Custom Scrollbar Container
+
+Wraps OverlayScrollbars v2. Use it instead of raw `overflow: auto/scroll`.
+
+```tsx
+import Scroller from '@/components/common/Scroller'
+
+<Scroller style={{ maxHeight: 400 }}>
+  {longContent}
+</Scroller>
+```
+
+- Applies the `os-theme-chtivo` theme (thin grey thumb, hidden on touch).
+- Accepts all standard `<div>` props plus `OverlayScrollbarsComponentProps`.
+- Supports `ref` for viewport access via `useImperativeHandle`.
+- Used in: `Modal`, `AdminSelect` dropdown, `HeaderSearchBar` results.
+
+### Other shared primitives
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `Modal` | `components/common/Modal/` | Radix Dialog wrapper with Scroller for content |
+| `Skeleton` | `components/common/Skeleton/` | Loading placeholder (`text`, `rect`, `circle` variants) |
+| `ErrorBoundary` | `components/common/ErrorBoundary/` | Class-based React error boundary at app root |
+
 ## Layout Components
 
 Pages that need a shell declare layout in `app/<route>/layout.tsx`.
@@ -171,35 +198,51 @@ Current structure:
 
 ```
 app/
-  layout.tsx               ← root layout (fonts, providers, globals.scss, Header)
-  page.tsx                 ← homepage
-  books/
-    (catalog)/             ← catalog listing (page/loading/error)
-    [slug]/                ← book detail (own loading.tsx)
-  account/
-  auth/
-  cart/
-  checkout/
-  subscription/
+  layout.tsx               ← root layout (fonts, providers, globals.scss)
+  (site)/                  ← storefront route group
+    layout.tsx             ← Header + Footer chrome
+    page.tsx               ← homepage
+    auth/                  ← login/ register/
+    profile/               ← user cabinet (multi-route layout)
+    books/
+      (catalog)/           ← catalog listing (page/loading/error)
+      [slug]/              ← book detail (own loading.tsx)
+    cart/
+    checkout/
+    payments/mock/         ← in-app mock payment gateway
+    dino-magazine/, gift-cards/, subscription/, authors/, abzac/, about/ …
+  admin/                   ← admin panel (no header/footer)
+    login/                 ← admin email+password login
+    (panel)/               ← guarded route group
+      layout.tsx           ← AdminShell (AdminSideNav + content area)
+      orders/, books/, authors/, box-sets/, gift-cards/,
+      subscriptions/, promo-codes/, articles/, featured/,
+      submissions/, audit/ + dashboard
 ```
 
 The `(catalog)/` route group exists to scope its `loading.tsx` away from
 `[slug]`. See `docs/conventions/ERROR_HANDLING.md` § Suspense scope and route
 groups before adding sibling `loading.tsx` files under a shared parent.
 
-Intended future structure using shell-level route groups (not yet implemented):
+The `admin/` panel uses its own chrome (`AdminShell` + `AdminSideNav`) with
+email+password auth only (no OAuth, no anonymous). See
+[docs/plans/admin-panel.md](../plans/admin-panel.md).
 
-```
-app/
-  layout.tsx            ← root layout
-  (shop)/
-    layout.tsx          ← PageLayout (header + footer)
-    books/
-    cart/
-  (protected)/
-    layout.tsx          ← server-side auth guard + account shell
-    account/
-  (admin)/
-    layout.tsx          ← admin auth guard + admin shell
-    admin/
-```
+## Admin Components
+
+Admin UI lives in `src/components/admin/`. Key shared primitives:
+
+| Component | Purpose |
+|-----------|---------|
+| `AdminShell` | Layout shell (sidebar + content) |
+| `AdminSideNav` | Sidebar navigation |
+| `AdminPageHeader` | Page title + actions bar |
+| `AdminList` | Paginated list with sort/filter |
+| `AdminFilterBar` | Filter controls row |
+| `AdminPager` | Pagination controls |
+| `AdminInput` / `AdminTextarea` | Form fields |
+| `AdminSelect` | Dropdown select with Scroller |
+| `AdminDatePicker` | Date input |
+
+Domain-specific admin forms (books, authors, articles, box sets, etc.) live in
+subdirectories under `src/components/admin/`.
