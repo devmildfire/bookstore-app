@@ -71,9 +71,9 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `TitleSimilarTitles` | ✅ **done** — mined "Познайте также" from book-page footers: 184 links across 62 books (`get_similar_books` verified) |
 | `BookContexts` | **0 rows** — book "context" cards empty |
 | `PromoCodes` | ✅ **done** — re-seeded 5 fixtures via `supabase/seed-promo-codes.sql` (SUMMER25/FREECART/WHITE30/AUDIO50/OLDCODE); apply/expired/not-found paths verified |
-| `booktrailers` bucket | empty — 1 `Booktrailers` row but no video/poster objects |
-| `partners` bucket | empty (7 `Partners` rows reference logos) |
-| `workers` bucket | empty (worker photos) |
+| `partners` bucket | ✅ **not a gap** — `Partners.logo_path` is NULL by design (about_page_seed: "logo_path NULL → placeholder square"); `PartnerLogo.tsx` renders a name tile fallback. Empty bucket is correct. |
+| `booktrailers` bucket | ⚠️ **not scrapeable** — chtivo embeds the trailer via a **Rutube iframe** (no downloadable mp4/webm); the pre-wipe content was a placeholder («заглушка»). Needs a decision: re-create placeholder / download Rutube via yt-dlp / switch app to embed Rutube. |
+| `workers` bucket | empty (worker photos) — author photos done; team-member photos sparse on chtivo |
 | `subscriptions` + `gift-cards` buckets | ✅ **done** — buckets recreated (public), 3 + 3 images uploaded (filenames already matched the DB columns), subscription blurs backfilled |
 | `avatars` bucket | empty — user-uploaded profile avatars, no source to restore (expected empty in dev) |
 | `digital-files` bucket | ✅ **done** — created the 3 category placeholders `getDownloadUrl` falls back to (`placeholders/{ebook.pdf,book2.pdf,audiobook.mp3}`), signed-URL verified. NB: `scripts/seed-placeholder-pdf.mjs` is **stale** — it writes `ebooks/50.pdf`, not the `placeholders/` keys the code uses; update it to be the reproducible source |
