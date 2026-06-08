@@ -280,7 +280,10 @@
 
 .similarGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  // Cap tracks to the card's own max-width and center the row, so a partial
+  // row (1–2 related books) sits centered instead of stretched/left-aligned.
+  grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
+  justify-content: center;
   column-gap: 100px;
   row-gap: 60px;
 
