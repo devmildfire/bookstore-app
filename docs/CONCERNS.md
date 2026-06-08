@@ -75,7 +75,7 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `partners` bucket | empty (7 `Partners` rows reference logos) |
 | `workers` bucket | empty (worker photos) |
 | `subscriptions` / gift-card / `avatars` buckets | empty |
-| `digital-files` bucket | placeholders missing (`scripts/seed-placeholder-pdf.mjs`) |
+| `digital-files` bucket | ✅ **done** — created the 3 category placeholders `getDownloadUrl` falls back to (`placeholders/{ebook.pdf,book2.pdf,audiobook.mp3}`), signed-URL verified. NB: `scripts/seed-placeholder-pdf.mjs` is **stale** — it writes `ebooks/50.pdf`, not the `placeholders/` keys the code uses; update it to be the reproducible source |
 | Edition demo files | ✅ **done** — 34 editions: demo zips downloaded, extracted (own sample, not cross-promo), stored as `demos/<slug>/demo.{epub,mp3}`, `demo_path` set. Pending: 5 **shared/mislabeled** source zips (`kotlovan`, `svehderzhava`, `DoctorSaxDemo`, `BogImyaDemo`, `Frieda-and-Gitta`) skipped to avoid wrong attachments + 1 source 404 (`unhappened`) — attach manually if wanted |
 
 A couple of source files 404 on the live site: `murlo/04.jpg`, `nikolay-staroobryadtsev.jpg`.
