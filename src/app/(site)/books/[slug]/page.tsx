@@ -126,6 +126,7 @@ export default async function BookDetailPage({ params }: Props) {
                         width={131}
                         height={120}
                         className={styles.awardImage}
+                        unoptimized
                       />
                     ) : (
                       <span className={styles.awardTitle}>{award.title}</span>

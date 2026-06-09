@@ -10,7 +10,7 @@ import type {
   BookWorker,
 } from './client'
 import type { BookServerRow } from './server'
-import { getAuthorPhotoUrl, getBooktrailerUrls, getCoverUrl, getDemoUrl } from '@/lib/storage'
+import { getAuthorPhotoUrl, getAwardUrl, getBooktrailerUrls, getCoverUrl, getDemoUrl } from '@/lib/storage'
 
 export function normalizeBook(raw: BookServerRow): Book {
   const authorNames = (raw.author_names ?? [])
@@ -181,7 +181,7 @@ function normalizeAwards(value: unknown): BookAward[] {
       return {
         id: award.id,
         title: award.title,
-        image: award.image,
+        image: getAwardUrl(award.image),
       }
     })
     .filter((award): award is BookAward => award !== null)

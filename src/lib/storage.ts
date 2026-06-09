@@ -99,6 +99,21 @@ export function getAuthorPhotoUrl(filename: string | null): string | null {
   return `${supabaseUrl}/storage/v1/object/public/${AUTHORS_BUCKET}/${filename}`
 }
 
+const AWARDS_BUCKET = 'awards'
+
+/**
+ * Convert an award badge filename into a public Supabase Storage URL.
+ * `Awards.image` stores a bare filename (e.g. `book_of_the_year_2019.svg`).
+ * Absolute URLs and legacy `/awards/...` public paths are returned untouched.
+ */
+export function getAwardUrl(image: string | null): string | null {
+  if (!image) return null
+  if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('/')) {
+    return image
+  }
+  return `${supabaseUrl}/storage/v1/object/public/${AWARDS_BUCKET}/${image}`
+}
+
 const BOOKTRAILERS_BUCKET = 'booktrailers'
 
 /**
@@ -175,6 +190,7 @@ export {
   BOOK_PHOTOS_BUCKET,
   BOOKTRAILERS_BUCKET,
   AUTHORS_BUCKET,
+  AWARDS_BUCKET,
   VIDEOS_BUCKET,
   PARTNERS_BUCKET,
   WORKERS_BUCKET,
