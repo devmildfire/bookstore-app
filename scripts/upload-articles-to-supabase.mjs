@@ -10,7 +10,7 @@
  */
 
 import { readFileSync, readdirSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
@@ -18,6 +18,21 @@ const SOURCE_DIR = join(SCRIPT_DIR, '..', 'public', 'articles')
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321'
 const BUCKET_NAME = 'articles'
+
+function listImages(dir, root = dir) {
+  const files = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      files.push(...listImages(fullPath, root))
+      continue
+    }
+    if (entry.isFile() && /\.(jpg|jpeg|png|webp|avif)$/i.test(entry.name)) {
+      files.push(relative(root, fullPath).split(sep).join('/'))
+    }
+  }
+  return files
+}
 
 function getContentType(filename) {
   if (/\.png$/i.test(filename)) return 'image/png'
@@ -70,7 +85,7 @@ async function main() {
 
   let files = []
   try {
-    files = readdirSync(SOURCE_DIR).filter((f) => /\.(jpg|jpeg|png|webp|avif)$/i.test(f))
+    files = listImages(SOURCE_DIR)
   } catch {
     console.error(`Source directory ${SOURCE_DIR} not found. Place images there first.`)
     process.exit(1)

@@ -110,7 +110,7 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 
 | Item | State |
 |------|-------|
-| `Articles` table + `articles` bucket | **0 rows** — `/dino-magazine` is empty (`scripts/upload-articles-to-supabase.mjs`) |
+| `Articles` table + `articles` bucket | ✅ **partly restored (2026-06-09)** — imported 12 stories from the supplied `Могучий Русский Динозавр № 6.epub` as `mrd6-*` article slugs; uploaded 12 illustrations to `articles/mrd6/`; reproducible via `scripts/extract-mrd6-articles.mjs` → `supabase/seed-articles-mrd6.sql` + `scripts/upload-articles-to-supabase.mjs`. Older pre-wipe magazine articles are still not recovered unless another source appears. |
 | `TitleSimilarTitles` | ✅ **done** — mined "Познайте также" from book-page footers: 184 links across 62 books (`get_similar_books` verified) |
 | `BookContexts` | **0 rows** — book "context" cards empty |
 | `PromoCodes` | ✅ **done** — re-seeded 5 fixtures via `supabase/seed-promo-codes.sql` (SUMMER25/FREECART/WHITE30/AUDIO50/OLDCODE); apply/expired/not-found paths verified |
