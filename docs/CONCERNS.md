@@ -6,10 +6,32 @@ Tracked issues that are not part of an active plan but haven't been resolved.
 
 ---
 
-## D1 🔴 Repo cannot rebuild the database — no authoritative schema source of truth
+## D1 ✅ RESOLVED (2026-06-09) — repo now reproduces the DB from a consolidated baseline
 
-`supabase/seed.sql` + `supabase/migrations/` **cannot reconstruct the database from
-scratch.** Several core tables have **no `CREATE TABLE` anywhere in the repo** — they
+**Fixed by squashing to a single baseline.** The 57 drifted migrations could no longer
+replay (renamed types, duplicate seed keys, function-signature changes). They are now
+archived in `supabase/migrations_archive/` (kept for reference) and replaced by one
+baseline generated from the live DB:
+
+- `supabase/migrations/20260101000000_baseline_schema.sql` — full public schema
+  (tables, enums, functions, RLS) + `pg_trgm` + the 15 storage buckets + 17
+  `storage.objects` policies. (`pg_dump --schema-only`, `CREATE SCHEMA public` stripped.)
+- `supabase/seed.sql` — **data only** now (`pg_dump --data-only`, catalog/content
+  tables only; user/runtime tables `Cart`/`Orders`/`OrderItems`/`Profiles`/… excluded
+  since they FK to `auth.users`, which is empty on a fresh reset).
+
+**Verified** on a throwaway DB (auth/storage stubbed): baseline + seed replay cleanly
+and every table count matches live (Titles 64, Workers 183, EbookWorkers 325,
+TitleSimilarTitles 184, …) + 15 buckets + 17 policies. A real `supabase db reset` was
+**not** run (it would wipe the restored storage). Post-reset steps remain manual:
+`scripts/seed-admin.mjs` (auth user) + the `scripts/upload-*`/`sync-*` scripts (storage
+objects) + the placeholder/demo restores. The live DB's `schema_migrations` was
+realigned to the single baseline version.
+
+<details><summary>Original problem (for history)</summary>
+
+`supabase/seed.sql` + `supabase/migrations/` **could not reconstruct the database from
+scratch.** Several core tables had **no `CREATE TABLE` anywhere in the repo** — they
 were only ever hand-applied to the live instance:
 
 - `Ebooks`, `Audiobooks`, `PrintedBooks`, `Orders`, `OrderItems`, `Cart` are **not
@@ -53,6 +75,8 @@ no clean way to rebuild — recovery had to reconstruct `OrderItems`/`Cart` DDL 
    nullable/defaulted so harmless, but should be dropped during consolidation.
 
 See also [docs/DATABASE_BACKUP.md](DATABASE_BACKUP.md) (backup-before-destructive rule).
+
+</details>
 
 ---
 
