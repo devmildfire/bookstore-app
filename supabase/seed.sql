@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 7pJaeYJxzpCbcTeH4PHvD36RGTyXGoJihacd90EZPWUSfNyErVaKzUXifThpFn8
+\restrict hyhIeCI5UTuBIwRtNWAmYuOpvGRpeIlsLQsfGnK6AhzV9ar1kFjWoA7RVAixgDI
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -111,9 +111,9 @@ COPY public."Titles" (id, name, slug, cover, description, thesis, demo, trailer,
 7	Дочь греха	doch-greha	doch-greha.png	Харизматичный и любвеобильный музыкант и поэт, пагубное пристрастие которого меняет в его жизни всё. Ромео и Джульетта времён Великой Отечественной войны. Взволнованный школьник, испытавший первое вожделение. Профессор и аспирантка, одержимые любовью. Плотские утехи, мимолётные романы, дружеские знакомства, житейская мудрость, девчачьи хитрости, остроумные афоризмы героев и отголоски войны. Всё это и не только ждёт вас под одной обложкой трагикомедийной лёгкой прозы Бориса Майнаева о дамских угодниках, жаждущих любви женщинах и их жизненных перипетиях. Автор о книге: «О чём громко и открыто не говорят или говорят, опуская глаза. В этих рассказах и повестях сладкий флирт незаметно перетекает в горечь трагедии. Любовь и ложь… Страсть и стыд… Жизнь и смерть… Что это — бесконечное обретение познания или бессмыслица, границы которой очерчены не нами?»	СЕМЬ МГНОВЕНИЙ СЛАДОСТРАСТИЯ	\N	\N	\N	18	2024	f	f	сборник повестей и рассказов	\N	\N	published
 8	Сверхдержава	sverhderzhava	sverhderzhava.jpg	Воин запаса Бедович ищет своё место в мирной жизни: днём продаёт телевизоры, ночами пробует себя в литературе. Всё круто меняется при знакомстве с писателем, фантомасом и основателем издательства Чтиво Сергеем Иннером, который вскоре психоделически исчезает. Бедович вынужден стать его преемником в таинственной арт-конгрегации Русский Динозавр и сладить с хаосом, который тот оставил после себя. Сознание Бедовича, а с ним и явь начинают меняться, люди всё чаще принимают за Иннера его самого. Роман с бывшей любовницей Иннера, сердцеедкой доктором-кардиологом превращается в абьюзивный цикл на стыке жизни, смерти и русской киберпанк-апокалиптики: кровососущие банкиры доводят общество до тотальной нищеты и массового помешательства, мутирующие от царь-вируса полицейские становятся зомби, а массолит бесконтрольно рождает тысячи плохих книг глупых писателей. Или всё это лишь художественное произведение Бедовича? Сможет ли герой спасти себя от нищеты, Чтиво от краха, а страну Россию от печальной участи Карфагена? Решает ли простой человек в своей жизни хоть что-нибудь, и чем он должен пожертвовать, чтобы стать непростым? Узнаем ли мы правду о войне с е■учими монголами? И, наконец, сакральное Бедовичево: «Как устроена страна Россия в частности и мир в целом»? Автор о книге: «Сызмальства я мечтал создать экзистенциальный романтический боевик социальной направленности с элементами бурлескного артхаус-порно-триллера для крестьян, рабочих, феминисток, спортсменов, психологов, бизнес-коучей, депутаток, инстабогинь* и всех, кто не входит в этот перечень. Мечты сбываются!» *Пантеон запрещён на территории страны России	любовь и власть	\N	\N	\N	18	2025	f	f	роман-превосхождение	\N	\N	published
 43	Бог его имя	bog-ego-imya	bog-ego-imya.jpg	Анна и Шмуэль знакомы с детства, и Анна верит, что он — тот, чьё имя ангел шепнул ей перед её рождением, что они предназначены друг другу; в то же время Шмуэль влюблён в сестру Анны. Чёрно-белая картина детства, где существуют правильные и неправильные поступки, вечная любовь и нерушимые обязательства, постепенно тает, сменяясь бытом взрослой жизни. Вечной любви нет места в этом мире, волшебство кончается. Или это неправда? «Это история взросления — не человека, а его чувств. История о том, как мы оправдываем выбор, который делаем в жизни», — пишет автор.	Взмах крыла голубя может изменить судьбу	\N	\N	\N	16	2021	f	f	повесть	\N	\N	published
-10	МРД6	moguchij-russkij-dinozavr	moguchij-russkij-dinozavr.png	В начале было Чтиво. Затем родился Русский Динозавр. Вместе они плечом к плечу стоят на защите современной малой прозы, публикуя для вас исключительные произведения. Перед вами все номера ежегодника: каждый год двенадцать избранных публикаций, двенадцать авторов под одной обложкой — итог двенадцати месяцев работы литжурнала. Выпуски также включают рассказы победителей конкурса рок-прозы «Гроза» радио Овердрайв. Держись, читатель, ибо Русский Динозавр воистину могуч!	Excelsior!	\N	\N	\N	18	2026	f	f	ежегодник	\N	\N	published
 13	Мурло	murlo	murlo.jpg	Степан Фёдорович Домрачёв, чудной пятидесятилетний слесарь, приезжает в село забрать вещи умершего дяди. Там у него угоняют «Газель», поэтому уехать из села он не может. Он начинает переворачивать жизнь местных жителей с ног на голову, постепенно лишаясь рассудка. Автор о книге: «"Мурло" — книга о девиациях. Персонажи, в сущности, самые обыкновенные русские люди, с трудом контролирующие свои страсти. И страсти эти так сильно завладевают ими, что порой может показаться, замещают их, становятся на их место, обретая болезненную форму. Как будто вырезается трафарет, в который удаётся пролезть только образу, высеченному страстями, но не душе. В фильме Андрея Тарковского "Сталкер" герой говорит: "То, что они называют страстью, на самом деле не душевная энергия, а лишь трение между душой и внешним миром". "Мурло" — это попытка осознать, что есть вещи более тонко организованные и могущие принести не трафаретное, а объёмное, истинное счастье».	Снег, блинчики, усач, истерика	\N	\N	\N	18	2021	f	f	роман	\N	{"print/01.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQAC/8QAHhAAAQQCAwEAAAAAAAAAAAAAAQACAxEEIRMjMXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AGxMfHkx5uYAzHUduqtXaNLXEkk7K2T1P+KHiC//Z", "print/02.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwIF/8QAHxAAAgEEAgMAAAAAAAAAAAAAAQIDAAUSIQQiERSB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARH/2gAMAwEAAhEDEQA/AAs3GgkSISds4wxBOwaCW93WGV4vYk6MV0B418rLZ2WNcWI0Bo1FRTj/2Q==", "print/03.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAX/xAAfEAEAAgEEAwEAAAAAAAAAAAABAhEAAwUhUQQTMYH/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AJ/iS0YLBDT5YyGNrb3jXaSSvskXz9w84juSIVY/veVVbeXBCr//2Q==", "print/05.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAwb/xAAdEAACAgIDAQAAAAAAAAAAAAABAgARAyESQXHR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AKI42LOocKTtT9ihNC6vuoKsxyBSTXEav2NA/9k=", "print/06.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQMG/8QAHhAAAwABBAMAAAAAAAAAAAAAAQIDAAQREiEFUWH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8ArTyF42vNuMeLKE9bHsEn7mlQydFYMNmG/WHTjN9WrPNGYJ0SoJxLA//Z"}	published
 11	Сега Мега Драйв	segamegadrive	segamegadrive.png	От первого тетриса до консолей виртуальной реальности, от первой затяжки за школой до диджитал-проектов федерального масштаба: история медиахудожника и продюсера, культ молодости, видеоигр и темнеющего рок-н-ролла, тусовки в супермаркете, диджитал-арт, скейт-поэзия, необитничество, техномистика, психоделириумный экшен и бешеное диско под тяжёлый рок между Петербургом, Москвой, Нижним Новгородом и родными экзистенциальными просторами индивидуального и коллективного бессознательного, а также работа сантехником в детском саду в паре с опустившейся рок-звездой — чистейшая грязь. Нажмите «старт».	game lover	\N	\N	\N	18	2026	f	f	роман-геймплей	\N	{"print/01.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABgT/xAAiEAACAAUEAwEAAAAAAAAAAAABAgAEBREhAzE0sRMVQXL/xAAVAQEBAAAAAAAAAAAAAAAAAAABAv/EABYRAQEBAAAAAAAAAAAAAAAAAAABMf/aAAwDAQACEQMRAD8AnrbFqjOqGcWcgkfMC0NZTiaF9/GvUDayo9tNYGWzjeGcrxdH8L1AmbX/2Q==", "print/02.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAX/xAAeEAACAQQDAQAAAAAAAAAAAAABAgQAAxExEhMhcv/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAERQf/aAAwDAQACEQMRAD8Akx4llZNtEQMCQSD7sazQHiXObYRR7rymMSs5OJxrVEuk9r/Ro6RVp//Z", "print/03.jpg": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABQED/8QAIBAAAQMCBwAAAAAAAAAAAAAAAQACERJRAxMhIjFBYf/EABUBAQEAAAAAAAAAAAAAAAAAAAED/8QAFhEBAQEAAAAAAAAAAAAAAAAAABES/9oADAMBAAIRAxEAPwAM4TSGsooMiZHRW+Qy7R5AU5c6ddpR8m5Qlmv/2Q=="}	published
+10	МРД6	moguchij-russkij-dinozavr	moguchij-russkij-dinozavr.png	В начале было Чтиво. Затем родился Русский Динозавр. Вместе они плечом к плечу стоят на защите современной малой прозы, публикуя для вас исключительные произведения. Перед вами все номера ежегодника: каждый год двенадцать избранных публикаций, двенадцать авторов под одной обложкой — итог двенадцати месяцев работы литжурнала. Выпуски также включают рассказы победителей конкурса рок-прозы «Гроза» радио Овердрайв. Держись, читатель, ибо Русский Динозавр воистину могуч!	Excelsior!	\N	\N	\N	18	2026	t	f	ежегодник	\N	\N	published
 17	Кокора	kokora	kokora.jpg	Симон — талантливый писатель. Он создаёт заказную попсу под массой имён, понимая, что его личная реальность — бесконечное противоречие. Творческие амбиции заземлены необходимостью писать ради заработка. Он мечтает об успехе, но рутина литературного «негритянства» откладывает его планы на неопределённый срок. В поисках выхода из этого тупика Симон находит загадочную работу, однако в первый же день всё принимает неожиданный оборот — ему выдают странный шлем. Надев его, Симон превращается в муху и попадает в иллюзорный мир. Балансируя между двумя реальностями, он приступает к своей миссии. Но кто он на самом деле? «Кокора» — многослойный роман, где границы действительности порой стёрты. Личностные перипетии соседствуют с невероятными технологическими идеями и сказочными погружениями в странные миры насекомых.	Мысли — это маленькие зелёные человечки. Ты хочешь их воспитать, но у них своё мнение	\N	\N	\N	18	2025	f	f	роман	\N	\N	published
 18	Макинтош для близнецов	makintosh-dlya-bliznecov	makintosh-dlya-bliznecov.jpg	Нина стаскивает Сашу в реальную жизнь прямо со сцены. Обе девушки устали от одиночества, но они непохожи: Нина торгует своим телом, а Саша не может продать Шекспира. Держась друг за друга, как за костыли, две невезучие героини постигают в окружающих и в самих себе душевную инвалидность и шаг за шагом учатся жить. Читатель видит мир глазами обеих: переносится флешбэками в их детство и юность, а затем возвращается в неустроенную и искалеченную жизнь. Амплитуда событий колеблется от омерзительного до возвышенного, вместе девушки бунтуют против пошлости, из которой не могут выбраться сами. Будет ли крик об одиночестве и нежелании жить в грязи услышан? Перед вами повесть о счастье и горестях, о вечном и преходящем, о цинизме и инфантильности, о превозможении и тёмных закоулках человеческой души, где так легко потеряться. Автор о книге: «Это история о необычном человеке, который родился в обычном мире, об инвалидности и целлюлите душ и тел, о поиске безусловной любви, о хроническом одиночестве и рецидивирующей жестокости, о падении и неврозах, о проституции. Книга о том, в чём сегодня запуталось полмира, о том, что ниже пояса, и о том, что выше, — тоже! Ещё о диких розах и людях, о сладкой алыче, о Маркесе, о пьяном немце и о белой полосе в небе, которую оставляет самолёт...»	Если ты встретил странного человека — значит, он где-то чудом выжил	\N	\N	\N	18	2025	f	f	повесть	\N	\N	published
 16	Виски сауэр	whiskey-sour	whiskey-sour.png	«Виски сауэр» — инструкция по применению внутрь: Патриков, алкоголя, женского внимания, мужских эмоций, историй в стиле стендап, бесед с бомжами и богачами. Саргис живёт в спальном районе и каждый день оказывается на Патриках как на работе. Разговоры у туалета, за барной стойкой, в чужой квартире, на поле для гольфа, на уличной скамейке. Люди меняются как в калейдоскопе. Тон книги — тон выпившего друга: искренний, грустный, рефлексивный, свой. Градус актуальности и узнаваемости высок, ведь «Виски сауэр» не о вечном, а о хрупком, бытовом, близком. Для тех, кто прислушивается к себе и другим людям, любит хороший рассказ и точность попадания в суть. Тех, кому наскучило «нормальное» и кто хотя бы раз пил алкоголь на последние — просто для того, чтобы остаться собой. Издатели книги не пропагандируют табак, алкоголь, наркотики и насилие, не всегда разделяют увлечения героев и призывают читателей к здоровому образу жизни.	Принимать внутрь	\N	\N	\N	18	2025	f	f	роман	\N	{"print/01.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAwT/xAAeEAACAQQDAQAAAAAAAAAAAAABAgMABAUREiExQf/EABUBAQEAAAAAAAAAAAAAAAAAAAQF/8QAGREAAwEBAQAAAAAAAAAAAAAAAQIRAAME/9oADAMBAAIRAxEAPwBMZnZrmzSVoebhhHIR9H0gVBK4eV3HEBmJ6UVHZMy4YcSRuU70ffKY9HqhdHYmXVPMihbN/9k=", "print/02.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAX/xAAeEAACAwABBQAAAAAAAAAAAAABAwACBBEhIjJBcf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAGBEBAQEBAQAAAAAAAAAAAAAAAQIAAxH/2gAMAwEAAhEDEQA/AICsL8qwxqz3cWA49SZbyP2OGh1sZFnMIHQA2MBC5016uo6ySAb/2Q==", "print/03.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgIF/8QAIhAAAQIFBAMAAAAAAAAAAAAAAQIDAAQRITEFEhQiMkFx/8QAFQEBAQAAAAAAAAAAAAAAAAAABAX/xAAaEQACAgMAAAAAAAAAAAAAAAABAgBBAxET/9oADAMBAAIRAxEAPwC39NdnJNe8U34STX5SCipBxKikutWNPKGGnuL4013V1QSL4NDGW2lJbTYYHqCb5qCtygqDM5DVP//Z", "print/04.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABQT/xAAnEAACAQIDBwUAAAAAAAAAAAABAgMABBESIQUGExQiMkExUWGRof/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAGREAAgMBAAAAAAAAAAAAAAAAAAECAzES/9oADAMBAAIRAxEAPwBUxW95KOHHGIo1Bzoo19gCPFTNsaEsSLhhifTImn5QG7txMrJGs0gTHtDHD6pK6duam6j3t5+aKSjrRTX3iZ//2Q==", "print/05.png": "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAKAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAX/xAAeEAEBAAICAgMAAAAAAAAAAAABAgQRAAMFEhMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAEDEgIRMf/aAAwDAQACEQMRAD8Ah/B1ZuHE40by/cgiQPbfJd9dxdTQlS6TX08X4uqjLGVl/R1xfYD2WoKrteBar0WKJSJZcP/Z"}	published
@@ -186,12 +186,6 @@ COPY public."Audiobooks" (id, title_id, price, is_published, publish_date, relea
 --
 
 COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_order) FROM stdin;
-1	Анна Соколова	Главный редактор	\N	Санкт-Петербург	t	0
-2	Дмитрий Орлов	Арт-директор	\N	Санкт-Петербург	t	1
-3	Мария Лебедева	Литературный редактор	\N	Санкт-Петербург	t	2
-4	Игорь Беляев	Дизайнер	\N	Санкт-Петербург	t	3
-5	Елена Кузнецова	Корректор	\N	Санкт-Петербург	t	4
-6	Сергей Морозов	Координатор	\N	Санкт-Петербург	t	5
 7	Сергей Иннер	редактор	\N	\N	f	0
 8	Александра Яшаркина	верстальщик	\N	\N	f	0
 9	Кристина Габеева	художник	\N	\N	f	0
@@ -226,8 +220,6 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 38	Анна Волкова	редактор	\N	\N	f	0
 39	Анна Мезенцева	корректор	\N	\N	f	0
 40	Лена Солнцева	иллюстратор	\N	\N	f	0
-41	Алексей Капустяк	верстальщик	\N	\N	f	0
-42	Андрей Янкус	продюсер	\N	\N	f	0
 43	Анна Черкасова	веб-мастер	\N	\N	f	0
 44	Валерия Арсибекова	продюсер	\N	\N	f	0
 45	художник-иллюстратор Екатерина Ковалевская	корректор	\N	\N	f	0
@@ -244,7 +236,6 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 56	Анастасия Давыдова	корректор	\N	\N	f	0
 57	Татьяна Максимова	корректор	\N	\N	f	0
 58	Анастасия Автухова	корректор	\N	\N	f	0
-59	Екатерина Ковалевская	иллюстратор	\N	\N	f	0
 60	Кладбище Джо	иллюстратор	\N	\N	f	0
 61	Екатерина Апенько	иллюстратор	\N	\N	f	0
 62	Анастасия Болбат	иллюстратор	\N	\N	f	0
@@ -346,8 +337,8 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 115	Александр Лызь	веб-мастер	\N	\N	f	0
 131	художник-иллюстратор Катерина Курносова	корректор	\N	\N	f	0
 140	иллюстратор-дизайнер Илья Дик	корректор	\N	\N	f	0
-163	Екатерина Курносова	иллюстратор	\N	\N	f	0
 179	текст буктрейлера читает Александр Лозбенев	художник	\N	\N	f	0
+163	Екатерина Курносова	иллюстратор	ekaterina-kurnosova.jpg	\N	t	4
 100	Катерина Апенько	дизайнер	\N	\N	f	0
 102	Катерина Гребенщикова и Анна Волкова	редактор	\N	\N	f	0
 109	Любовь Мельникова	корректор	\N	\N	f	0
@@ -369,6 +360,16 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 157	Мария Передок	редактор	\N	\N	f	0
 170	видеограф Катя Буторина	веб-мастер	\N	\N	f	0
 180	в основе коллажа на обложке фото Дарьи Дашковой	иллюстратор	\N	\N	f	0
+42	Андрей Янкус	продюсер	andrey-yankus.jpg	Санкт-Петербург	t	0
+185	Сергей Дедович	шеф-редактор	sergey-dedovich.jpg	Санкт-Петербург	t	1
+186	Алёна Купчинская	ведущий редактор	alyona-kupchinskaya.jpg	\N	t	2
+187	Катерина Видяскина	ведущий дизайнер	katerina-vidyaskina.jpg	Санкт-Петербург	t	3
+59	Екатерина Ковалевская	иллюстратор	ekaterina-kovalevskaya.jpg	Нижний Новгород	t	5
+190	Анастасия Мальцева	режиссёр буктрейлеров	anastasia-malceva.jpg	Санкт-Петербург	t	6
+191	Вероника Плосконос	художник анимации	veronika-ploskonos.jpg	\N	t	7
+192	Диана Гильманова	продюсер изданий	gilmanova-diana.jpg	Екатеринбург	t	8
+193	Екатерина Гребенщикова	корректор	ekaterina-grebenshchikova.jpg	\N	t	9
+41	Алексей Капустяк	верстальщик	aleksey-kapustyak.jpg	\N	t	10
 \.
 
 
@@ -533,6 +534,7 @@ COPY public."BoxSetBooks" (id, box_set_id, title_id, "position", product_id) FRO
 82	9	53	4	\N
 83	9	55	5	\N
 84	9	64	6	\N
+85	2	63	3	\N
 \.
 
 
@@ -1568,7 +1570,7 @@ COPY public.featured_books (id, title_id, sort_order, created_at) FROM stdin;
 -- Name: AdminAuditLog_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."AdminAuditLog_id_seq"', 7, true);
+SELECT pg_catalog.setval('public."AdminAuditLog_id_seq"', 8, true);
 
 
 --
@@ -1764,7 +1766,7 @@ SELECT pg_catalog.setval('public."UserSubscriptions_id_seq"', 1, false);
 -- Name: Workers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."Workers_id_seq"', 183, true);
+SELECT pg_catalog.setval('public."Workers_id_seq"', 194, true);
 
 
 --
@@ -1778,5 +1780,5 @@ SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 7pJaeYJxzpCbcTeH4PHvD36RGTyXGoJihacd90EZPWUSfNyErVaKzUXifThpFn8
+\unrestrict hyhIeCI5UTuBIwRtNWAmYuOpvGRpeIlsLQsfGnK6AhzV9ar1kFjWoA7RVAixgDI
 
