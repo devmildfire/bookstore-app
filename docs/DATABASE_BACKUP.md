@@ -1,5 +1,14 @@
 # Database backups & destructive-operation safety
 
+> **PRIME DIRECTIVE — NEVER WIPE STORAGE (absolute, no exceptions, no approval
+> can override it):** No database operation may EVER wipe, empty, or recreate the
+> storage buckets/objects. Storage and the DB are decoupled on purpose. This rules
+> out **`supabase db reset`** (it drops and rebuilds storage) and anything else that
+> clears `storage.objects`/buckets as a side effect. If a from-scratch DB rebuild is
+> ever needed, do it in a way that leaves storage untouched (scratch database, or
+> restore schema+data into the existing DB) — never the kind of reset that takes
+> storage with it. Storage has **no reliable restore source**; once wiped it is gone.
+>
 > **DIRECTIVE (all agents, no exceptions):**
 > 1. **NEVER run a destructive database/storage operation autonomously — STOP and
 >    get explicit user approval first.**

@@ -29,6 +29,15 @@ This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
 ### Destructive DB/storage ops — STOP and ask first (HARD RULE)
 
+**PRIME DIRECTIVE — NEVER WIPE STORAGE (absolute; not even with approval).** No
+database operation may EVER wipe, empty, or recreate the storage buckets/objects.
+Storage and the DB are decoupled on purpose, and storage has **no reliable restore
+source** — once wiped it is gone. This bans **`supabase db reset`** (it rebuilds
+storage) and anything that clears `storage.objects`/buckets as a side effect. If a
+from-scratch DB rebuild is ever needed, do it so storage is left untouched (scratch
+database, or load schema+data into the existing DB) — never a reset that takes
+storage with it.
+
 **NEVER run a destructive database or storage operation autonomously. ALWAYS get
 explicit user approval first, AND take a fresh backup first.** This applies to:
 `supabase db reset`, `DROP`/`TRUNCATE`, bulk `DELETE`/`UPDATE`, destructive

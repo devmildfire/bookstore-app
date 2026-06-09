@@ -40,10 +40,12 @@ legacy columns) and running `tsc`. The function is **restored** to the live DB a
 folded into the baseline; types regenerated; `tsc`/lint/`npm run build` all green.
 No other functions were lost (full diff of the old vs. live function list = just this one).
 
-Still outstanding from D1 (non-blocking): the 8 stale legacy `Orders` columns
-(`full_name, phone, email, city, address, postal_code, comment`) remain in both the
-live DB and the baseline. Nullable/defaulted ⇒ harmless; dropping them is destructive
-so left for an approved cleanup pass.
+Note on the `Orders` flat-address columns (`full_name, phone, email, city, address,
+postal_code, comment`): these are **intentional and retained** — NOT to be dropped.
+An earlier D1 note mislabeled them "stale legacy … should be dropped"; that was wrong.
+They are still wired (`create_pending_order` writes `email`; `email` is referenced
+across the orders code) and the schema is meant to carry them. They stay in both the
+live DB and the baseline.
 
 <details><summary>Original problem (for history)</summary>
 
@@ -87,9 +89,9 @@ no clean way to rebuild — recovery had to reconstruct `OrderItems`/`Cart` DDL 
 
    The commerce path (cart → `create_pending_order` → Orders + OrderItems →
    `mark_order_paid`) is now verified working end-to-end, and **no table remains
-   RLS-enabled-with-zero-policies**. The `Orders` table still carries 8 stale legacy
-   columns (`full_name`, `email`, `address`, …) not in the intended schema; they're
-   nullable/defaulted so harmless, but should be dropped during consolidation.
+   RLS-enabled-with-zero-policies**. (Earlier revisions of this note called the
+   `Orders` flat-address columns `full_name`/`email`/`address`/… "stale, drop them";
+   that is **wrong** — they are intentional and kept. See the 2026-06-09 follow-up above.)
 
 See also [docs/DATABASE_BACKUP.md](DATABASE_BACKUP.md) (backup-before-destructive rule).
 
