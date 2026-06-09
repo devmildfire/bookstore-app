@@ -1,9 +1,8 @@
 @use '@/styles/common' as *;
 
 // Figma 1920 — 250×250 frosted square: rgba(18,18,18,0.5) + 10px blur,
-// 4px corners. Each Figma partner asset already bakes in the dark frame
-// and label so we render it edge-to-edge inside the tile. The frosted
-// styling stays as a fallback for partners with no logo asset yet.
+// 4px corners. Partner logo assets are transparent (no baked background) so
+// the frosted tile shows through; the logo is contained + centred inside it.
 .tile {
   position: relative;
   width: 250px;
@@ -24,13 +23,14 @@
   @include breakpoint(phone) { width: 150px; height: 150px; }
 }
 
-// Real Figma asset — fills the entire tile.
+// Transparent logo asset — contained + centred over the frosted tile (the asset
+// already bakes in ~14% padding, so it fills the tile edge-to-edge here).
 .logoFill {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 // Placeholder branch.

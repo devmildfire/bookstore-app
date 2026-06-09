@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict hyhIeCI5UTuBIwRtNWAmYuOpvGRpeIlsLQsfGnK6AhzV9ar1kFjWoA7RVAixgDI
+\restrict RItBbkeCbdBKBbBd7CjhRIWbbKO82mawX6ydNtxHd0epGu7dz6SIgA37liCbkHE
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -1065,13 +1065,13 @@ COPY public."GiftCardProducts" (id, slug, name, face_value, sort_order, image_pa
 --
 
 COPY public."Partners" (id, name, logo_path, website_url, sort_order) FROM stdin;
-1	Ночлежка	\N	\N	0
-2	Смена	\N	\N	1
-3	Порядок Слов	\N	\N	2
-4	Фаренгейт 451	\N	\N	3
+2	Смена	smena.png	\N	1
+4	Фаренгейт 451	farengeyt-451.png	\N	3
 5	Ахули	\N	\N	4
-6	Дискурс	\N	\N	5
-7	Подписные Издания	\N	\N	6
+6	Дискурс	diskurs.png	\N	5
+1	Ночлежка	nochlezhka.png	https://nochlezhka.org	0
+7	Подписные Издания	podpisnye.png	https://podpisnie.ru	6
+3	Порядок Слов	poryadok-slov.png	https://www.wordorder.ru	2
 \.
 
 
@@ -1780,5 +1780,5 @@ SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict hyhIeCI5UTuBIwRtNWAmYuOpvGRpeIlsLQsfGnK6AhzV9ar1kFjWoA7RVAixgDI
+\unrestrict RItBbkeCbdBKBbBd7CjhRIWbbKO82mawX6ydNtxHd0epGu7dz6SIgA37liCbkHE
 
