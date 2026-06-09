@@ -4905,3 +4905,62 @@ CREATE POLICY story_submissions_insert ON storage.objects FOR INSERT WITH CHECK 
 CREATE POLICY story_submissions_select ON storage.objects FOR SELECT USING (((bucket_id = 'story-submissions'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)));
 CREATE POLICY videos_select ON storage.objects FOR SELECT USING ((bucket_id = 'videos'::text));
 CREATE POLICY workers_select ON storage.objects FOR SELECT USING ((bucket_id = 'workers'::text));
+
+-- Restored from archived migration 20260603160000_order_tracking_and_audit.sql
+-- (lost during the D1 consolidation; Orders columns + AdminAuditLog survived, the function did not).
+-- ─── 3. Atomic fulfillment update + audit entry ─────────────────────────────
+CREATE OR REPLACE FUNCTION public.admin_set_order_fulfillment(
+  p_order_id        integer,
+  p_status          text,
+  p_tracking_number text,
+  p_carrier         text,
+  p_note            text,
+  p_actor           uuid
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $function$
+DECLARE
+  v_order "Orders"%ROWTYPE;
+BEGIN
+  IF p_status NOT IN ('processing', 'shipped', 'delivered', 'completed') THEN
+    RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_status');
+  END IF;
+
+  SELECT * INTO v_order FROM "Orders" WHERE id = p_order_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('status', 'error', 'reason', 'order_not_found');
+  END IF;
+
+  UPDATE "Orders"
+     SET fulfillment_status = p_status,
+         tracking_number    = NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
+         tracking_carrier   = NULLIF(btrim(coalesce(p_carrier, '')), ''),
+         admin_note         = NULLIF(btrim(coalesce(p_note, '')), '')
+   WHERE id = p_order_id;
+
+  INSERT INTO "AdminAuditLog" (actor_user_id, action, entity_type, entity_id, summary, metadata)
+  VALUES (
+    p_actor,
+    'order.fulfillment',
+    'order',
+    p_order_id::text,
+    format('Статус доставки: %s → %s', v_order.fulfillment_status, p_status),
+    jsonb_build_object(
+      'from', v_order.fulfillment_status,
+      'to', p_status,
+      'tracking_number', NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
+      'carrier', NULLIF(btrim(coalesce(p_carrier, '')), '')
+    )
+  );
+
+  RETURN jsonb_build_object('status', 'ok', 'orderId', p_order_id);
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, text, text, uuid)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, text, text, uuid)
+  TO service_role;

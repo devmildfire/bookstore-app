@@ -28,6 +28,23 @@ TitleSimilarTitles 184, …) + 15 buckets + 17 policies. A real `supabase db res
 objects) + the placeholder/demo restores. The live DB's `schema_migrations` was
 realigned to the single baseline version.
 
+**Follow-up (2026-06-09, post-consolidation verify):** the consolidation dropped one
+function — `admin_set_order_fulfillment` (defined in archived
+`20260603160000_order_tracking_and_audit.sql`, called by
+`src/lib/admin/orders/actions.ts`). The migration's *columns* (`tracking_number`,
+`tracking_carrier`, `admin_note`) and `AdminAuditLog` table survived, but the function
+did not, so the admin "set order fulfillment" action was hitting a missing RPC. Caught
+by regenerating `src/types/supabase.ts` from the live DB (it had gone stale — also
+missing `Ebooks/Audiobooks/CardBooks/PrintedBooks.{sold,demo_path}` and the `Orders`
+legacy columns) and running `tsc`. The function is **restored** to the live DB and
+folded into the baseline; types regenerated; `tsc`/lint/`npm run build` all green.
+No other functions were lost (full diff of the old vs. live function list = just this one).
+
+Still outstanding from D1 (non-blocking): the 8 stale legacy `Orders` columns
+(`full_name, phone, email, city, address, postal_code, comment`) remain in both the
+live DB and the baseline. Nullable/defaulted ⇒ harmless; dropping them is destructive
+so left for an approved cleanup pass.
+
 <details><summary>Original problem (for history)</summary>
 
 `supabase/seed.sql` + `supabase/migrations/` **could not reconstruct the database from
@@ -115,6 +132,17 @@ a scan of history for key literals (service-role JWT / `sk-` / bot tokens) found
 **nothing**. `.env` is gitignored and exists only locally. **No credentials were
 exposed via git → no rotation required.** (Standard hygiene still applies if `.env`
 is ever shared out-of-band.)
+
+---
+
+## ✅ RESOLVED (2026-06-09) — `npm run build` broke under Next 16.2.6 (Turbopack default)
+
+The Next bump to 16.2.6 (commit `95918bf`) made Turbopack the default builder. The
+SVGR loader in `next.config.ts` is a `webpack`-only config, so `next build` errored
+(`webpack config and no turbopack config`). The `dev` script had already been updated
+to `next dev --webpack` but `build` was missed. Fixed by pinning `build` to
+`next build --webpack` (matches `dev`, preserves the exact SVGR behavior). A proper
+Turbopack migration of the SVGR loader is the longer-term alternative.
 
 ---
 

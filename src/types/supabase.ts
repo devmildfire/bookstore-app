@@ -122,6 +122,7 @@ export type Database = {
       }
       Audiobooks: {
         Row: {
+          demo_path: string | null
           discount: number | null
           duration_seconds: number | null
           file_path: string | null
@@ -131,9 +132,11 @@ export type Database = {
           price: number | null
           publish_date: string | null
           release_date: string | null
+          sold: boolean | null
           title_id: number
         }
         Insert: {
+          demo_path?: string | null
           discount?: number | null
           duration_seconds?: number | null
           file_path?: string | null
@@ -143,9 +146,11 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           title_id: number
         }
         Update: {
+          demo_path?: string | null
           discount?: number | null
           duration_seconds?: number | null
           file_path?: string | null
@@ -155,13 +160,14 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           title_id?: number
         }
         Relationships: [
           {
             foreignKeyName: "Audiobooks_title_id_fkey"
             columns: ["title_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
           },
@@ -447,6 +453,7 @@ export type Database = {
         Row: {
           counter_color: string | null
           demo: string | null
+          demo_path: string | null
           discount: number | null
           extra: string | null
           file_path: string | null
@@ -466,6 +473,7 @@ export type Database = {
         Insert: {
           counter_color?: string | null
           demo?: string | null
+          demo_path?: string | null
           discount?: number | null
           extra?: string | null
           file_path?: string | null
@@ -485,6 +493,7 @@ export type Database = {
         Update: {
           counter_color?: string | null
           demo?: string | null
+          demo_path?: string | null
           discount?: number | null
           extra?: string | null
           file_path?: string | null
@@ -561,11 +570,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          category?: Database["public"]["Enums"]["category"]
+          category: Database["public"]["Enums"]["category"]
           created_at?: string
           discount?: number | null
           id: string
-          name: string
+          name?: string
           picture?: string | null
           price?: number | null
           quantity?: number | null
@@ -615,6 +624,7 @@ export type Database = {
       Ebooks: {
         Row: {
           character_count: number | null
+          demo_path: string | null
           discount: number | null
           file_path: string | null
           formats: string[] | null
@@ -623,10 +633,12 @@ export type Database = {
           price: number | null
           publish_date: string | null
           release_date: string | null
+          sold: boolean | null
           title_id: number
         }
         Insert: {
           character_count?: number | null
+          demo_path?: string | null
           discount?: number | null
           file_path?: string | null
           formats?: string[] | null
@@ -635,10 +647,12 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           title_id: number
         }
         Update: {
           character_count?: number | null
+          demo_path?: string | null
           discount?: number | null
           file_path?: string | null
           formats?: string[] | null
@@ -647,13 +661,14 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           title_id?: number
         }
         Relationships: [
           {
             foreignKeyName: "Ebooks_title_id_fkey"
             columns: ["title_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
           },
@@ -887,9 +902,9 @@ export type Database = {
           box_set_name?: string | null
           category?: string | null
           id?: number
-          name: string
+          name?: string
           order_id: number
-          price: number
+          price?: number
           quantity?: number
         }
         Update: {
@@ -914,18 +929,25 @@ export type Database = {
       }
       Orders: {
         Row: {
+          address: string | null
           admin_note: string | null
           amount_due: number
           book_discount_total: number
+          city: string | null
+          comment: string | null
           created_at: string
           delivery_email: string | null
           delivery_method: string | null
+          email: string | null
           fulfillment_status: string
+          full_name: string | null
           gift_card_total_applied: number
           id: number
           original_total: number
           paid_at: string | null
           payment_provider: string
+          phone: string | null
+          postal_code: string | null
           promo_code: string | null
           promo_discount: number
           recurring: boolean
@@ -933,6 +955,7 @@ export type Database = {
           recurring_subscription_id: number | null
           shipping_building: string | null
           shipping_city: string | null
+          shipping_cost: number
           shipping_name: string | null
           shipping_phone: string | null
           shipping_postal_code: string | null
@@ -942,21 +965,28 @@ export type Database = {
           tracking_carrier: string | null
           tracking_number: string | null
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
+          address?: string | null
           admin_note?: string | null
           amount_due?: number
           book_discount_total?: number
+          city?: string | null
+          comment?: string | null
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
+          email?: string | null
           fulfillment_status?: string
+          full_name?: string | null
           gift_card_total_applied?: number
           id?: number
           original_total?: number
           paid_at?: string | null
           payment_provider?: string
+          phone?: string | null
+          postal_code?: string | null
           promo_code?: string | null
           promo_discount?: number
           recurring?: boolean
@@ -964,37 +994,7 @@ export type Database = {
           recurring_subscription_id?: number | null
           shipping_building?: string | null
           shipping_city?: string | null
-          shipping_name?: string | null
-          shipping_phone?: string | null
-          shipping_postal_code?: string | null
-          shipping_street?: string | null
-          status?: string
-          total: number
-          tracking_carrier?: string | null
-          tracking_number?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          admin_note?: string | null
-          amount_due?: number
-          book_discount_total?: number
-          created_at?: string
-          delivery_email?: string | null
-          delivery_method?: string | null
-          fulfillment_status?: string
-          gift_card_total_applied?: number
-          id?: number
-          original_total?: number
-          paid_at?: string | null
-          payment_provider?: string
-          promo_code?: string | null
-          promo_discount?: number
-          recurring?: boolean
-          recurring_amount?: number
-          recurring_subscription_id?: number | null
-          shipping_building?: string | null
-          shipping_city?: string | null
+          shipping_cost?: number
           shipping_name?: string | null
           shipping_phone?: string | null
           shipping_postal_code?: string | null
@@ -1004,7 +1004,46 @@ export type Database = {
           tracking_carrier?: string | null
           tracking_number?: string | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          admin_note?: string | null
+          amount_due?: number
+          book_discount_total?: number
+          city?: string | null
+          comment?: string | null
+          created_at?: string
+          delivery_email?: string | null
+          delivery_method?: string | null
+          email?: string | null
+          fulfillment_status?: string
+          full_name?: string | null
+          gift_card_total_applied?: number
+          id?: number
+          original_total?: number
+          paid_at?: string | null
+          payment_provider?: string
+          phone?: string | null
+          postal_code?: string | null
+          promo_code?: string | null
+          promo_discount?: number
+          recurring?: boolean
+          recurring_amount?: number
+          recurring_subscription_id?: number | null
+          shipping_building?: string | null
+          shipping_city?: string | null
+          shipping_cost?: number
+          shipping_name?: string | null
+          shipping_phone?: string | null
+          shipping_postal_code?: string | null
+          shipping_street?: string | null
+          status?: string
+          total?: number
+          tracking_carrier?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -1044,6 +1083,7 @@ export type Database = {
         Row: {
           binding: string | null
           cover_material: string | null
+          demo_path: string | null
           discount: number | null
           format: string | null
           id: number
@@ -1054,12 +1094,14 @@ export type Database = {
           price: number | null
           publish_date: string | null
           release_date: string | null
+          sold: boolean | null
           sold_out: boolean | null
           title_id: number
         }
         Insert: {
           binding?: string | null
           cover_material?: string | null
+          demo_path?: string | null
           discount?: number | null
           format?: string | null
           id?: number
@@ -1070,12 +1112,14 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           sold_out?: boolean | null
           title_id: number
         }
         Update: {
           binding?: string | null
           cover_material?: string | null
+          demo_path?: string | null
           discount?: number | null
           format?: string | null
           id?: number
@@ -1086,6 +1130,7 @@ export type Database = {
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
+          sold?: boolean | null
           sold_out?: boolean | null
           title_id?: number
         }
@@ -1093,7 +1138,7 @@ export type Database = {
           {
             foreignKeyName: "PrintedBooks_title_id_fkey"
             columns: ["title_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "Titles"
             referencedColumns: ["id"]
           },
