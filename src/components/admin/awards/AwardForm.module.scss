@@ -1,0 +1,79 @@
+@use '@/styles/common' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 560px;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $space-4;
+  align-items: end;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.8);
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-5;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.ok {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: #4caf7d;
+}
+
+.err {
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+}
+
+.danger {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid rgba($color-text-on-dark, 0.1);
+}
+
+.delete {
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: 1px solid rgba($color-accent-on-dark, 0.5);
+  border-radius: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-accent-on-dark;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($color-accent-on-dark, 0.1);
+  }
+}

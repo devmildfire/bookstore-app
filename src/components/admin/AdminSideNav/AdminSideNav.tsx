@@ -44,6 +44,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/admin/books', label: 'Книги', Icon: BooksIcon, countKey: 'books' },
       { href: '/admin/authors', label: 'Авторы', Icon: AuthorsIcon, countKey: 'authors' },
       { href: '/admin/box-sets', label: 'Бокс-сеты', Icon: BoxSetIcon, countKey: 'boxSets' },
+      { href: '/admin/awards', label: 'Награды', Icon: FeaturedIcon },
       { href: '/admin/featured', label: 'На главной', Icon: FeaturedIcon, countKey: 'featured' },
     ],
   },

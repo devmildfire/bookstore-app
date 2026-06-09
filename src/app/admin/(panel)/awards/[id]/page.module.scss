@@ -1,0 +1,16 @@
+@use '@/styles/common' as *;
+
+.page { display: flex; flex-direction: column; gap: $space-4; }
+.breadcrumb {
+  font-family: $font-montserrat; font-size: $font-size-sm;
+  a { color: rgba($color-text-on-dark, 0.65); text-decoration: none; &:hover { color: $color-text-on-dark; } }
+}
+.title {
+  @include admin-page-title;
+}
+.section {
+  display: flex; flex-direction: column; gap: $space-4; padding: $space-5;
+  background: $color-panel; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: 0;
+}
+.sectionTitle { margin: 0; font-family: $font-montserrat; font-weight: $font-weight-bold; font-size: 18px; color: $color-text-on-dark; }
+.sectionNote { margin: -$space-2 0 0; font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
