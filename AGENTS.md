@@ -174,6 +174,16 @@ Key invariants:
 - Discount % range: 1–100 (100 = giveaway).
 - See also: migrations `20260520140000_promo_codes.sql` + `20260520140200_apply_promo_code_rpc.sql`; `apply_promo_code` RPC; `docs/testing/promo-codes.md` for seeded test fixtures.
 
+### Admin panel (`/admin`)
+
+Staff back-office, **header-free chrome** (its own shell, not the storefront Header/Footer). Shipped — see [docs/plans/admin-panel.md](docs/plans/admin-panel.md).
+
+- **Routing:** `src/app/admin/login/` (unguarded) + `src/app/admin/(panel)/` (guarded route group). Sections under `(panel)/`: `orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/ articles/ dino-magazine/ featured/ submissions/ audit/` + the dashboard.
+- **Auth/guard:** admin role lives in `auth.users.app_metadata.role` (`= 'admin'`), set only via service-role (not user-editable). `src/lib/admin/auth.ts` (`isAdmin`, `requireAdmin`, `ADMIN_ROLE`); the `(panel)/layout.tsx` calls `requireAdmin()` (defense-in-depth alongside the `proxy.ts` gate). Seed/promote an admin with `node --env-file=.env scripts/seed-admin.mjs <email> <password>`.
+- **Chrome:** `AdminShell` (sticky topbar + breadcrumb + bell→`/audit`, off-canvas drawer ≤`search-bar`) + `AdminSideNav` (grouped nav with count chips from `getAdminNavCounts`).
+- **Shared UI — one component, used everywhere (do NOT reinvent per-section):** `AdminList`, `AdminFilterBar`, `AdminPageHeader`, `AdminPager`, `AdminSelect` (custom dropdown — used for every admin select except the storefront header), `AdminInput`/`AdminTextarea` (number inputs reject non-numerics), `AdminDatePicker` (custom; `withTime`/`yearOnly` variants — no native date pickers), `StatusBadge`, `ImageUploader`, `ComingSoon`, `icons/`. Re-skinned to the design handoff (dark tokens in `src/styles/params.scss`, `admin-page-title`/`admin-field` mixins). Plus per-domain folders under `src/components/admin/<domain>/`.
+- **Data:** reads via `src/api/admin/<domain>/`; writes via Server Actions in `src/lib/admin/<domain>/actions.ts`. Audit log = `AdminAuditLog`.
+
 ## Storage & Images
 
 ### Cover images
