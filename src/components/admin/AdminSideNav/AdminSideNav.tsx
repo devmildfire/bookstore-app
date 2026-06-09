@@ -44,7 +44,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/admin/books', label: 'Книги', Icon: BooksIcon, countKey: 'books' },
       { href: '/admin/authors', label: 'Авторы', Icon: AuthorsIcon, countKey: 'authors' },
       { href: '/admin/box-sets', label: 'Бокс-сеты', Icon: BoxSetIcon, countKey: 'boxSets' },
-      { href: '/admin/awards', label: 'Награды', Icon: FeaturedIcon },
+      { href: '/admin/awards', label: 'Награды', Icon: FeaturedIcon, countKey: 'awards' },
       { href: '/admin/featured', label: 'На главной', Icon: FeaturedIcon, countKey: 'featured' },
     ],
   },
@@ -53,8 +53,8 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/admin/orders', label: 'Заказы', Icon: OrdersIcon, countKey: 'ordersToShip' },
       { href: '/admin/promo-codes', label: 'Промокоды', Icon: PromoIcon, countKey: 'promoCodes' },
-      { href: '/admin/gift-cards', label: 'Карты даров', Icon: GiftCardIcon },
-      { href: '/admin/subscriptions', label: 'Подписки', Icon: SubscriptionsIcon },
+      { href: '/admin/gift-cards', label: 'Карты даров', Icon: GiftCardIcon, countKey: 'giftCards' },
+      { href: '/admin/subscriptions', label: 'Подписки', Icon: SubscriptionsIcon, countKey: 'subscriptions' },
     ],
   },
   {

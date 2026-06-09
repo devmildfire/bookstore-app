@@ -33,9 +33,12 @@ export type AdminNavCounts = {
   books: number
   authors: number
   boxSets: number
+  awards: number
   featured: number
   ordersToShip: number
   promoCodes: number
+  giftCards: number
+  subscriptions: number
   articles: number
   submissions: number
 }
@@ -47,10 +50,23 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
   const headCount = (table: string) =>
     admin.from(table as 'Titles').select('id', { count: 'exact', head: true })
 
-  const [books, authors, boxSets, featured, orders, promo, articles, submissions] = await Promise.all([
+  const [
+    books,
+    authors,
+    boxSets,
+    awards,
+    featured,
+    orders,
+    promo,
+    giftCards,
+    subscriptions,
+    articles,
+    submissions,
+  ] = await Promise.all([
     headCount('Titles'),
     headCount('Authors'),
     headCount('BoxSets'),
+    headCount('Awards'),
     headCount('featured_books'),
     admin
       .from('Orders')
@@ -58,6 +74,8 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
       .eq('status', 'paid')
       .eq('fulfillment_status', 'processing'),
     headCount('PromoCodes'),
+    headCount('GiftCardProducts'),
+    headCount('Subscriptions'),
     headCount('Articles'),
     getStorySubmissions(),
   ])
@@ -66,9 +84,12 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
     books: books.count ?? 0,
     authors: authors.count ?? 0,
     boxSets: boxSets.count ?? 0,
+    awards: awards.count ?? 0,
     featured: featured.count ?? 0,
     ordersToShip: orders.count ?? 0,
     promoCodes: promo.count ?? 0,
+    giftCards: giftCards.count ?? 0,
+    subscriptions: subscriptions.count ?? 0,
     articles: articles.count ?? 0,
     submissions: submissions.length,
   }
