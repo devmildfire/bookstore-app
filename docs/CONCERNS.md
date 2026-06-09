@@ -14,7 +14,7 @@ archived in `supabase/migrations_archive/` (kept for reference) and replaced by 
 baseline generated from the live DB:
 
 - `supabase/migrations/20260101000000_baseline_schema.sql` — full public schema
-  (tables, enums, functions, RLS) + `pg_trgm` + the 15 storage buckets + 17
+  (tables, enums, functions, RLS) + `pg_trgm` + the 16 storage buckets + 17
   `storage.objects` policies. (`pg_dump --schema-only`, `CREATE SCHEMA public` stripped.)
 - `supabase/seed.sql` — **data only** now (`pg_dump --data-only`, catalog/content
   tables only; user/runtime tables `Cart`/`Orders`/`OrderItems`/`Profiles`/… excluded
@@ -162,10 +162,13 @@ Turbopack migration of the SVGR loader is the longer-term alternative.
 - The 7 fabricated placeholder awards (and their ~40 random book links) were deleted
   by the user via the admin UI; white-flower is linked to the real «Книга года 2019».
   No legacy `/awards/...` paths or orphaned `Titles_Awards` remain.
-- **Reproducibility caveat (carries the same limitation as all storage):** the `awards`
-  bucket + SVGs and the `Awards` rows are runtime state, not in migrations/seed. 12 of
-  13 SVGs are committed under `public/awards/` (missing `award_liceum_2024.svg`); source
-  set is `repos/awardGen/`. Re-upload + re-seed manually if the DB/storage is rebuilt.
+- **Reproducibility (2026-06-09 follow-up):** the `awards` bucket is now folded into
+  the baseline (`20260101000000_baseline_schema.sql`) and the 13 `Awards` rows +
+  `Titles_Awards` link are in the regenerated `seed.sql`, so a from-scratch
+  `baseline + seed.sql` reproduces the catalog and the bucket. **Only the SVG storage
+  *objects* remain runtime state** (as with all storage) — re-upload them on a rebuild.
+  12 of 13 SVGs are committed under `public/awards/` (missing `award_liceum_2024.svg`);
+  source set is `repos/awardGen/`.
 
 ---
 
