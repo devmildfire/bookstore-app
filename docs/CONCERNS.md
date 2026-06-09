@@ -122,7 +122,11 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `digital-files` bucket | ✅ **done** — created the 3 category placeholders `getDownloadUrl` falls back to (`placeholders/{ebook.pdf,book2.pdf,audiobook.mp3}`), signed-URL verified. `scripts/seed-placeholder-pdf.mjs` rewritten to be the reproducible source — self-contained (embedded base64 PDF/MP3), seeds the 3 `placeholders/` keys; re-runnable. |
 | Edition demo files | ✅ **done** — 34 editions: demo zips downloaded, extracted (own sample, not cross-promo), stored as `demos/<slug>/demo.{epub,mp3}`, `demo_path` set. Pending: 5 **shared/mislabeled** source zips (`kotlovan`, `svehderzhava`, `DoctorSaxDemo`, `BogImyaDemo`, `Frieda-and-Gitta`) skipped to avoid wrong attachments + 1 source 404 (`unhappened`) — attach manually if wanted |
 
-A couple of source files 404 on the live site: `murlo/04.jpg`, `nikolay-staroobryadtsev.jpg`.
+One source file still 404s on the live site: `murlo/04.jpg`. (The author photo
+previously listed as a 404 — Николай Старообрядцев, white-flower — was **resolved**
+2026-06-09: the scrape looked for `nikolay-staroobryadtsev.jpg` but the real source is
+`assets/img/author_staroobryadcev.jpg`. Downloaded, uploaded to `authors/`,
+`Authors.photo` repointed, blur backfilled.)
 
 ---
 
