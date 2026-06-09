@@ -72,7 +72,7 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `BookContexts` | **0 rows** — book "context" cards empty |
 | `PromoCodes` | ✅ **done** — re-seeded 5 fixtures via `supabase/seed-promo-codes.sql` (SUMMER25/FREECART/WHITE30/AUDIO50/OLDCODE); apply/expired/not-found paths verified |
 | `partners` bucket | ✅ **not a gap** — `Partners.logo_path` is NULL by design (about_page_seed: "logo_path NULL → placeholder square"); `PartnerLogo.tsx` renders a name tile fallback. Empty bucket is correct. |
-| `booktrailers` bucket | ⚠️ **not scrapeable** — chtivo embeds the trailer via a **Rutube iframe** (no downloadable mp4/webm); the pre-wipe content was a placeholder («заглушка»). Needs a decision: re-create placeholder / download Rutube via yt-dlp / switch app to embed Rutube. |
+| `booktrailers` bucket | ✅ **done (placeholder)** — chtivo embeds via Rutube (not downloadable); restored a «заглушка» placeholder for white-flower (`booktrailers/white-flower/{video.mp4,video.webm,poster.jpg}`), matching the pre-wipe dev state. Real trailer would need Rutube download or switching the app to embed Rutube. |
 | `workers` bucket | empty (worker photos) — author photos done; team-member photos sparse on chtivo |
 | `subscriptions` + `gift-cards` buckets | ✅ **done** — buckets recreated (public), 3 + 3 images uploaded (filenames already matched the DB columns), subscription blurs backfilled |
 | `avatars` bucket | empty — user-uploaded profile avatars, no source to restore (expected empty in dev) |
