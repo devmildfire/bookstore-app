@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -86,6 +87,19 @@ export default async function BookDetailPage({ params }: Props) {
               <a href={`#${AUTHORS_ANCHOR}`} className={styles.authorsAnchor}>
                 Авторы
               </a>
+            ) : book.authors.length > 0 ? (
+              <p className={styles.author}>
+                {[...book.authors]
+                  .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
+                  .map((author, i) => (
+                    <Fragment key={author.id}>
+                      {i > 0 && ', '}
+                      <Link href={`/authors/${author.id}`} className={styles.authorLink}>
+                        {author.name}
+                      </Link>
+                    </Fragment>
+                  ))}
+              </p>
             ) : (
               <p className={styles.author}>{book.authorName}</p>
             )}

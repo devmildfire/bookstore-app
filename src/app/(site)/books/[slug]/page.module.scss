@@ -122,6 +122,21 @@
   }
 }
 
+// Author name inside `.author`: white by default (inherits), red on hover —
+// mirrors the `.nameLink` pattern in the "Об авторе" section, links to /authors.
+.authorLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $color-accent-on-dark;
+    text-decoration: none;
+    outline: none;
+  }
+}
+
 // Used on compilation/anthology titles in place of `.author` — the
 // comma-joined name list is replaced by a single underlined link that jumps
 // to the dedicated "Авторы" section further down the page.
