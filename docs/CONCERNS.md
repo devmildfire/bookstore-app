@@ -152,22 +152,20 @@ Turbopack migration of the SVGR loader is the longer-term alternative.
 
 ---
 
-## 🟠 Awards — real catalog seeded + admin shipped; cleanup + WF linking pending (2026-06-09)
+## ✅ RESOLVED (2026-06-09) — Awards: real catalog, storage, admin section
 
-- 13 real award badges uploaded to a new public `awards` bucket; `Awards` rows
-  8–20 seeded (Книга года 2019–2026, Лицей 2022/2024, лонг-листы). `Awards.image`
-  now holds a bare filename → `getAwardUrl()`; the book page renders the SVG via
-  `<Image unoptimized>`. Admin `/admin/awards` manages the catalog.
-- **Placeholder awards (ids 1–7)** are fabricated seed fixtures ("Выбор редакции",
-  "Голос читателей", …) with broken image paths, randomly attached to ~40 books.
-  Left in place (mass-delete is destructive). **Clean up via `/admin/awards`** (delete
-  removes their `Titles_Awards` links via cascade), or ask for an approved bulk purge.
-- **White-flower** is still linked to placeholder award 1; awaiting the user's list of
-  its real awards before relinking.
-- **Storage reproducibility:** the `awards` bucket + SVGs and the 13 `Awards` rows are
-  runtime state (not in migrations/seed). 12 of 13 SVGs are committed under
-  `public/awards/` (missing `award_liceum_2024.svg`); source set is `repos/awardGen/`.
-  Re-upload + re-seed manually if the DB/storage is ever rebuilt.
+- 13 real award badges uploaded to a new public `awards` bucket; catalog reseeded
+  (Книга года 2019–2026, Лицей 2022/2024, лонг-листы). `Awards.image` holds a bare
+  filename → `getAwardUrl()`; the book page renders the SVG via `<Image unoptimized>`.
+- Admin `/admin/awards` (list + new + edit, audit-logged, image upload) ships the
+  catalog management.
+- The 7 fabricated placeholder awards (and their ~40 random book links) were deleted
+  by the user via the admin UI; white-flower is linked to the real «Книга года 2019».
+  No legacy `/awards/...` paths or orphaned `Titles_Awards` remain.
+- **Reproducibility caveat (carries the same limitation as all storage):** the `awards`
+  bucket + SVGs and the `Awards` rows are runtime state, not in migrations/seed. 12 of
+  13 SVGs are committed under `public/awards/` (missing `award_liceum_2024.svg`); source
+  set is `repos/awardGen/`. Re-upload + re-seed manually if the DB/storage is rebuilt.
 
 ---
 
