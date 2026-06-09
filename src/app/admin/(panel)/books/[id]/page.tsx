@@ -28,7 +28,7 @@ export default async function AdminBookEditPage({ params }: Props) {
   if (!book) notFound()
 
   const [photos, awardsCatalog] = await Promise.all([
-    book.slug ? getAdminBookPhotos(book.slug) : Promise.resolve([]),
+    book.slug ? getAdminBookPhotos(book.slug) : Promise.resolve({ print: [], card: [], digital: [] }),
     getAwardsCatalog(),
   ])
   const trailerUrls = book.slug ? getBooktrailerUrls(book.slug, book.trailer.hasPoster) : null

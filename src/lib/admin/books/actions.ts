@@ -8,13 +8,14 @@ import { logAdminAction } from '@/lib/admin/audit'
 import { makeBlurDataUrl } from '@/lib/admin/blur'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
-import { getAdminBookPhotos, type AdminBookPhoto } from '@/api/admin/books'
+import { getAdminBookPhotos, type AdminEditionPhotos } from '@/api/admin/books'
+import { isBookPhotoFolder, BOOK_PHOTO_FOLDERS } from '@/consts/bookPhotos'
 import { EDITION_FILE_FOLDER, EDITION_HAS_DEMO, EDITION_WORKERS_TABLE, EDITION_WORKERS_FK } from '@/lib/admin/bookProducts'
 import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
 export type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
-export type PhotosResult = { status: 'ok'; photos: AdminBookPhoto[] } | { status: 'error'; message: string }
+export type PhotosResult = { status: 'ok'; photos: AdminEditionPhotos } | { status: 'error'; message: string }
 
 const EDITION_TABLES = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks'] as const
 type EditionTable = (typeof EDITION_TABLES)[number]
@@ -175,7 +176,9 @@ export async function uploadBookPhotoAction(formData: FormData): Promise<PhotosR
 
   const titleId = Number(formData.get('titleId'))
   const file = formData.get('file')
+  const folder = formData.get('folder')
   if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!isBookPhotoFolder(folder)) return { status: 'error', message: 'Неверный раздел фото.' }
   if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
   const ext = MIME_EXT[file.type]
   if (!ext) return { status: 'error', message: 'Только JPEG, PNG или WEBP.' }
@@ -190,19 +193,19 @@ export async function uploadBookPhotoAction(formData: FormData): Promise<PhotosR
   const slug = title?.slug
   if (!slug) return { status: 'error', message: 'Сначала задайте slug книги и сохраните.' }
 
-  const { data: existing } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(slug)
+  const { data: existing } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(`${slug}/${folder}`)
   const names = (existing ?? []).map((f) => f.name).filter((n) => n && !n.startsWith('.'))
   const filename = `${nextPhotoIndex(names)}.${ext}`
 
   const buffer = Buffer.from(await file.arrayBuffer())
   const { error: uploadError } = await admin.storage
     .from(BOOK_PHOTOS_BUCKET)
-    .upload(`${slug}/${filename}`, buffer, { contentType: file.type, upsert: true })
+    .upload(`${slug}/${folder}/${filename}`, buffer, { contentType: file.type, upsert: true })
   if (uploadError) return { status: 'error', message: uploadError.message }
 
   const blurs = asStringMap(title?.book_photos_blurs)
   try {
-    blurs[filename] = await makeBlurDataUrl(buffer)
+    blurs[`${folder}/${filename}`] = await makeBlurDataUrl(buffer)
   } catch {
     // leave blur out; the carousel falls back to no placeholder
   }
@@ -219,7 +222,9 @@ export async function deleteBookPhotoAction(formData: FormData): Promise<PhotosR
 
   const titleId = Number(formData.get('titleId'))
   const name = (formData.get('name') as string | null)?.trim()
+  const folder = formData.get('folder')
   if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
+  if (!isBookPhotoFolder(folder)) return { status: 'error', message: 'Неверный раздел фото.' }
   // Basename only — never let a path escape the title's folder.
   if (!name || name.includes('/') || name.includes('..')) return { status: 'error', message: 'Неверное имя файла.' }
 
@@ -232,11 +237,11 @@ export async function deleteBookPhotoAction(formData: FormData): Promise<PhotosR
   const slug = title?.slug
   if (!slug) return { status: 'error', message: 'У книги нет slug.' }
 
-  const { error: removeError } = await admin.storage.from(BOOK_PHOTOS_BUCKET).remove([`${slug}/${name}`])
+  const { error: removeError } = await admin.storage.from(BOOK_PHOTOS_BUCKET).remove([`${slug}/${folder}/${name}`])
   if (removeError) return { status: 'error', message: removeError.message }
 
   const blurs = asStringMap(title?.book_photos_blurs)
-  delete blurs[name]
+  delete blurs[`${folder}/${name}`]
   await admin.from('Titles').update({ book_photos_blurs: blurs as unknown as Json }).eq('id', titleId)
 
   revalidatePath(`/admin/books/${titleId}`)
@@ -346,9 +351,17 @@ export async function deleteBookAction(_prev: AdminActionResult | null, formData
   // Storage cleanup (best effort).
   if (title.cover) await admin.storage.from('covers').remove([title.cover]).catch(() => {})
   if (title.slug) {
-    const { data: photos } = await admin.storage.from(BOOK_PHOTOS_BUCKET).list(title.slug)
-    const paths = (photos ?? []).filter((f) => f.name).map((f) => `${title.slug}/${f.name}`)
-    if (paths.length > 0) await admin.storage.from(BOOK_PHOTOS_BUCKET).remove(paths).catch(() => {})
+    // Photos live in per-edition subfolders (print/card/digital) — collect each.
+    const photoPaths: string[] = []
+    for (const folder of BOOK_PHOTO_FOLDERS) {
+      const { data: photos } = await admin.storage
+        .from(BOOK_PHOTOS_BUCKET)
+        .list(`${title.slug}/${folder}`)
+      for (const f of photos ?? []) {
+        if (f.name) photoPaths.push(`${title.slug}/${folder}/${f.name}`)
+      }
+    }
+    if (photoPaths.length > 0) await admin.storage.from(BOOK_PHOTOS_BUCKET).remove(photoPaths).catch(() => {})
     // Trailer assets (Booktrailers row cascade-deletes with the Title).
     await admin.storage
       .from(BOOKTRAILERS_BUCKET)

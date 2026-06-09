@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import Carousel from '@/components/common/Carousel'
-import type { BookPhoto } from '@/api/books/getBookPhotos'
+import type { EditionPhotos } from '@/api/books/getBookPhotos'
 import type { Book, BookWorker } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import TabBarFrame from './TabBarFrame'
@@ -15,8 +15,8 @@ import styles from './BookEditionTabs.module.scss'
 
 type Props = {
   books: Book[]
-  /** Photos of the printed book, rendered as a carousel inside the PrintBook tab. */
-  printBookPhotos?: BookPhoto[]
+  /** Photos grouped by edition; each edition tab renders its own carousel. */
+  editionPhotos?: EditionPhotos
   /** Used for image alt text. */
   bookName?: string
 }
@@ -125,7 +125,7 @@ const HAS_DEMO_BUTTON: Partial<Record<ProductCategory, boolean>> = {
   EBook: true,
 }
 
-export default function BookEditionTabs({ books, printBookPhotos = [], bookName = '' }: Props) {
+export default function BookEditionTabs({ books, editionPhotos = {}, bookName = '' }: Props) {
   const tabs = TAB_ORDER.filter((cat) => books.some((b) => b.category === cat))
   const [active, setActive] = useState<ProductCategory>(tabs[0])
   const { addItem } = useCart()
@@ -136,6 +136,7 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
   const book = books.find((b) => b.category === active)!
   const rows = buildRows(book)
   const notes = NOTES[book.category]
+  const activePhotos = editionPhotos[active] ?? []
 
   function handleAddToCart() {
     addItem({
@@ -232,11 +233,11 @@ export default function BookEditionTabs({ books, printBookPhotos = [], bookName 
             </dl>
           )}
 
-          {book.category === 'PrintBook' && printBookPhotos.length > 0 && (
+          {activePhotos.length > 0 && (
             <div className={styles.carouselWrap}>
               <Carousel
                 ariaLabel={`Фотографии книги: ${bookName}`}
-                slides={printBookPhotos.map((photo, i) => (
+                slides={activePhotos.map((photo, i) => (
                   <Image
                     key={photo.url}
                     src={photo.url}

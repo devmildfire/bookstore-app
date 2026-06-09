@@ -225,7 +225,7 @@ Book covers are stored in a **Supabase Storage bucket called `covers`** (public,
 - `scripts/_blur.mjs` — Shared helper (`makeBlurDataUrl(buffer)`) — resize to 10×15, JPEG q40, base64 data URL
 - `scripts/sync-cover-blurs.mjs` — Backfill `Titles.cover_blur` for every row whose cover file exists in the `covers` bucket
 - `scripts/sync-author-photo-blurs.mjs` — Backfill `Authors.photo_blur` against the `authors` bucket
-- `scripts/sync-book-photo-blurs.mjs` — Backfill `Titles.book_photos_blurs` (JSONB map of filename → data URL) from the `book-photos/{slug}/` folders
+- `scripts/sync-book-photo-blurs.mjs` — Backfill `Titles.book_photos_blurs` (JSONB map of `folder/filename` → data URL) from the per-edition photo subfolders `book-photos/{slug}/{print,card,digital}/` (see `src/consts/bookPhotos.ts`)
 - `scripts/sync-subscription-blurs.mjs` — Backfill `Subscriptions.image_blur` from the `subscriptions` bucket
 
 All blur scripts are idempotent — re-running on a fully-seeded DB is a no-op.

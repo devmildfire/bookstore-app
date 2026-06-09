@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBook, getSimilarBooks, getBookPhotoUrls, getBookEditions } from '@/api/books'
+import { getBook, getSimilarBooks, getEditionPhotos, getBookEditions } from '@/api/books'
 import BookGrid from '@/components/book/BookGrid'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
@@ -45,9 +45,9 @@ export default async function BookDetailPage({ params }: Props) {
     notFound()
   }
 
-  const [similarBooks, bookPhotos, bookEditions] = await Promise.all([
+  const [similarBooks, editionPhotos, bookEditions] = await Promise.all([
     getSimilarBooks(book.titleId),
-    getBookPhotoUrls(slug),
+    getEditionPhotos(slug),
     getBookEditions(slug),
   ])
 
@@ -139,7 +139,7 @@ export default async function BookDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <BookEditionTabs books={bookEditions} printBookPhotos={bookPhotos} bookName={book.name} />
+      <BookEditionTabs books={bookEditions} editionPhotos={editionPhotos} bookName={book.name} />
 
       {book.booktrailer && <BookTrailer trailer={book.booktrailer} bookName={book.name} />}
 

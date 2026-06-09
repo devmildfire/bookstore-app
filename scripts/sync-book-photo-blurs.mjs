@@ -1,9 +1,10 @@
 /**
  * Back-fill `Titles.book_photos_blurs` from the `book-photos` bucket.
  *
- * For every Title with a `slug`, list `book-photos/{slug}/*`, fetch each
- * photo, compute a blur, and write a JSONB map `{ filename: dataUrl, ... }`
- * to `Titles.book_photos_blurs`.
+ * For every Title with a `slug`, scan the per-edition subfolders
+ * `book-photos/{slug}/{print,card,digital}/*`, fetch each photo, compute a
+ * blur, and write a JSONB map `{ "folder/filename": dataUrl, ... }` to
+ * `Titles.book_photos_blurs`.
  *
  * Idempotent — re-running over a fully-populated DB is a no-op (skips
  * rows that already have a non-null book_photos_blurs, unless --force).
@@ -22,6 +23,8 @@ import {
 
 const BUCKET = 'book-photos'
 const TABLE = 'Titles'
+// Per-edition photo subfolders (mirrors src/consts/bookPhotos.ts).
+const PHOTO_FOLDERS = ['print', 'card', 'digital']
 
 async function main() {
   const force = process.argv.includes('--force')
@@ -40,28 +43,32 @@ async function main() {
   let photosFail = 0
 
   for (const row of rows) {
-    const filenames = await listBucketFolder(supabaseUrl, serviceKey, BUCKET, row.slug)
-    if (filenames.length === 0) {
+    const blurs = {}
+    let found = 0
+    for (const folder of PHOTO_FOLDERS) {
+      const filenames = await listBucketFolder(supabaseUrl, serviceKey, BUCKET, `${row.slug}/${folder}`)
+      for (const name of filenames) {
+        found++
+        const key = `${folder}/${name}`
+        const bytes = await fetchBucketObject(supabaseUrl, BUCKET, `${row.slug}/${key}`)
+        if (!bytes) {
+          photosFail++
+          continue
+        }
+        try {
+          blurs[key] = await makeBlurDataUrl(bytes)
+          photosOk++
+        } catch (err) {
+          console.error(`  blur failed for ${row.slug}/${key}: ${err.message}`)
+          photosFail++
+        }
+      }
+    }
+
+    if (found === 0) {
       titlesEmpty++
       continue
     }
-
-    const blurs = {}
-    for (const name of filenames) {
-      const bytes = await fetchBucketObject(supabaseUrl, BUCKET, `${row.slug}/${name}`)
-      if (!bytes) {
-        photosFail++
-        continue
-      }
-      try {
-        blurs[name] = await makeBlurDataUrl(bytes)
-        photosOk++
-      } catch (err) {
-        console.error(`  blur failed for ${row.slug}/${name}: ${err.message}`)
-        photosFail++
-      }
-    }
-
     if (Object.keys(blurs).length === 0) continue
 
     const updated = await patchRow(supabaseUrl, serviceKey, TABLE, `id=eq.${row.id}`, {
