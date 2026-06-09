@@ -65,6 +65,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
       { href: '/admin/audit', label: 'Журнал', Icon: AuditIcon },
     ],
   },
+  {
+    label: 'О Чтиве',
+    items: [
+      { href: '/admin/team', label: 'Команда', Icon: AuthorsIcon, countKey: 'team' },
+      { href: '/admin/partners', label: 'Партнёры', Icon: FeaturedIcon, countKey: 'partners' },
+    ],
+  },
 ]
 
 type Props = {

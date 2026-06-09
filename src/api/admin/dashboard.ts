@@ -41,6 +41,8 @@ export type AdminNavCounts = {
   subscriptions: number
   articles: number
   submissions: number
+  partners: number
+  team: number
 }
 
 // Counts shown as chips on the sidebar nav items. Totals for catalog/editorial
@@ -62,6 +64,8 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
     subscriptions,
     articles,
     submissions,
+    partners,
+    team,
   ] = await Promise.all([
     headCount('Titles'),
     headCount('Authors'),
@@ -78,6 +82,8 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
     headCount('Subscriptions'),
     headCount('Articles'),
     getStorySubmissions(),
+    headCount('Partners'),
+    admin.from('Workers').select('id', { count: 'exact', head: true }).eq('is_team_member', true),
   ])
 
   return {
@@ -92,5 +98,7 @@ export async function getAdminNavCounts(): Promise<AdminNavCounts> {
     subscriptions: subscriptions.count ?? 0,
     articles: articles.count ?? 0,
     submissions: submissions.length,
+    partners: partners.count ?? 0,
+    team: team.count ?? 0,
   }
 }
