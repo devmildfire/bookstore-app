@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict RItBbkeCbdBKBbBd7CjhRIWbbKO82mawX6ydNtxHd0epGu7dz6SIgA37liCbkHE
+\restrict IfPOkJffKfMGizLZu2pmMEVT94BgyhtDs3IElGNB6KnxPMCFWMlLbABxV3Z88Jb
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -1067,7 +1067,7 @@ COPY public."GiftCardProducts" (id, slug, name, face_value, sort_order, image_pa
 COPY public."Partners" (id, name, logo_path, website_url, sort_order) FROM stdin;
 2	Смена	smena.png	\N	1
 4	Фаренгейт 451	farengeyt-451.png	\N	3
-5	Ахули	\N	\N	4
+5	Ахули	ahuli.png	\N	4
 6	Дискурс	diskurs.png	\N	5
 1	Ночлежка	nochlezhka.png	https://nochlezhka.org	0
 7	Подписные Издания	podpisnye.png	https://podpisnie.ru	6
@@ -1780,5 +1780,5 @@ SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict RItBbkeCbdBKBbBd7CjhRIWbbKO82mawX6ydNtxHd0epGu7dz6SIgA37liCbkHE
+\unrestrict IfPOkJffKfMGizLZu2pmMEVT94BgyhtDs3IElGNB6KnxPMCFWMlLbABxV3Z88Jb
 

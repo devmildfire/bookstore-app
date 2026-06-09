@@ -5,9 +5,6 @@
 -- scripts/upload-partners-to-supabase.mjs from public/partners/.
 --
 -- Re-runnable: updates the 7 partner rows seeded by the about-page migration.
--- Ахули keeps logo_path NULL (its Figma logo is a dark medallion that wouldn't
--- read on the frosted tile) — PartnerLogo renders a styled name-tile fallback;
--- upload a logo via /admin/partners.
 --   docker exec -i supabase_db_chtivo-next psql -U postgres -d postgres < supabase/seed-partners.sql
 
 BEGIN;
@@ -16,7 +13,7 @@ UPDATE "Partners" SET logo_path = 'nochlezhka.png'    WHERE name = 'Ночлеж
 UPDATE "Partners" SET logo_path = 'smena.png'         WHERE name = 'Смена';
 UPDATE "Partners" SET logo_path = 'poryadok-slov.png' WHERE name = 'Порядок Слов';
 UPDATE "Partners" SET logo_path = 'farengeyt-451.png' WHERE name = 'Фаренгейт 451';
-UPDATE "Partners" SET logo_path = NULL                WHERE name = 'Ахули';
+UPDATE "Partners" SET logo_path = 'ahuli.png'         WHERE name = 'Ахули';
 UPDATE "Partners" SET logo_path = 'diskurs.png'       WHERE name = 'Дискурс';
 UPDATE "Partners" SET logo_path = 'podpisnye.png'     WHERE name = 'Подписные Издания';
 
