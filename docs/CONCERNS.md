@@ -2,7 +2,7 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-08.
+**Last reviewed:** 2026-06-09.
 
 ---
 
@@ -100,29 +100,21 @@ work): **covers, box-set SVGs, book-photo galleries, author photos** (buckets), 
 | `workers` bucket | empty (worker photos) — author photos done; team-member photos sparse on chtivo |
 | `subscriptions` + `gift-cards` buckets | ✅ **done** — buckets recreated (public), 3 + 3 images uploaded (filenames already matched the DB columns), subscription blurs backfilled |
 | `avatars` bucket | empty — user-uploaded profile avatars, no source to restore (expected empty in dev) |
-| `digital-files` bucket | ✅ **done** — created the 3 category placeholders `getDownloadUrl` falls back to (`placeholders/{ebook.pdf,book2.pdf,audiobook.mp3}`), signed-URL verified. NB: `scripts/seed-placeholder-pdf.mjs` is **stale** — it writes `ebooks/50.pdf`, not the `placeholders/` keys the code uses; update it to be the reproducible source |
+| `digital-files` bucket | ✅ **done** — created the 3 category placeholders `getDownloadUrl` falls back to (`placeholders/{ebook.pdf,book2.pdf,audiobook.mp3}`), signed-URL verified. `scripts/seed-placeholder-pdf.mjs` rewritten to be the reproducible source — self-contained (embedded base64 PDF/MP3), seeds the 3 `placeholders/` keys; re-runnable. |
 | Edition demo files | ✅ **done** — 34 editions: demo zips downloaded, extracted (own sample, not cross-promo), stored as `demos/<slug>/demo.{epub,mp3}`, `demo_path` set. Pending: 5 **shared/mislabeled** source zips (`kotlovan`, `svehderzhava`, `DoctorSaxDemo`, `BogImyaDemo`, `Frieda-and-Gitta`) skipped to avoid wrong attachments + 1 source 404 (`unhappened`) — attach manually if wanted |
 
 A couple of source files 404 on the live site: `murlo/04.jpg`, `nikolay-staroobryadtsev.jpg`.
 
 ---
 
-## S1 🔴 Production credentials in `.env` git history
+## S1 ✅ RESOLVED (2026-06-09) — `.env` was never committed
 
-`.env` is gitignored, but credentials may have been committed before it was added.
-Check `git log --all -- .env` to confirm.
-
-**Keys that may need rotation:**
-
-| Variable | Sensitivity |
-|----------|------------|
-| `SUPABASE_SERVICE_ROLE_KEY` | **Maximum** — bypasses all RLS |
-| `BREVO_APIKEY` | High — email delivery service |
-| `TELEGRAM_BOT_APIKEY` | High — Telegram bot token |
-| `ROBOPASS_ONE` / `ROBOPASS_TWO` | High — Robokassa payment passwords |
-
-**Action:** Rotate all credentials in their respective dashboards if any were ever
-committed to git.
+Checked all of git history: `git log --all -- ':(literal).env'` is **empty**; the
+only env file ever committed is `.env.example` (empty placeholders, no values), and
+a scan of history for key literals (service-role JWT / `sk-` / bot tokens) found
+**nothing**. `.env` is gitignored and exists only locally. **No credentials were
+exposed via git → no rotation required.** (Standard hygiene still applies if `.env`
+is ever shared out-of-band.)
 
 ---
 
@@ -136,16 +128,12 @@ are all stubbed.
 
 ---
 
-## Unused Radix packages
+## ✅ RESOLVED (2026-06-09) — Unused Radix packages removed
 
-The following Radix packages are installed but have no component consuming them.
-They were pre-installed for future use — keep or remove as needed:
-
-- `@radix-ui/react-accordion`
-- `@radix-ui/react-switch`
-- `@radix-ui/react-tabs`
-- `@radix-ui/react-tooltip`
-- `@radix-ui/react-label`
+Removed the 8 Radix packages with zero `src/` imports (`accordion`, `icons`, `label`,
+`scroll-area` — superseded by OverlayScrollbars — `slot`, `switch`, `tabs`, `tooltip`).
+Remaining Radix deps are all in use: `checkbox`, `dialog`, `dropdown-menu`, `popover`,
+`select`, `toast`. `tsc` clean, 0 vulnerabilities, deps stay exact-pinned.
 
 ---
 
