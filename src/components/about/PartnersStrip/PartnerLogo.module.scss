@@ -31,6 +31,12 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: grayscale(1);
+  transition: filter 0.3s ease;
+}
+
+.tile:hover .logoFill {
+  filter: grayscale(0);
 }
 
 // Placeholder branch.
