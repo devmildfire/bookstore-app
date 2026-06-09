@@ -1,9 +1,8 @@
 @use '@/styles/common' as *;
 
-// ─── Cover sizing (all modes share these breakpoints) ─────────────────────────
+// ─── Cover sizing ─────────────────────────────────────────────────────────────
 
 .single,
-.multi,
 .placeholder {
   width: 500px;
   position: relative;

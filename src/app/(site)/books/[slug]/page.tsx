@@ -9,7 +9,7 @@ import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
 import BookAuthorsList, { AUTHORS_ANCHOR } from './BookAuthorsList'
 import BookContext from './BookContext'
-import BookCoverSlider from './BookCoverSlider'
+import BookCover from './BookCover'
 import BookEditionTabs from './BookEditionTabs'
 import BookTrailer from './BookTrailer'
 import styles from './page.module.scss'
@@ -73,8 +73,7 @@ export default async function BookDetailPage({ params }: Props) {
       <section className={styles.main}>
         <div className={styles.coverInfo}>
 
-          <BookCoverSlider
-            photos={bookPhotos}
+          <BookCover
             coverUrl={book.coverUrl}
             coverBlurDataUrl={book.coverBlurDataUrl}
             bookName={book.name}
