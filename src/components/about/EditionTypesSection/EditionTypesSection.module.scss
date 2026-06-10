@@ -4,13 +4,13 @@
   width: 100%;
   max-width: $layout-max-width;
   margin: 0 auto;
-  padding: $space-12 $layout-px;
+  padding: 124px $layout-px $space-12;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-10;
 
-  @include breakpoint(tablet) { padding: $space-12 $layout-px-tablet 100px; gap: $space-8; }
+  @include breakpoint(tablet) { padding: $space-16 $layout-px-tablet 100px; gap: $space-8; }
   @include breakpoint(tablet-small) { padding: 80px $layout-px-tablet-small 90px; }
   @include breakpoint(phone) { padding: 70px $layout-px-phone 80px; }
 }
