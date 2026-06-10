@@ -33,7 +33,7 @@ const EDITION_LABELS: Record<string, string> = {
 const dateFmt = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 const numFmt = new Intl.NumberFormat('ru-RU')
 
-const formatPrice = (price: number) => `${numFmt.format(price)}₽`
+const formatPrice = (price: number) => (price <= 0 ? 'Бесплатно' : `${numFmt.format(price)}₽`)
 
 function formatDate(value: string | null): string | null {
   if (!value) return null

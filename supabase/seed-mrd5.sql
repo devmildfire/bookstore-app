@@ -12,6 +12,7 @@ BEGIN;
 SELECT setval('"Titles_id_seq"', COALESCE((SELECT MAX(id) FROM "Titles"), 0) + 1, false);
 SELECT setval('"PrintedBooks_id_seq"', COALESCE((SELECT MAX(id) FROM "PrintedBooks"), 0) + 1, false);
 SELECT setval('"CardBooks_id_seq"', COALESCE((SELECT MAX(id) FROM "CardBooks"), 0) + 1, false);
+SELECT setval('"Ebooks_id_seq"', COALESCE((SELECT MAX(id) FROM "Ebooks"), 0) + 1, false);
 SELECT setval('"Titles_Authors_id_seq"', COALESCE((SELECT MAX(id) FROM "Titles_Authors"), 0) + 1, false);
 
 INSERT INTO "Titles" (name, slug, cover, is_compilation, age_restriction, lit_form, first_release, status, periodical_id, volume_number, volume_year)
@@ -24,14 +25,19 @@ UPDATE "Titles" SET
   volume_number = 5, volume_year = '2024', cover = 'mrd-5.jpg'
 WHERE slug = 'mrd-5';
 
--- Editions mirror МРД6 (print + Book2.0, 600 ₽), dated one cycle earlier.
-INSERT INTO "PrintedBooks" (title_id, price, is_published, publish_date, release_date)
-SELECT (SELECT id FROM "Titles" WHERE slug = 'mrd-5'), 600, true, '2025-01-01', '2024-10-15'
-WHERE NOT EXISTS (SELECT 1 FROM "PrintedBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5'));
+-- Editions per chtivo.spb.ru: a print book (700 ₽) + a free digital edition
+-- (Цифровое издание). Reset to exactly this set so re-running is authoritative.
+DELETE FROM "PrintedBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5');
+DELETE FROM "CardBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5');
+DELETE FROM "Ebooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5');
 
-INSERT INTO "CardBooks" (title_id, price, is_published, publish_date, release_date)
-SELECT (SELECT id FROM "Titles" WHERE slug = 'mrd-5'), 600, true, '2025-01-01', '2024-10-15'
-WHERE NOT EXISTS (SELECT 1 FROM "CardBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5'));
+INSERT INTO "PrintedBooks"
+  (title_id, price, is_published, publish_date, release_date, format, page_count, paper, cover_material, binding, illustrations)
+SELECT (SELECT id FROM "Titles" WHERE slug = 'mrd-5'), 700, true, '2025-01-01', '2024-10-15',
+  '210×297 мм', 204, 'офсетная, 80 гр/кв.м', 'мелованная, 250 гр/кв.м, матовое ламинирование', 'КБС, термопак', 'чёрно-белые';
+
+INSERT INTO "Ebooks" (title_id, price, is_published, publish_date, release_date, formats)
+SELECT (SELECT id FROM "Titles" WHERE slug = 'mrd-5'), 0, true, '2025-01-01', '2024-10-15', ARRAY['FB2', 'EPUB'];
 
 -- Link the issue's stories + derive its authors.
 UPDATE "Articles" SET title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-5') WHERE slug LIKE 'mrd5-%';

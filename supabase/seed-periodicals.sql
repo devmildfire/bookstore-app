@@ -28,6 +28,14 @@ UPDATE "Titles" SET
   volume_year = '2025'
 WHERE slug = 'mrd-6';
 
+-- Editions per chtivo.spb.ru: МРД6 is digital-only (free «Цифровое издание»).
+SELECT setval('"Ebooks_id_seq"', COALESCE((SELECT MAX(id) FROM "Ebooks"), 0) + 1, false);
+DELETE FROM "PrintedBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-6');
+DELETE FROM "CardBooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-6');
+DELETE FROM "Ebooks" WHERE title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-6');
+INSERT INTO "Ebooks" (title_id, price, is_published, publish_date, release_date, formats, character_count)
+SELECT (SELECT id FROM "Titles" WHERE slug = 'mrd-6'), 0, true, '2026-01-20', '2026-01-20', ARRAY['FB2', 'EPUB'], 280000;
+
 -- Link the issue's stories to it.
 UPDATE "Articles" SET title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-6')
 WHERE slug LIKE 'mrd6-%';
