@@ -81,6 +81,7 @@ export type Database = {
           published_at: string
           slug: string
           title: string
+          title_id: number | null
         }
         Insert: {
           author_id: number
@@ -95,6 +96,7 @@ export type Database = {
           published_at?: string
           slug: string
           title: string
+          title_id?: number | null
         }
         Update: {
           author_id?: number
@@ -109,6 +111,7 @@ export type Database = {
           published_at?: string
           slug?: string
           title?: string
+          title_id?: number | null
         }
         Relationships: [
           {
@@ -116,6 +119,13 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "Authors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Articles_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "Titles"
             referencedColumns: ["id"]
           },
         ]
@@ -1082,6 +1092,30 @@ export type Database = {
         }
         Relationships: []
       }
+      Periodicals: {
+        Row: {
+          description: string | null
+          id: number
+          name: string
+          slug: string | null
+          sort_order: number
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          name: string
+          slug?: string | null
+          sort_order?: number
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string
+          slug?: string | null
+          sort_order?: number
+        }
+        Relationships: []
+      }
       PrintedBooks: {
         Row: {
           binding: string | null
@@ -1331,11 +1365,14 @@ export type Database = {
           is_featured: boolean | null
           lit_form: string | null
           name: string
+          periodical_id: number | null
           slug: string | null
           status: string
           thesis: string | null
           trailer: string | null
           trailer_poster: string | null
+          volume_number: number | null
+          volume_year: string | null
         }
         Insert: {
           age_restriction?: number | null
@@ -1350,11 +1387,14 @@ export type Database = {
           is_featured?: boolean | null
           lit_form?: string | null
           name: string
+          periodical_id?: number | null
           slug?: string | null
           status?: string
           thesis?: string | null
           trailer?: string | null
           trailer_poster?: string | null
+          volume_number?: number | null
+          volume_year?: string | null
         }
         Update: {
           age_restriction?: number | null
@@ -1369,13 +1409,24 @@ export type Database = {
           is_featured?: boolean | null
           lit_form?: string | null
           name?: string
+          periodical_id?: number | null
           slug?: string | null
           status?: string
           thesis?: string | null
           trailer?: string | null
           trailer_poster?: string | null
+          volume_number?: number | null
+          volume_year?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Titles_periodical_id_fkey"
+            columns: ["periodical_id"]
+            isOneToOne: false
+            referencedRelation: "Periodicals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       Titles_Authors: {
         Row: {
