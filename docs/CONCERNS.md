@@ -2,7 +2,7 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-09.
+**Last reviewed:** 2026-06-10.
 
 ---
 
@@ -170,6 +170,31 @@ Turbopack migration of the SVGR loader is the longer-term alternative.
   *objects* remain runtime state** (as with all storage) — re-upload them on a rebuild.
   12 of 13 SVGs are committed under `public/awards/` (missing `award_liceum_2024.svg`);
   source set is `repos/awardGen/`.
+
+---
+
+## ✅ NEW (2026-06-10) — Periodicals (multi-issue book series)
+
+«Могучий Русский Динозавр» (and any future series) is now modelled as a **periodical**:
+each issue is its own `Title` (own cover, editions, authors, stories) grouped under a
+`Periodicals` row, shown together on one shared page.
+
+- **Schema** (`supabase/migrations/20260610120000_periodicals.sql`, on top of the baseline):
+  `Periodicals` table + `Titles.periodical_id/volume_number/volume_year` +
+  `Articles.title_id` (stories belong to an issue; the issue's authors derive from them).
+- **Page**: `/books/<periodical-slug>` renders every issue as a `#vol-N` section (cover,
+  Том №N · year, print + Book2.0 buy-boxes, Содержание → `/dino-magazine/*`, Авторы).
+  Catalog cards for issues link to the anchor (`getBooks` → `Book.periodicalHref`);
+  an issue slug (`mrd-6`, `mrd-5`) redirects to the periodical anchor.
+- **Data**: МРД6 retrofitted (`seed-periodicals.sql`); МРД5 imported from the supplied
+  EPUB (`scripts/extract-mrd-articles.mjs` → `seed-articles-mrd5.sql`, `seed-mrd5.sql`,
+  cover `covers/mrd-5.jpg`, editions mirror МРД6: print + Book2.0, 600 ₽). Both folded
+  into `seed.sql`. Covers/article images are storage (re-upload on a rebuild via the
+  `upload-*` scripts), as with all storage.
+- **Admin**: `/admin/periodicals` (create/edit/delete a series, list issues) + a
+  «Периодика» fieldset on the book editor (series + volume + year).
+- Open polish (non-blocking): МРД6 has no description; one legacy author row lingers on
+  МРД6 (13 vs 12 story authors); МРД5/6 digital edition is a Book2.0, no separate EBook.
 
 ---
 
