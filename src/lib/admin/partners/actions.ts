@@ -70,9 +70,16 @@ export async function createPartnerAction(
   redirect(`/admin/partners/${data.id}`)
 }
 
+const captionField = z
+  .string()
+  .trim()
+  .transform((v) => (v === '' ? null : v))
+  .nullable()
+
 const updateSchema = z.object({
   id: z.coerce.number().int().positive(),
   name: z.string().trim().min(1, 'Введите название'),
+  caption: captionField,
   websiteUrl: urlField,
   position: z.coerce.number().int().min(0),
 })
@@ -85,6 +92,7 @@ export async function updatePartnerAction(
   const parsed = updateSchema.safeParse({
     id: formData.get('id'),
     name: formData.get('name'),
+    caption: formData.get('caption'),
     websiteUrl: formData.get('websiteUrl'),
     position: formData.get('position'),
   })
@@ -94,7 +102,7 @@ export async function updatePartnerAction(
   const admin = createAdminClient()
   const { error } = await admin
     .from('Partners')
-    .update({ name: d.name, website_url: d.websiteUrl, sort_order: d.position })
+    .update({ name: d.name, logo_caption: d.caption, website_url: d.websiteUrl, sort_order: d.position })
     .eq('id', d.id)
   if (error) {
     const msg = error.message.includes('duplicate') ? 'Партнёр с таким названием уже существует.' : error.message

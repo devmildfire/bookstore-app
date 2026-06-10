@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict IfPOkJffKfMGizLZu2pmMEVT94BgyhtDs3IElGNB6KnxPMCFWMlLbABxV3Z88Jb
+\restrict MqvUhTHvj1cBNnX5lh2mDXscG78uWg2YMfXoElE53DnJJrVcLhrxOZr42DZOYP9
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -1064,14 +1064,14 @@ COPY public."GiftCardProducts" (id, slug, name, face_value, sort_order, image_pa
 -- Data for Name: Partners; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public."Partners" (id, name, logo_path, website_url, sort_order) FROM stdin;
-2	Смена	smena.png	\N	1
-4	Фаренгейт 451	farengeyt-451.png	\N	3
-5	Ахули	ahuli.png	\N	4
-6	Дискурс	diskurs.png	\N	5
-1	Ночлежка	nochlezhka.png	https://nochlezhka.org	0
-7	Подписные Издания	podpisnye.png	https://podpisnie.ru	6
-3	Порядок Слов	poryadok-slov.png	https://www.wordorder.ru	2
+COPY public."Partners" (id, name, logo_path, website_url, sort_order, logo_caption) FROM stdin;
+2	Смена	smena.png	\N	1	\N
+4	Фаренгейт 451	farengeyt-451.png	\N	3	ФАРЕНГЕЙТ 451
+5	Ахули	ahuli.png	\N	4	АХУЛИ
+6	Дискурс	diskurs.png	\N	5	ДИСКУРС
+1	Ночлежка	nochlezhka.png	https://nochlezhka.org	0	\N
+7	Подписные Издания	podpisnye.png	https://podpisnie.ru	6	\N
+3	Порядок Слов	poryadok-slov.png	https://www.wordorder.ru	2	\N
 \.
 
 
@@ -1780,5 +1780,5 @@ SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IfPOkJffKfMGizLZu2pmMEVT94BgyhtDs3IElGNB6KnxPMCFWMlLbABxV3Z88Jb
+\unrestrict MqvUhTHvj1cBNnX5lh2mDXscG78uWg2YMfXoElE53DnJJrVcLhrxOZr42DZOYP9
 

@@ -2792,7 +2792,8 @@ CREATE TABLE public."Partners" (
     name text NOT NULL,
     logo_path text,
     website_url text,
-    sort_order integer DEFAULT 0 NOT NULL
+    sort_order integer DEFAULT 0 NOT NULL,
+    logo_caption text
 );
 
 

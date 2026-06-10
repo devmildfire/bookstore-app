@@ -14,6 +14,7 @@ export type AdminPartner = {
   name: string
   logoPath: string | null
   logoUrl: string | null
+  caption: string | null
   websiteUrl: string | null
   position: number
 }
@@ -39,7 +40,7 @@ export async function getAdminPartner(id: number): Promise<AdminPartner | null> 
   const admin = createAdminClient()
   const { data } = await admin
     .from('Partners')
-    .select('id, name, logo_path, website_url, sort_order')
+    .select('id, name, logo_path, logo_caption, website_url, sort_order')
     .eq('id', id)
     .maybeSingle()
   if (!data) return null
@@ -49,6 +50,7 @@ export async function getAdminPartner(id: number): Promise<AdminPartner | null> 
     name: data.name,
     logoPath: data.logo_path,
     logoUrl: getPartnerLogoUrl(data.logo_path),
+    caption: data.logo_caption,
     websiteUrl: data.website_url,
     position: data.sort_order ?? 0,
   }

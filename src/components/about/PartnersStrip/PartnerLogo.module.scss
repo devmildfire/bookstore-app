@@ -39,6 +39,32 @@
   filter: grayscale(0);
 }
 
+// Mark-only logos with a caption: shrink the logo upward to leave room for the
+// title underneath (rendered by .caption, which mirrors .label).
+.logoCaptioned {
+  bottom: 22%;
+}
+
+.caption {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 30px;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 16px;
+  line-height: normal;
+  letter-spacing: 1.6px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ffffff;
+  pointer-events: none;
+
+  @include breakpoint(tablet) { bottom: 24px; font-size: 14px; letter-spacing: 1.4px; }
+  @include breakpoint(tablet-small) { bottom: 18px; font-size: 12px; letter-spacing: 1.2px; }
+  @include breakpoint(phone) { bottom: 18px; font-size: 10px; letter-spacing: 1px; }
+}
+
 // Placeholder branch.
 .logoPlaceholder {
   width: 60%;

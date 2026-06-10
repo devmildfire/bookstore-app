@@ -36,6 +36,11 @@ export default function PartnerEditForm({ partner }: { partner: AdminPartner }) 
       </label>
 
       <label className={styles.label}>
+        Подпись под логотипом
+        <AdminInput name='caption' defaultValue={partner.caption ?? ''} placeholder='Если логотип без текста, напр. ФАРЕНГЕЙТ 451' />
+      </label>
+
+      <label className={styles.label}>
         Ссылка на сайт
         <AdminInput name='websiteUrl' type='url' defaultValue={partner.websiteUrl ?? ''} placeholder='https://example.com' />
       </label>

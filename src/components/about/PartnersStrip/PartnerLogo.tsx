@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import cn from 'classnames'
 import PartnerPlaceholder from '@/assets/about/partner-placeholder.svg'
 import type { Partner } from '@/entities/partner/client'
 import styles from './PartnerLogo.module.scss'
@@ -9,6 +10,9 @@ type Props = {
 
 export default function PartnerLogo({ partner }: Props) {
   if (partner.logoUrl) {
+    // Wordmark logos carry their own name; mark-only logos get the supplied
+    // caption rendered beneath (the logo shrinks to make room).
+    const caption = partner.caption?.trim()
     return (
       <div className={styles.tile} aria-label={`Партнёр: ${partner.name}`}>
         <Image
@@ -16,10 +20,11 @@ export default function PartnerLogo({ partner }: Props) {
           alt={partner.name}
           width={250}
           height={250}
-          className={styles.logoFill}
+          className={cn(styles.logoFill, caption && styles.logoCaptioned)}
           sizes='250px'
           unoptimized
         />
+        {caption && <span className={styles.caption}>{caption}</span>}
       </div>
     )
   }

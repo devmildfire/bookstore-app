@@ -1058,6 +1058,7 @@ export type Database = {
       Partners: {
         Row: {
           id: number
+          logo_caption: string | null
           logo_path: string | null
           name: string
           sort_order: number
@@ -1065,6 +1066,7 @@ export type Database = {
         }
         Insert: {
           id?: number
+          logo_caption?: string | null
           logo_path?: string | null
           name: string
           sort_order?: number
@@ -1072,6 +1074,7 @@ export type Database = {
         }
         Update: {
           id?: number
+          logo_caption?: string | null
           logo_path?: string | null
           name?: string
           sort_order?: number
