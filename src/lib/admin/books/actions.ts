@@ -68,6 +68,11 @@ export async function updateBookAction(_prev: AdminActionResult | null, formData
   if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
   const d = parsed.data
 
+  // «Периодика»: which periodical this title is an issue of, and its volume/year.
+  const periodicalId = numOrNull(formData.get('periodicalId'))
+  const volumeNumber = numOrNull(formData.get('volumeNumber'))
+  const volumeYearRaw = (formData.get('volumeYear') as string | null)?.trim()
+
   const admin = createAdminClient()
 
   const { error: titleError } = await admin
@@ -81,6 +86,9 @@ export async function updateBookAction(_prev: AdminActionResult | null, formData
       first_release: d.firstRelease ?? null,
       lit_form: d.litForm ?? null,
       is_compilation: d.isCompilation,
+      periodical_id: periodicalId,
+      volume_number: volumeNumber,
+      volume_year: volumeYearRaw ? volumeYearRaw : null,
     })
     .eq('id', d.id)
   if (titleError) return { status: 'error', message: titleError.message }

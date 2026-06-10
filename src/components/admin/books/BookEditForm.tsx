@@ -10,6 +10,7 @@ import type { AdminBook } from '@/api/admin/books'
 import AdminInput from '@/components/admin/AdminInput'
 import AdminTextarea from '@/components/admin/AdminTextarea'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
+import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './BookEditForm.module.scss'
 
 type Props = { book: AdminBook }
@@ -60,6 +61,36 @@ export default function BookEditForm({ book }: Props) {
       <div className={styles.checks}>
         <Checkbox name='isCompilation' defaultChecked={book.isCompilation} label='Сборник' />
       </div>
+
+      <fieldset className={styles.periodical}>
+        <legend>Периодика</legend>
+        <p className={styles.hint}>
+          Выпуск периодического издания (напр. «Могучий Русский Динозавр»). Выпуски одной серии
+          показываются на одной странице секциями; в каталоге карточка ведёт к нужной секции.
+        </p>
+        <div className={styles.grid}>
+          <label className={styles.label}>
+            Серия
+            <AdminSelect
+              name='periodicalId'
+              ariaLabel='Серия'
+              defaultValue={book.periodicalId ? String(book.periodicalId) : ''}
+              options={[
+                { value: '', label: '— Не периодика —' },
+                ...book.periodicals.map((p) => ({ value: String(p.id), label: p.name })),
+              ]}
+            />
+          </label>
+          <label className={styles.label}>
+            Номер тома
+            <AdminInput name='volumeNumber' type='number' min={0} defaultValue={book.volumeNumber ?? ''} />
+          </label>
+          <label className={styles.label}>
+            Год тома
+            <AdminInput name='volumeYear' defaultValue={book.volumeYear ?? ''} placeholder='2025' />
+          </label>
+        </div>
+      </fieldset>
 
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

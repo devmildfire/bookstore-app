@@ -49,6 +49,10 @@ export type AdminBook = {
   firstRelease: string | null
   litForm: string | null
   isCompilation: boolean
+  periodicalId: number | null
+  volumeNumber: number | null
+  volumeYear: string | null
+  periodicals: { id: number; name: string }[]
   authors: { id: number; name: string }[]
   awards: AdminAward[]
   editions: AdminEdition[]
@@ -119,6 +123,13 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     .maybeSingle()
   const trailer = { exists: !!trailerRow, hasPoster: trailerRow?.has_poster ?? false }
 
+  // Periodicals (for the «Периодика» selector).
+  const { data: periodicalRows } = await admin
+    .from('Periodicals')
+    .select('id, name')
+    .order('sort_order', { ascending: true })
+  const periodicals = (periodicalRows ?? []).map((p) => ({ id: p.id, name: p.name }))
+
   // Editions: one query per edition table.
   const editions: AdminEdition[] = []
   for (const table of EDITION_TABLES) {
@@ -161,6 +172,10 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     firstRelease: title.first_release,
     litForm: title.lit_form,
     isCompilation: title.is_compilation,
+    periodicalId: title.periodical_id,
+    volumeNumber: title.volume_number,
+    volumeYear: title.volume_year,
+    periodicals,
     authors,
     awards,
     editions,
