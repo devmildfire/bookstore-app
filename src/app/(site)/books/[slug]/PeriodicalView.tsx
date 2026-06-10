@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import Link from 'next/link'
 import type { Periodical } from '@/api/periodicals'
 import BookCover from './BookCover'
@@ -20,6 +19,7 @@ export default function PeriodicalView({ periodical }: { periodical: Periodical 
 
       <header className={styles.intro}>
         <h1 className={styles.title}>{periodical.name}</h1>
+        {periodical.thesis && <p className={styles.thesis}>{periodical.thesis}</p>}
         {periodical.description && <p className={styles.description}>{periodical.description}</p>}
       </header>
 
@@ -38,46 +38,26 @@ export default function PeriodicalView({ periodical }: { periodical: Periodical 
                 {issue.volumeYear ? ` · ${issue.volumeYear}` : ''}
               </p>
               <h2 className={styles.issueTitle}>{issue.book.name}</h2>
-              {issue.book.thesis && <p className={styles.thesis}>{issue.book.thesis}</p>}
-              {issue.book.description && <p className={styles.issueDescription}>{issue.book.description}</p>}
+
+              {issue.stories.length > 0 && (
+                <div className={styles.stories}>
+                  <h3 className={styles.blockTitle}>Содержание</h3>
+                  <ol className={styles.storyList}>
+                    {issue.stories.map((s) => (
+                      <li key={s.slug} className={styles.story}>
+                        <Link href={`/dino-magazine/${s.slug}`} className={styles.storyLink}>
+                          {s.title}
+                        </Link>
+                        {s.authorName && <span className={styles.storyAuthor}>{s.authorName}</span>}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
             </div>
           </div>
 
-          <BookEditionTabs books={issue.editions} bookName={issue.book.name} />
-
-          {issue.stories.length > 0 && (
-            <section className={styles.stories}>
-              <h3 className={styles.blockTitle}>Содержание</h3>
-              <ol className={styles.storyList}>
-                {issue.stories.map((s) => (
-                  <li key={s.slug} className={styles.story}>
-                    <Link href={`/dino-magazine/${s.slug}`} className={styles.storyLink}>
-                      {s.title}
-                    </Link>
-                    {s.authorName && <span className={styles.storyAuthor}>{s.authorName}</span>}
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
-          {issue.book.authors.length > 0 && (
-            <section className={styles.authors}>
-              <h3 className={styles.blockTitle}>Авторы</h3>
-              <p className={styles.authorNames}>
-                {[...issue.book.authors]
-                  .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
-                  .map((author, i) => (
-                    <Fragment key={author.id}>
-                      {i > 0 && ', '}
-                      <Link href={`/authors/${author.id}`} className={styles.authorLink}>
-                        {author.name}
-                      </Link>
-                    </Fragment>
-                  ))}
-              </p>
-            </section>
-          )}
+          <BookEditionTabs books={issue.editions} editionPhotos={issue.editionPhotos} bookName={issue.book.name} />
         </section>
       ))}
     </article>

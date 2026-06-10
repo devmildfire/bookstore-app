@@ -1,5 +1,7 @@
 import { createDataClient } from '@/lib/supabase/server'
 import { getBook, getBookEditions } from '@/api/books/getBook'
+import { getEditionPhotos } from '@/api/books/getBookPhotos'
+import type { EditionPhotos } from '@/api/books/getBookPhotos'
 import type { Book } from '@/entities/book/client'
 
 export type PeriodicalStory = { slug: string; title: string; authorName: string | null }
@@ -9,6 +11,7 @@ export type PeriodicalIssue = {
   volumeYear: string | null
   book: Book
   editions: Book[]
+  editionPhotos: EditionPhotos
   stories: PeriodicalStory[]
 }
 
@@ -17,6 +20,7 @@ export type Periodical = {
   slug: string
   name: string
   description: string | null
+  thesis: string | null
   issues: PeriodicalIssue[]
 }
 
@@ -31,7 +35,7 @@ export async function getPeriodical(slug: string): Promise<Periodical | null> {
 
   const { data: p } = await supabase
     .from('Periodicals')
-    .select('id, slug, name, description')
+    .select('id, slug, name, description, thesis')
     .eq('slug', slug)
     .maybeSingle()
   if (!p) return null
@@ -45,9 +49,10 @@ export async function getPeriodical(slug: string): Promise<Periodical | null> {
   const issues: PeriodicalIssue[] = []
   for (const row of (issueRows ?? []) as IssueRow[]) {
     if (!row.slug) continue
-    const [book, editions, stories] = await Promise.all([
+    const [book, editions, editionPhotos, stories] = await Promise.all([
       getBook(row.slug),
       getBookEditions(row.slug),
+      getEditionPhotos(row.slug),
       getIssueStories(supabase, row.id),
     ])
     if (!book) continue
@@ -56,11 +61,12 @@ export async function getPeriodical(slug: string): Promise<Periodical | null> {
       volumeYear: row.volume_year,
       book,
       editions,
+      editionPhotos,
       stories,
     })
   }
 
-  return { id: p.id, slug: p.slug ?? slug, name: p.name, description: p.description, issues }
+  return { id: p.id, slug: p.slug ?? slug, name: p.name, description: p.description, thesis: p.thesis, issues }
 }
 
 async function getIssueStories(

@@ -11,6 +11,12 @@ INSERT INTO "Periodicals" (name, slug, sort_order)
 SELECT 'Могучий Русский Динозавр', 'moguchij-russkij-dinozavr', 0
 WHERE NOT EXISTS (SELECT 1 FROM "Periodicals" WHERE slug = 'moguchij-russkij-dinozavr');
 
+-- Shared lede (from chtivo.spb.ru/book-moguchij-russkij-dinozavr.html).
+UPDATE "Periodicals" SET
+  description = 'В начале было Чтиво. Затем родился Русский Динозавр. Вместе они плечом к плечу стоят на защите современной малой прозы, публикуя для вас исключительные произведения. Перед вами все номера ежегодника: каждый год двенадцать избранных публикаций, двенадцать авторов под одной обложкой — итог двенадцати месяцев работы литжурнала. Выпуски также включают рассказы победителей конкурса рок-прозы «Гроза» радио Овердрайв. Держись, читатель, ибо Русский Динозавр воистину могуч!',
+  thesis = 'Ежегодный альманах современной малой прозы от издательства «Чтиво» и арт-конгрегации «Русский Динозавр».'
+WHERE slug = 'moguchij-russkij-dinozavr';
+
 -- The periodical owns the shared page slug 'moguchij-russkij-dinozavr'; the issue
 -- itself moves to 'mrd-6' (the legacy МРД6 title slug). Idempotent.
 UPDATE "Titles" SET slug = 'mrd-6' WHERE slug = 'moguchij-russkij-dinozavr';

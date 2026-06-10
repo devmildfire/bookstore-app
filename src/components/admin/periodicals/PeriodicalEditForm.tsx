@@ -47,8 +47,13 @@ export default function PeriodicalEditForm({ periodical }: { periodical: AdminPe
       </div>
 
       <label className={styles.label}>
+        Тезис
+        <AdminTextarea name='thesis' defaultValue={periodical.thesis ?? ''} rows={2} />
+      </label>
+
+      <label className={styles.label}>
         Описание
-        <AdminTextarea name='description' defaultValue={periodical.description ?? ''} rows={3} />
+        <AdminTextarea name='description' defaultValue={periodical.description ?? ''} rows={4} />
       </label>
 
       <label className={styles.label}>

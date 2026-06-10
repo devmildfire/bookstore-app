@@ -121,9 +121,8 @@
   color: rgba($color-text-on-dark, 0.8);
 }
 
-.stories,
-.authors {
-  margin-top: $space-10;
+.stories {
+  margin-top: $space-6;
 }
 
 .blockTitle {
@@ -177,4 +176,11 @@
   color: rgba($color-text-on-dark, 0.85);
   text-decoration: none;
   &:hover { color: $color-accent-on-dark; }
+}
+
+.issueAuthors {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.55);
 }

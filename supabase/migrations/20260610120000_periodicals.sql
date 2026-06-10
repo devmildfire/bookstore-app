@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS public."Periodicals" (
     CONSTRAINT "Periodicals_slug_key" UNIQUE (slug)
 );
 
+-- Shared lede shown once at the top of the periodical page.
+ALTER TABLE public."Periodicals" ADD COLUMN IF NOT EXISTS thesis text;
+
 ALTER TABLE public."Periodicals" ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read periodicals" ON public."Periodicals";
 CREATE POLICY "Public read periodicals" ON public."Periodicals" FOR SELECT USING (true);

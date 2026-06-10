@@ -1099,6 +1099,7 @@ export type Database = {
           name: string
           slug: string | null
           sort_order: number
+          thesis: string | null
         }
         Insert: {
           description?: string | null
@@ -1106,6 +1107,7 @@ export type Database = {
           name: string
           slug?: string | null
           sort_order?: number
+          thesis?: string | null
         }
         Update: {
           description?: string | null
@@ -1113,6 +1115,7 @@ export type Database = {
           name?: string
           slug?: string | null
           sort_order?: number
+          thesis?: string | null
         }
         Relationships: []
       }

@@ -69,6 +69,11 @@ const updateSchema = z.object({
     .trim()
     .transform((v) => (v === '' ? null : v))
     .nullable(),
+  thesis: z
+    .string()
+    .trim()
+    .transform((v) => (v === '' ? null : v))
+    .nullable(),
   position: z.coerce.number().int().min(0),
 })
 
@@ -82,6 +87,7 @@ export async function updatePeriodicalAction(
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
+    thesis: formData.get('thesis'),
     position: formData.get('position'),
   })
   if (!parsed.success) return { status: 'error', message: parsed.error.issues[0].message }
@@ -90,7 +96,7 @@ export async function updatePeriodicalAction(
   const admin = createAdminClient()
   const { error } = await admin
     .from('Periodicals')
-    .update({ name: d.name, slug: d.slug, description: d.description, sort_order: d.position })
+    .update({ name: d.name, slug: d.slug, description: d.description, thesis: d.thesis, sort_order: d.position })
     .eq('id', d.id)
   if (error) {
     const msg = error.message.includes('duplicate') ? 'Серия с таким slug уже существует.' : error.message

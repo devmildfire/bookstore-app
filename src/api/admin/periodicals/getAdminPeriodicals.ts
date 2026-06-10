@@ -20,6 +20,7 @@ export type AdminPeriodical = {
   name: string
   slug: string | null
   description: string | null
+  thesis: string | null
   position: number
   issues: AdminPeriodicalIssue[]
 }
@@ -45,7 +46,7 @@ export async function getAdminPeriodical(id: number): Promise<AdminPeriodical | 
   const admin = createAdminClient()
   const { data } = await admin
     .from('Periodicals')
-    .select('id, name, slug, description, sort_order')
+    .select('id, name, slug, description, thesis, sort_order')
     .eq('id', id)
     .maybeSingle()
   if (!data) return null
@@ -61,6 +62,7 @@ export async function getAdminPeriodical(id: number): Promise<AdminPeriodical | 
     name: data.name,
     slug: data.slug,
     description: data.description,
+    thesis: data.thesis,
     position: data.sort_order ?? 0,
     issues: (issueRows ?? []).map((t) => ({
       id: t.id,
