@@ -1,9 +1,11 @@
 import { Fragment } from 'react'
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getBook, getSimilarBooks, getEditionPhotos, getBookEditions } from '@/api/books'
+import { getPeriodical, getPeriodicalIssueRedirect } from '@/api/periodicals'
+import PeriodicalView from './PeriodicalView'
 import BookGrid from '@/components/book/BookGrid'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import BookAuthor from './BookAuthor'
@@ -20,6 +22,15 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
+
+  const periodical = await getPeriodical(slug)
+  if (periodical) {
+    return {
+      title: periodical.name,
+      description: periodical.description?.slice(0, 160) ?? periodical.name,
+    }
+  }
+
   const book = await getBook(slug)
 
   if (!book) {
@@ -39,6 +50,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BookDetailPage({ params }: Props) {
   const { slug } = await params
+
+  // A periodical (e.g. «Могучий Русский Динозавр») renders one shared page with a
+  // section per issue; an individual issue slug redirects to its anchor there.
+  const periodical = await getPeriodical(slug)
+  if (periodical) {
+    return <PeriodicalView periodical={periodical} />
+  }
+  const issueRedirect = await getPeriodicalIssueRedirect(slug)
+  if (issueRedirect) {
+    redirect(`/books/${issueRedirect.periodicalSlug}#vol-${issueRedirect.volumeNumber}`)
+  }
+
   const book = await getBook(slug)
 
   if (!book) {

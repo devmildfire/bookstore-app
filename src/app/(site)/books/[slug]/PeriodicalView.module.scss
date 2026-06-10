@@ -1,0 +1,180 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav {
+  @include book-page-container;
+  display: flex;
+  align-self: stretch;
+  justify-content: start;
+  padding-top: $space-5;
+  padding-bottom: $space-5;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  letter-spacing: 0.6px;
+  color: rgba($color-text-on-dark, 0.5);
+
+  a { color: rgba($color-text-on-dark, 0.5); text-decoration: none; &:hover { color: $color-text-on-dark; } }
+}
+
+.separator { color: rgba($color-text-on-dark, 0.5); user-select: none; }
+
+.intro {
+  @include book-page-container;
+  align-self: stretch;
+  padding-top: $space-6;
+  padding-bottom: $space-6;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-cheque;
+  font-weight: $font-weight-bold;
+  font-size: 44px;
+  line-height: 1.1;
+  color: $color-text-on-dark;
+
+  @include breakpoint(tablet) { font-size: 34px; }
+  @include breakpoint(phone) { font-size: 28px; }
+}
+
+.description {
+  margin: $space-4 0 0;
+  max-width: 760px;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: rgba($color-text-on-dark, 0.8);
+}
+
+.issue {
+  @include book-page-container;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  padding-top: $space-10;
+  padding-bottom: $space-16;
+  border-top: 1px solid rgba($color-text-on-dark, 0.12);
+  scroll-margin-top: $space-16;
+}
+
+.issueMain {
+  display: flex;
+  gap: $space-13;
+  align-items: flex-start;
+
+  @include breakpoint(tablet) { gap: $space-8; }
+  @include breakpoint(phone) { flex-direction: column; gap: $space-6; }
+}
+
+.issueInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.volume {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: $color-accent-on-dark;
+}
+
+.issueTitle {
+  margin: 0;
+  font-family: $font-cheque;
+  font-weight: $font-weight-bold;
+  font-size: 32px;
+  line-height: 1.15;
+  color: $color-text-on-dark;
+
+  @include breakpoint(phone) { font-size: 26px; }
+}
+
+.thesis {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-style: italic;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.85);
+}
+
+.issueDescription {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: rgba($color-text-on-dark, 0.8);
+}
+
+.stories,
+.authors {
+  margin-top: $space-10;
+}
+
+.blockTitle {
+  margin: 0 0 $space-5;
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: $color-text-on-dark;
+}
+
+.storyList {
+  margin: 0;
+  padding-left: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.story {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-2 $space-4;
+  font-family: $font-montserrat;
+  color: $color-text-on-dark;
+}
+
+.storyLink {
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+  text-decoration: none;
+  &:hover { color: $color-accent-on-dark; }
+}
+
+.storyAuthor {
+  font-size: $font-size-sm;
+  color: rgba($color-text-on-dark, 0.55);
+}
+
+.authorNames {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  line-height: 1.7;
+  color: rgba($color-text-on-dark, 0.85);
+}
+
+.authorLink {
+  color: rgba($color-text-on-dark, 0.85);
+  text-decoration: none;
+  &:hover { color: $color-accent-on-dark; }
+}

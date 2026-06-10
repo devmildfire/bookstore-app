@@ -33,7 +33,7 @@ export default function BookCard({ book, className }: Props) {
     <>
       <article className={cn(styles.card, className)}>
         <div className={styles.coverWrap}>
-          <Link href={`/books/${book.slug}`} className={styles.coverLink} tabIndex={-1} aria-hidden>
+          <Link href={book.periodicalHref ?? `/books/${book.slug}`} className={styles.coverLink} tabIndex={-1} aria-hidden>
             {book.coverUrl ? (
               <Image
                 src={book.coverUrl}

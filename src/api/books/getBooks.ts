@@ -49,6 +49,12 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const total = rows[0]?.total_count ?? 0
   const books = rows.map(normalizeBook)
 
+  // Periodical issues link to the shared periodical page + anchor, not /books/<slug>.
+  const periodicalHrefs = await getPeriodicalHrefs(supabase, books.map((b) => b.titleId))
+  for (const book of books) {
+    book.periodicalHref = periodicalHrefs.get(book.titleId) ?? null
+  }
+
   return {
     books,
     total,
@@ -142,4 +148,31 @@ function normalizeLegacySort(value: unknown): string {
   if (value === 'price-asc' || value === 'price-desc') return value
   if (value === 'author-asc' || value === 'author-desc') return 'title'
   return 'newest'
+}
+
+// Map of titleId → "/books/<periodical-slug>#vol-<n>" for any catalog titles that
+// are periodical issues, so their cards link to the shared periodical page.
+async function getPeriodicalHrefs(
+  supabase: ReturnType<typeof createDataClient>,
+  titleIds: number[],
+): Promise<Map<number, string>> {
+  const map = new Map<number, string>()
+  if (titleIds.length === 0) return map
+
+  const { data: titles } = await supabase
+    .from('Titles')
+    .select('id, periodical_id, volume_number')
+    .in('id', titleIds)
+    .not('periodical_id', 'is', null)
+  if (!titles?.length) return map
+
+  const periodicalIds = Array.from(new Set(titles.map((t) => t.periodical_id).filter((v): v is number => v != null)))
+  const { data: periodicals } = await supabase.from('Periodicals').select('id, slug').in('id', periodicalIds)
+  const slugById = new Map((periodicals ?? []).map((p) => [p.id, p.slug]))
+
+  for (const t of titles) {
+    const slug = t.periodical_id != null ? slugById.get(t.periodical_id) : null
+    if (slug) map.set(t.id, `/books/${slug}#vol-${t.volume_number}`)
+  }
+  return map
 }

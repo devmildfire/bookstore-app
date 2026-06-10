@@ -11,15 +11,19 @@ INSERT INTO "Periodicals" (name, slug, sort_order)
 SELECT 'Могучий Русский Динозавр', 'moguchij-russkij-dinozavr', 0
 WHERE NOT EXISTS (SELECT 1 FROM "Periodicals" WHERE slug = 'moguchij-russkij-dinozavr');
 
--- Issue №6 (2025) — the existing МРД6 title.
+-- The periodical owns the shared page slug 'moguchij-russkij-dinozavr'; the issue
+-- itself moves to 'mrd-6' (the legacy МРД6 title slug). Idempotent.
+UPDATE "Titles" SET slug = 'mrd-6' WHERE slug = 'moguchij-russkij-dinozavr';
+
+-- Issue №6 (2025).
 UPDATE "Titles" SET
   periodical_id = (SELECT id FROM "Periodicals" WHERE slug = 'moguchij-russkij-dinozavr'),
   volume_number = 6,
   volume_year = '2025'
-WHERE slug = 'moguchij-russkij-dinozavr';
+WHERE slug = 'mrd-6';
 
 -- Link the issue's stories to it.
-UPDATE "Articles" SET title_id = (SELECT id FROM "Titles" WHERE slug = 'moguchij-russkij-dinozavr')
+UPDATE "Articles" SET title_id = (SELECT id FROM "Titles" WHERE slug = 'mrd-6')
 WHERE slug LIKE 'mrd6-%';
 
 -- Issue authors = distinct authors of its stories (skip any already linked).

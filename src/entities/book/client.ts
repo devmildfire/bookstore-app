@@ -69,6 +69,8 @@ export type Book = {
   id: string
   titleId: number
   slug: string
+  /** For a periodical issue, the shared periodical page + anchor to link to instead of /books/<slug>. */
+  periodicalHref: string | null
   name: string
   description: string | null
   thesis: string | null

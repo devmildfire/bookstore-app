@@ -26,6 +26,7 @@ export function normalizeBook(raw: BookServerRow): Book {
     id: `${raw.product_type ?? 'Book2.0'}-${raw.id}`,
     titleId: raw.title_id,
     slug: raw.title_slug ?? String(raw.title_id),
+    periodicalHref: null,
     name: raw.title_name,
     description: raw.title_description,
     thesis: raw.title_thesis ?? null,
