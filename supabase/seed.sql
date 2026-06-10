@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 1DzM2FKAtaCaNAq4dcXPfNBlXUyXImNnOGHlSnHHK0foe218PJgGJRouTQtRhP5
+\restrict esqSYJZVSqMEMhO5g4h0AWwqKWGPwx8INCyFslYrT6fG6dUkil74TYRagLoHgwd
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -401,6 +401,8 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 192	Диана Гильманова	продюсер изданий	gilmanova-diana.jpg	Екатеринбург	t	8
 193	Екатерина Гребенщикова	корректор	ekaterina-grebenshchikova.jpg	\N	t	9
 41	Алексей Капустяк	верстальщик	aleksey-kapustyak.jpg	\N	t	10
+194	Полина Смолякова	корректор	\N	\N	f	0
+195	Маргарита Царева	иллюстратор	\N	\N	f	0
 \.
 
 
@@ -1105,6 +1107,48 @@ COPY public."EbookWorkers" (id, ebook_id, worker_id, sort_order) FROM stdin;
 290	49	75	5
 300	52	168	4
 325	56	183	5
+326	57	54	0
+327	57	35	1
+328	57	17	2
+329	57	49	3
+330	57	78	4
+331	57	31	5
+332	57	91	6
+333	57	19	7
+334	57	69	8
+335	57	194	9
+336	57	40	10
+337	57	195	11
+338	57	59	12
+339	57	22	13
+340	57	21	14
+341	57	24	15
+342	57	26	16
+343	58	38	0
+344	58	53	1
+345	58	35	2
+346	58	17	3
+347	58	54	4
+348	58	18	5
+349	58	31	6
+350	58	55	7
+351	58	56	8
+352	58	57	9
+353	58	19	10
+354	58	58	11
+355	58	36	12
+356	58	51	13
+357	58	40	14
+358	58	59	15
+359	58	60	16
+360	58	61	17
+361	58	62	18
+362	58	63	19
+363	58	29	20
+364	58	65	21
+365	58	21	22
+366	58	23	23
+367	58	25	24
 \.
 
 
@@ -1289,6 +1333,31 @@ COPY public."PrintedBookWorkers" (id, printed_book_id, worker_id, sort_order) FR
 144	21	177	5
 145	21	178	6
 146	21	179	7
+147	23	38	0
+148	23	53	1
+149	23	35	2
+150	23	17	3
+151	23	54	4
+152	23	18	5
+153	23	31	6
+154	23	55	7
+155	23	56	8
+156	23	57	9
+157	23	19	10
+158	23	58	11
+159	23	36	12
+160	23	51	13
+161	23	40	14
+162	23	59	15
+163	23	60	16
+164	23	61	17
+165	23	62	18
+166	23	63	19
+167	23	29	20
+168	23	65	21
+169	23	21	22
+170	23	23	23
+171	23	25	24
 \.
 
 
@@ -1719,7 +1788,7 @@ SELECT pg_catalog.setval('public."CardBooks_id_seq"', 66, false);
 -- Name: EbookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."EbookWorkers_id_seq"', 325, true);
+SELECT pg_catalog.setval('public."EbookWorkers_id_seq"', 367, true);
 
 
 --
@@ -1775,7 +1844,7 @@ SELECT pg_catalog.setval('public."Periodicals_id_seq"', 1, true);
 -- Name: PrintedBookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."PrintedBookWorkers_id_seq"', 146, true);
+SELECT pg_catalog.setval('public."PrintedBookWorkers_id_seq"', 171, true);
 
 
 --
@@ -1831,7 +1900,7 @@ SELECT pg_catalog.setval('public."UserSubscriptions_id_seq"', 1, false);
 -- Name: Workers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."Workers_id_seq"', 194, true);
+SELECT pg_catalog.setval('public."Workers_id_seq"', 195, true);
 
 
 --
@@ -1845,5 +1914,5 @@ SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 1DzM2FKAtaCaNAq4dcXPfNBlXUyXImNnOGHlSnHHK0foe218PJgGJRouTQtRhP5
+\unrestrict esqSYJZVSqMEMhO5g4h0AWwqKWGPwx8INCyFslYrT6fG6dUkil74TYRagLoHgwd
 
