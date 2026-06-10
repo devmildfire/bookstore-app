@@ -35,6 +35,13 @@
   transition: filter 0.3s ease;
 }
 
+// Clickable when the partner has a website_url.
+.tileLink {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
 .tile:hover .logoFill {
   filter: grayscale(0);
 }
