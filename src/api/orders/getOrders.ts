@@ -6,6 +6,7 @@ import type { Order } from '@/entities/order/client'
 import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server'
 
 export const ordersQueryKey = ['orders'] as const
+export const orderHistoryQueryKey = ['order-history'] as const
 
 // bookId is shaped '<Category>-<editionId>' (place_order RPC). Each
 // edition table has a title_id we join against Titles to get the cover.
@@ -34,7 +35,21 @@ const COURSE_COVERS: Record<string, string | null> = {
 
 type Enriched = { coverUrl: string | null; titleSlug: string | null }
 
+// Paid orders only. This is the ownership source for the library ("Мои книги")
+// and courses — an unpaid order must never grant access to its items.
 export async function getOrders(): Promise<Order[]> {
+  return loadOrders(['paid'])
+}
+
+// Full order history for the cabinet's "Заказы" view, INCLUDING unpaid
+// (pending) / failed / cancelled orders. A buyer who closed the payment page
+// must still see the order exists and that it is NOT paid — otherwise they may
+// assume the purchase went through. Never feed this into the library views.
+export async function getOrderHistory(): Promise<Order[]> {
+  return loadOrders(null)
+}
+
+async function loadOrders(statuses: readonly string[] | null): Promise<Order[]> {
   const supabase = createClient()
 
   // Resolve the current user explicitly and filter by user_id in the
@@ -44,14 +59,16 @@ export async function getOrders(): Promise<Order[]> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
-  // Only settled orders belong in "Мои книги" — pending/failed/cancelled orders
-  // (created up-front for the payment lifecycle) must not surface here.
-  const { data: orders, error: ordersError } = await supabase
+  let query = supabase
     .from('Orders')
     .select('*')
     .eq('user_id', user.id)
-    .eq('status', 'paid')
-    .order('created_at', { ascending: false })
+  // `null` = every status (full history); an explicit list narrows it.
+  if (statuses) query = query.in('status', statuses)
+
+  const { data: orders, error: ordersError } = await query.order('created_at', {
+    ascending: false,
+  })
 
   if (ordersError) {
     throw new Error(`Не удалось загрузить заказы: ${ordersError.message}`)

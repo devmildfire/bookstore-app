@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useQuery } from '@tanstack/react-query'
-import { getOrders, ordersQueryKey } from '@/api/orders'
+import { getOrderHistory, orderHistoryQueryKey } from '@/api/orders'
 import { formatPrice } from '@/lib/formatPrice'
 import {
   CATEGORY_LABEL,
@@ -13,7 +13,7 @@ import {
   itemLink,
   paymentStatusLabel,
 } from '@/lib/orderDisplay'
-import type { Order, OrderItem } from '@/entities/order/client'
+import type { Order, OrderItem, OrderStatus } from '@/entities/order/client'
 import styles from './OrderHistoryList.module.scss'
 
 const SUBSCRIPTION_STATUS_LABEL: Record<string, string> = {
@@ -22,12 +22,27 @@ const SUBSCRIPTION_STATUS_LABEL: Record<string, string> = {
   past_due: 'Просрочена',
 }
 
+// Payment-status badge tone — paid reads positive, an unpaid/abandoned order
+// reads as a warning so it can't be mistaken for a completed purchase.
+const PAYMENT_BADGE_CLASS: Record<OrderStatus, string> = {
+  paid: styles.badgePaid,
+  pending: styles.badgePending,
+  failed: styles.badgeFailed,
+  cancelled: styles.badgeCancelled,
+}
+
+// A short reassurance/clarification shown under unpaid orders.
+const PAYMENT_NOTE: Partial<Record<OrderStatus, string>> = {
+  pending: 'Оплата не завершена — заказ ещё не оплачен, деньги не списаны.',
+  failed: 'Оплата не прошла — заказ не оплачен, деньги не списаны.',
+}
+
 type Props = { highlightOrderId?: number }
 
 export default function OrderHistoryList({ highlightOrderId }: Props) {
   const { data: orders = [], isLoading } = useQuery({
-    queryKey: ordersQueryKey,
-    queryFn: getOrders,
+    queryKey: orderHistoryQueryKey,
+    queryFn: getOrderHistory,
   })
 
   if (isLoading) return <p className={styles.empty}>Загрузка заказов…</p>
@@ -52,14 +67,21 @@ function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean 
         </div>
         <div className={styles.headRight}>
           <div className={styles.badges}>
-            <span className={cn(styles.badge, styles.badgePayment)}>
+            <span className={cn(styles.badge, PAYMENT_BADGE_CLASS[order.status])}>
               {paymentStatusLabel(order.status)}
             </span>
-            <span className={styles.badge}>{fulfillmentLabel(order.fulfillmentStatus)}</span>
+            {/* Fulfillment only means something once the order is paid. */}
+            {order.status === 'paid' && (
+              <span className={styles.badge}>{fulfillmentLabel(order.fulfillmentStatus)}</span>
+            )}
           </div>
           <div className={styles.total}>{formatPrice(order.total)}</div>
         </div>
       </header>
+
+      {PAYMENT_NOTE[order.status] && (
+        <p className={styles.unpaidNote}>{PAYMENT_NOTE[order.status]}</p>
+      )}
 
       {order.shipping && (
         <p className={styles.meta}>

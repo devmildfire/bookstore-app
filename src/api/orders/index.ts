@@ -3,7 +3,7 @@
 // Server-only functions (placeOrder, getDownloadUrl) live in their own files
 // and are imported directly from src/lib/orders/actions.ts — re-exporting
 // them here would pull `next/headers` into the client bundle.
-export { getOrders, ordersQueryKey } from './getOrders'
+export { getOrders, getOrderHistory, ordersQueryKey, orderHistoryQueryKey } from './getOrders'
 export { getBoxSetPhysicalFlags, boxSetPhysicalFlagsQueryKey } from './getBoxSetPhysicalFlags'
 
 // Types are erased at runtime, safe to re-export from anywhere.

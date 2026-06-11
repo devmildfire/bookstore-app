@@ -80,9 +80,39 @@
   white-space: nowrap;
 }
 
-.badgePayment {
-  border-color: rgba($color-accent-on-dark, 0.5);
-  color: $color-accent-on-dark;
+.badgePaid {
+  color: $tone-positive;
+  border-color: $tone-positive-border;
+  background: $tone-positive-bg;
+}
+
+.badgePending {
+  color: $tone-warning;
+  border-color: $tone-warning-border;
+  background: $tone-warning-bg;
+}
+
+.badgeFailed {
+  color: $tone-accent-text;
+  border-color: $tone-accent-border;
+  background: $tone-accent-bg;
+}
+
+.badgeCancelled {
+  color: $tone-neutral;
+  border-color: $tone-neutral-border;
+  background: $tone-neutral-bg;
+}
+
+.unpaidNote {
+  margin: 0;
+  padding: $space-2 $space-3;
+  border: 1px solid $tone-warning-border;
+  border-radius: $radius-sm;
+  background: $tone-warning-bg;
+  font-size: 13px;
+  line-height: 1.5;
+  color: $tone-warning;
 }
 
 .total {
