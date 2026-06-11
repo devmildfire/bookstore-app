@@ -3,7 +3,7 @@
  * Supabase Storage bucket "articles". Mirrors
  * `scripts/upload-covers-to-supabase.mjs`.
  *
- * Usage: place files under `public/articles/` and run:
+ * Usage: place files under `storage-assets/articles/` and run:
  *   node scripts/upload-articles-to-supabase.mjs
  *
  * Requires SUPABASE_SERVICE_ROLE_KEY in .env or the environment.
@@ -14,7 +14,7 @@ import { join, dirname, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
-const SOURCE_DIR = join(SCRIPT_DIR, '..', 'public', 'articles')
+const SOURCE_DIR = join(SCRIPT_DIR, '..', 'storage-assets', 'articles')
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321'
 const BUCKET_NAME = 'articles'

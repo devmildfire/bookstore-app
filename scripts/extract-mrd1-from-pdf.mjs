@@ -5,7 +5,7 @@
 // rejoined; running footers / page numbers / captions are dropped).
 //
 //   node scripts/extract-mrd1-from-pdf.mjs [pdfPath]
-// Outputs: public/articles/mrd1/<slug>.jpg, supabase/seed-articles-mrd1.sql
+// Outputs: storage-assets/articles/mrd1/<slug>.jpg, supabase/seed-articles-mrd1.sql
 
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -20,7 +20,7 @@ const REPO_ROOT = join(SCRIPT_DIR, '..')
 const PDF = process.argv[2] ?? '/home/mildfire/Downloads/MoguchijRusskijDinozavr.pdf'
 const PREFIX = 'mrd1'
 const PUBLISHED_AT = '2020-12-30T12:00:00.000Z'
-const OUT_IMG = join(REPO_ROOT, 'public', 'articles', PREFIX)
+const OUT_IMG = join(REPO_ROOT, 'storage-assets', 'articles', PREFIX)
 const OUT_SQL = join(REPO_ROOT, 'supabase', `seed-articles-${PREFIX}.sql`)
 
 const CYRILLIC = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' }

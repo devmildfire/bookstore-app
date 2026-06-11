@@ -5,7 +5,7 @@
 //   e.g. node scripts/extract-mrd-articles.mjs ".../МРД № 5 2024/...№ 5.epub" 5 2024-01-20T12:00:00.000Z
 //
 // Article TOC entries are nav labels of the form "Название | Автор". Outputs:
-//   public/articles/mrd<N>/<slug>.<ext>   (illustrations)
+//   storage-assets/articles/mrd<N>/<slug>.<ext>   (illustrations)
 //   supabase/seed-articles-mrd<N>.sql      (authors + articles, re-runnable upsert)
 
 import { execFileSync } from 'node:child_process'
@@ -26,7 +26,7 @@ if (!epubPath || !issue) {
   process.exit(1)
 }
 const prefix = `mrd${issue}`
-const outputImageDir = join(REPO_ROOT, 'public', 'articles', prefix)
+const outputImageDir = join(REPO_ROOT, 'storage-assets', 'articles', prefix)
 const outputSqlPath = join(REPO_ROOT, 'supabase', `seed-articles-${prefix}.sql`)
 const outputManifestPath = join(REPO_ROOT, 'supabase', `seed-articles-${prefix}.json`)
 

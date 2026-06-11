@@ -61,3 +61,8 @@ tsconfig.tsbuildinfo
 
 # Local database backups (pg_dump artifacts — never commit; can be large / contain data)
 backups/
+
+# Periodical e-book source binaries (3–19 MB each — exceed the 1 MB commit limit).
+# Re-supply from the original PDF/EPUB files, then run
+# scripts/upload-storage-assets-to-supabase.mjs to push them to the digital-files bucket.
+storage-assets/digital-files/
