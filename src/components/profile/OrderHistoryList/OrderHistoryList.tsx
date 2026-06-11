@@ -40,9 +40,13 @@ const PAYMENT_NOTE: Partial<Record<OrderStatus, string>> = {
   failed: 'Оплата не прошла — заказ не оплачен, деньги не списаны.',
 }
 
-type Props = { highlightOrderId?: number }
+// Shown when the buyer just came back from a declined/failed payment.
+const BANK_DECLINED_NOTE =
+  'Банк отклонил платёж — деньги не списаны. Заказ ждёт оплаты: попробуйте оплатить ещё раз сейчас или позже.'
 
-export default function OrderHistoryList({ highlightOrderId }: Props) {
+type Props = { highlightOrderId?: number; declinedOrderId?: number }
+
+export default function OrderHistoryList({ highlightOrderId, declinedOrderId }: Props) {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: orderHistoryQueryKey,
     queryFn: getOrderHistory,
@@ -54,13 +58,30 @@ export default function OrderHistoryList({ highlightOrderId }: Props) {
   return (
     <div className={styles.orders}>
       {orders.map((order) => (
-        <OrderCard key={order.id} order={order} highlighted={order.id === highlightOrderId} />
+        <OrderCard
+          key={order.id}
+          order={order}
+          highlighted={order.id === highlightOrderId}
+          bankDeclined={order.id === declinedOrderId}
+        />
       ))}
     </div>
   )
 }
 
-function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean }) {
+function OrderCard({
+  order,
+  highlighted,
+  bankDeclined,
+}: {
+  order: Order
+  highlighted: boolean
+  bankDeclined: boolean
+}) {
+  // A just-declined order gets the explicit bank message; otherwise the generic
+  // unpaid note. (bankDeclined only ever applies to a pending order.)
+  const note = bankDeclined && order.status === 'pending' ? BANK_DECLINED_NOTE : PAYMENT_NOTE[order.status]
+
   return (
     <article className={cn(styles.order, highlighted && styles.orderHighlighted)}>
       <header className={styles.header}>
@@ -82,8 +103,8 @@ function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean 
         </div>
       </header>
 
-      {PAYMENT_NOTE[order.status] && (
-        <p className={styles.unpaidNote}>{PAYMENT_NOTE[order.status]}</p>
+      {note && (
+        <p className={cn(styles.unpaidNote, bankDeclined && styles.declinedNote)}>{note}</p>
       )}
 
       {order.status === 'pending' && <PendingActions orderId={order.id} />}

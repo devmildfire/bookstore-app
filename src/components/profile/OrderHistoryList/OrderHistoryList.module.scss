@@ -115,6 +115,13 @@
   color: $tone-warning;
 }
 
+// A freshly-declined payment reads stronger than a quietly-abandoned one.
+.declinedNote {
+  border-color: $tone-accent-border;
+  background: $tone-accent-bg;
+  color: $tone-accent-text;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

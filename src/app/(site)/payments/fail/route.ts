@@ -1,12 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getPaymentConfig } from '@/lib/payments/config'
-import { createAdminClient } from '@/lib/supabase/server'
 
-// FailURL — the buyer cancelled or the payment failed. Robokassa sends InvId
-// (no signed confirmation). We cancel the still-pending order (releasing any
-// reserved gift cards; the cart is left intact so they can retry) and send them
-// back to checkout. cancel_pending_order is idempotent and a no-op if the order
-// already settled.
+// FailURL — the payment did not go through (bank declined, or the buyer backed
+// out at the gateway). Robokassa sends only InvId with no signed confirmation
+// and can't reliably tell a decline from a cancellation, so we do NOT cancel the
+// order: it stays `pending` (unpaid but still payable). The buyer is sent to
+// their order history, where the order shows a "банк отклонил платёж" notice and
+// a "Завершить оплату" button to retry now or later — and it auto-expires after
+// 7 days if abandoned (expire_stale_pending_orders).
 
 export const dynamic = 'force-dynamic'
 
@@ -28,12 +29,14 @@ async function handle(req: NextRequest): Promise<Response> {
   const params = await paramsFrom(req)
   const invId = Number(params.InvId)
 
-  if (Number.isInteger(invId) && invId > 0) {
-    const supabase = createAdminClient()
-    await supabase.rpc('cancel_pending_order', { p_order_id: invId })
-  }
+  // The order is left `pending` — no cancellation. Point the buyer at the order
+  // so they can retry payment; include its id when we have one.
+  const target =
+    Number.isInteger(invId) && invId > 0
+      ? `${cfg.siteUrl}/profile/orders?payment=failed&order=${invId}`
+      : `${cfg.siteUrl}/profile/orders?payment=failed`
 
-  return NextResponse.redirect(`${cfg.siteUrl}/checkout?payment=failed`, 303)
+  return NextResponse.redirect(target, 303)
 }
 
 export async function GET(req: NextRequest) {
