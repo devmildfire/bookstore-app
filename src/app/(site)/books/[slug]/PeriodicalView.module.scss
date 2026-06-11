@@ -73,17 +73,19 @@
 }
 
 // ─── Issue section ───────────────────────────────────────────────────────────
+// Full-width divider + vertical rhythm; the inner blocks (masthead, cover row,
+// tabs) each carry the page container so they all align to the same width/padding
+// as the edition tabs — never nested (which would double the horizontal padding).
 .issue {
-  @include book-page-container;
-  padding-top: 56px;
-  padding-bottom: 72px;
+  padding: 56px 0 72px;
   border-top: 1px solid rgba($color-text-on-dark, 0.12);
   scroll-margin-top: $space-12;
 }
 
 // ── Volume masthead ──
 .volHead {
-  display: flex;
+  @include book-page-container;
+  flex-direction: row; // book-page-container is column by default; numero + meta sit in a row
   align-items: center;
   gap: $space-6;
   margin-bottom: $space-10;
@@ -124,7 +126,8 @@
 
 // ── Cover + contents row ──
 .issueMain {
-  display: grid;
+  @include book-page-container;
+  display: grid; // override the mixin's flex
   grid-template-columns: auto 1fr;
   gap: 56px;
   align-items: start;
