@@ -40,13 +40,25 @@ const PAYMENT_NOTE: Partial<Record<OrderStatus, string>> = {
   failed: 'Оплата не прошла — заказ не оплачен, деньги не списаны.',
 }
 
-// Shown when the buyer just came back from a declined/failed payment.
-const BANK_DECLINED_NOTE =
-  'Банк отклонил платёж — деньги не списаны. Заказ ждёт оплаты: попробуйте оплатить ещё раз сейчас или позже.'
+// Outcome of a just-returned payment attempt — distinct messages so a buyer's
+// own cancellation is never mislabelled as a bank decline. `declined` reads
+// strongest (red); `cancelled`/`failed` are calmer (amber).
+type PaymentNoticeKind = 'declined' | 'cancelled' | 'failed'
 
-type Props = { highlightOrderId?: number; declinedOrderId?: number }
+const PAYMENT_NOTICE: Record<PaymentNoticeKind, string> = {
+  declined:
+    'Банк отклонил платёж — деньги не списаны. Заказ ждёт оплаты: попробуйте оплатить ещё раз сейчас или позже.',
+  cancelled: 'Оплата отменена — заказ не оплачен. Вы можете оплатить его сейчас или позже.',
+  failed: 'Оплата не завершена — заказ не оплачен, деньги не списаны. Можно попробовать ещё раз.',
+}
 
-export default function OrderHistoryList({ highlightOrderId, declinedOrderId }: Props) {
+type Props = {
+  highlightOrderId?: number
+  noticeOrderId?: number
+  noticeKind?: PaymentNoticeKind
+}
+
+export default function OrderHistoryList({ highlightOrderId, noticeOrderId, noticeKind }: Props) {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: orderHistoryQueryKey,
     queryFn: getOrderHistory,
@@ -62,7 +74,7 @@ export default function OrderHistoryList({ highlightOrderId, declinedOrderId }: 
           key={order.id}
           order={order}
           highlighted={order.id === highlightOrderId}
-          bankDeclined={order.id === declinedOrderId}
+          notice={order.id === noticeOrderId ? noticeKind : undefined}
         />
       ))}
     </div>
@@ -72,15 +84,16 @@ export default function OrderHistoryList({ highlightOrderId, declinedOrderId }: 
 function OrderCard({
   order,
   highlighted,
-  bankDeclined,
+  notice,
 }: {
   order: Order
   highlighted: boolean
-  bankDeclined: boolean
+  notice?: PaymentNoticeKind
 }) {
-  // A just-declined order gets the explicit bank message; otherwise the generic
-  // unpaid note. (bankDeclined only ever applies to a pending order.)
-  const note = bankDeclined && order.status === 'pending' ? BANK_DECLINED_NOTE : PAYMENT_NOTE[order.status]
+  // A just-returned payment attempt (notice) gets its specific message; otherwise
+  // the generic unpaid note. notice only ever applies to a still-pending order.
+  const showNotice = notice && order.status === 'pending'
+  const note = showNotice ? PAYMENT_NOTICE[notice] : PAYMENT_NOTE[order.status]
 
   return (
     <article className={cn(styles.order, highlighted && styles.orderHighlighted)}>
@@ -104,7 +117,9 @@ function OrderCard({
       </header>
 
       {note && (
-        <p className={cn(styles.unpaidNote, bankDeclined && styles.declinedNote)}>{note}</p>
+        <p className={cn(styles.unpaidNote, showNotice && notice === 'declined' && styles.declinedNote)}>
+          {note}
+        </p>
       )}
 
       {order.status === 'pending' && <PendingActions orderId={order.id} />}

@@ -2,12 +2,14 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getPaymentConfig } from '@/lib/payments/config'
 
 // FailURL — the payment did not go through (bank declined, or the buyer backed
-// out at the gateway). Robokassa sends only InvId with no signed confirmation
-// and can't reliably tell a decline from a cancellation, so we do NOT cancel the
-// order: it stays `pending` (unpaid but still payable). The buyer is sent to
-// their order history, where the order shows a "банк отклонил платёж" notice and
-// a "Завершить оплату" button to retry now or later — and it auto-expires after
-// 7 days if abandoned (expire_stale_pending_orders).
+// out at the gateway). We do NOT cancel the order: it stays `pending` (unpaid
+// but still payable). The buyer is sent to their order history, where the order
+// shows a notice + a "Завершить оплату" button to retry now or later, and it
+// auto-expires after 7 days if abandoned (expire_stale_pending_orders).
+//
+// `reason` (declined | cancelled) drives the message so a cancellation isn't
+// mislabelled as a bank decline. Real Robokassa can't pass this on its FailURL,
+// so when it's absent we fall back to a neutral "payment not completed" notice.
 
 export const dynamic = 'force-dynamic'
 
@@ -29,12 +31,14 @@ async function handle(req: NextRequest): Promise<Response> {
   const params = await paramsFrom(req)
   const invId = Number(params.InvId)
 
+  // declined | cancelled drive the order-history message; anything else is a
+  // neutral "payment not completed".
+  const payment = params.reason === 'cancelled' ? 'cancelled' : params.reason === 'declined' ? 'declined' : 'failed'
+
   // The order is left `pending` — no cancellation. Point the buyer at the order
   // so they can retry payment; include its id when we have one.
-  const target =
-    Number.isInteger(invId) && invId > 0
-      ? `${cfg.siteUrl}/profile/orders?payment=failed&order=${invId}`
-      : `${cfg.siteUrl}/profile/orders?payment=failed`
+  const base = `${cfg.siteUrl}/profile/orders?payment=${payment}`
+  const target = Number.isInteger(invId) && invId > 0 ? `${base}&order=${invId}` : base
 
   return NextResponse.redirect(target, 303)
 }

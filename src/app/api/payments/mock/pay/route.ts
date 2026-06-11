@@ -24,9 +24,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.redirect(`${cfg.siteUrl}/checkout?payment=error`, 303)
   }
 
-  // Cancel / simulated decline → FailURL.
+  // Not a payment → FailURL, tagging WHY: an explicit cancel vs a bank decline.
+  // (A real Robokassa FailURL can't carry this; the mock can, so the buyer gets
+  // an accurate message.)
   if (action !== 'pay') {
-    return NextResponse.redirect(`${cfg.siteUrl}/payments/fail?InvId=${invId}`, 303)
+    const reason = action === 'decline' ? 'declined' : 'cancelled'
+    return NextResponse.redirect(`${cfg.siteUrl}/payments/fail?InvId=${invId}&reason=${reason}`, 303)
   }
 
   const supabase = createAdminClient()
@@ -58,8 +61,8 @@ export async function POST(req: NextRequest) {
   })
   const resultText = (await resultRes.text()).trim()
   if (!resultText.toUpperCase().startsWith('OK')) {
-    // ResultURL rejected — treat as a failed payment.
-    return NextResponse.redirect(`${cfg.siteUrl}/payments/fail?InvId=${invId}`, 303)
+    // ResultURL rejected — the payment was attempted but not accepted (a decline).
+    return NextResponse.redirect(`${cfg.siteUrl}/payments/fail?InvId=${invId}&reason=declined`, 303)
   }
 
   // 2) Redirect the buyer to SuccessURL (Password1 signature).
