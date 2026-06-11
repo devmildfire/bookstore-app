@@ -1,10 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrderHistory, orderHistoryQueryKey } from '@/api/orders'
+import { cancelOrderAction, resumeCheckoutAction } from '@/lib/orders/actions'
+import { submitPaymentRedirect } from '@/lib/payments/submitRedirect'
 import { formatPrice } from '@/lib/formatPrice'
 import {
   CATEGORY_LABEL,
@@ -83,6 +86,8 @@ function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean 
         <p className={styles.unpaidNote}>{PAYMENT_NOTE[order.status]}</p>
       )}
 
+      {order.status === 'pending' && <PendingActions orderId={order.id} />}
+
       {order.shipping && (
         <p className={styles.meta}>
           Доставка: {order.shipping.name}, {order.shipping.city}, {order.shipping.street},{' '}
@@ -103,6 +108,64 @@ function OrderCard({ order, highlighted }: { order: Order; highlighted: boolean 
         ))}
       </ul>
     </article>
+  )
+}
+
+// Buyer-facing actions for an abandoned (pending) order: finish paying — which
+// re-hands the browser to the gateway for the same order — or cancel it.
+function PendingActions({ orderId }: { orderId: number }) {
+  const queryClient = useQueryClient()
+  const [busy, setBusy] = useState<'resume' | 'cancel' | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleResume() {
+    setBusy('resume')
+    setError(null)
+    const result = await resumeCheckoutAction(orderId)
+    if (result.status === 'redirect') {
+      submitPaymentRedirect(result.redirect) // full-page navigation to the gateway
+      return // keep the button disabled while the browser leaves
+    }
+    if (result.status === 'paid') {
+      await queryClient.invalidateQueries({ queryKey: orderHistoryQueryKey })
+      return
+    }
+    setError('Не удалось продолжить оплату. Попробуйте ещё раз.')
+    setBusy(null)
+  }
+
+  async function handleCancel() {
+    setBusy('cancel')
+    setError(null)
+    const result = await cancelOrderAction(orderId)
+    if (result.status === 'ok') {
+      await queryClient.invalidateQueries({ queryKey: orderHistoryQueryKey })
+      return
+    }
+    setError('Не удалось отменить заказ. Попробуйте ещё раз.')
+    setBusy(null)
+  }
+
+  return (
+    <div className={styles.actions}>
+      <button
+        type='button'
+        className={styles.payButton}
+        onClick={handleResume}
+        disabled={busy !== null}
+      >
+        {busy === 'resume' ? 'Переход к оплате…' : 'Завершить оплату'}
+      </button>
+      <button
+        type='button'
+        className={styles.cancelButton}
+        onClick={handleCancel}
+        disabled={busy !== null}
+      >
+        {busy === 'cancel' ? 'Отмена…' : 'Отменить заказ'}
+      </button>
+      {error && <span className={styles.actionError}>{error}</span>}
+    </div>
   )
 }
 

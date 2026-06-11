@@ -12,30 +12,13 @@ import PaymentConfirmModal, {
   type PaymentModalState,
 } from '@/components/checkout/PaymentConfirmModal'
 import { startCheckoutAction } from '@/lib/orders/actions'
-import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
+import { submitPaymentRedirect } from '@/lib/payments/submitRedirect'
 import type {
   EmailOnlyFormValues,
   ShippingFormValues,
 } from '@/entities/order/validation'
 import type { PlaceOrderInput } from '@/api/orders'
 import styles from './page.module.scss'
-
-// Build a hidden form and POST the buyer to the payment gateway (mock or real
-// Robokassa) — a full-page navigation, exactly like Robokassa's own redirect.
-function submitPaymentRedirect(redirect: PaymentRedirect) {
-  const form = document.createElement('form')
-  form.method = redirect.method
-  form.action = redirect.url
-  for (const [name, value] of Object.entries(redirect.fields)) {
-    const field = document.createElement('input')
-    field.type = 'hidden'
-    field.name = name
-    field.value = value
-    form.appendChild(field)
-  }
-  document.body.appendChild(form)
-  form.submit()
-}
 
 type PendingOrder = {
   input: PlaceOrderInput

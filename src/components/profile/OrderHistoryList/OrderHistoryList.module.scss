@@ -115,6 +115,54 @@
   color: $tone-warning;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.payButton,
+.cancelButton {
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-family: $font-montserrat;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.payButton {
+  border: none;
+  background: $color-accent-on-dark;
+  color: $color-gray-5;
+
+  &:not(:disabled):hover {
+    background: $color-accent-hover-on-dark;
+  }
+}
+
+.cancelButton {
+  border: 1px solid rgba($color-text-on-dark, 0.3);
+  background: transparent;
+  color: rgba($color-text-on-dark, 0.8);
+
+  &:not(:disabled):hover {
+    color: $color-text-on-dark;
+    border-color: rgba($color-text-on-dark, 0.5);
+  }
+}
+
+.actionError {
+  font-size: 13px;
+  color: $tone-accent-text;
+}
+
 .total {
   font-family: $font-montserrat;
   font-weight: $font-weight-bold;

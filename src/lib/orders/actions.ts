@@ -5,7 +5,7 @@ import { createPendingOrder } from '@/api/orders/createPendingOrder'
 import { getDownloadUrl } from '@/api/orders/getDownloadUrl'
 import { getPaymentConfig } from '@/lib/payments/config'
 import { buildInitRedirect } from '@/lib/payments/robokassa/client'
-import { createAdminClient } from '@/lib/supabase/server'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
 import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
 import type {
   PlaceOrderInput,
@@ -61,4 +61,78 @@ export async function startCheckoutAction(input: PlaceOrderInput): Promise<Start
     recurring: pending.recurring,
   })
   return { status: 'redirect', orderId: pending.orderId, redirect }
+}
+
+/**
+ * Resume payment for an existing `pending` order (an abandoned checkout the
+ * buyer wants to finish). Re-builds the gateway redirect for the SAME InvId
+ * against the order's snapshotted amount_due — no new order, no re-pricing. The
+ * verified ResultURL webhook settles it via mark_order_paid, exactly as for a
+ * fresh checkout. Ownership is enforced by RLS on the user-scoped read.
+ */
+export async function resumeCheckoutAction(orderId: number): Promise<StartCheckoutResult> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { status: 'error', reason: 'not_authenticated' }
+
+  const { data: order, error } = await supabase
+    .from('Orders')
+    .select('id, user_id, status, amount_due, delivery_email, recurring')
+    .eq('id', orderId)
+    .maybeSingle()
+
+  if (error) return { status: 'error', reason: 'unknown', message: error.message }
+  // RLS already scopes to the owner; the explicit check is defense-in-depth.
+  if (!order || order.user_id !== user.id) {
+    return { status: 'error', reason: 'order_not_found' }
+  }
+  if (order.status !== 'pending') return { status: 'error', reason: 'not_pending' }
+
+  // A 0 ₽ balance (e.g. fully covered by gift cards) settles without the gateway.
+  if (Number(order.amount_due) <= 0) {
+    const admin = createAdminClient()
+    const { error: payError } = await admin.rpc('mark_order_paid', {
+      p_inv_id: order.id,
+      p_out_sum: '0.00',
+    })
+    if (payError) return { status: 'error', reason: 'unknown', message: payError.message }
+    return { status: 'paid', orderId: order.id }
+  }
+
+  const redirect = buildInitRedirect({
+    invId: order.id,
+    amount: Number(order.amount_due),
+    description: `Заказ №${order.id} — Чтиво`,
+    email: order.delivery_email,
+    recurring: order.recurring,
+  })
+  return { status: 'redirect', orderId: order.id, redirect }
+}
+
+export type CancelOrderResult =
+  | { status: 'ok'; orderId: number }
+  | { status: 'error'; reason: string; message?: string }
+
+/**
+ * Cancel an abandoned `pending` order at the buyer's request. Delegates to
+ * cancel_pending_order (releases reserved gift-card balances, flips status →
+ * 'cancelled'); the user-scoped client makes the RPC enforce ownership.
+ */
+export async function cancelOrderAction(orderId: number): Promise<CancelOrderResult> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { status: 'error', reason: 'not_authenticated' }
+
+  const { data, error } = await supabase.rpc('cancel_pending_order', { p_order_id: orderId })
+  if (error) return { status: 'error', reason: 'unknown', message: error.message }
+
+  const payload = data as { status: string; reason?: string; orderId?: number }
+  if (payload.status === 'error') {
+    return { status: 'error', reason: payload.reason ?? 'unknown' }
+  }
+  return { status: 'ok', orderId: payload.orderId ?? orderId }
 }
