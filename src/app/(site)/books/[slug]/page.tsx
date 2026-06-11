@@ -87,7 +87,7 @@ export default async function BookDetailPage({ params }: Props) {
 
       <section className={styles.nav}>
         <nav className={styles.breadcrumbs} aria-label='Breadcrumb'>
-          <Link href='/books'>Каталог</Link>
+          <Link href='/'>Каталог</Link>
           <span className={styles.separator} aria-hidden='true'>/</span>
           <span aria-current='page'>{book.name}</span>
         </nav>

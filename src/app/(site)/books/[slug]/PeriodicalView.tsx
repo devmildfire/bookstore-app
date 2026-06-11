@@ -14,7 +14,7 @@ export default function PeriodicalView({ periodical }: { periodical: Periodical 
   return (
     <article className={styles.page}>
       <nav className={styles.crumbs} aria-label='Breadcrumb'>
-        <Link href='/books'>Каталог</Link>
+        <Link href='/'>Каталог</Link>
         <span className={styles.sep} aria-hidden='true'>/</span>
         <span aria-current='page'>{periodical.name}</span>
       </nav>

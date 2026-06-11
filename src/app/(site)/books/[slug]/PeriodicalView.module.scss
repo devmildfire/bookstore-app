@@ -9,7 +9,7 @@
 // ─── Breadcrumbs ─────────────────────────────────────────────────────────────
 .crumbs {
   @include book-page-container;
-  display: flex;
+  flex-direction: row;
   align-items: center;
   gap: $space-2;
   padding-top: 22px;
