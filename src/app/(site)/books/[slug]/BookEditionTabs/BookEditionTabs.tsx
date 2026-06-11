@@ -8,9 +8,10 @@ import { useToast } from '@/contexts/toast'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import Carousel from '@/components/common/Carousel'
 import type { EditionPhotos } from '@/api/books/getBookPhotos'
-import type { Book, BookWorker } from '@/entities/book/client'
+import type { Book } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import TabBarFrame from './TabBarFrame'
+import EditionCredits from './EditionCredits'
 import styles from './BookEditionTabs.module.scss'
 
 type Props = {
@@ -56,10 +57,6 @@ function formatFileSize(bytes: number): string {
   return `${bytes} б`
 }
 
-function formatWorkers(workers: BookWorker[]): string {
-  return workers.map((w) => `${w.job} ${w.name}`).join(', ')
-}
-
 type DetailRow = { label: string; values: (string | null)[] }
 
 // Each category contributes its own labeled rows. Null values are skipped so a
@@ -99,9 +96,8 @@ function buildRows(book: Book): DetailRow[] {
     })
   }
 
-  if (book.workers.length > 0) {
-    rows.push({ label: 'Над изданием работали:', values: [formatWorkers(book.workers)] })
-  }
+  // «Над изданием работали» is rendered as a dedicated collapsible, full-width
+  // credits block (EditionCredits) — not crammed into the narrow detail column.
 
   return rows
     .map((row) => ({ ...row, values: row.values.filter((v): v is string => Boolean(v)) }))
@@ -232,6 +228,8 @@ export default function BookEditionTabs({ books, editionPhotos = {}, bookName = 
               ))}
             </dl>
           )}
+
+          <EditionCredits key={active} workers={book.workers} />
 
           {activePhotos.length > 0 && (
             <div className={styles.carouselWrap}>

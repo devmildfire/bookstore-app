@@ -108,7 +108,8 @@
   grid-template-columns: 1fr 302px;
   grid-template-areas:
     "title   price"
-    "details actions";
+    "details actions"
+    "credits credits";
   column-gap: $space-8;
   row-gap: $space-8;
   align-items: start;
@@ -121,7 +122,8 @@
     grid-template-areas:
       "title   price"
       "actions actions"
-      "details details";
+      "details details"
+      "credits credits";
     column-gap: $space-4;
     row-gap: $space-5;
   }
@@ -314,3 +316,96 @@
     letter-spacing: 0.4px;
   }
 }
+
+// ─── Credits «Над изданием работали» (collapsible, full-width) ─────────────────
+.credits {
+  grid-area: credits;
+  border-top: 1px solid rgba($color-text-on-dark, 0.12);
+  margin-top: $space-1;
+}
+
+.creditsToggle {
+  display: flex;
+  align-items: baseline;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-4 0 2px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+
+  &:hover .creditsHeading { color: rgba($color-text-on-dark, 0.85); }
+}
+.creditsHeading {
+  font-family: $font-montserrat;
+  font-weight: $font-weight-bold;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba($color-text-on-dark, 0.55);
+  transition: color 0.15s ease;
+}
+.creditsCount {
+  font-family: $font-montserrat;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: rgba($color-text-on-dark, 0.5);
+}
+.creditsChevron {
+  margin-left: auto;
+  align-self: center;
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-right: 1.5px solid rgba($color-text-on-dark, 0.5);
+  border-bottom: 1.5px solid rgba($color-text-on-dark, 0.5);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.creditsOpen .creditsChevron { transform: rotate(-135deg); }
+
+.creditsRoles {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-4;
+}
+.creditsRole {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 8px 24px;
+  align-items: start;
+
+  & + & { border-top: 1px solid rgba($color-text-on-dark, 0.08); padding-top: $space-3; }
+
+  @include breakpoint(tablet) { grid-template-columns: 120px 1fr; gap: 8px 18px; }
+  @include breakpoint(phone) { grid-template-columns: 1fr; gap: 6px; }
+}
+.creditsRoleName {
+  font-family: $font-montserrat;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  line-height: 1.25;
+  color: $color-accent-hover-on-dark;
+  text-transform: lowercase;
+  padding-top: 1px;
+
+  @include breakpoint(phone) { padding-top: 0; }
+}
+.creditsPeople {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px 18px;
+  min-width: 0;
+
+  @include breakpoint(tablet) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 14px; }
+  @include breakpoint(phone) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; }
+}
+.creditsPerson { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.creditsFn,
+.creditsLn { overflow-wrap: anywhere; font-family: $font-montserrat; font-size: 12.5px; }
+.creditsFn { color: rgba($color-text-on-dark, 0.5); }
+.creditsLn { font-weight: $font-weight-medium; color: $color-text-on-dark; }
