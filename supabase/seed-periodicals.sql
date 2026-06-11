@@ -21,11 +21,13 @@ WHERE slug = 'moguchij-russkij-dinozavr';
 -- itself moves to 'mrd-6' (the legacy МРД6 title slug). Idempotent.
 UPDATE "Titles" SET slug = 'mrd-6' WHERE slug = 'moguchij-russkij-dinozavr';
 
--- Issue №6 (2025).
+-- Issue №6 (2025). Its real cover is covers/mrd-6.jpg (the earlier value was
+-- mistakenly the №1/2020 cover — moguchij-russkij-dinozavr.png).
 UPDATE "Titles" SET
   periodical_id = (SELECT id FROM "Periodicals" WHERE slug = 'moguchij-russkij-dinozavr'),
   volume_number = 6,
-  volume_year = '2025'
+  volume_year = '2026',
+  cover = 'mrd-6.jpg'
 WHERE slug = 'mrd-6';
 
 -- Editions per chtivo.spb.ru: МРД6 is digital-only (free «Цифровое издание»).
