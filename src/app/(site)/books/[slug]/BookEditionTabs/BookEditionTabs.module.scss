@@ -342,7 +342,7 @@
 .creditsHeading {
   font-family: $font-montserrat;
   font-weight: $font-weight-bold;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: rgba($color-text-on-dark, 0.55);
@@ -350,7 +350,7 @@
 }
 .creditsCount {
   font-family: $font-montserrat;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.3px;
   color: rgba($color-text-on-dark, 0.5);
 }
@@ -386,9 +386,9 @@
 }
 .creditsRoleName {
   font-family: $font-montserrat;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.4px;
-  line-height: 1.25;
+  line-height: 1.3;
   color: $color-accent-hover-on-dark;
   text-transform: lowercase;
   padding-top: 1px;
@@ -404,8 +404,8 @@
   @include breakpoint(tablet) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 14px; }
   @include breakpoint(phone) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; }
 }
-.creditsPerson { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.creditsPerson { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
 .creditsFn,
-.creditsLn { overflow-wrap: anywhere; font-family: $font-montserrat; font-size: 12.5px; }
+.creditsLn { overflow-wrap: anywhere; font-family: $font-montserrat; font-size: $font-size-sm; }
 .creditsFn { color: rgba($color-text-on-dark, 0.5); }
 .creditsLn { font-weight: $font-weight-medium; color: $color-text-on-dark; }
