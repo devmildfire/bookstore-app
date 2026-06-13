@@ -198,21 +198,28 @@ each issue is its own `Title` (own cover, editions, authors, stories) grouped un
 
 ---
 
-## G2 🟡 Email delivery — implemented, pending production cutover
+## G2 🟡 Email delivery — implemented + live-tested, pending prod cutover
 
 Built out via the Resend email system (see [docs/plans/email-system.md](plans/email-system.md)):
 auth confirmation + password reset (Supabase Send-Email hook → React Email → Resend),
 order confirmation, admin story-submission notification, and a double-opt-in mailing list
-with Resend Audience sync. `RESEND_API_KEY` is set; emails render via `@react-email/components`.
+with Resend Audience sync. **All of P0–P6 were live-tested end-to-end on 2026-06-13** against
+the verified `mildfire.dev` domain (delivered to real inboxes, not test mode) and the Resend
+Audience. The two follow-up migrations are applied, types regenerated, Supabase restarted.
+`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_AUDIENCE_ID`, `SEND_EMAIL_HOOK_SECRET`,
+`ADMIN_NOTIFICATIONS_EMAIL` are all set. **T1** (verified domain) and **T2** (Audience) are
+done in dev.
 
-**Still outstanding (production):**
-- Apply the two follow-up migrations (`20260613120000_order_confirmation_email.sql`,
-  `20260613130000_subscribers.sql`) + regenerate `src/types/supabase.ts`, and restart Supabase
-  so the auth hook + `enable_confirmations` take effect.
-- **T1** — verify a sending domain in Resend and set `RESEND_FROM_EMAIL` (test mode only
-  delivers to the account owner until then).
-- **T2** — create the Resend Audience, set `RESEND_AUDIENCE_ID` (mailing-list sync no-ops
-  until then).
+Live testing fixed a launch-blocking bug: the Send-Email hook sent to the empty `user.email`
+on the `email_change` (anon→account) path, 500-ing every registration — now sends to
+`new_email` (commit 274694e8).
+
+**Still outstanding (production only):**
+- Set `NEXT_PUBLIC_BASE_URL` to the prod origin (email/confirm/unsubscribe links default to
+  `http://localhost:3000`).
+- Point the auth hook `uri` at the live origin and set `SEND_EMAIL_HOOK_SECRET` in prod.
+- Re-verify the sending domain / re-create the Audience under the prod Resend account if
+  different from the current one.
 
 ---
 

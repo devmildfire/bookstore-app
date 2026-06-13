@@ -1,6 +1,9 @@
 # Email system (Resend) — plan
 
-Status: **planned, not started** (2026-06-13).
+Status: **P0–P6 implemented and live-tested** (2026-06-13). All transactional email +
+mailing-list scaffolding works end-to-end against the verified `mildfire.dev` domain and the
+Resend Audience. Remaining = prod-only cutover items in P7 (`NEXT_PUBLIC_BASE_URL`, prod hook
+URL/secret).
 
 Single source of truth for all outbound email: **transactional** (auth confirmation,
 password reset, order confirmation, admin notifications) and the scaffolding for a
@@ -72,14 +75,14 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | # | Phase | Status | Notes |
 |---|-------|--------|-------|
-| P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | code in; live-delivery check needs `node --env-file=.env scripts/test-email.mjs <your-resend-addr>` |
-| P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
-| P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
-| P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
-| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration APPLIED (2026-06-13), types regenerated; live-acceptance still pending |
-| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; superseded plan doc deleted |
-| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | migration `20260613130000` APPLIED (2026-06-13); live-acceptance still pending |
-| P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | 🟡 | T1 domain `mildfire.dev` verified + `RESEND_FROM_EMAIL` set; T2 Audience created + `RESEND_AUDIENCE_ID` set. Remaining: `ADMIN_NOTIFICATIONS_EMAIL` empty, `NEXT_PUBLIC_BASE_URL` empty (prod), prod hook URL/secret |
+| P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | live-tested 2026-06-13 (delivered) |
+| P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | live-tested; **fixed a launch-blocking bug** (hook sent to empty `user.email` on email_change — commit 274694e8) |
+| P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | live-tested (anon-upgrade path end-to-end); optional AccountWelcome still deferred |
+| P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | live-tested (new pw works, old rejected) |
+| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration applied; live-tested (one email, webhook replay idempotent) |
+| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | live-tested (delivered to ADMIN_NOTIFICATIONS_EMAIL) |
+| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | migration applied; live-tested full round-trip incl. Audience sync |
+| P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | 🟡 | **T1 done** (domain `mildfire.dev` verified, `RESEND_FROM_EMAIL` set); **T2 done** (Audience created + `RESEND_AUDIENCE_ID` set); `ADMIN_NOTIFICATIONS_EMAIL` set. Remaining for prod: `NEXT_PUBLIC_BASE_URL`, prod hook URL/secret |
 
 Per-phase sub-steps with acceptance checks are below. Tick the sub-boxes as you go; flip
 the table status when a phase's boxes are all ✅.
@@ -204,7 +207,11 @@ the table status when a phase's boxes are all ✅.
       runs in the browser, so the notify is a Server Action, not inside `submitStorySubmission`).
 - [x] Deleted `docs/plans/story-submission-notifications.md` (now shipped here).
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
-- [ ] **Live acceptance (manual):** submitting a story emails `ADMIN_NOTIFICATIONS_EMAIL`.
+- [x] **Live acceptance (2026-06-13):** submitted a story via `/suggest-story-to-rd`
+      (StorySubmitModal, fb2 upload) → "Новый рассказ на рассмотрение — Тестовый Автор P5"
+      delivered to `ADMIN_NOTIFICATIONS_EMAIL` (`mildfire@gmail.com`). Note: the `.env` line had
+      a space before `=` and is read at server startup, so it required normalizing the line +
+      a dev-server restart.
 
 ## P6 — Mailing list (scaffold, double opt-in) ✅ (code; migration not yet applied)
 
@@ -228,8 +235,11 @@ the table status when a phase's boxes are all ✅.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
 - [ ] **Apply migration (manual):** `supabase migration up`. Until then the subscribe RPCs error
       (subscribe surfaces a friendly failure; nothing crashes).
-- [ ] **Live acceptance (manual):** subscribe on /about → confirm email → link → `active` + in
-      admin list (+ Audience once T2 done); unsubscribe link flips to `unsubscribed`.
+- [x] **Live acceptance (2026-06-13):** subscribed on /about → `pending` row + "Подтвердите
+      подписку" delivered → confirm link (307 → `/newsletter?status=confirmed`) flipped to
+      `active`, stored `resend_contact_id`, and added the address to the Resend Audience.
+      Unsubscribe link (307 → `/newsletter?status=unsubscribed`) flipped to `unsubscribed` and
+      removed it from the Audience (back to 0 contacts). Audience sync (T2) confirmed working.
 
 ## P7 — Production cutover (tracked, not dev work)
 
