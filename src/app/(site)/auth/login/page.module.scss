@@ -29,25 +29,33 @@
 }
 
 .fieldError {
-  color: $color-danger;
+  color: $tone-accent-text;
   font-size: $font-size-xs;
   margin-top: $space-1;
 }
 
 .error {
-  color: $color-danger;
+  color: $tone-accent-text;
   font-size: $font-size-sm;
   padding: $space-2 $space-3;
-  background-color: $color-danger-bg;
+  background-color: $tone-accent-bg;
+  border: 1px solid $tone-accent-border;
   border-radius: $radius-md;
 }
 
 .success {
-  color: $color-success;
+  color: $tone-positive;
   font-size: $font-size-sm;
   padding: $space-2 $space-3;
-  background-color: $color-success-bg;
+  background-color: $tone-positive-bg;
+  border: 1px solid $tone-positive-border;
   border-radius: $radius-md;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-text-muted-on-dark;
+  margin-top: -$space-3;
 }
 
 .link {

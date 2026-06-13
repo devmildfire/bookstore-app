@@ -140,7 +140,16 @@ export async function updatePasswordAction(_prev: AuthError | null, formData: Fo
 
   const supabase = await createClient()
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password })
-  if (error) return { error: error.message }
+  if (error) {
+    // GoTrue messages are English; surface a Russian message to the user.
+    const samePassword =
+      error.code === 'same_password' || /different from the old/i.test(error.message)
+    return {
+      error: samePassword
+        ? 'Новый пароль должен отличаться от текущего.'
+        : 'Не удалось сохранить пароль. Откройте ссылку из письма ещё раз и попробуйте снова.',
+    }
+  }
 
   redirect('/profile')
 }

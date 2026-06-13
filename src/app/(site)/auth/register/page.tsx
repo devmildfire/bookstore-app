@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { startTransition, useActionState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -27,7 +27,7 @@ export default function RegisterPage() {
     const formData = new FormData()
     formData.set('email', data.email)
     formData.set('password', data.password)
-    serverAction(formData)
+    startTransition(() => serverAction(formData))
   }
 
   return (
