@@ -198,13 +198,21 @@ each issue is its own `Title` (own cover, editions, authors, stories) grouped un
 
 ---
 
-## G2 — Email delivery not implemented
+## G2 🟡 Email delivery — implemented, pending production cutover
 
-`resend` and `@react-email/components` are installed but no templates or sending
-logic exist. Order confirmation, password reset, and admin notification emails
-are all stubbed.
+Built out via the Resend email system (see [docs/plans/email-system.md](plans/email-system.md)):
+auth confirmation + password reset (Supabase Send-Email hook → React Email → Resend),
+order confirmation, admin story-submission notification, and a double-opt-in mailing list
+with Resend Audience sync. `RESEND_API_KEY` is set; emails render via `@react-email/components`.
 
-**Dependencies:** Brevo API key (see S1).
+**Still outstanding (production):**
+- Apply the two follow-up migrations (`20260613120000_order_confirmation_email.sql`,
+  `20260613130000_subscribers.sql`) + regenerate `src/types/supabase.ts`, and restart Supabase
+  so the auth hook + `enable_confirmations` take effect.
+- **T1** — verify a sending domain in Resend and set `RESEND_FROM_EMAIL` (test mode only
+  delivers to the account owner until then).
+- **T2** — create the Resend Audience, set `RESEND_AUDIENCE_ID` (mailing-list sync no-ops
+  until then).
 
 ---
 

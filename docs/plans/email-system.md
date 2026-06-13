@@ -7,8 +7,8 @@ password reset, order confirmation, admin notifications) and the scaffolding for
 future **mailing list**. Provider: **Resend** (`resend@4.8.0` + `@react-email/components@1.0.12`,
 both already installed). `RESEND_API_KEY` is set in `.env`.
 
-This plan **supersedes** `docs/plans/story-submission-notifications.md` — the admin
-story-submission notification is folded in here (Phase 5). Delete that doc once Phase 5 ships.
+This plan **superseded** `docs/plans/story-submission-notifications.md` (the admin
+story-submission notification is folded in here, Phase 5) — that doc has been deleted.
 
 ---
 
@@ -77,7 +77,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
-| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; deletion of the superseded plan doc pending user OK |
+| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; superseded plan doc deleted |
 | P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | code done; migration `20260613130000` NOT applied yet |
 | P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
 
@@ -185,7 +185,7 @@ the table status when a phase's boxes are all ✅.
       `ADMIN_NOTIFICATIONS_EMAIL` (best-effort, server action).
 - [x] Called from `StorySubmitModal` after a successful upload (fire-and-forget — the upload
       runs in the browser, so the notify is a Server Action, not inside `submitStorySubmission`).
-- [ ] Delete `docs/plans/story-submission-notifications.md` (now shipped here) — **pending user OK**.
+- [x] Deleted `docs/plans/story-submission-notifications.md` (now shipped here).
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
 - [ ] **Live acceptance (manual):** submitting a story emails `ADMIN_NOTIFICATIONS_EMAIL`.
 
