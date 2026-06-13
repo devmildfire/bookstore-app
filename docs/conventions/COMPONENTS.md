@@ -257,26 +257,28 @@ The `admin/` panel uses its own chrome (`AdminShell` + `AdminSideNav`) with
 email+password auth only (no OAuth, no anonymous). See the **Admin panel**
 section in `AGENTS.md`.
 
-## Admin Components
+## Shared primitives (`common/`)
 
-Admin UI lives in `src/components/admin/`. Key shared primitives:
+The single, app-wide UI set lives in `src/components/common/` and is used by both
+the storefront and `/admin`. Form/control primitives:
 
 | Component | Purpose |
 |-----------|---------|
-| `AdminShell` | Layout shell (sidebar + content) |
-| `AdminSideNav` | Sidebar navigation |
-| `AdminPageHeader` | Page title + actions bar |
-| `AdminList` | Paginated list with sort/filter |
-| `AdminFilterBar` | Filter controls row |
-| `AdminPager` | Pagination controls |
-| `AdminSelect` | Dropdown select with Scroller |
-| `AdminDatePicker` | Date input |
+| `Input` / `Textarea` | Text fields (bare or labelled; number-safe) |
+| `Select` | Custom dropdown — controlled, or `name`+hidden-input form mode |
+| `DatePicker` | Date / date-time picker (`withTime`/`yearOnly` variants) |
+| `Button` | All buttons — variants incl. `cta`/`ctaOutline`, `href` link mode |
+| `Pagination` | Pager — `variant` `simple` (admin) / `numbered` (storefront) |
+| `Badge` | Status pill (`tone`) |
+| `Checkbox`, `Counter`, `NumberStepper`, `Slider` | Other controls |
+| `Modal`, `Popover`, `Toast`, `Scroller`, `Skeleton`, `Spinner` | Chrome/feedback |
+| `icons/` | The app-wide line-art icon set |
 
-Domain-specific admin forms (books, authors, articles, box sets, etc.) live in
-subdirectories under `src/components/admin/`.
+## Admin-only components
 
-> **Note:** the text fields are no longer admin-specific. `AdminInput` /
-> `AdminTextarea` were promoted to **`common/Input`** / **`common/Textarea`** and
-> deleted from `admin/` (see the principle below). The remaining `Admin*`
-> primitives above are next in line for the same treatment — see
-> [docs/plans/ui-component-unification.md](../plans/ui-component-unification.md).
+Genuinely admin-specific compositions stay under `src/components/admin/`:
+`AdminShell` + `AdminSideNav` (the panel's chrome), plus `AdminPageHeader`,
+`AdminList`, `AdminFilterBar`, `ImageUploader`. These are single components (not
+duplicates) — a future review may move the generic ones to `common/`
+(see [docs/plans/ui-component-unification.md](../plans/ui-component-unification.md)).
+Domain-specific admin forms live in subdirectories under `src/components/admin/`.

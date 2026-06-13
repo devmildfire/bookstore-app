@@ -30,14 +30,24 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started
 | `StatusBadge` + `common/Badge` | `common/Badge` | 13 + 0 | ✅ | Done 2026-06-13 (commit d8dac5ed). `common/Badge` now = the StatusBadge impl, `tone` prop (neutral/positive/warning/danger/accent). |
 | `AdminPager` + `common/Pagination` | `common/Pagination` | 3 + 0 | ✅ | Done 2026-06-13 (commit c265f6fb). Link-based (SSR-safe), `variant='simple'` (admin) / `'numbered'` (storefront). |
 | `admin/ComingSoon` + `common/ComingSoon` | `common/ComingSoon` | 0 + 0 | ✅ | Done 2026-06-13. Both were dead code; deleted the admin copy, kept `common/ComingSoon`. |
-| **icon barrel** `admin/icons` → `common/icons` | `common/icons` | 12 | ⬜ | **Prerequisite for the DatePicker move.** `admin/icons/index.tsx` is the app's shared line-art icon set (30+ icons), not admin-specific. Relocate to `common/icons` (mind the collision: `common/icons` already holds `CartPlusIcon`/`ProductTypeIcon` as standalone files — fold them into the barrel or keep separate paths), update the 12 importers. |
-| `AdminDatePicker` | `common/DatePicker` | 5 | ⏸️ | Pure relocation, but it imports `Calendar`/`Chevron` icons from `admin/icons`. Do the icon-barrel move first, else `common/DatePicker` would import backwards from `admin/`. |
-| `AdminSelect` + `common/Select` | `common/Select` | 11 + 2 | ⬜ | **Decision needed.** Two different dropdowns (admin custom dropdown w/ Scroller vs storefront `<select>` wrapper). Pick the base (likely the admin custom dropdown), reconcile the API, add a variant for the storefront header select. |
-| `Button` / `PrimaryButton` / `OutlinedButton` | `common/Button` | 34 / 3 / 6 | ⬜ | **Decision needed.** Three components for one concept (all in `common/`). Collapse `PrimaryButton`/`OutlinedButton` into `Button` variants (`primary`/`outlined`), migrate, delete the extras — confirm the variant names + any behavioural differences first. |
-| `AdminList` / `AdminFilterBar` / `AdminPageHeader` / `ImageUploader` | (review) | — | ⬜ | Evaluate whether these are generic enough to move to `common/`; some may be legitimately admin-only compositions. |
+| **icon barrel** `admin/icons` → `common/icons` | `common/icons` | 12 | ✅ | Done 2026-06-13 (commit e635c881). Moved the barrel `index.tsx` to `common/icons` (the standalone `CartPlusIcon`/`ProductTypeIcon` stay as separate files — no collision), repointed 12 importers, removed a backwards dep from `common/NumberStepper`. |
+| `AdminDatePicker` → `common/DatePicker` | `common/DatePicker` | 5 | ✅ | Done 2026-06-13 (commit e635c881). Relocated + renamed; now imports icons from `common/icons`. |
+| `AdminSelect` + `common/Select` | `common/Select` | 11 + 2 | ✅ | Done 2026-06-13 (commit 9091c27f). Custom-dropdown base (Radix can't do empty values / hidden-input form submit); supports controlled (`value`/`onValueChange`) + uncontrolled (`name`/`defaultValue` + hidden input) + optional `label`/`error`. `onChange` kept as an alias. |
+| `Button` / `PrimaryButton` / `OutlinedButton` | `common/Button` | 34 / 3 / 6 | ✅ | Done 2026-06-13 (commit f83ba0ca). Added `cta`/`ctaOutline` variants (verbatim Figma styles) + `href` link mode + `fitContainer`; existing 34 untouched, 9 CTA consumers migrated, extras deleted. |
+| `AdminList` / `AdminFilterBar` / `AdminPageHeader` / `ImageUploader` | (review) | — | ⬜ | Evaluate whether these are generic enough to move to `common/`; some may be legitimately admin-only compositions. Lower priority — these are single components (not duplicates), just located under `admin/`. |
 
 Genuinely admin-only chrome that stays under `admin/`: `AdminShell`,
 `AdminSideNav` (the panel's layout shell, not reused on the storefront).
+
+## Status
+
+All true duplicates are collapsed: **Input, Textarea, Select, Pagination, Badge,
+DatePicker, the icon barrel, and the button trio** now have one implementation in
+`common/`. Remaining work is only the optional review of the admin-only
+compositions above (`AdminList`/`AdminFilterBar`/`AdminPageHeader`/`ImageUploader`),
+which are not duplicates. The `admin-field` mixin in `src/styles/mixins.scss` is the
+app-wide field base (Input/Textarea/Select/DatePicker) — consider renaming it
+`field-base` for clarity.
 
 ## Notes / gotchas
 
