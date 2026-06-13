@@ -1,6 +1,7 @@
 import { type NextRequest } from 'next/server'
 import { parseAndVerifyResult, buildResultResponse } from '@/lib/payments/robokassa/client'
 import { createAdminClient } from '@/lib/supabase/server'
+import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation'
 
 // Robokassa ResultURL webhook — the source of truth for payment. Robokassa
 // (or the mock gateway) calls this server-to-server after a payment. We verify
@@ -42,6 +43,9 @@ async function handle(params: Record<string, string>): Promise<Response> {
   if (payload?.status !== 'ok') {
     return new Response(`error: ${payload?.reason ?? 'unknown'}`, { status: 500 })
   }
+
+  // Confirmation email (best-effort, idempotent — internal try/catch, won't fail the OK).
+  await sendOrderConfirmationEmail(Number(verified.invId))
 
   return new Response(buildResultResponse(verified.invId), {
     status: 200,

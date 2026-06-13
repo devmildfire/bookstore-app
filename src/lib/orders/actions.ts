@@ -6,6 +6,7 @@ import { getDownloadUrl } from '@/api/orders/getDownloadUrl'
 import { getPaymentConfig } from '@/lib/payments/config'
 import { buildInitRedirect } from '@/lib/payments/robokassa/client'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
+import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation'
 import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
 import type {
   PlaceOrderInput,
@@ -50,6 +51,7 @@ export async function startCheckoutAction(input: PlaceOrderInput): Promise<Start
     if (error) {
       return { status: 'error', reason: 'unknown', message: error.message }
     }
+    await sendOrderConfirmationEmail(pending.orderId)
     return { status: 'paid', orderId: pending.orderId }
   }
 
@@ -98,6 +100,7 @@ export async function resumeCheckoutAction(orderId: number): Promise<StartChecko
       p_out_sum: '0.00',
     })
     if (payError) return { status: 'error', reason: 'unknown', message: payError.message }
+    await sendOrderConfirmationEmail(order.id)
     return { status: 'paid', orderId: order.id }
   }
 

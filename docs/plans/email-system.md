@@ -76,7 +76,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
-| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ⬜ | |
+| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ⬜ | |
 | P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ⬜ | |
 | P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
@@ -156,19 +156,27 @@ the table status when a phase's boxes are all ✅.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
 - [ ] **Live acceptance (manual):** forgot → recovery email → reset link → set password → signed in.
 
-## P4 — Order/payment confirmation email
+## P4 — Order/payment confirmation email ✅ (code; migration not yet applied)
 
-- [ ] Migration `Orders.confirmation_email_sent_at timestamptz` (on top of the baseline).
-- [ ] `src/emails/OrderConfirmation.tsx` — items, totals (snapshot fields), delivery info.
-- [ ] Send after a **fresh** paid transition, idempotently: claim with
-      `UPDATE "Orders" SET confirmation_email_sent_at = now() WHERE id = $1 AND status='paid'
-      AND confirmation_email_sent_at IS NULL RETURNING …`; send only if a row came back.
-      Recipient = `Orders.delivery_email` (fallback to account email).
-- [ ] Call sites: `src/app/api/payments/robokassa/result/route.ts` (webhook) and
-      `src/lib/orders/actions.ts` (0₽/gift-card-covered settle). Failures must not break the
-      payment path (log + swallow).
-- [ ] Acceptance: a mock-gateway purchase delivers exactly one confirmation email; replaying
-      the webhook sends nothing further.
+- [x] Migration `supabase/migrations/20260613120000_order_confirmation_email.sql` —
+      `Orders.confirmation_email_sent_at` + SECURITY DEFINER `claim_order_confirmation_email`
+      (atomic transition, returns true once) + `release_order_confirmation_email` (retry on
+      send failure). Granted to `service_role` only. (RPC-based so no generated-types
+      dependency — avoids editing `src/types/supabase.ts`.)
+- [x] `src/emails/OrderConfirmation.tsx` — line items (+ box-set label, qty), total.
+- [x] `src/lib/email/sendOrderConfirmation.ts` — claim → fetch order/items via admin client →
+      recipient = `Orders.delivery_email` (fallback to account email via
+      `auth.admin.getUserById`) → send. Best-effort (logs + swallows); releases claim on
+      send failure.
+- [x] Call sites: `result/route.ts` (webhook), `startCheckoutAction` + `resumeCheckoutAction`
+      0₽ settles. (Deliberately NOT the recurring-charge path — renewals don't fire the
+      one-time purchase confirmation.)
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Apply migration (manual):** `supabase migration up` (additive/safe) then regenerate
+      `src/types/supabase.ts`. Until applied, the claim RPC errors and the email silently
+      no-ops (payment flow unaffected).
+- [ ] **Live acceptance (manual):** a mock-gateway purchase delivers exactly one confirmation;
+      replaying the webhook sends nothing further.
 
 ## P5 — Admin: new story submission
 
