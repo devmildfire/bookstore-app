@@ -216,8 +216,9 @@ app/
     (panel)/               ← guarded route group
       layout.tsx           ← AdminShell (AdminSideNav + content area)
       orders/, books/, authors/, box-sets/, gift-cards/,
-      subscriptions/, promo-codes/, articles/, featured/,
-      submissions/, audit/ + dashboard
+      subscriptions/, promo-codes/, articles/, periodicals/,
+      awards/, featured/, partners/, team/, submissions/,
+      audit/ + dashboard   (dino-magazine/ → redirect to articles/)
 ```
 
 The `(catalog)/` route group exists to scope its `loading.tsx` away from
@@ -225,8 +226,8 @@ The `(catalog)/` route group exists to scope its `loading.tsx` away from
 groups before adding sibling `loading.tsx` files under a shared parent.
 
 The `admin/` panel uses its own chrome (`AdminShell` + `AdminSideNav`) with
-email+password auth only (no OAuth, no anonymous). See
-[docs/plans/admin-panel.md](../plans/admin-panel.md).
+email+password auth only (no OAuth, no anonymous). See the **Admin panel**
+section in `AGENTS.md`.
 
 ## Admin Components
 

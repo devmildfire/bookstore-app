@@ -21,8 +21,6 @@ import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
 //     `sb-pending-anon-id` cookie so /auth/callback can run
 //     migrate_anonymous_user on the way back
 //   - 302 redirect to the OAuth URL
-//
-// See docs/plans/auth-flow.md for the full design.
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

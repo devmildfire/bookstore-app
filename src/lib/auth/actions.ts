@@ -73,7 +73,7 @@ export async function logoutAction(): Promise<void> {
 
 // Moves an anonymous user's cart + orders onto the authenticated caller,
 // then deletes the anon row. Calls migrate_anonymous_user SECURITY DEFINER
-// (migration 20260521130000). Same RPC used by /auth/callback for the
+// (in the consolidated baseline schema). Same RPC used by /auth/callback for the
 // Google OAuth hand-off, so email/password and Google login behave the same.
 export async function migrateAnonymousUserAction(fromUserId: string): Promise<void> {
   const supabase = await createClient()

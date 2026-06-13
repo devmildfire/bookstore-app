@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 // Admin role lives in auth.users.app_metadata.role — set only via service-role
-// SQL (see docs/plans/admin-panel.md §9). app_metadata is not user-editable and
-// rides in the JWT, so the proxy and server can trust it without a DB lookup.
+// SQL (provision/promote with `node --env-file=.env scripts/seed-admin.mjs`).
+// app_metadata is not user-editable and rides in the JWT, so the proxy and
+// server can trust it without a DB lookup.
 export const ADMIN_ROLE = 'admin'
 
 export function isAdmin(user: User | null | undefined): boolean {

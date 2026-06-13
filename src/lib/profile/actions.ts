@@ -39,4 +39,4 @@ export async function setRecoveryEmailAction(email: string): Promise<SetRecovery
 // have the client navigate) raced Firefox's RSC stream reader and
 // surfaced "Uncaught TypeError: Error in input stream" mid-flight. A
 // top-level navigation to a Route Handler has no streaming response to
-// abort. See docs/plans/auth-flow.md.
+// abort.

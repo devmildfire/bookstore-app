@@ -2,7 +2,7 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-10.
+**Last reviewed:** 2026-06-13.
 
 ---
 
@@ -214,6 +214,44 @@ Removed the 8 Radix packages with zero `src/` imports (`accordion`, `icons`, `la
 `scroll-area` — superseded by OverlayScrollbars — `slot`, `switch`, `tabs`, `tooltip`).
 Remaining Radix deps are all in use: `checkbox`, `dialog`, `dropdown-menu`, `popover`,
 `select`, `toast`. `tsc` clean, 0 vulnerabilities, deps stay exact-pinned.
+
+---
+
+## P1 🟠 Pre-launch auth ops (carried over from the now-deleted auth-flow plan)
+
+The anon→OAuth/email migration flow is **implemented and shipped** (`migrate_anonymous_user`
+RPC, `GET /api/auth/google`, `tokens-only` cookie encoding). These deployment/ops items
+remain **outstanding** and are environment config, not repo state — they only matter once
+the VPS goes live:
+
+- **Prod Google OAuth client** — create the prod OAuth client + redirect URIs, set the
+  prod env vars; the Supabase Auth Google provider must point at them.
+- **Reverse-proxy `/auth/v1/*` routing + HTTPS end-to-end** — the proxy must forward Supabase
+  Auth routes to the Supabase container; OAuth requires HTTPS throughout.
+- **Anon-row garbage collection** — no `pg_cron` job exists to reap stale anonymous
+  `auth.users` rows. (Note: `expire_stale_pending_orders` reaps *orders*, not anon users —
+  unrelated.) Without it, abandoned anon sessions accumulate.
+- **Future (not started):** provider generalization (only Google is wired; Yandex/VK/Telegram
+  show a "Скоро" hint), an add-a-provider UX, a `Profiles.first_seen_at` audit column, and
+  field-level profile merge on migration.
+
+---
+
+## P2 🟠 Payments — go-live + intentionally-stubbed pieces (carried over from the now-deleted robokassa plan)
+
+The two-phase checkout + Robokassa integration is **implemented and shipped** behind
+`PAYMENT_PROVIDER` (defaults to `mock`; the in-app mock gateway is fully interactive). The
+following are intentionally out of scope / stubbed and remain **outstanding** for production:
+
+- **Flip `PAYMENT_PROVIDER` → `robokassa`** and supply real PSP credentials (merchant login +
+  passwords) via env; the signature/recurring logic is ready (`src/lib/payments/robokassa/`).
+- **Real fiscalization receipt** — `RobokassaReceipt` is a type-only stub (`receipt.ts` returns
+  `undefined`); a real 54-ФЗ payload is needed for live fiscalization.
+- **Real cron infrastructure** — the recurring-charge route
+  (`src/app/api/payments/robokassa/cron/route.ts`) exists and is `x-cron-secret`-guarded, but
+  no scheduler is wired to call it on a cadence.
+- **Not built (deferred):** saved-card UI, multi-currency, two-stage (hold/capture) flows.
+- Real SMTP for order/payment emails is tracked separately under **G2** above.
 
 ---
 

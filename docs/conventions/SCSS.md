@@ -167,8 +167,6 @@ import Scroller from '@/components/common/Scroller'
 The theme CSS lives in `globals.scss` under the `os-theme-chtivo` class selectors.
 Do not override OverlayScrollbars inline styles directly — edit the theme in `globals.scss`.
 
-See [docs/plans/custom-scrollbar.md](../plans/custom-scrollbar.md) for the full design.
-
 ## Specificity and Overrides
 
 - Avoid `!important` unless required to override a third-party stylesheet
