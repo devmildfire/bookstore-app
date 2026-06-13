@@ -27,6 +27,7 @@
 
   &:hover {
     background: rgba($color-text-on-dark, 0.04);
+    text-decoration: none;
   }
 }
 
@@ -106,11 +107,12 @@
   color: rgba($color-text-on-dark, 0.7);
   transition: color 140ms ease, background 140ms ease;
 
-  // No focus outline on nav items — color/background change only.
+  // No focus outline or underline on nav items — color/background change only.
   &:hover,
   &:focus-visible {
     color: $color-text-on-dark;
     background: rgba($color-text-on-dark, 0.04);
+    text-decoration: none;
     outline: none;
 
     .linkIcon {
