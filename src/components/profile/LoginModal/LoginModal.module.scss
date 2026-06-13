@@ -1,6 +1,96 @@
 @use '@/styles/common' as *;
 
-// Provider buttons (line-art circles). Modal chrome comes from common/Modal.
+// Email/password form sits above the OAuth icons. Modal chrome (dark panel)
+// comes from common/Modal, so fields are styled for the dark surface.
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-on-dark;
+}
+
+.input {
+  padding: $space-2 $space-3;
+  background: transparent;
+  border: 1px solid $color-border-hairline;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-on-dark;
+  outline: none;
+  transition: border-color 150ms ease;
+
+  &::placeholder {
+    color: rgba(220, 220, 220, 0.4);
+  }
+
+  &:focus {
+    border-color: $color-border-strong;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.submit {
+  width: 100%;
+  margin-top: $space-1;
+}
+
+.fieldError {
+  color: $color-accent-on-dark;
+  font-size: $font-size-xs;
+}
+
+.error {
+  color: $color-accent-on-dark;
+  font-size: $font-size-sm;
+}
+
+.formLinks {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-3;
+  font-size: $font-size-sm;
+
+  a {
+    color: rgba(220, 220, 220, 0.7);
+    transition: color 150ms ease;
+
+    &:hover {
+      color: $color-text-on-dark;
+    }
+  }
+}
+
+// "или войдите через" rule between the form and the provider icons.
+.divider {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin: $space-5 0 $space-4;
+  color: rgba(220, 220, 220, 0.5);
+  font-size: $font-size-xs;
+  text-transform: lowercase;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $color-border-hairline;
+  }
+}
+
+// Provider buttons (line-art circles).
 .providers {
   display: flex;
   justify-content: center;
