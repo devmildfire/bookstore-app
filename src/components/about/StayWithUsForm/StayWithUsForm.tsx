@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useToast } from '@/contexts/toast'
 import { subscribeAction } from '@/lib/subscribers/actions'
-import OutlinedButton from '@/components/common/OutlinedButton'
+import Button from '@/components/common/Button'
 import styles from './StayWithUsForm.module.scss'
 
 const schema = z.object({
@@ -54,9 +54,9 @@ export default function StayWithUsForm() {
               {...register('email')}
             />
           </div>
-          <OutlinedButton type='submit' className={styles.submit} disabled={isSubmitting}>
+          <Button variant='ctaOutline' type='submit' className={styles.submit} disabled={isSubmitting}>
             {isSubmitting ? 'Отправка…' : 'Подписаться'}
-          </OutlinedButton>
+          </Button>
         </div>
         {errors.email && <p className={styles.error}>{errors.email.message}</p>}
       </form>

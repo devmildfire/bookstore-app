@@ -113,6 +113,69 @@
       color: $color-accent-bright;
     }
   }
+
+  // ─── Marketing CTA variants (Figma) ───────────────────────────────────────
+  // Large rounded Montserrat CTAs with responsive padding. They set their own
+  // geometry (no `size` class is applied for these variants).
+  &.cta,
+  &.ctaOutline {
+    padding: 20px 80px;
+    border-radius: 4px;
+    color: $color-text-on-dark;
+    font-family: $font-montserrat;
+    font-weight: $font-weight-normal;
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: 0.8px;
+
+    &:focus-visible {
+      outline: 2px solid $color-text-on-dark;
+      outline-offset: 3px;
+    }
+
+    @include breakpoint(tablet) {
+      padding: 15px 50px;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+    @include breakpoint(tablet-small) {
+      padding: 10px 50px;
+      font-size: 12px;
+    }
+    @include breakpoint(phone) {
+      padding: 10px 50px;
+      font-size: 12px;
+    }
+  }
+
+  &.cta {
+    background: $color-accent-on-dark;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background: $color-accent-hover-on-dark;
+      color: $color-text-on-dark;
+    }
+  }
+
+  &.ctaOutline {
+    background: transparent;
+    border-color: $color-text-on-dark;
+
+    &:hover:not(:disabled) {
+      border-color: $color-accent-on-dark;
+      color: $color-accent-on-dark;
+    }
+  }
+
+  // Stretch to fill a narrow parent at the phone breakpoint (CTA buttons).
+  &.fitContainer {
+    @include breakpoint(phone) {
+      width: 100%;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
 }
 
 .buttonSpinner {

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useToast } from '@/contexts/toast'
-import OutlinedButton from '@/components/common/OutlinedButton'
+import Button from '@/components/common/Button'
 import styles from './DonateForm.module.scss'
 
 const schema = z.object({
@@ -57,9 +57,9 @@ export default function DonateForm() {
             ₽
           </span>
         </div>
-        <OutlinedButton type='submit' className={styles.submit} disabled={isSubmitting}>
+        <Button variant='ctaOutline' type='submit' className={styles.submit} disabled={isSubmitting}>
           {isSubmitting ? 'Отправка…' : 'Задонатить'}
-        </OutlinedButton>
+        </Button>
         {errors.amount && <p className={styles.error}>{errors.amount.message}</p>}
       </form>
     </section>

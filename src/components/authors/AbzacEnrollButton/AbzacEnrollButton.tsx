@@ -1,6 +1,6 @@
 'use client'
 
-import PrimaryButton from '@/components/common/PrimaryButton'
+import Button from '@/components/common/Button'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import { ABZAC_COURSE } from '@/consts/abzacCourse'
@@ -21,8 +21,8 @@ export default function AbzacEnrollButton({ className }: Props) {
   }
 
   return (
-    <PrimaryButton className={className} onClick={handleEnroll}>
+    <Button variant='cta' className={className} onClick={handleEnroll}>
       Обучаться
-    </PrimaryButton>
+    </Button>
   )
 }

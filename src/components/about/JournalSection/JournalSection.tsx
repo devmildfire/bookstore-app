@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import OutlinedButton from '@/components/common/OutlinedButton'
+import Button from '@/components/common/Button'
 import journalCollage from '@/assets/about/journal-collage.jpg'
 import JournalLeaf from '@/assets/about/journal-leaf.svg'
 import styles from './JournalSection.module.scss'
@@ -36,10 +36,10 @@ export default function JournalSection() {
           Лучшие рассказы года попадают в ежегодник «Могучий Русский Динозавр».
         </p>
 
-        <OutlinedButton href='/dino-magazine' className={styles.cta} fitContainer>
+        <Button variant='ctaOutline' href='/dino-magazine' className={styles.cta} fitContainer>
           <span className={styles.ctaDesktop}>Литжурнал Русского Динозавра</span>
           <span className={styles.ctaCompact}>Журнал Русского Динозавра</span>
-        </OutlinedButton>
+        </Button>
       </div>
     </section>
   )

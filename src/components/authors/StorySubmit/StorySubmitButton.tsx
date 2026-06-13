@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import PrimaryButton from '@/components/common/PrimaryButton'
+import Button from '@/components/common/Button'
 import StorySubmitModal from './StorySubmitModal'
 
 type Props = {
@@ -22,9 +22,9 @@ export default function StorySubmitButton({
   const [open, setOpen] = useState(false)
   return (
     <>
-      <PrimaryButton className={className} onClick={() => setOpen(true)}>
+      <Button variant='cta' className={className} onClick={() => setOpen(true)}>
         {children}
-      </PrimaryButton>
+      </Button>
       <StorySubmitModal
         open={open}
         onOpenChange={setOpen}

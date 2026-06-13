@@ -1,4 +1,4 @@
-import OutlinedButton from '@/components/common/OutlinedButton'
+import Button from '@/components/common/Button'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './CartTotals.module.scss'
 
@@ -55,9 +55,9 @@ export default function CartTotals({
         </div>
       </dl>
 
-      <OutlinedButton href='/checkout' className={styles.continue} fitContainer>
+      <Button variant='ctaOutline' href='/checkout' className={styles.continue} fitContainer>
         Продолжить
-      </OutlinedButton>
+      </Button>
 
       <p className={styles.caption}>
         После оплаты нажмите «Вернуться в магазин», чтобы скачать книгу.

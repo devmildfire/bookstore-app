@@ -3,8 +3,9 @@
 import { useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import Modal from '@/components/common/Modal'
-import PrimaryButton from '@/components/common/PrimaryButton'
-import OutlinedButton from '@/components/common/OutlinedButton'
+import Button from '@/components/common/Button'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import { submitStorySubmission } from '@/api/stories/submitStorySubmission'
 import { notifyStorySubmissionAction } from '@/lib/stories/actions'
 import {
@@ -126,9 +127,9 @@ function StoryForm({
         <p className={styles.successText}>
           Рассказ отправлен на рассмотрение. Мы свяжемся с вами по результатам.
         </p>
-        <PrimaryButton className={styles.submit} onClick={onClose}>
+        <Button variant='cta' className={styles.submit} onClick={onClose}>
           Закрыть
-        </PrimaryButton>
+        </Button>
       </div>
     )
   }
@@ -139,8 +140,7 @@ function StoryForm({
 
       <label className={styles.field}>
         <span className={styles.label}>Авторское имя</span>
-        <input
-          className={styles.input}
+        <Input
           type='text'
           value={authorName}
           onChange={(e) => {
@@ -153,8 +153,7 @@ function StoryForm({
 
       <label className={styles.field}>
         <span className={styles.label}>Сопроводительное письмо</span>
-        <textarea
-          className={styles.textarea}
+        <Textarea
           value={coverLetter}
           onChange={(e) => setCoverLetter(e.target.value)}
           placeholder={feedbackPrompt}
@@ -164,14 +163,14 @@ function StoryForm({
       </label>
 
       <div className={styles.upload}>
-        <OutlinedButton
-          as='button'
+        <Button
+          variant='ctaOutline'
           type='button'
           className={styles.uploadButton}
           onClick={() => inputRef.current?.click()}
         >
           Загрузить рассказ
-        </OutlinedButton>
+        </Button>
         <p className={styles.hint}>
           {STORY_ALLOWED_EXTENSIONS.join(', ')} · до {STORY_MAX_MB} МБ
         </p>
@@ -200,9 +199,9 @@ function StoryForm({
 
       {formError && <p className={styles.error}>{formError}</p>}
 
-      <PrimaryButton type='submit' className={styles.submit} disabled={busy}>
+      <Button variant='cta' type='submit' className={styles.submit} disabled={busy}>
         {busy ? 'Отправляем…' : 'Отправить на рассмотрение'}
-      </PrimaryButton>
+      </Button>
     </form>
   )
 }
