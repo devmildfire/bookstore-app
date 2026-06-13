@@ -945,6 +945,7 @@ export type Database = {
           book_discount_total: number
           city: string | null
           comment: string | null
+          confirmation_email_sent_at: string | null
           created_at: string
           delivery_email: string | null
           delivery_method: string | null
@@ -984,6 +985,7 @@ export type Database = {
           book_discount_total?: number
           city?: string | null
           comment?: string | null
+          confirmation_email_sent_at?: string | null
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
@@ -1023,6 +1025,7 @@ export type Database = {
           book_discount_total?: number
           city?: string | null
           comment?: string | null
+          confirmation_email_sent_at?: string | null
           created_at?: string
           delivery_email?: string | null
           delivery_method?: string | null
@@ -1305,6 +1308,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      Subscribers: {
+        Row: {
+          confirm_token: string
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          resend_contact_id: string | null
+          source: string | null
+          status: string
+          unsubscribe_token: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          confirm_token?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          resend_contact_id?: string | null
+          source?: string | null
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          confirm_token?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          resend_contact_id?: string | null
+          source?: string | null
+          status?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       Subscriptions: {
         Row: {
@@ -1646,6 +1691,11 @@ export type Database = {
         Args: { p_user_subscription_id: number }
         Returns: Json
       }
+      claim_order_confirmation_email: {
+        Args: { p_order_id: number }
+        Returns: boolean
+      }
+      confirm_newsletter: { Args: { p_token: string }; Returns: Json }
       create_pending_order: {
         Args: {
           p_email: string
@@ -1667,6 +1717,10 @@ export type Database = {
       default_edition_for_title: {
         Args: { p_title_id: number }
         Returns: string
+      }
+      expire_stale_pending_orders: {
+        Args: { p_days?: number }
+        Returns: number
       }
       generate_gift_card_code: { Args: never; Returns: string }
       get_cart_with_title_ids: {
@@ -1832,6 +1886,10 @@ export type Database = {
             Returns: Json
           }
       redeem_gift_card_token: { Args: { p_token: string }; Returns: string }
+      release_order_confirmation_email: {
+        Args: { p_order_id: number }
+        Returns: undefined
+      }
       search_books: {
         Args: {
           result_limit?: number
@@ -1863,12 +1921,21 @@ export type Database = {
         Args: { p_card_id: string; p_recipient_email: string }
         Returns: string
       }
+      set_subscriber_resend_contact: {
+        Args: { p_contact_id: string; p_email: string }
+        Returns: undefined
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      subscribe_newsletter: {
+        Args: { p_email: string; p_source: string }
+        Returns: Json
+      }
       toggle_like: {
         Args: { p_item_id: number; p_item_type: string }
         Returns: boolean
       }
+      unsubscribe_newsletter: { Args: { p_token: string }; Returns: Json }
     }
     Enums: {
       author_contact_channel:
