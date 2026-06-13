@@ -17,29 +17,6 @@
   color: $color-text-on-dark;
 }
 
-.input {
-  padding: $space-2 $space-3;
-  background: transparent;
-  border: 1px solid $color-border-hairline;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $color-text-on-dark;
-  outline: none;
-  transition: border-color 150ms ease;
-
-  &::placeholder {
-    color: rgba(220, 220, 220, 0.4);
-  }
-
-  &:focus {
-    border-color: $color-border-strong;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-  }
-}
-
 .submit {
   width: 100%;
   margin-top: $space-1;

@@ -36,33 +36,6 @@
   font-size: 0.85em;
 }
 
-.input,
-.textarea {
-  padding: $space-3 $space-4;
-  background: rgba($color-text-on-dark, 0.1);
-  border: 1px solid transparent;
-  border-radius: $radius-sm;
-  color: $color-text-on-dark;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  outline: none;
-  transition: border-color 0.15s ease;
-
-  &:focus {
-    border-color: rgba($color-text-on-dark, 0.4);
-  }
-}
-
-.input {
-  height: 50px;
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.5;
-}
-
 .error {
   margin: 0;
   font-family: $font-montserrat;

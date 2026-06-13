@@ -7,6 +7,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 import { registerAction } from '@/lib/auth/actions'
 import Button from '@/components/common/Button'
+import AdminInput from '@/components/admin/AdminInput'
 import styles from './page.module.scss'
 
 const schema = z.object({
@@ -37,13 +38,13 @@ export default function RegisterPage() {
 
         <label className={styles.label}>
           Email
-          <input type='email' {...register('email')} className={styles.input} placeholder='your@email.com' />
+          <AdminInput type='email' autoComplete='email' {...register('email')} placeholder='your@email.com' />
           {errors.email && <span className={styles.fieldError}>{errors.email.message}</span>}
         </label>
 
         <label className={styles.label}>
           Пароль
-          <input type='password' {...register('password')} className={styles.input} placeholder='Минимум 6 символов' />
+          <AdminInput type='password' autoComplete='new-password' {...register('password')} placeholder='Минимум 6 символов' />
           {errors.password && <span className={styles.fieldError}>{errors.password.message}</span>}
         </label>
 

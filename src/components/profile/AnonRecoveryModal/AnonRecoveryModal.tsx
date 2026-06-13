@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Modal from '@/components/common/Modal'
+import AdminInput from '@/components/admin/AdminInput'
 import { useToast } from '@/contexts/toast'
 import { setRecoveryEmailAction } from '@/lib/profile/actions'
 import styles from './AnonRecoveryModal.module.scss'
@@ -85,7 +86,7 @@ export default function AnonRecoveryModal({ open, onOpenChange }: Props) {
 
           {showInput ? (
             <div className={styles.emailRow}>
-              <input
+              <AdminInput
                 type='email'
                 placeholder='you@example.com'
                 value={email}
