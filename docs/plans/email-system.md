@@ -76,10 +76,10 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
-| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
+| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration APPLIED (2026-06-13), types regenerated; live-acceptance still pending |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; superseded plan doc deleted |
-| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | code done; migration `20260613130000` NOT applied yet |
-| P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
+| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | migration `20260613130000` APPLIED (2026-06-13); live-acceptance still pending |
+| P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | 🟡 | T1 domain `mildfire.dev` verified + `RESEND_FROM_EMAIL` set; T2 Audience created + `RESEND_AUDIENCE_ID` set. Remaining: `ADMIN_NOTIFICATIONS_EMAIL` empty, `NEXT_PUBLIC_BASE_URL` empty (prod), prod hook URL/secret |
 
 Per-phase sub-steps with acceptance checks are below. Tick the sub-boxes as you go; flip
 the table status when a phase's boxes are all ✅.
@@ -99,9 +99,10 @@ the table status when a phase's boxes are all ✅.
       `RESEND_AUDIENCE_ID`, tidied `ADMIN_NOTIFICATIONS_EMAIL`). `RESEND_API_KEY` /
       `ADMIN_NOTIFICATIONS_EMAIL` already in `.env`.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
-- [ ] **Live acceptance (manual, needs your address):** `node --env-file=.env
-      scripts/test-email.mjs <your-resend-account-email>` → email arrives. (`scripts/test-email.mjs`
-      is a throwaway dev aid; delete once real templates send.)
+- [x] **Live acceptance (2026-06-13):** `node --env-file=.env scripts/test-email.mjs
+      mildfire@gmail.com` → Resend `last_event: delivered` (msg `7d822b93…`), from the
+      verified `no-reply@mildfire.dev`. (`scripts/test-email.mjs` is a throwaway dev aid;
+      delete once the rest of the live-acceptance pass is done.)
 
 ## P1 — Auth Send-Email Hook ✅ (code; live test pending Supabase restart)
 
@@ -120,10 +121,11 @@ the table status when a phase's boxes are all ✅.
       sets session cookies on the redirect response, forwards to safe `next`.
 - [x] `SEND_EMAIL_HOOK_SECRET` generated into local `.env`.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
-- [ ] **Live acceptance (manual):** `supabase stop && supabase start` to load the hook,
-      then trigger a confirm/reset email and verify it routes through `/api/auth/hooks/send-email`
-      and arrives via Resend (test mode → your account address). Not run autonomously to
-      avoid disrupting the running local stack.
+- [x] **Live acceptance (2026-06-13):** anon-upgrade registration routed through
+      `/api/auth/hooks/send-email` and the email **delivered** via Resend to the verified
+      domain. ⚠️ Found + fixed a bug: the hook sent to the empty `user.email` on
+      `email_change`; GoTrue puts the address in `new_email`. Fixed in commit `274694e8`
+      (recipient = `new_email || email`). Without the fix every registration 500s.
 
 ## P2 — Registration confirmation + soft-gate UX ✅ (code; live test pending Supabase restart)
 
@@ -140,10 +142,14 @@ the table status when a phase's boxes are all ✅.
 - [~] `AccountWelcome.tsx` — **deferred** (optional). Add later from `/auth/confirm` on first
       confirm if wanted.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
-- [ ] **Live acceptance (manual):** after the Supabase restart, register both ways →
-      confirm email arrives (Resend test mode → owner address) → link confirms → banner clears.
-      ⚠️ With confirmations on locally, registration now requires a reachable confirm link, so
-      use the Resend account-owner address until a domain is verified (T1).
+- [x] **Live acceptance (2026-06-13, anon-upgrade path):** registered as anon →
+      `email_change` confirm email delivered → soft-gate `/profile` with `EmailConfirmBanner`
+      ("Мы отправили ссылку на …") → followed the link → DB shows `is_anonymous=f`,
+      `email_confirmed_at` set, `email_change` cleared, UID preserved → banner gone, sidebar
+      shows the authenticated "Выйти" state. (Required the `274694e8` hook fix above.)
+- [ ] **Live acceptance — fresh `signUp` path:** not exercised via the browser (providers
+      always create an anon session first, so the register page always takes the upgrade
+      branch). Lower risk — `signUp` populates `user.email`, which the hook already handled.
 
 ## P3 — Password reset ✅
 
