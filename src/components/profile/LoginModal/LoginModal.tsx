@@ -8,7 +8,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 import Modal from '@/components/common/Modal'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import { useToast } from '@/contexts/toast'
 import { loginAction } from '@/lib/auth/actions'
 import GoogleIcon from '@/assets/icons/google.svg'
@@ -95,7 +95,7 @@ export default function LoginModal({ open, onOpenChange }: Props) {
 
         <label className={styles.label}>
           Email
-          <AdminInput
+          <Input
             type='email'
             autoComplete='email'
             placeholder='your@email.com'
@@ -107,7 +107,7 @@ export default function LoginModal({ open, onOpenChange }: Props) {
 
         <label className={styles.label}>
           Пароль
-          <AdminInput
+          <Input
             type='password'
             autoComplete='current-password'
             placeholder='••••••••'

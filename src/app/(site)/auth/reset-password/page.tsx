@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { updatePasswordAction } from '@/lib/auth/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from '../login/page.module.scss'
 
 const schema = z
@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
 
         <label className={styles.label}>
           Новый пароль
-          <AdminInput
+          <Input
             type='password'
             autoComplete='new-password'
             placeholder='Минимум 6 символов'
@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
 
         <label className={styles.label}>
           Повторите новый пароль
-          <AdminInput
+          <Input
             type='password'
             autoComplete='new-password'
             placeholder='Ещё раз тот же пароль'

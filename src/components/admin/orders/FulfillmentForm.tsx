@@ -6,8 +6,8 @@ import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import { CheckIcon } from '@/components/admin/icons'
 import type { FulfillmentStatus } from '@/entities/order/client'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import styles from './FulfillmentForm.module.scss'
 
 const OPTIONS: { value: FulfillmentStatus; label: string }[] = [
@@ -40,7 +40,7 @@ export default function FulfillmentForm({ orderId, current, trackingNumber, trac
       <div className={styles.row}>
         <label className={styles.label}>
           Трек-номер
-          <AdminInput
+          <Input
             type='text'
             name='trackingNumber'
             defaultValue={trackingNumber ?? ''}
@@ -49,7 +49,7 @@ export default function FulfillmentForm({ orderId, current, trackingNumber, trac
         </label>
         <label className={styles.label}>
           Служба доставки
-          <AdminInput
+          <Input
             type='text'
             name='carrier'
             defaultValue={trackingCarrier ?? ''}
@@ -60,7 +60,7 @@ export default function FulfillmentForm({ orderId, current, trackingNumber, trac
 
       <label className={styles.label}>
         Внутренняя заметка
-        <AdminTextarea name='note' defaultValue={adminNote ?? ''} rows={3} />
+        <Textarea name='note' defaultValue={adminNote ?? ''} rows={3} />
       </label>
 
       <div className={styles.actions}>

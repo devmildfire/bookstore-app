@@ -6,7 +6,7 @@ import { updateAwardAction, deleteAwardAction } from '@/lib/admin/awards/actions
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import type { AdminAward } from '@/api/admin/awards'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './AwardForm.module.scss'
 
 export default function AwardEditForm({ award }: { award: AdminAward }) {
@@ -38,18 +38,18 @@ export default function AwardEditForm({ award }: { award: AdminAward }) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <AdminInput name='title' defaultValue={award.title} required />
+          <Input name='title' defaultValue={award.title} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={award.slug} required />
+          <Input name='slug' defaultValue={award.slug} required />
         </label>
       </div>
 
       <div className={styles.grid}>
         <label className={styles.label}>
           Позиция
-          <AdminInput name='position' type='number' min={0} defaultValue={award.position} />
+          <Input name='position' type='number' min={0} defaultValue={award.position} />
         </label>
         <div className={styles.checks}>
           <Checkbox name='isActive' defaultChecked={award.isActive} label='Активна' />

@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createTeamMemberAction } from '@/lib/admin/team/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './MemberForm.module.scss'
 
 export default function MemberCreateForm() {
@@ -13,11 +13,11 @@ export default function MemberCreateForm() {
       <p className={styles.note}>Фото и город добавите на следующем шаге.</p>
       <label className={styles.label}>
         Имя
-        <AdminInput name='name' required placeholder='Например: Андрей Янкус' />
+        <Input name='name' required placeholder='Например: Андрей Янкус' />
       </label>
       <label className={styles.label}>
         Должность
-        <AdminInput name='job' required placeholder='Например: продюсер' />
+        <Input name='job' required placeholder='Например: продюсер' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

@@ -6,8 +6,8 @@ import { updateAuthorAction, deleteAuthorAction } from '@/lib/admin/authors/acti
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import type { AdminAuthor } from '@/api/admin/authors'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './AuthorEditForm.module.scss'
 
@@ -35,12 +35,12 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
 
       <label className={styles.label}>
         Имя
-        <AdminInput name='name' defaultValue={author.name} required />
+        <Input name='name' defaultValue={author.name} required />
       </label>
 
       <label className={styles.label}>
         Биография
-        <AdminTextarea name='bio' defaultValue={author.bio ?? ''} rows={5} />
+        <Textarea name='bio' defaultValue={author.bio ?? ''} rows={5} />
       </label>
 
       <div className={styles.grid}>
@@ -54,13 +54,13 @@ export default function AuthorEditForm({ author }: { author: AdminAuthor }) {
         </div>
         <label className={styles.label}>
           Город
-          <AdminInput name='city' defaultValue={author.city ?? ''} />
+          <Input name='city' defaultValue={author.city ?? ''} />
         </label>
       </div>
 
       <label className={styles.label}>
         Фраза / цитата
-        <AdminTextarea name='phrase' defaultValue={author.phrase ?? ''} rows={3} />
+        <Textarea name='phrase' defaultValue={author.phrase ?? ''} rows={3} />
       </label>
 
       <Checkbox name='nonsalable' defaultChecked={author.nonsalable} label='Непродаваемый (служебный автор)' />

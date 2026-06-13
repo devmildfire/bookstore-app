@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createBookAction } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './BookCreateForm.module.scss'
 
 export default function BookCreateForm() {
@@ -17,12 +17,12 @@ export default function BookCreateForm() {
 
       <label className={styles.label}>
         Название
-        <AdminInput name='name' required placeholder='Например: Белый цветок' />
+        <Input name='name' required placeholder='Например: Белый цветок' />
       </label>
 
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required placeholder='white-flower' />
+        <Input name='slug' required placeholder='white-flower' />
       </label>
 
       <div className={styles.actions}>

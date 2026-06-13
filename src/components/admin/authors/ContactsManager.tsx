@@ -10,7 +10,7 @@ import {
   type AdminAuthorContact,
   type AuthorContactChannel,
 } from '@/lib/admin/authorContacts'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import {
   VkIcon,
   TelegramIcon,
@@ -105,7 +105,7 @@ export default function ContactsManager({ authorId, contacts }: Props) {
           onChange={setChannel}
           options={AUTHOR_CONTACT_CHANNELS.map((ch) => ({ value: ch, label: CONTACT_CHANNEL_LABEL[ch] }))}
         />
-        <AdminInput ref={urlRef} placeholder='https://… или email' disabled={busy} />
+        <Input ref={urlRef} placeholder='https://… или email' disabled={busy} />
         <button type='button' className={styles.addButton} onClick={handleAdd} disabled={busy}>
           Добавить
         </button>

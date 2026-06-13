@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createSubscriptionAction } from '@/lib/admin/subscriptions/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './SubscriptionCreateForm.module.scss'
 
 export default function SubscriptionCreateForm() {
@@ -13,15 +13,15 @@ export default function SubscriptionCreateForm() {
       <p className={styles.note}>Подписка создаётся неопубликованной. Преимущества и картинку задайте на следующем шаге.</p>
       <label className={styles.label}>
         Название
-        <AdminInput name='name' required placeholder='Например: Подписка на год' />
+        <Input name='name' required placeholder='Например: Подписка на год' />
       </label>
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required placeholder='yearly' />
+        <Input name='slug' required placeholder='yearly' />
       </label>
       <label className={styles.label}>
         Цена ₽
-        <AdminInput name='price' type='number' min={0} required placeholder='5000' />
+        <Input name='price' type='number' min={0} required placeholder='5000' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

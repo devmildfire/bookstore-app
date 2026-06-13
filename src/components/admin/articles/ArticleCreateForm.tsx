@@ -4,7 +4,7 @@ import { useActionState } from 'react'
 import { createArticleAction } from '@/lib/admin/articles/actions'
 import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './ArticleCreateForm.module.scss'
 
 type Props = { authorOptions: { id: number; name: string }[] }
@@ -16,11 +16,11 @@ export default function ArticleCreateForm({ authorOptions }: Props) {
       <p className={styles.note}>Контент и обложку добавите на следующем шаге.</p>
       <label className={styles.label}>
         Заголовок
-        <AdminInput name='title' required />
+        <Input name='title' required />
       </label>
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required />
+        <Input name='slug' required />
       </label>
       <div className={styles.label}>
         <span>Автор</span>

@@ -7,8 +7,8 @@ import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './ArticleEditForm.module.scss'
 
@@ -46,11 +46,11 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Заголовок
-          <AdminInput name='title' defaultValue={article.title} required />
+          <Input name='title' defaultValue={article.title} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={article.slug} required />
+          <Input name='slug' defaultValue={article.slug} required />
         </label>
         <div className={styles.label}>
           <span>Автор</span>
@@ -69,7 +69,7 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
 
       <label className={styles.label}>
         Анонс (excerpt)
-        <AdminTextarea name='excerpt' defaultValue={article.excerpt ?? ''} rows={2} />
+        <Textarea name='excerpt' defaultValue={article.excerpt ?? ''} rows={2} />
       </label>
 
       <div className={styles.label}>

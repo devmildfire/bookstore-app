@@ -7,8 +7,8 @@ import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
 import { CheckIcon } from '@/components/admin/icons'
 import type { AdminBook } from '@/api/admin/books'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './BookEditForm.module.scss'
@@ -25,22 +25,22 @@ export default function BookEditForm({ book }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <AdminInput name='name' defaultValue={book.name} required />
+          <Input name='name' defaultValue={book.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={book.slug ?? ''} required />
+          <Input name='slug' defaultValue={book.slug ?? ''} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <AdminTextarea name='description' defaultValue={book.description ?? ''} rows={5} />
+        <Textarea name='description' defaultValue={book.description ?? ''} rows={5} />
       </label>
 
       <label className={styles.label}>
         Тезис
-        <AdminTextarea name='thesis' defaultValue={book.thesis ?? ''} rows={2} />
+        <Textarea name='thesis' defaultValue={book.thesis ?? ''} rows={2} />
       </label>
 
       <div className={styles.grid}>
@@ -54,7 +54,7 @@ export default function BookEditForm({ book }: Props) {
         </div>
         <label className={styles.label}>
           Литературная форма
-          <AdminInput name='litForm' defaultValue={book.litForm ?? ''} />
+          <Input name='litForm' defaultValue={book.litForm ?? ''} />
         </label>
       </div>
 
@@ -83,11 +83,11 @@ export default function BookEditForm({ book }: Props) {
           </label>
           <label className={styles.label}>
             Номер тома
-            <AdminInput name='volumeNumber' type='number' min={0} defaultValue={book.volumeNumber ?? ''} />
+            <Input name='volumeNumber' type='number' min={0} defaultValue={book.volumeNumber ?? ''} />
           </label>
           <label className={styles.label}>
             Год тома
-            <AdminInput name='volumeYear' defaultValue={book.volumeYear ?? ''} placeholder='2025' />
+            <Input name='volumeYear' defaultValue={book.volumeYear ?? ''} placeholder='2025' />
           </label>
         </div>
       </fieldset>

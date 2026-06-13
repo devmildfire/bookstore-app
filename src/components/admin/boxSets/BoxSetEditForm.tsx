@@ -6,8 +6,8 @@ import { updateBoxSetAction, deleteBoxSetAction } from '@/lib/admin/boxSets/acti
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import type { AdminBoxSet } from '@/api/admin/boxSets'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import styles from './BoxSetEditForm.module.scss'
 
 export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
@@ -35,27 +35,27 @@ export default function BoxSetEditForm({ boxSet }: { boxSet: AdminBoxSet }) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <AdminInput name='name' defaultValue={boxSet.name} required />
+          <Input name='name' defaultValue={boxSet.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={boxSet.slug} required />
+          <Input name='slug' defaultValue={boxSet.slug} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <AdminTextarea name='description' defaultValue={boxSet.description ?? ''} rows={4} />
+        <Textarea name='description' defaultValue={boxSet.description ?? ''} rows={4} />
       </label>
 
       <div className={styles.grid}>
         <label className={styles.label}>
           Цена ₽
-          <AdminInput name='price' type='number' min={0} defaultValue={boxSet.price} />
+          <Input name='price' type='number' min={0} defaultValue={boxSet.price} />
         </label>
         <label className={styles.label}>
           Скидка %
-          <AdminInput name='discount' type='number' min={0} max={100} defaultValue={boxSet.discount ?? ''} />
+          <Input name='discount' type='number' min={0} max={100} defaultValue={boxSet.discount ?? ''} />
         </label>
       </div>
 

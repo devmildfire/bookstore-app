@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { addBoxSetBookAction, removeBoxSetBookAction } from '@/lib/admin/boxSets/actions'
 import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminBoxSetBook } from '@/api/admin/boxSets'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './BoxSetBooksManager.module.scss'
 
 type Props = {
@@ -81,7 +81,7 @@ export default function BoxSetBooksManager({ boxSetId, books, titleOptions }: Pr
             ...titleOptions.map((t) => ({ value: String(t.id), label: t.name })),
           ]}
         />
-        <AdminInput
+        <Input
           ref={productRef}
           placeholder='product_id (необязательно, напр. PrintBook-5)'
           disabled={busy}

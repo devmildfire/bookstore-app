@@ -16,7 +16,7 @@ import {
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import StatusBadge from '@/components/admin/StatusBadge'
 import { PaperIcon, DigitalIcon, AudioIcon, PlusIcon, TrashIcon, UploadIcon, CheckIcon } from '@/components/admin/icons'
 import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
@@ -101,7 +101,7 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
           <div className={styles.field}>
             <span className={styles.fieldLabel}>Цена</span>
             <div className={styles.affix}>
-              <AdminInput name='price' type='number' step='0.01' defaultValue={edition.price ?? ''} className={styles.affixInput} />
+              <Input name='price' type='number' step='0.01' defaultValue={edition.price ?? ''} className={styles.affixInput} />
               <span className={styles.affixUnit}>₽</span>
             </div>
           </div>
@@ -208,8 +208,8 @@ function WorkersSlot({ titleId, edition }: { titleId: number; edition: AdminEdit
         </ul>
       )}
       <div className={styles.workerAdd}>
-        <AdminInput ref={nameRef} className={styles.workerField} placeholder='Имя' disabled={busy} />
-        <AdminInput ref={jobRef} className={styles.workerField} placeholder='Роль (напр. Переводчик)' disabled={busy} />
+        <Input ref={nameRef} className={styles.workerField} placeholder='Имя' disabled={busy} />
+        <Input ref={jobRef} className={styles.workerField} placeholder='Роль (напр. Переводчик)' disabled={busy} />
         <button type='button' className={styles.fileButton} onClick={handleAdd} disabled={busy}>
           + Добавить
         </button>

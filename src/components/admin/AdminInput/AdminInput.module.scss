@@ -1,7 +1,0 @@
-@use '@/styles/common' as *;
-
-.input {
-  @include admin-field;
-  height: 44px;
-  padding: 0 14px;
-}

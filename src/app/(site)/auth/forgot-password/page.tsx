@@ -7,7 +7,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 import { requestPasswordResetAction } from '@/lib/auth/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from '../login/page.module.scss'
 
 const schema = z.object({ email: z.string().email('Введите корректный email') })
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
 
           <label className={styles.label}>
             Email
-            <AdminInput type='email' autoComplete='email' {...register('email')} placeholder='your@email.com' />
+            <Input type='email' autoComplete='email' {...register('email')} placeholder='your@email.com' />
             {errors.email && <span className={styles.fieldError}>{errors.email.message}</span>}
           </label>
 

@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createPartnerAction } from '@/lib/admin/partners/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './PartnerForm.module.scss'
 
 export default function PartnerCreateForm() {
@@ -13,7 +13,7 @@ export default function PartnerCreateForm() {
       <p className={styles.note}>Логотип и ссылку добавите на следующем шаге.</p>
       <label className={styles.label}>
         Название
-        <AdminInput name='name' required placeholder='Например: Подписные издания' />
+        <Input name='name' required placeholder='Например: Подписные издания' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

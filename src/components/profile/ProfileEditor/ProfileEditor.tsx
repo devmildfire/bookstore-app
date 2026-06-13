@@ -8,8 +8,8 @@ import { updateProfileAction } from '@/lib/profile/actions'
 import { profileEditSchema, type ProfileEditValues } from '@/entities/profile/validation'
 import AvatarUpload from '@/components/profile/AvatarUpload'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import styles from './ProfileEditor.module.scss'
 
 type Props = {
@@ -73,7 +73,7 @@ export default function ProfileEditor({ onDone }: Props) {
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className={styles.field}>
           <label htmlFor='profile-nickname' className={styles.label}>Никнейм</label>
-          <AdminInput id='profile-nickname' {...register('nickname')} />
+          <Input id='profile-nickname' {...register('nickname')} />
           {errors.nickname && <p className={styles.error}>{errors.nickname.message}</p>}
         </div>
 
@@ -81,7 +81,7 @@ export default function ProfileEditor({ onDone }: Props) {
           <label htmlFor='profile-fullName' className={styles.label}>
             ФИО <span className={styles.optional}>(необязательно)</span>
           </label>
-          <AdminInput id='profile-fullName' {...register('fullName')} />
+          <Input id='profile-fullName' {...register('fullName')} />
           {errors.fullName && <p className={styles.error}>{errors.fullName.message}</p>}
         </div>
 
@@ -89,7 +89,7 @@ export default function ProfileEditor({ onDone }: Props) {
           <label htmlFor='profile-phone' className={styles.label}>
             Телефон <span className={styles.optional}>(необязательно)</span>
           </label>
-          <AdminInput id='profile-phone' type='tel' {...register('phone')} />
+          <Input id='profile-phone' type='tel' {...register('phone')} />
           {errors.phone && <p className={styles.error}>{errors.phone.message}</p>}
         </div>
 
@@ -111,7 +111,7 @@ export default function ProfileEditor({ onDone }: Props) {
           <label htmlFor='profile-city' className={styles.label}>
             Город <span className={styles.optional}>(необязательно)</span>
           </label>
-          <AdminInput id='profile-city' {...register('city')} />
+          <Input id='profile-city' {...register('city')} />
           {errors.city && <p className={styles.error}>{errors.city.message}</p>}
         </div>
 
@@ -119,7 +119,7 @@ export default function ProfileEditor({ onDone }: Props) {
           <label htmlFor='profile-about' className={styles.label}>
             О себе <span className={styles.optional}>(необязательно)</span>
           </label>
-          <AdminTextarea id='profile-about' rows={6} {...register('about')} />
+          <Textarea id='profile-about' rows={6} {...register('about')} />
           {errors.about && <p className={styles.error}>{errors.about.message}</p>}
         </div>
 

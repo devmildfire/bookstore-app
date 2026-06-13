@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { updateTeamMemberAction, removeTeamMemberAction } from '@/lib/admin/team/actions'
 import Button from '@/components/common/Button'
 import type { AdminTeamMember } from '@/api/admin/team'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './MemberForm.module.scss'
 
 export default function MemberEditForm({ member }: { member: AdminTeamMember }) {
@@ -33,22 +33,22 @@ export default function MemberEditForm({ member }: { member: AdminTeamMember }) 
       <div className={styles.grid}>
         <label className={styles.label}>
           Имя
-          <AdminInput name='name' defaultValue={member.name} required />
+          <Input name='name' defaultValue={member.name} required />
         </label>
         <label className={styles.label}>
           Должность
-          <AdminInput name='job' defaultValue={member.job} required />
+          <Input name='job' defaultValue={member.job} required />
         </label>
       </div>
 
       <div className={styles.grid}>
         <label className={styles.label}>
           Город
-          <AdminInput name='city' defaultValue={member.city ?? ''} placeholder='Например: Санкт-Петербург' />
+          <Input name='city' defaultValue={member.city ?? ''} placeholder='Например: Санкт-Петербург' />
         </label>
         <label className={styles.label}>
           Позиция
-          <AdminInput name='position' type='number' min={0} defaultValue={member.position} />
+          <Input name='position' type='number' min={0} defaultValue={member.position} />
         </label>
       </div>
 

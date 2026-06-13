@@ -45,7 +45,7 @@
 }
 
 // ─── Admin field (input / textarea) ─────────────────────────────────────────────
-// Shared base for the standard admin text controls (AdminInput / AdminTextarea):
+// Shared base for the standard text controls (Input / Textarea / Select / DatePicker):
 // dark inset, hairline border, hard edges, accent focus.
 
 @mixin admin-field {

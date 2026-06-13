@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { loginAction } from '@/lib/auth/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './page.module.scss'
 
 const schema = z.object({
@@ -56,13 +56,13 @@ export default function LoginPage() {
 
         <label className={styles.label}>
           Email
-          <AdminInput type='email' autoComplete='email' {...register('email')} placeholder='your@email.com' />
+          <Input type='email' autoComplete='email' {...register('email')} placeholder='your@email.com' />
           {errors.email && <span className={styles.fieldError}>{errors.email.message}</span>}
         </label>
 
         <label className={styles.label}>
           Пароль
-          <AdminInput type='password' autoComplete='current-password' {...register('password')} placeholder='••••••••' />
+          <Input type='password' autoComplete='current-password' {...register('password')} placeholder='••••••••' />
           {errors.password && <span className={styles.fieldError}>{errors.password.message}</span>}
         </label>
 

@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { updatePeriodicalAction, deletePeriodicalAction } from '@/lib/admin/periodicals/actions'
 import Button from '@/components/common/Button'
 import type { AdminPeriodical } from '@/api/admin/periodicals'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import styles from './PeriodicalForm.module.scss'
 
 export default function PeriodicalEditForm({ periodical }: { periodical: AdminPeriodical }) {
@@ -38,27 +38,27 @@ export default function PeriodicalEditForm({ periodical }: { periodical: AdminPe
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <AdminInput name='name' defaultValue={periodical.name} required />
+          <Input name='name' defaultValue={periodical.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={periodical.slug ?? ''} required />
+          <Input name='slug' defaultValue={periodical.slug ?? ''} required />
         </label>
       </div>
 
       <label className={styles.label}>
         Тезис
-        <AdminTextarea name='thesis' defaultValue={periodical.thesis ?? ''} rows={2} />
+        <Textarea name='thesis' defaultValue={periodical.thesis ?? ''} rows={2} />
       </label>
 
       <label className={styles.label}>
         Описание
-        <AdminTextarea name='description' defaultValue={periodical.description ?? ''} rows={4} />
+        <Textarea name='description' defaultValue={periodical.description ?? ''} rows={4} />
       </label>
 
       <label className={styles.label}>
         Позиция
-        <AdminInput name='position' type='number' min={0} defaultValue={periodical.position} />
+        <Input name='position' type='number' min={0} defaultValue={periodical.position} />
       </label>
 
       <div className={styles.actions}>

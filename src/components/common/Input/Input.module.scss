@@ -1,5 +1,14 @@
 @use '@/styles/common' as *;
 
+// The one input look, shared by storefront + admin. Dark inset field from the
+// design system (admin-field mixin), 44px tall.
+.input {
+  @include admin-field;
+  height: 44px;
+  padding: 0 14px;
+}
+
+// Wrapper mode (label/error/hint) — labelled field block.
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -9,49 +18,23 @@
 .label {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $color-text-primary;
-}
-
-.input {
-  width: 100%;
-  padding: $space-2 $space-3;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $color-text-primary;
-  background-color: $color-bg-surface;
-  transition: border-color 0.15s ease;
-
-  &::placeholder {
-    color: $color-text-muted;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: $color-border-focus;
-  }
-
-  &:disabled {
-    background-color: $color-bg-muted;
-    color: $color-text-muted;
-    cursor: not-allowed;
-  }
+  color: $color-text-on-dark;
 }
 
 .hasError .input {
-  border-color: $color-danger;
+  border-color: $tone-accent-border;
 
   &:focus {
-    border-color: $color-danger;
+    border-color: $tone-accent-text;
   }
 }
 
 .error {
-  font-size: $font-size-sm;
-  color: $color-danger;
+  font-size: $font-size-xs;
+  color: $tone-accent-text;
 }
 
 .hint {
-  font-size: $font-size-sm;
-  color: $color-text-muted;
+  font-size: $font-size-xs;
+  color: $color-text-muted-on-dark;
 }

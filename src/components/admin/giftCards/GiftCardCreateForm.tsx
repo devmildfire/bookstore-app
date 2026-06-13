@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createGiftCardAction } from '@/lib/admin/giftCards/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './GiftCardCreateForm.module.scss'
 
 export default function GiftCardCreateForm() {
@@ -12,15 +12,15 @@ export default function GiftCardCreateForm() {
     <form action={action} className={styles.form}>
       <label className={styles.label}>
         Название
-        <AdminInput name='name' required placeholder='Например: Карта даров 1000 ₽' />
+        <Input name='name' required placeholder='Например: Карта даров 1000 ₽' />
       </label>
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required placeholder='gift-1000' />
+        <Input name='slug' required placeholder='gift-1000' />
       </label>
       <label className={styles.label}>
         Номинал ₽
-        <AdminInput name='faceValue' type='number' min={1} required placeholder='1000' />
+        <Input name='faceValue' type='number' min={1} required placeholder='1000' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

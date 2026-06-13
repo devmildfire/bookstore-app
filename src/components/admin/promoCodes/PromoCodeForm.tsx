@@ -10,7 +10,7 @@ import {
 import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminPromoCode } from '@/api/admin/promoCodes'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import AdminDatePicker from '@/components/admin/AdminDatePicker'
 import styles from './PromoCodeForm.module.scss'
 
@@ -55,11 +55,11 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
       <div className={styles.grid}>
         <label className={styles.label}>
           Код
-          <AdminInput name='code' defaultValue={promo?.code ?? ''} required placeholder='SUMMER25' />
+          <Input name='code' defaultValue={promo?.code ?? ''} required placeholder='SUMMER25' />
         </label>
         <label className={styles.label}>
           Скидка %
-          <AdminInput
+          <Input
             name='discountPct'
             type='number'
             min={1}
@@ -99,7 +99,7 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
           </div>
           <label className={styles.label}>
             …или product_id
-            <AdminInput
+            <Input
               name='targetProductId'
               defaultValue={promo?.targetProductId ?? ''}
               placeholder='напр. AudioBook-4'

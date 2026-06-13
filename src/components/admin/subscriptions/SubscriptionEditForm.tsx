@@ -6,8 +6,8 @@ import { updateSubscriptionAction, deleteSubscriptionAction } from '@/lib/admin/
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import type { AdminSubscription } from '@/api/admin/subscriptions'
-import AdminInput from '@/components/admin/AdminInput'
-import AdminTextarea from '@/components/admin/AdminTextarea'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
 import styles from './SubscriptionEditForm.module.scss'
 
 export default function SubscriptionEditForm({ subscription }: { subscription: AdminSubscription }) {
@@ -35,30 +35,30 @@ export default function SubscriptionEditForm({ subscription }: { subscription: A
       <div className={styles.grid}>
         <label className={styles.label}>
           Название
-          <AdminInput name='name' defaultValue={subscription.name} required />
+          <Input name='name' defaultValue={subscription.name} required />
         </label>
         <label className={styles.label}>
           Slug
-          <AdminInput name='slug' defaultValue={subscription.slug} required />
+          <Input name='slug' defaultValue={subscription.slug} required />
         </label>
         <label className={styles.label}>
           Цена ₽
-          <AdminInput name='price' type='number' min={0} defaultValue={subscription.price} />
+          <Input name='price' type='number' min={0} defaultValue={subscription.price} />
         </label>
         <label className={styles.label}>
           Скидка %
-          <AdminInput name='discount' type='number' min={0} max={100} defaultValue={subscription.discount ?? ''} />
+          <Input name='discount' type='number' min={0} max={100} defaultValue={subscription.discount ?? ''} />
         </label>
       </div>
 
       <label className={styles.label}>
         Описание
-        <AdminTextarea name='description' defaultValue={subscription.description ?? ''} rows={3} />
+        <Textarea name='description' defaultValue={subscription.description ?? ''} rows={3} />
       </label>
 
       <label className={styles.label}>
         Преимущества (по одному в строке)
-        <AdminTextarea name='perks' defaultValue={subscription.perks.join('\n')} rows={5} />
+        <Textarea name='perks' defaultValue={subscription.perks.join('\n')} rows={5} />
       </label>
 
       <div className={styles.checks}>

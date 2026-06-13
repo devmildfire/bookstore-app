@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createPeriodicalAction } from '@/lib/admin/periodicals/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './PeriodicalForm.module.scss'
 
 export default function PeriodicalCreateForm() {
@@ -16,11 +16,11 @@ export default function PeriodicalCreateForm() {
       </p>
       <label className={styles.label}>
         Название
-        <AdminInput name='name' required placeholder='Например: Могучий Русский Динозавр' />
+        <Input name='name' required placeholder='Например: Могучий Русский Динозавр' />
       </label>
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required placeholder='moguchij-russkij-dinozavr' />
+        <Input name='slug' required placeholder='moguchij-russkij-dinozavr' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

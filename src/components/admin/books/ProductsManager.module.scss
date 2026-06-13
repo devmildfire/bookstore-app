@@ -118,7 +118,7 @@
   font-weight: $font-weight-medium;
 }
 
-// price ₽ affix — AdminInput provides the field base; this only merges it with
+// price ₽ affix — Input provides the field base; this only merges it with
 // the unit cell on the right.
 .affix {
   display: flex;
@@ -324,7 +324,7 @@
   }
 }
 
-// Flex sizing only — AdminInput supplies the standard field styling + height.
+// Flex sizing only — Input supplies the standard field styling + height.
 // On desktop the two inputs share the row; on mobile the column stacks them, so
 // flex:1 must be cleared (it would otherwise grow along the vertical axis and
 // collapse the field height).

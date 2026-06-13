@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { updatePartnerAction, deletePartnerAction } from '@/lib/admin/partners/actions'
 import Button from '@/components/common/Button'
 import type { AdminPartner } from '@/api/admin/partners'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './PartnerForm.module.scss'
 
 export default function PartnerEditForm({ partner }: { partner: AdminPartner }) {
@@ -32,22 +32,22 @@ export default function PartnerEditForm({ partner }: { partner: AdminPartner }) 
 
       <label className={styles.label}>
         Название
-        <AdminInput name='name' defaultValue={partner.name} required />
+        <Input name='name' defaultValue={partner.name} required />
       </label>
 
       <label className={styles.label}>
         Подпись под логотипом
-        <AdminInput name='caption' defaultValue={partner.caption ?? ''} placeholder='Если логотип без текста, напр. ФАРЕНГЕЙТ 451' />
+        <Input name='caption' defaultValue={partner.caption ?? ''} placeholder='Если логотип без текста, напр. ФАРЕНГЕЙТ 451' />
       </label>
 
       <label className={styles.label}>
         Ссылка на сайт
-        <AdminInput name='websiteUrl' type='url' defaultValue={partner.websiteUrl ?? ''} placeholder='https://example.com' />
+        <Input name='websiteUrl' type='url' defaultValue={partner.websiteUrl ?? ''} placeholder='https://example.com' />
       </label>
 
       <label className={styles.label}>
         Позиция
-        <AdminInput name='position' type='number' min={0} defaultValue={partner.position} />
+        <Input name='position' type='number' min={0} defaultValue={partner.position} />
       </label>
 
       <div className={styles.actions}>

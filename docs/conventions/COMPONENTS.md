@@ -1,5 +1,33 @@
 # Component Conventions
 
+## One component set — no one-offs, no admin/site duplication (READ FIRST)
+
+**There is ONE set of UI components for the entire app — storefront *and* admin.**
+A given UI element (input, textarea, select, button, badge, pager, date picker,
+modal, …) has exactly **one** implementation, and it lives in
+`src/components/common/`. Admin and storefront import the same component.
+
+This is a hard rule:
+
+- **Never create a one-off.** Do not write a bespoke `<input className={styles.input}>`,
+  a local `MySelect`, a per-page button, or a second copy of an existing
+  primitive. If a shared component exists, use it.
+- **Never fork "admin" vs "site" versions.** We are actively collapsing the old
+  `Admin*` duplicates (`AdminInput`/`AdminTextarea` are already merged into
+  `common/Input`/`common/Textarea`; the rest are tracked in
+  [docs/plans/ui-component-unification.md](../plans/ui-component-unification.md)).
+  Do not add new ones.
+- **Need a visual or behavioural difference? Add it with a prop**, not a new
+  component — a `variant`, `size`, `tone`, boolean flag, or an optional
+  slot/render prop on the existing component. Extend the one component so every
+  caller benefits and nothing drifts.
+- **Genuinely new primitive?** Add it once under `src/components/common/`, then
+  reuse it everywhere. Co-locate styles; theme via the design tokens in
+  `src/styles/params.scss` (the app is one dark design system).
+
+Why: divergent inputs/buttons/etc. across screens read as broken and rot fast.
+One component = one place to fix bugs, restyle, and keep accessibility correct.
+
 ## File Structure
 
 Each component lives in its own folder with co-located styles and index re-export:
@@ -241,21 +269,14 @@ Admin UI lives in `src/components/admin/`. Key shared primitives:
 | `AdminList` | Paginated list with sort/filter |
 | `AdminFilterBar` | Filter controls row |
 | `AdminPager` | Pagination controls |
-| `AdminInput` / `AdminTextarea` | Form fields |
 | `AdminSelect` | Dropdown select with Scroller |
 | `AdminDatePicker` | Date input |
 
 Domain-specific admin forms (books, authors, articles, box sets, etc.) live in
 subdirectories under `src/components/admin/`.
 
-### Form fields: one shared input everywhere
-
-`AdminInput` / `AdminTextarea` are the **canonical text fields for the whole
-site**, not just `/admin` — despite the name. The storefront auth pages
-(`/auth/login`, `register`, `forgot-password`, `reset-password`), the profile
-cabinet (`ProfileEditor`, `LoginModal`, `AnonRecoveryModal`) and admin forms all
-use them, so every input matches. **Do not** write a one-off
-`<input className={styles.input}>` for a new form — import the shared component.
-They forward `ref` + all native props, so they drop into `react-hook-form`
-(`{...register('field')}`). (`components/common/Input` predates this and remains
-only in the catalog search/filters; prefer `AdminInput` for new work.)
+> **Note:** the text fields are no longer admin-specific. `AdminInput` /
+> `AdminTextarea` were promoted to **`common/Input`** / **`common/Textarea`** and
+> deleted from `admin/` (see the principle below). The remaining `Admin*`
+> primitives above are next in line for the same treatment — see
+> [docs/plans/ui-component-unification.md](../plans/ui-component-unification.md).

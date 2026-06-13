@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createAwardAction } from '@/lib/admin/awards/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './AwardForm.module.scss'
 
 export default function AwardCreateForm() {
@@ -13,11 +13,11 @@ export default function AwardCreateForm() {
       <p className={styles.note}>Бейдж награды загрузите на следующем шаге.</p>
       <label className={styles.label}>
         Название
-        <AdminInput name='title' required placeholder='Например: Книга года 2026' />
+        <Input name='title' required placeholder='Например: Книга года 2026' />
       </label>
       <label className={styles.label}>
         Slug (латиница, цифры, дефис)
-        <AdminInput name='slug' required placeholder='book-of-the-year-2026' />
+        <Input name='slug' required placeholder='book-of-the-year-2026' />
       </label>
       <div className={styles.actions}>
         <Button type='submit' variant='primary' size='md' loading={pending}>

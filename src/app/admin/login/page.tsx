@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { adminLoginAction } from '@/lib/admin/actions'
 import Button from '@/components/common/Button'
-import AdminInput from '@/components/admin/AdminInput'
+import Input from '@/components/common/Input'
 import styles from './page.module.scss'
 
 const schema = z.object({
@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
 
           <label className={styles.label}>
             Email
-            <AdminInput
+            <Input
               type='email'
               autoComplete='email'
               {...register('email')}
@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
 
           <label className={styles.label}>
             Пароль
-            <AdminInput
+            <Input
               type='password'
               autoComplete='current-password'
               {...register('password')}
