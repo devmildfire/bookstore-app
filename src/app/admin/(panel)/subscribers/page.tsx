@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { getAdminSubscribers, type SubscriberStatus } from '@/api/admin/subscribers'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import StatusBadge from '@/components/admin/StatusBadge'
-import type { BadgeTone } from '@/components/admin/StatusBadge/StatusBadge'
+import Badge from '@/components/common/Badge'
+import type { BadgeTone } from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Подписчики' }
@@ -39,7 +39,7 @@ export default async function AdminSubscribersPage() {
                   {new Date(s.createdAt).toLocaleDateString('ru-RU')}
                 </span>
               </span>
-              <StatusBadge tone={STATUS_TONE[s.status]}>{STATUS_LABEL[s.status]}</StatusBadge>
+              <Badge tone={STATUS_TONE[s.status]}>{STATUS_LABEL[s.status]}</Badge>
             </li>
           ))}
         </ul>

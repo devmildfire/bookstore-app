@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAdminPeriodicals } from '@/api/admin/periodicals'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Периодика' }
@@ -30,9 +30,9 @@ export default async function AdminPeriodicalsPage() {
                   <span className={styles.name}>{p.name}</span>
                   {p.slug && <span className={styles.slug}>{p.slug}</span>}
                 </span>
-                <StatusBadge tone={p.issueCount > 0 ? 'positive' : 'neutral'}>
+                <Badge tone={p.issueCount > 0 ? 'positive' : 'neutral'}>
                   {p.issueCount} вып.
-                </StatusBadge>
+                </Badge>
               </Link>
             </li>
           ))}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getAdminBooks, type BookStatus } from '@/api/admin/books'
-import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
+import Badge, { type BadgeTone } from '@/components/common/Badge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
@@ -80,8 +80,8 @@ export default async function AdminBooksPage({ searchParams }: Props) {
               sub={`${b.authorName ? `${b.authorName} · ` : ''}${b.slug ? `/${b.slug}` : '—'}`}
               badges={
                 <>
-                  <StatusBadge tone={STATUS_TONE[b.status]}>{STATUS_LABEL[b.status]}</StatusBadge>
-                  {b.isFeatured && <StatusBadge tone='accent'>На главной</StatusBadge>}
+                  <Badge tone={STATUS_TONE[b.status]}>{STATUS_LABEL[b.status]}</Badge>
+                  {b.isFeatured && <Badge tone='accent'>На главной</Badge>}
                 </>
               }
             />

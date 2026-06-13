@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminAwards } from '@/api/admin/awards'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Награды' }
@@ -39,9 +39,9 @@ export default async function AdminAwardsPage() {
                   <span className={styles.slug}>{a.slug}</span>
                 </span>
                 <span className={styles.usage}>{a.usageCount} кн.</span>
-                <StatusBadge tone={a.isActive ? 'positive' : 'neutral'}>
+                <Badge tone={a.isActive ? 'positive' : 'neutral'}>
                   {a.isActive ? 'Активна' : 'Скрыта'}
-                </StatusBadge>
+                </Badge>
               </Link>
             </li>
           ))}

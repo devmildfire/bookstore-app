@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { getAdminOrder } from '@/api/admin/orders'
 import { formatPrice } from '@/lib/formatPrice'
 import { CATEGORY_LABEL, fulfillmentLabel, formatOrderDate, paymentStatusLabel } from '@/lib/orderDisplay'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import { FulfillmentForm } from '@/components/admin/orders'
 import styles from './page.module.scss'
 
@@ -33,8 +33,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <p className={styles.date}>{formatOrderDate(order.createdAt)}</p>
         </div>
         <div className={styles.badges}>
-          <StatusBadge>{paymentStatusLabel(order.status)}</StatusBadge>
-          <StatusBadge tone='accent'>{fulfillmentLabel(order.fulfillmentStatus)}</StatusBadge>
+          <Badge>{paymentStatusLabel(order.status)}</Badge>
+          <Badge tone='accent'>{fulfillmentLabel(order.fulfillmentStatus)}</Badge>
         </div>
       </header>
 

@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { setBookStatusAction, deleteBookAction } from '@/lib/admin/books/actions'
-import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
+import Badge, { type BadgeTone } from '@/components/common/Badge'
 import type { BookStatus } from '@/api/admin/books'
 import styles from './BookStatusBar.module.scss'
 
@@ -51,7 +51,7 @@ export default function BookStatusBar({ bookId, status, name }: Props) {
 
   return (
     <div className={styles.bar}>
-      <StatusBadge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</StatusBadge>
+      <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>
 
       <div className={styles.actions}>
         {status !== 'published' && (

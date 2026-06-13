@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminBoxSets } from '@/api/admin/boxSets'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Бокс-сеты' }
@@ -38,9 +38,9 @@ export default async function AdminBoxSetsPage() {
                   <span className={styles.name}>{b.name}</span>
                   <span className={styles.slug}>{b.slug}</span>
                 </span>
-                <StatusBadge tone={b.isPublished ? 'positive' : 'warning'}>
+                <Badge tone={b.isPublished ? 'positive' : 'warning'}>
                   {b.isPublished ? 'Опубл.' : 'Черновик'}
-                </StatusBadge>
+                </Badge>
               </Link>
             </li>
           ))}

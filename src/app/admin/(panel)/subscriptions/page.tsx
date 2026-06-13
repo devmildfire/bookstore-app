@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAdminSubscriptions } from '@/api/admin/subscriptions'
 import { formatPrice } from '@/lib/formatPrice'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import styles from './page.module.scss'
@@ -35,9 +35,9 @@ export default async function AdminSubscriptionsPage() {
               sub={`/${s.slug}`}
               value={formatPrice(s.price)}
               badges={
-                <StatusBadge tone={s.isPublished ? 'positive' : 'warning'}>
+                <Badge tone={s.isPublished ? 'positive' : 'warning'}>
                   {s.isPublished ? 'Опубл.' : 'Черновик'}
-                </StatusBadge>
+                </Badge>
               }
             />
           ))}

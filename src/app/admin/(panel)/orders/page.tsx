@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAdminOrders } from '@/api/admin/orders'
 import { formatPrice } from '@/lib/formatPrice'
 import { fulfillmentLabel, formatOrderDate, paymentStatusLabel } from '@/lib/orderDisplay'
-import StatusBadge, { type BadgeTone } from '@/components/admin/StatusBadge'
+import Badge, { type BadgeTone } from '@/components/common/Badge'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import AdminPager from '@/components/admin/AdminPager'
@@ -114,12 +114,12 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                   <td className={styles.muted}>{formatOrderDate(o.createdAt)}</td>
                   <td className={styles.muted}>{o.deliveryEmail ?? '—'}</td>
                   <td>
-                    <StatusBadge tone={PAYMENT_TONE[o.status]}>{paymentStatusLabel(o.status)}</StatusBadge>
+                    <Badge tone={PAYMENT_TONE[o.status]}>{paymentStatusLabel(o.status)}</Badge>
                   </td>
                   <td>
-                    <StatusBadge tone={FULFILLMENT_TONE[o.fulfillmentStatus]}>
+                    <Badge tone={FULFILLMENT_TONE[o.fulfillmentStatus]}>
                       {fulfillmentLabel(o.fulfillmentStatus)}
-                    </StatusBadge>
+                    </Badge>
                   </td>
                   <td className={styles.right}>{formatPrice(o.total)}</td>
                 </tr>

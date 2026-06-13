@@ -3,35 +3,61 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px $space-2;
-  border-radius: $radius-full;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  line-height: $line-height-tight;
+  gap: $space-2 - 2px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 0;
+  border: 1px solid transparent;
+  font-family: $font-montserrat;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
   white-space: nowrap;
 
-  &.default {
-    background-color: $color-bg-muted;
-    color: $color-text-secondary;
+  // Leading 5px square dot in the tone color.
+  &::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: currentColor;
+    flex-shrink: 0;
   }
 
-  &.success {
-    background-color: $color-success-bg;
-    color: $color-success;
+  @include breakpoint(phone) {
+    height: 22px;
+    padding: 0 7px;
+    font-size: 10px;
+    letter-spacing: 0.4px;
   }
+}
 
-  &.warning {
-    background-color: $color-warning-bg;
-    color: $color-warning;
-  }
+.positive {
+  color: $tone-positive;
+  background: $tone-positive-bg;
+  border-color: $tone-positive-border;
+}
 
-  &.danger {
-    background-color: $color-danger-bg;
-    color: $color-danger;
-  }
+.warning {
+  color: $tone-warning;
+  background: $tone-warning-bg;
+  border-color: $tone-warning-border;
+}
 
-  &.info {
-    background-color: $color-info-bg;
-    color: $color-info;
+.neutral {
+  color: $tone-neutral;
+  background: $tone-neutral-bg;
+  border-color: $tone-neutral-border;
+}
+
+.accent,
+.danger {
+  color: $tone-accent-text;
+  background: $tone-accent-bg;
+  border-color: $tone-accent-border;
+
+  &::before {
+    background: $color-accent-bright;
   }
 }

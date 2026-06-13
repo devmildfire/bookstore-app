@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminTeam } from '@/api/admin/team'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Команда' }
@@ -41,9 +41,9 @@ export default async function AdminTeamPage() {
                     {m.city ? ` · ${m.city}` : ''}
                   </span>
                 </span>
-                <StatusBadge tone={m.photoUrl ? 'positive' : 'neutral'}>
+                <Badge tone={m.photoUrl ? 'positive' : 'neutral'}>
                   {m.photoUrl ? 'С фото' : 'Без фото'}
-                </StatusBadge>
+                </Badge>
               </Link>
             </li>
           ))}

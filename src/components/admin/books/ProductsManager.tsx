@@ -17,7 +17,7 @@ import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
 import Input from '@/components/common/Input'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import { PaperIcon, DigitalIcon, AudioIcon, PlusIcon, TrashIcon, UploadIcon, CheckIcon } from '@/components/admin/icons'
 import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
 import styles from './ProductsManager.module.scss'
@@ -84,9 +84,9 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
       <div className={styles.productHead}>
         <Icon className={styles.productIcon} />
         <span className={styles.label}>{edition.label}</span>
-        <StatusBadge tone={edition.isPublished ? 'positive' : 'neutral'}>
+        <Badge tone={edition.isPublished ? 'positive' : 'neutral'}>
           {edition.isPublished ? 'В продаже' : 'Скрыт'}
-        </StatusBadge>
+        </Badge>
         <span className={styles.spacer} />
         <button type='button' className={styles.remove} onClick={handleRemove} disabled={removing} aria-label='Удалить продукт'>
           <TrashIcon />

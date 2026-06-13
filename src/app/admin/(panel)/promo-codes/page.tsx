@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAdminPromoCodes } from '@/api/admin/promoCodes'
 import { formatOrderDate } from '@/lib/orderDisplay'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import styles from './page.module.scss'
 
@@ -48,9 +48,9 @@ export default async function AdminPromoCodesPage() {
                     {formatOrderDate(c.startsAt)} — {formatOrderDate(c.endsAt)}
                   </td>
                   <td>
-                    <StatusBadge tone={c.isActive ? 'positive' : 'neutral'}>
+                    <Badge tone={c.isActive ? 'positive' : 'neutral'}>
                       {c.isActive ? 'Активен' : 'Неактивен'}
-                    </StatusBadge>
+                    </Badge>
                   </td>
                 </tr>
               ))}

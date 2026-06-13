@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getAdminPartners } from '@/api/admin/partners'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import StatusBadge from '@/components/admin/StatusBadge'
+import Badge from '@/components/common/Badge'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Партнёры' }
@@ -38,9 +38,9 @@ export default async function AdminPartnersPage() {
                   <span className={styles.name}>{p.name}</span>
                   {p.websiteUrl && <span className={styles.slug}>{p.websiteUrl}</span>}
                 </span>
-                <StatusBadge tone={p.logoUrl ? 'positive' : 'neutral'}>
+                <Badge tone={p.logoUrl ? 'positive' : 'neutral'}>
                   {p.logoUrl ? 'С логотипом' : 'Без логотипа'}
-                </StatusBadge>
+                </Badge>
               </Link>
             </li>
           ))}
