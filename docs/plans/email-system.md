@@ -74,7 +74,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|-------|--------|-------|
 | P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | code in; live-delivery check needs `node --env-file=.env scripts/test-email.mjs <your-resend-addr>` |
 | P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
-| P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ⬜ | |
+| P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ⬜ | |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ⬜ | |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ⬜ | |
@@ -125,22 +125,25 @@ the table status when a phase's boxes are all ✅.
       and arrives via Resend (test mode → your account address). Not run autonomously to
       avoid disrupting the running local stack.
 
-## P2 — Registration confirmation + soft-gate UX
+## P2 — Registration confirmation + soft-gate UX ✅ (code; live test pending Supabase restart)
 
-- [ ] `supabase/config.toml`: `[auth.email] enable_confirmations = true`.
-- [ ] `registerAction` (`src/lib/auth/actions.ts`): keep anon `updateUser({email,password})`
-      (preserves UID/cart) — this now triggers an `email_change` confirm; user stays signed
-      in (soft gate). Fresh `signUp` → no session until confirmed → redirect to a
-      "проверьте почту" screen. Document both branches in code comments.
-- [ ] Confirmation banner: in `src/app/(site)/profile/layout.tsx` (or a small client
-      component) show "Подтвердите email" + resend button when
-      `user && (!user.email_confirmed_at || user.new_email)`; resend via
-      `supabase.auth.resend({ type })`.
-- [ ] Register page: success copy / redirect for the fresh-signup "check your email" case.
-- [ ] (Optional) `src/emails/AccountWelcome.tsx` — app-level welcome sent from
-      `/auth/confirm` on first successful confirm.
-- [ ] Acceptance: register (both anon-upgrade and fresh) → confirm email arrives → clicking
-      it confirms the account; banner clears.
+- [x] `supabase/config.toml`: `[auth.email] enable_confirmations = true`.
+- [x] `registerAction` (`src/lib/auth/actions.ts`): anon `updateUser({email,password})`
+      (preserves UID/cart) → `email_change` confirm, session persists (soft gate), redirect
+      `/profile`. Fresh `signUp` → no session → redirect `/auth/login?check_email=1`. Both
+      branches commented.
+- [x] `resendEmailConfirmationAction` — picks `email_change` vs `signup` from user state.
+- [x] `EmailConfirmBanner` (`src/components/profile/EmailConfirmBanner/`) — shown in
+      `profile/layout.tsx` when `user.new_email` (pending change) or a real account with no
+      `email_confirmed_at`; resend button + toast.
+- [x] Login page shows a "проверьте почту" notice on `?check_email=1`.
+- [~] `AccountWelcome.tsx` — **deferred** (optional). Add later from `/auth/confirm` on first
+      confirm if wanted.
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Live acceptance (manual):** after the Supabase restart, register both ways →
+      confirm email arrives (Resend test mode → owner address) → link confirms → banner clears.
+      ⚠️ With confirmations on locally, registration now requires a reachable confirm link, so
+      use the Resend account-owner address until a domain is verified (T1).
 
 ## P3 — Password reset
 

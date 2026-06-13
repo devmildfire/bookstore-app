@@ -1,0 +1,56 @@
+@use '@/styles/common' as *;
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin: 0 0 24px;
+  padding: 14px 18px;
+  border: 1px solid rgba($color: #a10202, $alpha: 0.5);
+  border-left: 3px solid $color-accent-on-dark;
+  border-radius: 8px;
+  background: rgba($color: #a10202, $alpha: 0.08);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  color: $color-text-title;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.body {
+  color: $color-text-muted-on-dark;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.button {
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border: 1px solid $color-accent-on-dark;
+  border-radius: 6px;
+  background: transparent;
+  color: $color-text-on-dark;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-accent-on-dark;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}

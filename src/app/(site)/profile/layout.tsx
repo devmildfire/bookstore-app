@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ProfileProvider } from '@/contexts/profile'
 import ProfileSideNav from '@/components/profile/ProfileSideNav'
 import ProfileAuthSlot from '@/components/profile/ProfileAuthSlot'
+import EmailConfirmBanner from '@/components/profile/EmailConfirmBanner'
 import type { Profile } from '@/entities/profile/client'
 import styles from './layout.module.scss'
 
@@ -31,6 +32,10 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   // stale state after OAuth completes server-side.
   const isAnon = !user || user.is_anonymous === true
   const userEmail = (!isAnon && user?.email) || null
+  // Email pending confirmation: a queued email change (anon→account upgrade keeps
+  // user.new_email until confirmed) or a real account whose email isn't confirmed.
+  const pendingEmail =
+    user?.new_email ?? (user && !user.is_anonymous && !user.email_confirmed_at ? user.email : null) ?? null
   // user.app_metadata.provider tracks the *initial* signup method, not the
   // current session's. For an account created via email and later linked
   // to Google, .provider stays 'email' forever. Read user.identities and
@@ -52,7 +57,10 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           <header className={styles.header}>
             <h1 className={styles.title}>ЛИЧНЫЙ КАБИНЕТ</h1>
           </header>
-          <div className={styles.main}>{children}</div>
+          <div className={styles.main}>
+            {pendingEmail && <EmailConfirmBanner email={pendingEmail} />}
+            {children}
+          </div>
         </div>
         {/* Mobile-only auth slot. Hidden on desktop / tablet (where the
             sidebar embeds its own copy at the bottom). */}

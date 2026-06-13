@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [state, serverAction, pending] = useActionState(loginAction, null)
   const searchParams = useSearchParams()
   const justRegistered = searchParams.get('registered') === 'true'
+  const checkEmail = searchParams.get('check_email') === '1'
   const authError = searchParams.get('auth_error')
   const returnTo = searchParams.get('returnTo')
   const guestHref = returnTo && returnTo.startsWith('/') ? returnTo : '/'
@@ -39,9 +40,13 @@ export default function LoginPage() {
     <div className={styles.page}>
       <h1>Вход</h1>
 
-      {justRegistered && (
+      {checkEmail ? (
+        <p className={styles.success}>
+          Мы отправили письмо для подтверждения. Перейдите по ссылке из письма, затем войдите.
+        </p>
+      ) : justRegistered ? (
         <p className={styles.success}>Аккаунт создан. Теперь вы можете войти.</p>
-      )}
+      ) : null}
 
       {authError && <p className={styles.error}>{authError}</p>}
 
