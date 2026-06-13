@@ -202,7 +202,7 @@ app/
   (site)/                  ← storefront route group
     layout.tsx             ← Header + Footer chrome
     page.tsx               ← homepage
-    auth/                  ← login/ register/
+    auth/                  ← login/ register/ forgot-password/ reset-password/ confirm/
     profile/               ← user cabinet (multi-route layout)
     books/
       (catalog)/           ← catalog listing (page/loading/error)
@@ -218,7 +218,7 @@ app/
       orders/, books/, authors/, box-sets/, gift-cards/,
       subscriptions/, promo-codes/, articles/, periodicals/,
       awards/, featured/, partners/, team/, submissions/,
-      audit/ + dashboard   (dino-magazine/ → redirect to articles/)
+      subscribers/, audit/ + dashboard   (dino-magazine/ → redirect to articles/)
 ```
 
 The `(catalog)/` route group exists to scope its `loading.tsx` away from
@@ -247,3 +247,15 @@ Admin UI lives in `src/components/admin/`. Key shared primitives:
 
 Domain-specific admin forms (books, authors, articles, box sets, etc.) live in
 subdirectories under `src/components/admin/`.
+
+### Form fields: one shared input everywhere
+
+`AdminInput` / `AdminTextarea` are the **canonical text fields for the whole
+site**, not just `/admin` — despite the name. The storefront auth pages
+(`/auth/login`, `register`, `forgot-password`, `reset-password`), the profile
+cabinet (`ProfileEditor`, `LoginModal`, `AnonRecoveryModal`) and admin forms all
+use them, so every input matches. **Do not** write a one-off
+`<input className={styles.input}>` for a new form — import the shared component.
+They forward `ref` + all native props, so they drop into `react-hook-form`
+(`{...register('field')}`). (`components/common/Input` predates this and remains
+only in the catalog search/filters; prefer `AdminInput` for new work.)

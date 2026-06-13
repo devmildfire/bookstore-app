@@ -79,7 +79,7 @@ Note: `supabase db reset` does NOT restore auth users (re-run
 src/
   app/          Next.js App Router. Root layout = html/body/Providers ONLY (no chrome).
     (site)/     Storefront route group — owns the Header/Footer chrome via its layout.
-      auth/       login/ and register/ routes
+      auth/       login/, register/, forgot-password/, reset-password/, confirm/ routes
       profile/    User cabinet (books/, courses/, subscriptions/, orders/, gift-cards/, favorites/)
       books/      Catalog
         (catalog)/  Catalog listing (page.tsx, loading.tsx, error.tsx). Nested route group
@@ -132,6 +132,8 @@ Layouts use the App Router convention: each route segment can have a `layout.tsx
 
 On app load, `src/app/providers.tsx` checks for an existing Supabase session client-side. If none exists it calls `supabase.auth.signInAnonymously()`. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`; Google OAuth via the `GET /api/auth/google` route handler (`src/app/api/auth/google/route.ts`), triggered by `window.location.assign('/api/auth/google')`. It is deliberately a route handler, **not** a Server Action — the old action shape raced Firefox's RSC stream reader ("Error in input stream"); a top-level navigation to a GET → 302 has no streaming response to abort.
 
+Registration uses **double opt-in** (`enable_confirmations = true`) — see the Email section. Password reset is `/auth/forgot-password` → recovery email → `/auth/reset-password`. All auth-email links land on `/auth/confirm` (`verifyOtp`, sets session cookies, forwards to `next`). The cabinet's sign-in-method label is read from the session JWT's `amr` claim (`getClaims()` in `profile/layout.tsx`), **not** from `identities` — adding a password to an OAuth account creates no `email` identity and password sign-in doesn't bump an identity's `last_sign_in_at`, so the identity list would mislabel a password login.
+
 When an anonymous user signs in (OAuth or email/password), their Cart, Orders, Profile, GiftCards, and Likes are migrated onto the resolved authenticated user and the anon row is deleted, in a single atomic SQL transaction (`migrate_anonymous_user` RPC, in the consolidated baseline). We deliberately do **not** use `linkIdentity`. Outstanding pre-launch auth ops (prod Google OAuth client, anon-row GC via `pg_cron`, reverse-proxy `/auth/v1/*` routing) are tracked in [docs/CONCERNS.md](docs/CONCERNS.md).
 
 ### Profile cabinet (`/profile`)
@@ -146,7 +148,7 @@ Key invariants:
 - Avatars live in the `avatars` public bucket (2 MB cap, JPEG/PNG/WEBP). Path is `avatars/{user_id}.{ext}` — `Profiles.avatar_path` stores the bare object key.
 - The sidebar header strip carries avatar (77 × 78) + nickname over a red→black gradient overlay on `$color-sidebar`. The "active" nav-item color is `$color-accent-on-dark`.
 - Sidebar nav: **Мои книги** → `/profile/books`, **Мои курсы** → `/profile/courses`, **Мои подписки** → `/profile/subscriptions`, **Заказы** → `/profile/orders`, **Карты даров** → `/profile/gift-cards`, **Избранное** → `/profile/favorites`, **Стать автором** → `/suggest-manuscript` (existing stub, real authors page is future work). Items + icons live in `ProfileSideNav` `NAV_ITEMS`.
-- The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal` with four line-art OAuth icons — Google is wired, Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
+- The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal`, which has an **email + password form** on top — built on the shared `AdminInput`, dispatched via `loginAction` inside `startTransition`, refreshes the route on success — and four line-art OAuth icons below: Google is wired, Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
 - **`isAnon` must be resolved server-side and passed down as a prop.** With `encode: 'tokens-only'` the live session tokens are in HttpOnly cookies the browser cannot read; `localStorage` only holds a cached `User` object that goes stale after a server-side OAuth exchange. `ProfileLayout` reads `user.is_anonymous` from `createClient()` (server) and passes `isAnon` to `ProfileSideNav`. Do not use `useSupabaseUser()` for sign-in CTAs.
 - Profile editing happens in `EditProfileModal` triggered by the outlined "Редактировать профиль" button in the main panel. Avatar upload is inside the modal, not the read-only main panel.
 - See also: `Profiles` table + `get_or_create_profile` RPC in the consolidated baseline (`supabase/migrations/20260101000000_baseline_schema.sql`); `src/components/profile/{ProfileSideNav,ProfileAuthSlot,ProfileMainPanel,LoginModal,AnonRecoveryModal,EditProfileModal,ProfileEditor,AvatarUpload,MyBooksList,MyCoursesList,SubscriptionList,OrderHistoryList}/`. (The Войти/Выйти CTA lives in `ProfileAuthSlot`.)
@@ -167,8 +169,18 @@ Key invariants:
 - Digital files live in the private `digital-files` bucket. Per-edition columns: `Ebooks.file_path`, `Audiobooks.file_path`, `CardBooks.file_path`. Served via signed URLs with 1 h TTL.
 - Anonymous users complete checkout fine — `Orders.user_id` accepts the anon UID. The anon→OAuth/email migration (see auth flow above) moves those orders to the real user on sign-in.
 - **Failed/cancelled payment ≠ cancelled order.** A gateway FailURL hit leaves the order `pending` so the buyer can resume payment from order history (`src/app/(site)/payments/fail/route.ts`); cancellation is a separate explicit user action (`cancelOrderAction` → `cancel_pending_order` RPC). Stale `pending` orders auto-expire after 7 days (`expire_stale_pending_orders`).
-- Out of scope and stubbed: real SMTP, BoxSet/GiftCard/Subscription/Course file downloads. (The single-shot `place_order` RPC + `src/api/orders/placeOrder.ts` are legacy — still present and wired, but no longer the checkout path; the two-phase flow above replaces them.)
+- A paid order sends one idempotent **order-confirmation email** (Resend — see Email below). Out of scope and stubbed: BoxSet/GiftCard/Subscription/Course file downloads. (The single-shot `place_order` RPC + `src/api/orders/placeOrder.ts` are legacy — still present and wired, but no longer the checkout path; the two-phase flow above replaces them.)
 - See also: schema/RPCs in the consolidated baseline (`supabase/migrations/20260101000000_baseline_schema.sql`), plus follow-ups `20260611180000_order_fulfillment_physical.sql` + `20260611190000_expire_stale_pending_orders.sql`; `src/app/(site)/checkout/`; `src/api/orders/createPendingOrder.ts`; `src/lib/payments/`.
+
+### Email (Resend)
+
+All outbound email — transactional + the mailing-list scaffold — flows through one path: `src/lib/email/` (`resend.ts` client + `send.ts`) rendering React Email templates from `src/emails/`. Implemented and **live-tested** (2026-06-13) against the verified `mildfire.dev` domain.
+
+- **Auth emails** (signup / email-change confirmation, password recovery) are generated by GoTrue, which calls our **Send-Email hook** (`src/app/api/auth/hooks/send-email/route.ts`, wired in `supabase/config.toml`; verifies the Standard-Webhooks signature with `SEND_EMAIL_HOOK_SECRET`). GoTrue never sends directly. Recipient = `user.new_email || user.email` (an `email_change`, incl. the anon→account upgrade, leaves `user.email` empty).
+- **App emails** are sent straight from server code via `send.ts`: order confirmation (`src/lib/email/sendOrderConfirmation.ts`, idempotent claim-then-send on `Orders.confirmation_email_sent_at`), admin story-submission notify (`ADMIN_NOTIFICATIONS_EMAIL`), and the newsletter confirm/welcome.
+- **Mailing list**: own `Subscribers` table (double opt-in, `confirm_token`/`unsubscribe_token`, RLS + SECURITY DEFINER RPCs) synced to a **Resend Audience** (`RESEND_AUDIENCE_ID`) via `src/lib/email/audience.ts`. Routes: `/newsletter/confirm`, `/newsletter/unsubscribe`. Wired into the /about + /contacts forms; read-only admin view at `/admin/subscribers`.
+- Env: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `SEND_EMAIL_HOOK_SECRET`, `ADMIN_NOTIFICATIONS_EMAIL`, `RESEND_AUDIENCE_ID`, `NEXT_PUBLIC_BASE_URL` (absolute links). Prod cutover remainder (prod hook URL/secret, `NEXT_PUBLIC_BASE_URL`) tracked in [docs/CONCERNS.md](docs/CONCERNS.md) G2.
+- See also: [docs/plans/email-system.md](docs/plans/email-system.md) (full plan + per-phase acceptance); migrations `20260613120000_order_confirmation_email.sql` + `20260613130000_subscribers.sql` (applied).
 
 ### Promo codes
 
@@ -188,7 +200,7 @@ Key invariants:
 
 Staff back-office, **header-free chrome** (its own shell, not the storefront Header/Footer). Shipped.
 
-- **Routing:** `src/app/admin/login/` (unguarded) + `src/app/admin/(panel)/` (guarded route group). Sections under `(panel)/`: `orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/ articles/ periodicals/ awards/ featured/ partners/ team/ submissions/ audit/` + the dashboard. (`dino-magazine/` is a redirect to `/admin/articles` — the «Динозавр» magazine is the Articles collection.)
+- **Routing:** `src/app/admin/login/` (unguarded) + `src/app/admin/(panel)/` (guarded route group). Sections under `(panel)/`: `orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/ articles/ periodicals/ awards/ featured/ partners/ team/ submissions/ subscribers/ audit/` + the dashboard. (`dino-magazine/` is a redirect to `/admin/articles` — the «Динозавр» magazine is the Articles collection.)
 - **Auth/guard:** admin role lives in `auth.users.app_metadata.role` (`= 'admin'`), set only via service-role (not user-editable). `src/lib/admin/auth.ts` (`isAdmin`, `requireAdmin`, `ADMIN_ROLE`); the `(panel)/layout.tsx` calls `requireAdmin()` (defense-in-depth alongside the `proxy.ts` gate). Seed/promote an admin with `node --env-file=.env scripts/seed-admin.mjs <email> <password>`.
 - **Chrome:** `AdminShell` (sticky topbar + breadcrumb + bell→`/audit`, off-canvas drawer ≤`search-bar`) + `AdminSideNav` (grouped nav with count chips from `getAdminNavCounts`).
 - **Shared UI — one component, used everywhere (do NOT reinvent per-section):** `AdminList`, `AdminFilterBar`, `AdminPageHeader`, `AdminPager`, `AdminSelect` (custom dropdown — used for every admin select except the storefront header), `AdminInput`/`AdminTextarea` (number inputs reject non-numerics), `AdminDatePicker` (custom; `withTime`/`yearOnly` variants — no native date pickers), `StatusBadge`, `ImageUploader`, `ComingSoon`, `icons/`. Re-skinned to the design handoff (dark tokens in `src/styles/params.scss`, `admin-page-title`/`admin-field` mixins). Plus per-domain folders under `src/components/admin/<domain>/`.
