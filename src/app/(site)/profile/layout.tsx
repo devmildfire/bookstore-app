@@ -36,18 +36,27 @@ export default async function ProfileLayout({ children }: { children: React.Reac
   // user.new_email until confirmed) or a real account whose email isn't confirmed.
   const pendingEmail =
     user?.new_email ?? (user && !user.is_anonymous && !user.email_confirmed_at ? user.email : null) ?? null
-  // user.app_metadata.provider tracks the *initial* signup method, not the
-  // current session's. For an account created via email and later linked
-  // to Google, .provider stays 'email' forever. Read user.identities and
-  // pick the most-recently-used one — that's the method this session used.
-  const provider = !isAnon && user?.identities
-    ? user.identities
-        .slice()
-        .sort((a, b) =>
-          new Date(b.last_sign_in_at ?? 0).getTime() -
-          new Date(a.last_sign_in_at ?? 0).getTime()
-        )[0]?.provider ?? null
-    : null
+  // How THIS session signed in, read from the JWT `amr` claim — the only
+  // authoritative signal. `identities` can't be trusted: adding a password to
+  // an OAuth account creates no 'email' identity, and a password sign-in never
+  // updates an identity's `last_sign_in_at`, so a Google-origin account that
+  // signs in with a password would be mislabelled "Вход через Google".
+  let provider: string | null = null
+  if (!isAnon) {
+    const { data: claims } = await supabase.auth.getClaims()
+    const amr = claims?.claims.amr ?? []
+    const latestMethod = amr
+      .map((e) => (typeof e === 'string' ? { method: e, timestamp: 0 } : e))
+      .filter((e) => e.method !== 'token_refresh')
+      .sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0))[0]?.method
+    // 'oauth'/'sso/saml' → name the external provider from identities; any
+    // credential method ('password'/'otp'/'magiclink'/…) → email + password.
+    if (latestMethod === 'oauth' || latestMethod === 'sso/saml') {
+      provider = user?.identities?.find((i) => i.provider !== 'email')?.provider ?? 'oauth'
+    } else if (latestMethod) {
+      provider = 'email'
+    }
+  }
 
   return (
     <ProfileProvider initialProfile={profile}>
