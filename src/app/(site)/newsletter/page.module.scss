@@ -1,0 +1,27 @@
+@use '@/styles/common' as *;
+
+.page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: $space-12 $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  text-align: center;
+}
+
+.title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+}
+
+.body {
+  color: $color-text-muted;
+  font-size: $font-size-base;
+  line-height: 1.6;
+}
+
+.link {
+  color: $color-text-link;
+  font-size: $font-size-sm;
+}

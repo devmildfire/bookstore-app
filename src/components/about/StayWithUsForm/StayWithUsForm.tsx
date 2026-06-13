@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useToast } from '@/contexts/toast'
+import { subscribeAction } from '@/lib/subscribers/actions'
 import OutlinedButton from '@/components/common/OutlinedButton'
 import styles from './StayWithUsForm.module.scss'
 
@@ -14,7 +15,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 export default function StayWithUsForm() {
-  const { success } = useToast()
+  const { success, error: toastError } = useToast()
   const {
     register,
     handleSubmit,
@@ -25,10 +26,14 @@ export default function StayWithUsForm() {
     defaultValues: { email: '' },
   })
 
-  const onSubmit = async () => {
-    await new Promise((r) => setTimeout(r, 300))
-    success('Подписка оформлена')
-    reset({ email: '' })
+  const onSubmit = async (values: FormValues) => {
+    const result = await subscribeAction({ email: values.email, source: 'about' })
+    if (result.ok) {
+      success(result.already ? 'Вы уже подписаны' : 'Почти готово', result.already ? undefined : 'Проверьте почту — мы отправили письмо для подтверждения')
+      reset({ email: '' })
+    } else {
+      toastError('Не удалось подписаться', result.error)
+    }
   }
 
   return (

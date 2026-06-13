@@ -78,7 +78,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; deletion of the superseded plan doc pending user OK |
-| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ⬜ | |
+| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | 🟡 | core done (table/opt-in/routes/forms/Audience); admin view + migration apply remain |
 | P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
 
 Per-phase sub-steps with acceptance checks are below. Tick the sub-boxes as you go; flip
