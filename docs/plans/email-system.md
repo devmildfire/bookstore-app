@@ -62,7 +62,7 @@ story-submission notification is folded in here (Phase 5). Delete that doc once 
 | `SEND_EMAIL_HOOK_SECRET` | Verify Supabase auth hook calls (Standard Webhooks `v1,whsec_…`) | generate |
 | `ADMIN_NOTIFICATIONS_EMAIL` | Story-submission notify target | your address |
 | `RESEND_AUDIENCE_ID` | Resend Audience for the mailing list | create once (T2) |
-| `NEXT_PUBLIC_SITE_URL` | Build absolute links in emails | `http://localhost:3000` |
+| `NEXT_PUBLIC_BASE_URL` | Build absolute links in emails (reuses the existing payments var) | `http://localhost:3000` |
 
 ---
 
@@ -72,7 +72,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | # | Phase | Status | Notes |
 |---|-------|--------|-------|
-| P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ⬜ | |
+| P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | code in; live-delivery check needs `node --env-file=.env scripts/test-email.mjs <your-resend-addr>` |
 | P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ⬜ | |
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ⬜ | |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ⬜ | |
@@ -86,17 +86,22 @@ the table status when a phase's boxes are all ✅.
 
 ---
 
-## P0 — Foundations
+## P0 — Foundations ✅
 
-- [ ] `src/lib/email/resend.ts` — singleton `new Resend(process.env.RESEND_API_KEY)`.
-- [ ] `src/lib/email/send.ts` — `sendEmail({ to, subject, react, from? })` → `resend.emails.send`
-      with `react` (Resend v4 renders React Email directly). Returns `{ id }` or throws;
-      log + swallow at call sites that must not fail (e.g. order webhook).
-- [ ] `src/emails/_BaseLayout.tsx` — brand shell (logo, `$color-*` palette as inline styles,
-      footer with legal line). All templates compose this.
-- [ ] Add env vars to `.env` and placeholders to `.env.example`.
-- [ ] Acceptance: a throwaway script / route sends a test email to the account owner in
-      Resend test mode and it arrives.
+- [x] `src/lib/email/resend.ts` — singleton `new Resend(process.env.RESEND_API_KEY)` +
+      `DEFAULT_FROM` + `SITE_URL` (from `NEXT_PUBLIC_BASE_URL`).
+- [x] `src/lib/email/send.ts` — `sendEmail({ to, subject, react, from?, replyTo? })` →
+      `resend.emails.send` with `react` (Resend v4 renders React Email directly). Returns the
+      message id or throws; log + swallow at call sites that must not fail (e.g. order webhook).
+- [x] `src/emails/_BaseLayout.tsx` — brand shell (ЧТИВО wordmark, palette inline, legal footer)
+      + exported `ui` style primitives. All templates compose this.
+- [x] Env vars added to `.env.example` (`RESEND_FROM_EMAIL`, `SEND_EMAIL_HOOK_SECRET`,
+      `RESEND_AUDIENCE_ID`, tidied `ADMIN_NOTIFICATIONS_EMAIL`). `RESEND_API_KEY` /
+      `ADMIN_NOTIFICATIONS_EMAIL` already in `.env`.
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Live acceptance (manual, needs your address):** `node --env-file=.env
+      scripts/test-email.mjs <your-resend-account-email>` → email arrives. (`scripts/test-email.mjs`
+      is a throwaway dev aid; delete once real templates send.)
 
 ## P1 — Auth Send-Email Hook
 
