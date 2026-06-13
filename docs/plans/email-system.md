@@ -160,7 +160,10 @@ the table status when a phase's boxes are all ✅.
       `updateUser({ password })` for the recovery session, redirect `/profile`.
 - [x] "Забыли пароль?" link added to the login page. New pages reuse `../login/page.module.scss`.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
-- [ ] **Live acceptance (manual):** forgot → recovery email → reset link → set password → signed in.
+- [x] **Live acceptance (2026-06-13):** forgot-password → "Сброс пароля — Чтиво" recovery
+      email delivered via the hook → reset link → `/auth/reset-password` → set new password →
+      redirected signed-in to `/profile`. Verified at the GoTrue token endpoint: the new
+      password authenticates, the old one returns `invalid_credentials`.
 
 ## P4 — Order/payment confirmation email ✅ (code; migration not yet applied)
 
