@@ -276,6 +276,15 @@ max_frequency = "5s"
 # Force log out if the user has been inactive longer than the specified duration.
 # inactivity_timeout = "8h"
 
+# Send-Email hook: GoTrue calls our Next.js endpoint to render + send all auth
+# emails via Resend (see docs/plans/email-system.md P1). Local dev: GoTrue runs
+# in Docker, so it reaches the host dev server via host.docker.internal. The
+# secret is a Standard-Webhooks key (v1,whsec_<base64>) in SEND_EMAIL_HOOK_SECRET.
+[auth.hook.send_email]
+enabled = true
+uri = "http://host.docker.internal:3000/api/auth/hooks/send-email"
+secrets = "env(SEND_EMAIL_HOOK_SECRET)"
+
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
 # [auth.hook.before_user_created]
 # enabled = true

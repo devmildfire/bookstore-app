@@ -1,0 +1,56 @@
+import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import type { EmailOtpType } from '@supabase/supabase-js'
+import type { Database } from '@/types/supabase'
+
+// Verifies the token_hash from auth emails (signup / email_change / recovery)
+// rendered by the Send-Email hook, sets the resulting session on the redirect
+// response, and forwards to `next`. Cookies are attached to the response object
+// directly — Route Handler `cookies().set()` isn't always preserved across a
+// redirect (same reason as /auth/callback). See docs/plans/email-system.md P1.
+
+const VALID_TYPES: EmailOtpType[] = ['signup', 'email_change', 'recovery', 'magiclink', 'invite', 'email']
+
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url)
+  const tokenHash = url.searchParams.get('token_hash')
+  const type = url.searchParams.get('type') as EmailOtpType | null
+  const next = url.searchParams.get('next') ?? '/profile'
+  const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/profile'
+
+  if (!tokenHash || !type || !VALID_TYPES.includes(type)) {
+    const errorUrl = new URL('/auth/login', request.url)
+    errorUrl.searchParams.set('auth_error', 'Ссылка недействительна или устарела')
+    return NextResponse.redirect(errorUrl)
+  }
+
+  const response = NextResponse.redirect(new URL(safeNext, request.url))
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        encode: 'tokens-only',
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
+
+  const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+  if (error) {
+    const errorUrl = new URL('/auth/login', request.url)
+    errorUrl.searchParams.set('auth_error', error.message)
+    return NextResponse.redirect(errorUrl)
+  }
+
+  return response
+}

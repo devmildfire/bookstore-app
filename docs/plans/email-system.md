@@ -73,7 +73,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | # | Phase | Status | Notes |
 |---|-------|--------|-------|
 | P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | code in; live-delivery check needs `node --env-file=.env scripts/test-email.mjs <your-resend-addr>` |
-| P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ⬜ | |
+| P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ⬜ | |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ⬜ | |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ⬜ | |
@@ -103,29 +103,27 @@ the table status when a phase's boxes are all ✅.
       scripts/test-email.mjs <your-resend-account-email>` → email arrives. (`scripts/test-email.mjs`
       is a throwaway dev aid; delete once real templates send.)
 
-## P1 — Auth Send-Email Hook
+## P1 — Auth Send-Email Hook ✅ (code; live test pending Supabase restart)
 
-- [ ] `src/app/api/auth/hooks/send-email/route.ts` — POST handler:
-      verify Standard-Webhooks signature with `SEND_EMAIL_HOOK_SECRET` (use the
-      `standardwebhooks` package), parse `{ user, email_data: { token_hash, redirect_to,
-      email_action_type, site_url, … } }`, build the action URL
-      (`${SITE_URL}/auth/confirm?token_hash=…&type=…&next=…`), switch on
-      `email_action_type` (`signup` | `recovery` | `email_change` | `magiclink`),
-      render the matching template, `sendEmail`, return 200.
-- [ ] `src/emails/ConfirmSignup.tsx` (covers `signup` + `email_change`) and
+- [x] `src/app/api/auth/hooks/send-email/route.ts` — POST handler: verifies the
+      Standard-Webhooks signature with `SEND_EMAIL_HOOK_SECRET` (`standardwebhooks@1.0.0`,
+      strips the `v1,whsec_` prefix), parses `{ user, email_data }`, builds the
+      `${SITE_URL}/auth/confirm?token_hash=…&type=…&next=…` link, switches on
+      `email_action_type` (`recovery` → ResetPassword; `signup`/`email_change`/other →
+      ConfirmSignup), sends, returns `{}`.
+- [x] `src/emails/ConfirmSignup.tsx` (covers `signup` + `email_change`) and
       `src/emails/ResetPassword.tsx` (`recovery`).
-- [ ] `supabase/config.toml`: add
-      ```toml
-      [auth.hook.send_email]
-      enabled = true
-      uri = "http://host.docker.internal:3000/api/auth/hooks/send-email"   # local dev
-      secrets = "env(SEND_EMAIL_HOOK_SECRET)"
-      ```
-      (Prod uri = the live origin — tracker T1.)
-- [ ] `src/app/(site)/auth/confirm/route.ts` — GET handler calling
-      `supabase.auth.verifyOtp({ token_hash, type })`, then redirect to `next` (default `/profile`).
-- [ ] Acceptance: `supabase stop && supabase start` picks up the hook; triggering a confirm
-      email routes through our endpoint and arrives via Resend.
+- [x] `supabase/config.toml`: `[auth.hook.send_email]` enabled, uri
+      `http://host.docker.internal:3000/api/auth/hooks/send-email`,
+      `secrets = "env(SEND_EMAIL_HOOK_SECRET)"`. (Prod uri = live origin — T1.)
+- [x] `src/app/(site)/auth/confirm/route.ts` — GET, `verifyOtp({ token_hash, type })`,
+      sets session cookies on the redirect response, forwards to safe `next`.
+- [x] `SEND_EMAIL_HOOK_SECRET` generated into local `.env`.
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Live acceptance (manual):** `supabase stop && supabase start` to load the hook,
+      then trigger a confirm/reset email and verify it routes through `/api/auth/hooks/send-email`
+      and arrives via Resend (test mode → your account address). Not run autonomously to
+      avoid disrupting the running local stack.
 
 ## P2 — Registration confirmation + soft-gate UX
 
