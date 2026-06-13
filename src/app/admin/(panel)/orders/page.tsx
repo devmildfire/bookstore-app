@@ -6,7 +6,7 @@ import { fulfillmentLabel, formatOrderDate, paymentStatusLabel } from '@/lib/ord
 import Badge, { type BadgeTone } from '@/components/common/Badge'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import AdminPager from '@/components/admin/AdminPager'
+import Pagination from '@/components/common/Pagination'
 import AdminSelect from '@/components/admin/AdminSelect'
 import type { OrderStatus, FulfillmentStatus } from '@/entities/order/client'
 import styles from './page.module.scss'
@@ -129,7 +129,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         </div>
       )}
 
-      <AdminPager page={page} totalPages={totalPages} hrefForPage={(p) => buildHref({ page: p })} />
+      <Pagination variant='simple' page={page} totalPages={totalPages} hrefForPage={(p) => buildHref({ page: p })} />
     </section>
   )
 }

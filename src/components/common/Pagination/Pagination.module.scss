@@ -1,50 +1,85 @@
 @use '@/styles/common' as *;
 
+// Shared faded state for an unavailable control (rendered as a <span>).
+.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+// ─── 'simple' variant: «Назад» / «n / total» / «Вперёд» ──────────────────────
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 26px;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid $color-border-hairline;
+    border-radius: 0;
+    color: $color-text-muted-on-dark;
+    font-family: $font-montserrat;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.14s ease, border-color 0.14s ease;
+
+    &:hover {
+      color: $color-accent-bright;
+      border-color: $color-accent-on-dark;
+    }
+  }
+}
+
+.info {
+  font-family: $font-montserrat;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: $color-text-faint;
+  padding: 0 6px;
+}
+
+// ─── 'numbered' variant: numbered pages with ellipsis ────────────────────────
 .pagination {
   display: flex;
   align-items: center;
   gap: $space-1;
-}
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  padding: 0 $space-2;
-  border-radius: $radius-md;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $color-text-secondary;
-  transition: background-color 0.15s ease, color 0.15s ease;
-
-  &:hover:not(:disabled) {
-    background-color: $color-bg-muted;
-    color: $color-text-primary;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-brand-primary;
-    outline-offset: 2px;
-  }
-
-  &.active {
-    background-color: $color-brand-primary;
-    color: $color-text-inverse;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 $space-2;
+    border-radius: 0;
+    border: 1px solid transparent;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-muted-on-dark;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 
     &:hover {
-      background-color: $color-brand-primary-hover;
+      color: $color-accent-bright;
+      border-color: $color-accent-on-dark;
     }
-  }
 
-  &.arrow {
-    color: $color-text-muted;
+    &.active {
+      color: $color-text-on-dark;
+      background-color: $color-accent-on-dark;
+      border-color: $color-accent-on-dark;
+    }
+
+    &.arrow {
+      color: $color-text-faint;
+    }
   }
 }
 
@@ -54,8 +89,7 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  color: $color-text-muted;
+  color: $color-text-faint;
   font-size: $font-size-sm;
-  cursor: default;
   user-select: none;
 }

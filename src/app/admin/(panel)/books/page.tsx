@@ -4,7 +4,7 @@ import Badge, { type BadgeTone } from '@/components/common/Badge'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import AdminPager from '@/components/admin/AdminPager'
+import Pagination from '@/components/common/Pagination'
 import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './page.module.scss'
 
@@ -89,7 +89,7 @@ export default async function AdminBooksPage({ searchParams }: Props) {
         </AdminList>
       )}
 
-      <AdminPager page={page} totalPages={totalPages} hrefForPage={pageHref} />
+      <Pagination variant='simple' page={page} totalPages={totalPages} hrefForPage={pageHref} />
     </section>
   )
 }

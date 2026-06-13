@@ -3,7 +3,7 @@ import { getAdminAuthors } from '@/api/admin/authors'
 import { AdminList, AdminRow } from '@/components/admin/AdminList'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import AdminPager from '@/components/admin/AdminPager'
+import Pagination from '@/components/common/Pagination'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Авторы' }
@@ -50,7 +50,7 @@ export default async function AdminAuthorsPage({ searchParams }: Props) {
         </AdminList>
       )}
 
-      <AdminPager page={page} totalPages={totalPages} hrefForPage={pageHref} />
+      <Pagination variant='simple' page={page} totalPages={totalPages} hrefForPage={pageHref} />
     </section>
   )
 }
