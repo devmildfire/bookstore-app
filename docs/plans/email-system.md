@@ -184,8 +184,16 @@ the table status when a phase's boxes are all ✅.
 - [ ] **Apply migration (manual):** `supabase migration up` (additive/safe) then regenerate
       `src/types/supabase.ts`. Until applied, the claim RPC errors and the email silently
       no-ops (payment flow unaffected).
-- [ ] **Live acceptance (manual):** a mock-gateway purchase delivers exactly one confirmation;
-      replaying the webhook sends nothing further.
+- [x] **Live acceptance (2026-06-13):** anon digital purchase (order №19, 100₽, delivery
+      email entered) via the mock gateway delivered exactly one "Заказ №19 оплачен" email;
+      `Orders.confirmation_email_sent_at` set, status `paid`. Replaying the gateway ResultURL
+      notification (re-POST to `/api/payments/mock/pay`, HTTP 303, order re-marked paid
+      idempotently) sent nothing further — still exactly one email in Resend. Claim-then-send
+      idempotency confirmed.
+      ⚠️ Note (not email-related): `/checkout` `router.replace('/cart')` fires on a **hard**
+      load/refresh before the cart query hydrates (`items` briefly `[]`), bouncing the user to
+      `/cart`. Harmless via the normal client-nav flow; worth a guard (wait for cart load)
+      pre-launch.
 
 ## P5 — Admin: new story submission ✅
 
