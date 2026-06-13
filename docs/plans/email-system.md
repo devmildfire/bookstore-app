@@ -1,0 +1,225 @@
+# Email system (Resend) — plan
+
+Status: **planned, not started** (2026-06-13).
+
+Single source of truth for all outbound email: **transactional** (auth confirmation,
+password reset, order confirmation, admin notifications) and the scaffolding for a
+future **mailing list**. Provider: **Resend** (`resend@4.8.0` + `@react-email/components@1.0.12`,
+both already installed). `RESEND_API_KEY` is set in `.env`.
+
+This plan **supersedes** `docs/plans/story-submission-notifications.md` — the admin
+story-submission notification is folded in here (Phase 5). Delete that doc once Phase 5 ships.
+
+---
+
+## Locked decisions (from requirements Q&A)
+
+| Topic | Decision |
+|-------|----------|
+| Email verification on registration | **Required (double opt-in)** — `enable_confirmations = true`. |
+| Unconfirmed-user UX | **Soft gate** — user stays signed in and can shop/checkout; persistent "Подтвердите email" banner + resend button until confirmed. (Applies to the anon→account upgrade; a brand-new `signUp` has no session until confirmed → "check your email" screen.) |
+| Emails to build now | Welcome/confirmation, password reset, order & payment confirmation, admin "new story submission". |
+| Auth-email routing | **Supabase Auth Send-Email Hook** → our endpoint renders React Email + sends via Resend SDK. One templating path for *all* email. |
+| App-email routing | Resend SDK directly from server code. |
+| Sending domain | **Resend test mode for now** (`onboarding@resend.dev`, can only reach the account owner's address). Real verified domain = pre-launch tracker item (T1). |
+| Mailing list storage | **Own `Subscribers` Postgres table = source of truth**, synced to a **Resend Audience** for future broadcasts. |
+| Mailing-list opt-in | **Double opt-in** (confirm-subscription email + token). One-click unsubscribe token on every send. |
+| Subscriber identity | **Account optional** — `Subscribers.user_id` nullable; anonymous visitors can subscribe. |
+| Opt-in surfaces | Wire the existing **/about `StayWithUsForm`** and **/contacts `NewsletterForm`** stubs. (Investors page: no form, not in scope now.) |
+| Admin notify recipient | Address from a new env var **`ADMIN_NOTIFICATIONS_EMAIL`**. |
+| Broadcast campaigns | **Out of scope** — scaffold the list + Audience sync only; no sending UI/cron. |
+
+---
+
+## Architecture overview
+
+```
+                         ┌───────────────────────────────────────────────┐
+                         │  src/lib/email/  (one path for everything)      │
+   Supabase Auth ──hook──▶  resend.ts (client)  +  send.ts (render+send)   │
+   (GoTrue: signup,       │  templates: src/emails/*.tsx (React Email)     │
+    recovery, email_      └───────────────────────────────────────────────┘
+    change) calls our                 ▲                     ▲
+    /api/auth/hooks/                  │                     │
+    send-email                  app server code        Resend SDK → Resend API
+                                (actions, webhooks)
+```
+
+- **Auth emails** (signup confirm, password recovery, email-change confirm) are generated
+  by GoTrue, which calls our **Send-Email Hook**; we render the matching React Email
+  template and send via Resend. GoTrue never sends directly.
+- **App emails** (order confirmation, admin notify, newsletter confirm/welcome) are sent
+  straight from server code via the same `send.ts` helper.
+- **Newsletter** subscribers live in `Subscribers`; on confirmation they're pushed to a
+  Resend **Audience** (`RESEND_AUDIENCE_ID`) so future broadcasts can target them.
+
+### New environment variables (add to `.env` + document in `.env.example`)
+
+| Var | Purpose | Dev value |
+|-----|---------|-----------|
+| `RESEND_API_KEY` | Resend SDK auth | **set** |
+| `RESEND_FROM_EMAIL` | Default From | `Чтиво <onboarding@resend.dev>` (test) |
+| `SEND_EMAIL_HOOK_SECRET` | Verify Supabase auth hook calls (Standard Webhooks `v1,whsec_…`) | generate |
+| `ADMIN_NOTIFICATIONS_EMAIL` | Story-submission notify target | your address |
+| `RESEND_AUDIENCE_ID` | Resend Audience for the mailing list | create once (T2) |
+| `NEXT_PUBLIC_SITE_URL` | Build absolute links in emails | `http://localhost:3000` |
+
+---
+
+## Tracker (resume here if interrupted)
+
+Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
+
+| # | Phase | Status | Notes |
+|---|-------|--------|-------|
+| P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ⬜ | |
+| P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ⬜ | |
+| P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ⬜ | |
+| P3 | Password-reset flow (forgot + reset pages, recovery email) | ⬜ | |
+| P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ⬜ | |
+| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ⬜ | |
+| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ⬜ | |
+| P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
+
+Per-phase sub-steps with acceptance checks are below. Tick the sub-boxes as you go; flip
+the table status when a phase's boxes are all ✅.
+
+---
+
+## P0 — Foundations
+
+- [ ] `src/lib/email/resend.ts` — singleton `new Resend(process.env.RESEND_API_KEY)`.
+- [ ] `src/lib/email/send.ts` — `sendEmail({ to, subject, react, from? })` → `resend.emails.send`
+      with `react` (Resend v4 renders React Email directly). Returns `{ id }` or throws;
+      log + swallow at call sites that must not fail (e.g. order webhook).
+- [ ] `src/emails/_BaseLayout.tsx` — brand shell (logo, `$color-*` palette as inline styles,
+      footer with legal line). All templates compose this.
+- [ ] Add env vars to `.env` and placeholders to `.env.example`.
+- [ ] Acceptance: a throwaway script / route sends a test email to the account owner in
+      Resend test mode and it arrives.
+
+## P1 — Auth Send-Email Hook
+
+- [ ] `src/app/api/auth/hooks/send-email/route.ts` — POST handler:
+      verify Standard-Webhooks signature with `SEND_EMAIL_HOOK_SECRET` (use the
+      `standardwebhooks` package), parse `{ user, email_data: { token_hash, redirect_to,
+      email_action_type, site_url, … } }`, build the action URL
+      (`${SITE_URL}/auth/confirm?token_hash=…&type=…&next=…`), switch on
+      `email_action_type` (`signup` | `recovery` | `email_change` | `magiclink`),
+      render the matching template, `sendEmail`, return 200.
+- [ ] `src/emails/ConfirmSignup.tsx` (covers `signup` + `email_change`) and
+      `src/emails/ResetPassword.tsx` (`recovery`).
+- [ ] `supabase/config.toml`: add
+      ```toml
+      [auth.hook.send_email]
+      enabled = true
+      uri = "http://host.docker.internal:3000/api/auth/hooks/send-email"   # local dev
+      secrets = "env(SEND_EMAIL_HOOK_SECRET)"
+      ```
+      (Prod uri = the live origin — tracker T1.)
+- [ ] `src/app/(site)/auth/confirm/route.ts` — GET handler calling
+      `supabase.auth.verifyOtp({ token_hash, type })`, then redirect to `next` (default `/profile`).
+- [ ] Acceptance: `supabase stop && supabase start` picks up the hook; triggering a confirm
+      email routes through our endpoint and arrives via Resend.
+
+## P2 — Registration confirmation + soft-gate UX
+
+- [ ] `supabase/config.toml`: `[auth.email] enable_confirmations = true`.
+- [ ] `registerAction` (`src/lib/auth/actions.ts`): keep anon `updateUser({email,password})`
+      (preserves UID/cart) — this now triggers an `email_change` confirm; user stays signed
+      in (soft gate). Fresh `signUp` → no session until confirmed → redirect to a
+      "проверьте почту" screen. Document both branches in code comments.
+- [ ] Confirmation banner: in `src/app/(site)/profile/layout.tsx` (or a small client
+      component) show "Подтвердите email" + resend button when
+      `user && (!user.email_confirmed_at || user.new_email)`; resend via
+      `supabase.auth.resend({ type })`.
+- [ ] Register page: success copy / redirect for the fresh-signup "check your email" case.
+- [ ] (Optional) `src/emails/AccountWelcome.tsx` — app-level welcome sent from
+      `/auth/confirm` on first successful confirm.
+- [ ] Acceptance: register (both anon-upgrade and fresh) → confirm email arrives → clicking
+      it confirms the account; banner clears.
+
+## P3 — Password reset
+
+- [ ] `src/app/(site)/auth/forgot-password/page.tsx` + action calling
+      `supabase.auth.resetPasswordForEmail(email, { redirectTo: '${SITE_URL}/auth/reset-password' })`
+      (recovery email rendered by the P1 hook).
+- [ ] `src/app/(site)/auth/reset-password/page.tsx` — form that calls
+      `supabase.auth.updateUser({ password })` for the recovery session.
+- [ ] Link "Забыли пароль?" from the login page.
+- [ ] Acceptance: full forgot → email → reset → login works.
+
+## P4 — Order/payment confirmation email
+
+- [ ] Migration `Orders.confirmation_email_sent_at timestamptz` (on top of the baseline).
+- [ ] `src/emails/OrderConfirmation.tsx` — items, totals (snapshot fields), delivery info.
+- [ ] Send after a **fresh** paid transition, idempotently: claim with
+      `UPDATE "Orders" SET confirmation_email_sent_at = now() WHERE id = $1 AND status='paid'
+      AND confirmation_email_sent_at IS NULL RETURNING …`; send only if a row came back.
+      Recipient = `Orders.delivery_email` (fallback to account email).
+- [ ] Call sites: `src/app/api/payments/robokassa/result/route.ts` (webhook) and
+      `src/lib/orders/actions.ts` (0₽/gift-card-covered settle). Failures must not break the
+      payment path (log + swallow).
+- [ ] Acceptance: a mock-gateway purchase delivers exactly one confirmation email; replaying
+      the webhook sends nothing further.
+
+## P5 — Admin: new story submission
+
+- [ ] `src/emails/AdminStorySubmission.tsx`.
+- [ ] `src/lib/stories/actions.ts` `notifyStorySubmission(meta)` → send to
+      `ADMIN_NOTIFICATIONS_EMAIL`.
+- [ ] Call it from `submitStorySubmission` (`src/api/stories/submitStorySubmission.ts`) after a
+      successful upload (best-effort; upload success must not depend on email).
+- [ ] Delete `docs/plans/story-submission-notifications.md` (now shipped here).
+- [ ] Acceptance: submitting a story emails the configured address with author + cover letter.
+
+## P6 — Mailing list (scaffold, double opt-in)
+
+- [ ] Migration: `Subscribers` table —
+      `id uuid pk`, `email citext unique`, `user_id uuid null references auth.users on delete set null`,
+      `status text default 'pending' check in ('pending','active','unsubscribed')`,
+      `source text`, `confirm_token uuid`, `confirmed_at timestamptz`,
+      `unsubscribe_token uuid not null`, `resend_contact_id text`,
+      `created_at/updated_at`. RLS: no anon/auth access — all writes via server actions
+      using the service-role client.
+- [ ] `src/api/subscribers/` (reads) + `src/lib/subscribers/actions.ts`:
+      - `subscribeAction(email, source)` → upsert `pending`, (re)issue `confirm_token`,
+        send `NewsletterConfirm` (double opt-in). Idempotent for re-subscribe.
+      - confirm + unsubscribe handlers (below).
+- [ ] `src/emails/NewsletterConfirm.tsx` (+ optional `NewsletterWelcome.tsx`).
+- [ ] `src/app/(site)/newsletter/confirm/route.ts` — `?token` → set `active`, `confirmed_at`,
+      `resend.contacts.create({ audienceId, email })`, store `resend_contact_id`,
+      redirect to a small confirmation page.
+- [ ] `src/app/(site)/newsletter/unsubscribe/route.ts` — `?token` → set `unsubscribed`,
+      `resend.contacts.remove(...)`, confirmation page. (Link injected into every send.)
+- [ ] Wire **/about `StayWithUsForm`** and **/contacts `NewsletterForm`** to `subscribeAction`
+      (replace their fake/stub `onSubmit`); keep their existing success/consent copy.
+- [ ] Admin: `src/app/admin/(panel)/subscribers/` list (reuse `AdminList`/`AdminFilterBar`),
+      `src/api/admin/subscribers/`, nav entry + count chip. Read-only (no sending).
+- [ ] Acceptance: subscribe on /about → confirm email → click → `active` + appears in the
+      Resend Audience + admin list; unsubscribe link flips to `unsubscribed` and removes
+      from the Audience.
+
+## P7 — Production cutover (tracked, not dev work)
+
+- [ ] **T1** Verify the real sending domain in Resend (SPF/DKIM/DMARC DNS), set
+      `RESEND_FROM_EMAIL` to e.g. `no-reply@<domain>`, point the hook `uri` at the live origin,
+      set `SEND_EMAIL_HOOK_SECRET` in prod.
+- [ ] **T2** Create the Resend Audience, set `RESEND_AUDIENCE_ID` in prod.
+- [ ] Mirror to `docs/CONCERNS.md` (relates to **P2** payments go-live + **G2** email delivery).
+
+---
+
+## Notes / gotchas
+
+- **`@react-email/render` vs Resend `react`**: Resend v4 accepts a `react` prop and renders
+  server-side — prefer that over manual `render()`.
+- **Local hook reachability**: GoTrue runs in Docker; it reaches the host dev server via
+  `host.docker.internal`. Confirm the container can hit port 3000.
+- **Anon-upgrade confirmation is the trickiest path** — `updateUser({email})` uses the
+  `email_change` action type and `user.new_email`, not `signup`/`email_confirmed_at`. The
+  banner + resend logic must handle both shapes.
+- **Idempotency everywhere a webhook can replay** (order confirmation) — claim-then-send.
+- **Test mode caveat**: until T1, Resend will only deliver to the account owner's address;
+  emails to other addresses are accepted but not delivered. Don't mistake that for a bug.
+- **Resolves** the email half of `docs/CONCERNS.md` **G2** once P0–P5 ship.
