@@ -27,12 +27,13 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started
 |------|------------------|-----------|--------|-------|
 | `AdminInput` + `common/Input` | `common/Input` | 33 + 2 | ✅ | Done 2026-06-13. Dark design-system field, number-safe, bare/wrapped modes. `Admin*` deleted. The old light `common/Input` had no live consumers (orphaned FiltersPanel/SearchBar). |
 | `AdminTextarea` + `common/Textarea` | `common/Textarea` | 8 + 0 | ✅ | Done 2026-06-13 alongside Input. |
-| `AdminSelect` + `common/Select` | `common/Select` | 11 + 2 | ⬜ | Two different dropdowns (admin custom dropdown w/ Scroller vs storefront select). Reconcile API; likely keep the admin custom dropdown as the base, add a storefront-friendly variant/props. Header storefront select is the one documented exception today — re-check. |
-| `AdminPager` + `common/Pagination` | `common/Pagination` | 3 + 0 | ⬜ | `common/Pagination` is orphaned; fold its needs (if any) into the admin pager and move to common. |
-| `StatusBadge` + `common/Badge` | `common/Badge` | 13 + 0 | ⬜ | `common/Badge` orphaned. Move StatusBadge → `common/Badge` with a `tone` prop (positive/warning/neutral/accent). |
-| `admin/ComingSoon` + `common/ComingSoon` | `common/ComingSoon` | 0 + 0 | ⬜ | Both orphaned — delete the admin copy, keep one in common (or remove both if truly unused). |
-| `AdminDatePicker` | `common/DatePicker` | 5 | ⬜ | No storefront equivalent; just relocate `admin/AdminDatePicker` → `common/DatePicker` (already used by the storefront ProfileEditor). |
-| `Button` / `PrimaryButton` / `OutlinedButton` | `common/Button` | 34 / 3 / 6 | ⬜ | All in `common/` already but three components for one concept. Collapse `PrimaryButton`/`OutlinedButton` into `Button` variants (`primary`/`outlined`), migrate, delete the extras. |
+| `StatusBadge` + `common/Badge` | `common/Badge` | 13 + 0 | ✅ | Done 2026-06-13 (commit d8dac5ed). `common/Badge` now = the StatusBadge impl, `tone` prop (neutral/positive/warning/danger/accent). |
+| `AdminPager` + `common/Pagination` | `common/Pagination` | 3 + 0 | ✅ | Done 2026-06-13 (commit c265f6fb). Link-based (SSR-safe), `variant='simple'` (admin) / `'numbered'` (storefront). |
+| `admin/ComingSoon` + `common/ComingSoon` | `common/ComingSoon` | 0 + 0 | ✅ | Done 2026-06-13. Both were dead code; deleted the admin copy, kept `common/ComingSoon`. |
+| **icon barrel** `admin/icons` → `common/icons` | `common/icons` | 12 | ⬜ | **Prerequisite for the DatePicker move.** `admin/icons/index.tsx` is the app's shared line-art icon set (30+ icons), not admin-specific. Relocate to `common/icons` (mind the collision: `common/icons` already holds `CartPlusIcon`/`ProductTypeIcon` as standalone files — fold them into the barrel or keep separate paths), update the 12 importers. |
+| `AdminDatePicker` | `common/DatePicker` | 5 | ⏸️ | Pure relocation, but it imports `Calendar`/`Chevron` icons from `admin/icons`. Do the icon-barrel move first, else `common/DatePicker` would import backwards from `admin/`. |
+| `AdminSelect` + `common/Select` | `common/Select` | 11 + 2 | ⬜ | **Decision needed.** Two different dropdowns (admin custom dropdown w/ Scroller vs storefront `<select>` wrapper). Pick the base (likely the admin custom dropdown), reconcile the API, add a variant for the storefront header select. |
+| `Button` / `PrimaryButton` / `OutlinedButton` | `common/Button` | 34 / 3 / 6 | ⬜ | **Decision needed.** Three components for one concept (all in `common/`). Collapse `PrimaryButton`/`OutlinedButton` into `Button` variants (`primary`/`outlined`), migrate, delete the extras — confirm the variant names + any behavioural differences first. |
 | `AdminList` / `AdminFilterBar` / `AdminPageHeader` / `ImageUploader` | (review) | — | ⬜ | Evaluate whether these are generic enough to move to `common/`; some may be legitimately admin-only compositions. |
 
 Genuinely admin-only chrome that stays under `admin/`: `AdminShell`,
