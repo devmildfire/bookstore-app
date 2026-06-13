@@ -10,7 +10,9 @@ import ResetPassword from '@/emails/ResetPassword'
 // See docs/plans/email-system.md P1.
 
 interface HookPayload {
-  user: { email: string }
+  // `email` is empty for an email_change (incl. the anon→account upgrade); the
+  // target address is in `new_email`. Always prefer new_email when present.
+  user: { email: string; new_email?: string }
   email_data: {
     token_hash: string
     redirect_to: string
@@ -52,17 +54,25 @@ export async function POST(request: Request): Promise<Response> {
   const { user, email_data } = data
   const { token_hash, email_action_type } = email_data
 
+  // For email_change (incl. the anon→account upgrade) GoTrue leaves user.email
+  // empty and puts the address being confirmed in new_email.
+  const recipient = user.new_email || user.email
+  if (!recipient) {
+    console.error('[send-email hook] no recipient address in payload', { email_action_type })
+    return Response.json({ error: { http_code: 400, message: 'no recipient' } }, { status: 400 })
+  }
+
   try {
     if (email_action_type === 'recovery') {
       await sendEmail({
-        to: user.email,
+        to: recipient,
         subject: 'Сброс пароля — Чтиво',
         react: ResetPassword({ resetUrl: confirmLink(token_hash, 'recovery', '/auth/reset-password') }),
       })
     } else {
       const isEmailChange = email_action_type === 'email_change'
       await sendEmail({
-        to: user.email,
+        to: recipient,
         subject: isEmailChange ? 'Подтвердите смену email — Чтиво' : 'Подтвердите ваш email — Чтиво',
         react: ConfirmSignup({
           confirmUrl: confirmLink(token_hash, email_action_type, '/profile'),
