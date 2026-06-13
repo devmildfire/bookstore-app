@@ -6,6 +6,7 @@ import Modal from '@/components/common/Modal'
 import PrimaryButton from '@/components/common/PrimaryButton'
 import OutlinedButton from '@/components/common/OutlinedButton'
 import { submitStorySubmission } from '@/api/stories/submitStorySubmission'
+import { notifyStorySubmissionAction } from '@/lib/stories/actions'
 import {
   STORY_ACCEPT,
   STORY_ALLOWED_EXTENSIONS,
@@ -111,6 +112,8 @@ function StoryForm({
 
     if (result.status === 'ok') {
       setDone(true)
+      // Notify the editorial team — best-effort, must not block or fail the UI.
+      void notifyStorySubmissionAction({ authorName, coverLetter, path: result.path }).catch(() => {})
     } else {
       setFormError(result.message)
     }

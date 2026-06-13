@@ -77,7 +77,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
-| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ⬜ | |
+| P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; deletion of the superseded plan doc pending user OK |
 | P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ⬜ | |
 | P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
 
@@ -178,15 +178,16 @@ the table status when a phase's boxes are all ✅.
 - [ ] **Live acceptance (manual):** a mock-gateway purchase delivers exactly one confirmation;
       replaying the webhook sends nothing further.
 
-## P5 — Admin: new story submission
+## P5 — Admin: new story submission ✅
 
-- [ ] `src/emails/AdminStorySubmission.tsx`.
-- [ ] `src/lib/stories/actions.ts` `notifyStorySubmission(meta)` → send to
-      `ADMIN_NOTIFICATIONS_EMAIL`.
-- [ ] Call it from `submitStorySubmission` (`src/api/stories/submitStorySubmission.ts`) after a
-      successful upload (best-effort; upload success must not depend on email).
-- [ ] Delete `docs/plans/story-submission-notifications.md` (now shipped here).
-- [ ] Acceptance: submitting a story emails the configured address with author + cover letter.
+- [x] `src/emails/AdminStorySubmission.tsx` (author, cover letter, storage path).
+- [x] `src/lib/stories/actions.ts` `notifyStorySubmissionAction(meta)` → send to
+      `ADMIN_NOTIFICATIONS_EMAIL` (best-effort, server action).
+- [x] Called from `StorySubmitModal` after a successful upload (fire-and-forget — the upload
+      runs in the browser, so the notify is a Server Action, not inside `submitStorySubmission`).
+- [ ] Delete `docs/plans/story-submission-notifications.md` (now shipped here) — **pending user OK**.
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Live acceptance (manual):** submitting a story emails `ADMIN_NOTIFICATIONS_EMAIL`.
 
 ## P6 — Mailing list (scaffold, double opt-in)
 
