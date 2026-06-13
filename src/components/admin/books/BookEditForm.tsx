@@ -5,11 +5,11 @@ import { updateBookAction } from '@/lib/admin/books/actions'
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
-import { CheckIcon } from '@/components/admin/icons'
+import { CheckIcon } from '@/components/common/icons'
 import type { AdminBook } from '@/api/admin/books'
 import Input from '@/components/common/Input'
 import Textarea from '@/components/common/Textarea'
-import AdminDatePicker from '@/components/admin/AdminDatePicker'
+import DatePicker from '@/components/common/DatePicker'
 import AdminSelect from '@/components/admin/AdminSelect'
 import styles from './BookEditForm.module.scss'
 
@@ -50,7 +50,7 @@ export default function BookEditForm({ book }: Props) {
         </div>
         <div className={styles.label}>
           <span>Год первого издания</span>
-          <AdminDatePicker name='firstRelease' yearOnly defaultValue={book.firstRelease ?? ''} ariaLabel='Год первого издания' />
+          <DatePicker name='firstRelease' yearOnly defaultValue={book.firstRelease ?? ''} ariaLabel='Год первого издания' />
         </div>
         <label className={styles.label}>
           Литературная форма

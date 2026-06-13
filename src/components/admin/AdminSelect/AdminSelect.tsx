@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import cn from 'classnames'
-import { ChevronDownIcon, CheckIcon } from '@/components/admin/icons'
+import { ChevronDownIcon, CheckIcon } from '@/components/common/icons'
 import Scroller from '@/components/common/Scroller/Scroller'
 import styles from './AdminSelect.module.scss'
 

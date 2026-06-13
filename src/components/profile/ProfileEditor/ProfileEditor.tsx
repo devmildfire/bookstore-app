@@ -7,7 +7,7 @@ import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'
 import { profileEditSchema, type ProfileEditValues } from '@/entities/profile/validation'
 import AvatarUpload from '@/components/profile/AvatarUpload'
-import AdminDatePicker from '@/components/admin/AdminDatePicker'
+import DatePicker from '@/components/common/DatePicker'
 import Input from '@/components/common/Input'
 import Textarea from '@/components/common/Textarea'
 import styles from './ProfileEditor.module.scss'
@@ -101,7 +101,7 @@ export default function ProfileEditor({ onDone }: Props) {
             name='birthday'
             control={control}
             render={({ field }) => (
-              <AdminDatePicker value={field.value ?? ''} onChange={field.onChange} ariaLabel='Дата рождения' />
+              <DatePicker value={field.value ?? ''} onChange={field.onChange} ariaLabel='Дата рождения' />
             )}
           />
           {errors.birthday && <p className={styles.error}>{errors.birthday.message}</p>}

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PlusIcon } from '@/components/admin/icons'
+import { PlusIcon } from '@/components/common/icons'
 import styles from './AdminPageHeader.module.scss'
 
 // The one page header for every admin section, per the handoff `.page-head`:

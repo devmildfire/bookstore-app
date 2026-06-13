@@ -17,7 +17,7 @@ import {
   SubmissionsIcon,
   AuditIcon,
   LogoutIcon,
-} from '@/components/admin/icons'
+} from '@/components/common/icons'
 import { adminLogoutAction } from '@/lib/admin/actions'
 import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminSideNav.module.scss'

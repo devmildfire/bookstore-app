@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { SearchIcon } from '@/components/admin/icons'
+import { SearchIcon } from '@/components/common/icons'
 import styles from './AdminFilterBar.module.scss'
 
 // The one search/filter toolbar for every admin list, per the handoff

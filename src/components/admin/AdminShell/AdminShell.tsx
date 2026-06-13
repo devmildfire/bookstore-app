@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
 import AdminSideNav from '@/components/admin/AdminSideNav'
-import { BurgerIcon, BellIcon } from '@/components/admin/icons'
+import { BurgerIcon, BellIcon } from '@/components/common/icons'
 import type { AdminNavCounts } from '@/api/admin/dashboard'
 import styles from './AdminShell.module.scss'
 

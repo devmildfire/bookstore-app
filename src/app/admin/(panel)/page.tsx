@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAdminDashboardStats } from '@/api/admin/dashboard'
 import { getAuditLog } from '@/api/admin/audit'
 import { formatOrderDate } from '@/lib/orderDisplay'
-import { OrdersIcon, BooksIcon, SubmissionsIcon, AuditIcon } from '@/components/admin/icons'
+import { OrdersIcon, BooksIcon, SubmissionsIcon, AuditIcon } from '@/components/common/icons'
 import styles from './page.module.scss'
 
 export const metadata: Metadata = { title: 'Сводка' }

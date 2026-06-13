@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import cn from 'classnames'
-import { MinusIcon, PlusIcon } from '@/components/admin/icons'
+import { MinusIcon, PlusIcon } from '@/components/common/icons'
 import styles from './NumberStepper.module.scss'
 
 // Hard-edged −/+ number stepper replacing native <input type=number>. Renders a

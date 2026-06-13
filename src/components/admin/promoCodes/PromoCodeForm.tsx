@@ -11,7 +11,7 @@ import Button from '@/components/common/Button'
 import AdminSelect from '@/components/admin/AdminSelect'
 import type { AdminPromoCode } from '@/api/admin/promoCodes'
 import Input from '@/components/common/Input'
-import AdminDatePicker from '@/components/admin/AdminDatePicker'
+import DatePicker from '@/components/common/DatePicker'
 import styles from './PromoCodeForm.module.scss'
 
 type Props = {
@@ -111,11 +111,11 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
       <div className={styles.grid}>
         <div className={styles.label}>
           <span>Начало действия</span>
-          <AdminDatePicker name='startsAt' withTime defaultValue={toLocalInput(promo?.startsAt)} ariaLabel='Начало действия' />
+          <DatePicker name='startsAt' withTime defaultValue={toLocalInput(promo?.startsAt)} ariaLabel='Начало действия' />
         </div>
         <div className={styles.label}>
           <span>Окончание</span>
-          <AdminDatePicker name='endsAt' withTime defaultValue={toLocalInput(promo?.endsAt)} ariaLabel='Окончание' />
+          <DatePicker name='endsAt' withTime defaultValue={toLocalInput(promo?.endsAt)} ariaLabel='Окончание' />
         </div>
       </div>
 

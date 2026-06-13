@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import cn from 'classnames'
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '@/components/admin/icons'
-import styles from './AdminDatePicker.module.scss'
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '@/components/common/icons'
+import styles from './DatePicker.module.scss'
 
 // Custom date / date-time picker (Radix ships no calendar primitive). Same
 // open/outside-click/Escape pattern as AdminSelect, styled like Input.
@@ -52,7 +52,7 @@ type Props = {
   placeholder?: string
 }
 
-export default function AdminDatePicker({
+export default function DatePicker({
   name,
   value,
   defaultValue = '',

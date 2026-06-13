@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRightIcon } from '@/components/admin/icons'
+import { ChevronRightIcon } from '@/components/common/icons'
 import styles from './AdminList.module.scss'
 
 // The one canonical admin list, per the design handoff (`admin.css` .rows/.row):
