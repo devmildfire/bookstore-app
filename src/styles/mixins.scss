@@ -44,11 +44,11 @@
   }
 }
 
-// ─── Admin field (input / textarea) ─────────────────────────────────────────────
-// Shared base for the standard text controls (Input / Textarea / Select / DatePicker):
-// dark inset, hairline border, hard edges, accent focus.
+// ─── Field base ──────────────────────────────────────────────────────────────
+// App-wide base for the standard text controls (Input / Textarea / Select /
+// DatePicker): dark inset, hairline border, hard edges, accent focus.
 
-@mixin admin-field {
+@mixin field-base {
   width: 100%;
   background: $color-bg-inset;
   border: 1px solid $color-border-hairline;

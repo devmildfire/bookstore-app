@@ -1,9 +1,9 @@
 @use '@/styles/common' as *;
 
 // The one input look, shared by storefront + admin. Dark inset field from the
-// design system (admin-field mixin), 44px tall.
+// design system (field-base mixin), 44px tall.
 .input {
-  @include admin-field;
+  @include field-base;
   height: 44px;
   padding: 0 14px;
 }

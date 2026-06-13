@@ -45,16 +45,12 @@ All true duplicates are collapsed: **Input, Textarea, Select, Pagination, Badge,
 DatePicker, the icon barrel, and the button trio** now have one implementation in
 `common/`. Remaining work is only the optional review of the admin-only
 compositions above (`AdminList`/`AdminFilterBar`/`AdminPageHeader`/`ImageUploader`),
-which are not duplicates. The `admin-field` mixin in `src/styles/mixins.scss` is the
-app-wide field base (Input/Textarea/Select/DatePicker) — consider renaming it
-`field-base` for clarity.
+which are not duplicates. The shared field styling lives in the `field-base` mixin
+(`src/styles/mixins.scss`) — the app-wide base for Input/Textarea, and the source
+of the same look in Select/DatePicker.
 
 ## Notes / gotchas
 
-- The shared field styling lives in the `admin-field` mixin
-  (`src/styles/mixins.scss`) — despite the name it's now the **app-wide** field
-  base (Input/Textarea/Select/DatePicker). Consider renaming it `field-base` when
-  the select/date-picker moves land.
 - When a target `common/` component already exists but is orphaned (Pagination,
   Badge, ComingSoon), replace its implementation with the canonical one rather
   than adding a third.

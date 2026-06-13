@@ -1,9 +1,9 @@
 @use '@/styles/common' as *;
 
 // The one textarea look, shared by storefront + admin. Dark inset field from the
-// design system (admin-field mixin).
+// design system (field-base mixin).
 .textarea {
-  @include admin-field;
+  @include field-base;
   min-height: 96px;
   padding: 12px 14px;
   line-height: 1.5;
