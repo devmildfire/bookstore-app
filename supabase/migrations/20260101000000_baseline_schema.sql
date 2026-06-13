@@ -4966,3 +4966,26 @@ REVOKE ALL ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, t
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, text, text, uuid)
   TO service_role;
+
+--
+-- Catalog tables: RLS + public read, no anon/authenticated writes (folded from
+-- migration 20260613150000_lock_catalog_tables.sql — data-architecture audit F1).
+-- Mirrors the Ebooks/Audiobooks/PrintedBooks public-read treatment so a from-scratch
+-- rebuild reproduces the locked-down catalog.
+--
+
+ALTER TABLE public."Titles" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read titles" ON public."Titles" FOR SELECT USING (true);
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Titles" FROM anon, authenticated;
+
+ALTER TABLE public."Authors" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read authors" ON public."Authors" FOR SELECT USING (true);
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Authors" FROM anon, authenticated;
+
+ALTER TABLE public."CardBooks" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read card books" ON public."CardBooks" FOR SELECT USING (true);
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."CardBooks" FROM anon, authenticated;
+
+ALTER TABLE public."Titles_Authors" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read titles_authors" ON public."Titles_Authors" FOR SELECT USING (true);
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Titles_Authors" FROM anon, authenticated;

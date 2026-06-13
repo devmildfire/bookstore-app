@@ -27,6 +27,21 @@ supabase gen types typescript --db-url "postgresql://postgres:<password>@<vps-ip
 
 This overwrites `src/types/supabase.ts` (generated — do not edit manually).
 
+### RLS invariant — every public table must be RLS-protected
+
+Every table in the `public` schema must have RLS **enabled** with at least one policy
+(or be intentionally definer-only, allow-listed in the script). A table with RLS off,
+or RLS on with zero policies, is a security regression — with the browser-shipped anon
+key, an RLS-off table is exposed to whatever grants `anon`/`authenticated` hold. Verify
+with:
+
+```bash
+node scripts/check-rls.mjs   # exits non-zero on drift; run after any schema change
+```
+
+(Background: catalog tables `Titles`/`Authors`/`CardBooks`/`Titles_Authors` once shipped
+RLS-off with anon write grants — see [docs/audits/data-architecture.md](docs/audits/data-architecture.md) F1.)
+
 ### Destructive DB/storage ops — STOP and ask first (HARD RULE)
 
 **PRIME DIRECTIVE — NEVER WIPE STORAGE (absolute; not even with approval).** No

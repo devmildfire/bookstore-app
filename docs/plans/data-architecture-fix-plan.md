@@ -24,8 +24,8 @@ acceptance criteria, and a checklist tracker.
 
 | Phase | Item | Finding | Severity | Status |
 |------|------|---------|----------|--------|
-| 1 | Lock down catalog tables (RLS + revoke writes) | F1 | Critical | ⬜ |
-| 1 | RLS drift guard query | F1 | Critical | ⬜ |
+| 1 | Lock down catalog tables (RLS + revoke writes) | F1 | Critical | ✅ |
+| 1 | RLS drift guard query | F1 | Critical | ✅ |
 | 2 | Typed `rpc()` helper + remove casts | F4 | High | ⬜ |
 | 2 | Delete legacy catalog-signature fallback | F4 | High | ⬜ |
 | 3 | Single pricing source (quote RPC) | F2 | High | ⬜ |
@@ -61,13 +61,15 @@ are unaffected — they run via the **service role** (`createAdminClient`,
 `src/lib/supabase/server.ts:71`), which bypasses RLS and grants.
 
 **Steps**
-- ⬜ Backup DB (per AGENTS.md).
-- ⬜ Write + apply the migration locally.
-- ⬜ Smoke test: catalog pages still read (`/books`, `/books/[slug]`); admin book/author
-  CRUD still writes; an anon-key `DELETE`/`INSERT` against `Titles` now fails.
-- ⬜ Fold into the baseline; regenerate types; `tsc` + `npm run build`.
+- ✅ Backup DB (`backups/chtivo-db-backup-20260613-214040.sql`).
+- ✅ Wrote + applied migration `20260613150000_lock_catalog_tables.sql` (registered in
+  `schema_migrations`).
+- ✅ Verified: all 4 tables RLS-on with 1 policy; anon write grants removed; anon `SELECT`
+  reads 69 titles; anon `DELETE` → "permission denied for table Titles".
+- ✅ Folded into the baseline (appended block). Types **not** regenerated — RLS/policies/
+  grants don't affect generated TS types (no `tsc`/build impact; no app code changed).
 
-**Acceptance:** the cross-check below returns **zero rows**; storefront reads and admin
+**Acceptance:** ✅ the cross-check returns **zero rows**; storefront reads and admin
 writes both work.
 
 ### 1.2 Standing RLS drift guard
@@ -87,10 +89,11 @@ WHERE n.nspname = 'public' AND c.relkind = 'r'
 ```
 
 **Steps**
-- ⬜ Add as `scripts/check-rls.mjs` (or a SQL file) runnable locally / in CI.
-- ⬜ Document in AGENTS.md next to the destructive-ops rules.
+- ✅ Added `scripts/check-rls.mjs` (DATABASE_URL or local Docker; `Subscribers` allow-listed).
+- ✅ Documented in AGENTS.md ("RLS invariant" section).
 
-**Acceptance:** the script exits non-zero if a table regresses; passes after 1.1.
+**Acceptance:** ✅ the script exits non-zero on drift; passes now
+(`RLS guard OK — all public tables are RLS-enabled with policies.`).
 
 ---
 
