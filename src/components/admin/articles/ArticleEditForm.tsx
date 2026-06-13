@@ -4,7 +4,7 @@ import { useActionState, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateArticleAction, deleteArticleAction } from '@/lib/admin/articles/actions'
 import Button from '@/components/common/Button'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import ArticleContentEditor from './ArticleContentEditor'
 import type { AdminArticle } from '@/api/admin/articles'
 import Input from '@/components/common/Input'
@@ -54,7 +54,7 @@ export default function ArticleEditForm({ article, authorOptions }: Props) {
         </label>
         <div className={styles.label}>
           <span>Автор</span>
-          <AdminSelect
+          <Select
             name='authorId'
             defaultValue={String(article.authorId)}
             ariaLabel='Автор'

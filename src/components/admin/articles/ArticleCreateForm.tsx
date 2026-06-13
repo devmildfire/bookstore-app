@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { createArticleAction } from '@/lib/admin/articles/actions'
 import Button from '@/components/common/Button'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import Input from '@/components/common/Input'
 import styles from './ArticleCreateForm.module.scss'
 
@@ -24,7 +24,7 @@ export default function ArticleCreateForm({ authorOptions }: Props) {
       </label>
       <div className={styles.label}>
         <span>Автор</span>
-        <AdminSelect
+        <Select
           name='authorId'
           defaultValue=''
           ariaLabel='Автор'

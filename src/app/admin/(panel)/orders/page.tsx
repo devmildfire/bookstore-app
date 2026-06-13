@@ -7,7 +7,7 @@ import Badge, { type BadgeTone } from '@/components/common/Badge'
 import AdminFilterBar from '@/components/admin/AdminFilterBar'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import Pagination from '@/components/common/Pagination'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import type { OrderStatus, FulfillmentStatus } from '@/entities/order/client'
 import styles from './page.module.scss'
 
@@ -74,13 +74,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         searchDefaultValue={sp.q ?? ''}
         searchPlaceholder='№ заказа или email'
       >
-        <AdminSelect
+        <Select
           name='status'
           defaultValue={sp.status ?? ''}
           ariaLabel='Статус оплаты'
           options={[{ value: '', label: 'Оплата: все' }, ...STATUS_OPTIONS]}
         />
-        <AdminSelect
+        <Select
           name='fulfillment'
           defaultValue={sp.fulfillment ?? ''}
           ariaLabel='Статус доставки'

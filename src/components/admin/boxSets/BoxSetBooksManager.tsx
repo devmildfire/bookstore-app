@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addBoxSetBookAction, removeBoxSetBookAction } from '@/lib/admin/boxSets/actions'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import type { AdminBoxSetBook } from '@/api/admin/boxSets'
 import Input from '@/components/common/Input'
 import styles from './BoxSetBooksManager.module.scss'
@@ -70,7 +70,7 @@ export default function BoxSetBooksManager({ boxSetId, books, titleOptions }: Pr
       )}
 
       <div className={styles.add}>
-        <AdminSelect
+        <Select
           key={books.length}
           name='titleId'
           defaultValue=''

@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { setOrderFulfillmentAction } from '@/lib/admin/orders/actions'
 import Button from '@/components/common/Button'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import { CheckIcon } from '@/components/common/icons'
 import type { FulfillmentStatus } from '@/entities/order/client'
 import Input from '@/components/common/Input'
@@ -34,7 +34,7 @@ export default function FulfillmentForm({ orderId, current, trackingNumber, trac
 
       <div className={styles.label}>
         <span>Статус доставки</span>
-        <AdminSelect name='status' defaultValue={current} options={OPTIONS} ariaLabel='Статус доставки' />
+        <Select name='status' defaultValue={current} options={OPTIONS} ariaLabel='Статус доставки' />
       </div>
 
       <div className={styles.row}>

@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addAuthorContactAction, removeAuthorContactAction } from '@/lib/admin/authors/actions'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import {
   AUTHOR_CONTACT_CHANNELS,
   CONTACT_CHANNEL_LABEL,
@@ -98,7 +98,7 @@ export default function ContactsManager({ authorId, contacts }: Props) {
       )}
 
       <div className={styles.add}>
-        <AdminSelect
+        <Select
           name='channel'
           defaultValue={AUTHOR_CONTACT_CHANNELS[0]}
           ariaLabel='Канал'

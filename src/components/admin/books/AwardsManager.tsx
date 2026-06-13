@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addAwardAction, removeAwardAction } from '@/lib/admin/books/actions'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import type { AdminAward } from '@/lib/admin/bookProducts'
 import styles from './AwardsManager.module.scss'
 
@@ -69,7 +69,7 @@ export default function AwardsManager({ titleId, attached, catalog }: Props) {
 
       {available.length > 0 && (
         <div className={styles.add}>
-          <AdminSelect
+          <Select
             key={attached.length}
             name='award'
             defaultValue=''

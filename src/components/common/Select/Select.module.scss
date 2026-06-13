@@ -1,127 +1,156 @@
 @use '@/styles/common' as *;
 
+// Optional labelled-field wrapper.
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: $space-2;
+  gap: $space-1;
 }
 
 .label {
-  font-family: $font-montserrat;
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $color-text-muted-on-dark;
+  color: $color-text-on-dark;
+}
+
+.error {
+  font-size: $font-size-xs;
+  color: $tone-accent-text;
+}
+
+// ─── Custom dropdown (ported from the admin .cselect) ────────────────────────
+.select {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+
+  @include breakpoint(phone) {
+    display: block;
+    flex-basis: 100%;
+    width: 100%;
+  }
 }
 
 .trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-3;
+  gap: 10px;
   width: 100%;
   height: 42px;
   padding: 0 14px;
+  background: $color-bg-inset;
   border: 1px solid $color-border-hairline;
   border-radius: 0;
+  color: $color-text-on-dark;
   font-family: $font-montserrat;
   font-size: $font-size-sm;
-  color: $color-text-on-dark;
-  background-color: $color-bg-inset;
   cursor: pointer;
-  white-space: nowrap;
   transition: border-color 0.16s ease;
 
   &:hover {
     border-color: $color-border-strong;
   }
 
-  &:focus-visible,
-  &[data-state='open'] {
-    outline: none;
-    border-color: $color-accent-on-dark;
-  }
-
-  &[data-placeholder] {
-    color: $color-text-faint;
-  }
-
-  &[disabled] {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.hasError .trigger {
-  border-color: $color-accent-on-dark;
-}
-
-.icon {
-  display: flex;
-  align-items: center;
-  color: $color-text-faint;
-  flex-shrink: 0;
-  transition: transform 0.16s ease;
-}
-
-.trigger[data-state='open'] .icon {
-  transform: rotate(180deg);
-}
-
-.content {
-  background-color: $color-panel;
-  border: 1px solid $color-border-strong;
-  border-radius: 0;
-  box-shadow: $shadow-popup-strong;
-  min-width: var(--radix-select-trigger-width);
-  max-height: var(--radix-select-content-available-height);
-  z-index: $z-dropdown;
-  overflow: hidden;
-}
-
-.viewport {
-  padding: 5px;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: $space-2;
-  padding: 9px 12px;
-  border-radius: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: $color-text-muted-on-dark;
-  cursor: pointer;
-  user-select: none;
-  outline: none;
-  transition: background 0.12s ease, color 0.12s ease;
-
-  &[data-highlighted] {
-    background-color: rgba(220, 220, 220, 0.05);
-    color: $color-text-on-dark;
-  }
-
-  &[data-state='checked'] {
-    color: #fff;
-  }
-
-  &[data-disabled] {
+  &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
-.itemIndicator {
-  display: flex;
-  align-items: center;
-  color: $color-accent-bright;
+// Selected label truncates so a long value never widens/overflows the trigger.
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
 }
 
-.error {
+.placeholder {
+  color: $color-text-ghost;
+}
+
+.open .trigger {
+  border-color: $color-accent-on-dark;
+}
+
+.chev {
+  width: 15px;
+  height: auto;
+  flex-shrink: 0;
+  color: $color-text-muted-on-dark;
+  transition: transform 0.16s ease;
+}
+
+.open .chev {
+  transform: rotate(180deg);
+}
+
+.hasError .trigger {
+  border-color: $tone-accent-border;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(420px, calc(100vw - 32px));
+  max-height: 240px;
+  z-index: 50;
+  background: $color-panel;
+  border: 1px solid $color-border-strong;
+  border-radius: 0;
+  box-shadow: $shadow-popup-strong;
+
+  @include breakpoint(phone) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 0;
   font-family: $font-montserrat;
-  font-size: 12px;
+  font-size: $font-size-sm;
+  color: $color-text-muted-on-dark;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background: rgba(220, 220, 220, 0.05);
+    color: $color-text-on-dark;
+  }
+}
+
+.check {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
   color: $color-accent-bright;
+  opacity: 0;
+}
+
+.selected {
+  color: #fff;
+
+  .check {
+    opacity: 1;
+  }
 }

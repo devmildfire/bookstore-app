@@ -6,7 +6,7 @@ import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from '@/components/co
 import styles from './DatePicker.module.scss'
 
 // Custom date / date-time picker (Radix ships no calendar primitive). Same
-// open/outside-click/Escape pattern as AdminSelect, styled like Input.
+// open/outside-click/Escape pattern as Select, styled like Input.
 // Works uncontrolled (defaultValue + hidden input for plain forms) or controlled
 // (value + onChange, e.g. with react-hook-form). With `withTime` it also edits a
 // HH:MM time and the value is `YYYY-MM-DDTHH:MM` (datetime-local); otherwise the

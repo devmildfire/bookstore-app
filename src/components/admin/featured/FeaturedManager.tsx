@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { addFeaturedTitleAction, removeFeaturedAction, moveFeaturedAction } from '@/lib/admin/featured/actions'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import type { FeaturedTitle } from '@/api/admin/featured'
 import styles from './FeaturedManager.module.scss'
 
@@ -89,7 +89,7 @@ export default function FeaturedManager({ featured, titleOptions }: Props) {
 
       {available.length > 0 && (
         <div className={styles.add}>
-          <AdminSelect
+          <Select
             key={featured.length}
             name='titleId'
             defaultValue=''

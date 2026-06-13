@@ -8,7 +8,7 @@ import {
   deletePromoCodeAction,
 } from '@/lib/admin/promoCodes/actions'
 import Button from '@/components/common/Button'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import type { AdminPromoCode } from '@/api/admin/promoCodes'
 import Input from '@/components/common/Input'
 import DatePicker from '@/components/common/DatePicker'
@@ -70,7 +70,7 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
         </label>
         <div className={styles.label}>
           <span>Тип</span>
-          <AdminSelect
+          <Select
             name='kind'
             defaultValue={kind}
             ariaLabel='Тип'
@@ -87,7 +87,7 @@ export default function PromoCodeForm({ mode, titleOptions, promo }: Props) {
         <div className={styles.grid}>
           <div className={styles.label}>
             <span>Книга (target_title_id)</span>
-            <AdminSelect
+            <Select
               name='targetTitleId'
               defaultValue={promo?.targetTitleId ? String(promo.targetTitleId) : ''}
               ariaLabel='Книга'

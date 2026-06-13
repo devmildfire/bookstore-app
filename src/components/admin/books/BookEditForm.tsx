@@ -10,7 +10,7 @@ import type { AdminBook } from '@/api/admin/books'
 import Input from '@/components/common/Input'
 import Textarea from '@/components/common/Textarea'
 import DatePicker from '@/components/common/DatePicker'
-import AdminSelect from '@/components/admin/AdminSelect'
+import Select from '@/components/common/Select'
 import styles from './BookEditForm.module.scss'
 
 type Props = { book: AdminBook }
@@ -71,7 +71,7 @@ export default function BookEditForm({ book }: Props) {
         <div className={styles.grid}>
           <label className={styles.label}>
             Серия
-            <AdminSelect
+            <Select
               name='periodicalId'
               ariaLabel='Серия'
               defaultValue={book.periodicalId ? String(book.periodicalId) : ''}
