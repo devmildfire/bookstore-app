@@ -71,6 +71,9 @@ export default function LoginPage() {
       </form>
 
       <p className={styles.link}>
+        <Link href='/auth/forgot-password'>Забыли пароль?</Link>
+      </p>
+      <p className={styles.link}>
         Нет аккаунта? <Link href='/auth/register'>Зарегистрироваться</Link>
       </p>
       <p className={styles.link}>

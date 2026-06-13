@@ -108,3 +108,39 @@ export async function migrateAnonymousUserAction(fromUserId: string): Promise<vo
     to_user_id: user.id,
   })
 }
+
+const forgotSchema = z.object({ email: z.string().email('Введите корректный email') })
+
+// Sends the password-recovery email (rendered by the Send-Email hook). Always
+// reports success — never reveal whether an address has an account. The email
+// link lands on /auth/confirm (type=recovery) → /auth/reset-password.
+export async function requestPasswordResetAction(
+  _prev: { ok: boolean; error?: string } | null,
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  const parsed = forgotSchema.safeParse({ email: formData.get('email') })
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${baseUrl}/auth/reset-password`,
+  })
+  return { ok: true }
+}
+
+const resetSchema = z.object({
+  password: z.string().min(6, 'Пароль должен содержать не менее 6 символов'),
+})
+
+// Sets a new password for the recovery session established by /auth/confirm.
+export async function updatePasswordAction(_prev: AuthError | null, formData: FormData): Promise<AuthError | null> {
+  const parsed = resetSchema.safeParse({ password: formData.get('password') })
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password })
+  if (error) return { error: error.message }
+
+  redirect('/profile')
+}

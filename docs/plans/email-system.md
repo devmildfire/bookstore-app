@@ -75,7 +75,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P0 | Foundations: Resend client, `send.ts`, React Email base layout, env wiring | ✅ | code in; live-delivery check needs `node --env-file=.env scripts/test-email.mjs <your-resend-addr>` |
 | P1 | Auth Send-Email Hook endpoint + `config.toml` wiring + signature verify | ✅ | code in; needs `supabase stop && supabase start` to load the hook before live test |
 | P2 | Registration confirmation + soft-gate UX (`enable_confirmations`, banner, resend, anon-upgrade path, optional welcome) | ✅ | optional AccountWelcome deferred; needs Supabase restart for live test |
-| P3 | Password-reset flow (forgot + reset pages, recovery email) | ⬜ | |
+| P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ⬜ | |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ⬜ | |
 | P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ⬜ | |
@@ -145,15 +145,16 @@ the table status when a phase's boxes are all ✅.
       ⚠️ With confirmations on locally, registration now requires a reachable confirm link, so
       use the Resend account-owner address until a domain is verified (T1).
 
-## P3 — Password reset
+## P3 — Password reset ✅
 
-- [ ] `src/app/(site)/auth/forgot-password/page.tsx` + action calling
-      `supabase.auth.resetPasswordForEmail(email, { redirectTo: '${SITE_URL}/auth/reset-password' })`
-      (recovery email rendered by the P1 hook).
-- [ ] `src/app/(site)/auth/reset-password/page.tsx` — form that calls
-      `supabase.auth.updateUser({ password })` for the recovery session.
-- [ ] Link "Забыли пароль?" from the login page.
-- [ ] Acceptance: full forgot → email → reset → login works.
+- [x] `src/app/(site)/auth/forgot-password/page.tsx` + `requestPasswordResetAction` calling
+      `resetPasswordForEmail(email, { redirectTo: '${BASE_URL}/auth/reset-password' })`
+      (recovery email rendered by the P1 hook). Always reports success (no account-existence leak).
+- [x] `src/app/(site)/auth/reset-password/page.tsx` + `updatePasswordAction` →
+      `updateUser({ password })` for the recovery session, redirect `/profile`.
+- [x] "Забыли пароль?" link added to the login page. New pages reuse `../login/page.module.scss`.
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Live acceptance (manual):** forgot → recovery email → reset link → set password → signed in.
 
 ## P4 — Order/payment confirmation email
 
