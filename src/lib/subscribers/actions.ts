@@ -13,7 +13,7 @@ const schema = z.object({
   source: z.string().max(50).optional(),
 })
 
-export type SubscribeResult = { ok: true; already?: boolean } | { ok: false; error: string }
+type SubscribeResult = { ok: true; already?: boolean } | { ok: false; error: string }
 
 /**
  * Public mailing-list signup (double opt-in). Records the address as pending and

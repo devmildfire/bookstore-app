@@ -63,6 +63,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/admin/articles', label: 'Статьи', Icon: ArticlesIcon, countKey: 'articles' },
       { href: '/admin/submissions', label: 'Заявки', Icon: SubmissionsIcon, countKey: 'submissions' },
+      { href: '/admin/subscribers', label: 'Подписчики', Icon: AuthorsIcon },
       { href: '/admin/audit', label: 'Журнал', Icon: AuditIcon },
     ],
   },

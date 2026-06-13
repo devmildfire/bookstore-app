@@ -78,7 +78,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done · ⏸️ blocked
 | P3 | Password-reset flow (forgot + reset pages, recovery email) | ✅ | recovery email via P1 hook; reuses login page styles |
 | P4 | Order/payment confirmation email (+ `Orders.confirmation_email_sent_at` migration, idempotent send) | ✅ | migration written, NOT applied — run `supabase migration up` + regen types |
 | P5 | Admin "new story submission" notification (folds in story-submission-notifications.md) | ✅ | done; deletion of the superseded plan doc pending user OK |
-| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | 🟡 | core done (table/opt-in/routes/forms/Audience); admin view + migration apply remain |
+| P6 | Mailing list: `Subscribers` table, double opt-in, confirm/unsubscribe routes, wire /about + /contacts forms, admin subscribers view, Resend Audience sync | ✅ | code done; migration `20260613130000` NOT applied yet |
 | P7 | Production cutover (verified domain, prod hook URL/secret, audience id) — see CONCERNS T1/T2 | ⬜ | tracked, not for dev |
 
 Per-phase sub-steps with acceptance checks are below. Tick the sub-boxes as you go; flip
@@ -189,32 +189,30 @@ the table status when a phase's boxes are all ✅.
 - [x] `npx eslint` + `npx tsc --noEmit` clean.
 - [ ] **Live acceptance (manual):** submitting a story emails `ADMIN_NOTIFICATIONS_EMAIL`.
 
-## P6 — Mailing list (scaffold, double opt-in)
+## P6 — Mailing list (scaffold, double opt-in) ✅ (code; migration not yet applied)
 
-- [ ] Migration: `Subscribers` table —
-      `id uuid pk`, `email citext unique`, `user_id uuid null references auth.users on delete set null`,
-      `status text default 'pending' check in ('pending','active','unsubscribed')`,
-      `source text`, `confirm_token uuid`, `confirmed_at timestamptz`,
-      `unsubscribe_token uuid not null`, `resend_contact_id text`,
-      `created_at/updated_at`. RLS: no anon/auth access — all writes via server actions
-      using the service-role client.
-- [ ] `src/api/subscribers/` (reads) + `src/lib/subscribers/actions.ts`:
-      - `subscribeAction(email, source)` → upsert `pending`, (re)issue `confirm_token`,
-        send `NewsletterConfirm` (double opt-in). Idempotent for re-subscribe.
-      - confirm + unsubscribe handlers (below).
-- [ ] `src/emails/NewsletterConfirm.tsx` (+ optional `NewsletterWelcome.tsx`).
-- [ ] `src/app/(site)/newsletter/confirm/route.ts` — `?token` → set `active`, `confirmed_at`,
-      `resend.contacts.create({ audienceId, email })`, store `resend_contact_id`,
-      redirect to a small confirmation page.
-- [ ] `src/app/(site)/newsletter/unsubscribe/route.ts` — `?token` → set `unsubscribed`,
-      `resend.contacts.remove(...)`, confirmation page. (Link injected into every send.)
-- [ ] Wire **/about `StayWithUsForm`** and **/contacts `NewsletterForm`** to `subscribeAction`
-      (replace their fake/stub `onSubmit`); keep their existing success/consent copy.
-- [ ] Admin: `src/app/admin/(panel)/subscribers/` list (reuse `AdminList`/`AdminFilterBar`),
-      `src/api/admin/subscribers/`, nav entry + count chip. Read-only (no sending).
-- [ ] Acceptance: subscribe on /about → confirm email → click → `active` + appears in the
-      Resend Audience + admin list; unsubscribe link flips to `unsubscribed` and removes
-      from the Audience.
+- [x] Migration `supabase/migrations/20260613130000_subscribers.sql` — `Subscribers` table
+      (`email text unique` normalized lower in SQL; nullable `user_id`; status check;
+      `confirm_token`/`unsubscribe_token`; `resend_contact_id`). RLS on, no policies. All
+      access via SECURITY DEFINER fns granted to `service_role`: `subscribe_newsletter`,
+      `confirm_newsletter`, `unsubscribe_newsletter`, `set_subscriber_resend_contact`.
+- [x] `src/lib/subscribers/actions.ts` `subscribeAction({email, source})` → `subscribe_newsletter`
+      RPC → send `NewsletterConfirm` (double opt-in). `already` short-circuit for active addresses.
+- [x] `src/emails/NewsletterConfirm.tsx`. (NewsletterWelcome optional — not built.)
+- [x] `src/lib/email/audience.ts` — `addToAudience`/`removeFromAudience` (no-op until
+      `RESEND_AUDIENCE_ID` set; failures swallowed).
+- [x] `/newsletter/confirm/route.ts` → activate + add to Audience + store contact id → redirect
+      `/newsletter?status=confirmed`. `/newsletter/unsubscribe/route.ts` → unsubscribe + remove
+      from Audience. `/newsletter/page.tsx` renders the result message.
+- [x] Wired **/about `StayWithUsForm`** and **/contacts `NewsletterForm`** to `subscribeAction`
+      (kept consent copy; show "проверьте почту").
+- [x] Admin: `/admin/subscribers` read-only list (`src/api/admin/subscribers`, `AdminPageHeader`
+      + `StatusBadge`), nav entry under «Редакция» (no count chip — avoids counts plumbing).
+- [x] `npx eslint` + `npx tsc --noEmit` clean.
+- [ ] **Apply migration (manual):** `supabase migration up`. Until then the subscribe RPCs error
+      (subscribe surfaces a friendly failure; nothing crashes).
+- [ ] **Live acceptance (manual):** subscribe on /about → confirm email → link → `active` + in
+      admin list (+ Audience once T2 done); unsubscribe link flips to `unsubscribed`.
 
 ## P7 — Production cutover (tracked, not dev work)
 
