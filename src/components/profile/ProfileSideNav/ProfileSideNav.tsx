@@ -61,12 +61,15 @@ export default function ProfileSideNav({ isAnon, userEmail, provider }: Props) {
       <Link href='/profile' className={styles.header} aria-label='К профилю'>
         <div className={styles.avatar}>
           {avatarSrc ? (
-            <Image src={avatarSrc} alt='' fill sizes='78px' className={styles.avatarImg} unoptimized />
+            <Image src={avatarSrc} alt='' fill sizes='40px' className={styles.avatarImg} unoptimized />
           ) : (
             <ProfileIcon className={styles.avatarPlaceholder} />
           )}
         </div>
-        <span className={styles.nickname}>{profile.nickname}</span>
+        <span className={styles.userMeta}>
+          <span className={styles.nickname}>{profile.nickname}</span>
+          <span className={styles.role}>Личный кабинет</span>
+        </span>
       </Link>
 
       <nav className={styles.nav}>

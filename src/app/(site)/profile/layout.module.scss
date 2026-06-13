@@ -5,7 +5,9 @@
 // aligns with where a page-container would put its first column.
 .page {
   display: grid;
-  grid-template-columns: 450px 1fr;
+  // Compact 268px rail (redesign). Fixed width holds until the layout
+  // collapses to a single column at tablet-small.
+  grid-template-columns: 268px 1fr;
   align-items: stretch;
   // No vertical padding here: the sidebar should run flush from the
   // header to the footer with no gap above or below. `flex: 1` makes
@@ -13,10 +15,6 @@
   // then resolves against the full available height between the site
   // header and footer.
   flex: 1 0 auto;
-
-  @include breakpoint(tablet) {
-    grid-template-columns: 300px 1fr;
-  }
 
   @include breakpoint(tablet-small) {
     grid-template-columns: 1fr;
