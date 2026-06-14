@@ -1,7 +1,9 @@
--- Baseline schema for chtivo-next, generated from the live DB (pg_dump).
--- Consolidates the pre-2026-06-09 migration chain, which had drifted and
--- could no longer replay cleanly. Catalog/seed DATA lives in supabase/seed.sql.
--- See docs/CONCERNS.md (D1). Older migrations archived in supabase/migrations_archive/.
+-- Baseline schema for chtivo-next, generated from the live DB (pg_dump --schema-only).
+-- Single source of truth for the public schema (tables, enums, functions, RLS) plus
+-- the 16 storage buckets + storage.objects policies. Regenerated 2026-06-14 after the
+-- Editions consolidation (audit F5): one Editions + EditionWorkers table replaces the
+-- four edition + four worker tables. Catalog/content DATA lives in supabase/seed.sql.
+-- Prior transitional migrations are archived in supabase/migrations_archive/.
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
@@ -9,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 -- PostgreSQL database dump
 --
 
-\restrict gfUgm29Fn5dnwuZPud72SGbOWtDrxFcOOJRUEBkD7r7asSaUqJkU0Ex0GbetQOJ
+\restrict 5P0yUkeD1aiPP9qRDjj8x2uqDsCkdW7ro1XegDzqzJbhuCaV16jlkfa3LXydPUZ
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -71,6 +73,53 @@ CREATE TYPE public.category AS ENUM (
 
 
 --
+-- Name: admin_set_order_fulfillment(integer, text, text, text, text, uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.admin_set_order_fulfillment(p_order_id integer, p_status text, p_tracking_number text, p_carrier text, p_note text, p_actor uuid) RETURNS jsonb
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+DECLARE
+  v_order "Orders"%ROWTYPE;
+BEGIN
+  IF p_status NOT IN ('processing', 'shipped', 'delivered', 'completed') THEN
+    RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_status');
+  END IF;
+
+  SELECT * INTO v_order FROM "Orders" WHERE id = p_order_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('status', 'error', 'reason', 'order_not_found');
+  END IF;
+
+  UPDATE "Orders"
+     SET fulfillment_status = p_status,
+         tracking_number    = NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
+         tracking_carrier   = NULLIF(btrim(coalesce(p_carrier, '')), ''),
+         admin_note         = NULLIF(btrim(coalesce(p_note, '')), '')
+   WHERE id = p_order_id;
+
+  INSERT INTO "AdminAuditLog" (actor_user_id, action, entity_type, entity_id, summary, metadata)
+  VALUES (
+    p_actor,
+    'order.fulfillment',
+    'order',
+    p_order_id::text,
+    format('Статус доставки: %s → %s', v_order.fulfillment_status, p_status),
+    jsonb_build_object(
+      'from', v_order.fulfillment_status,
+      'to', p_status,
+      'tracking_number', NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
+      'carrier', NULLIF(btrim(coalesce(p_carrier, '')), '')
+    )
+  );
+
+  RETURN jsonb_build_object('status', 'ok', 'orderId', p_order_id);
+END;
+$$;
+
+
+--
 -- Name: apply_promo_code(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -93,7 +142,6 @@ BEGIN
   END IF;
 
   v_code := upper(trim(input_code));
-
   SELECT * INTO v_promo FROM "PromoCodes" WHERE upper(code) = v_code;
   IF NOT FOUND THEN
     RETURN jsonb_build_object('status', 'error', 'reason', 'not_found');
@@ -103,73 +151,36 @@ BEGIN
     RETURN jsonb_build_object('status', 'error', 'reason', 'inactive');
   END IF;
 
-  -- Item-level: verify target is in the cart and resolve the title name
-  -- for the error message if missing.
   IF v_promo.kind = 'item' THEN
-
     IF v_promo.target_product_id IS NOT NULL THEN
-      SELECT EXISTS (
-        SELECT 1 FROM "Cart"
-        WHERE user_id = v_user_id AND id = v_promo.target_product_id
-      ) INTO v_match_found;
-
+      SELECT EXISTS (SELECT 1 FROM "Cart" WHERE user_id = v_user_id AND id = v_promo.target_product_id) INTO v_match_found;
       IF NOT v_match_found THEN
         v_category := split_part(v_promo.target_product_id, '-', 1);
         v_edition_id := NULLIF(split_part(v_promo.target_product_id, '-', 2), '')::integer;
         v_target_name := (
           SELECT t.name FROM "Titles" t
-          WHERE t.id = COALESCE(
-            (SELECT title_id FROM "Ebooks"       WHERE id = v_edition_id AND v_category = 'EBook'),
-            (SELECT title_id FROM "Audiobooks"   WHERE id = v_edition_id AND v_category = 'AudioBook'),
-            (SELECT title_id FROM "PrintedBooks" WHERE id = v_edition_id AND v_category = 'PrintBook'),
-            (SELECT title_id FROM "CardBooks"    WHERE id = v_edition_id AND v_category = 'Book2.0')
-          )
+          WHERE t.id = (SELECT title_id FROM "Editions" WHERE id = v_edition_id AND kind = v_category)
         );
-        RETURN jsonb_build_object(
-          'status', 'error',
-          'reason', 'target_missing',
-          'targetName', v_target_name
-        );
+        RETURN jsonb_build_object('status', 'error', 'reason', 'target_missing', 'targetName', v_target_name);
       END IF;
-
-    ELSE -- target_title_id IS NOT NULL
-      SELECT EXISTS (
-        SELECT 1 FROM get_cart_with_title_ids()
-        WHERE title_id = v_promo.target_title_id
-      ) INTO v_match_found;
-
+    ELSE
+      SELECT EXISTS (SELECT 1 FROM get_cart_with_title_ids() WHERE title_id = v_promo.target_title_id) INTO v_match_found;
       IF NOT v_match_found THEN
         SELECT name INTO v_target_name FROM "Titles" WHERE id = v_promo.target_title_id;
-        RETURN jsonb_build_object(
-          'status', 'error',
-          'reason', 'target_missing',
-          'targetName', v_target_name
-        );
+        RETURN jsonb_build_object('status', 'error', 'reason', 'target_missing', 'targetName', v_target_name);
       END IF;
     END IF;
   END IF;
 
-  -- Upsert CartPromo for this user — one applied code per user at a time.
   INSERT INTO "CartPromo" (user_id, promo_id, applied_at)
   VALUES (v_user_id, v_promo.id, now())
-  ON CONFLICT (user_id) DO UPDATE
-    SET promo_id   = EXCLUDED.promo_id,
-        applied_at = EXCLUDED.applied_at;
+  ON CONFLICT (user_id) DO UPDATE SET promo_id = EXCLUDED.promo_id, applied_at = EXCLUDED.applied_at;
 
-  RETURN jsonb_build_object(
-    'status', 'ok',
-    'applied', jsonb_build_object(
-      'id',                v_promo.id,
-      'code',              v_promo.code,
-      'kind',              v_promo.kind,
-      'target_title_id',   v_promo.target_title_id,
-      'target_product_id', v_promo.target_product_id,
-      'discount_pct',      v_promo.discount_pct,
-      'starts_at',         v_promo.starts_at,
-      'ends_at',           v_promo.ends_at,
-      'applied_at',        now()
-    )
-  );
+  RETURN jsonb_build_object('status', 'ok', 'applied', jsonb_build_object(
+    'id', v_promo.id, 'code', v_promo.code, 'kind', v_promo.kind,
+    'target_title_id', v_promo.target_title_id, 'target_product_id', v_promo.target_product_id,
+    'discount_pct', v_promo.discount_pct, 'starts_at', v_promo.starts_at, 'ends_at', v_promo.ends_at, 'applied_at', now()
+  ));
 END;
 $$;
 
@@ -188,13 +199,10 @@ CREATE FUNCTION public.box_set_is_physical(p_box_set_id integer) RETURNS boolean
       AND (
         bsb.product_id LIKE 'PrintBook-%'
         OR bsb.product_id LIKE 'Book2.0-%'
-        OR (
-          bsb.product_id IS NULL
-          AND (
-            EXISTS (SELECT 1 FROM "PrintedBooks" pb WHERE pb.title_id = bsb.title_id)
-            OR EXISTS (SELECT 1 FROM "CardBooks" cb WHERE cb.title_id = bsb.title_id)
-          )
-        )
+        OR (bsb.product_id IS NULL AND EXISTS (
+          SELECT 1 FROM "Editions" e
+          WHERE e.title_id = bsb.title_id AND e.kind IN ('PrintBook', 'Book2.0')
+        ))
       )
   );
 $$;
@@ -274,6 +282,154 @@ $$;
 
 
 --
+-- Name: claim_order_confirmation_email(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.claim_order_confirmation_email(p_order_id integer) RETURNS boolean
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+declare
+  v_rows integer;
+begin
+  update public."Orders"
+     set confirmation_email_sent_at = now()
+   where id = p_order_id
+     and status = 'paid'
+     and confirmation_email_sent_at is null;
+  get diagnostics v_rows = row_count;
+  return v_rows > 0;
+end;
+$$;
+
+
+--
+-- Name: compute_cart_totals(uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.compute_cart_totals(p_user_id uuid, OUT subtotal numeric, OUT original_sum numeric, OUT book_disc_total numeric, OUT promo_delta numeric, OUT final_total numeric, OUT gift_card_eligible_total numeric, OUT recurring_amount numeric, OUT has_physical boolean, OUT promo_code text) RETURNS record
+    LANGUAGE plpgsql STABLE
+    SET search_path TO 'public'
+    AS $_$
+DECLARE
+  v_promo                 "PromoCodes"%ROWTYPE;
+  v_promo_applies         boolean := false;
+  v_original_discountable numeric(10,2) := 0;
+  v_discountable_subtotal numeric(10,2) := 0;
+  v_total_disc            numeric(10,2) := 0;
+  v_orig_unit             numeric(10,2);
+  v_orig_line             numeric(10,2);
+  v_line_book_disc        numeric(10,2);
+  v_line_effective        numeric(10,2);
+  v_promo_amount          numeric(10,2);
+  v_matched               boolean;
+  cart_row                record;
+BEGIN
+  subtotal := 0;
+  original_sum := 0;
+  book_disc_total := 0;
+  promo_delta := 0;
+  final_total := 0;
+  gift_card_eligible_total := 0;
+  recurring_amount := 0;
+  has_physical := false;
+  promo_code := NULL;
+
+  SELECT pc.* INTO v_promo
+  FROM "CartPromo" cp
+  JOIN "PromoCodes" pc ON pc.id = cp.promo_id
+  WHERE cp.user_id = p_user_id;
+
+  IF FOUND THEN
+    v_promo_applies := now() >= v_promo.starts_at AND now() <= v_promo.ends_at;
+  END IF;
+
+  FOR cart_row IN SELECT * FROM "Cart" WHERE user_id = p_user_id LOOP
+    v_orig_unit := CASE
+      WHEN cart_row.discount IS NOT NULL AND cart_row.discount > 0
+        THEN round(cart_row.price / (1 - cart_row.discount / 100.0))
+      ELSE cart_row.price
+    END;
+    v_orig_line := v_orig_unit * cart_row.quantity;
+    subtotal := subtotal + (cart_row.price * cart_row.quantity);
+
+    IF cart_row.category::text IN ('PrintBook', 'Book2.0') THEN
+      has_physical := true;
+    ELSIF cart_row.category::text = 'BoxSet'
+      AND box_set_is_physical(NULLIF(substring(cart_row.id FROM '-(\d+)$'), '')::int) THEN
+      has_physical := true;
+    END IF;
+
+    IF cart_row.category::text = 'Subscription' THEN
+      recurring_amount := recurring_amount + (cart_row.price * cart_row.quantity);
+    END IF;
+
+    IF cart_row.category::text <> 'GiftCard' THEN
+      v_discountable_subtotal := v_discountable_subtotal + (cart_row.price * cart_row.quantity);
+      original_sum := original_sum + v_orig_line;
+      v_original_discountable := v_original_discountable + v_orig_line;
+      v_line_book_disc := v_orig_line - (cart_row.price * cart_row.quantity);
+      book_disc_total := book_disc_total + v_line_book_disc;
+
+      IF v_promo_applies AND v_promo.kind = 'item' THEN
+        v_matched := false;
+        IF v_promo.target_product_id IS NOT NULL THEN
+          v_matched := (cart_row.id = v_promo.target_product_id);
+        ELSIF v_promo.target_title_id IS NOT NULL THEN
+          v_matched := EXISTS (
+            SELECT 1 FROM get_cart_with_title_ids() t
+            WHERE t.cart_id = cart_row.id AND t.title_id = v_promo.target_title_id
+          );
+        END IF;
+
+        IF v_matched THEN
+          v_line_effective := GREATEST(v_line_book_disc, round(v_orig_line * v_promo.discount_pct / 100.0));
+        ELSE
+          v_line_effective := v_line_book_disc;
+        END IF;
+        v_total_disc := v_total_disc + v_line_effective;
+      END IF;
+    ELSE
+      original_sum := original_sum + v_orig_line;
+    END IF;
+  END LOOP;
+
+  IF v_promo_applies AND v_promo.kind = 'cart' THEN
+    v_promo_amount := round(v_original_discountable * v_promo.discount_pct / 100.0);
+    v_total_disc := GREATEST(book_disc_total, v_promo_amount);
+  ELSIF NOT v_promo_applies THEN
+    v_total_disc := book_disc_total;
+  END IF;
+
+  promo_delta := GREATEST(0, v_total_disc - book_disc_total);
+  final_total := subtotal - promo_delta;
+  gift_card_eligible_total := GREATEST(0, v_discountable_subtotal - promo_delta);
+  promo_code := CASE WHEN v_promo_applies THEN v_promo.code ELSE NULL END;
+END;
+$_$;
+
+
+--
+-- Name: confirm_newsletter(uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.confirm_newsletter(p_token uuid) RETURNS jsonb
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+declare v_email text;
+begin
+  update public."Subscribers"
+     set status = 'active', confirmed_at = coalesce(confirmed_at, now()), updated_at = now()
+   where confirm_token = p_token and status <> 'unsubscribed'
+  returning email into v_email;
+  if v_email is null then return jsonb_build_object('status', 'invalid'); end if;
+  return jsonb_build_object('status', 'ok', 'email', v_email);
+end;
+$$;
+
+
+--
 -- Name: create_pending_order(text, text, text, text, text, text, text, text, jsonb); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -283,27 +439,18 @@ CREATE FUNCTION public.create_pending_order(p_provider text, p_shipping_name tex
     AS $_$
 DECLARE
   v_user_id                  uuid;
-  v_promo                    "PromoCodes"%ROWTYPE;
-  v_promo_applies            boolean;
   v_original_sum             numeric(10,2) := 0;
-  v_original_discountable    numeric(10,2) := 0;
   v_subtotal                 numeric(10,2) := 0;
-  v_discountable_subtotal    numeric(10,2) := 0;
   v_gift_card_eligible_total numeric(10,2) := 0;
   v_book_disc_total          numeric(10,2) := 0;
-  v_total_disc               numeric(10,2) := 0;
   v_promo_delta              numeric(10,2) := 0;
   v_final_total              numeric(10,2) := 0;
   v_recurring_amount         numeric(10,2) := 0;
   v_gift_card_total          numeric(10,2) := 0;
   v_amount_due               numeric(10,2) := 0;
-  v_orig_unit                numeric(10,2);
-  v_orig_line                numeric(10,2);
-  v_line_book_disc           numeric(10,2);
-  v_line_effective           numeric(10,2);
-  v_promo_amount             numeric(10,2);
-  v_matched                  boolean;
+  v_promo_code               text;
   v_delivery_method          text;
+  v_has_physical             boolean := false;
   v_order_id                 integer;
   cart_row                   record;
   request_row                record;
@@ -328,71 +475,14 @@ BEGIN
     RETURN jsonb_build_object('status', 'error', 'reason', 'empty_cart');
   END IF;
 
-  SELECT pc.* INTO v_promo
-  FROM "CartPromo" cp
-  JOIN "PromoCodes" pc ON pc.id = cp.promo_id
-  WHERE cp.user_id = v_user_id;
-
-  IF FOUND THEN
-    v_promo_applies := now() >= v_promo.starts_at AND now() <= v_promo.ends_at;
-  ELSE
-    v_promo_applies := false;
-  END IF;
-
-  FOR cart_row IN SELECT * FROM "Cart" WHERE user_id = v_user_id LOOP
-    v_orig_unit := CASE
-      WHEN cart_row.discount IS NOT NULL AND cart_row.discount > 0
-        THEN round(cart_row.price / (1 - cart_row.discount / 100.0))
-      ELSE cart_row.price
-    END;
-    v_orig_line := v_orig_unit * cart_row.quantity;
-    v_subtotal := v_subtotal + (cart_row.price * cart_row.quantity);
-
-    -- Recurring portion = sum of Subscription lines (re-billed each period).
-    IF cart_row.category::text = 'Subscription' THEN
-      v_recurring_amount := v_recurring_amount + (cart_row.price * cart_row.quantity);
-    END IF;
-
-    IF cart_row.category::text <> 'GiftCard' THEN
-      v_discountable_subtotal := v_discountable_subtotal + (cart_row.price * cart_row.quantity);
-      v_original_sum := v_original_sum + v_orig_line;
-      v_original_discountable := v_original_discountable + v_orig_line;
-      v_line_book_disc := v_orig_line - (cart_row.price * cart_row.quantity);
-      v_book_disc_total := v_book_disc_total + v_line_book_disc;
-
-      IF v_promo_applies AND v_promo.kind = 'item' THEN
-        v_matched := false;
-        IF v_promo.target_product_id IS NOT NULL THEN
-          v_matched := (cart_row.id = v_promo.target_product_id);
-        ELSIF v_promo.target_title_id IS NOT NULL THEN
-          v_matched := EXISTS (
-            SELECT 1 FROM get_cart_with_title_ids() t
-            WHERE t.cart_id = cart_row.id AND t.title_id = v_promo.target_title_id
-          );
-        END IF;
-
-        IF v_matched THEN
-          v_line_effective := GREATEST(v_line_book_disc, round(v_orig_line * v_promo.discount_pct / 100.0));
-        ELSE
-          v_line_effective := v_line_book_disc;
-        END IF;
-        v_total_disc := v_total_disc + v_line_effective;
-      END IF;
-    ELSE
-      v_original_sum := v_original_sum + v_orig_line;
-    END IF;
-  END LOOP;
-
-  IF v_promo_applies AND v_promo.kind = 'cart' THEN
-    v_promo_amount := round(v_original_discountable * v_promo.discount_pct / 100.0);
-    v_total_disc := GREATEST(v_book_disc_total, v_promo_amount);
-  ELSIF NOT v_promo_applies THEN
-    v_total_disc := v_book_disc_total;
-  END IF;
-
-  v_promo_delta := GREATEST(0, v_total_disc - v_book_disc_total);
-  v_final_total := v_subtotal - v_promo_delta;
-  v_gift_card_eligible_total := GREATEST(0, v_discountable_subtotal - v_promo_delta);
+  -- Pricing: single source of truth (shared with quote_cart).
+  SELECT t.subtotal, t.original_sum, t.book_disc_total, t.promo_delta,
+         t.final_total, t.gift_card_eligible_total, t.recurring_amount,
+         t.has_physical, t.promo_code
+    INTO v_subtotal, v_original_sum, v_book_disc_total, v_promo_delta,
+         v_final_total, v_gift_card_eligible_total, v_recurring_amount,
+         v_has_physical, v_promo_code
+  FROM compute_cart_totals(v_user_id) t;
 
   -- Validate + reserve gift cards (balances decremented now; released on cancel).
   CREATE TEMP TABLE IF NOT EXISTS pg_temp.requested_gift_cards (
@@ -442,7 +532,12 @@ BEGIN
 
   v_amount_due := GREATEST(0, v_final_total - v_gift_card_total);
 
-  IF p_shipping_name IS NOT NULL AND p_shipping_name <> '' THEN
+  -- Physical content (or any captured shipping address) means this order ships;
+  -- a blank recipient name must NOT downgrade it to a digital delivery method.
+  IF v_has_physical
+     OR (p_shipping_name IS NOT NULL AND p_shipping_name <> '')
+     OR (p_shipping_city IS NOT NULL AND p_shipping_city <> '')
+     OR (p_shipping_street IS NOT NULL AND p_shipping_street <> '') THEN
     v_delivery_method := 'shipping';
   ELSIF p_email IS NOT NULL AND p_email <> '' THEN
     v_delivery_method := 'email';
@@ -466,7 +561,7 @@ BEGIN
     NULLIF(p_shipping_name, ''), NULLIF(p_shipping_phone, ''), NULLIF(p_shipping_city, ''),
     NULLIF(p_shipping_street, ''), NULLIF(p_shipping_building, ''), NULLIF(p_shipping_postal_code, ''),
     v_original_sum, v_book_disc_total,
-    CASE WHEN v_promo_applies THEN v_promo.code ELSE NULL END,
+    v_promo_code,
     v_promo_delta,
     v_gift_card_total, v_amount_due,
     COALESCE(p_provider, 'mock'), (v_recurring_amount > 0), v_recurring_amount,
@@ -583,25 +678,42 @@ $$;
 --
 
 CREATE FUNCTION public.default_edition_for_title(p_title_id integer) RETURNS text
-    LANGUAGE plpgsql STABLE
+    LANGUAGE sql STABLE
+    SET search_path TO 'public'
+    AS $$
+  SELECT e.kind || '-' || e.id
+  FROM "Editions" e
+  WHERE e.title_id = p_title_id
+  ORDER BY CASE e.kind
+    WHEN 'EBook' THEN 1 WHEN 'AudioBook' THEN 2 WHEN 'Book2.0' THEN 3 WHEN 'PrintBook' THEN 4 ELSE 5 END,
+    e.id
+  LIMIT 1;
+$$;
+
+
+--
+-- Name: expire_stale_pending_orders(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.expire_stale_pending_orders(p_days integer DEFAULT 7) RETURNS integer
+    LANGUAGE plpgsql SECURITY DEFINER
     SET search_path TO 'public'
     AS $$
 DECLARE
-  v_id INT;
+  v_id    integer;
+  v_count integer := 0;
 BEGIN
-  SELECT id INTO v_id FROM "Ebooks" WHERE title_id = p_title_id ORDER BY id LIMIT 1;
-  IF v_id IS NOT NULL THEN RETURN 'EBook-' || v_id; END IF;
-
-  SELECT id INTO v_id FROM "Audiobooks" WHERE title_id = p_title_id ORDER BY id LIMIT 1;
-  IF v_id IS NOT NULL THEN RETURN 'AudioBook-' || v_id; END IF;
-
-  SELECT id INTO v_id FROM "CardBooks" WHERE title_id = p_title_id ORDER BY id LIMIT 1;
-  IF v_id IS NOT NULL THEN RETURN 'Book2.0-' || v_id; END IF;
-
-  SELECT id INTO v_id FROM "PrintedBooks" WHERE title_id = p_title_id ORDER BY id LIMIT 1;
-  IF v_id IS NOT NULL THEN RETURN 'PrintBook-' || v_id; END IF;
-
-  RETURN NULL;
+  -- cancel_pending_order is reused for the gift-card release + status flip; with
+  -- auth.uid() NULL (cron / service role) it skips the owner check.
+  FOR v_id IN
+    SELECT id FROM "Orders"
+    WHERE status = 'pending'
+      AND created_at < now() - make_interval(days => p_days)
+  LOOP
+    PERFORM cancel_pending_order(v_id);
+    v_count := v_count + 1;
+  END LOOP;
+  RETURN v_count;
 END;
 $$;
 
@@ -645,27 +757,12 @@ CREATE FUNCTION public.get_cart_with_title_ids() RETURNS TABLE(cart_id text, tit
     SET search_path TO 'public'
     AS $$
   WITH cart_rows AS (
-    SELECT
-      id,
-      category,
-      NULLIF(SPLIT_PART(id, '-', 2), '')::integer AS edition_id
+    SELECT id, category, NULLIF(SPLIT_PART(id, '-', 2), '')::integer AS edition_id
     FROM "Cart"
   )
-  SELECT cr.id AS cart_id, e.title_id
-    FROM cart_rows cr
-    JOIN "Ebooks" e ON cr.category = 'EBook' AND e.id = cr.edition_id
-  UNION ALL
-  SELECT cr.id, a.title_id
-    FROM cart_rows cr
-    JOIN "Audiobooks" a ON cr.category = 'AudioBook' AND a.id = cr.edition_id
-  UNION ALL
-  SELECT cr.id, p.title_id
-    FROM cart_rows cr
-    JOIN "PrintedBooks" p ON cr.category = 'PrintBook' AND p.id = cr.edition_id
-  UNION ALL
-  SELECT cr.id, b.title_id
-    FROM cart_rows cr
-    JOIN "CardBooks" b ON cr.category = 'Book2.0' AND b.id = cr.edition_id;
+  SELECT cr.id, e.title_id
+  FROM cart_rows cr
+  JOIN "Editions" e ON e.id = cr.edition_id AND e.kind = cr.category::text;
 $$;
 
 
@@ -677,193 +774,36 @@ CREATE FUNCTION public.get_catalog_book_by_slug(title_slug text) RETURNS TABLE(i
     LANGUAGE sql STABLE
     AS $$
   WITH all_products AS (
-    SELECT
-      cb.id, cb.price, cb.discount,
-      coalesce(cb.sold_out, false) AS sold_out,
-      coalesce(cb.is_published, false) AS is_published,
-      cb.publish_date, cb.release_date, cb.title_id,
-      'Book2.0'::text AS product_type,
-      2 AS type_rank,
-      jsonb_build_object(
-        'format',             cb.format,
-        'printing_technique', cb.printing_technique,
-        'paper',              cb.paper,
-        'packaging',          cb.packaging,
-        'demo_path',          cb.demo_path
-      ) AS edition_details,
-      (
-        SELECT coalesce(jsonb_agg(jsonb_build_object('name', w.name, 'job', w.job) ORDER BY cbw.sort_order, w.name), '[]'::jsonb)
-        FROM "CardBookWorkers" cbw
-        JOIN "Workers" w ON w.id = cbw.worker_id
-        WHERE cbw.card_book_id = cb.id
-      ) AS edition_workers
-    FROM "CardBooks" cb
-
-    UNION ALL
-
-    SELECT
-      e.id, e.price, e.discount,
-      false, coalesce(e.is_published, false),
-      e.publish_date, e.release_date, e.title_id,
-      'EBook'::text, 1,
-      jsonb_build_object(
-        'formats',         e.formats,
-        'character_count', e.character_count,
-        'demo_path',       e.demo_path
-      ),
-      (
-        SELECT coalesce(jsonb_agg(jsonb_build_object('name', w.name, 'job', w.job) ORDER BY ew.sort_order, w.name), '[]'::jsonb)
-        FROM "EbookWorkers" ew
-        JOIN "Workers" w ON w.id = ew.worker_id
-        WHERE ew.ebook_id = e.id
-      )
-    FROM "Ebooks" e
-
-    UNION ALL
-
-    SELECT
-      a.id, a.price, a.discount,
-      false, coalesce(a.is_published, false),
-      a.publish_date, a.release_date, a.title_id,
-      'AudioBook'::text, 3,
-      jsonb_build_object(
-        'duration_seconds', a.duration_seconds,
-        'file_size_bytes',  a.file_size_bytes,
-        'demo_path',        a.demo_path
-      ),
-      (
-        SELECT coalesce(jsonb_agg(jsonb_build_object('name', w.name, 'job', w.job) ORDER BY abw.sort_order, w.name), '[]'::jsonb)
-        FROM "AudiobookWorkers" abw
-        JOIN "Workers" w ON w.id = abw.worker_id
-        WHERE abw.audiobook_id = a.id
-      )
-    FROM "Audiobooks" a
-
-    UNION ALL
-
-    SELECT
-      pb.id, pb.price, pb.discount,
-      coalesce(pb.sold_out, false),
-      coalesce(pb.is_published, false),
-      pb.publish_date, pb.release_date, pb.title_id,
-      'PrintBook'::text, 4,
-      jsonb_build_object(
-        'format',         pb.format,
-        'page_count',     pb.page_count,
-        'paper',          pb.paper,
-        'cover_material', pb.cover_material,
-        'binding',        pb.binding,
-        'illustrations',  pb.illustrations
-      ),
-      (
-        SELECT coalesce(jsonb_agg(jsonb_build_object('name', w.name, 'job', w.job) ORDER BY pbw.sort_order, w.name), '[]'::jsonb)
-        FROM "PrintedBookWorkers" pbw
-        JOIN "Workers" w ON w.id = pbw.worker_id
-        WHERE pbw.printed_book_id = pb.id
-      )
-    FROM "PrintedBooks" pb
+    SELECT e.id, e.price, e.discount, coalesce(e.sold_out, false) AS sold_out,
+           coalesce(e.is_published, false) AS is_published, e.publish_date, e.release_date, e.title_id,
+           e.kind AS product_type,
+           CASE e.kind WHEN 'EBook' THEN 1 WHEN 'Book2.0' THEN 2 WHEN 'AudioBook' THEN 3 WHEN 'PrintBook' THEN 4 END AS type_rank,
+           (e.details || jsonb_build_object('demo_path', e.demo_path)) AS edition_details,
+           (
+             SELECT coalesce(jsonb_agg(jsonb_build_object('name', w.name, 'job', w.job) ORDER BY ew.sort_order, w.name), '[]'::jsonb)
+             FROM "EditionWorkers" ew JOIN "Workers" w ON w.id = ew.worker_id WHERE ew.edition_id = e.id
+           ) AS edition_workers
+    FROM "Editions" e
   )
   SELECT
-    p.id,
-    p.price,
-    p.discount,
-    p.sold_out,
-    p.is_published,
-    p.publish_date,
-    p.release_date,
-    p.title_id,
-    p.product_type,
-    t.name            AS title_name,
-    t.slug            AS title_slug,
-    t.cover           AS title_cover,
-    t.cover_blur      AS title_cover_blur,
-    t.description     AS title_description,
-    t.thesis          AS title_thesis,
-    t.lit_form        AS title_lit_form,
-    t.age_restriction AS title_age_restriction,
-    t.first_release   AS title_first_release,
-    t.is_compilation  AS title_is_compilation,
-    (
-      SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}')
-      FROM "Titles_Authors" ta
-      JOIN "Authors" a ON a.id = ta.author_id
-      WHERE ta.title_id = t.id
-    ) AS author_names,
-    (
-      SELECT coalesce(
-        jsonb_agg(
-          jsonb_build_object(
-            'id', a.id,
-            'title', a.title,
-            'image', a.image
-          )
-          ORDER BY ta.position ASC, a.position ASC, a.title ASC
-        ),
-        '[]'::jsonb
-      )
-      FROM "Titles_Awards" ta
-      JOIN "Awards" a ON a.id = ta.award_id
-      WHERE ta.title_id = t.id
-        AND a.is_active = true
-    ) AS title_awards,
-    p.edition_details,
-    p.edition_workers,
-    (
-      SELECT jsonb_build_object('has_poster', bt.has_poster)
-      FROM "Booktrailers" bt
-      WHERE bt.title_id = t.id
-    ) AS title_booktrailer,
-    (
-      SELECT coalesce(
-        jsonb_agg(
-          jsonb_build_object(
-            'id',         au.id,
-            'name',       au.name,
-            'photo',      au.photo,
-            'photo_blur', au.photo_blur,
-            'city',       au.city,
-            'birth_date', au.birth_date,
-            'death_date', au.death_date,
-            'phrase',     au.phrase,
-            'bio',        au.bio,
-            'contacts',   (
-              SELECT coalesce(
-                jsonb_agg(jsonb_build_object('channel', ac.channel, 'url', ac.url) ORDER BY ac.sort_order),
-                '[]'::jsonb
-              )
-              FROM "AuthorContacts" ac
-              WHERE ac.author_id = au.id
-            )
-          )
-          ORDER BY ta_inner.id ASC, au.name ASC
-        ),
-        '[]'::jsonb
-      )
-      FROM "Titles_Authors" ta_inner
-      JOIN "Authors" au ON au.id = ta_inner.author_id
-      WHERE ta_inner.title_id = t.id
-    ) AS title_authors,
-    (
-      SELECT coalesce(
-        jsonb_agg(
-          jsonb_build_object(
-            'id',      bc.id,
-            'heading', bc.heading,
-            'body',    bc.body,
-            'url',     bc.url
-          )
-          ORDER BY bc.sort_order ASC, bc.id ASC
-        ),
-        '[]'::jsonb
-      )
-      FROM "BookContexts" bc
-      WHERE bc.title_id = t.id
-    ) AS title_contexts
+    p.id, p.price, p.discount, p.sold_out, p.is_published, p.publish_date, p.release_date, p.title_id, p.product_type,
+    t.name AS title_name, t.slug AS title_slug, t.cover AS title_cover, t.cover_blur AS title_cover_blur,
+    t.description AS title_description, t.thesis AS title_thesis, t.lit_form AS title_lit_form,
+    t.age_restriction AS title_age_restriction, t.first_release AS title_first_release, t.is_compilation AS title_is_compilation,
+    (SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}') FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id WHERE ta.title_id = t.id) AS author_names,
+    (SELECT coalesce(jsonb_agg(jsonb_build_object('id', a.id, 'title', a.title, 'image', a.image) ORDER BY ta.position ASC, a.position ASC, a.title ASC), '[]'::jsonb)
+     FROM "Titles_Awards" ta JOIN "Awards" a ON a.id = ta.award_id WHERE ta.title_id = t.id AND a.is_active = true) AS title_awards,
+    p.edition_details, p.edition_workers,
+    (SELECT jsonb_build_object('has_poster', bt.has_poster) FROM "Booktrailers" bt WHERE bt.title_id = t.id) AS title_booktrailer,
+    (SELECT coalesce(jsonb_agg(jsonb_build_object('id', au.id, 'name', au.name, 'photo', au.photo, 'photo_blur', au.photo_blur, 'city', au.city, 'birth_date', au.birth_date, 'death_date', au.death_date, 'phrase', au.phrase, 'bio', au.bio,
+       'contacts', (SELECT coalesce(jsonb_agg(jsonb_build_object('channel', ac.channel, 'url', ac.url) ORDER BY ac.sort_order), '[]'::jsonb) FROM "AuthorContacts" ac WHERE ac.author_id = au.id)
+     ) ORDER BY ta_inner.id ASC, au.name ASC), '[]'::jsonb)
+     FROM "Titles_Authors" ta_inner JOIN "Authors" au ON au.id = ta_inner.author_id WHERE ta_inner.title_id = t.id) AS title_authors,
+    (SELECT coalesce(jsonb_agg(jsonb_build_object('id', bc.id, 'heading', bc.heading, 'body', bc.body, 'url', bc.url) ORDER BY bc.sort_order ASC, bc.id ASC), '[]'::jsonb)
+     FROM "BookContexts" bc WHERE bc.title_id = t.id) AS title_contexts
   FROM all_products p
   INNER JOIN "Titles" t ON t.id = p.title_id
-  WHERE t.slug = title_slug
-    AND p.is_published = true
-    AND t.status = 'published'
+  WHERE t.slug = title_slug AND p.is_published = true AND t.status = 'published'
   ORDER BY p.type_rank ASC;
 $$;
 
@@ -877,126 +817,59 @@ CREATE FUNCTION public.get_catalog_books(result_limit integer DEFAULT 12, result
     AS $$
   WITH filter_params AS (
     SELECT
-      CASE
-        WHEN product_type_filters IS NOT NULL AND cardinality(product_type_filters) > 0 THEN product_type_filters
-        WHEN product_type_filter IS NOT NULL AND product_type_filter <> '' THEN ARRAY[product_type_filter]
-        ELSE NULL::text[]
-      END AS product_types,
-      CASE
-        WHEN author_names_filter IS NOT NULL AND cardinality(author_names_filter) > 0 THEN author_names_filter
-        WHEN author_name IS NOT NULL AND author_name <> '' THEN ARRAY[author_name]
-        ELSE NULL::text[]
-      END AS authors,
-      CASE
-        WHEN year_filters IS NOT NULL AND cardinality(year_filters) > 0 THEN year_filters
-        ELSE NULL::text[]
-      END AS years
+      CASE WHEN product_type_filters IS NOT NULL AND cardinality(product_type_filters) > 0 THEN product_type_filters
+           WHEN product_type_filter IS NOT NULL AND product_type_filter <> '' THEN ARRAY[product_type_filter]
+           ELSE NULL::text[] END AS product_types,
+      CASE WHEN author_names_filter IS NOT NULL AND cardinality(author_names_filter) > 0 THEN author_names_filter
+           WHEN author_name IS NOT NULL AND author_name <> '' THEN ARRAY[author_name]
+           ELSE NULL::text[] END AS authors,
+      CASE WHEN year_filters IS NOT NULL AND cardinality(year_filters) > 0 THEN year_filters
+           ELSE NULL::text[] END AS years
   ),
   all_products AS (
-    SELECT id, price, discount, coalesce(sold_out, false) AS sold_out,
-           coalesce(is_published, false) AS is_published,
-           publish_date, release_date, title_id, 'Book2.0'::text AS product_type, 2 AS type_rank
-    FROM "CardBooks"
-    UNION ALL
-    SELECT id, price, discount, false,
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'EBook'::text, 1
-    FROM "Ebooks"
-    UNION ALL
-    SELECT id, price, discount, false,
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'AudioBook'::text, 3
-    FROM "Audiobooks"
-    UNION ALL
-    SELECT id, price, discount, coalesce(sold_out, false),
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'PrintBook'::text, 4
-    FROM "PrintedBooks"
+    SELECT e.id, e.price, e.discount, coalesce(e.sold_out, false) AS sold_out,
+           coalesce(e.is_published, false) AS is_published,
+           e.publish_date, e.release_date, e.title_id, e.kind AS product_type,
+           CASE e.kind WHEN 'EBook' THEN 1 WHEN 'Book2.0' THEN 2 WHEN 'AudioBook' THEN 3 WHEN 'PrintBook' THEN 4 END AS type_rank
+    FROM "Editions" e
   ),
   filtered AS (
-    SELECT
-      p.id,
-      p.price,
-      p.discount,
-      p.sold_out,
-      p.is_published,
-      p.publish_date,
-      p.release_date,
-      p.title_id,
-      p.product_type,
-      p.type_rank,
-      t.name            AS title_name,
-      t.slug            AS title_slug,
-      t.cover           AS title_cover,
-      t.cover_blur      AS title_cover_blur,
-      t.description     AS title_description,
-      t.thesis          AS title_thesis,
-      t.lit_form        AS title_lit_form,
-      t.age_restriction AS title_age_restriction,
-      t.first_release   AS title_first_release,
-      authors.author_names,
-      authors.first_author_surname,
-      COUNT(*) OVER (PARTITION BY p.title_id) AS type_count
+    SELECT p.id, p.price, p.discount, p.sold_out, p.is_published, p.publish_date, p.release_date,
+           p.title_id, p.product_type, p.type_rank,
+           t.name AS title_name, t.slug AS title_slug, t.cover AS title_cover, t.cover_blur AS title_cover_blur,
+           t.description AS title_description, t.thesis AS title_thesis, t.lit_form AS title_lit_form,
+           t.age_restriction AS title_age_restriction, t.first_release AS title_first_release,
+           authors.author_names, authors.first_author_surname,
+           COUNT(*) OVER (PARTITION BY p.title_id) AS type_count
     FROM all_products p
     INNER JOIN "Titles" t ON t.id = p.title_id
     CROSS JOIN filter_params fp
     CROSS JOIN LATERAL (
-      SELECT
-        coalesce(array_agg(a.name ORDER BY a.name), '{}') AS author_names,
-        lower(regexp_replace((array_agg(a.name ORDER BY a.name))[1], '^.*[[:space:]]+', '')) AS first_author_surname
-      FROM "Titles_Authors" ta
-      JOIN "Authors" a ON a.id = ta.author_id
-      WHERE ta.title_id = t.id
+      SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}') AS author_names,
+             lower(regexp_replace((array_agg(a.name ORDER BY a.name))[1], '^.*[[:space:]]+', '')) AS first_author_surname
+      FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id WHERE ta.title_id = t.id
     ) authors
-    WHERE p.is_published = true
-      AND t.status = 'published'
+    WHERE p.is_published = true AND t.status = 'published'
       AND (title_ids IS NULL OR p.title_id = ANY(title_ids))
       AND (fp.product_types IS NULL OR p.product_type = ANY(fp.product_types))
-      AND (search_term IS NULL OR search_term = ''
-           OR t.name ILIKE '%' || search_term || '%')
-      AND (fp.authors IS NULL
-           OR EXISTS (
-             SELECT 1 FROM "Titles_Authors" ta
-             JOIN "Authors" a ON a.id = ta.author_id
-             WHERE ta.title_id = t.id AND a.name = ANY(fp.authors)
-           ))
+      AND (search_term IS NULL OR search_term = '' OR t.name ILIKE '%' || search_term || '%')
+      AND (fp.authors IS NULL OR EXISTS (
+        SELECT 1 FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id
+        WHERE ta.title_id = t.id AND a.name = ANY(fp.authors)))
       AND (fp.years IS NULL OR left(t.first_release, 4) = ANY(fp.years))
       AND (price_from IS NULL OR p.price >= price_from)
-      AND (price_to   IS NULL OR p.price <= price_to)
+      AND (price_to IS NULL OR p.price <= price_to)
   ),
   deduped AS (
-    SELECT DISTINCT ON (f.title_id)
-      f.*
+    SELECT DISTINCT ON (f.title_id) f.*
     FROM filtered f
-    ORDER BY
-      f.title_id,
-      f.type_rank ASC,
-      f.publish_date DESC NULLS LAST,
-      f.release_date DESC NULLS LAST
+    ORDER BY f.title_id, f.type_rank ASC, f.publish_date DESC NULLS LAST, f.release_date DESC NULLS LAST
   ),
   matched AS (
-    SELECT
-      d.id,
-      d.price,
-      d.discount,
-      d.sold_out,
-      d.is_published,
-      d.publish_date,
-      d.release_date,
-      d.title_id,
-      d.product_type,
-      d.title_name,
-      d.title_slug,
-      d.title_cover,
-      d.title_cover_blur,
-      d.title_description,
-      d.title_thesis,
-      d.title_lit_form,
-      d.title_age_restriction,
-      d.title_first_release,
-      d.author_names,
-      count(*) OVER ()    AS total_count,
-      (d.type_count > 1)  AS has_multiple_products
+    SELECT d.id, d.price, d.discount, d.sold_out, d.is_published, d.publish_date, d.release_date,
+           d.title_id, d.product_type, d.title_name, d.title_slug, d.title_cover, d.title_cover_blur,
+           d.title_description, d.title_thesis, d.title_lit_form, d.title_age_restriction, d.title_first_release,
+           d.author_names, count(*) OVER () AS total_count, (d.type_count > 1) AS has_multiple_products
     FROM deduped d
     ORDER BY
       CASE WHEN sort_by = 'newest' THEN d.title_first_release END DESC NULLS LAST,
@@ -1008,10 +881,44 @@ CREATE FUNCTION public.get_catalog_books(result_limit integer DEFAULT 12, result
       CASE WHEN sort_by = 'price-asc' THEN d.price END ASC NULLS LAST,
       CASE WHEN sort_by = 'price-desc' THEN d.price END DESC NULLS LAST,
       d.title_id ASC
-    LIMIT result_limit
-    OFFSET result_offset
+    LIMIT result_limit OFFSET result_offset
   )
   SELECT * FROM matched;
+$$;
+
+
+--
+-- Name: get_catalog_facets(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_catalog_facets() RETURNS jsonb
+    LANGUAGE sql STABLE
+    SET search_path TO 'public'
+    AS $$
+  WITH published_titles AS (
+    SELECT t.id, t.first_release
+    FROM "Titles" t
+    WHERE t.status = 'published'
+      AND EXISTS (SELECT 1 FROM "Editions" e WHERE e.title_id = t.id AND e.is_published)
+  )
+  SELECT jsonb_build_object(
+    'authors', (
+      SELECT coalesce(jsonb_agg(DISTINCT a.name), '[]'::jsonb)
+      FROM published_titles pt JOIN "Titles_Authors" ta ON ta.title_id = pt.id JOIN "Authors" a ON a.id = ta.author_id
+    ),
+    'years', (
+      SELECT coalesce(jsonb_agg(DISTINCT left(pt.first_release, 4)), '[]'::jsonb)
+      FROM published_titles pt WHERE pt.first_release IS NOT NULL AND pt.first_release <> ''
+    ),
+    'productTypes', (
+      SELECT coalesce(jsonb_agg(kind), '[]'::jsonb) FROM (
+        SELECT 'PrintBook' AS kind WHERE EXISTS (SELECT 1 FROM "Editions" e JOIN published_titles p ON p.id = e.title_id WHERE e.kind='PrintBook' AND e.is_published)
+        UNION SELECT 'EBook'    WHERE EXISTS (SELECT 1 FROM "Editions" e JOIN published_titles p ON p.id = e.title_id WHERE e.kind='EBook' AND e.is_published)
+        UNION SELECT 'AudioBook' WHERE EXISTS (SELECT 1 FROM "Editions" e JOIN published_titles p ON p.id = e.title_id WHERE e.kind='AudioBook' AND e.is_published)
+        UNION SELECT 'Book2.0'  WHERE EXISTS (SELECT 1 FROM "Editions" e JOIN published_titles p ON p.id = e.title_id WHERE e.kind='Book2.0' AND e.is_published)
+      ) q
+    )
+  );
 $$;
 
 
@@ -1074,101 +981,44 @@ CREATE FUNCTION public.get_similar_books(p_title_id integer) RETURNS TABLE(id in
     LANGUAGE sql STABLE
     AS $$
   WITH similar_titles AS (
-    SELECT similar_title_id AS title_id, position
-    FROM "TitleSimilarTitles"
-    WHERE title_id = p_title_id
+    SELECT similar_title_id AS title_id, position FROM "TitleSimilarTitles" WHERE title_id = p_title_id
   ),
   all_products AS (
-    SELECT id, price, discount, coalesce(sold_out, false) AS sold_out,
-           coalesce(is_published, false) AS is_published,
-           publish_date, release_date, title_id, 'Book2.0'::text AS product_type, 2 AS type_rank
-    FROM "CardBooks"
-    UNION ALL
-    SELECT id, price, discount, false,
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'EBook'::text, 1
-    FROM "Ebooks"
-    UNION ALL
-    SELECT id, price, discount, false,
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'AudioBook'::text, 3
-    FROM "Audiobooks"
-    UNION ALL
-    SELECT id, price, discount, coalesce(sold_out, false),
-           coalesce(is_published, false),
-           publish_date, release_date, title_id, 'PrintBook'::text, 4
-    FROM "PrintedBooks"
+    SELECT e.id, e.price, e.discount, coalesce(e.sold_out, false) AS sold_out,
+           coalesce(e.is_published, false) AS is_published, e.publish_date, e.release_date, e.title_id,
+           e.kind AS product_type,
+           CASE e.kind WHEN 'EBook' THEN 1 WHEN 'Book2.0' THEN 2 WHEN 'AudioBook' THEN 3 WHEN 'PrintBook' THEN 4 END AS type_rank
+    FROM "Editions" e
   ),
   filtered AS (
-    SELECT
-      p.id,
-      p.price,
-      p.discount,
-      p.sold_out,
-      p.is_published,
-      p.publish_date,
-      p.release_date,
-      p.title_id,
-      p.product_type,
-      p.type_rank,
-      t.name            AS title_name,
-      t.slug            AS title_slug,
-      t.cover           AS title_cover,
-      t.cover_blur      AS title_cover_blur,
-      t.description     AS title_description,
-      t.thesis          AS title_thesis,
-      t.lit_form        AS title_lit_form,
-      t.age_restriction AS title_age_restriction,
-      t.first_release   AS title_first_release,
-      authors.author_names,
-      COUNT(*) OVER (PARTITION BY p.title_id) AS type_count
+    SELECT p.id, p.price, p.discount, p.sold_out, p.is_published, p.publish_date, p.release_date,
+           p.title_id, p.product_type, p.type_rank,
+           t.name AS title_name, t.slug AS title_slug, t.cover AS title_cover, t.cover_blur AS title_cover_blur,
+           t.description AS title_description, t.thesis AS title_thesis, t.lit_form AS title_lit_form,
+           t.age_restriction AS title_age_restriction, t.first_release AS title_first_release,
+           authors.author_names, COUNT(*) OVER (PARTITION BY p.title_id) AS type_count
     FROM all_products p
     INNER JOIN similar_titles s ON s.title_id = p.title_id
     INNER JOIN "Titles" t ON t.id = p.title_id
     CROSS JOIN LATERAL (
       SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}') AS author_names
-      FROM "Titles_Authors" ta
-      JOIN "Authors" a ON a.id = ta.author_id
-      WHERE ta.title_id = t.id
+      FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id WHERE ta.title_id = t.id
     ) authors
-    WHERE p.is_published = true
-      AND t.status = 'published'
+    WHERE p.is_published = true AND t.status = 'published'
   ),
   deduped AS (
     SELECT DISTINCT ON (f.title_id)
-      f.id, f.price, f.discount, f.sold_out, f.is_published, f.publish_date,
-      f.release_date, f.title_id, f.product_type, f.type_rank,
-      f.title_name, f.title_slug, f.title_cover, f.title_cover_blur,
-      f.title_description, f.title_thesis, f.title_lit_form, f.title_age_restriction,
-      f.title_first_release, f.author_names, f.type_count
+      f.id, f.price, f.discount, f.sold_out, f.is_published, f.publish_date, f.release_date, f.title_id,
+      f.product_type, f.type_rank, f.title_name, f.title_slug, f.title_cover, f.title_cover_blur,
+      f.title_description, f.title_thesis, f.title_lit_form, f.title_age_restriction, f.title_first_release,
+      f.author_names, f.type_count
     FROM filtered f
-    ORDER BY
-      f.title_id,
-      f.type_rank ASC,
-      f.publish_date DESC NULLS LAST,
-      f.release_date DESC NULLS LAST
+    ORDER BY f.title_id, f.type_rank ASC, f.publish_date DESC NULLS LAST, f.release_date DESC NULLS LAST
   )
-  SELECT
-    d.id,
-    d.price,
-    d.discount,
-    d.sold_out,
-    d.is_published,
-    d.publish_date,
-    d.release_date,
-    d.title_id,
-    d.product_type,
-    d.title_name,
-    d.title_slug,
-    d.title_cover,
-    d.title_cover_blur,
-    d.title_description,
-    d.title_thesis,
-    d.title_lit_form,
-    d.title_age_restriction,
-    d.title_first_release,
-    d.author_names,
-    (d.type_count > 1) AS has_multiple_products
+  SELECT d.id, d.price, d.discount, d.sold_out, d.is_published, d.publish_date, d.release_date, d.title_id,
+         d.product_type, d.title_name, d.title_slug, d.title_cover, d.title_cover_blur, d.title_description,
+         d.title_thesis, d.title_lit_form, d.title_age_restriction, d.title_first_release, d.author_names,
+         (d.type_count > 1) AS has_multiple_products
   FROM deduped d
   INNER JOIN similar_titles s ON s.title_id = d.title_id
   ORDER BY s.position ASC;
@@ -1226,7 +1076,13 @@ BEGIN
   UPDATE "Orders"
      SET status = 'paid',
          paid_at = now(),
-         fulfillment_status = CASE WHEN delivery_method = 'shipping' THEN 'processing' ELSE 'completed' END
+         fulfillment_status = CASE
+           WHEN EXISTS (
+             SELECT 1 FROM "OrderItems"
+             WHERE order_id = v_order.id AND category IN ('PrintBook', 'Book2.0')
+           ) THEN 'processing'
+           ELSE 'completed'
+         END
    WHERE id = v_order.id;
 
   -- Recurring bookkeeping.
@@ -1370,446 +1226,6 @@ $$;
 
 
 --
--- Name: place_order(text, text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.place_order(p_shipping_name text, p_shipping_phone text, p_shipping_city text, p_shipping_street text, p_shipping_building text, p_shipping_postal_code text, p_email text) RETURNS jsonb
-    LANGUAGE plpgsql
-    SET search_path TO 'public'
-    AS $$
-DECLARE
-  v_user_id           uuid;
-  v_promo             "PromoCodes"%ROWTYPE;
-  v_promo_applies     boolean;
-  v_original_sum      numeric(10,2) := 0;
-  v_subtotal          numeric(10,2) := 0;
-  v_book_disc_total   numeric(10,2) := 0;
-  v_total_disc        numeric(10,2) := 0;
-  v_promo_delta       numeric(10,2) := 0;
-  v_final_total       numeric(10,2) := 0;
-  v_orig_unit         numeric(10,2);
-  v_orig_line         numeric(10,2);
-  v_line_book_disc    numeric(10,2);
-  v_line_effective    numeric(10,2);
-  v_promo_amount      numeric(10,2);
-  v_matched           boolean;
-  v_delivery_method   text;
-  v_order_id          integer;
-  cart_row            record;
-BEGIN
-  v_user_id := auth.uid();
-  IF v_user_id IS NULL THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'not_authenticated');
-  END IF;
-
-  -- Cart presence check
-  IF NOT EXISTS (SELECT 1 FROM "Cart" WHERE user_id = v_user_id) THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'empty_cart');
-  END IF;
-
-  -- Resolve active promo, if any
-  SELECT pc.* INTO v_promo
-  FROM "CartPromo" cp
-  JOIN "PromoCodes" pc ON pc.id = cp.promo_id
-  WHERE cp.user_id = v_user_id;
-
-  IF FOUND THEN
-    -- Re-validate window
-    IF now() >= v_promo.starts_at AND now() <= v_promo.ends_at THEN
-      v_promo_applies := true;
-    ELSE
-      v_promo_applies := false;
-    END IF;
-  ELSE
-    v_promo_applies := false;
-  END IF;
-
-  -- Recompute totals
-  FOR cart_row IN
-    SELECT * FROM "Cart" WHERE user_id = v_user_id
-  LOOP
-    v_orig_unit := CASE
-      WHEN cart_row.discount IS NOT NULL AND cart_row.discount > 0
-        THEN round(cart_row.price / (1 - cart_row.discount / 100.0))
-      ELSE cart_row.price
-    END;
-    v_orig_line := v_orig_unit * cart_row.quantity;
-    v_subtotal := v_subtotal + (cart_row.price * cart_row.quantity);
-    v_original_sum := v_original_sum + v_orig_line;
-    v_line_book_disc := v_orig_line - (cart_row.price * cart_row.quantity);
-
-    IF v_promo_applies AND v_promo.kind = 'item' THEN
-      v_matched := false;
-      IF v_promo.target_product_id IS NOT NULL THEN
-        v_matched := (cart_row.id = v_promo.target_product_id);
-      ELSIF v_promo.target_title_id IS NOT NULL THEN
-        v_matched := EXISTS (
-          SELECT 1 FROM get_cart_with_title_ids() t
-          WHERE t.cart_id = cart_row.id AND t.title_id = v_promo.target_title_id
-        );
-      END IF;
-
-      IF v_matched THEN
-        v_line_effective := GREATEST(v_line_book_disc, round(v_orig_line * v_promo.discount_pct / 100.0));
-      ELSE
-        v_line_effective := v_line_book_disc;
-      END IF;
-      v_total_disc := v_total_disc + v_line_effective;
-    END IF;
-
-    v_book_disc_total := v_book_disc_total + v_line_book_disc;
-  END LOOP;
-
-  -- Cart-level promo: compare against the sum
-  IF v_promo_applies AND v_promo.kind = 'cart' THEN
-    v_promo_amount := round(v_original_sum * v_promo.discount_pct / 100.0);
-    v_total_disc := GREATEST(v_book_disc_total, v_promo_amount);
-  ELSIF NOT v_promo_applies THEN
-    v_total_disc := v_book_disc_total;
-  END IF;
-
-  v_promo_delta := GREATEST(0, v_total_disc - v_book_disc_total);
-  v_final_total := v_subtotal - v_promo_delta;
-
-  -- Decide delivery_method based on which fields were provided
-  IF p_shipping_name IS NOT NULL AND p_shipping_name <> '' THEN
-    v_delivery_method := 'shipping';
-  ELSIF p_email IS NOT NULL AND p_email <> '' THEN
-    v_delivery_method := 'email';
-  ELSE
-    v_delivery_method := 'download';
-  END IF;
-
-  -- Insert order header
-  INSERT INTO "Orders" (
-    user_id, status, total,
-    delivery_method, delivery_email,
-    shipping_name, shipping_phone, shipping_city,
-    shipping_street, shipping_building, shipping_postal_code,
-    original_total, book_discount_total,
-    promo_code, promo_discount,
-    paid_at
-  ) VALUES (
-    v_user_id, 'paid', v_final_total,
-    v_delivery_method, NULLIF(p_email, ''),
-    NULLIF(p_shipping_name, ''), NULLIF(p_shipping_phone, ''), NULLIF(p_shipping_city, ''),
-    NULLIF(p_shipping_street, ''), NULLIF(p_shipping_building, ''), NULLIF(p_shipping_postal_code, ''),
-    v_original_sum, v_book_disc_total,
-    CASE WHEN v_promo_applies THEN v_promo.code ELSE NULL END,
-    v_promo_delta,
-    now()
-  )
-  RETURNING id INTO v_order_id;
-
-  -- Insert order items snapshotted from Cart
-  INSERT INTO "OrderItems" (order_id, book_id, name, price, quantity, category)
-  SELECT v_order_id, id, name, price, quantity, category::text
-  FROM "Cart"
-  WHERE user_id = v_user_id;
-
-  -- Clear cart + applied promo
-  DELETE FROM "CartPromo" WHERE user_id = v_user_id;
-  DELETE FROM "Cart" WHERE user_id = v_user_id;
-
-  RETURN jsonb_build_object(
-    'status', 'ok',
-    'orderId', v_order_id,
-    'finalTotal', v_final_total
-  );
-END;
-$$;
-
-
---
--- Name: place_order(text, text, text, text, text, text, text, jsonb); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.place_order(p_shipping_name text, p_shipping_phone text, p_shipping_city text, p_shipping_street text, p_shipping_building text, p_shipping_postal_code text, p_email text, p_gift_cards jsonb DEFAULT '[]'::jsonb) RETURNS jsonb
-    LANGUAGE plpgsql
-    SET search_path TO 'public'
-    AS $_$
-DECLARE
-  v_user_id                  uuid;
-  v_promo                    "PromoCodes"%ROWTYPE;
-  v_promo_applies            boolean;
-  v_original_sum             numeric(10,2) := 0;
-  v_original_discountable    numeric(10,2) := 0;
-  v_subtotal                 numeric(10,2) := 0;
-  v_discountable_subtotal    numeric(10,2) := 0;
-  v_gift_card_eligible_total numeric(10,2) := 0;
-  v_book_disc_total          numeric(10,2) := 0;
-  v_total_disc               numeric(10,2) := 0;
-  v_promo_delta              numeric(10,2) := 0;
-  v_final_total              numeric(10,2) := 0;
-  v_gift_card_total          numeric(10,2) := 0;
-  v_amount_due               numeric(10,2) := 0;
-  v_orig_unit                numeric(10,2);
-  v_orig_line                numeric(10,2);
-  v_line_book_disc           numeric(10,2);
-  v_line_effective           numeric(10,2);
-  v_promo_amount             numeric(10,2);
-  v_matched                  boolean;
-  v_delivery_method          text;
-  v_order_id                 integer;
-  cart_row                   record;
-  gift_row                   record;
-  request_row                record;
-  v_card_ids                 uuid[];
-  v_card_count               integer;
-  v_request_count            integer;
-  v_product_id               integer;
-  v_unit_i                   integer;
-  v_box_set_id               integer;
-  v_box_set_name             text;
-  v_resolved_book_id         text;
-  v_resolved_category        text;
-  bsb_row                    record;
-BEGIN
-  v_user_id := auth.uid();
-  IF v_user_id IS NULL THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'not_authenticated');
-  END IF;
-
-  IF jsonb_typeof(COALESCE(p_gift_cards, '[]'::jsonb)) <> 'array' THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_gift_cards');
-  END IF;
-
-  IF NOT EXISTS (SELECT 1 FROM "Cart" WHERE user_id = v_user_id) THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'empty_cart');
-  END IF;
-
-  SELECT pc.* INTO v_promo
-  FROM "CartPromo" cp
-  JOIN "PromoCodes" pc ON pc.id = cp.promo_id
-  WHERE cp.user_id = v_user_id;
-
-  IF FOUND THEN
-    v_promo_applies := now() >= v_promo.starts_at AND now() <= v_promo.ends_at;
-  ELSE
-    v_promo_applies := false;
-  END IF;
-
-  FOR cart_row IN
-    SELECT * FROM "Cart" WHERE user_id = v_user_id
-  LOOP
-    v_orig_unit := CASE
-      WHEN cart_row.discount IS NOT NULL AND cart_row.discount > 0
-        THEN round(cart_row.price / (1 - cart_row.discount / 100.0))
-      ELSE cart_row.price
-    END;
-    v_orig_line := v_orig_unit * cart_row.quantity;
-    v_subtotal := v_subtotal + (cart_row.price * cart_row.quantity);
-
-    IF cart_row.category::text <> 'GiftCard' THEN
-      v_discountable_subtotal := v_discountable_subtotal + (cart_row.price * cart_row.quantity);
-      v_original_sum := v_original_sum + v_orig_line;
-      v_original_discountable := v_original_discountable + v_orig_line;
-      v_line_book_disc := v_orig_line - (cart_row.price * cart_row.quantity);
-      v_book_disc_total := v_book_disc_total + v_line_book_disc;
-
-      IF v_promo_applies AND v_promo.kind = 'item' THEN
-        v_matched := false;
-        IF v_promo.target_product_id IS NOT NULL THEN
-          v_matched := (cart_row.id = v_promo.target_product_id);
-        ELSIF v_promo.target_title_id IS NOT NULL THEN
-          v_matched := EXISTS (
-            SELECT 1 FROM get_cart_with_title_ids() t
-            WHERE t.cart_id = cart_row.id AND t.title_id = v_promo.target_title_id
-          );
-        END IF;
-
-        IF v_matched THEN
-          v_line_effective := GREATEST(v_line_book_disc, round(v_orig_line * v_promo.discount_pct / 100.0));
-        ELSE
-          v_line_effective := v_line_book_disc;
-        END IF;
-        v_total_disc := v_total_disc + v_line_effective;
-      END IF;
-    ELSE
-      v_original_sum := v_original_sum + v_orig_line;
-    END IF;
-  END LOOP;
-
-  IF v_promo_applies AND v_promo.kind = 'cart' THEN
-    v_promo_amount := round(v_original_discountable * v_promo.discount_pct / 100.0);
-    v_total_disc := GREATEST(v_book_disc_total, v_promo_amount);
-  ELSIF NOT v_promo_applies THEN
-    v_total_disc := v_book_disc_total;
-  END IF;
-
-  v_promo_delta := GREATEST(0, v_total_disc - v_book_disc_total);
-  v_final_total := v_subtotal - v_promo_delta;
-  v_gift_card_eligible_total := GREATEST(0, v_discountable_subtotal - v_promo_delta);
-
-  CREATE TEMP TABLE IF NOT EXISTS pg_temp.requested_gift_cards (
-    id uuid PRIMARY KEY,
-    amount numeric(10,2) NOT NULL CHECK (amount > 0)
-  ) ON COMMIT DROP;
-  TRUNCATE pg_temp.requested_gift_cards;
-
-  INSERT INTO pg_temp.requested_gift_cards (id, amount)
-  SELECT (elem->>'id')::uuid, (elem->>'amount')::numeric(10,2)
-  FROM jsonb_array_elements(COALESCE(p_gift_cards, '[]'::jsonb)) elem
-  WHERE elem ? 'id' AND elem ? 'amount';
-
-  SELECT jsonb_array_length(COALESCE(p_gift_cards, '[]'::jsonb)) INTO v_request_count;
-  SELECT count(*), COALESCE(sum(amount), 0) INTO v_card_count, v_gift_card_total
-  FROM pg_temp.requested_gift_cards;
-
-  IF v_request_count <> v_card_count THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_gift_cards');
-  END IF;
-
-  IF v_gift_card_total > v_gift_card_eligible_total THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'gift_card_over_limit');
-  END IF;
-
-  SELECT array_agg(id ORDER BY id) INTO v_card_ids FROM pg_temp.requested_gift_cards;
-
-  IF v_card_count > 0 THEN
-    FOR gift_row IN
-      SELECT gc.*, rgc.amount
-      FROM "GiftCards" gc
-      JOIN pg_temp.requested_gift_cards rgc ON rgc.id = gc.id
-      ORDER BY gc.id
-      FOR UPDATE OF gc
-    LOOP
-      IF gift_row.owner_user_id IS DISTINCT FROM v_user_id
-         OR gift_row.status <> 'active'
-         OR gift_row.balance < gift_row.amount THEN
-        RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_gift_cards');
-      END IF;
-    END LOOP;
-
-    IF (
-      SELECT count(*)
-      FROM "GiftCards" gc
-      JOIN pg_temp.requested_gift_cards rgc ON rgc.id = gc.id
-    ) <> v_card_count THEN
-      RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_gift_cards');
-    END IF;
-  END IF;
-
-  v_amount_due := GREATEST(0, v_final_total - v_gift_card_total);
-
-  IF p_shipping_name IS NOT NULL AND p_shipping_name <> '' THEN
-    v_delivery_method := 'shipping';
-  ELSIF p_email IS NOT NULL AND p_email <> '' THEN
-    v_delivery_method := 'email';
-  ELSE
-    v_delivery_method := 'download';
-  END IF;
-
-  INSERT INTO "Orders" (
-    user_id, status, total,
-    delivery_method, delivery_email,
-    shipping_name, shipping_phone, shipping_city,
-    shipping_street, shipping_building, shipping_postal_code,
-    original_total, book_discount_total,
-    promo_code, promo_discount,
-    gift_card_total_applied, amount_due,
-    paid_at
-  ) VALUES (
-    v_user_id, 'paid', v_final_total,
-    v_delivery_method, NULLIF(p_email, ''),
-    NULLIF(p_shipping_name, ''), NULLIF(p_shipping_phone, ''), NULLIF(p_shipping_city, ''),
-    NULLIF(p_shipping_street, ''), NULLIF(p_shipping_building, ''), NULLIF(p_shipping_postal_code, ''),
-    v_original_sum, v_book_disc_total,
-    CASE WHEN v_promo_applies THEN v_promo.code ELSE NULL END,
-    v_promo_delta,
-    v_gift_card_total, v_amount_due,
-    now()
-  )
-  RETURNING id INTO v_order_id;
-
-  IF v_card_count > 0 THEN
-    FOR request_row IN SELECT * FROM pg_temp.requested_gift_cards ORDER BY id LOOP
-      UPDATE "GiftCards"
-         SET balance = balance - request_row.amount,
-             status = CASE WHEN balance - request_row.amount = 0 THEN 'depleted' ELSE 'active' END
-       WHERE id = request_row.id;
-
-      INSERT INTO "OrderGiftCardApplications" (order_id, gift_card_id, amount)
-      VALUES (v_order_id, request_row.id, request_row.amount);
-    END LOOP;
-  END IF;
-
-  FOR cart_row IN
-    SELECT * FROM "Cart" WHERE user_id = v_user_id
-  LOOP
-    IF cart_row.category::text = 'BoxSet' THEN
-      v_box_set_id := NULLIF(substring(cart_row.id FROM '-(\d+)$'), '')::int;
-      SELECT name INTO v_box_set_name FROM "BoxSets" WHERE id = v_box_set_id;
-
-      FOR bsb_row IN
-        SELECT bsb.title_id, bsb.product_id, t.name AS title_name
-        FROM "BoxSetBooks" bsb
-        JOIN "Titles" t ON t.id = bsb.title_id
-        WHERE bsb.box_set_id = v_box_set_id
-        ORDER BY bsb.position, bsb.id
-      LOOP
-        v_resolved_book_id := COALESCE(bsb_row.product_id, default_edition_for_title(bsb_row.title_id));
-        IF v_resolved_book_id IS NULL THEN CONTINUE; END IF;
-        v_resolved_category := substring(v_resolved_book_id FROM '^[^-]+');
-
-        INSERT INTO "OrderItems" (order_id, book_id, name, price, quantity, category, box_set_name)
-        VALUES (
-          v_order_id,
-          v_resolved_book_id,
-          bsb_row.title_name,
-          0,
-          cart_row.quantity,
-          v_resolved_category,
-          v_box_set_name
-        );
-      END LOOP;
-    ELSE
-      INSERT INTO "OrderItems" (order_id, book_id, name, price, quantity, category, box_set_name)
-      VALUES (
-        v_order_id,
-        cart_row.id,
-        cart_row.name,
-        cart_row.price,
-        cart_row.quantity,
-        cart_row.category::text,
-        NULL
-      );
-    END IF;
-
-    IF cart_row.category::text = 'GiftCard' THEN
-      v_product_id := NULLIF(substring(cart_row.id FROM '-(\d+)$'), '')::int;
-
-      FOR v_unit_i IN 1..COALESCE(cart_row.quantity, 1) LOOP
-        INSERT INTO "GiftCards" (
-          code, product_id, owner_user_id, initial_value, balance, status, order_id
-        )
-        SELECT
-          generate_gift_card_code(), gcp.id, v_user_id, gcp.face_value, gcp.face_value, 'active', v_order_id
-        FROM "GiftCardProducts" gcp
-        WHERE gcp.id = v_product_id;
-
-        IF NOT FOUND THEN
-          RAISE EXCEPTION 'Gift card product % not found', v_product_id;
-        END IF;
-      END LOOP;
-    END IF;
-  END LOOP;
-
-  DELETE FROM "CartPromo" WHERE user_id = v_user_id;
-  DELETE FROM "Cart" WHERE user_id = v_user_id;
-
-  RETURN jsonb_build_object(
-    'status', 'ok',
-    'orderId', v_order_id,
-    'finalTotal', v_final_total,
-    'giftCardTotalApplied', v_gift_card_total,
-    'amountDue', v_amount_due
-  );
-END;
-$_$;
-
-
---
 -- Name: profiles_touch_updated_at(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1819,6 +1235,34 @@ CREATE FUNCTION public.profiles_touch_updated_at() RETURNS trigger
 BEGIN
   NEW.updated_at := now();
   RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: quote_cart(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.quote_cart() RETURNS jsonb
+    LANGUAGE plpgsql STABLE
+    SET search_path TO 'public'
+    AS $$
+DECLARE
+  v_user_id uuid := auth.uid();
+  t         record;
+BEGIN
+  IF v_user_id IS NULL THEN
+    RETURN jsonb_build_object('subtotal', 0, 'discountAmount', 0, 'total', 0, 'giftCardEligibleTotal', 0);
+  END IF;
+
+  SELECT * INTO t FROM compute_cart_totals(v_user_id);
+
+  RETURN jsonb_build_object(
+    'subtotal',              COALESCE(t.subtotal, 0),
+    'discountAmount',        COALESCE(t.promo_delta, 0),
+    'total',                 COALESCE(t.final_total, 0),
+    'giftCardEligibleTotal', COALESCE(t.gift_card_eligible_total, 0)
+  );
 END;
 $$;
 
@@ -1854,76 +1298,61 @@ $$;
 
 
 --
+-- Name: release_order_confirmation_email(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.release_order_confirmation_email(p_order_id integer) RETURNS void
+    LANGUAGE sql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+  update public."Orders" set confirmation_email_sent_at = null where id = p_order_id;
+$$;
+
+
+--
 -- Name: search_books(text, integer, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.search_books(search_term text, result_limit integer DEFAULT 12, result_offset integer DEFAULT 0) RETURNS TABLE(id integer, price numeric, sold_out boolean, is_published boolean, publish_date text, release_date text, title_id integer, title_name text, title_slug text, title_cover text, title_cover_blur text, title_description text, title_thesis text, title_lit_form text, title_age_restriction integer, title_first_release text, author_names text[], total_count bigint)
+CREATE FUNCTION public.search_books(search_term text, result_limit integer DEFAULT 12, result_offset integer DEFAULT 0) RETURNS TABLE(id integer, price numeric, discount integer, sold_out boolean, is_published boolean, publish_date text, release_date text, title_id integer, product_type text, title_name text, title_slug text, title_cover text, title_cover_blur text, title_description text, title_thesis text, title_lit_form text, title_age_restriction integer, title_first_release text, author_names text[], total_count bigint, has_multiple_products boolean)
     LANGUAGE sql STABLE
     AS $$
-  WITH matched_books AS (
-    SELECT
-      cb.id,
-      cb.price,
-      cb.sold_out,
-      cb.is_published,
-      cb.publish_date,
-      cb.release_date,
-      cb.title_id,
-      t.name AS title_name,
-      t.slug AS title_slug,
-      t.cover AS title_cover,
-      t.cover_blur AS title_cover_blur,
-      t.description AS title_description,
-      t.thesis AS title_thesis,
-      t.lit_form AS title_lit_form,
-      t.age_restriction AS title_age_restriction,
-      t.first_release AS title_first_release,
-      (
-        SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}')
-        FROM "Titles_Authors" ta
-        JOIN "Authors" a ON a.id = ta.author_id
-        WHERE ta.title_id = t.id
-      ) AS author_names,
-      count(*) OVER () AS total_count
-    FROM "CardBooks" cb
-    INNER JOIN "Titles" t ON t.id = cb.title_id
-    WHERE cb.is_published = true
-      AND t.status = 'published'
+  WITH all_products AS (
+    SELECT e.id, e.price, e.discount, coalesce(e.sold_out, false) AS sold_out,
+           coalesce(e.is_published, false) AS is_published, e.publish_date, e.release_date, e.title_id,
+           e.kind AS product_type,
+           CASE e.kind WHEN 'EBook' THEN 1 WHEN 'Book2.0' THEN 2 WHEN 'AudioBook' THEN 3 WHEN 'PrintBook' THEN 4 END AS type_rank
+    FROM "Editions" e
+  ),
+  filtered AS (
+    SELECT p.*, t.name AS title_name, t.slug AS title_slug, t.cover AS title_cover, t.cover_blur AS title_cover_blur,
+           t.description AS title_description, t.thesis AS title_thesis, t.lit_form AS title_lit_form,
+           t.age_restriction AS title_age_restriction, t.first_release AS title_first_release,
+           authors.author_names, COUNT(*) OVER (PARTITION BY p.title_id) AS type_count
+    FROM all_products p
+    INNER JOIN "Titles" t ON t.id = p.title_id
+    CROSS JOIN LATERAL (
+      SELECT coalesce(array_agg(a.name ORDER BY a.name), '{}') AS author_names
+      FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id WHERE ta.title_id = t.id
+    ) authors
+    WHERE p.is_published = true AND t.status = 'published'
       AND (
         t.name ILIKE '%' || search_term || '%'
-        OR
-        EXISTS (
-          SELECT 1
-          FROM "Titles_Authors" ta
-          JOIN "Authors" a ON a.id = ta.author_id
-          WHERE ta.title_id = t.id
-            AND a.name ILIKE '%' || search_term || '%'
-        )
+        OR EXISTS (SELECT 1 FROM "Titles_Authors" ta JOIN "Authors" a ON a.id = ta.author_id
+                   WHERE ta.title_id = t.id AND a.name ILIKE '%' || search_term || '%')
       )
-    ORDER BY cb.publish_date DESC NULLS LAST, cb.release_date DESC NULLS LAST
-    LIMIT result_limit
-    OFFSET result_offset
+  ),
+  deduped AS (
+    SELECT DISTINCT ON (f.title_id) f.*
+    FROM filtered f
+    ORDER BY f.title_id, f.type_rank ASC, f.publish_date DESC NULLS LAST, f.release_date DESC NULLS LAST
   )
-  SELECT
-    id,
-    price,
-    sold_out,
-    is_published,
-    publish_date,
-    release_date,
-    title_id,
-    title_name,
-    title_slug,
-    title_cover,
-    title_cover_blur,
-    title_description,
-    title_thesis,
-    title_lit_form,
-    title_age_restriction,
-    title_first_release,
-    author_names,
-    total_count
-  FROM matched_books;
+  SELECT d.id, d.price, d.discount, d.sold_out, d.is_published, d.publish_date, d.release_date, d.title_id,
+         d.product_type, d.title_name, d.title_slug, d.title_cover, d.title_cover_blur, d.title_description,
+         d.title_thesis, d.title_lit_form, d.title_age_restriction, d.title_first_release, d.author_names,
+         count(*) OVER () AS total_count, (d.type_count > 1) AS has_multiple_products
+  FROM deduped d
+  ORDER BY d.publish_date DESC NULLS LAST, d.release_date DESC NULLS LAST
+  LIMIT result_limit OFFSET result_offset;
 $$;
 
 
@@ -1963,6 +1392,54 @@ $$;
 
 
 --
+-- Name: set_subscriber_resend_contact(text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.set_subscriber_resend_contact(p_email text, p_contact_id text) RETURNS void
+    LANGUAGE sql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+  update public."Subscribers" set resend_contact_id = p_contact_id, updated_at = now()
+   where email = lower(trim(p_email));
+$$;
+
+
+--
+-- Name: subscribe_newsletter(text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.subscribe_newsletter(p_email text, p_source text DEFAULT NULL::text) RETURNS jsonb
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+declare
+  v_email text := lower(trim(p_email));
+  v_status text;
+  v_token uuid;
+begin
+  if v_email = '' or position('@' in v_email) = 0 then
+    return jsonb_build_object('status', 'invalid');
+  end if;
+
+  insert into public."Subscribers" (email, source, status, confirm_token)
+  values (v_email, p_source, 'pending', gen_random_uuid())
+  on conflict (email) do update set
+    status = case when public."Subscribers".status = 'active' then 'active' else 'pending' end,
+    confirm_token = case when public."Subscribers".status = 'active'
+                         then public."Subscribers".confirm_token else gen_random_uuid() end,
+    source = coalesce(excluded.source, public."Subscribers".source),
+    updated_at = now()
+  returning status, confirm_token into v_status, v_token;
+
+  if v_status = 'active' then
+    return jsonb_build_object('status', 'active');
+  end if;
+  return jsonb_build_object('status', 'pending', 'confirm_token', v_token);
+end;
+$$;
+
+
+--
 -- Name: toggle_like(text, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1992,6 +1469,26 @@ BEGIN
   INSERT INTO "Likes" (user_id, item_type, item_id) VALUES (uid, p_item_type, p_item_id);
   RETURN true;  -- now liked
 END;
+$$;
+
+
+--
+-- Name: unsubscribe_newsletter(uuid); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.unsubscribe_newsletter(p_token uuid) RETURNS jsonb
+    LANGUAGE plpgsql SECURITY DEFINER
+    SET search_path TO 'public'
+    AS $$
+declare v_email text; v_contact text;
+begin
+  update public."Subscribers"
+     set status = 'unsubscribed', updated_at = now()
+   where unsubscribe_token = p_token
+  returning email, resend_contact_id into v_email, v_contact;
+  if v_email is null then return jsonb_build_object('status', 'invalid'); end if;
+  return jsonb_build_object('status', 'ok', 'email', v_email, 'resend_contact_id', v_contact);
+end;
 $$;
 
 
@@ -2042,6 +1539,7 @@ CREATE TABLE public."Articles" (
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     cover_width integer,
     cover_height integer,
+    title_id integer,
     CONSTRAINT content_blocks_is_array CHECK ((jsonb_typeof(content_blocks) = 'array'::text))
 );
 
@@ -2064,78 +1562,6 @@ CREATE SEQUENCE public."Articles_id_seq"
 --
 
 ALTER SEQUENCE public."Articles_id_seq" OWNED BY public."Articles".id;
-
-
---
--- Name: AudiobookWorkers; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."AudiobookWorkers" (
-    id integer NOT NULL,
-    audiobook_id integer NOT NULL,
-    worker_id integer NOT NULL,
-    sort_order integer DEFAULT 0 NOT NULL
-);
-
-
---
--- Name: AudiobookWorkers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."AudiobookWorkers_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: AudiobookWorkers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."AudiobookWorkers_id_seq" OWNED BY public."AudiobookWorkers".id;
-
-
---
--- Name: Audiobooks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."Audiobooks" (
-    id integer NOT NULL,
-    title_id integer NOT NULL,
-    price numeric(10,2),
-    is_published boolean DEFAULT true,
-    publish_date text,
-    release_date text,
-    duration_seconds integer,
-    file_size_bytes bigint,
-    file_path text,
-    demo_path text,
-    discount numeric(10,2),
-    sold boolean DEFAULT false
-);
-
-
---
--- Name: Audiobooks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."Audiobooks_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: Audiobooks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."Audiobooks_id_seq" OWNED BY public."Audiobooks".id;
 
 
 --
@@ -2389,84 +1815,6 @@ ALTER SEQUENCE public."BoxSets_id_seq" OWNED BY public."BoxSets".id;
 
 
 --
--- Name: CardBookWorkers; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."CardBookWorkers" (
-    id integer NOT NULL,
-    card_book_id integer NOT NULL,
-    worker_id integer NOT NULL,
-    sort_order integer DEFAULT 0 NOT NULL
-);
-
-
---
--- Name: CardBookWorkers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."CardBookWorkers_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: CardBookWorkers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."CardBookWorkers_id_seq" OWNED BY public."CardBookWorkers".id;
-
-
---
--- Name: CardBooks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."CardBooks" (
-    id integer NOT NULL,
-    title_id integer NOT NULL,
-    price numeric(10,2),
-    sold_out boolean DEFAULT false,
-    is_published boolean DEFAULT true,
-    publish_date text,
-    release_date text,
-    discount numeric(10,2),
-    sold integer DEFAULT 0,
-    demo text,
-    extra text,
-    counter_color text,
-    demo_path text,
-    format text,
-    printing_technique text,
-    paper text,
-    packaging text,
-    file_path text
-);
-
-
---
--- Name: CardBooks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."CardBooks_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: CardBooks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."CardBooks_id_seq" OWNED BY public."CardBooks".id;
-
-
---
 -- Name: Cart; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2496,75 +1844,65 @@ CREATE TABLE public."CartPromo" (
 
 
 --
--- Name: EbookWorkers; Type: TABLE; Schema: public; Owner: -
+-- Name: EditionWorkers; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."EbookWorkers" (
+CREATE TABLE public."EditionWorkers" (
     id integer NOT NULL,
-    ebook_id integer NOT NULL,
+    edition_id integer NOT NULL,
     worker_id integer NOT NULL,
     sort_order integer DEFAULT 0 NOT NULL
 );
 
 
 --
--- Name: EbookWorkers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: EditionWorkers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public."EbookWorkers_id_seq"
-    AS integer
+ALTER TABLE public."EditionWorkers" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."EditionWorkers_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: EbookWorkers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."EbookWorkers_id_seq" OWNED BY public."EbookWorkers".id;
-
-
---
--- Name: Ebooks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."Ebooks" (
-    id integer NOT NULL,
-    title_id integer NOT NULL,
-    price numeric(10,2),
-    is_published boolean DEFAULT true,
-    publish_date text,
-    release_date text,
-    formats text[],
-    character_count integer,
-    file_path text,
-    demo_path text,
-    discount numeric(10,2),
-    sold boolean DEFAULT false
+    CACHE 1
 );
 
 
 --
--- Name: Ebooks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: Editions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public."Ebooks_id_seq"
-    AS integer
+CREATE TABLE public."Editions" (
+    id integer NOT NULL,
+    title_id integer NOT NULL,
+    kind text NOT NULL,
+    price numeric(10,2),
+    discount numeric(10,2),
+    is_published boolean DEFAULT false NOT NULL,
+    sold_out boolean DEFAULT false NOT NULL,
+    publish_date text,
+    release_date text,
+    file_path text,
+    demo_path text,
+    details jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT "Editions_kind_check" CHECK ((kind = ANY (ARRAY['EBook'::text, 'AudioBook'::text, 'PrintBook'::text, 'Book2.0'::text])))
+);
+
+
+--
+-- Name: Editions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public."Editions" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."Editions_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: Ebooks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."Ebooks_id_seq" OWNED BY public."Ebooks".id;
+    CACHE 1
+);
 
 
 --
@@ -2758,6 +2096,7 @@ CREATE TABLE public."Orders" (
     delivery_method text,
     delivery_email text,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    confirmation_email_sent_at timestamp with time zone,
     CONSTRAINT orders_fulfillment_status_check CHECK ((fulfillment_status = ANY (ARRAY['processing'::text, 'shipped'::text, 'delivered'::text, 'completed'::text]))),
     CONSTRAINT orders_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'paid'::text, 'failed'::text, 'cancelled'::text])))
 );
@@ -2818,79 +2157,31 @@ ALTER SEQUENCE public."Partners_id_seq" OWNED BY public."Partners".id;
 
 
 --
--- Name: PrintedBookWorkers; Type: TABLE; Schema: public; Owner: -
+-- Name: Periodicals; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."PrintedBookWorkers" (
+CREATE TABLE public."Periodicals" (
     id integer NOT NULL,
-    printed_book_id integer NOT NULL,
-    worker_id integer NOT NULL,
-    sort_order integer DEFAULT 0 NOT NULL
+    name text NOT NULL,
+    slug text,
+    description text,
+    sort_order integer DEFAULT 0 NOT NULL,
+    thesis text
 );
 
 
 --
--- Name: PrintedBookWorkers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: Periodicals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public."PrintedBookWorkers_id_seq"
-    AS integer
+ALTER TABLE public."Periodicals" ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public."Periodicals_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: PrintedBookWorkers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."PrintedBookWorkers_id_seq" OWNED BY public."PrintedBookWorkers".id;
-
-
---
--- Name: PrintedBooks; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."PrintedBooks" (
-    id integer NOT NULL,
-    title_id integer NOT NULL,
-    price numeric(10,2),
-    sold_out boolean DEFAULT false,
-    is_published boolean DEFAULT true,
-    publish_date text,
-    release_date text,
-    format text,
-    page_count integer,
-    paper text,
-    cover_material text,
-    binding text,
-    illustrations text,
-    demo_path text,
-    discount numeric(10,2),
-    sold boolean DEFAULT false
+    CACHE 1
 );
-
-
---
--- Name: PrintedBooks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."PrintedBooks_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: PrintedBooks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public."PrintedBooks_id_seq" OWNED BY public."PrintedBooks".id;
 
 
 --
@@ -2911,6 +2202,26 @@ CREATE TABLE public."PromoCodes" (
     CONSTRAINT "PromoCodes_kind_check" CHECK ((kind = ANY (ARRAY['cart'::text, 'item'::text]))),
     CONSTRAINT promo_dates CHECK ((starts_at < ends_at)),
     CONSTRAINT promo_kind_targets CHECK ((((kind = 'cart'::text) AND (target_title_id IS NULL) AND (target_product_id IS NULL)) OR ((kind = 'item'::text) AND (((target_title_id IS NOT NULL) AND (target_product_id IS NULL)) OR ((target_title_id IS NULL) AND (target_product_id IS NOT NULL))))))
+);
+
+
+--
+-- Name: Subscribers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Subscribers" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    email text NOT NULL,
+    user_id uuid,
+    status text DEFAULT 'pending'::text NOT NULL,
+    source text,
+    confirm_token uuid DEFAULT gen_random_uuid() NOT NULL,
+    confirmed_at timestamp with time zone,
+    unsubscribe_token uuid DEFAULT gen_random_uuid() NOT NULL,
+    resend_contact_id text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT "Subscribers_status_check" CHECK ((status = ANY (ARRAY['pending'::text, 'active'::text, 'unsubscribed'::text])))
 );
 
 
@@ -3010,6 +2321,9 @@ CREATE TABLE public."Titles" (
     cover_blur text,
     book_photos_blurs jsonb,
     status text DEFAULT 'published'::text NOT NULL,
+    periodical_id integer,
+    volume_number integer,
+    volume_year text,
     CONSTRAINT titles_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text])))
 );
 
@@ -3206,20 +2520,6 @@ ALTER TABLE ONLY public."Articles" ALTER COLUMN id SET DEFAULT nextval('public."
 
 
 --
--- Name: AudiobookWorkers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."AudiobookWorkers" ALTER COLUMN id SET DEFAULT nextval('public."AudiobookWorkers_id_seq"'::regclass);
-
-
---
--- Name: Audiobooks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."Audiobooks" ALTER COLUMN id SET DEFAULT nextval('public."Audiobooks_id_seq"'::regclass);
-
-
---
 -- Name: AuthorContacts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3269,34 +2569,6 @@ ALTER TABLE ONLY public."BoxSets" ALTER COLUMN id SET DEFAULT nextval('public."B
 
 
 --
--- Name: CardBookWorkers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBookWorkers" ALTER COLUMN id SET DEFAULT nextval('public."CardBookWorkers_id_seq"'::regclass);
-
-
---
--- Name: CardBooks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBooks" ALTER COLUMN id SET DEFAULT nextval('public."CardBooks_id_seq"'::regclass);
-
-
---
--- Name: EbookWorkers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."EbookWorkers" ALTER COLUMN id SET DEFAULT nextval('public."EbookWorkers_id_seq"'::regclass);
-
-
---
--- Name: Ebooks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."Ebooks" ALTER COLUMN id SET DEFAULT nextval('public."Ebooks_id_seq"'::regclass);
-
-
---
 -- Name: GiftCardProducts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3329,20 +2601,6 @@ ALTER TABLE ONLY public."Orders" ALTER COLUMN id SET DEFAULT nextval('public."Or
 --
 
 ALTER TABLE ONLY public."Partners" ALTER COLUMN id SET DEFAULT nextval('public."Partners_id_seq"'::regclass);
-
-
---
--- Name: PrintedBookWorkers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBookWorkers" ALTER COLUMN id SET DEFAULT nextval('public."PrintedBookWorkers_id_seq"'::regclass);
-
-
---
--- Name: PrintedBooks id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBooks" ALTER COLUMN id SET DEFAULT nextval('public."PrintedBooks_id_seq"'::regclass);
 
 
 --
@@ -3416,30 +2674,6 @@ ALTER TABLE ONLY public."Articles"
 
 ALTER TABLE ONLY public."Articles"
     ADD CONSTRAINT "Articles_slug_key" UNIQUE (slug);
-
-
---
--- Name: AudiobookWorkers AudiobookWorkers_audiobook_id_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."AudiobookWorkers"
-    ADD CONSTRAINT "AudiobookWorkers_audiobook_id_worker_id_key" UNIQUE (audiobook_id, worker_id);
-
-
---
--- Name: AudiobookWorkers AudiobookWorkers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."AudiobookWorkers"
-    ADD CONSTRAINT "AudiobookWorkers_pkey" PRIMARY KEY (id);
-
-
---
--- Name: Audiobooks Audiobooks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."Audiobooks"
-    ADD CONSTRAINT "Audiobooks_pkey" PRIMARY KEY (id);
 
 
 --
@@ -3539,38 +2773,6 @@ ALTER TABLE ONLY public."BoxSets"
 
 
 --
--- Name: CardBookWorkers CardBookWorkers_card_book_id_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBookWorkers"
-    ADD CONSTRAINT "CardBookWorkers_card_book_id_worker_id_key" UNIQUE (card_book_id, worker_id);
-
-
---
--- Name: CardBookWorkers CardBookWorkers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBookWorkers"
-    ADD CONSTRAINT "CardBookWorkers_pkey" PRIMARY KEY (id);
-
-
---
--- Name: CardBooks CardBooks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBooks"
-    ADD CONSTRAINT "CardBooks_pkey" PRIMARY KEY (id);
-
-
---
--- Name: CardBooks CardBooks_title_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBooks"
-    ADD CONSTRAINT "CardBooks_title_id_key" UNIQUE (title_id);
-
-
---
 -- Name: CartPromo CartPromo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3587,27 +2789,27 @@ ALTER TABLE ONLY public."Cart"
 
 
 --
--- Name: EbookWorkers EbookWorkers_ebook_id_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: EditionWorkers EditionWorkers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."EbookWorkers"
-    ADD CONSTRAINT "EbookWorkers_ebook_id_worker_id_key" UNIQUE (ebook_id, worker_id);
-
-
---
--- Name: EbookWorkers EbookWorkers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."EbookWorkers"
-    ADD CONSTRAINT "EbookWorkers_pkey" PRIMARY KEY (id);
+ALTER TABLE ONLY public."EditionWorkers"
+    ADD CONSTRAINT "EditionWorkers_pkey" PRIMARY KEY (id);
 
 
 --
--- Name: Ebooks Ebooks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: Editions Editions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."Ebooks"
-    ADD CONSTRAINT "Ebooks_pkey" PRIMARY KEY (id);
+ALTER TABLE ONLY public."Editions"
+    ADD CONSTRAINT "Editions_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Editions Editions_title_id_kind_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Editions"
+    ADD CONSTRAINT "Editions_title_id_kind_key" UNIQUE (title_id, kind);
 
 
 --
@@ -3699,27 +2901,19 @@ ALTER TABLE ONLY public."Partners"
 
 
 --
--- Name: PrintedBookWorkers PrintedBookWorkers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: Periodicals Periodicals_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."PrintedBookWorkers"
-    ADD CONSTRAINT "PrintedBookWorkers_pkey" PRIMARY KEY (id);
-
-
---
--- Name: PrintedBookWorkers PrintedBookWorkers_printed_book_id_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBookWorkers"
-    ADD CONSTRAINT "PrintedBookWorkers_printed_book_id_worker_id_key" UNIQUE (printed_book_id, worker_id);
+ALTER TABLE ONLY public."Periodicals"
+    ADD CONSTRAINT "Periodicals_pkey" PRIMARY KEY (id);
 
 
 --
--- Name: PrintedBooks PrintedBooks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: Periodicals Periodicals_slug_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."PrintedBooks"
-    ADD CONSTRAINT "PrintedBooks_pkey" PRIMARY KEY (id);
+ALTER TABLE ONLY public."Periodicals"
+    ADD CONSTRAINT "Periodicals_slug_key" UNIQUE (slug);
 
 
 --
@@ -3736,6 +2930,22 @@ ALTER TABLE ONLY public."Profiles"
 
 ALTER TABLE ONLY public."PromoCodes"
     ADD CONSTRAINT "PromoCodes_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Subscribers Subscribers_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Subscribers"
+    ADD CONSTRAINT "Subscribers_email_key" UNIQUE (email);
+
+
+--
+-- Name: Subscribers Subscribers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Subscribers"
+    ADD CONSTRAINT "Subscribers_pkey" PRIMARY KEY (id);
 
 
 --
@@ -3865,6 +3075,13 @@ CREATE INDEX admin_audit_entity_idx ON public."AdminAuditLog" USING btree (entit
 
 
 --
+-- Name: articles_title_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX articles_title_id_idx ON public."Articles" USING btree (title_id);
+
+
+--
 -- Name: bookcontexts_title_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3883,6 +3100,13 @@ CREATE INDEX gift_cards_claim_token_idx ON public."GiftCards" USING btree (claim
 --
 
 CREATE INDEX gift_cards_owner_active_idx ON public."GiftCards" USING btree (owner_user_id) WHERE (status = 'active'::text);
+
+
+--
+-- Name: idx_admin_audit_actor_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_admin_audit_actor_user_id ON public."AdminAuditLog" USING btree (actor_user_id);
 
 
 --
@@ -3907,6 +3131,83 @@ CREATE INDEX idx_authors_name_trgm ON public."Authors" USING gin (name public.gi
 
 
 --
+-- Name: idx_cartpromo_promo_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_cartpromo_promo_id ON public."CartPromo" USING btree (promo_id);
+
+
+--
+-- Name: idx_edition_workers_edition_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_edition_workers_edition_id ON public."EditionWorkers" USING btree (edition_id);
+
+
+--
+-- Name: idx_editions_kind; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_editions_kind ON public."Editions" USING btree (kind);
+
+
+--
+-- Name: idx_editions_title_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_editions_title_id ON public."Editions" USING btree (title_id);
+
+
+--
+-- Name: idx_giftcards_order_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_giftcards_order_id ON public."GiftCards" USING btree (order_id);
+
+
+--
+-- Name: idx_giftcards_product_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_giftcards_product_id ON public."GiftCards" USING btree (product_id);
+
+
+--
+-- Name: idx_ogca_gift_card_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_ogca_gift_card_id ON public."OrderGiftCardApplications" USING btree (gift_card_id);
+
+
+--
+-- Name: idx_orders_recurring_subscription_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_orders_recurring_subscription_id ON public."Orders" USING btree (recurring_subscription_id);
+
+
+--
+-- Name: idx_orders_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_orders_user_id ON public."Orders" USING btree (user_id);
+
+
+--
+-- Name: idx_promocodes_target_title_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_promocodes_target_title_id ON public."PromoCodes" USING btree (target_title_id);
+
+
+--
+-- Name: idx_subscribers_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_subscribers_user_id ON public."Subscribers" USING btree (user_id);
+
+
+--
 -- Name: idx_title_similar_titles_title_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3914,10 +3215,38 @@ CREATE INDEX idx_title_similar_titles_title_id ON public."TitleSimilarTitles" US
 
 
 --
+-- Name: idx_titles_authors_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_titles_authors_author_id ON public."Titles_Authors" USING btree (author_id);
+
+
+--
+-- Name: idx_titles_authors_title_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_titles_authors_title_id ON public."Titles_Authors" USING btree (title_id);
+
+
+--
 -- Name: idx_titles_name_trgm; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_titles_name_trgm ON public."Titles" USING gin (name public.gin_trgm_ops);
+
+
+--
+-- Name: idx_user_subscriptions_anchor_order_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_subscriptions_anchor_order_id ON public."UserSubscriptions" USING btree (anchor_order_id);
+
+
+--
+-- Name: idx_user_subscriptions_subscription_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_subscriptions_subscription_id ON public."UserSubscriptions" USING btree (subscription_id);
 
 
 --
@@ -3946,6 +3275,13 @@ CREATE INDEX promo_codes_active_idx ON public."PromoCodes" USING btree (starts_a
 --
 
 CREATE UNIQUE INDEX promo_codes_code_unique ON public."PromoCodes" USING btree (upper(code));
+
+
+--
+-- Name: titles_periodical_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX titles_periodical_id_idx ON public."Titles" USING btree (periodical_id);
 
 
 --
@@ -4000,27 +3336,11 @@ ALTER TABLE ONLY public."Articles"
 
 
 --
--- Name: AudiobookWorkers AudiobookWorkers_audiobook_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: Articles Articles_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."AudiobookWorkers"
-    ADD CONSTRAINT "AudiobookWorkers_audiobook_id_fkey" FOREIGN KEY (audiobook_id) REFERENCES public."Audiobooks"(id) ON DELETE CASCADE;
-
-
---
--- Name: AudiobookWorkers AudiobookWorkers_worker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."AudiobookWorkers"
-    ADD CONSTRAINT "AudiobookWorkers_worker_id_fkey" FOREIGN KEY (worker_id) REFERENCES public."Workers"(id) ON DELETE CASCADE;
-
-
---
--- Name: Audiobooks Audiobooks_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."Audiobooks"
-    ADD CONSTRAINT "Audiobooks_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public."Articles"
+    ADD CONSTRAINT "Articles_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE SET NULL;
 
 
 --
@@ -4064,30 +3384,6 @@ ALTER TABLE ONLY public."BoxSetBooks"
 
 
 --
--- Name: CardBookWorkers CardBookWorkers_card_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBookWorkers"
-    ADD CONSTRAINT "CardBookWorkers_card_book_id_fkey" FOREIGN KEY (card_book_id) REFERENCES public."CardBooks"(id) ON DELETE CASCADE;
-
-
---
--- Name: CardBookWorkers CardBookWorkers_worker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBookWorkers"
-    ADD CONSTRAINT "CardBookWorkers_worker_id_fkey" FOREIGN KEY (worker_id) REFERENCES public."Workers"(id) ON DELETE CASCADE;
-
-
---
--- Name: CardBooks CardBooks_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."CardBooks"
-    ADD CONSTRAINT "CardBooks_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
-
-
---
 -- Name: CartPromo CartPromo_promo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4112,27 +3408,27 @@ ALTER TABLE ONLY public."Cart"
 
 
 --
--- Name: EbookWorkers EbookWorkers_ebook_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: EditionWorkers EditionWorkers_edition_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."EbookWorkers"
-    ADD CONSTRAINT "EbookWorkers_ebook_id_fkey" FOREIGN KEY (ebook_id) REFERENCES public."Ebooks"(id) ON DELETE CASCADE;
-
-
---
--- Name: EbookWorkers EbookWorkers_worker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."EbookWorkers"
-    ADD CONSTRAINT "EbookWorkers_worker_id_fkey" FOREIGN KEY (worker_id) REFERENCES public."Workers"(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public."EditionWorkers"
+    ADD CONSTRAINT "EditionWorkers_edition_id_fkey" FOREIGN KEY (edition_id) REFERENCES public."Editions"(id) ON DELETE CASCADE;
 
 
 --
--- Name: Ebooks Ebooks_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: EditionWorkers EditionWorkers_worker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."Ebooks"
-    ADD CONSTRAINT "Ebooks_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public."EditionWorkers"
+    ADD CONSTRAINT "EditionWorkers_worker_id_fkey" FOREIGN KEY (worker_id) REFERENCES public."Workers"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: Editions Editions_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Editions"
+    ADD CONSTRAINT "Editions_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
 
 
 --
@@ -4208,30 +3504,6 @@ ALTER TABLE ONLY public."Orders"
 
 
 --
--- Name: PrintedBookWorkers PrintedBookWorkers_printed_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBookWorkers"
-    ADD CONSTRAINT "PrintedBookWorkers_printed_book_id_fkey" FOREIGN KEY (printed_book_id) REFERENCES public."PrintedBooks"(id) ON DELETE CASCADE;
-
-
---
--- Name: PrintedBookWorkers PrintedBookWorkers_worker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBookWorkers"
-    ADD CONSTRAINT "PrintedBookWorkers_worker_id_fkey" FOREIGN KEY (worker_id) REFERENCES public."Workers"(id) ON DELETE CASCADE;
-
-
---
--- Name: PrintedBooks PrintedBooks_title_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."PrintedBooks"
-    ADD CONSTRAINT "PrintedBooks_title_id_fkey" FOREIGN KEY (title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
-
-
---
 -- Name: Profiles Profiles_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4245,6 +3517,14 @@ ALTER TABLE ONLY public."Profiles"
 
 ALTER TABLE ONLY public."PromoCodes"
     ADD CONSTRAINT "PromoCodes_target_title_id_fkey" FOREIGN KEY (target_title_id) REFERENCES public."Titles"(id) ON DELETE CASCADE;
+
+
+--
+-- Name: Subscribers Subscribers_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Subscribers"
+    ADD CONSTRAINT "Subscribers_user_id_fkey" FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
 
 
 --
@@ -4296,6 +3576,14 @@ ALTER TABLE ONLY public."Titles_Awards"
 
 
 --
+-- Name: Titles Titles_periodical_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Titles"
+    ADD CONSTRAINT "Titles_periodical_id_fkey" FOREIGN KEY (periodical_id) REFERENCES public."Periodicals"(id) ON DELETE SET NULL;
+
+
+--
 -- Name: UserSubscriptions UserSubscriptions_anchor_order_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4332,18 +3620,6 @@ ALTER TABLE public."AdminAuditLog" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."Articles" ENABLE ROW LEVEL SECURITY;
 
 --
--- Name: AudiobookWorkers; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public."AudiobookWorkers" ENABLE ROW LEVEL SECURITY;
-
---
--- Name: Audiobooks; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public."Audiobooks" ENABLE ROW LEVEL SECURITY;
-
---
 -- Name: featured_books Authenticated users can modify featured books; Type: POLICY; Schema: public; Owner: -
 --
 
@@ -4355,6 +3631,12 @@ CREATE POLICY "Authenticated users can modify featured books" ON public.featured
 --
 
 ALTER TABLE public."AuthorContacts" ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: Authors; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public."Authors" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: Awards; Type: ROW SECURITY; Schema: public; Owner: -
@@ -4387,12 +3669,6 @@ ALTER TABLE public."BoxSetBooks" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."BoxSets" ENABLE ROW LEVEL SECURITY;
 
 --
--- Name: CardBookWorkers; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public."CardBookWorkers" ENABLE ROW LEVEL SECURITY;
-
---
 -- Name: Cart; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
@@ -4405,16 +3681,16 @@ ALTER TABLE public."Cart" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."CartPromo" ENABLE ROW LEVEL SECURITY;
 
 --
--- Name: EbookWorkers; Type: ROW SECURITY; Schema: public; Owner: -
+-- Name: EditionWorkers; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
-ALTER TABLE public."EbookWorkers" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."EditionWorkers" ENABLE ROW LEVEL SECURITY;
 
 --
--- Name: Ebooks; Type: ROW SECURITY; Schema: public; Owner: -
+-- Name: Editions; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
-ALTER TABLE public."Ebooks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."Editions" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: featured_books Featured books are publicly readable; Type: POLICY; Schema: public; Owner: -
@@ -4554,16 +3830,10 @@ CREATE POLICY "Owner updates own gift cards" ON public."GiftCards" FOR UPDATE US
 ALTER TABLE public."Partners" ENABLE ROW LEVEL SECURITY;
 
 --
--- Name: PrintedBookWorkers; Type: ROW SECURITY; Schema: public; Owner: -
+-- Name: Periodicals; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
-ALTER TABLE public."PrintedBookWorkers" ENABLE ROW LEVEL SECURITY;
-
---
--- Name: PrintedBooks; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public."PrintedBooks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."Periodicals" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: Profiles; Type: ROW SECURITY; Schema: public; Owner: -
@@ -4585,24 +3855,17 @@ CREATE POLICY "Public read articles" ON public."Articles" FOR SELECT USING (true
 
 
 --
--- Name: AudiobookWorkers Public read audiobook workers; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Public read audiobook workers" ON public."AudiobookWorkers" FOR SELECT USING (true);
-
-
---
--- Name: Audiobooks Public read audiobooks; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Public read audiobooks" ON public."Audiobooks" FOR SELECT USING (true);
-
-
---
 -- Name: AuthorContacts Public read author contacts; Type: POLICY; Schema: public; Owner: -
 --
 
 CREATE POLICY "Public read author contacts" ON public."AuthorContacts" FOR SELECT USING (true);
+
+
+--
+-- Name: Authors Public read authors; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Public read authors" ON public."Authors" FOR SELECT USING (true);
 
 
 --
@@ -4641,24 +3904,17 @@ CREATE POLICY "Public read box sets" ON public."BoxSets" FOR SELECT USING (((is_
 
 
 --
--- Name: CardBookWorkers Public read card book workers; Type: POLICY; Schema: public; Owner: -
+-- Name: EditionWorkers Public read edition workers; Type: POLICY; Schema: public; Owner: -
 --
 
-CREATE POLICY "Public read card book workers" ON public."CardBookWorkers" FOR SELECT USING (true);
-
-
---
--- Name: EbookWorkers Public read ebook workers; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Public read ebook workers" ON public."EbookWorkers" FOR SELECT USING (true);
+CREATE POLICY "Public read edition workers" ON public."EditionWorkers" FOR SELECT USING (true);
 
 
 --
--- Name: Ebooks Public read ebooks; Type: POLICY; Schema: public; Owner: -
+-- Name: Editions Public read editions; Type: POLICY; Schema: public; Owner: -
 --
 
-CREATE POLICY "Public read ebooks" ON public."Ebooks" FOR SELECT USING (true);
+CREATE POLICY "Public read editions" ON public."Editions" FOR SELECT USING (true);
 
 
 --
@@ -4676,17 +3932,10 @@ CREATE POLICY "Public read partners" ON public."Partners" FOR SELECT USING (true
 
 
 --
--- Name: PrintedBookWorkers Public read printed book workers; Type: POLICY; Schema: public; Owner: -
+-- Name: Periodicals Public read periodicals; Type: POLICY; Schema: public; Owner: -
 --
 
-CREATE POLICY "Public read printed book workers" ON public."PrintedBookWorkers" FOR SELECT USING (true);
-
-
---
--- Name: PrintedBooks Public read printed books; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Public read printed books" ON public."PrintedBooks" FOR SELECT USING (true);
+CREATE POLICY "Public read periodicals" ON public."Periodicals" FOR SELECT USING (true);
 
 
 --
@@ -4713,11 +3962,31 @@ CREATE POLICY "Public read title awards" ON public."Titles_Awards" FOR SELECT US
 
 
 --
+-- Name: Titles Public read titles; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Public read titles" ON public."Titles" FOR SELECT USING (true);
+
+
+--
+-- Name: Titles_Authors Public read titles_authors; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Public read titles_authors" ON public."Titles_Authors" FOR SELECT USING (true);
+
+
+--
 -- Name: Workers Public read workers; Type: POLICY; Schema: public; Owner: -
 --
 
 CREATE POLICY "Public read workers" ON public."Workers" FOR SELECT USING (true);
 
+
+--
+-- Name: Subscribers; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public."Subscribers" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: Subscriptions; Type: ROW SECURITY; Schema: public; Owner: -
@@ -4730,6 +3999,18 @@ ALTER TABLE public."Subscriptions" ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE public."TitleSimilarTitles" ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: Titles; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public."Titles" ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: Titles_Authors; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public."Titles_Authors" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: Titles_Awards; Type: ROW SECURITY; Schema: public; Owner: -
@@ -4868,8 +4149,13 @@ CREATE POLICY promo_codes_select ON public."PromoCodes" FOR SELECT TO authentica
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gfUgm29Fn5dnwuZPud72SGbOWtDrxFcOOJRUEBkD7r7asSaUqJkU0Ex0GbetQOJ
+\unrestrict 5P0yUkeD1aiPP9qRDjj8x2uqDsCkdW7ro1XegDzqzJbhuCaV16jlkfa3LXydPUZ
 
+
+--
+-- Storage buckets + object policies (manual; the storage schema itself is
+-- Supabase-managed, so only buckets + storage.objects policies are declared here).
+--
 
 -- ─── Storage buckets ──────────────────────────────────────────────────────
 INSERT INTO storage.buckets (id,name,public,file_size_limit,allowed_mime_types) VALUES ('articles','articles','t','20971520','{image/jpeg,image/png,image/webp,image/avif}') ON CONFLICT (id) DO UPDATE SET public=EXCLUDED.public,file_size_limit=EXCLUDED.file_size_limit,allowed_mime_types=EXCLUDED.allowed_mime_types;
@@ -4907,105 +4193,3 @@ CREATE POLICY story_submissions_insert ON storage.objects FOR INSERT WITH CHECK 
 CREATE POLICY story_submissions_select ON storage.objects FOR SELECT USING (((bucket_id = 'story-submissions'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)));
 CREATE POLICY videos_select ON storage.objects FOR SELECT USING ((bucket_id = 'videos'::text));
 CREATE POLICY workers_select ON storage.objects FOR SELECT USING ((bucket_id = 'workers'::text));
-
--- Restored from archived migration 20260603160000_order_tracking_and_audit.sql
--- (lost during the D1 consolidation; Orders columns + AdminAuditLog survived, the function did not).
--- ─── 3. Atomic fulfillment update + audit entry ─────────────────────────────
-CREATE OR REPLACE FUNCTION public.admin_set_order_fulfillment(
-  p_order_id        integer,
-  p_status          text,
-  p_tracking_number text,
-  p_carrier         text,
-  p_note            text,
-  p_actor           uuid
-)
-RETURNS jsonb
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO 'public'
-AS $function$
-DECLARE
-  v_order "Orders"%ROWTYPE;
-BEGIN
-  IF p_status NOT IN ('processing', 'shipped', 'delivered', 'completed') THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'invalid_status');
-  END IF;
-
-  SELECT * INTO v_order FROM "Orders" WHERE id = p_order_id FOR UPDATE;
-  IF NOT FOUND THEN
-    RETURN jsonb_build_object('status', 'error', 'reason', 'order_not_found');
-  END IF;
-
-  UPDATE "Orders"
-     SET fulfillment_status = p_status,
-         tracking_number    = NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
-         tracking_carrier   = NULLIF(btrim(coalesce(p_carrier, '')), ''),
-         admin_note         = NULLIF(btrim(coalesce(p_note, '')), '')
-   WHERE id = p_order_id;
-
-  INSERT INTO "AdminAuditLog" (actor_user_id, action, entity_type, entity_id, summary, metadata)
-  VALUES (
-    p_actor,
-    'order.fulfillment',
-    'order',
-    p_order_id::text,
-    format('Статус доставки: %s → %s', v_order.fulfillment_status, p_status),
-    jsonb_build_object(
-      'from', v_order.fulfillment_status,
-      'to', p_status,
-      'tracking_number', NULLIF(btrim(coalesce(p_tracking_number, '')), ''),
-      'carrier', NULLIF(btrim(coalesce(p_carrier, '')), '')
-    )
-  );
-
-  RETURN jsonb_build_object('status', 'ok', 'orderId', p_order_id);
-END;
-$function$;
-
-REVOKE ALL ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, text, text, uuid)
-  FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.admin_set_order_fulfillment(integer, text, text, text, text, uuid)
-  TO service_role;
-
---
--- Catalog tables: RLS + public read, no anon/authenticated writes (folded from
--- migration 20260613150000_lock_catalog_tables.sql — data-architecture audit F1).
--- Mirrors the Ebooks/Audiobooks/PrintedBooks public-read treatment so a from-scratch
--- rebuild reproduces the locked-down catalog.
---
-
-ALTER TABLE public."Titles" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public read titles" ON public."Titles" FOR SELECT USING (true);
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Titles" FROM anon, authenticated;
-
-ALTER TABLE public."Authors" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public read authors" ON public."Authors" FOR SELECT USING (true);
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Authors" FROM anon, authenticated;
-
-ALTER TABLE public."CardBooks" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public read card books" ON public."CardBooks" FOR SELECT USING (true);
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."CardBooks" FROM anon, authenticated;
-
-ALTER TABLE public."Titles_Authors" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public read titles_authors" ON public."Titles_Authors" FOR SELECT USING (true);
-REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON public."Titles_Authors" FROM anon, authenticated;
-
---
--- Foreign-key indexes (folded from 20260614130000_fk_indexes.sql — audit F6).
---
-CREATE INDEX IF NOT EXISTS idx_ebooks_title_id        ON public."Ebooks" (title_id);
-CREATE INDEX IF NOT EXISTS idx_audiobooks_title_id    ON public."Audiobooks" (title_id);
-CREATE INDEX IF NOT EXISTS idx_printedbooks_title_id  ON public."PrintedBooks" (title_id);
-CREATE INDEX IF NOT EXISTS idx_titles_authors_title_id   ON public."Titles_Authors" (title_id);
-CREATE INDEX IF NOT EXISTS idx_titles_authors_author_id  ON public."Titles_Authors" (author_id);
-CREATE INDEX IF NOT EXISTS idx_orders_user_id                  ON public."Orders" (user_id);
-CREATE INDEX IF NOT EXISTS idx_orders_recurring_subscription_id ON public."Orders" (recurring_subscription_id);
-CREATE INDEX IF NOT EXISTS idx_cartpromo_promo_id             ON public."CartPromo" (promo_id);
-CREATE INDEX IF NOT EXISTS idx_giftcards_order_id            ON public."GiftCards" (order_id);
-CREATE INDEX IF NOT EXISTS idx_giftcards_product_id          ON public."GiftCards" (product_id);
-CREATE INDEX IF NOT EXISTS idx_ogca_gift_card_id             ON public."OrderGiftCardApplications" (gift_card_id);
-CREATE INDEX IF NOT EXISTS idx_user_subscriptions_subscription_id ON public."UserSubscriptions" (subscription_id);
-CREATE INDEX IF NOT EXISTS idx_user_subscriptions_anchor_order_id ON public."UserSubscriptions" (anchor_order_id);
-CREATE INDEX IF NOT EXISTS idx_promocodes_target_title_id    ON public."PromoCodes" (target_title_id);
-CREATE INDEX IF NOT EXISTS idx_admin_audit_actor_user_id     ON public."AdminAuditLog" (actor_user_id);
-CREATE INDEX IF NOT EXISTS idx_subscribers_user_id           ON public."Subscribers" (user_id);

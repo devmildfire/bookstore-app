@@ -193,7 +193,13 @@ Phase G gate before F's drop.
 - ✅ **Reproducibility:** `seed.sql` regenerated (carries `Editions`/`EditionWorkers`, no old
   tables, promo ref repointed). Baseline+migrations+seed replays clean (migrations create
   `Editions` before seed loads).
-- ⏳ **Deferred (non-blocking):** regenerate the consolidated *baseline* itself + archive the
-  transitional migrations so the baseline (not baseline+migrations) is the single source.
-  Skipped now because the baseline carries the storage schema and exact pg_dump format —
-  worth a dedicated pass with a stubbed-`db reset` dry-run. The repo is reproducible as-is.
+- ✅ **Baseline regenerated (2026-06-14).** `20260101000000_baseline_schema.sql` rebuilt from
+  the live DB (`pg_dump --schema-only` of public, schema-line stripped, `pg_trgm` prepended,
+  the manual storage buckets/policies block re-attached). It now defines `Editions`/
+  `EditionWorkers` directly (no old tables, no transitional churn). The 15 transitional
+  migrations were moved to `supabase/migrations_archive/`; `migrations/` holds only the
+  baseline; live `schema_migrations` realigned to the single baseline version.
+  **Verified on a stubbed throwaway DB** (auth/storage stubbed): baseline + seed replay with
+  0 errors → Editions 150, EditionWorkers 601, Titles 69, 16 buckets; `get_catalog_books`→12,
+  `search_books('МРД')`→6, facets→4 kinds; old `Ebooks` absent. The baseline is once again the
+  single source of truth.
