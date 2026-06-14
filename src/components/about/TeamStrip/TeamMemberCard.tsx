@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import TeamPlaceholder from '@/assets/about/team-placeholder.svg'
-import type { TeamMember } from '@/entities/worker/client'
+import type { TeamMember } from '@/entities/worker'
 import styles from './TeamMemberCard.module.scss'
 
 type Props = {

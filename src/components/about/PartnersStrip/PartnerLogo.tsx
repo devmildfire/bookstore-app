@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import cn from 'classnames'
 import PartnerPlaceholder from '@/assets/about/partner-placeholder.svg'
-import type { Partner } from '@/entities/partner/client'
+import type { Partner } from '@/entities/partner'
 import styles from './PartnerLogo.module.scss'
 
 type Props = {

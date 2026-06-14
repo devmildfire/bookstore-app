@@ -1,6 +1,16 @@
 import { getWorkerPhotoUrl } from '@/lib/storage'
-import type { WorkerRow } from './server'
-import type { TeamMember } from './client'
+import type { Database } from '@/types/supabase'
+
+export type WorkerRow = Database['public']['Tables']['Workers']['Row']
+
+export type TeamMember = {
+  id: number
+  name: string
+  position: string
+  city: string | null
+  photoUrl: string | null
+  sortOrder: number
+}
 
 export function normalizeTeamMember(raw: WorkerRow): TeamMember {
   return {

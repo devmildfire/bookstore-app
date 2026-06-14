@@ -9,7 +9,7 @@ import { addGiftCardToCart } from '@/api/giftCards/addGiftCardToCart'
 import { cartQueryKey } from '@/api/cart'
 import { useToast } from '@/contexts/toast'
 import { formatPrice } from '@/lib/formatPrice'
-import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
+import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardAddToCartModal.module.scss'
 
 type Props = {

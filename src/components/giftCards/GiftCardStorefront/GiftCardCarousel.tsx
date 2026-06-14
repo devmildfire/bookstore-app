@@ -3,7 +3,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import GiftCardTierCard from '@/components/giftCards/GiftCardTierCard'
-import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
+import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardStorefront.module.scss'
 
 type Props = {

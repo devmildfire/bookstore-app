@@ -1,6 +1,6 @@
 import Marquee from '@/components/about/Marquee'
 import TeamMemberCard from './TeamMemberCard'
-import type { TeamMember } from '@/entities/worker/client'
+import type { TeamMember } from '@/entities/worker'
 import styles from './TeamStrip.module.scss'
 
 type Props = {

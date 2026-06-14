@@ -30,7 +30,7 @@ import { isSinglePurchaseCategory } from '@/consts/products'
 import type { CartItem, CartState } from '@/entities/cart/client'
 import type { AddToCartInput } from '@/entities/cart/validation'
 import type { AppliedPromo } from '@/entities/promo/client'
-import type { GiftCard } from '@/entities/giftCard/client'
+import type { GiftCard } from '@/entities/giftCard'
 
 // Physical-on-its-face categories — no per-item lookup needed.
 const ALWAYS_PHYSICAL = new Set<string>(['PrintBook', 'Book2.0'])

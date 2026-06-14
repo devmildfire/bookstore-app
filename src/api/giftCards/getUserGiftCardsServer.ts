@@ -1,7 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { normalizeGiftCard } from '@/entities/giftCard/normalize'
-import type { GiftCard } from '@/entities/giftCard/client'
-import type { GiftCardRow } from '@/entities/giftCard/server'
+import { normalizeGiftCard, type GiftCard, type GiftCardRow } from '@/entities/giftCard'
 
 const SELECT = '*, GiftCardProducts(*)'
 

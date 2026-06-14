@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import GiftCardAddToCartModal from '@/components/giftCards/GiftCardAddToCartModal'
 import { formatPrice } from '@/lib/formatPrice'
-import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
+import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardTierCard.module.scss'
 
 type Props = {

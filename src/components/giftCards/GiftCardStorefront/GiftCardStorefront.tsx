@@ -1,6 +1,6 @@
 import GiftCardTierCard from '@/components/giftCards/GiftCardTierCard'
 import GiftCardCarousel from './GiftCardCarousel'
-import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
+import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardStorefront.module.scss'
 
 type Props = {

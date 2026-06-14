@@ -145,7 +145,16 @@ export async function getBook(id: string): Promise<Book> {
 
 ## Entity Layer
 
-Each domain entity in `src/entities/<name>/` has:
+Each domain entity lives under `src/entities/<name>`. **Split into the four-file
+directory shape only when the entity earns it** — i.e. it has non-trivial normalization,
+a Zod schema, or several server/client types. A *simple* entity (a row type, a flat
+client type, a one-function normalizer, no validation) should be a **single file**
+`src/entities/<name>.ts` exporting all of the above. Don't create four 3-line files; that
+ceremony was the "too much boilerplate" smell flagged in the data-architecture audit (F7).
+`book` and `order` are the canonical four-file entities; `partner`, `worker`,
+`subscription`, `giftCard`, `giftCardProduct` are single-file.
+
+The four-file directory shape, when used:
 
 | File | Purpose |
 |------|---------|

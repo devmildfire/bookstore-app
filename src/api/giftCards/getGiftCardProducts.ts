@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { normalizeGiftCardProduct } from '@/entities/giftCardProduct/normalize'
-import type { GiftCardProduct } from '@/entities/giftCardProduct/client'
+import { normalizeGiftCardProduct, type GiftCardProduct } from '@/entities/giftCardProduct'
 
 export async function getGiftCardProducts(): Promise<GiftCardProduct[]> {
   const supabase = await createClient()

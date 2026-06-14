@@ -31,7 +31,7 @@ acceptance criteria, and a checklist tracker.
 | 3 | Single pricing source (quote RPC) | F2 | High | ✅ |
 | 3 | Surface anon-migration failures | F3 | High | ✅ |
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ✅ |
-| 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ⬜ |
+| 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ✅ |
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ⬜ |
 | 5 | Remove legacy `place_order` | F9 | Low | ⬜ |
 | 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ⬜ |
@@ -201,16 +201,16 @@ still succeeds; anon cart/orders remain recoverable. `tsc` green.
 
 **Acceptance:** ✅ every FK column is now index-backed; seq-scan cliffs avoided as data grows.
 
-### 4.2 Trim entity boilerplate (F7)
-- ⬜ Delete the empty `src/entities/user/` directory.
-- ⬜ Collapse stub entities (`partner`, `worker`, `subscription`, `giftCard`,
-  `giftCardProduct`) from 4 files to a single `<name>.ts` (type + normalize + optional
-  schema); update imports.
-- ⬜ Update `docs/conventions/DATA.md` / `COMPONENTS.md`: "use the 4-file split when the
-  entity has non-trivial normalization or validation; a simple entity may be one file."
+### 4.2 Trim entity boilerplate (F7) — DONE
+- ✅ Deleted the empty `src/entities/user/` directory.
+- ✅ Collapsed `partner`, `worker`, `subscription`, `giftCard`, `giftCardProduct` from
+  3-file directories to single `src/entities/<name>.ts` files (row type + client type +
+  normalizer). Updated all 19 consumer import sites (`@/entities/X/{client,server,normalize}`
+  → `@/entities/X`) and merged the multi-symbol imports.
+- ✅ Updated `docs/conventions/DATA.md`: split into the 4-file shape only when warranted; a
+  simple entity is one file. `book`/`order` left as the canonical four-file entities.
 
-**Acceptance:** fewer files, identical behaviour, `tsc`/build green; `book`/`order` left
-as-is.
+**Acceptance:** ✅ fewer files (15 → 5), identical behaviour, `tsc`/`eslint`/`build` green.
 
 ### 4.3 Catalog facets RPC (F8)
 - ⬜ Add `get_catalog_facets()` returning distinct authors / years / published product

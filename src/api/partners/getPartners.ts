@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { normalizePartner } from '@/entities/partner/normalize'
-import type { Partner } from '@/entities/partner/client'
+import { normalizePartner, type Partner } from '@/entities/partner'
 
 export async function getPartners(): Promise<Partner[]> {
   const supabase = await createClient()

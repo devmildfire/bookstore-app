@@ -7,7 +7,7 @@ import Link from 'next/link'
 import cn from 'classnames'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
-import type { Subscription } from '@/entities/subscription/client'
+import type { Subscription } from '@/entities/subscription'
 import styles from './SubscriptionsSection.module.scss'
 
 const fmt = new Intl.NumberFormat('ru-RU', {

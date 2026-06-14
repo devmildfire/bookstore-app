@@ -1,6 +1,6 @@
 import Marquee from '@/components/about/Marquee'
 import PartnerLogo from './PartnerLogo'
-import type { Partner } from '@/entities/partner/client'
+import type { Partner } from '@/entities/partner'
 import styles from './PartnersStrip.module.scss'
 
 type Props = {

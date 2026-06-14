@@ -1,6 +1,27 @@
 import { getGiftCardImageUrl } from '@/lib/storage'
-import type { GiftCard, GiftCardStatus } from './client'
-import type { GiftCardRow } from './server'
+import type { Database } from '@/types/supabase'
+
+export type GiftCardRow = Database['public']['Tables']['GiftCards']['Row'] & {
+  GiftCardProducts: Database['public']['Tables']['GiftCardProducts']['Row'] | null
+}
+
+export type GiftCardStatus = 'active' | 'pending' | 'depleted'
+
+export type GiftCard = {
+  id: string
+  code: string
+  productId: number
+  productName: string
+  productImageUrl: string | null
+  faceValue: number
+  balance: number
+  status: GiftCardStatus
+  claimToken: string | null
+  recipientEmail: string | null
+  sentAt: string | null
+  orderId: number | null
+  createdAt: string
+}
 
 function normalizeStatus(status: string): GiftCardStatus {
   if (status === 'pending' || status === 'depleted') return status

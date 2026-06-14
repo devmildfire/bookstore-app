@@ -1,6 +1,23 @@
 import { getSubscriptionImageUrl } from '@/lib/storage'
-import type { SubscriptionRow } from './server'
-import type { Subscription } from './client'
+import type { Database } from '@/types/supabase'
+
+export type SubscriptionRow = Database['public']['Tables']['Subscriptions']['Row']
+
+export type Subscription = {
+  id: number
+  cartId: string
+  slug: string
+  name: string
+  description: string | null
+  perks: string[]
+  price: number
+  discount: number | null
+  originalPrice: number | null
+  imageUrl: string | null
+  imageBlurDataUrl: string | null
+  position: number
+  publishedAt: string | null
+}
 
 export function normalizeSubscription(raw: SubscriptionRow): Subscription {
   const discount = raw.discount ?? null

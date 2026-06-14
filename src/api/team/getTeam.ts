@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { normalizeTeamMember } from '@/entities/worker/normalize'
-import type { TeamMember } from '@/entities/worker/client'
+import { normalizeTeamMember, type TeamMember } from '@/entities/worker'
 
 export async function getTeam(): Promise<TeamMember[]> {
   const supabase = await createClient()

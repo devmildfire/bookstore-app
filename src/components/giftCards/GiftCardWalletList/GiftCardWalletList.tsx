@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import GiftCardWalletItem from '@/components/giftCards/GiftCardWalletItem'
-import type { GiftCard } from '@/entities/giftCard/client'
+import type { GiftCard } from '@/entities/giftCard'
 import styles from './GiftCardWalletList.module.scss'
 
 type Props = {

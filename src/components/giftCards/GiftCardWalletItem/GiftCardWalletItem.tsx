@@ -4,7 +4,7 @@ import Image from 'next/image'
 import SendGiftCardDialog from '@/components/giftCards/SendGiftCardDialog'
 import { useToast } from '@/contexts/toast'
 import { formatPrice } from '@/lib/formatPrice'
-import type { GiftCard } from '@/entities/giftCard/client'
+import type { GiftCard } from '@/entities/giftCard'
 import styles from './GiftCardWalletItem.module.scss'
 
 type Props = {
