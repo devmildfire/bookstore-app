@@ -1695,6 +1695,10 @@ export type Database = {
         Args: { p_order_id: number }
         Returns: boolean
       }
+      compute_cart_totals: {
+        Args: { p_user_id: string }
+        Returns: Record<string, unknown>
+      }
       confirm_newsletter: { Args: { p_token: string }; Returns: Json }
       create_pending_order: {
         Args: {
@@ -1885,6 +1889,7 @@ export type Database = {
             }
             Returns: Json
           }
+      quote_cart: { Args: never; Returns: Json }
       redeem_gift_card_token: { Args: { p_token: string }; Returns: string }
       release_order_confirmation_email: {
         Args: { p_order_id: number }

@@ -5,20 +5,28 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
+  keepPreviousData,
 } from '@tanstack/react-query'
-import { getCart, cartQueryKey, addToCart, removeFromCart, updateCartQuantity, clearCart } from '@/api/cart'
+import {
+  getCart,
+  cartQueryKey,
+  addToCart,
+  removeFromCart,
+  updateCartQuantity,
+  clearCart,
+  getCartQuote,
+  cartQuoteQueryKey,
+} from '@/api/cart'
 import {
   activePromoQueryKey,
   applyPromoCode,
-  cartTitleIdsQueryKey,
   getActivePromo,
-  getCartWithTitleIds,
   removePromoCode,
   type ApplyPromoResult,
 } from '@/api/promo'
 import { boxSetPhysicalFlagsQueryKey, getBoxSetPhysicalFlags } from '@/api/orders'
 import { getUserGiftCards, userGiftCardsQueryKey } from '@/api/giftCards/getUserGiftCards'
-import { calculateCartTotals } from '@/lib/cartTotals'
+import { isSinglePurchaseCategory } from '@/consts/products'
 import type { CartItem, CartState } from '@/entities/cart/client'
 import type { AddToCartInput } from '@/entities/cart/validation'
 import type { AppliedPromo } from '@/entities/promo/client'
@@ -95,15 +103,18 @@ export function CartProvider({ children }: Props) {
 
   const [selectedGiftCardIds, setSelectedGiftCardIds] = useState<ReadonlySet<string>>(() => new Set())
 
-  // Only fetch title-id mapping when a title-target item code is applied —
-  // otherwise we never need it.
-  const needsTitleIds = appliedPromo?.kind === 'item' && appliedPromo.targetTitleId != null
-
-  const { data: cartTitleIds = [] } = useQuery({
-    queryKey: cartTitleIdsQueryKey,
-    queryFn: getCartWithTitleIds,
-    enabled: needsTitleIds,
+  // Server-authoritative pricing — the single source of truth, shared with checkout
+  // (compute_cart_totals → quote_cart / create_pending_order). The client never
+  // recomputes pricing. `keepPreviousData` defers the money figure: the previous total
+  // stays on screen while a change is recomputed server-side, so cart composition
+  // (item count, add/remove — updated optimistically below) feels instant while the
+  // price catches up on the next round-trip.
+  const { data: quote } = useQuery({
+    queryKey: cartQuoteQueryKey,
+    queryFn: getCartQuote,
+    placeholderData: keepPreviousData,
   })
+  const totals = quote ?? { subtotal: 0, discountAmount: 0, total: 0, giftCardEligibleTotal: 0 }
 
   // BoxSet physicality — only fetch when the cart actually has BoxSet items.
   const boxSetIds = useMemo(() => {
@@ -123,37 +134,82 @@ export function CartProvider({ children }: Props) {
     enabled: boxSetIds.length > 0,
   })
 
+  // Invalidate both the cart items and the server price quote after any cart write.
+  const invalidateCart = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: cartQueryKey })
+    queryClient.invalidateQueries({ queryKey: cartQuoteQueryKey })
+  }, [queryClient])
+
+  // Snapshot the cart cache, apply an optimistic transform, and return the snapshot
+  // for rollback. Composition (items + count) updates instantly; the price re-quotes.
+  const optimisticCart = useCallback(
+    async (transform: (items: CartItem[]) => CartItem[]) => {
+      await queryClient.cancelQueries({ queryKey: cartQueryKey })
+      const previous = queryClient.getQueryData<CartItem[]>(cartQueryKey)
+      queryClient.setQueryData<CartItem[]>(cartQueryKey, (old) => transform(old ?? []))
+      return { previous }
+    },
+    [queryClient],
+  )
+
+  const rollbackCart = useCallback(
+    (ctx: { previous?: CartItem[] } | undefined) => {
+      if (ctx?.previous) queryClient.setQueryData(cartQueryKey, ctx.previous)
+    },
+    [queryClient],
+  )
+
   const addMutation = useMutation({
     mutationFn: ({ item, quantity }: { item: AddToCartInput; quantity: number }) =>
       addToCart(item, quantity),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKey })
-      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
-    },
+    onMutate: ({ item, quantity }) =>
+      optimisticCart((items) => {
+        const existing = items.find((i) => i.id === item.id)
+        if (existing) {
+          if (isSinglePurchaseCategory(item.category)) return items
+          return items.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i))
+        }
+        const added: CartItem = {
+          id: item.id,
+          name: item.name,
+          subtitle: item.subtitle ?? null,
+          price: item.price,
+          quantity: isSinglePurchaseCategory(item.category) ? 1 : quantity,
+          picture: item.picture ?? null,
+          discount: item.discount ?? null,
+          category: item.category,
+        }
+        return [...items, added]
+      }),
+    onError: (_e, _v, ctx) => rollbackCart(ctx),
+    onSettled: invalidateCart,
   })
 
   const removeMutation = useMutation({
     mutationFn: removeFromCart,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKey })
-      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
-    },
+    onMutate: (id: string) => optimisticCart((items) => items.filter((i) => i.id !== id)),
+    onError: (_e, _v, ctx) => rollbackCart(ctx),
+    onSettled: invalidateCart,
   })
 
   const updateMutation = useMutation({
     mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
       updateCartQuantity(id, quantity),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKey })
-    },
+    onMutate: ({ id, quantity }) =>
+      optimisticCart((items) =>
+        quantity <= 0
+          ? items.filter((i) => i.id !== id)
+          : items.map((i) => (i.id === id ? { ...i, quantity } : i)),
+      ),
+    onError: (_e, _v, ctx) => rollbackCart(ctx),
+    onSettled: invalidateCart,
   })
 
   const clearMutation = useMutation({
     mutationFn: clearCart,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cartQueryKey })
-      queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
-    },
+    onMutate: () => optimisticCart(() => []),
+    onError: (_e, _v, ctx) => rollbackCart(ctx),
+    onSettled: invalidateCart,
   })
 
   const applyPromoMutation = useMutation({
@@ -161,7 +217,7 @@ export function CartProvider({ children }: Props) {
     onSuccess: (result) => {
       if (result.status === 'ok') {
         queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
-        queryClient.invalidateQueries({ queryKey: cartTitleIdsQueryKey })
+        queryClient.invalidateQueries({ queryKey: cartQuoteQueryKey })
       }
     },
   })
@@ -170,6 +226,7 @@ export function CartProvider({ children }: Props) {
     mutationFn: removePromoCode,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
+      queryClient.invalidateQueries({ queryKey: cartQuoteQueryKey })
     },
   })
 
@@ -204,17 +261,6 @@ export function CartProvider({ children }: Props) {
   )
 
   const state = calculateState(items)
-
-  const matchedCartIds = useMemo(() => {
-    if (!needsTitleIds || appliedPromo?.targetTitleId == null) return new Set<string>()
-    const targetTitle = appliedPromo.targetTitleId
-    return new Set(cartTitleIds.filter((r) => r.titleId === targetTitle).map((r) => r.cartId))
-  }, [needsTitleIds, appliedPromo, cartTitleIds])
-
-  const totals = useMemo(
-    () => calculateCartTotals(items, appliedPromo, matchedCartIds),
-    [items, appliedPromo, matchedCartIds]
-  )
 
   // Only `active` cards with balance > 0 can pay; cards already pending/depleted
   // are filtered out so the UI never offers them.

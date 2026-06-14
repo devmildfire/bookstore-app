@@ -28,7 +28,7 @@ acceptance criteria, and a checklist tracker.
 | 1 | RLS drift guard query | F1 | Critical | ✅ |
 | 2 | Use native typed `.rpc()`; remove all `RpcFn` casts | F4 | High | ✅ |
 | 2 | Delete legacy catalog-signature fallback | F4 | High | ✅ |
-| 3 | Single pricing source (quote RPC) | F2 | High | 🟡 |
+| 3 | Single pricing source (quote RPC) | F2 | High | ✅ |
 | 3 | Surface anon-migration failures | F3 | High | ✅ |
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ⬜ |
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ⬜ |
@@ -148,19 +148,32 @@ RPC arg now fails to compile (proven by the 4 bugs it caught).
 
 ## Phase 3 — P1: Integrity (F2, F3)
 
-### 3.1 Single source of truth for money (F2)
-- ⬜ Extract the pricing math in `create_pending_order`
-  (`baseline:280–526`) into a shared SQL function (e.g. `compute_cart_totals(user, gift_cards)`
-  returning subtotal / book-discount / promo-delta / final / gift-card-eligible / amount-due).
-- ⬜ Have `create_pending_order` call it (no behavioural change to the charge).
-- ⬜ Add a read-only `quote_cart()` RPC that returns the same struct for display.
-- ⬜ Point cart/checkout at `quote_cart()` for the **displayed + charged** figure; demote
-  `src/lib/cartTotals.ts` to an explicit optimistic estimate (clearly commented) or remove
-  it and its callsite in `src/contexts/cart.tsx:214` if the quote is fast enough.
+### 3.1 Single source of truth for money (F2) — DONE
+**Approach (user-chosen):** single server-side pricing source, but keep the UI snappy via
+optimistic composition + a deferred price (no blocking round-trip per change). See
+[[feedback_optimistic_over_blocking]].
 
-**Acceptance:** the total shown at checkout is produced by the same SQL that charges;
-removing/altering one pricing path can't silently diverge the other. Manual re-test of the
-promo + gift-card scenarios in `docs/testing/promo-codes.md`.
+- ✅ Migration `20260614120000_compute_cart_totals.sql`:
+  - `compute_cart_totals(p_user_id)` — the **one** pricing implementation (subtotal,
+    original_sum, book_disc_total, promo_delta, final_total, gift_card_eligible_total,
+    recurring_amount, has_physical, promo_code), extracted verbatim from the old inline loop.
+  - `create_pending_order` rewritten to `SELECT … FROM compute_cart_totals(...)` for pricing
+    — everything else (gift-card reserve, Orders insert, OrderItems) unchanged.
+  - `quote_cart()` — read-only, returns the same numbers for display.
+- ✅ Client: `src/api/cart/quoteCart.ts` (`getCartQuote`/`cartQuoteQueryKey`); `CartProvider`
+  now reads the quote with `placeholderData: keepPreviousData` (deferred price). Cart
+  mutations (add/remove/update/clear) are **optimistic** so composition is instant; each
+  invalidates the quote. Deleted `src/lib/cartTotals.ts` (no client price math) and the now-
+  dead `getCartWithTitleIds` wrapper + `cartTitleIds`/`matchedCartIds` machinery.
+- ✅ **Parity verified** (compute_cart_totals vs hand-computed, rolled-back txns):
+  no-promo → 4200/0/4200; cart-20% → Δ840/3360/3360; item-50% on Book2.0-26 → Δ1400/2800/2800;
+  and `quote_cart()` as the authenticated user (RLS path) → total 4200. `tsc`/`eslint`/`build` green.
+- Note: the new/updated functions live in the migration (not folded into the baseline),
+  matching how the existing `20260611180000` `create_pending_order` redefinition is handled;
+  they replay correctly in version order. Fold at the next full baseline regen.
+
+**Acceptance:** ✅ the displayed total (cart + checkout) comes from the same SQL that charges;
+there is exactly one pricing implementation; promo + gift-card scenarios re-verified.
 
 ### 3.2 Surface anon-migration failures (F3) — DONE
 - ✅ `migrateAnonymousUserAction` now returns `{ ok; error? }` and logs the RPC error with
