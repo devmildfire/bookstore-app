@@ -13,7 +13,8 @@ type FilterOptions = {
   years: string[]
 }
 
-const CATALOG_FILTER_OPTIONS_LIMIT = 10000
+// Filter types in the order the storefront expects them.
+const CANONICAL_TYPE_ORDER: ProductCategory[] = ['PrintBook', 'EBook', 'AudioBook', 'Book2.0']
 
 export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const supabase = createDataClient()
@@ -59,55 +60,39 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   }
 }
 
+// Distinct authors / years / published product types for the filter dropdowns, in one
+// RPC (get_catalog_facets) instead of re-fetching the whole catalog. Sorting stays here
+// to preserve the exact Russian-locale order and the canonical type order.
 async function getCatalogFilterOptions(
   supabase: ReturnType<typeof createDataClient>,
 ): Promise<FilterOptions> {
-  const [result, categoryResults] = await Promise.all([
-    supabase.rpc('get_catalog_books', {
-      result_limit: CATALOG_FILTER_OPTIONS_LIMIT,
-      result_offset: 0,
-      sort_by: 'newest',
-    }),
-    getPublishedProductCategories(supabase),
-  ])
+  const { data, error } = await supabase.rpc('get_catalog_facets')
+  if (error) throw new Error(`Не удалось загрузить фильтры каталога: ${error.message}`)
 
-  if (result.error) {
-    throw new Error(`Не удалось загрузить фильтры каталога: ${result.error.message}`)
-  }
-
-  const rows = (result.data ?? []) as BookServerRow[]
+  const facets = parseFacets(data)
+  const presentTypes = new Set(facets.productTypes)
 
   return {
-    categories: categoryResults,
-    authors: Array.from(new Set(rows.flatMap((row) => row.author_names ?? []))).sort((a, b) =>
-      a.localeCompare(b, 'ru'),
-    ),
-    years: Array.from(
-      new Set(
-        rows
-          .map((row) => row.title_first_release?.slice(0, 4))
-          .filter((year): year is string => Boolean(year)),
-      ),
-    ).sort((a, b) => b.localeCompare(a, 'ru')),
+    categories: CANONICAL_TYPE_ORDER.filter((type) => presentTypes.has(type)),
+    authors: [...facets.authors].sort((a, b) => a.localeCompare(b, 'ru')),
+    years: [...facets.years].sort((a, b) => b.localeCompare(a, 'ru')),
   }
 }
 
-async function getPublishedProductCategories(supabase: ReturnType<typeof createDataClient>): Promise<ProductCategory[]> {
-  const categoryQueries = [
-    { category: 'PrintBook' as const, query: supabase.from('PrintedBooks').select('id').eq('is_published', true).limit(1) },
-    { category: 'EBook' as const, query: supabase.from('Ebooks').select('id').eq('is_published', true).limit(1) },
-    { category: 'AudioBook' as const, query: supabase.from('Audiobooks').select('id').eq('is_published', true).limit(1) },
-    { category: 'Book2.0' as const, query: supabase.from('CardBooks').select('id').eq('is_published', true).limit(1) },
-  ]
-  const results = await Promise.all(categoryQueries.map(({ query }) => query))
+function parseFacets(data: unknown): { authors: string[]; years: string[]; productTypes: string[] } {
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    return { authors: [], years: [], productTypes: [] }
+  }
+  const record = data as Record<string, unknown>
+  return {
+    authors: toStringArray(record.authors),
+    years: toStringArray(record.years),
+    productTypes: toStringArray(record.productTypes),
+  }
+}
 
-  results.forEach((result) => {
-    if (result.error) throw new Error(`Не удалось загрузить типы изданий: ${result.error.message}`)
-  })
-
-  return categoryQueries
-    .filter((_, index) => (results[index].data ?? []).length > 0)
-    .map(({ category }) => category)
+function toStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : []
 }
 
 // Map of titleId → "/books/<periodical-slug>#vol-<n>" for any catalog titles that

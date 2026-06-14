@@ -32,7 +32,7 @@ acceptance criteria, and a checklist tracker.
 | 3 | Surface anon-migration failures | F3 | High | ✅ |
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ✅ |
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ✅ |
-| 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ⬜ |
+| 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ✅ |
 | 5 | Remove legacy `place_order` | F9 | Low | ⬜ |
 | 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ⬜ |
 | 6 | Editions-model consolidation — SPIKE | F5 | Medium | ⏸️ |
@@ -212,14 +212,15 @@ still succeeds; anon cart/orders remain recoverable. `tsc` green.
 
 **Acceptance:** ✅ fewer files (15 → 5), identical behaviour, `tsc`/`eslint`/`build` green.
 
-### 4.3 Catalog facets RPC (F8)
-- ⬜ Add `get_catalog_facets()` returning distinct authors / years / published product
-  types (single pass), or a small materialized view refreshed on catalog writes.
-- ⬜ Replace the `limit 10000` second catalog-RPC call + the four `is_published` probes in
-  `src/api/books/getBooks.ts:70–120` with it.
+### 4.3 Catalog facets RPC (F8) — DONE
+- ✅ Migration `20260614140000_get_catalog_facets.sql` — returns distinct authors / years /
+  published product types in one pass, scoped to the published catalog.
+- ✅ `getBooks` now calls `get_catalog_facets()` instead of re-running `get_catalog_books`
+  with `result_limit: 10000` + four `is_published` probe queries. Sorting (localeCompare
+  'ru', canonical type order) kept client-side for identical output.
 
-**Acceptance:** a catalog page load runs the heavy catalog RPC **once**; facets bounded
-and correct.
+**Acceptance:** ✅ a catalog page load runs the heavy `get_catalog_books` **once** (page
+data) + one tiny facets call; the 10k-row over-fetch + 4 probes are gone. `tsc`/lint/build green.
 
 ---
 

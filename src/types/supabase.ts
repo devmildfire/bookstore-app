@@ -1804,6 +1804,7 @@ export type Database = {
           total_count: number
         }[]
       }
+      get_catalog_facets: { Args: never; Returns: Json }
       get_or_create_profile: {
         Args: never
         Returns: {
