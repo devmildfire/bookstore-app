@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import Carousel from '@/components/common/Carousel'
+import { formatProductPrice } from '@/lib/formatPrice'
 import type { EditionPhotos } from '@/api/books/getBookPhotos'
 import type { Book } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
@@ -33,8 +34,6 @@ const EDITION_LABELS: Record<string, string> = {
 
 const dateFmt = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 const numFmt = new Intl.NumberFormat('ru-RU')
-
-const formatPrice = (price: number) => (price <= 0 ? 'Бесценно' : `${numFmt.format(price)}₽`)
 
 function formatDate(value: string | null): string | null {
   if (!value) return null
@@ -180,7 +179,7 @@ export default function BookEditionTabs({ books, editionPhotos = {}, bookName = 
       >
         <div className={styles.panelContent}>
           <h2 className={styles.editionTitle}>{EDITION_LABELS[active] ?? active}</h2>
-          <p className={styles.price}>{formatPrice(book.price)}</p>
+          <p className={styles.price}>{formatProductPrice(book.price)}</p>
 
           <div className={styles.actions}>
             <button

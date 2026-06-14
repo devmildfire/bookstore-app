@@ -7,6 +7,7 @@ import { useToast } from '@/contexts/toast'
 import { useBookProducts } from '@/hooks/useBookProducts'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import { DIGITAL_CATEGORIES } from '@/consts/products'
+import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import type { Book } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import styles from './AddToCartModal.module.scss'
@@ -22,11 +23,6 @@ const CATEGORY_LABELS: Record<ProductCategory, string> = {
   'Course':       'КУРС',
 }
 
-const fmt = new Intl.NumberFormat('ru-RU', {
-  style: 'currency',
-  currency: 'RUB',
-  maximumFractionDigits: 0,
-})
 
 type Props = {
   slug: string
@@ -169,9 +165,9 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
 
                 <div className={styles.rowPrices}>
                   {book.originalPrice && (
-                    <span className={styles.rowOriginalPrice}>{fmt.format(book.originalPrice)}</span>
+                    <span className={styles.rowOriginalPrice}>{formatPrice(book.originalPrice)}</span>
                   )}
-                  <span className={styles.rowPrice}>{fmt.format(book.price)}</span>
+                  <span className={styles.rowPrice}>{formatProductPrice(book.price)}</span>
                 </div>
               </div>
             ))}
@@ -183,7 +179,7 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
               {totalItems > 0 && (
                 <span className={styles.totalItems}>{totalItems} шт.</span>
               )}
-              <span className={styles.totalPrice}>{totalItems > 0 ? fmt.format(totalPrice) : '—'}</span>
+              <span className={styles.totalPrice}>{totalItems > 0 ? formatProductPrice(totalPrice) : '—'}</span>
             </div>
 
             <button

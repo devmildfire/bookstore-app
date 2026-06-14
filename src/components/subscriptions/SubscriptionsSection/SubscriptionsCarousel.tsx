@@ -8,13 +8,8 @@ import cn from 'classnames'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
 import type { Subscription } from '@/entities/subscription'
+import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import styles from './SubscriptionsSection.module.scss'
-
-const fmt = new Intl.NumberFormat('ru-RU', {
-  style: 'currency',
-  currency: 'RUB',
-  maximumFractionDigits: 0,
-})
 
 export default function SubscriptionsCarousel({ items }: { items: Subscription[] }) {
   return (
@@ -81,9 +76,9 @@ export function SubscriptionCard({ sub }: { sub: Subscription }) {
         </ul>
 
         <div className={styles.priceBlock}>
-          <span className={styles.price}>{fmt.format(sub.price)}</span>
+          <span className={styles.price}>{formatProductPrice(sub.price)}</span>
           {sub.originalPrice && (
-            <span className={styles.originalPrice}>{fmt.format(sub.originalPrice)}</span>
+            <span className={styles.originalPrice}>{formatPrice(sub.originalPrice)}</span>
           )}
           <span className={styles.priceLabel}>в месяц</span>
         </div>

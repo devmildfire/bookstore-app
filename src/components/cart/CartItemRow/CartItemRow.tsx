@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import Image from 'next/image'
 import { isSinglePurchaseCategory } from '@/consts/products'
 import type { CartItem } from '@/entities/cart/client'
-import { formatPrice } from '@/lib/formatPrice'
+import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import styles from './CartItemRow.module.scss'
 
 type Props = {
@@ -67,7 +67,7 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props)
       <p className={styles.type}>{typeLabel}</p>
 
       <div className={styles.priceCol}>
-        <span className={styles.price}>{formatPrice(item.price)}</span>
+        <span className={styles.price}>{formatProductPrice(item.price)}</span>
         {originalUnitPrice && (
           <span className={styles.priceOld}>{formatPrice(originalUnitPrice)}</span>
         )}
@@ -98,7 +98,7 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemove }: Props)
         </div>
       )}
 
-      <p className={styles.sum}>{formatPrice(lineTotal)}</p>
+      <p className={styles.sum}>{formatProductPrice(lineTotal)}</p>
 
       <button
         type='button'

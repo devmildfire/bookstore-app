@@ -6,6 +6,7 @@ import Link from 'next/link'
 import cn from 'classnames'
 import CartPlusIcon from '@/components/common/icons/CartPlusIcon'
 import LikeButton from '@/components/common/LikeButton'
+import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import type { Book } from '@/entities/book/client'
 import styles from './BookCard.module.scss'
 
@@ -13,12 +14,6 @@ type Props = {
   book: Book
   className?: string
 }
-
-const fmt = new Intl.NumberFormat('ru-RU', {
-  style: 'currency',
-  currency: 'RUB',
-  maximumFractionDigits: 0,
-})
 
 export default function BookCard({ book, className }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -53,9 +48,9 @@ export default function BookCard({ book, className }: Props) {
 
         <div className={styles.footer}>
           <div className={styles.prices}>
-            <span className={styles.price}>{fmt.format(book.price)}</span>
+            <span className={styles.price}>{formatProductPrice(book.price)}</span>
             {book.originalPrice && (
-              <span className={styles.originalPrice}>{fmt.format(book.originalPrice)}</span>
+              <span className={styles.originalPrice}>{formatPrice(book.originalPrice)}</span>
             )}
           </div>
 

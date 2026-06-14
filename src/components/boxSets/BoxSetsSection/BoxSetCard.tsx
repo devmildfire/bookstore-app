@@ -6,13 +6,8 @@ import { useToast } from '@/contexts/toast'
 import LikeButton from '@/components/common/LikeButton'
 import type { BoxSet } from '@/entities/boxSet/client'
 import cn from 'classnames'
+import { formatProductPrice } from '@/lib/formatPrice'
 import styles from './BoxSetsSection.module.scss'
-
-const fmt = new Intl.NumberFormat('ru-RU', {
-  style: 'currency',
-  currency: 'RUB',
-  maximumFractionDigits: 0,
-})
 
 type Props = {
   boxSet: BoxSet
@@ -73,7 +68,7 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       </div>
 
       <div className={styles.cardFooter}>
-        <span className={styles.price}>{fmt.format(boxSet.price)}</span>
+        <span className={styles.price}>{formatProductPrice(boxSet.price)}</span>
 
         <button
           type="button"

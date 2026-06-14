@@ -8,6 +8,7 @@ import {
   type SubscriptionActionResult,
 } from '@/lib/payments/actions'
 import type { UserSubscription } from '@/api/subscriptions/getUserSubscriptionsServer'
+import { formatProductPrice } from '@/lib/formatPrice'
 import styles from './SubscriptionList.module.scss'
 
 const STATUS_LABEL: Record<string, string> = {
@@ -56,7 +57,7 @@ export default function SubscriptionList({ subscriptions, canChargeNow }: Props)
             <div className={styles.info}>
               <span className={styles.name}>{sub.planName}</span>
               <span className={styles.meta}>
-                {sub.amount}&nbsp;₽ / мес · {STATUS_LABEL[sub.status] ?? sub.status}
+                {formatProductPrice(sub.amount)} / мес · {STATUS_LABEL[sub.status] ?? sub.status}
               </span>
               {active && (
                 <span className={styles.next}>

@@ -8,7 +8,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrderHistory, orderHistoryQueryKey } from '@/api/orders'
 import { cancelOrderAction, resumeCheckoutAction } from '@/lib/orders/actions'
 import { submitPaymentRedirect } from '@/lib/payments/submitRedirect'
-import { formatPrice } from '@/lib/formatPrice'
+import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import {
   CATEGORY_LABEL,
   formatOrderDate,
@@ -244,7 +244,13 @@ function ItemRow({
       </span>
       <span className={styles.itemRight}>
         {item.quantity > 1 && <span className={styles.qty}>× {item.quantity}</span>}
-        <span className={styles.price}>{formatPrice(item.price * item.quantity)}</span>
+        {/* Box-set components are snapshotted at price 0 (the set is priced as a whole),
+            so they must show 0₽, not «Бесценно» — only genuinely free products do. */}
+        <span className={styles.price}>
+          {item.boxSetName
+            ? formatPrice(item.price * item.quantity)
+            : formatProductPrice(item.price * item.quantity)}
+        </span>
       </span>
     </>
   )
