@@ -42,6 +42,10 @@ const forAuthors: SubmenuItem[] = [
     subtitle: 'Предложить рассказ\nв журнал Русского Динозавра',
     link: '/suggest-story-to-rd',
   },
+  {
+    subtitle: 'Мастерская Абзац',
+    link: '/abzac',
+  },
 ]
 
 const menu: MenuItem[] = [
