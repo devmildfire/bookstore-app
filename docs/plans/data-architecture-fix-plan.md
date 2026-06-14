@@ -35,7 +35,7 @@ acceptance criteria, and a checklist tracker.
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ✅ |
 | 5 | Remove legacy `place_order` | F9 | Low | ✅ |
 | 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ✅ |
-| 6 | Editions-model consolidation — SPIKE | F5 | Medium | ⏸️ |
+| 6 | Editions-model consolidation — SPIKE | F5 | Medium | ✅ spike done → NO-GO now (see spike doc) |
 
 ---
 
@@ -256,21 +256,25 @@ and drift-checked. `tsc`/lint/build green.
 
 ---
 
-## Phase 6 — P2 (optional, gated): Editions-model consolidation (F5)
+## Phase 6 — P2 (optional, gated): Editions-model consolidation (F5) — SPIKED
 
-**Do not start without a go/no-go.** This is the only large, risky item.
+**Spike complete** → full write-up in
+[editions-consolidation-spike.md](editions-consolidation-spike.md) (design, migration
+sketch, blast radius, risks).
 
-- ⬜ **Spike:** design a single `Editions` table (shared columns + `kind` discriminator +
-  type-specific nullable columns or `jsonb details`) and one `EditionWorkers` join.
-- ⬜ Estimate blast radius: the `category` enum, the `"<Category>-<id>"` product-id scheme
-  (cart ids, order item `book_id`, promo `target_product_id`, box-set expansion), the
-  three catalog RPCs, `normalizeBook`, the fat `Book` type.
-- ⬜ Write a migration sketch + data-backfill plan + rollback.
-- ⬜ **Decision:** proceed only if the spike shows the cost is justified by collapsing the
-  triplicated `UNION ALL` and shrinking `Book`/`normalizeBook`.
+- ✅ Designed a single `Editions` + `EditionWorkers` model with the decisive
+  `(kind, source_id)` choice that **preserves the `"<Category>-<id>"` external id scheme**
+  (protects immutable `OrderItems.book_id` + cart/promo/box-set text refs; the four tables
+  have overlapping id ranges so a naive single-id renumber would orphan order history).
+- ✅ Blast radius: 2 new tables / 8 dropped, ~10 SQL functions rewritten, ~8 code files;
+  the ~30 product-id parse sites stay unchanged thanks to id preservation.
+- ✅ **Recommendation: NO-GO as a big-bang now.** At current scale the 4-table model works;
+  the migration is large/high-risk across the checkout/order-snapshot scheme with no test
+  harness. Instead do the **cheap sliver**: fix the `search_books` CardBooks-only bug
+  (~20 lines, no data migration), and defer full consolidation until a forcing function +
+  a test harness exist. Design is captured for when that time comes.
 
-**Acceptance:** a written go/no-go with migration sketch. If "go", it becomes its own
-phased plan.
+**Outcome:** go/no-go delivered. Awaiting user decision (go / sliver-only / defer).
 
 ---
 
