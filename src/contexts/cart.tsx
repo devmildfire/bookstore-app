@@ -54,7 +54,7 @@ type CartContextValue = CartState & {
   finalTotal: number
   giftCardEligibleTotal: number
   // Gift cards — selection lives in the cart so it survives navigation
-  // from /cart → /checkout and feeds straight into place_order.
+  // from /cart → /checkout and feeds straight into create_pending_order.
   availableGiftCards: GiftCard[]
   selectedGiftCardIds: ReadonlySet<string>
   toggleGiftCard: (cardId: string) => void

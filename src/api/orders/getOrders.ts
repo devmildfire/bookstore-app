@@ -8,7 +8,7 @@ import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server
 export const ordersQueryKey = ['orders'] as const
 export const orderHistoryQueryKey = ['order-history'] as const
 
-// bookId is shaped '<Category>-<editionId>' (place_order RPC). Each
+// bookId is shaped '<Category>-<editionId>' (create_pending_order RPC). Each
 // edition table has a title_id we join against Titles to get the cover.
 const EDITION_TABLE: Record<string, 'CardBooks' | 'Ebooks' | 'Audiobooks' | 'PrintedBooks'> = {
   EBook: 'Ebooks',

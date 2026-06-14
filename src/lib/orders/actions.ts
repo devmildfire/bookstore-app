@@ -1,6 +1,5 @@
 'use server'
 
-import { placeOrder } from '@/api/orders/placeOrder'
 import { createPendingOrder } from '@/api/orders/createPendingOrder'
 import { getDownloadUrl } from '@/api/orders/getDownloadUrl'
 import { getPaymentConfig } from '@/lib/payments/config'
@@ -8,15 +7,7 @@ import { buildInitRedirect } from '@/lib/payments/robokassa/client'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation'
 import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
-import type {
-  PlaceOrderInput,
-  PlaceOrderResult,
-  DownloadUrlResult,
-} from '@/api/orders'
-
-export async function placeOrderAction(input: PlaceOrderInput): Promise<PlaceOrderResult> {
-  return placeOrder(input)
-}
+import type { PlaceOrderInput, DownloadUrlResult } from '@/api/orders'
 
 export async function getDownloadUrlAction(orderItemId: number): Promise<DownloadUrlResult> {
   return getDownloadUrl(orderItemId)

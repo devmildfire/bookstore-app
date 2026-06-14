@@ -1864,32 +1864,6 @@ export type Database = {
         Args: { from_user_id: string; to_user_id: string }
         Returns: undefined
       }
-      place_order:
-        | {
-            Args: {
-              p_email: string
-              p_shipping_building: string
-              p_shipping_city: string
-              p_shipping_name: string
-              p_shipping_phone: string
-              p_shipping_postal_code: string
-              p_shipping_street: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_email: string
-              p_gift_cards?: Json
-              p_shipping_building: string
-              p_shipping_city: string
-              p_shipping_name: string
-              p_shipping_phone: string
-              p_shipping_postal_code: string
-              p_shipping_street: string
-            }
-            Returns: Json
-          }
       quote_cart: { Args: never; Returns: Json }
       redeem_gift_card_token: { Args: { p_token: string }; Returns: string }
       release_order_confirmation_email: {

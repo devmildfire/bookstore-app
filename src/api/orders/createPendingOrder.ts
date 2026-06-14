@@ -1,11 +1,30 @@
 import { createClient } from '@/lib/supabase/server'
-import type { PlaceOrderInput, PlaceOrderErrorReason } from './placeOrder'
+
+// Shipping/email input for a checkout. The RPC re-prices the cart server-side and
+// never trusts these beyond the raw strings.
+export type PlaceOrderInput = {
+  shippingName: string | null
+  shippingPhone: string | null
+  shippingCity: string | null
+  shippingStreet: string | null
+  shippingBuilding: string | null
+  shippingPostalCode: string | null
+  email: string | null
+  giftCards?: Array<{ id: string; amount: number }>
+}
+
+export type PlaceOrderErrorReason =
+  | 'not_authenticated'
+  | 'empty_cart'
+  | 'invalid_gift_cards'
+  | 'gift_card_over_limit'
+  | 'unknown'
 
 // Creates a `pending` order (price snapshot + reserved gift cards) WITHOUT
 // taking payment or wiping the cart. The returned amountDue is what the gateway
 // must charge; recurring marks a subscription anchor. Settlement happens later
-// via mark_order_paid (the verified ResultURL webhook). Mirrors placeOrder's
-// re-pricing inside the create_pending_order RPC — input is never trusted beyond
+// via mark_order_paid (the verified ResultURL webhook). The create_pending_order
+// RPC re-prices the cart server-side — input is never trusted beyond
 // shipping/email strings.
 
 export type CreatePendingOrderResult =

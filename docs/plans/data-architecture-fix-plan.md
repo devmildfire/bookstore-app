@@ -33,7 +33,7 @@ acceptance criteria, and a checklist tracker.
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ✅ |
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ✅ |
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ✅ |
-| 5 | Remove legacy `place_order` | F9 | Low | ⬜ |
+| 5 | Remove legacy `place_order` | F9 | Low | ✅ |
 | 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ✅ |
 | 6 | Editions-model consolidation — SPIKE | F5 | Medium | ⏸️ |
 
@@ -226,14 +226,21 @@ data) + one tiny facets call; the 10k-row over-fetch + 4 probes are gone. `tsc`/
 
 ## Phase 5 — P3: Cleanup (F9, F10)
 
-### 5.1 Remove legacy `place_order` (F9)
-- ⬜ Confirm zero callers of `placeOrder` / `place_order` outside `api/orders/placeOrder.ts`
-  (audit found none in `app/`/`components/`).
-- ⬜ Drop both SQL overloads (`baseline:1376`, `:1527`) in a migration; delete
-  `src/api/orders/placeOrder.ts` and any dead `entities/order` bits it alone used.
+### 5.1 Remove legacy `place_order` (F9) — DONE
+- ✅ Fresh backup first (`backups/chtivo-db-backup-20260614-113159.sql`).
+- ✅ Confirmed `placeOrderAction` had zero callers; `placeOrder()` → `place_order` RPC was
+  reachable only through it.
+- ✅ Migration `20260614150000_drop_legacy_place_order.sql` drops both overloads (verified
+  2 → 0). Deleted `src/api/orders/placeOrder.ts` + the dead `placeOrderAction`.
+- ✅ Relocated the still-used types (`PlaceOrderInput`, `PlaceOrderErrorReason`) into
+  `createPendingOrder.ts` (the live consumer); dropped the dead `PlaceOrderResult`. Updated
+  `index.ts` re-exports + stale comments. Types regenerated (`place_order` gone).
+- Note: baseline still defines `place_order`; the DROP migration removes it on replay
+  (same migration-not-folded approach as the other function changes).
 
-**Acceptance:** two-phase checkout still works; dead code + its duplicate pricing copy
-gone.
+**Acceptance:** ✅ two-phase checkout RPCs intact (`create_pending_order`/`mark_order_paid`/
+`compute_cart_totals`/`quote_cart`); dead code + its duplicate pricing copy gone.
+`tsc`/lint/build green.
 
 ### 5.2 Boundary nits (F10) — DONE
 - ✅ Moved `AvatarUpload`'s direct `supabase.storage` call behind `api/profile/uploadAvatar.ts`
