@@ -5,11 +5,8 @@ export type DownloadUrlResult =
   | { status: 'ok'; url: string; expiresIn: number }
   | { status: 'error'; reason: 'not_authenticated' | 'not_owner' | 'not_digital' | 'no_file' | 'sign_failed'; message?: string }
 
-const DIGITAL_FILE_TABLE: Record<string, 'Ebooks' | 'Audiobooks' | 'CardBooks'> = {
-  EBook: 'Ebooks',
-  AudioBook: 'Audiobooks',
-  'Book2.0': 'CardBooks',
-}
+// Edition kinds that have a downloadable digital file (PrintBook is physical).
+const DIGITAL_KINDS = new Set<string>(['EBook', 'AudioBook', 'Book2.0'])
 
 // Per-category placeholder objects in the `digital-files` bucket.
 // Used when the edition's file_path is null (the real file hasn't been
@@ -52,8 +49,7 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
   }
 
   const category = (item.category ?? '') as ProductCategory
-  const table = DIGITAL_FILE_TABLE[category]
-  if (!table) {
+  if (!DIGITAL_KINDS.has(category)) {
     return { status: 'error', reason: 'not_digital' }
   }
 
@@ -64,9 +60,10 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
   }
 
   const { data: edition, error: editionError } = await supabase
-    .from(table)
+    .from('Editions')
     .select('file_path')
     .eq('id', editionId)
+    .eq('kind', category)
     .single()
 
   // Fall back to the per-category placeholder when the row has no

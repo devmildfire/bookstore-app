@@ -2,20 +2,19 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl } from '@/lib/storage'
 import {
   EDITION_LABEL,
-  ALL_EDITION_TABLES,
+  ALL_EDITION_KINDS,
   EDITION_FILE_FOLDER,
   EDITION_HAS_DEMO,
-  EDITION_WORKERS_TABLE,
-  EDITION_WORKERS_FK,
-  type EditionTable,
+  EDITION_HAS_SOLD_OUT,
+  type EditionKind,
   type BookStatus,
   type AdminEdition,
   type AdminAward,
   type AdminWorker,
 } from '@/lib/admin/bookProducts'
 
-export { EDITION_LABEL, ALL_EDITION_TABLES }
-export type { EditionTable, BookStatus, AdminEdition, AdminAward }
+export { EDITION_LABEL, ALL_EDITION_KINDS }
+export type { EditionKind, BookStatus, AdminEdition, AdminAward }
 
 // The full Awards catalogue (for the attach picker).
 export async function getAwardsCatalog(): Promise<AdminAward[]> {
@@ -26,14 +25,6 @@ export async function getAwardsCatalog(): Promise<AdminAward[]> {
 
 function asBookStatus(raw: string | null | undefined): BookStatus {
   return raw === 'draft' || raw === 'archived' ? raw : 'published'
-}
-
-// Which edition tables carry a sold_out column.
-const HAS_SOLD_OUT: Record<EditionTable, boolean> = {
-  Ebooks: false,
-  Audiobooks: false,
-  PrintedBooks: true,
-  CardBooks: true,
 }
 
 export type AdminBook = {
@@ -59,33 +50,23 @@ export type AdminBook = {
   trailer: { exists: boolean; hasPoster: boolean }
 }
 
-const EDITION_TABLES: EditionTable[] = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks']
-
 // Contributors linked to a single edition, ordered by sort_order.
 async function fetchEditionWorkers(
   admin: ReturnType<typeof createAdminClient>,
-  table: EditionTable,
   editionId: number
 ): Promise<AdminWorker[]> {
-  const joinTable = EDITION_WORKERS_TABLE[table]
-  const fk = EDITION_WORKERS_FK[table]
-  const builder = admin.from(joinTable as 'EbookWorkers') as unknown as {
-    select: (c: string) => {
-      eq: (col: string, val: number) => {
-        order: (col: string, o: { ascending: boolean }) => Promise<{
-          data: Array<{ id: number; worker_id: number; Workers: { name: string; job: string } | null }> | null
-        }>
-      }
-    }
-  }
-  const { data } = await builder
+  const { data } = await admin
+    .from('EditionWorkers')
     .select('id, worker_id, Workers(name, job)')
-    .eq(fk, editionId)
+    .eq('edition_id', editionId)
     .order('sort_order', { ascending: true })
   return (data ?? [])
     .filter((r) => r.Workers)
     .map((r) => ({ linkId: r.id, workerId: r.worker_id, name: r.Workers!.name, job: r.Workers!.job }))
 }
+
+// Display order for a title's editions (matches the "add product" order).
+const KIND_RANK = new Map<EditionKind, number>(ALL_EDITION_KINDS.map((k, i) => [k, i]))
 
 export async function getAdminBook(id: number): Promise<AdminBook | null> {
   const admin = createAdminClient()
@@ -130,34 +111,47 @@ export async function getAdminBook(id: number): Promise<AdminBook | null> {
     .order('sort_order', { ascending: true })
   const periodicals = (periodicalRows ?? []).map((p) => ({ id: p.id, name: p.name }))
 
-  // Editions: one query per edition table.
-  const editions: AdminEdition[] = []
-  for (const table of EDITION_TABLES) {
-    const hasFile = !!EDITION_FILE_FOLDER[table]
-    const hasDemo = !!EDITION_HAS_DEMO[table]
-    const cols = ['id', 'price', 'discount', 'is_published']
-    if (HAS_SOLD_OUT[table]) cols.push('sold_out')
-    if (hasFile) cols.push('file_path')
-    if (hasDemo) cols.push('demo_path')
-    const { data: rows } = await admin.from(table).select(cols.join(', ')).eq('title_id', id)
-    for (const row of (rows ?? []) as unknown as Array<Record<string, unknown>>) {
-      editions.push({
-        table,
-        id: row.id as number,
-        label: EDITION_LABEL[table],
-        price: row.price == null ? null : Number(row.price),
-        discount: row.discount == null ? null : Number(row.discount),
-        isPublished: (row.is_published as boolean | null) ?? true,
-        soldOut: HAS_SOLD_OUT[table] ? ((row.sold_out as boolean | null) ?? false) : null,
-        hasSoldOut: HAS_SOLD_OUT[table],
-        hasFile,
-        filePath: hasFile ? ((row.file_path as string | null) ?? null) : null,
-        hasDemo,
-        demoPath: hasDemo ? ((row.demo_path as string | null) ?? null) : null,
-        workers: await fetchEditionWorkers(admin, table, row.id as number),
+  // Editions: a single query against the unified Editions table.
+  const { data: editionRows } = await admin
+    .from('Editions')
+    .select('id, kind, price, discount, is_published, sold_out, file_path, demo_path')
+    .eq('title_id', id)
+
+  const editions: AdminEdition[] = await Promise.all(
+    ((editionRows ?? []) as Array<{
+      id: number
+      kind: string
+      price: number | null
+      discount: number | null
+      is_published: boolean | null
+      sold_out: boolean | null
+      file_path: string | null
+      demo_path: string | null
+    }>)
+      .filter((row): row is typeof row & { kind: EditionKind } => KIND_RANK.has(row.kind as EditionKind))
+      .sort((a, b) => (KIND_RANK.get(a.kind as EditionKind)! - KIND_RANK.get(b.kind as EditionKind)!))
+      .map(async (row) => {
+        const kind = row.kind as EditionKind
+        const hasFile = !!EDITION_FILE_FOLDER[kind]
+        const hasDemo = !!EDITION_HAS_DEMO[kind]
+        const hasSoldOut = !!EDITION_HAS_SOLD_OUT[kind]
+        return {
+          kind,
+          id: row.id,
+          label: EDITION_LABEL[kind],
+          price: row.price == null ? null : Number(row.price),
+          discount: row.discount == null ? null : Number(row.discount),
+          isPublished: row.is_published ?? true,
+          soldOut: hasSoldOut ? (row.sold_out ?? false) : null,
+          hasSoldOut,
+          hasFile,
+          filePath: hasFile ? row.file_path : null,
+          hasDemo,
+          demoPath: hasDemo ? row.demo_path : null,
+          workers: await fetchEditionWorkers(admin, row.id),
+        }
       })
-    }
-  }
+  )
 
   return {
     id: title.id,

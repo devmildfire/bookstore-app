@@ -6,10 +6,7 @@ export type DbTitle = Database['public']['Tables']['Titles']['Row']
 export type DbTitleInsert = Database['public']['Tables']['Titles']['Insert']
 
 export type DbAuthor = Database['public']['Tables']['Authors']['Row']
-export type DbEbook = Database['public']['Tables']['Ebooks']['Row']
-export type DbAudiobook = Database['public']['Tables']['Audiobooks']['Row']
-export type DbPrintedBook = Database['public']['Tables']['PrintedBooks']['Row']
-export type DbCardBook = Database['public']['Tables']['CardBooks']['Row']
+export type DbEdition = Database['public']['Tables']['Editions']['Row']
 
 export type DbCartItem = Database['public']['Tables']['Cart']['Row']
 export type DbCartItemInsert = Database['public']['Tables']['Cart']['Insert']

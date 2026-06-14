@@ -1,6 +1,6 @@
 export { getAdminBooks, ADMIN_BOOKS_PAGE_SIZE } from './getAdminBooks'
 export type { AdminBookListItem, AdminBooksResult } from './getAdminBooks'
-export { getAdminBook, getAwardsCatalog, EDITION_LABEL, ALL_EDITION_TABLES } from './getAdminBook'
-export type { AdminBook, AdminEdition, EditionTable, BookStatus, AdminAward } from './getAdminBook'
+export { getAdminBook, getAwardsCatalog, EDITION_LABEL, ALL_EDITION_KINDS } from './getAdminBook'
+export type { AdminBook, AdminEdition, EditionKind, BookStatus, AdminAward } from './getAdminBook'
 export { getAdminBookPhotos } from './getAdminBookPhotos'
 export type { AdminBookPhoto, AdminEditionPhotos } from './getAdminBookPhotos'

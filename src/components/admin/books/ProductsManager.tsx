@@ -18,38 +18,36 @@ import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'
 import Input from '@/components/common/Input'
 import Badge from '@/components/common/Badge'
-import { PaperIcon, DigitalIcon, AudioIcon, PlusIcon, TrashIcon, UploadIcon, CheckIcon } from '@/components/common/icons'
-import { ALL_EDITION_TABLES, EDITION_LABEL, type AdminEdition, type EditionTable } from '@/lib/admin/bookProducts'
+import { PaperIcon, DigitalIcon, AudioIcon, TrashIcon, CheckIcon } from '@/components/common/icons'
+import { ALL_EDITION_KINDS, EDITION_LABEL, type AdminEdition, type EditionKind } from '@/lib/admin/bookProducts'
 import styles from './ProductsManager.module.scss'
 
-const HAS_SOLD_OUT = new Set<EditionTable>(['PrintedBooks', 'CardBooks'])
-
-const EDITION_ICON: Record<EditionTable, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  PrintedBooks: PaperIcon,
-  CardBooks: PaperIcon,
-  Ebooks: DigitalIcon,
-  Audiobooks: AudioIcon,
+const EDITION_ICON: Record<EditionKind, React.FC<React.SVGProps<SVGSVGElement>>> = {
+  PrintBook: PaperIcon,
+  'Book2.0': PaperIcon,
+  EBook: DigitalIcon,
+  AudioBook: AudioIcon,
 }
 
 type Props = { titleId: number; editions: AdminEdition[] }
 
 export default function ProductsManager({ titleId, editions }: Props) {
-  const present = new Set(editions.map((e) => e.table))
-  const absent = ALL_EDITION_TABLES.filter((t) => !present.has(t))
+  const present = new Set(editions.map((e) => e.kind))
+  const absent = ALL_EDITION_KINDS.filter((k) => !present.has(k))
 
   return (
     <div className={styles.wrap}>
       {editions.length === 0 && <p className={styles.empty}>У книги пока нет продуктов. Добавьте хотя бы один.</p>}
 
       {editions.map((ed) => (
-        <ProductRow key={`${ed.table}-${ed.id}`} titleId={titleId} edition={ed} />
+        <ProductRow key={`${ed.kind}-${ed.id}`} titleId={titleId} edition={ed} />
       ))}
 
       {absent.length > 0 && (
         <div className={styles.add}>
           <span className={styles.addLabel}>Добавить продукт:</span>
-          {absent.map((table) => (
-            <AddButton key={table} titleId={titleId} table={table} />
+          {absent.map((kind) => (
+            <AddButton key={kind} titleId={titleId} kind={kind} />
           ))}
         </div>
       )}
@@ -70,14 +68,14 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
       const fd = new FormData()
       fd.set('titleId', String(titleId))
       fd.set('editionId', String(edition.id))
-      fd.set('table', edition.table)
+      fd.set('kind', edition.kind)
       const res = await removeProductAction(fd)
       if (res.status === 'error') setRemoveError(res.message)
       else router.refresh()
     })
   }
 
-  const Icon = EDITION_ICON[edition.table]
+  const Icon = EDITION_ICON[edition.kind]
 
   return (
     <div className={styles.product}>
@@ -97,7 +95,7 @@ function ProductRow({ titleId, edition }: { titleId: number; edition: AdminEditi
         <form action={action} className={styles.fields}>
           <input type='hidden' name='titleId' value={titleId} />
           <input type='hidden' name='editionId' value={edition.id} />
-          <input type='hidden' name='table' value={edition.table} />
+          <input type='hidden' name='kind' value={edition.kind} />
           <div className={styles.field}>
             <span className={styles.fieldLabel}>Цена</span>
             <div className={styles.affix}>
@@ -156,7 +154,6 @@ function WorkersSlot({ titleId, edition }: { titleId: number; edition: AdminEdit
       const fd = new FormData()
       fd.set('titleId', String(titleId))
       fd.set('editionId', String(edition.id))
-      fd.set('table', edition.table)
       fd.set('name', name)
       fd.set('job', job)
       const res = await addWorkerAction(fd)
@@ -174,7 +171,6 @@ function WorkersSlot({ titleId, edition }: { titleId: number; edition: AdminEdit
     startTransition(async () => {
       const fd = new FormData()
       fd.set('titleId', String(titleId))
-      fd.set('table', edition.table)
       fd.set('linkId', String(linkId))
       fd.set('workerId', String(workerId))
       const res = await removeWorkerAction(fd)
@@ -234,7 +230,7 @@ function FileSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
         const fd = new FormData()
         fd.set('titleId', String(titleId))
         fd.set('editionId', String(edition.id))
-        fd.set('table', edition.table)
+        fd.set('kind', edition.kind)
         fd.set('file', file)
         const res = await uploadProductFileAction(fd)
         if (res.status === 'error') setError(res.message)
@@ -250,7 +246,6 @@ function FileSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
       const fd = new FormData()
       fd.set('titleId', String(titleId))
       fd.set('editionId', String(edition.id))
-      fd.set('table', edition.table)
       fd.set('filePath', edition.filePath ?? '')
       const res = await removeProductFileAction(fd)
       if (res.status === 'error') setError(res.message)
@@ -291,7 +286,7 @@ function DemoSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
         const fd = new FormData()
         fd.set('titleId', String(titleId))
         fd.set('editionId', String(edition.id))
-        fd.set('table', edition.table)
+        fd.set('kind', edition.kind)
         fd.set('file', file)
         const res = await uploadDemoFileAction(fd)
         if (res.status === 'error') setError(res.message)
@@ -307,7 +302,6 @@ function DemoSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
       const fd = new FormData()
       fd.set('titleId', String(titleId))
       fd.set('editionId', String(edition.id))
-      fd.set('table', edition.table)
       fd.set('demoPath', edition.demoPath ?? '')
       const res = await removeDemoFileAction(fd)
       if (res.status === 'error') setError(res.message)
@@ -333,7 +327,7 @@ function DemoSlot({ titleId, edition }: { titleId: number; edition: AdminEdition
   )
 }
 
-function AddButton({ titleId, table }: { titleId: number; table: EditionTable }) {
+function AddButton({ titleId, kind }: { titleId: number; kind: EditionKind }) {
   const [busy, startAdd] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -343,7 +337,7 @@ function AddButton({ titleId, table }: { titleId: number; table: EditionTable })
     startAdd(async () => {
       const fd = new FormData()
       fd.set('titleId', String(titleId))
-      fd.set('table', table)
+      fd.set('kind', kind)
       const res = await addProductAction(fd)
       if (res.status === 'error') setError(res.message)
       else router.refresh()
@@ -353,7 +347,7 @@ function AddButton({ titleId, table }: { titleId: number; table: EditionTable })
   return (
     <span className={styles.addItem}>
       <button type='button' className={styles.addButton} onClick={handleAdd} disabled={busy}>
-        {busy ? '…' : `+ ${EDITION_LABEL[table]}`}
+        {busy ? '…' : `+ ${EDITION_LABEL[kind]}`}
       </button>
       {error && <span className={styles.err}>{error}</span>}
     </span>

@@ -8,14 +8,9 @@ import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server
 export const ordersQueryKey = ['orders'] as const
 export const orderHistoryQueryKey = ['order-history'] as const
 
-// bookId is shaped '<Category>-<editionId>' (create_pending_order RPC). Each
-// edition table has a title_id we join against Titles to get the cover.
-const EDITION_TABLE: Record<string, 'CardBooks' | 'Ebooks' | 'Audiobooks' | 'PrintedBooks'> = {
-  EBook: 'Ebooks',
-  AudioBook: 'Audiobooks',
-  'Book2.0': 'CardBooks',
-  PrintBook: 'PrintedBooks',
-}
+// bookId is shaped '<Category>-<editionId>' (create_pending_order RPC). editionId is
+// the unified Editions.id; we look up its title_id once and join Titles for the cover.
+const EDITION_KINDS = new Set<string>(['EBook', 'AudioBook', 'PrintBook', 'Book2.0'])
 
 // Gift card items don't go through the title/edition lookup — their
 // bookId is `GiftCard-<GiftCardProducts.id>` and the cover image lives
@@ -123,7 +118,7 @@ async function fetchItemEnrichments(
   supabase: ReturnType<typeof createClient>,
   items: OrderItemServerRow[]
 ): Promise<Map<number, Enriched>> {
-  const byEdition = new Map<string, { itemIds: number[]; editionId: number; table: string }>()
+  const byEdition = new Map<number, number[]>() // editionId → itemIds
   const giftCardItemsByProductId = new Map<number, number[]>()
   const subscriptionItemsByProductId = new Map<number, number[]>()
   const courseItemCovers: Array<{ itemId: number; coverUrl: string | null }> = []
@@ -153,35 +148,24 @@ async function fetchItemEnrichments(
       continue
     }
 
-    const table = EDITION_TABLE[category]
     const editionId = Number(editionIdStr)
-    if (!table || !Number.isFinite(editionId)) continue
-    const key = `${table}:${editionId}`
-    const existing = byEdition.get(key)
-    if (existing) existing.itemIds.push(item.id)
-    else byEdition.set(key, { itemIds: [item.id], editionId, table })
+    if (!EDITION_KINDS.has(category) || !Number.isFinite(editionId)) continue
+    const existing = byEdition.get(editionId)
+    if (existing) existing.push(item.id)
+    else byEdition.set(editionId, [item.id])
   }
 
-  const idsPerTable = new Map<string, Set<number>>()
-  for (const { table, editionId } of byEdition.values()) {
-    const set = idsPerTable.get(table) ?? new Set<number>()
-    set.add(editionId)
-    idsPerTable.set(table, set)
+  // One query: edition id → title_id (Editions.id is globally unique now).
+  const editionTitleIds = new Map<number, number>()
+  if (byEdition.size > 0) {
+    const { data } = await supabase
+      .from('Editions')
+      .select('id, title_id')
+      .in('id', Array.from(byEdition.keys()))
+    for (const row of (data ?? []) as Array<{ id: number; title_id: number | null }>) {
+      if (row.title_id !== null) editionTitleIds.set(row.id, row.title_id)
+    }
   }
-
-  const editionTitleIds = new Map<string, number>()
-  await Promise.all(
-    Array.from(idsPerTable.entries()).map(async ([table, idSet]) => {
-      // `table` is a dynamic union of four edition table names; supabase-js
-      // can't narrow the row type from a string variable, so widen via unknown.
-      const { data } = await (supabase.from as unknown as (t: string) => ReturnType<typeof supabase.from>)(table)
-        .select('id, title_id')
-        .in('id', Array.from(idSet))
-      for (const row of (data ?? []) as Array<{ id: number; title_id: number | null }>) {
-        if (row.title_id !== null) editionTitleIds.set(`${table}:${row.id}`, row.title_id)
-      }
-    })
-  )
 
   const titleIds = Array.from(new Set(editionTitleIds.values()))
   const titleInfo = new Map<number, Enriched>()
@@ -199,8 +183,8 @@ async function fetchItemEnrichments(
   }
 
   const enrichedByItemId = new Map<number, Enriched>()
-  for (const { itemIds, editionId, table } of byEdition.values()) {
-    const titleId = editionTitleIds.get(`${table}:${editionId}`)
+  for (const [editionId, itemIds] of byEdition.entries()) {
+    const titleId = editionTitleIds.get(editionId)
     const info = titleId !== undefined ? titleInfo.get(titleId) : undefined
     const value: Enriched = info ?? { coverUrl: null, titleSlug: null }
     for (const itemId of itemIds) enrichedByItemId.set(itemId, value)

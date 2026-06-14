@@ -10,16 +10,12 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
 import { getAdminBookPhotos, type AdminEditionPhotos } from '@/api/admin/books'
 import { isBookPhotoFolder, BOOK_PHOTO_FOLDERS } from '@/consts/bookPhotos'
-import { EDITION_FILE_FOLDER, EDITION_HAS_DEMO, EDITION_WORKERS_TABLE, EDITION_WORKERS_FK } from '@/lib/admin/bookProducts'
+import { EDITION_FILE_FOLDER, EDITION_HAS_DEMO, EDITION_HAS_SOLD_OUT, ALL_EDITION_KINDS, type EditionKind } from '@/lib/admin/bookProducts'
 import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
 export type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
 export type PhotosResult = { status: 'ok'; photos: AdminEditionPhotos } | { status: 'error'; message: string }
-
-const EDITION_TABLES = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks'] as const
-type EditionTable = (typeof EDITION_TABLES)[number]
-const HAS_SOLD_OUT = new Set<EditionTable>(['PrintedBooks', 'CardBooks'])
 
 const coreSchema = z.object({
   id: z.coerce.number().int().positive(),
@@ -40,14 +36,8 @@ function numOrNull(v: FormDataEntryValue | null): number | null {
   return Number.isFinite(n) ? n : null
 }
 
-type EditionUpdate = { price: number | null; discount: number | null; is_published: boolean; sold_out?: boolean }
-
-// A bound, loosely-typed write handle for an edition table (the table name is
-// dynamic, so supabase-js can't infer the row type).
-type EditionWriter = {
-  update: (v: EditionUpdate) => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
-  insert: (v: Record<string, unknown>) => Promise<{ error: { message: string } | null }>
-  delete: () => { eq: (col: string, val: number) => Promise<{ error: { message: string } | null }> }
+function asEditionKind(v: FormDataEntryValue | null): EditionKind | null {
+  return ALL_EDITION_KINDS.includes(v as EditionKind) ? (v as EditionKind) : null
 }
 
 // Save the Title's own fields. Products (editions) are managed separately.
@@ -378,8 +368,8 @@ export async function deleteBookAction(_prev: AdminActionResult | null, formData
   }
   // Digital files of each edition (editions themselves cascade-delete with the Title).
   const digitalPaths: string[] = []
-  for (const [t] of Object.entries(EDITION_FILE_FOLDER)) {
-    const { data } = await admin.from(t as 'Ebooks').select('file_path').eq('title_id', id)
+  {
+    const { data } = await admin.from('Editions').select('file_path').eq('title_id', id)
     for (const r of (data ?? []) as Array<{ file_path: string | null }>) {
       if (r.file_path) digitalPaths.push(r.file_path)
     }
@@ -400,25 +390,17 @@ export async function deleteBookAction(_prev: AdminActionResult | null, formData
   redirect('/admin/books')
 }
 
-function asEditionTable(v: FormDataEntryValue | null): EditionTable | null {
-  return EDITION_TABLES.includes(v as EditionTable) ? (v as EditionTable) : null
-}
-
-// Add a product (edition) of a given type to a title. One per type (UNIQUE
-// title_id), created unpublished with no price.
+// Add a product (edition) of a given kind to a title. One per kind (UNIQUE
+// (title_id, kind)), created unpublished with no price.
 export async function addProductAction(formData: FormData): Promise<AdminActionResult> {
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
-  const table = asEditionTable(formData.get('table'))
+  const kind = asEditionKind(formData.get('kind'))
   if (!Number.isInteger(titleId) || titleId <= 0) return { status: 'error', message: 'Неверный id книги.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  if (!kind) return { status: 'error', message: 'Неверный тип продукта.' }
 
   const admin = createAdminClient()
-  const id = await nextId(admin, table)
-  const row: Record<string, unknown> = { id, title_id: titleId, price: null, is_published: false }
-  if (HAS_SOLD_OUT.has(table)) row.sold_out = false
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.insert(row)
+  const { error } = await admin.from('Editions').insert({ title_id: titleId, kind, price: null, is_published: false })
   if (error) {
     const msg = error.message.includes('duplicate') ? 'Такой продукт уже есть у книги.' : error.message
     return { status: 'error', message: msg }
@@ -432,13 +414,10 @@ export async function removeProductAction(formData: FormData): Promise<AdminActi
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
 
   const admin = createAdminClient()
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.delete().eq('id', editionId)
+  const { error } = await admin.from('Editions').delete().eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
@@ -452,20 +431,19 @@ export async function updateProductAction(_prev: AdminActionResult | null, formD
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
+  const kind = asEditionKind(formData.get('kind'))
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
+  if (!kind) return { status: 'error', message: 'Неверный тип продукта.' }
 
-  const payload: EditionUpdate = {
+  const payload: { price: number | null; discount: number | null; is_published: boolean; sold_out?: boolean } = {
     price: numOrNull(formData.get('price')),
     discount: numOrNull(formData.get('discount')),
     is_published: formData.get('isPublished') === 'on',
   }
-  if (HAS_SOLD_OUT.has(table)) payload.sold_out = formData.get('soldOut') === 'on'
+  if (EDITION_HAS_SOLD_OUT[kind]) payload.sold_out = formData.get('soldOut') === 'on'
 
   const admin = createAdminClient()
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.update(payload).eq('id', editionId)
+  const { error } = await admin.from('Editions').update(payload).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   const { data: title } = await admin.from('Titles').select('slug').eq('id', titleId).maybeSingle()
@@ -485,11 +463,11 @@ export async function uploadProductFileAction(formData: FormData): Promise<Admin
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
+  const kind = asEditionKind(formData.get('kind'))
   const file = formData.get('file')
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
-  const folder = EDITION_FILE_FOLDER[table]
+  if (!kind) return { status: 'error', message: 'Неверный тип продукта.' }
+  const folder = EDITION_FILE_FOLDER[kind]
   if (!folder) return { status: 'error', message: 'У этого типа продукта нет файла.' }
   if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
   if (file.size > MAX_DIGITAL_BYTES) return { status: 'error', message: 'Файл больше 1 ГБ.' }
@@ -503,8 +481,7 @@ export async function uploadProductFileAction(formData: FormData): Promise<Admin
     .upload(key, buffer, { contentType: file.type || 'application/octet-stream', upsert: true })
   if (uploadError) return { status: 'error', message: uploadError.message }
 
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.update({ file_path: key } as unknown as EditionUpdate).eq('id', editionId)
+  const { error } = await admin.from('Editions').update({ file_path: key }).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   revalidatePath(`/admin/books/${titleId}`)
@@ -516,15 +493,12 @@ export async function removeProductFileAction(formData: FormData): Promise<Admin
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
   const filePath = (formData.get('filePath') as string | null)?.trim()
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
 
   const admin = createAdminClient()
   if (filePath) await admin.storage.from(DIGITAL_FILES_BUCKET).remove([filePath]).catch(() => {})
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.update({ file_path: null } as unknown as EditionUpdate).eq('id', editionId)
+  const { error } = await admin.from('Editions').update({ file_path: null }).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   revalidatePath(`/admin/books/${titleId}`)
@@ -542,25 +516,24 @@ export async function uploadDemoFileAction(formData: FormData): Promise<AdminAct
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
+  const kind = asEditionKind(formData.get('kind'))
   const file = formData.get('file')
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
-  if (!EDITION_HAS_DEMO[table]) return { status: 'error', message: 'У этого типа продукта нет демо.' }
+  if (!kind) return { status: 'error', message: 'Неверный тип продукта.' }
+  if (!EDITION_HAS_DEMO[kind]) return { status: 'error', message: 'У этого типа продукта нет демо.' }
   if (!(file instanceof File) || file.size === 0) return { status: 'error', message: 'Файл не выбран.' }
   if (file.size > MAX_DEMO_BYTES) return { status: 'error', message: 'Файл больше 50 МБ.' }
 
   const ext = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : 'bin'
   const admin = createAdminClient()
-  const key = `${EDITION_FILE_FOLDER[table]}/demo-${editionId}.${ext}`
+  const key = `${EDITION_FILE_FOLDER[kind]}/demo-${editionId}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
   const { error: uploadError } = await admin.storage
     .from(DEMOS_BUCKET)
     .upload(key, buffer, { contentType: file.type || 'application/octet-stream', upsert: true })
   if (uploadError) return { status: 'error', message: uploadError.message }
 
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.update({ demo_path: key } as unknown as EditionUpdate).eq('id', editionId)
+  const { error } = await admin.from('Editions').update({ demo_path: key }).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   revalidatePath(`/admin/books/${titleId}`)
@@ -572,15 +545,12 @@ export async function removeDemoFileAction(formData: FormData): Promise<AdminAct
   await requireAdmin()
   const titleId = Number(formData.get('titleId'))
   const editionId = Number(formData.get('editionId'))
-  const table = asEditionTable(formData.get('table'))
   const demoPath = (formData.get('demoPath') as string | null)?.trim()
   if (!Number.isInteger(editionId) || editionId <= 0) return { status: 'error', message: 'Неверный id продукта.' }
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
 
   const admin = createAdminClient()
   if (demoPath) await admin.storage.from(DEMOS_BUCKET).remove([demoPath]).catch(() => {})
-  const writer = admin.from(table) as unknown as EditionWriter
-  const { error } = await writer.update({ demo_path: null } as unknown as EditionUpdate).eq('id', editionId)
+  const { error } = await admin.from('Editions').update({ demo_path: null }).eq('id', editionId)
   if (error) return { status: 'error', message: error.message }
 
   revalidatePath(`/admin/books/${titleId}`)
@@ -652,8 +622,6 @@ const workerSchema = z.object({
 // not a team member) + the join row.
 export async function addWorkerAction(formData: FormData): Promise<AdminActionResult> {
   await requireAdmin()
-  const table = asEditionTable(formData.get('table'))
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
   const parsed = workerSchema.safeParse({
     titleId: formData.get('titleId'),
     editionId: formData.get('editionId'),
@@ -675,17 +643,13 @@ export async function addWorkerAction(formData: FormData): Promise<AdminActionRe
   })
   if (workerError) return { status: 'error', message: workerError.message }
 
-  const joinTable = EDITION_WORKERS_TABLE[table]
-  const fk = EDITION_WORKERS_FK[table]
+  // EditionWorkers.id is IDENTITY — omit it.
   const { count } = await admin
-    .from(joinTable as 'EbookWorkers')
+    .from('EditionWorkers')
     .select('id', { count: 'exact', head: true })
-    .eq(fk, editionId)
-  const linkId = await nextId(admin, joinTable)
-  const joinWriter = admin.from(joinTable as 'EbookWorkers') as unknown as LooseWriter
-  const { error: linkError } = await joinWriter.insert({
-    id: linkId,
-    [fk]: editionId,
+    .eq('edition_id', editionId)
+  const { error: linkError } = await admin.from('EditionWorkers').insert({
+    edition_id: editionId,
     worker_id: workerId,
     sort_order: count ?? 0,
   })
@@ -702,14 +666,10 @@ export async function removeWorkerAction(formData: FormData): Promise<AdminActio
   const titleId = Number(formData.get('titleId'))
   const linkId = Number(formData.get('linkId'))
   const workerId = Number(formData.get('workerId'))
-  const table = asEditionTable(formData.get('table'))
-  if (!table) return { status: 'error', message: 'Неверный тип продукта.' }
   if (!Number.isInteger(linkId) || linkId <= 0) return { status: 'error', message: 'Неверная связь.' }
 
   const admin = createAdminClient()
-  const joinTable = EDITION_WORKERS_TABLE[table]
-  const joinWriter = admin.from(joinTable as 'EbookWorkers') as unknown as LooseWriter
-  const { error } = await joinWriter.delete().eq('id', linkId)
+  const { error } = await admin.from('EditionWorkers').delete().eq('id', linkId)
   if (error) return { status: 'error', message: error.message }
 
   if (Number.isInteger(workerId) && workerId > 0) {

@@ -2,54 +2,47 @@
 // server-only imports (no @/lib/supabase/server) so client components can use
 // them without dragging next/headers into the browser bundle.
 
-export type EditionTable = 'Ebooks' | 'Audiobooks' | 'PrintedBooks' | 'CardBooks'
+// Editions live in one table keyed by `kind` (= the catalog category value).
+export type EditionKind = 'EBook' | 'AudioBook' | 'PrintBook' | 'Book2.0'
 export type BookStatus = 'draft' | 'published' | 'archived'
 
 export type AdminAward = { id: number; title: string }
 
-export const EDITION_LABEL: Record<EditionTable, string> = {
-  Ebooks: 'Электронная книга',
-  Audiobooks: 'Аудиокнига',
-  PrintedBooks: 'Печатная книга',
-  CardBooks: 'Карточная книга (Книга 2.0)',
+export const EDITION_LABEL: Record<EditionKind, string> = {
+  EBook: 'Электронная книга',
+  AudioBook: 'Аудиокнига',
+  PrintBook: 'Печатная книга',
+  'Book2.0': 'Карточная книга (Книга 2.0)',
 }
 
-// All product types, in display order — used to offer "add product".
-export const ALL_EDITION_TABLES: EditionTable[] = ['Ebooks', 'Audiobooks', 'PrintedBooks', 'CardBooks']
+// All edition kinds, in display order — used to offer "add product".
+export const ALL_EDITION_KINDS: EditionKind[] = ['EBook', 'AudioBook', 'PrintBook', 'Book2.0']
 
-// Edition tables that hold a downloadable digital file (in the private
-// `digital-files` bucket). PrintedBook is physical — no file.
-export const EDITION_FILE_FOLDER: Partial<Record<EditionTable, string>> = {
-  Ebooks: 'ebooks',
-  Audiobooks: 'audiobooks',
-  CardBooks: 'cardbooks',
+// Kinds that hold a downloadable digital file (private `digital-files` bucket),
+// mapped to their storage folder. PrintBook is physical — no file.
+export const EDITION_FILE_FOLDER: Partial<Record<EditionKind, string>> = {
+  EBook: 'ebooks',
+  AudioBook: 'audiobooks',
+  'Book2.0': 'cardbooks',
 }
 
-// Per-edition contributor join tables + their FK column to the edition row.
-export const EDITION_WORKERS_TABLE: Record<EditionTable, string> = {
-  Ebooks: 'EbookWorkers',
-  Audiobooks: 'AudiobookWorkers',
-  PrintedBooks: 'PrintedBookWorkers',
-  CardBooks: 'CardBookWorkers',
+// Kinds that support a demo file (public sample in the `demos` bucket).
+export const EDITION_HAS_DEMO: Partial<Record<EditionKind, boolean>> = {
+  EBook: true,
+  AudioBook: true,
+  'Book2.0': true,
 }
-export const EDITION_WORKERS_FK: Record<EditionTable, string> = {
-  Ebooks: 'ebook_id',
-  Audiobooks: 'audiobook_id',
-  PrintedBooks: 'printed_book_id',
-  CardBooks: 'card_book_id',
+
+// Kinds whose editor exposes a sold_out toggle (physical stock).
+export const EDITION_HAS_SOLD_OUT: Partial<Record<EditionKind, boolean>> = {
+  PrintBook: true,
+  'Book2.0': true,
 }
 
 export type AdminWorker = { linkId: number; workerId: number; name: string; job: string }
 
-// Edition tables that support a demo file (public sample in `demos` bucket).
-export const EDITION_HAS_DEMO: Partial<Record<EditionTable, boolean>> = {
-  Ebooks: true,
-  Audiobooks: true,
-  CardBooks: true,
-}
-
 export type AdminEdition = {
-  table: EditionTable
+  kind: EditionKind
   id: number
   label: string
   price: number | null
@@ -57,11 +50,11 @@ export type AdminEdition = {
   isPublished: boolean
   soldOut: boolean | null
   hasSoldOut: boolean
-  // Digital file (download). null for PrintedBooks and for editions without an
+  // Digital file (download). null for PrintBook and for editions without an
   // uploaded file yet.
   hasFile: boolean
   filePath: string | null
-  // Demo file (public sample). Only Ebooks / Audiobooks / CardBooks have demos.
+  // Demo file (public sample). Only EBook / AudioBook / Book2.0 have demos.
   hasDemo: boolean
   demoPath: string | null
   // Per-edition contributors (translator, narrator, illustrator, …).

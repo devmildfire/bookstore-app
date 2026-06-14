@@ -130,95 +130,6 @@ export type Database = {
           },
         ]
       }
-      Audiobooks: {
-        Row: {
-          demo_path: string | null
-          discount: number | null
-          duration_seconds: number | null
-          file_path: string | null
-          file_size_bytes: number | null
-          id: number
-          is_published: boolean | null
-          price: number | null
-          publish_date: string | null
-          release_date: string | null
-          sold: boolean | null
-          title_id: number
-        }
-        Insert: {
-          demo_path?: string | null
-          discount?: number | null
-          duration_seconds?: number | null
-          file_path?: string | null
-          file_size_bytes?: number | null
-          id?: number
-          is_published?: boolean | null
-          price?: number | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: boolean | null
-          title_id: number
-        }
-        Update: {
-          demo_path?: string | null
-          discount?: number | null
-          duration_seconds?: number | null
-          file_path?: string | null
-          file_size_bytes?: number | null
-          id?: number
-          is_published?: boolean | null
-          price?: number | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: boolean | null
-          title_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Audiobooks_title_id_fkey"
-            columns: ["title_id"]
-            isOneToOne: false
-            referencedRelation: "Titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      AudiobookWorkers: {
-        Row: {
-          audiobook_id: number
-          id: number
-          sort_order: number
-          worker_id: number
-        }
-        Insert: {
-          audiobook_id: number
-          id?: number
-          sort_order?: number
-          worker_id: number
-        }
-        Update: {
-          audiobook_id?: number
-          id?: number
-          sort_order?: number
-          worker_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "AudiobookWorkers_audiobook_id_fkey"
-            columns: ["audiobook_id"]
-            isOneToOne: false
-            referencedRelation: "Audiobooks"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "AudiobookWorkers_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "Workers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       AuthorContacts: {
         Row: {
           author_id: number
@@ -459,113 +370,6 @@ export type Database = {
         }
         Relationships: []
       }
-      CardBooks: {
-        Row: {
-          counter_color: string | null
-          demo: string | null
-          demo_path: string | null
-          discount: number | null
-          extra: string | null
-          file_path: string | null
-          format: string | null
-          id: number
-          is_published: boolean | null
-          packaging: string | null
-          paper: string | null
-          price: number | null
-          printing_technique: string | null
-          publish_date: string | null
-          release_date: string | null
-          sold: number | null
-          sold_out: boolean | null
-          title_id: number
-        }
-        Insert: {
-          counter_color?: string | null
-          demo?: string | null
-          demo_path?: string | null
-          discount?: number | null
-          extra?: string | null
-          file_path?: string | null
-          format?: string | null
-          id?: number
-          is_published?: boolean | null
-          packaging?: string | null
-          paper?: string | null
-          price?: number | null
-          printing_technique?: string | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: number | null
-          sold_out?: boolean | null
-          title_id: number
-        }
-        Update: {
-          counter_color?: string | null
-          demo?: string | null
-          demo_path?: string | null
-          discount?: number | null
-          extra?: string | null
-          file_path?: string | null
-          format?: string | null
-          id?: number
-          is_published?: boolean | null
-          packaging?: string | null
-          paper?: string | null
-          price?: number | null
-          printing_technique?: string | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: number | null
-          sold_out?: boolean | null
-          title_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "CardBooks_title_id_fkey"
-            columns: ["title_id"]
-            isOneToOne: true
-            referencedRelation: "Titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      CardBookWorkers: {
-        Row: {
-          card_book_id: number
-          id: number
-          sort_order: number
-          worker_id: number
-        }
-        Insert: {
-          card_book_id: number
-          id?: number
-          sort_order?: number
-          worker_id: number
-        }
-        Update: {
-          card_book_id?: number
-          id?: number
-          sort_order?: number
-          worker_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "CardBookWorkers_card_book_id_fkey"
-            columns: ["card_book_id"]
-            isOneToOne: false
-            referencedRelation: "CardBooks"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "CardBookWorkers_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "Workers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       Cart: {
         Row: {
           category: Database["public"]["Enums"]["category"]
@@ -631,52 +435,55 @@ export type Database = {
           },
         ]
       }
-      Ebooks: {
+      Editions: {
         Row: {
-          character_count: number | null
+          created_at: string
           demo_path: string | null
+          details: Json
           discount: number | null
           file_path: string | null
-          formats: string[] | null
           id: number
-          is_published: boolean | null
+          is_published: boolean
+          kind: string
           price: number | null
           publish_date: string | null
           release_date: string | null
-          sold: boolean | null
+          sold_out: boolean
           title_id: number
         }
         Insert: {
-          character_count?: number | null
+          created_at?: string
           demo_path?: string | null
+          details?: Json
           discount?: number | null
           file_path?: string | null
-          formats?: string[] | null
-          id?: number
-          is_published?: boolean | null
+          id?: never
+          is_published?: boolean
+          kind: string
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
-          sold?: boolean | null
+          sold_out?: boolean
           title_id: number
         }
         Update: {
-          character_count?: number | null
+          created_at?: string
           demo_path?: string | null
+          details?: Json
           discount?: number | null
           file_path?: string | null
-          formats?: string[] | null
-          id?: number
-          is_published?: boolean | null
+          id?: never
+          is_published?: boolean
+          kind?: string
           price?: number | null
           publish_date?: string | null
           release_date?: string | null
-          sold?: boolean | null
+          sold_out?: boolean
           title_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "Ebooks_title_id_fkey"
+            foreignKeyName: "Editions_title_id_fkey"
             columns: ["title_id"]
             isOneToOne: false
             referencedRelation: "Titles"
@@ -684,35 +491,35 @@ export type Database = {
           },
         ]
       }
-      EbookWorkers: {
+      EditionWorkers: {
         Row: {
-          ebook_id: number
+          edition_id: number
           id: number
           sort_order: number
           worker_id: number
         }
         Insert: {
-          ebook_id: number
-          id?: number
+          edition_id: number
+          id?: never
           sort_order?: number
           worker_id: number
         }
         Update: {
-          ebook_id?: number
-          id?: number
+          edition_id?: number
+          id?: never
           sort_order?: number
           worker_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "EbookWorkers_ebook_id_fkey"
-            columns: ["ebook_id"]
+            foreignKeyName: "EditionWorkers_edition_id_fkey"
+            columns: ["edition_id"]
             isOneToOne: false
-            referencedRelation: "Ebooks"
+            referencedRelation: "Editions"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "EbookWorkers_worker_id_fkey"
+            foreignKeyName: "EditionWorkers_worker_id_fkey"
             columns: ["worker_id"]
             isOneToOne: false
             referencedRelation: "Workers"
@@ -1121,107 +928,6 @@ export type Database = {
           thesis?: string | null
         }
         Relationships: []
-      }
-      PrintedBooks: {
-        Row: {
-          binding: string | null
-          cover_material: string | null
-          demo_path: string | null
-          discount: number | null
-          format: string | null
-          id: number
-          illustrations: string | null
-          is_published: boolean | null
-          page_count: number | null
-          paper: string | null
-          price: number | null
-          publish_date: string | null
-          release_date: string | null
-          sold: boolean | null
-          sold_out: boolean | null
-          title_id: number
-        }
-        Insert: {
-          binding?: string | null
-          cover_material?: string | null
-          demo_path?: string | null
-          discount?: number | null
-          format?: string | null
-          id?: number
-          illustrations?: string | null
-          is_published?: boolean | null
-          page_count?: number | null
-          paper?: string | null
-          price?: number | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: boolean | null
-          sold_out?: boolean | null
-          title_id: number
-        }
-        Update: {
-          binding?: string | null
-          cover_material?: string | null
-          demo_path?: string | null
-          discount?: number | null
-          format?: string | null
-          id?: number
-          illustrations?: string | null
-          is_published?: boolean | null
-          page_count?: number | null
-          paper?: string | null
-          price?: number | null
-          publish_date?: string | null
-          release_date?: string | null
-          sold?: boolean | null
-          sold_out?: boolean | null
-          title_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "PrintedBooks_title_id_fkey"
-            columns: ["title_id"]
-            isOneToOne: false
-            referencedRelation: "Titles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      PrintedBookWorkers: {
-        Row: {
-          id: number
-          printed_book_id: number
-          sort_order: number
-          worker_id: number
-        }
-        Insert: {
-          id?: number
-          printed_book_id: number
-          sort_order?: number
-          worker_id: number
-        }
-        Update: {
-          id?: number
-          printed_book_id?: number
-          sort_order?: number
-          worker_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "PrintedBookWorkers_printed_book_id_fkey"
-            columns: ["printed_book_id"]
-            isOneToOne: false
-            referencedRelation: "PrintedBooks"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "PrintedBookWorkers_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "Workers"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       Profiles: {
         Row: {
@@ -1878,9 +1584,12 @@ export type Database = {
         }
         Returns: {
           author_names: string[]
+          discount: number
+          has_multiple_products: boolean
           id: number
           is_published: boolean
           price: number
+          product_type: string
           publish_date: string
           release_date: string
           sold_out: boolean
