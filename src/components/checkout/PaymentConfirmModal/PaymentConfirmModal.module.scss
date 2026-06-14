@@ -70,47 +70,4 @@
   gap: $space-3;
 }
 
-.confirm {
-  height: 50px;
-  background: $color-text-on-dark;
-  border: none;
-  border-radius: $radius-sm;
-  color: $color-bg-page;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  font-weight: $font-weight-bold;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
-
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    opacity: 0.85;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    background: rgba($color-text-on-dark, 0.5);
-  }
-}
-
-.cancel {
-  height: 40px;
-  background: transparent;
-  border: none;
-  color: rgba($color-text-on-dark, 0.7);
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  cursor: pointer;
-  transition: color 0.15s ease;
-
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    color: $color-text-on-dark;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.4;
-  }
-}
+// Confirm/cancel are the shared <Button> (primary / ghost) — no local styles.

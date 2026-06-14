@@ -1,6 +1,7 @@
 'use client'
 
 import Modal from '@/components/common/Modal'
+import Button from '@/components/common/Button'
 import { formatPrice } from '@/lib/formatPrice'
 import styles from './PaymentConfirmModal.module.scss'
 
@@ -63,24 +64,14 @@ export default function PaymentConfirmModal({
           </div>
 
           <div className={styles.actions}>
-            <button
-              type='button'
-              className={styles.confirm}
-              onClick={onConfirm}
-              disabled={processing}
-            >
+            <Button type='button' variant='primary' size='lg' onClick={onConfirm} loading={processing}>
               {processing
                 ? (isFullyCovered ? 'Оформляем заказ…' : 'Обработка платежа…')
                 : (isFullyCovered ? 'Оформить заказ' : 'Подтвердить оплату')}
-            </button>
-            <button
-              type='button'
-              className={styles.cancel}
-              onClick={onClose}
-              disabled={processing}
-            >
+            </Button>
+            <Button type='button' variant='secondary' size='lg' onClick={onClose} disabled={processing}>
               Отмена
-            </button>
+            </Button>
           </div>
       </div>
     </Modal>
