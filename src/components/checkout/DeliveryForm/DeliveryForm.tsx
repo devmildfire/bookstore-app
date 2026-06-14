@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { shippingSchema, type ShippingFormValues } from '@/entities/order/validation'
+import Input from '@/components/common/Input'
 import styles from './DeliveryForm.module.scss'
 
 type Defaults = {
@@ -42,13 +43,13 @@ export default function DeliveryForm({ onSubmit, isPending, defaults }: Props) {
           <label htmlFor='ship-name' className={styles.label}>
             Имя и фамилия <span className={styles.optional}>(необязательно)</span>
           </label>
-          <input id='ship-name' className={styles.input} {...register('name')} disabled={isPending} />
+          <Input id='ship-name' {...register('name')} disabled={isPending} />
           {errors.name && <p className={styles.error}>{errors.name.message}</p>}
         </div>
 
         <div className={styles.field}>
           <label htmlFor='ship-city' className={styles.label}>Город/населённый пункт</label>
-          <input id='ship-city' className={styles.input} {...register('city')} disabled={isPending} />
+          <Input id='ship-city' {...register('city')} disabled={isPending} />
           {errors.city && <p className={styles.error}>{errors.city.message}</p>}
         </div>
 
@@ -56,13 +57,13 @@ export default function DeliveryForm({ onSubmit, isPending, defaults }: Props) {
           <label htmlFor='ship-phone' className={styles.label}>
             Телефон <span className={styles.optional}>(необязательно)</span>
           </label>
-          <input id='ship-phone' type='tel' className={styles.input} {...register('phone')} disabled={isPending} />
+          <Input id='ship-phone' type='tel' {...register('phone')} disabled={isPending} />
           {errors.phone && <p className={styles.error}>{errors.phone.message}</p>}
         </div>
 
         <div className={styles.field}>
           <label htmlFor='ship-street' className={styles.label}>Улица</label>
-          <input id='ship-street' className={styles.input} {...register('street')} disabled={isPending} />
+          <Input id='ship-street' {...register('street')} disabled={isPending} />
           {errors.street && <p className={styles.error}>{errors.street.message}</p>}
         </div>
 
@@ -70,19 +71,19 @@ export default function DeliveryForm({ onSubmit, isPending, defaults }: Props) {
           <label htmlFor='ship-email' className={styles.label}>
             E-mail <span className={styles.optional}>(необязательно)</span>
           </label>
-          <input id='ship-email' type='email' className={styles.input} {...register('email')} disabled={isPending} />
+          <Input id='ship-email' type='email' {...register('email')} disabled={isPending} />
           {errors.email && <p className={styles.error}>{errors.email.message}</p>}
         </div>
 
         <div className={styles.fieldPair}>
           <div className={styles.field}>
             <label htmlFor='ship-building' className={styles.label}>Дом, квартира</label>
-            <input id='ship-building' className={styles.input} {...register('building')} disabled={isPending} />
+            <Input id='ship-building' {...register('building')} disabled={isPending} />
             {errors.building && <p className={styles.error}>{errors.building.message}</p>}
           </div>
           <div className={styles.field}>
             <label htmlFor='ship-postal' className={styles.label}>Почтовый индекс</label>
-            <input id='ship-postal' inputMode='numeric' className={styles.input} {...register('postalCode')} disabled={isPending} />
+            <Input id='ship-postal' inputMode='numeric' {...register('postalCode')} disabled={isPending} />
             {errors.postalCode && <p className={styles.error}>{errors.postalCode.message}</p>}
           </div>
         </div>

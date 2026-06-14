@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCart } from '@/contexts/cart'
+import Input from '@/components/common/Input'
 import type { ApplyPromoErrorReason } from '@/api/promo'
 import styles from './PromoCodeForm.module.scss'
 
@@ -61,7 +62,7 @@ export default function PromoCodeForm() {
             Промокод
           </label>
           <div className={styles.controls}>
-            <input
+            <Input
               id='cart-promo'
               type='text'
               autoComplete='off'

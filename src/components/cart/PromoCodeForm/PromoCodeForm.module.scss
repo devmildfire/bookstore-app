@@ -35,40 +35,19 @@
   }
 }
 
+// Layout + promo-specific uppercasing only; the field's appearance (bg, border,
+// height, focus) comes from the shared <Input> (common/Input) so it matches the
+// rest of the site.
 .input {
   flex: 1 1 auto;
   min-width: 0;
   max-width: 300px;
-  height: 50px;
-  padding: 0 $space-4;
-  background: $color-panel;
-  border: 1px solid transparent;
-  border-radius: $radius-sm;
-  color: $color-text-on-dark;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
   text-transform: uppercase;
-  outline: none;
-  transition: border-color 0.15s ease;
-
-  &:focus {
-    border-color: rgba($color-text-on-dark, 0.4);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @include breakpoint(phone) {
-    height: 32px;
-    font-size: $font-size-sm;
-  }
 }
 
 .button {
   flex: 0 0 auto;
-  height: 50px;
+  height: 44px; // match the shared Input height
   padding: 0 $space-8;
   background: transparent;
   border: 1px solid $color-text-on-dark;
@@ -92,7 +71,6 @@
   }
 
   @include breakpoint(phone) {
-    height: 32px;
     padding: 0 $space-5;
     font-size: 10px;
     letter-spacing: 0.5px;

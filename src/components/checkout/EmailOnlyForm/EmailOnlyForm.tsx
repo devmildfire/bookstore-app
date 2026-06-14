@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { emailOnlySchema, type EmailOnlyFormValues } from '@/entities/order/validation'
+import Input from '@/components/common/Input'
 import styles from './EmailOnlyForm.module.scss'
 
 type Props = {
@@ -36,11 +37,10 @@ export default function EmailOnlyForm({
         <label htmlFor='checkout-email' className={styles.label}>
           E-mail <span className={styles.optional}>(необязательно)</span>
         </label>
-        <input
+        <Input
           id='checkout-email'
           type='email'
           autoComplete='email'
-          className={styles.input}
           {...register('email')}
           disabled={isPending}
         />
