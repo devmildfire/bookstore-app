@@ -6,7 +6,7 @@ export async function getPartners(): Promise<Partner[]> {
 
   const { data, error } = await supabase
     .from('Partners')
-    .select('*')
+    .select('id, name, logo_path, logo_caption, website_url, sort_order')
     .order('sort_order')
 
   if (error) throw error

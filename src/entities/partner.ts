@@ -12,7 +12,9 @@ export type Partner = {
   sortOrder: number
 }
 
-export function normalizePartner(raw: PartnerRow): Partner {
+export function normalizePartner(
+  raw: Pick<PartnerRow, 'id' | 'name' | 'logo_path' | 'logo_caption' | 'website_url' | 'sort_order'>,
+): Partner {
   return {
     id: raw.id,
     name: raw.name,

@@ -7,5 +7,6 @@
 //   import { updateProfile }    from '@/api/profile/updateProfile'
 //   import { setRecoveryEmail } from '@/api/profile/setRecoveryEmail'
 export { getProfile, profileQueryKey } from './getProfile'
+export { uploadAvatar } from './uploadAvatar'
 export type { UpdateProfileInput } from './updateProfile'
 export type { SetRecoveryEmailResult } from './setRecoveryEmail'

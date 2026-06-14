@@ -6,7 +6,7 @@ export async function getGiftCardProducts(): Promise<GiftCardProduct[]> {
 
   const { data, error } = await supabase
     .from('GiftCardProducts')
-    .select('*')
+    .select('id, slug, name, face_value, sort_order, image_path')
     .order('sort_order')
 
   if (error) throw new Error(`Не удалось загрузить карты даров: ${error.message}`)

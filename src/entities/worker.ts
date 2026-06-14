@@ -12,7 +12,9 @@ export type TeamMember = {
   sortOrder: number
 }
 
-export function normalizeTeamMember(raw: WorkerRow): TeamMember {
+export function normalizeTeamMember(
+  raw: Pick<WorkerRow, 'id' | 'name' | 'job' | 'city' | 'photo_path' | 'sort_order'>,
+): TeamMember {
   return {
     id: raw.id,
     name: raw.name,

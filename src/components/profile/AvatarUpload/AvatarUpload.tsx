@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
+import { uploadAvatar } from '@/api/profile'
 import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'
@@ -41,14 +41,11 @@ export default function AvatarUpload() {
     const path = `${profile.userId}/avatar.${ext}`
 
     setBusy(true)
-    const supabase = createClient()
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(path, file, { upsert: true, contentType: file.type })
-
-    if (uploadError) {
+    try {
+      await uploadAvatar(path, file)
+    } catch (uploadError) {
       setBusy(false)
-      setError(`Не удалось загрузить: ${uploadError.message}`)
+      setError(`Не удалось загрузить: ${uploadError instanceof Error ? uploadError.message : 'ошибка'}`)
       return
     }
 

@@ -19,7 +19,22 @@ export type Subscription = {
   publishedAt: string | null
 }
 
-export function normalizeSubscription(raw: SubscriptionRow): Subscription {
+export function normalizeSubscription(
+  raw: Pick<
+    SubscriptionRow,
+    | 'id'
+    | 'slug'
+    | 'name'
+    | 'description'
+    | 'perks'
+    | 'price'
+    | 'discount'
+    | 'image'
+    | 'image_blur'
+    | 'position'
+    | 'publish_date'
+  >,
+): Subscription {
   const discount = raw.discount ?? null
   const originalPrice = discount ? Math.round(raw.price / (1 - discount / 100)) : null
 

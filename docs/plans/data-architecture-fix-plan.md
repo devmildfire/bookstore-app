@@ -34,7 +34,7 @@ acceptance criteria, and a checklist tracker.
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ✅ |
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ✅ |
 | 5 | Remove legacy `place_order` | F9 | Low | ⬜ |
-| 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ⬜ |
+| 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ✅ |
 | 6 | Editions-model consolidation — SPIKE | F5 | Medium | ⏸️ |
 
 ---
@@ -235,15 +235,17 @@ data) + one tiny facets call; the 10k-row over-fetch + 4 probes are gone. `tsc`/
 **Acceptance:** two-phase checkout still works; dead code + its duplicate pricing copy
 gone.
 
-### 5.2 Boundary nits (F10)
-- ⬜ Move `AvatarUpload`'s direct `supabase.storage` call
-  (`src/components/profile/AvatarUpload/AvatarUpload.tsx:44`) behind an `api/profile`
-  function.
-- ⬜ Tighten the handful of list-feeding `select('*')` (22 in `src/api`) into explicit
-  column projections; leave single-row fetches as-is. Leave deliberate best-effort
-  `.catch(() => {})` storage-cleanup calls in `lib/admin/**` as-is.
+### 5.2 Boundary nits (F10) — DONE
+- ✅ Moved `AvatarUpload`'s direct `supabase.storage` call behind `api/profile/uploadAvatar.ts`
+  (the one real breach of "no Supabase in components").
+- ✅ Tightened the storefront list getters (`getPartners`, `getTeam`, `getSubscriptions`,
+  `getGiftCardProducts`) from `select('*')` to explicit column projections; narrowed each
+  normalizer's param to `Pick<…Row, …>` so `tsc` enforces the projection covers what the
+  normalizer reads. Left single-row admin edit fetches (`…eq('id').maybeSingle()`) and the
+  deliberate best-effort `.catch(()=>{})` storage cleanup as-is.
 
-**Acceptance:** no Supabase calls in components; list payloads bounded.
+**Acceptance:** ✅ no Supabase calls in components; storefront list payloads column-bounded
+and drift-checked. `tsc`/lint/build green.
 
 ---
 

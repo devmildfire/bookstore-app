@@ -6,7 +6,7 @@ export async function getTeam(): Promise<TeamMember[]> {
 
   const { data, error } = await supabase
     .from('Workers')
-    .select('*')
+    .select('id, name, job, city, photo_path, sort_order')
     .eq('is_team_member', true)
     .order('sort_order')
 

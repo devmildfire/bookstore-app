@@ -13,7 +13,9 @@ export type GiftCardProduct = {
   imageUrl: string | null
 }
 
-export function normalizeGiftCardProduct(raw: GiftCardProductRow): GiftCardProduct {
+export function normalizeGiftCardProduct(
+  raw: Pick<GiftCardProductRow, 'id' | 'slug' | 'name' | 'face_value' | 'sort_order' | 'image_path'>,
+): GiftCardProduct {
   return {
     id: raw.id,
     cartId: `GiftCard-${raw.id}`,
