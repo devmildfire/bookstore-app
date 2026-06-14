@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 2u9Z9PhdLGENkL5cgYrrJmd0zi4QMa2EQWTTcfpYfUdTDO01lS69IyxLrVjV7dZ
+\restrict E31YAAODEYuTYZJHccJ3iK5DvLneZXvH88lLTcDifFrEufvMNuFCML82g0HJIdc
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -273,14 +273,344 @@ COPY public."Articles" (id, slug, title, author_id, cover_path, cover_blur, exce
 
 
 --
--- Data for Name: Audiobooks; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: AuthorContacts; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public."Audiobooks" (id, title_id, price, is_published, publish_date, release_date, duration_seconds, file_size_bytes, file_path, demo_path, discount, sold) FROM stdin;
-1	22	100.00	t	2018-01-01	2024-12-12	\N	\N	\N	\N	\N	f
-3	43	100.00	t	2021-01-01	2021-01-25	\N	\N	\N	\N	\N	f
-2	29	300.00	t	2019-01-01	2019-12-10	\N	\N	\N	amystis/demo.mp3	\N	f
-4	58	300.00	t	2019-01-01	2019-04-04	19920	305000000	\N	white-flower/demo.mp3	\N	f
+COPY public."AuthorContacts" (id, author_id, channel, url, sort_order) FROM stdin;
+32	29	telegram	https://t.me/staroobryadtsev	0
+33	29	instagram	https://instagram.com/nikolay.staroobryadtsev	1
+34	29	email	mailto:nikolay@chtivo.spb.ru	2
+35	1	telegram	https://t.me/lighthouse_keeper_1	0
+36	1	email	mailto:nasibullin.i93@gmail.com	1
+37	2	email	mailto:novokoleg79@yandex.ru	0
+38	3	instagram	https://www.instagram.com/sketchesfrommoscow/	0
+39	3	email	mailto:sketchesfrommoscow@gmail.com	1
+40	5	email	mailto:favazmatova30@gmail.com	0
+41	6	email	mailto:dinikin@gmail.com	0
+42	8	instagram	https://www.instagram.com/borismainaev?igsh=MXQ5dGJmYWc4YzIyaA==	0
+43	9	telegram	https://t.me/deadowitch	0
+44	10	instagram	https://www.instagram.com/vladislav_olegowitch?igsh=MWQ0bmF1YWg0M2R5Nw%3D%3D&utm_source=qr	0
+45	10	email	mailto:nes1999vlad@yandex.ru	1
+46	13	facebook	https://www.facebook.com/profile.php?id=100041174074023	0
+47	14	telegram	https://t.me/razmik_kochar	0
+48	14	instagram	https://www.instagram.com/razmik.kochar	1
+49	16	email	mailto:marina5tv@mail.ru	0
+50	18	email	mailto:inner.inbox@gmail.com	0
+51	18	facebook	https://www.facebook.com/rocknword	1
+52	18	instagram	https://www.instagram.com/rocknword/	2
+53	19	facebook	https://www.facebook.com/dasha.streltsova.3	0
+54	19	instagram	https://www.instagram.com/deriendutout/	1
+55	20	email	artem.severskiy.77@mail.ru	0
+56	24	telegram	https://t.me/pankratov_live	0
+57	24	email	mailto:pankratov_g@bk.ru	1
+58	25	email	mailto:zhemoitelite@mail.ru	0
+59	26	email	mailto:sashacarin@gmail.com	0
+60	32	telegram	https://t.me/jankus_txt	0
+61	32	email	mailto:oraoliveyra@gmail.com	1
+62	35	facebook	https://www.facebook.com/erich.vonneff	0
+63	36	email	mailto:alecsandr0709@mail.ru	0
+64	39	email	mailto:a.aedov@mail.ru	0
+65	1	vk	https://vk.com/nasibulline	2
+66	6	vk	https://vk.com/id167965294	1
+67	13	vk	https://vk.com/oganesmartirosyan	1
+68	15	vk	https://vk.com/id175146355	0
+69	18	vk	https://vk.com/rocknword	3
+70	20	vk	https://vk.com/seversky_artem	1
+71	2	vk	https://vk.com/id569882966	1
+72	24	vk	https://vk.com/pankratov_live	2
+73	25	vk	https://vk.com/id125923715	1
+74	26	vk	https://vk.com/sashakarin	1
+75	30	vk	https://vk.com/schetnikov_translations	0
+76	32	vk	https://vk.com/jahnkus	2
+77	34	vk	https://vk.com/eversum	0
+78	37	vk	https://vk.com/id45567246	0
+\.
+
+
+--
+-- Data for Name: Awards; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."Awards" (id, slug, title, image, "position", is_active) FROM stdin;
+8	book-of-the-year-2019	Книга года 2019	book_of_the_year_2019.svg	8	t
+9	book-of-the-year-2020	Книга года 2020	book_of_the_year_2020.svg	9	t
+10	book-of-the-year-2021	Книга года 2021	book_of_the_year_2021.svg	10	t
+11	book-of-the-year-2022	Книга года 2022	book_of_the_year_2022.svg	11	t
+12	book-of-the-year-2023	Книга года 2023	book_of_the_year_2023.svg	12	t
+13	book-of-the-year-2024	Книга года 2024	book_of_the_year_2024.svg	13	t
+14	book-of-the-year-2025	Книга года 2025	book_of_the_year_2025.svg	14	t
+15	book-of-the-year-2026	Книга года 2026	book_of_the_year_2026.svg	15	t
+16	premiya-licey-2024	Премия «Лицей» 2024	award_liceum_2024.svg	16	t
+17	bronza-licey-2022	Бронза премии «Лицей» 2022	award_bronze_liceum_2022.svg	17	t
+18	longlist-licey-2022	Лонг-лист «Лицей» 2022	award_longlist_liceum_2022.svg	18	t
+19	longlist-bolshaya-kniga-2020	Лонг-лист «Большая книга» 2020	award_longlist_big_book_2020.svg	19	t
+20	longlist-fikshn35-2020	Лонг-лист «ФИКШН35» 2020	award_longlist_fiction-35_2020.svg	20	t
+\.
+
+
+--
+-- Data for Name: BookContexts; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."BookContexts" (id, title_id, heading, body, url, sort_order) FROM stdin;
+1	29	Что мы вообще знаем об Олеге Новокщёнове	Что мы с вами вообще знаем об Олеге Новокщёнове? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://vk.com/@russiantrex-chto-my-voobsche-znaem-ob-avtore-amystis-olege-novokschenove	0
+2	42	Доктор Сакс и Великий Мировой Змей: забытый опус Керуака | Катерина де Леон	Очерк Катерины де Леон в переводе Андрея Щетникова об искренней и пророческой книге Джека Керуака «Доктор Сакс» — романе, который не так-то просто разгадать между строк битнической прозы.	https://vk.com/@russiantrex-doktor-saks-i-velikii-mirovoi-zmei-zabytyi-opus-keruaka-katr	0
+3	60	«Пиво, минет и — расслабьтесь». Первое интервью неизвестного героя бит-поколения Эриха фон Неффа	Материал Сергея Дедовича, посвящённый автору и опубликованный в журнале Дискурс.	https://6243612d5980520009703948-discours.netlify.app/articles/culture/pivo-minet-i-rasslabtes-pervoe-intervyu-neizvestnogo-geroya-bit-pokoleniya-eriha-fon-neffa	0
+4	60	Что мы вообще знаем об Эрихе фон Неффе	Что мы с вами вообще знаем об Эрихе фон Неффе? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-prostitutok-na-obochine-5cf7a78c2d133400afd9b2a4	1
+5	55	«Ирокез» Алексея Колесникова | Год Литературы	На сайте Год Литературы опубликовали рассказ «Итака» из сборника «Ирокез» Алексея Колесникова, сопроводив его рецензией от Андрея Мягкова.	https://godliteratury.ru/articles/2022/05/19/irokez-alekseia-kolesnikova	0
+6	55	Интервью с Алексеем Колесниковым	В День рождения А.С. Пушкина на Красной площади вручали премии молодым авторам, среди которых в этом году был и Алексей Колёсников: его сборник «Ирокез» оценили по достоинству, отметив 3-м почётным местом. Мы пообщались с Алексеем о премии и о его творчестве.	https://vk.com/@ichtivo-intervu-s-alekseem-kolesnikovym	1
+7	15	Правила смерти Оганеса Мартиросяна	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает драматург, поэт, писатель Оганес Мартиросян.	https://vk.com/@russiantrex-pravila-smerti-oganesa-martirosyana	0
+8	15	Что мы вообще знаем об Оганесе Мартиросяне	Что мы с вами вообще знаем об Оганесе Мартиросяне? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-kubka-voiny-i-tanca-5da3310d6f5f6f00ad962087	1
+9	45	Антироман «Овердрайв» — секс, наркотики, рок-н-ролл, иногда в другом порядке | журнал ROCKWEEK	Читайте первый большой материал об «Овердрайве» Сергея Иннера в журнале ROCKWEEK. Автор текста — Виктория Травникова.	https://rockweek.ru/antiroman-overdrive/	0
+10	45	Рецензия на роман Сергея Иннера «Овердрайв»	Читайте рецензию автора «Янгспейс» и писателя Василия Вялого на роман Сергея Иннера — «Овердрайв».	https://youngspace.ru/culture/retsenziya-na-roman-sergeya-innera-overdrajv	1
+11	45	Родина Иннера	Спецпроект Русского Динозавра, журналистское расследование, проведённое в местах рождения и становления Сергея Иннера — городе Таганроге Ростовской области.	https://vk.com/@rocknword-rodina-innera	2
+12	57	«Ещё одна пропитая любовь». Религия битников и алкогольный солипсизм в романе Керуака «Подземные»	Материал Николая Старообрядцева о «Подземных» Джека Керуака в журнале Дискурс.	https://discours.io/articles/culture/esch-odna-propitaya-lyubov-religiya-bitnikov-i-alkogolnyy-solipsizm-v-romane-keruaka-podzemnye	0
+13	50	Родина Иннера	Спецпроект Русского Динозавра, журналистское расследование, проведённое в местах рождения и становления Сергея Иннера — городе Таганроге Ростовской области.	https://vk.com/@rocknword-rodina-innera	0
+14	52	Что мы вообще знаем об Эрихе фон Неффе?	Что мы с вами вообще знаем об Эрихе фон Неффе? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-prostitutok-na-obochine-5cf7a78c2d133400afd9b2a4	0
+15	52	Эксперимент с восприятием. О книге «Проститутки на обочине» Эриха фон Неффа	Недавно наши редакторы получили рукопись, которая увлекла их в удивительный эксперимент на тему зависимости восприятия произведения от восприятия автора. Эксперимент завершён, и мы предлагаем вам ознакомиться с этой любопытной историей.	https://dzen.ru/media/russiandino/eksperiment-s-vospriiatiem-o-knige-prostitutki-na-obochine-eriha-fon-neffa-5cd7f95b02da9d00b3fc2c36?utm_referer=away.vk.com	1
+16	52	Как мы «Проституток на обочине» Эриха фон Неффа издавали	Книга «Проститутки на обочине» американского писателя Эриха фон Неффа вышла 10 июня в издательстве Чтиво. Возможно, вы уже читали наш материал об истории знакомства с автором. Этот проект был несказанно важен для Чтива: первая книга зарубежного автора, притом довольно известного, пусть и на другом конце Земли, и даже состоявшего в переписке с Алленом Гинзбергом(!). Стоит ли говорить, как мы переживали. Пожалуй, лучше поговорить о том, как мы издавали.	https://dzen.ru/media/russiandino/kak-my-prostitutok-na-obochine-eriha-fon-neffa-izdavali-5d0104fb582ec400ab67f65e	2
+17	52	Другая сторона дороги | Любовь Волдинер	Любовь Волдинер о «Проститутках на обочине» Эриха фон Неффа.	https://dzen.ru/media/russiandino/drugaia-storona-dorogi-na-knigu-prostituki-na-obochine-eriha-fon-neffa-liubov-voldiner-5e860cbcbb31c2679c6eb75a	3
+18	52	Сексуально-политический трактат Эриха фон Неффа | Николай Старообрядцев	10 июня 2019-ого года в издательстве Чтиво вышло первое русскоязычное издание книги «Проститутки на обочине» калифорнийского писателя, философа и портового докера Эриха фон Неффа. Критика петербургского автора Николая Старообрядцева не заставила себя долго ждать.	https://vk.com/@russiantrex-seksualno-politicheskii-traktat-eriha-fon-neffa-nikolai-star	4
+19	31	Правила смерти Георгия Панкратова	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает автор книги «Российское время» Георгий Панкратов.	https://vk.com/@russiantrex-pravila-smerti-georgiya-pankratova	0
+20	31	Интервью с Георгием Панкратовым | журнал «Янгспейс»	Журнал «Янгспейс» пообщался с автором о новой книге, литературном настоящем в социальных сетях и узнал, как писателю пробиться к читателю.	https://youngspace.ru/culture/intervyu-s-georgiem-pankratovym	1
+21	31	Российское время | журнал «Знамя»	Читайте рецензию Станислава Секретова на «Российское время» Георгия Панкратова в журнале «Знамя».	https://znamlit.ru/publication.php?id=7731	2
+22	48	А вот и Слава! Интервью с Вячеславом Немировым	Мы решили узнать автора сборника рассказов «А где же Слава?» поближе и спросили Вячеслава о любимых писателях, творческом процессе и литературных планах. Вот что получилось.	https://vk.com/@ichtivo-intervu-s-vyacheslavom-nemirovym	0
+23	48	Правила смерти Вячеслава Немирова	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает писатель и поэт Вячеслав Немиров.	https://vk.com/@ichtivo-pravila-smerti-vyacheslava-nemirova	1
+24	62	Интервью с переводчиком Андреем Щетниковым | Журнал Дискурс	«"В дороге" — это гимн Америке: это и "легендарная" Америка прошлого, и одновременно Америка сегодняшняя. Взаимоотношения со временем сложные, и отношения со страной тоже сложные, но он живёт в ней и хочет о ней рассказать».	https://discours.io/articles/culture/ya-ves-ih-put-prosh-l-v-gugl-kartah-perevodchik-bitnikov-o-revolyutsii-soznaniya-buntarstve-i-manifeste-bit-pokoleniya	0
+25	62	On Kerouac | Николай Старообрядцев	Летом 2020-ого года в свет вышел новый перевод легендарного романа «On the Road» Джека Керуака в переводе специалиста по зарубежной поэзии Андрея Щетникова (г. Новосибирск). Специальным гостем презентации издания в баре «Parabellum» в Санкт-Петербурге стал писатель и философ Николай Старообрядцев. Его спонтанная лекция о романе «В дороге» и феномене битников вообще пришлась аудитории по душе, и мы попросили Николая создать её письменную версию, на что он любезно согласился.	https://vk.com/@ichtivo-on-kerouac-nikolai-staroobryadcev	1
+26	58	Правила смерти Николая Старообрядцева	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает петербургский писатель и философ Николай Старообрядцев.	https://vk.com/@ichtivo-pravila-smerti-nikolaya-staroobryadceva	0
+27	58	«Работаю как исследователь»: интервью с Николаем Старообрядцевым | Журнал МОСТ	«Начнем с простого – талант или гений?». Интервью Николая Старообрядцева журналу МОСТ.	https://mostmag.ru/rabotaju-kak-issledovatel-intervju-s-nikolaem-staroobrjadcevym/	1
+\.
+
+
+--
+-- Data for Name: Booktrailers; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."Booktrailers" (id, title_id, has_poster) FROM stdin;
+1	58	t
+\.
+
+
+--
+-- Data for Name: BoxSets; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."BoxSets" (id, slug, name, description, price, discount, image, "position", is_active, is_published, publish_date) FROM stdin;
+1	usa-literature	Соединённые Штаты Литературы	Произведения американских авторов	1100	\N	usa-literature.svg	1	t	t	2026-01-01
+2	inner	Весь Иннер	Все изданные в Чтиве произведения Сергея Иннера (и одно о нём)	1100	\N	inner.svg	2	t	t	2026-01-01
+3	staroobryad	Весь Старообрядцев	Все изданные в Чтиве произведения Николая Старообрядцева	1100	\N	staroobryad.svg	3	t	t	2026-01-01
+4	von-neff	Весь фон Нефф	Все изданные в Чтиве произведения Эриха фон Неффа	1100	\N	von-neff.svg	4	t	t	2026-01-01
+5	womens-power	Женская сила	Книги прекрасной части коллектива авторов Чтива	1100	\N	womens-power.svg	5	t	t	2026-01-01
+6	pankratov	Весь Панкратов	Все изданные в Чтиве произведения Георгия Панкратова	1100	\N	pankratov.svg	6	t	t	2026-01-01
+7	novokshchenov	Весь Новокщёнов и сотоварищи	Все изданные в Чтиве произведения Олега Новокщёнова, Александра Киреева и Дмитрия Горшечникова	1100	\N	novokshchenov.svg	7	t	t	2026-01-01
+8	russian-death	Российская смерть	Знакомая действительность и тёмные миры близ необъятной	1100	\N	russian-death.svg	8	t	t	2026-01-01
+9	far-from-moscow	Далеко от Москвы	Произведения авторов из разных городов России	1100	\N	far-from-moscow.svg	9	t	t	2026-01-01
+\.
+
+
+--
+-- Data for Name: BoxSetBooks; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."BoxSetBooks" (id, box_set_id, title_id, "position", product_id) FROM stdin;
+43	4	52	0	\N
+44	4	60	1	\N
+45	2	45	0	\N
+46	2	50	1	\N
+47	2	21	2	\N
+48	3	58	0	\N
+49	3	41	1	\N
+50	6	56	0	\N
+51	6	31	1	\N
+52	7	29	0	\N
+53	7	2	1	\N
+56	7	37	4	\N
+59	1	42	1	\N
+60	1	46	2	\N
+61	1	52	3	\N
+62	1	57	4	\N
+63	1	60	5	\N
+64	1	62	6	\N
+65	5	3	1	\N
+66	5	18	2	\N
+67	5	22	3	\N
+68	5	32	4	\N
+69	5	43	5	\N
+70	8	7	1	\N
+71	8	14	2	\N
+72	8	27	3	\N
+73	8	37	4	\N
+74	8	41	5	\N
+75	8	44	6	\N
+76	8	47	7	\N
+77	8	54	8	\N
+78	8	59	9	\N
+79	9	15	1	\N
+80	9	23	2	\N
+81	9	29	3	\N
+82	9	53	4	\N
+83	9	55	5	\N
+84	9	64	6	\N
+85	2	63	3	\N
+\.
+
+
+--
+-- Data for Name: Editions; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public."Editions" (id, title_id, kind, price, discount, is_published, sold_out, publish_date, release_date, file_path, demo_path, details, created_at) FROM stdin;
+1	13	EBook	300.00	\N	t	f	2021-01-01	2025-10-22	\N	\N	{}	2026-06-14 07:02:30.111492+00
+2	9	EBook	450.00	\N	f	f	2024-01-01	2024-10-24	\N	gomoza/demo.epub	{"character_count": 700000}	2026-06-14 07:02:30.111492+00
+3	4	EBook	400.00	\N	f	f	2026-01-01	2026-04-30	\N	troe-v-lodke-ne-schitaya-harona/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 254526}	2026-06-14 07:02:30.111492+00
+4	11	EBook	300.00	\N	t	f	2026-01-01	2026-01-01	\N	segamegadrive/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 700000}	2026-06-14 07:02:30.111492+00
+5	5	EBook	200.00	\N	f	f	2022-01-01	2022-11-15	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 200000}	2026-06-14 07:02:30.111492+00
+6	6	EBook	400.00	\N	f	f	2023-01-01	2023-12-12	\N	\N	{"formats": ["FB2", "EPUB", "БЫСТРЫЙ ПРОСМОТР ДЕМО"], "character_count": 200000}	2026-06-14 07:02:30.111492+00
+7	7	EBook	300.00	\N	f	f	2024-01-01	2024-05-13	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 265885}	2026-06-14 07:02:30.111492+00
+8	8	EBook	200.00	\N	f	f	2025-01-01	2025-01-01	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 613000}	2026-06-14 07:02:30.111492+00
+9	25	EBook	400.00	\N	t	f	2024-01-01	2024-11-25	\N	gorod-sluchajnostej/demo.epub	{"character_count": 552000}	2026-06-14 07:02:30.111492+00
+10	26	EBook	400.00	\N	t	f	2024-01-01	2024-11-25	\N	vihr-zhizni/demo.epub	{"character_count": 341000}	2026-06-14 07:02:30.111492+00
+11	27	EBook	400.00	\N	t	f	2024-01-01	2024-11-25	\N	prizrachnye-istorii/demo.epub	{"character_count": 270000}	2026-06-14 07:02:30.111492+00
+12	12	EBook	400.00	\N	t	f	2025-01-01	2025-12-30	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 340000}	2026-06-14 07:02:30.111492+00
+13	14	EBook	300.00	\N	t	f	2025-01-01	2025-10-02	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 295200}	2026-06-14 07:02:30.111492+00
+14	29	EBook	300.00	\N	t	f	2019-01-01	2019-12-10	\N	amystis/demo.epub	{"character_count": 220000}	2026-06-14 07:02:30.111492+00
+15	30	EBook	150.00	\N	t	f	2024-01-01	2024-10-03	\N	pupsiki/demo.epub	{"character_count": 700000}	2026-06-14 07:02:30.111492+00
+16	17	EBook	200.00	\N	t	f	2025-01-01	2025-05-07	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 525000}	2026-06-14 07:02:30.111492+00
+17	18	EBook	200.00	\N	t	f	2025-01-01	2025-04-03	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 230000}	2026-06-14 07:02:30.111492+00
+18	19	EBook	400.00	\N	t	f	2023-01-01	2025-03-18	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 250000}	2026-06-14 07:02:30.111492+00
+19	20	EBook	200.00	\N	t	f	2024-01-01	2024-12-25	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 169000}	2026-06-14 07:02:30.111492+00
+20	31	EBook	300.00	\N	t	f	2019-01-01	2024-08-16	\N	rossijskoe-vremja/demo.epub	{"character_count": 260000}	2026-06-14 07:02:30.111492+00
+21	37	EBook	400.00	\N	t	f	2023-01-01	2023-10-10	\N	predsetatel-tomskiy/demo.epub	{"formats": ["FB2", "EPUB", "БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"], "character_count": 230000}	2026-06-14 07:02:30.111492+00
+22	45	EBook	300.00	\N	t	f	2019-01-01	2023-01-19	\N	overdrive/demo.epub	{"formats": ["PDF FB2 EPUB HTML", "БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"], "character_count": 480000}	2026-06-14 07:02:30.111492+00
+23	49	EBook	300.00	\N	t	f	2022-01-01	2022-06-13	\N	dostoevski-dvoinik/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 321050}	2026-06-14 07:02:30.111492+00
+24	50	EBook	300.00	\N	t	f	2022-01-01	2022-05-08	\N	pozhninoch/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 410000}	2026-06-14 07:02:30.111492+00
+25	51	EBook	300.00	\N	t	f	2022-01-01	2022-05-04	\N	dostoevskie_dni/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 360000}	2026-06-14 07:02:30.111492+00
+26	52	EBook	300.00	\N	t	f	2019-01-01	2019-06-10	\N	prostitutes/demo.epub	{"character_count": 135000}	2026-06-14 07:02:30.111492+00
+27	53	EBook	300.00	\N	t	f	2022-01-01	2022-03-02	\N	sepiya/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 230000}	2026-06-14 07:02:30.111492+00
+28	54	EBook	300.00	\N	t	f	2022-01-01	2022-01-31	\N	prizraki/demo.epub	{"formats": ["FB2", "EPUB"], "character_count": 230000}	2026-06-14 07:02:30.111492+00
+29	32	EBook	100.00	\N	t	f	2024-01-01	2024-04-04	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 80000}	2026-06-14 07:02:30.111492+00
+30	36	EBook	300.00	\N	t	f	2023-01-01	2023-10-05	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 142000}	2026-06-14 07:02:30.111492+00
+31	55	EBook	300.00	\N	t	f	2021-01-01	2021-10-26	\N	irokez/demo.epub	{}	2026-06-14 07:02:30.111492+00
+32	39	EBook	200.00	\N	t	f	2023-01-01	2023-08-31	\N	\N	{"formats": ["PDF", "БЫСТРЫЙ ПРОСМОТР ДЕМО"], "character_count": 141204}	2026-06-14 07:02:30.111492+00
+33	40	EBook	300.00	\N	t	f	2023-01-01	2023-08-18	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 200000}	2026-06-14 07:02:30.111492+00
+34	41	EBook	400.00	\N	t	f	2023-01-01	2023-07-25	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 465000}	2026-06-14 07:02:30.111492+00
+35	42	EBook	400.00	\N	t	f	2023-01-01	2023-01-04	\N	\N	{"formats": ["FB2", "EPUB", "БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"], "character_count": 370000}	2026-06-14 07:02:30.111492+00
+36	43	EBook	100.00	\N	t	f	2021-01-01	2021-01-25	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 70000}	2026-06-14 07:02:30.111492+00
+37	44	EBook	400.00	\N	t	f	2023-01-01	2023-03-02	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 390000}	2026-06-14 07:02:30.111492+00
+38	57	EBook	300.00	\N	t	f	2021-01-01	2021-10-21	\N	podzemnie/demo.epub	{"character_count": 180000}	2026-06-14 07:02:30.111492+00
+39	47	EBook	200.00	\N	t	f	2022-01-01	2022-09-27	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 220660}	2026-06-14 07:02:30.111492+00
+40	48	EBook	200.00	\N	t	f	2022-01-01	2022-09-15	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 205000}	2026-06-14 07:02:30.111492+00
+41	58	EBook	300.00	\N	t	f	2019-01-01	2019-04-04	\N	white-flower/demo.epub	{"formats": ["PDF", "FB2", "HTML", "Epub"], "character_count": 355000}	2026-06-14 07:02:30.111492+00
+42	61	EBook	100.00	\N	t	f	2020-01-01	2020-08-17	\N	lucifer/demo.epub	{"character_count": 90000}	2026-06-14 07:02:30.111492+00
+43	62	EBook	300.00	\N	t	f	2020-01-01	2020-07-22	\N	v-doroge/demo.epub	{"character_count": 560000}	2026-06-14 07:02:30.111492+00
+44	64	EBook	300.00	\N	t	f	2019-01-01	2020-04-13	\N	my-komu-to-nujni/demo.epub	{"character_count": 255000}	2026-06-14 07:02:30.111492+00
+45	56	EBook	300.00	\N	t	f	2021-01-01	2021-04-22	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 530000}	2026-06-14 07:02:30.111492+00
+46	59	EBook	300.00	\N	t	f	2021-01-01	2021-02-28	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 330000}	2026-06-14 07:02:30.111492+00
+47	60	EBook	200.00	\N	t	f	2020-01-01	2020-12-14	\N	\N	{"formats": ["FB2", "EPUB"], "character_count": 170000}	2026-06-14 07:02:30.111492+00
+48	66	EBook	0.00	\N	t	f	2020-12-30	2020-12-30	ebook/mrd-1.pdf	\N	{"formats": ["PDF"], "character_count": 140000}	2026-06-14 07:02:30.111492+00
+49	63	EBook	100.00	\N	t	f	2020-01-01	2020-05-08	\N	\N	{"character_count": 40000}	2026-06-14 07:02:30.111492+00
+50	67	EBook	0.00	\N	t	f	2021-12-30	2021-12-30	ebook/mrd-2.pdf	\N	{"formats": ["PDF"]}	2026-06-14 07:02:30.111492+00
+51	1	EBook	400.00	\N	f	f	2026-01-01	2026-03-11	\N	igra-v-mayaki/demo.epub	{"character_count": 700000}	2026-06-14 07:02:30.111492+00
+52	2	EBook	300.00	\N	f	f	2018-01-01	2025-11-12	\N	baron/demo.epub	{"character_count": 320000}	2026-06-14 07:02:30.111492+00
+53	3	EBook	400.00	\N	f	f	2024-01-01	2026-02-18	\N	na-zemle-zaratushtry/demo.epub	{"character_count": 286000}	2026-06-14 07:02:30.111492+00
+54	15	EBook	300.00	\N	t	f	2019-01-01	2025-08-01	\N	kubok-voiny-i-tanca/demo.epub	{"character_count": 340000}	2026-06-14 07:02:30.111492+00
+55	16	EBook	400.00	\N	t	f	2025-01-01	2025-10-23	\N	whiskey-sour/demo.epub	{"character_count": 700000}	2026-06-14 07:02:30.111492+00
+56	21	EBook	300.00	\N	t	f	2017-01-01	2017-10-26	\N	poseiden/demo.epub	{"character_count": 400000}	2026-06-14 07:02:30.111492+00
+57	22	EBook	100.00	\N	t	f	2018-01-01	2024-12-12	\N	unhappened/demo.epub	{"character_count": 65000}	2026-06-14 07:02:30.111492+00
+58	23	EBook	300.00	\N	t	f	2024-01-01	2024-12-04	\N	vremyapadenie/demo.epub	{"character_count": 195000}	2026-06-14 07:02:30.111492+00
+59	68	EBook	0.00	\N	t	f	2022-12-30	2022-12-30	ebook/mrd-3.epub	\N	{"formats": ["FB2", "EPUB"], "character_count": 141000}	2026-06-14 07:02:30.111492+00
+60	69	EBook	0.00	\N	t	f	2023-12-31	2023-12-31	ebook/mrd-4.epub	\N	{"formats": ["FB2", "EPUB", "PDF"], "character_count": 189000}	2026-06-14 07:02:30.111492+00
+61	65	EBook	0.00	\N	t	f	2025-01-01	2024-10-15	ebook/mrd-5.epub	\N	{"formats": ["FB2", "EPUB", "PDF"], "character_count": 269000}	2026-06-14 07:02:30.111492+00
+62	10	EBook	0.00	\N	t	f	2026-01-20	2026-01-20	ebook/mrd-6.epub	\N	{"formats": ["FB2", "EPUB"], "character_count": 280000}	2026-06-14 07:02:30.111492+00
+63	22	AudioBook	100.00	\N	t	f	2018-01-01	2024-12-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+64	43	AudioBook	100.00	\N	t	f	2021-01-01	2021-01-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+65	29	AudioBook	300.00	\N	t	f	2019-01-01	2019-12-10	\N	amystis/demo.mp3	{}	2026-06-14 07:02:30.111492+00
+66	58	AudioBook	300.00	\N	t	f	2019-01-01	2019-04-04	\N	white-flower/demo.mp3	{"file_size_bytes": 305000000, "duration_seconds": 19920}	2026-06-14 07:02:30.111492+00
+67	2	PrintBook	1000.00	\N	f	f	2018-01-01	2025-11-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+68	3	PrintBook	700.00	\N	f	f	2024-01-01	2026-02-18	\N	\N	{}	2026-06-14 07:02:30.111492+00
+69	13	PrintBook	1000.00	\N	t	f	2021-01-01	2025-10-22	\N	\N	{}	2026-06-14 07:02:30.111492+00
+70	15	PrintBook	600.00	\N	t	f	2019-01-01	2025-08-01	\N	\N	{}	2026-06-14 07:02:30.111492+00
+71	16	PrintBook	1000.00	\N	t	f	2025-01-01	2025-10-23	\N	\N	{}	2026-06-14 07:02:30.111492+00
+72	19	PrintBook	600.00	\N	t	f	2023-01-01	2025-03-18	\N	\N	{}	2026-06-14 07:02:30.111492+00
+73	20	PrintBook	600.00	\N	t	f	2024-01-01	2024-12-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+74	21	PrintBook	1000.00	\N	t	f	2017-01-01	2017-10-26	\N	\N	{}	2026-06-14 07:02:30.111492+00
+75	22	PrintBook	600.00	\N	t	f	2018-01-01	2024-12-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+76	24	PrintBook	900.00	\N	t	f	2023-01-01	2023-02-02	\N	\N	{}	2026-06-14 07:02:30.111492+00
+77	29	PrintBook	1000.00	\N	t	f	2019-01-01	2019-12-10	\N	\N	{}	2026-06-14 07:02:30.111492+00
+78	31	PrintBook	600.00	\N	t	f	2019-01-01	2024-08-16	\N	\N	{}	2026-06-14 07:02:30.111492+00
+79	33	PrintBook	3000.00	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+80	38	PrintBook	800.00	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+81	42	PrintBook	900.00	\N	t	f	2023-01-01	2023-01-04	\N	\N	{}	2026-06-14 07:02:30.111492+00
+82	45	PrintBook	1000.00	\N	t	f	2019-01-01	2023-01-19	\N	\N	{}	2026-06-14 07:02:30.111492+00
+83	52	PrintBook	900.00	\N	t	f	2019-01-01	2019-06-10	\N	\N	{}	2026-06-14 07:02:30.111492+00
+84	57	PrintBook	500.00	\N	t	f	2021-01-01	2021-10-21	\N	\N	{}	2026-06-14 07:02:30.111492+00
+85	62	PrintBook	700.00	\N	t	f	2020-01-01	2020-07-22	\N	\N	{}	2026-06-14 07:02:30.111492+00
+86	58	PrintBook	900.00	\N	t	f	2019-01-01	2019-04-04	\N	\N	{"paper": "офсетная 80 гр/кв. м.", "format": "145x215 мм", "binding": "КШС (термоклей)", "page_count": 200, "illustrations": "Чёрно-белые", "cover_material": "мелованная, 250 гр./кв. м., матовое ламинирование, выборочный уф-лак"}	2026-06-14 07:02:30.111492+00
+87	65	PrintBook	700.00	\N	t	f	2025-01-01	2024-10-15	\N	\N	{"paper": "офсетная, 80 гр/кв.м", "format": "210×297 мм", "binding": "КБС, термопак поэкземплярно", "page_count": 204, "illustrations": "чёрно-белые", "cover_material": "мелованная, 250 гр/кв.м, матовое ламинирование"}	2026-06-14 07:02:30.111492+00
+88	1	Book2.0	400.00	\N	f	f	2026-01-01	2026-03-11	\N	\N	{}	2026-06-14 07:02:30.111492+00
+89	2	Book2.0	300.00	\N	f	f	2018-01-01	2025-11-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+90	3	Book2.0	400.00	\N	f	f	2024-01-01	2026-02-18	\N	\N	{}	2026-06-14 07:02:30.111492+00
+91	4	Book2.0	400.00	\N	f	f	2026-01-01	2026-04-30	\N	\N	{}	2026-06-14 07:02:30.111492+00
+92	5	Book2.0	200.00	\N	f	f	2022-01-01	2022-11-15	\N	\N	{}	2026-06-14 07:02:30.111492+00
+93	6	Book2.0	400.00	\N	f	f	2023-01-01	2023-12-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+94	7	Book2.0	300.00	\N	f	f	2024-01-01	2024-05-13	\N	\N	{}	2026-06-14 07:02:30.111492+00
+95	8	Book2.0	200.00	\N	f	f	2025-01-01	2025-01-01	\N	\N	{}	2026-06-14 07:02:30.111492+00
+96	9	Book2.0	450.00	\N	f	f	2024-01-01	2024-10-24	\N	\N	{}	2026-06-14 07:02:30.111492+00
+97	11	Book2.0	300.00	\N	t	f	2026-01-01	2026-01-01	\N	\N	{}	2026-06-14 07:02:30.111492+00
+98	12	Book2.0	400.00	\N	t	f	2025-01-01	2025-12-30	\N	\N	{}	2026-06-14 07:02:30.111492+00
+99	14	Book2.0	300.00	\N	t	f	2025-01-01	2025-10-02	\N	\N	{}	2026-06-14 07:02:30.111492+00
+100	15	Book2.0	300.00	\N	t	f	2019-01-01	2025-08-01	\N	\N	{}	2026-06-14 07:02:30.111492+00
+101	16	Book2.0	400.00	\N	t	f	2025-01-01	2025-10-23	\N	\N	{}	2026-06-14 07:02:30.111492+00
+102	17	Book2.0	200.00	\N	t	f	2025-01-01	2025-05-07	\N	\N	{}	2026-06-14 07:02:30.111492+00
+103	18	Book2.0	200.00	\N	t	f	2025-01-01	2025-04-03	\N	\N	{}	2026-06-14 07:02:30.111492+00
+104	19	Book2.0	400.00	\N	t	f	2023-01-01	2025-03-18	\N	\N	{}	2026-06-14 07:02:30.111492+00
+105	20	Book2.0	200.00	\N	t	f	2024-01-01	2024-12-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+106	21	Book2.0	300.00	\N	t	f	2017-01-01	2017-10-26	\N	\N	{}	2026-06-14 07:02:30.111492+00
+107	22	Book2.0	100.00	\N	t	f	2018-01-01	2024-12-12	\N	\N	{}	2026-06-14 07:02:30.111492+00
+108	23	Book2.0	300.00	\N	t	f	2024-01-01	2024-12-04	\N	\N	{}	2026-06-14 07:02:30.111492+00
+109	24	Book2.0	900.00	\N	t	f	2023-01-01	2023-02-02	\N	\N	{}	2026-06-14 07:02:30.111492+00
+110	25	Book2.0	400.00	\N	t	f	2024-01-01	2024-11-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+111	26	Book2.0	400.00	\N	t	f	2024-01-01	2024-11-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+112	27	Book2.0	400.00	\N	t	f	2024-01-01	2024-11-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+113	28	Book2.0	\N	\N	t	f	2024-01-01	2024-11-06	\N	\N	{}	2026-06-14 07:02:30.111492+00
+114	29	Book2.0	300.00	\N	t	f	2019-01-01	2019-12-10	\N	\N	{}	2026-06-14 07:02:30.111492+00
+115	30	Book2.0	150.00	\N	t	f	2024-01-01	2024-10-03	\N	\N	{}	2026-06-14 07:02:30.111492+00
+116	31	Book2.0	300.00	\N	t	f	2019-01-01	2024-08-16	\N	\N	{}	2026-06-14 07:02:30.111492+00
+117	32	Book2.0	100.00	\N	t	f	2024-01-01	2024-04-04	\N	\N	{}	2026-06-14 07:02:30.111492+00
+118	33	Book2.0	3000.00	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+119	34	Book2.0	\N	\N	t	f	2023-01-01	2023-12-23	\N	\N	{}	2026-06-14 07:02:30.111492+00
+120	35	Book2.0	\N	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+121	36	Book2.0	300.00	\N	t	f	2023-01-01	2023-10-05	\N	\N	{}	2026-06-14 07:02:30.111492+00
+122	37	Book2.0	400.00	\N	t	f	2023-01-01	2023-10-10	\N	\N	{}	2026-06-14 07:02:30.111492+00
+123	38	Book2.0	800.00	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+124	39	Book2.0	200.00	\N	t	f	2023-01-01	2023-08-31	\N	\N	{}	2026-06-14 07:02:30.111492+00
+125	40	Book2.0	300.00	\N	t	f	2023-01-01	2023-08-18	\N	\N	{}	2026-06-14 07:02:30.111492+00
+126	41	Book2.0	400.00	\N	t	f	2023-01-01	2023-07-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+127	42	Book2.0	400.00	\N	t	f	2023-01-01	2023-01-04	\N	\N	{}	2026-06-14 07:02:30.111492+00
+128	43	Book2.0	100.00	\N	t	f	2021-01-01	2021-01-25	\N	\N	{}	2026-06-14 07:02:30.111492+00
+129	44	Book2.0	400.00	\N	t	f	2023-01-01	2023-03-02	\N	\N	{}	2026-06-14 07:02:30.111492+00
+130	45	Book2.0	300.00	\N	t	f	2019-01-01	2023-01-19	\N	\N	{}	2026-06-14 07:02:30.111492+00
+131	46	Book2.0	\N	\N	t	f	2023-01-01	\N	\N	\N	{}	2026-06-14 07:02:30.111492+00
+132	47	Book2.0	200.00	\N	t	f	2022-01-01	2022-09-27	\N	\N	{}	2026-06-14 07:02:30.111492+00
+133	48	Book2.0	200.00	\N	t	f	2022-01-01	2022-09-15	\N	\N	{}	2026-06-14 07:02:30.111492+00
+134	49	Book2.0	300.00	\N	t	f	2022-01-01	2022-06-13	\N	\N	{}	2026-06-14 07:02:30.111492+00
+135	50	Book2.0	300.00	\N	t	f	2022-01-01	2022-05-08	\N	\N	{}	2026-06-14 07:02:30.111492+00
+136	51	Book2.0	300.00	\N	t	f	2022-01-01	2022-05-04	\N	\N	{}	2026-06-14 07:02:30.111492+00
+137	52	Book2.0	300.00	\N	t	f	2019-01-01	2019-06-10	\N	\N	{}	2026-06-14 07:02:30.111492+00
+138	53	Book2.0	300.00	\N	t	f	2022-01-01	2022-03-02	\N	\N	{}	2026-06-14 07:02:30.111492+00
+139	54	Book2.0	300.00	\N	t	f	2022-01-01	2022-01-31	\N	\N	{}	2026-06-14 07:02:30.111492+00
+140	55	Book2.0	300.00	\N	t	f	2021-01-01	2021-10-26	\N	\N	{}	2026-06-14 07:02:30.111492+00
+141	56	Book2.0	300.00	\N	t	f	2021-01-01	2021-04-22	\N	\N	{}	2026-06-14 07:02:30.111492+00
+142	57	Book2.0	300.00	\N	t	f	2021-01-01	2021-10-21	\N	\N	{}	2026-06-14 07:02:30.111492+00
+143	59	Book2.0	300.00	\N	t	f	2021-01-01	2021-02-28	\N	\N	{}	2026-06-14 07:02:30.111492+00
+144	60	Book2.0	200.00	\N	t	f	2020-01-01	2020-12-14	\N	\N	{}	2026-06-14 07:02:30.111492+00
+145	61	Book2.0	100.00	\N	t	f	2020-01-01	2020-08-17	\N	\N	{}	2026-06-14 07:02:30.111492+00
+146	62	Book2.0	300.00	\N	t	f	2020-01-01	2020-07-22	\N	\N	{}	2026-06-14 07:02:30.111492+00
+147	63	Book2.0	100.00	\N	t	f	2020-01-01	2020-05-08	\N	\N	{}	2026-06-14 07:02:30.111492+00
+148	64	Book2.0	300.00	\N	t	f	2019-01-01	2020-04-13	\N	\N	{}	2026-06-14 07:02:30.111492+00
+149	58	Book2.0	300.00	\N	t	f	2019-01-01	2019-04-04	\N	\N	{"paper": "Дизайнерская бумага Sirio Black Black 0,7 мм.", "format": "50x70 мм", "packaging": "Индивидуальная упаковка с цветной запечаткой.", "printing_technique": "Двухсторонняя шелкография белым."}	2026-06-14 07:02:30.111492+00
+150	13	Book2.0	300.00	\N	t	f	2021-01-01	2025-10-22	\N	murlo/demo.epub	{}	2026-06-14 07:02:30.111492+00
 \.
 
 
@@ -487,806 +817,611 @@ COPY public."Workers" (id, name, job, photo_path, city, is_team_member, sort_ord
 
 
 --
--- Data for Name: AudiobookWorkers; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: EditionWorkers; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public."AudiobookWorkers" (id, audiobook_id, worker_id, sort_order) FROM stdin;
-\.
-
-
---
--- Data for Name: AuthorContacts; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."AuthorContacts" (id, author_id, channel, url, sort_order) FROM stdin;
-32	29	telegram	https://t.me/staroobryadtsev	0
-33	29	instagram	https://instagram.com/nikolay.staroobryadtsev	1
-34	29	email	mailto:nikolay@chtivo.spb.ru	2
-35	1	telegram	https://t.me/lighthouse_keeper_1	0
-36	1	email	mailto:nasibullin.i93@gmail.com	1
-37	2	email	mailto:novokoleg79@yandex.ru	0
-38	3	instagram	https://www.instagram.com/sketchesfrommoscow/	0
-39	3	email	mailto:sketchesfrommoscow@gmail.com	1
-40	5	email	mailto:favazmatova30@gmail.com	0
-41	6	email	mailto:dinikin@gmail.com	0
-42	8	instagram	https://www.instagram.com/borismainaev?igsh=MXQ5dGJmYWc4YzIyaA==	0
-43	9	telegram	https://t.me/deadowitch	0
-44	10	instagram	https://www.instagram.com/vladislav_olegowitch?igsh=MWQ0bmF1YWg0M2R5Nw%3D%3D&utm_source=qr	0
-45	10	email	mailto:nes1999vlad@yandex.ru	1
-46	13	facebook	https://www.facebook.com/profile.php?id=100041174074023	0
-47	14	telegram	https://t.me/razmik_kochar	0
-48	14	instagram	https://www.instagram.com/razmik.kochar	1
-49	16	email	mailto:marina5tv@mail.ru	0
-50	18	email	mailto:inner.inbox@gmail.com	0
-51	18	facebook	https://www.facebook.com/rocknword	1
-52	18	instagram	https://www.instagram.com/rocknword/	2
-53	19	facebook	https://www.facebook.com/dasha.streltsova.3	0
-54	19	instagram	https://www.instagram.com/deriendutout/	1
-55	20	email	artem.severskiy.77@mail.ru	0
-56	24	telegram	https://t.me/pankratov_live	0
-57	24	email	mailto:pankratov_g@bk.ru	1
-58	25	email	mailto:zhemoitelite@mail.ru	0
-59	26	email	mailto:sashacarin@gmail.com	0
-60	32	telegram	https://t.me/jankus_txt	0
-61	32	email	mailto:oraoliveyra@gmail.com	1
-62	35	facebook	https://www.facebook.com/erich.vonneff	0
-63	36	email	mailto:alecsandr0709@mail.ru	0
-64	39	email	mailto:a.aedov@mail.ru	0
-65	1	vk	https://vk.com/nasibulline	2
-66	6	vk	https://vk.com/id167965294	1
-67	13	vk	https://vk.com/oganesmartirosyan	1
-68	15	vk	https://vk.com/id175146355	0
-69	18	vk	https://vk.com/rocknword	3
-70	20	vk	https://vk.com/seversky_artem	1
-71	2	vk	https://vk.com/id569882966	1
-72	24	vk	https://vk.com/pankratov_live	2
-73	25	vk	https://vk.com/id125923715	1
-74	26	vk	https://vk.com/sashakarin	1
-75	30	vk	https://vk.com/schetnikov_translations	0
-76	32	vk	https://vk.com/jahnkus	2
-77	34	vk	https://vk.com/eversum	0
-78	37	vk	https://vk.com/id45567246	0
-\.
-
-
---
--- Data for Name: Awards; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."Awards" (id, slug, title, image, "position", is_active) FROM stdin;
-8	book-of-the-year-2019	Книга года 2019	book_of_the_year_2019.svg	8	t
-9	book-of-the-year-2020	Книга года 2020	book_of_the_year_2020.svg	9	t
-10	book-of-the-year-2021	Книга года 2021	book_of_the_year_2021.svg	10	t
-11	book-of-the-year-2022	Книга года 2022	book_of_the_year_2022.svg	11	t
-12	book-of-the-year-2023	Книга года 2023	book_of_the_year_2023.svg	12	t
-13	book-of-the-year-2024	Книга года 2024	book_of_the_year_2024.svg	13	t
-14	book-of-the-year-2025	Книга года 2025	book_of_the_year_2025.svg	14	t
-15	book-of-the-year-2026	Книга года 2026	book_of_the_year_2026.svg	15	t
-16	premiya-licey-2024	Премия «Лицей» 2024	award_liceum_2024.svg	16	t
-17	bronza-licey-2022	Бронза премии «Лицей» 2022	award_bronze_liceum_2022.svg	17	t
-18	longlist-licey-2022	Лонг-лист «Лицей» 2022	award_longlist_liceum_2022.svg	18	t
-19	longlist-bolshaya-kniga-2020	Лонг-лист «Большая книга» 2020	award_longlist_big_book_2020.svg	19	t
-20	longlist-fikshn35-2020	Лонг-лист «ФИКШН35» 2020	award_longlist_fiction-35_2020.svg	20	t
-\.
-
-
---
--- Data for Name: BookContexts; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."BookContexts" (id, title_id, heading, body, url, sort_order) FROM stdin;
-1	29	Что мы вообще знаем об Олеге Новокщёнове	Что мы с вами вообще знаем об Олеге Новокщёнове? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://vk.com/@russiantrex-chto-my-voobsche-znaem-ob-avtore-amystis-olege-novokschenove	0
-2	42	Доктор Сакс и Великий Мировой Змей: забытый опус Керуака | Катерина де Леон	Очерк Катерины де Леон в переводе Андрея Щетникова об искренней и пророческой книге Джека Керуака «Доктор Сакс» — романе, который не так-то просто разгадать между строк битнической прозы.	https://vk.com/@russiantrex-doktor-saks-i-velikii-mirovoi-zmei-zabytyi-opus-keruaka-katr	0
-3	60	«Пиво, минет и — расслабьтесь». Первое интервью неизвестного героя бит-поколения Эриха фон Неффа	Материал Сергея Дедовича, посвящённый автору и опубликованный в журнале Дискурс.	https://6243612d5980520009703948-discours.netlify.app/articles/culture/pivo-minet-i-rasslabtes-pervoe-intervyu-neizvestnogo-geroya-bit-pokoleniya-eriha-fon-neffa	0
-4	60	Что мы вообще знаем об Эрихе фон Неффе	Что мы с вами вообще знаем об Эрихе фон Неффе? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-prostitutok-na-obochine-5cf7a78c2d133400afd9b2a4	1
-5	55	«Ирокез» Алексея Колесникова | Год Литературы	На сайте Год Литературы опубликовали рассказ «Итака» из сборника «Ирокез» Алексея Колесникова, сопроводив его рецензией от Андрея Мягкова.	https://godliteratury.ru/articles/2022/05/19/irokez-alekseia-kolesnikova	0
-6	55	Интервью с Алексеем Колесниковым	В День рождения А.С. Пушкина на Красной площади вручали премии молодым авторам, среди которых в этом году был и Алексей Колёсников: его сборник «Ирокез» оценили по достоинству, отметив 3-м почётным местом. Мы пообщались с Алексеем о премии и о его творчестве.	https://vk.com/@ichtivo-intervu-s-alekseem-kolesnikovym	1
-7	15	Правила смерти Оганеса Мартиросяна	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает драматург, поэт, писатель Оганес Мартиросян.	https://vk.com/@russiantrex-pravila-smerti-oganesa-martirosyana	0
-8	15	Что мы вообще знаем об Оганесе Мартиросяне	Что мы с вами вообще знаем об Оганесе Мартиросяне? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-kubka-voiny-i-tanca-5da3310d6f5f6f00ad962087	1
-9	45	Антироман «Овердрайв» — секс, наркотики, рок-н-ролл, иногда в другом порядке | журнал ROCKWEEK	Читайте первый большой материал об «Овердрайве» Сергея Иннера в журнале ROCKWEEK. Автор текста — Виктория Травникова.	https://rockweek.ru/antiroman-overdrive/	0
-10	45	Рецензия на роман Сергея Иннера «Овердрайв»	Читайте рецензию автора «Янгспейс» и писателя Василия Вялого на роман Сергея Иннера — «Овердрайв».	https://youngspace.ru/culture/retsenziya-na-roman-sergeya-innera-overdrajv	1
-11	45	Родина Иннера	Спецпроект Русского Динозавра, журналистское расследование, проведённое в местах рождения и становления Сергея Иннера — городе Таганроге Ростовской области.	https://vk.com/@rocknword-rodina-innera	2
-12	57	«Ещё одна пропитая любовь». Религия битников и алкогольный солипсизм в романе Керуака «Подземные»	Материал Николая Старообрядцева о «Подземных» Джека Керуака в журнале Дискурс.	https://discours.io/articles/culture/esch-odna-propitaya-lyubov-religiya-bitnikov-i-alkogolnyy-solipsizm-v-romane-keruaka-podzemnye	0
-13	50	Родина Иннера	Спецпроект Русского Динозавра, журналистское расследование, проведённое в местах рождения и становления Сергея Иннера — городе Таганроге Ростовской области.	https://vk.com/@rocknword-rodina-innera	0
-14	52	Что мы вообще знаем об Эрихе фон Неффе?	Что мы с вами вообще знаем об Эрихе фон Неффе? Вот то немногое, что нам удалось выяснить из переписки с ним и открытых источников.	https://dzen.ru/media/russiandino/chto-my-voobsce-znaem-ob-avtore-prostitutok-na-obochine-5cf7a78c2d133400afd9b2a4	0
-15	52	Эксперимент с восприятием. О книге «Проститутки на обочине» Эриха фон Неффа	Недавно наши редакторы получили рукопись, которая увлекла их в удивительный эксперимент на тему зависимости восприятия произведения от восприятия автора. Эксперимент завершён, и мы предлагаем вам ознакомиться с этой любопытной историей.	https://dzen.ru/media/russiandino/eksperiment-s-vospriiatiem-o-knige-prostitutki-na-obochine-eriha-fon-neffa-5cd7f95b02da9d00b3fc2c36?utm_referer=away.vk.com	1
-16	52	Как мы «Проституток на обочине» Эриха фон Неффа издавали	Книга «Проститутки на обочине» американского писателя Эриха фон Неффа вышла 10 июня в издательстве Чтиво. Возможно, вы уже читали наш материал об истории знакомства с автором. Этот проект был несказанно важен для Чтива: первая книга зарубежного автора, притом довольно известного, пусть и на другом конце Земли, и даже состоявшего в переписке с Алленом Гинзбергом(!). Стоит ли говорить, как мы переживали. Пожалуй, лучше поговорить о том, как мы издавали.	https://dzen.ru/media/russiandino/kak-my-prostitutok-na-obochine-eriha-fon-neffa-izdavali-5d0104fb582ec400ab67f65e	2
-17	52	Другая сторона дороги | Любовь Волдинер	Любовь Волдинер о «Проститутках на обочине» Эриха фон Неффа.	https://dzen.ru/media/russiandino/drugaia-storona-dorogi-na-knigu-prostituki-na-obochine-eriha-fon-neffa-liubov-voldiner-5e860cbcbb31c2679c6eb75a	3
-18	52	Сексуально-политический трактат Эриха фон Неффа | Николай Старообрядцев	10 июня 2019-ого года в издательстве Чтиво вышло первое русскоязычное издание книги «Проститутки на обочине» калифорнийского писателя, философа и портового докера Эриха фон Неффа. Критика петербургского автора Николая Старообрядцева не заставила себя долго ждать.	https://vk.com/@russiantrex-seksualno-politicheskii-traktat-eriha-fon-neffa-nikolai-star	4
-19	31	Правила смерти Георгия Панкратова	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает автор книги «Российское время» Георгий Панкратов.	https://vk.com/@russiantrex-pravila-smerti-georgiya-pankratova	0
-20	31	Интервью с Георгием Панкратовым | журнал «Янгспейс»	Журнал «Янгспейс» пообщался с автором о новой книге, литературном настоящем в социальных сетях и узнал, как писателю пробиться к читателю.	https://youngspace.ru/culture/intervyu-s-georgiem-pankratovym	1
-21	31	Российское время | журнал «Знамя»	Читайте рецензию Станислава Секретова на «Российское время» Георгия Панкратова в журнале «Знамя».	https://znamlit.ru/publication.php?id=7731	2
-22	48	А вот и Слава! Интервью с Вячеславом Немировым	Мы решили узнать автора сборника рассказов «А где же Слава?» поближе и спросили Вячеслава о любимых писателях, творческом процессе и литературных планах. Вот что получилось.	https://vk.com/@ichtivo-intervu-s-vyacheslavom-nemirovym	0
-23	48	Правила смерти Вячеслава Немирова	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает писатель и поэт Вячеслав Немиров.	https://vk.com/@ichtivo-pravila-smerti-vyacheslava-nemirova	1
-24	62	Интервью с переводчиком Андреем Щетниковым | Журнал Дискурс	«"В дороге" — это гимн Америке: это и "легендарная" Америка прошлого, и одновременно Америка сегодняшняя. Взаимоотношения со временем сложные, и отношения со страной тоже сложные, но он живёт в ней и хочет о ней рассказать».	https://discours.io/articles/culture/ya-ves-ih-put-prosh-l-v-gugl-kartah-perevodchik-bitnikov-o-revolyutsii-soznaniya-buntarstve-i-manifeste-bit-pokoleniya	0
-25	62	On Kerouac | Николай Старообрядцев	Летом 2020-ого года в свет вышел новый перевод легендарного романа «On the Road» Джека Керуака в переводе специалиста по зарубежной поэзии Андрея Щетникова (г. Новосибирск). Специальным гостем презентации издания в баре «Parabellum» в Санкт-Петербурге стал писатель и философ Николай Старообрядцев. Его спонтанная лекция о романе «В дороге» и феномене битников вообще пришлась аудитории по душе, и мы попросили Николая создать её письменную версию, на что он любезно согласился.	https://vk.com/@ichtivo-on-kerouac-nikolai-staroobryadcev	1
-26	58	Правила смерти Николая Старообрядцева	В рубрике «Правила смерти» мы расспрашиваем на эту тему замечательных людей нашего времени. О своих правилах смерти рассказывает петербургский писатель и философ Николай Старообрядцев.	https://vk.com/@ichtivo-pravila-smerti-nikolaya-staroobryadceva	0
-27	58	«Работаю как исследователь»: интервью с Николаем Старообрядцевым | Журнал МОСТ	«Начнем с простого – талант или гений?». Интервью Николая Старообрядцева журналу МОСТ.	https://mostmag.ru/rabotaju-kak-issledovatel-intervju-s-nikolaem-staroobrjadcevym/	1
-\.
-
-
---
--- Data for Name: Booktrailers; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."Booktrailers" (id, title_id, has_poster) FROM stdin;
-1	58	t
-\.
-
-
---
--- Data for Name: BoxSets; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."BoxSets" (id, slug, name, description, price, discount, image, "position", is_active, is_published, publish_date) FROM stdin;
-1	usa-literature	Соединённые Штаты Литературы	Произведения американских авторов	1100	\N	usa-literature.svg	1	t	t	2026-01-01
-2	inner	Весь Иннер	Все изданные в Чтиве произведения Сергея Иннера (и одно о нём)	1100	\N	inner.svg	2	t	t	2026-01-01
-3	staroobryad	Весь Старообрядцев	Все изданные в Чтиве произведения Николая Старообрядцева	1100	\N	staroobryad.svg	3	t	t	2026-01-01
-4	von-neff	Весь фон Нефф	Все изданные в Чтиве произведения Эриха фон Неффа	1100	\N	von-neff.svg	4	t	t	2026-01-01
-5	womens-power	Женская сила	Книги прекрасной части коллектива авторов Чтива	1100	\N	womens-power.svg	5	t	t	2026-01-01
-6	pankratov	Весь Панкратов	Все изданные в Чтиве произведения Георгия Панкратова	1100	\N	pankratov.svg	6	t	t	2026-01-01
-7	novokshchenov	Весь Новокщёнов и сотоварищи	Все изданные в Чтиве произведения Олега Новокщёнова, Александра Киреева и Дмитрия Горшечникова	1100	\N	novokshchenov.svg	7	t	t	2026-01-01
-8	russian-death	Российская смерть	Знакомая действительность и тёмные миры близ необъятной	1100	\N	russian-death.svg	8	t	t	2026-01-01
-9	far-from-moscow	Далеко от Москвы	Произведения авторов из разных городов России	1100	\N	far-from-moscow.svg	9	t	t	2026-01-01
-\.
-
-
---
--- Data for Name: BoxSetBooks; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."BoxSetBooks" (id, box_set_id, title_id, "position", product_id) FROM stdin;
-43	4	52	0	\N
-44	4	60	1	\N
-45	2	45	0	\N
-46	2	50	1	\N
-47	2	21	2	\N
-48	3	58	0	\N
-49	3	41	1	\N
-50	6	56	0	\N
-51	6	31	1	\N
-52	7	29	0	\N
-53	7	2	1	\N
-56	7	37	4	\N
-59	1	42	1	\N
-60	1	46	2	\N
-61	1	52	3	\N
-62	1	57	4	\N
-63	1	60	5	\N
-64	1	62	6	\N
-65	5	3	1	\N
-66	5	18	2	\N
-67	5	22	3	\N
-68	5	32	4	\N
-69	5	43	5	\N
-70	8	7	1	\N
-71	8	14	2	\N
-72	8	27	3	\N
-73	8	37	4	\N
-74	8	41	5	\N
-75	8	44	6	\N
-76	8	47	7	\N
-77	8	54	8	\N
-78	8	59	9	\N
-79	9	15	1	\N
-80	9	23	2	\N
-81	9	29	3	\N
-82	9	53	4	\N
-83	9	55	5	\N
-84	9	64	6	\N
-85	2	63	3	\N
-\.
-
-
---
--- Data for Name: CardBooks; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."CardBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date, discount, sold, demo, extra, counter_color, demo_path, format, printing_technique, paper, packaging, file_path) FROM stdin;
-1	1	400.00	f	f	2026-01-01	2026-03-11	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-2	2	300.00	f	f	2018-01-01	2025-11-12	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-3	3	400.00	f	f	2024-01-01	2026-02-18	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-4	4	400.00	f	f	2026-01-01	2026-04-30	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-5	5	200.00	f	f	2022-01-01	2022-11-15	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-6	6	400.00	f	f	2023-01-01	2023-12-12	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-7	7	300.00	f	f	2024-01-01	2024-05-13	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-8	8	200.00	f	f	2025-01-01	2025-01-01	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-9	9	450.00	f	f	2024-01-01	2024-10-24	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-11	11	300.00	f	t	2026-01-01	2026-01-01	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-12	12	400.00	f	t	2025-01-01	2025-12-30	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-14	14	300.00	f	t	2025-01-01	2025-10-02	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-15	15	300.00	f	t	2019-01-01	2025-08-01	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-16	16	400.00	f	t	2025-01-01	2025-10-23	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-17	17	200.00	f	t	2025-01-01	2025-05-07	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-18	18	200.00	f	t	2025-01-01	2025-04-03	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-19	19	400.00	f	t	2023-01-01	2025-03-18	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-20	20	200.00	f	t	2024-01-01	2024-12-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-21	21	300.00	f	t	2017-01-01	2017-10-26	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-22	22	100.00	f	t	2018-01-01	2024-12-12	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-23	23	300.00	f	t	2024-01-01	2024-12-04	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-24	24	900.00	f	t	2023-01-01	2023-02-02	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-25	25	400.00	f	t	2024-01-01	2024-11-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-26	26	400.00	f	t	2024-01-01	2024-11-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-27	27	400.00	f	t	2024-01-01	2024-11-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-28	28	\N	f	t	2024-01-01	2024-11-06	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-29	29	300.00	f	t	2019-01-01	2019-12-10	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-30	30	150.00	f	t	2024-01-01	2024-10-03	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-31	31	300.00	f	t	2019-01-01	2024-08-16	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-32	32	100.00	f	t	2024-01-01	2024-04-04	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-33	33	3000.00	f	t	2023-01-01	\N	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-34	34	\N	f	t	2023-01-01	2023-12-23	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-35	35	\N	f	t	2023-01-01	\N	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-36	36	300.00	f	t	2023-01-01	2023-10-05	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-37	37	400.00	f	t	2023-01-01	2023-10-10	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-38	38	800.00	f	t	2023-01-01	\N	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-39	39	200.00	f	t	2023-01-01	2023-08-31	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-40	40	300.00	f	t	2023-01-01	2023-08-18	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-41	41	400.00	f	t	2023-01-01	2023-07-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-42	42	400.00	f	t	2023-01-01	2023-01-04	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-43	43	100.00	f	t	2021-01-01	2021-01-25	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-44	44	400.00	f	t	2023-01-01	2023-03-02	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-45	45	300.00	f	t	2019-01-01	2023-01-19	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-46	46	\N	f	t	2023-01-01	\N	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-47	47	200.00	f	t	2022-01-01	2022-09-27	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-48	48	200.00	f	t	2022-01-01	2022-09-15	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-49	49	300.00	f	t	2022-01-01	2022-06-13	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-50	50	300.00	f	t	2022-01-01	2022-05-08	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-51	51	300.00	f	t	2022-01-01	2022-05-04	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-52	52	300.00	f	t	2019-01-01	2019-06-10	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-53	53	300.00	f	t	2022-01-01	2022-03-02	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-54	54	300.00	f	t	2022-01-01	2022-01-31	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-55	55	300.00	f	t	2021-01-01	2021-10-26	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-56	56	300.00	f	t	2021-01-01	2021-04-22	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-57	57	300.00	f	t	2021-01-01	2021-10-21	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-59	59	300.00	f	t	2021-01-01	2021-02-28	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-60	60	200.00	f	t	2020-01-01	2020-12-14	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-61	61	100.00	f	t	2020-01-01	2020-08-17	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-62	62	300.00	f	t	2020-01-01	2020-07-22	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-63	63	100.00	f	t	2020-01-01	2020-05-08	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-64	64	300.00	f	t	2019-01-01	2020-04-13	\N	0	\N	\N	\N	\N	\N	\N	\N	\N	\N
-58	58	300.00	f	t	2019-01-01	2019-04-04	\N	0	\N	\N	\N	\N	50x70 мм	Двухсторонняя шелкография белым.	Дизайнерская бумага Sirio Black Black 0,7 мм.	Индивидуальная упаковка с цветной запечаткой.	\N
-13	13	300.00	f	t	2021-01-01	2025-10-22	\N	0	\N	\N	\N	murlo/demo.epub	\N	\N	\N	\N	\N
-\.
-
-
---
--- Data for Name: CardBookWorkers; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."CardBookWorkers" (id, card_book_id, worker_id, sort_order) FROM stdin;
-1	58	10	2
-2	58	11	1
-3	58	12	0
-4	58	13	3
-5	58	14	4
-6	13	71	0
-7	13	72	1
-8	13	13	2
-9	13	73	3
-10	13	75	4
-11	13	77	5
-12	31	81	0
-13	31	84	1
-14	31	13	2
-15	31	119	3
-16	31	10	4
-17	45	81	0
-18	45	8	1
-19	45	105	2
-20	45	10	3
-21	52	156	0
-22	52	27	1
-23	52	8	2
-24	52	105	3
-25	52	10	4
-26	62	133	0
-27	62	27	1
-28	62	8	2
-29	62	119	3
-30	62	10	4
-31	64	27	0
-32	64	8	1
-33	64	115	2
-34	64	10	3
-\.
-
-
---
--- Data for Name: Ebooks; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."Ebooks" (id, title_id, price, is_published, publish_date, release_date, formats, character_count, file_path, demo_path, discount, sold) FROM stdin;
-12	13	300.00	t	2021-01-01	2025-10-22	\N	\N	\N	\N	\N	f
-9	9	450.00	f	2024-01-01	2024-10-24	\N	700000	\N	gomoza/demo.epub	\N	f
-4	4	400.00	f	2026-01-01	2026-04-30	{FB2,EPUB}	254526	\N	troe-v-lodke-ne-schitaya-harona/demo.epub	\N	f
-10	11	300.00	t	2026-01-01	2026-01-01	{FB2,EPUB}	700000	\N	segamegadrive/demo.epub	\N	f
-5	5	200.00	f	2022-01-01	2022-11-15	{FB2,EPUB}	200000	\N	\N	\N	f
-6	6	400.00	f	2023-01-01	2023-12-12	{FB2,EPUB,"БЫСТРЫЙ ПРОСМОТР ДЕМО"}	200000	\N	\N	\N	f
-7	7	300.00	f	2024-01-01	2024-05-13	{FB2,EPUB}	265885	\N	\N	\N	f
-8	8	200.00	f	2025-01-01	2025-01-01	{FB2,EPUB}	613000	\N	\N	\N	f
-23	25	400.00	t	2024-01-01	2024-11-25	\N	552000	\N	gorod-sluchajnostej/demo.epub	\N	f
-24	26	400.00	t	2024-01-01	2024-11-25	\N	341000	\N	vihr-zhizni/demo.epub	\N	f
-25	27	400.00	t	2024-01-01	2024-11-25	\N	270000	\N	prizrachnye-istorii/demo.epub	\N	f
-11	12	400.00	t	2025-01-01	2025-12-30	{FB2,EPUB}	340000	\N	\N	\N	f
-13	14	300.00	t	2025-01-01	2025-10-02	{FB2,EPUB}	295200	\N	\N	\N	f
-26	29	300.00	t	2019-01-01	2019-12-10	\N	220000	\N	amystis/demo.epub	\N	f
-27	30	150.00	t	2024-01-01	2024-10-03	\N	700000	\N	pupsiki/demo.epub	\N	f
-16	17	200.00	t	2025-01-01	2025-05-07	{FB2,EPUB}	525000	\N	\N	\N	f
-17	18	200.00	t	2025-01-01	2025-04-03	{FB2,EPUB}	230000	\N	\N	\N	f
-18	19	400.00	t	2023-01-01	2025-03-18	{FB2,EPUB}	250000	\N	\N	\N	f
-19	20	200.00	t	2024-01-01	2024-12-25	{FB2,EPUB}	169000	\N	\N	\N	f
-28	31	300.00	t	2019-01-01	2024-08-16	\N	260000	\N	rossijskoe-vremja/demo.epub	\N	f
-31	37	400.00	t	2023-01-01	2023-10-10	{FB2,EPUB,"БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"}	230000	\N	predsetatel-tomskiy/demo.epub	\N	f
-38	45	300.00	t	2019-01-01	2023-01-19	{"PDF FB2 EPUB HTML","БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"}	480000	\N	overdrive/demo.epub	\N	f
-41	49	300.00	t	2022-01-01	2022-06-13	{FB2,EPUB}	321050	\N	dostoevski-dvoinik/demo.epub	\N	f
-42	50	300.00	t	2022-01-01	2022-05-08	{FB2,EPUB}	410000	\N	pozhninoch/demo.epub	\N	f
-43	51	300.00	t	2022-01-01	2022-05-04	{FB2,EPUB}	360000	\N	dostoevskie_dni/demo.epub	\N	f
-44	52	300.00	t	2019-01-01	2019-06-10	\N	135000	\N	prostitutes/demo.epub	\N	f
-45	53	300.00	t	2022-01-01	2022-03-02	{FB2,EPUB}	230000	\N	sepiya/demo.epub	\N	f
-46	54	300.00	t	2022-01-01	2022-01-31	{FB2,EPUB}	230000	\N	prizraki/demo.epub	\N	f
-29	32	100.00	t	2024-01-01	2024-04-04	{FB2,EPUB}	80000	\N	\N	\N	f
-30	36	300.00	t	2023-01-01	2023-10-05	{FB2,EPUB}	142000	\N	\N	\N	f
-47	55	300.00	t	2021-01-01	2021-10-26	\N	\N	\N	irokez/demo.epub	\N	f
-32	39	200.00	t	2023-01-01	2023-08-31	{PDF,"БЫСТРЫЙ ПРОСМОТР ДЕМО"}	141204	\N	\N	\N	f
-33	40	300.00	t	2023-01-01	2023-08-18	{FB2,EPUB}	200000	\N	\N	\N	f
-34	41	400.00	t	2023-01-01	2023-07-25	{FB2,EPUB}	465000	\N	\N	\N	f
-35	42	400.00	t	2023-01-01	2023-01-04	{FB2,EPUB,"БЫСТРЫЙ ПРОСМОТР ДЕМО В PDF"}	370000	\N	\N	\N	f
-36	43	100.00	t	2021-01-01	2021-01-25	{FB2,EPUB}	70000	\N	\N	\N	f
-37	44	400.00	t	2023-01-01	2023-03-02	{FB2,EPUB}	390000	\N	\N	\N	f
-49	57	300.00	t	2021-01-01	2021-10-21	\N	180000	\N	podzemnie/demo.epub	\N	f
-39	47	200.00	t	2022-01-01	2022-09-27	{FB2,EPUB}	220660	\N	\N	\N	f
-40	48	200.00	t	2022-01-01	2022-09-15	{FB2,EPUB}	205000	\N	\N	\N	f
-50	58	300.00	t	2019-01-01	2019-04-04	{PDF,FB2,HTML,Epub}	355000	\N	white-flower/demo.epub	\N	f
-53	61	100.00	t	2020-01-01	2020-08-17	\N	90000	\N	lucifer/demo.epub	\N	f
-54	62	300.00	t	2020-01-01	2020-07-22	\N	560000	\N	v-doroge/demo.epub	\N	f
-56	64	300.00	t	2019-01-01	2020-04-13	\N	255000	\N	my-komu-to-nujni/demo.epub	\N	f
-48	56	300.00	t	2021-01-01	2021-04-22	{FB2,EPUB}	530000	\N	\N	\N	f
-51	59	300.00	t	2021-01-01	2021-02-28	{FB2,EPUB}	330000	\N	\N	\N	f
-52	60	200.00	t	2020-01-01	2020-12-14	{FB2,EPUB}	170000	\N	\N	\N	f
-61	66	0.00	t	2020-12-30	2020-12-30	{PDF}	140000	ebook/mrd-1.pdf	\N	\N	f
-55	63	100.00	t	2020-01-01	2020-05-08	\N	40000	\N	\N	\N	f
-62	67	0.00	t	2021-12-30	2021-12-30	{PDF}	\N	ebook/mrd-2.pdf	\N	\N	f
-1	1	400.00	f	2026-01-01	2026-03-11	\N	700000	\N	igra-v-mayaki/demo.epub	\N	f
-2	2	300.00	f	2018-01-01	2025-11-12	\N	320000	\N	baron/demo.epub	\N	f
-3	3	400.00	f	2024-01-01	2026-02-18	\N	286000	\N	na-zemle-zaratushtry/demo.epub	\N	f
-14	15	300.00	t	2019-01-01	2025-08-01	\N	340000	\N	kubok-voiny-i-tanca/demo.epub	\N	f
-15	16	400.00	t	2025-01-01	2025-10-23	\N	700000	\N	whiskey-sour/demo.epub	\N	f
-20	21	300.00	t	2017-01-01	2017-10-26	\N	400000	\N	poseiden/demo.epub	\N	f
-21	22	100.00	t	2018-01-01	2024-12-12	\N	65000	\N	unhappened/demo.epub	\N	f
-22	23	300.00	t	2024-01-01	2024-12-04	\N	195000	\N	vremyapadenie/demo.epub	\N	f
-63	68	0.00	t	2022-12-30	2022-12-30	{FB2,EPUB}	141000	ebook/mrd-3.epub	\N	\N	f
-64	69	0.00	t	2023-12-31	2023-12-31	{FB2,EPUB,PDF}	189000	ebook/mrd-4.epub	\N	\N	f
-65	65	0.00	t	2025-01-01	2024-10-15	{FB2,EPUB,PDF}	269000	ebook/mrd-5.epub	\N	\N	f
-66	10	0.00	t	2026-01-20	2026-01-20	{FB2,EPUB}	280000	ebook/mrd-6.epub	\N	\N	f
-\.
-
-
---
--- Data for Name: EbookWorkers; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."EbookWorkers" (id, ebook_id, worker_id, sort_order) FROM stdin;
-1	1	17	0
-2	1	18	1
-3	1	19	2
-4	1	20	3
-5	1	21	4
-6	1	22	5
-7	1	23	6
-8	1	24	7
-9	1	25	8
-10	1	26	9
-11	3	35	0
-12	3	36	1
-13	3	37	2
-14	3	23	3
-15	3	21	4
-16	3	34	5
-17	5	38	0
-18	5	39	1
-19	5	40	2
-20	5	41	3
-21	5	42	4
-22	6	29	0
-23	6	41	1
-24	6	43	2
-25	6	44	3
-26	7	18	0
-27	7	31	1
-28	7	45	2
+COPY public."EditionWorkers" (id, edition_id, worker_id, sort_order) FROM stdin;
+1	2	21	3
+2	2	23	4
+3	2	31	1
+4	2	33	2
+5	2	34	6
+6	2	38	0
+7	2	48	5
+8	3	21	4
+9	3	24	5
+10	3	26	6
+11	3	49	0
+12	3	50	1
+13	3	51	2
+14	3	52	3
+15	4	21	1
+16	4	24	2
+17	4	29	0
+18	4	67	3
+19	5	38	0
+20	5	39	1
+21	5	40	2
+22	5	41	3
+23	5	42	4
+24	6	29	0
+25	6	41	1
+26	6	43	2
+27	6	44	3
+28	7	18	0
 29	7	29	3
-30	7	41	4
-31	7	43	5
-32	7	46	6
-33	8	47	0
-34	8	29	1
-35	8	43	2
+30	7	31	1
+31	7	41	4
+32	7	43	5
+33	7	45	2
+34	7	46	6
+35	8	21	4
 36	8	23	3
-37	8	21	4
+37	8	29	1
 38	8	34	5
-39	9	38	0
-40	9	31	1
-41	9	33	2
-42	9	21	3
-43	9	23	4
-44	9	48	5
-45	9	34	6
-46	4	49	0
-47	4	50	1
-48	4	51	2
-49	4	52	3
-50	4	21	4
-51	4	24	5
-52	4	26	6
-53	10	29	0
-54	10	21	1
-55	10	24	2
-56	10	67	3
-57	11	68	0
-58	11	69	1
-59	11	70	2
-60	11	21	3
-61	11	24	4
-62	11	26	5
-63	13	78	0
-64	13	50	1
-65	13	79	2
-66	13	59	3
-67	13	22	4
-68	13	21	5
-69	13	23	6
-70	13	80	7
-71	14	81	0
-72	14	84	1
-73	14	21	2
-74	14	85	3
-75	14	86	4
-76	14	82	5
-77	14	33	6
-78	14	87	7
-79	15	50	0
-80	15	91	1
-81	15	21	2
-82	15	88	3
-83	15	32	4
-84	15	23	5
-85	15	92	6
-86	16	54	0
-87	16	51	1
-88	16	21	2
-89	16	22	3
-90	16	23	4
-91	16	26	5
-92	17	50	0
-93	17	31	1
-94	17	21	2
-95	17	93	3
-96	17	23	4
-97	17	92	5
-98	18	18	0
-99	18	94	1
-100	18	72	2
-101	18	73	3
-102	18	41	4
-103	18	43	5
-104	18	97	6
-105	18	42	7
-106	19	102	0
-107	19	103	1
-108	19	98	2
-109	19	104	3
-110	19	41	4
-111	19	43	5
-112	19	44	6
-113	22	54	0
-114	22	18	1
-115	22	31	2
-116	22	21	3
-117	22	37	4
-118	22	23	5
-119	22	25	6
-120	23	56	0
-121	23	69	1
-122	23	104	2
-123	23	29	3
-124	23	41	4
-125	23	21	5
-126	23	23	6
-127	23	46	7
-128	23	34	8
-129	24	57	0
-130	24	69	1
-131	24	104	2
-132	24	29	3
-133	24	41	4
-134	24	21	5
-135	24	23	6
-136	24	46	7
-137	24	34	8
-138	25	109	0
-139	25	69	1
-140	25	110	2
-141	25	111	3
-142	25	112	4
-143	25	104	5
-144	25	29	6
-145	25	22	7
-146	25	41	8
-147	25	21	9
-148	25	23	10
-149	25	46	11
-150	25	34	12
-151	26	81	0
-152	26	8	1
-153	26	114	2
-154	26	115	3
-155	26	116	4
-156	27	117	0
-157	27	8	1
-158	27	29	2
-159	27	23	3
-160	27	118	4
-161	28	81	0
-162	28	84	1
-163	28	13	2
-164	28	119	3
-165	28	85	4
-166	28	120	5
-167	29	35	0
-168	29	38	1
-169	29	31	2
-170	29	121	3
-171	29	41	4
-172	29	29	5
+39	8	43	2
+40	8	47	0
+41	9	21	5
+42	9	23	6
+43	9	29	3
+44	9	34	8
+45	9	41	4
+46	9	46	7
+47	9	56	0
+48	9	69	1
+49	9	104	2
+50	10	21	5
+51	10	23	6
+52	10	29	3
+53	10	34	8
+54	10	41	4
+55	10	46	7
+56	10	57	0
+57	10	69	1
+58	10	104	2
+59	11	21	9
+60	11	22	7
+61	11	23	10
+62	11	29	6
+63	11	34	12
+64	11	41	8
+65	11	46	11
+66	11	69	1
+67	11	104	5
+68	11	109	0
+69	11	110	2
+70	11	111	3
+71	11	112	4
+72	12	21	3
+73	12	24	4
+74	12	26	5
+75	12	68	0
+76	12	69	1
+77	12	70	2
+78	13	21	5
+79	13	22	4
+80	13	23	6
+81	13	50	1
+82	13	59	3
+83	13	78	0
+84	13	79	2
+85	13	80	7
+86	14	8	1
+87	14	81	0
+88	14	114	2
+89	14	115	3
+90	14	116	4
+91	15	8	1
+92	15	23	3
+93	15	29	2
+94	15	117	0
+95	15	118	4
+96	16	21	2
+97	16	22	3
+98	16	23	4
+99	16	26	5
+100	16	51	1
+101	16	54	0
+102	17	21	2
+103	17	23	4
+104	17	31	1
+105	17	50	0
+106	17	92	5
+107	17	93	3
+108	18	18	0
+109	18	41	4
+110	18	42	7
+111	18	43	5
+112	18	72	2
+113	18	73	3
+114	18	94	1
+115	18	97	6
+116	19	41	4
+117	19	43	5
+118	19	44	6
+119	19	98	2
+120	19	102	0
+121	19	103	1
+122	19	104	3
+123	20	13	2
+124	20	81	0
+125	20	84	1
+126	20	85	4
+127	20	119	3
+128	20	120	5
+129	21	29	3
+130	21	34	6
+131	21	41	4
+132	21	43	5
+133	21	50	0
+134	21	123	1
+135	21	124	2
+136	23	41	1
+137	23	71	3
+138	23	73	2
+139	23	150	0
+140	24	41	0
+141	24	148	2
+142	24	151	1
+143	24	152	3
+144	24	153	4
+145	25	13	2
+146	25	59	6
+147	25	73	3
+148	25	137	0
+149	25	148	5
+150	25	154	1
+151	25	155	4
+152	26	8	2
+153	26	27	1
+154	26	105	3
+155	26	156	0
+156	27	13	2
+157	27	71	0
+158	27	73	3
+159	27	75	4
+160	27	159	1
+161	28	13	2
+162	28	73	3
+163	28	75	4
+164	28	160	0
+165	28	161	1
+166	28	162	5
+167	29	29	5
+168	29	31	2
+169	29	34	8
+170	29	35	0
+171	29	38	1
+172	29	41	4
 173	29	43	6
-174	29	122	7
-175	29	34	8
-176	30	46	0
-177	30	71	1
-178	30	31	2
-179	30	59	3
-180	30	99	4
-181	30	41	5
-182	30	43	6
-183	31	50	0
-184	31	123	1
-185	31	124	2
-186	31	29	3
-196	33	38	0
-205	34	123	2
-222	36	10	3
-226	37	39	1
-236	39	148	5
-241	40	73	4
-246	41	71	3
-259	44	156	0
-267	45	75	4
-270	46	13	2
-275	47	158	1
-313	54	133	0
-187	31	41	4
-192	32	125	2
-197	33	39	1
-231	39	146	0
-242	40	34	5
-250	42	152	3
-253	43	154	1
-260	44	27	1
-271	46	73	3
-291	51	12	0
-296	52	156	0
-306	52	171	10
-309	53	27	0
-314	54	27	1
-321	56	181	1
-188	31	43	5
-202	33	129	6
-211	35	133	0
-223	36	11	4
-232	39	71	1
-254	43	13	2
-261	44	8	2
-272	46	75	4
-285	49	133	0
-301	52	169	5
-310	53	8	1
-315	54	8	2
-322	56	11	2
-189	31	34	6
-206	34	131	3
-212	35	71	1
-227	37	140	2
-255	43	73	3
-262	44	105	3
-276	47	163	2
-286	49	137	1
-302	52	10	6
-311	53	9	2
-190	32	46	0
-199	33	128	3
-216	35	134	5
-235	39	73	4
-243	41	150	0
-248	42	151	1
-257	43	148	5
-264	45	159	1
-283	48	10	3
-288	49	13	3
-295	51	11	4
-308	52	173	12
-191	32	18	1
-200	33	41	4
-203	34	130	0
-217	35	42	6
-239	40	149	2
-244	41	41	1
-249	42	148	2
-252	43	137	0
-258	43	59	6
-265	45	13	2
-284	48	11	4
-289	49	10	4
-305	52	170	9
-319	55	180	2
-320	56	27	0
-193	32	126	3
-198	33	127	2
-207	34	41	4
-213	35	39	2
-228	37	73	3
-237	40	71	0
-247	42	41	0
-251	42	153	4
-263	45	71	0
-277	47	13	3
-280	48	164	0
-292	51	166	1
-297	52	167	1
-303	52	148	7
-307	52	172	11
-317	55	8	0
-194	32	8	4
-208	34	73	5
-214	35	59	3
-219	36	137	0
-224	36	139	5
-229	37	41	4
-233	39	147	2
-238	40	39	1
-273	46	162	5
-278	47	10	4
-281	48	13	1
-293	51	8	2
-298	52	8	2
-304	52	11	8
-316	54	175	3
-318	55	105	1
-323	56	182	3
-195	32	43	5
-209	34	43	6
-215	35	41	4
-220	36	8	1
-230	37	34	5
-234	39	41	3
-256	43	155	4
-268	46	160	0
-279	47	75	5
-282	48	40	2
-287	49	165	2
-294	51	10	3
-299	52	13	3
-312	53	174	3
-324	56	10	4
-201	33	43	5
+174	29	121	3
+175	29	122	7
+176	30	31	2
+177	30	41	5
+178	30	43	6
+179	30	46	0
+180	30	59	3
+181	30	71	1
+182	30	99	4
+183	31	10	4
+184	31	13	3
+185	31	75	5
+186	31	137	0
+187	31	158	1
+188	31	163	2
+189	32	8	4
+190	32	18	1
+191	32	43	5
+192	32	46	0
+193	32	125	2
+194	32	126	3
+195	33	38	0
+196	33	39	1
+197	33	41	4
+198	33	43	5
+199	33	127	2
+200	33	128	3
+201	33	129	6
+202	34	41	4
+203	34	43	6
 204	34	50	1
-210	34	132	7
-218	35	135	7
-221	36	138	2
-225	37	71	0
-240	40	41	3
-245	41	73	2
-266	45	73	3
-269	46	161	1
-274	47	137	0
-290	49	75	5
-300	52	168	4
-325	56	183	5
-405	61	196	0
-406	61	197	1
-407	61	165	2
-408	61	40	3
-409	61	159	4
-410	61	198	5
-411	61	166	6
-412	61	199	7
-413	61	8	8
-414	61	27	9
-415	61	148	10
-416	61	11	11
-417	62	149	0
-418	62	159	1
-419	62	72	2
-420	62	200	3
-421	62	196	4
-422	62	201	5
-423	62	73	6
-424	62	141	7
-425	62	13	8
-426	62	137	9
-427	62	115	10
-428	63	160	0
-429	63	137	1
-430	63	38	2
-431	63	53	3
-432	63	19	4
-433	63	59	5
-434	63	40	6
-435	63	72	7
-436	63	159	8
-437	63	127	9
-438	63	141	10
-439	63	41	11
-440	63	34	12
-441	64	38	0
-442	64	50	1
-443	64	53	2
-444	64	35	3
-445	64	123	4
-446	64	94	5
-447	64	31	6
-448	64	55	7
-449	64	200	8
-450	64	59	9
-451	64	72	10
-452	64	202	11
-453	64	127	12
-454	64	203	13
-455	64	29	14
-456	64	41	15
-457	64	8	16
-458	64	34	17
-459	65	38	0
-460	65	53	1
-461	65	35	2
-462	65	17	3
-463	65	54	4
-464	65	18	5
-465	65	31	6
-466	65	55	7
-467	65	56	8
-468	65	57	9
-469	65	19	10
-470	65	58	11
-471	65	36	12
-472	65	51	13
-473	65	40	14
-474	65	59	15
-475	65	60	16
-476	65	61	17
-477	65	62	18
-478	65	63	19
-479	65	29	20
-480	65	65	21
-481	65	21	22
-482	65	23	23
-483	65	25	24
-484	66	54	0
-485	66	35	1
-486	66	17	2
-487	66	49	3
-488	66	78	4
-489	66	31	5
-490	66	91	6
-491	66	19	7
-492	66	69	8
-493	66	194	9
-494	66	40	10
-495	66	195	11
-496	66	59	12
-497	66	22	13
-498	66	21	14
-499	66	24	15
-500	66	26	16
+205	34	73	5
+206	34	123	2
+207	34	130	0
+208	34	131	3
+209	34	132	7
+210	35	39	2
+211	35	41	4
+212	35	42	6
+213	35	59	3
+214	35	71	1
+215	35	133	0
+216	35	134	5
+217	35	135	7
+218	36	8	1
+219	36	10	3
+220	36	11	4
+221	36	137	0
+222	36	138	2
+223	36	139	5
+224	37	34	5
+225	37	39	1
+226	37	41	4
+227	37	71	0
+228	37	73	3
+229	37	140	2
+230	38	10	4
+231	38	13	3
+232	38	75	5
+233	38	133	0
+234	38	137	1
+235	38	165	2
+236	39	41	3
+237	39	71	1
+238	39	73	4
+239	39	146	0
+240	39	147	2
+241	39	148	5
+242	40	34	5
+243	40	39	1
+244	40	41	3
+245	40	71	0
+246	40	73	4
+247	40	149	2
+248	42	8	1
+249	42	9	2
+250	42	27	0
+251	42	174	3
+252	43	8	2
+253	43	27	1
+254	43	133	0
+255	43	175	3
+256	44	10	4
+257	44	11	2
+258	44	27	0
+259	44	181	1
+260	44	182	3
+261	44	183	5
+262	45	10	3
+263	45	11	4
+264	45	13	1
+265	45	40	2
+266	45	164	0
+267	46	8	2
+268	46	10	3
+269	46	11	4
+270	46	12	0
+271	46	166	1
+272	47	8	2
+273	47	10	6
+274	47	11	8
+275	47	13	3
+276	47	148	7
+277	47	156	0
+278	47	167	1
+279	47	168	4
+280	47	169	5
+281	47	170	9
+282	47	171	10
+283	47	172	11
+284	47	173	12
+285	48	8	8
+286	48	11	11
+287	48	27	9
+288	48	40	3
+289	48	148	10
+290	48	159	4
+291	48	165	2
+292	48	166	6
+293	48	196	0
+294	48	197	1
+295	48	198	5
+296	48	199	7
+297	49	8	0
+298	49	105	1
+299	49	180	2
+300	50	13	8
+301	50	72	2
+302	50	73	6
+303	50	115	10
+304	50	137	9
+305	50	141	7
+306	50	149	0
+307	50	159	1
+308	50	196	4
+309	50	200	3
+310	50	201	5
+311	51	17	0
+312	51	18	1
+313	51	19	2
+314	51	20	3
+315	51	21	4
+316	51	22	5
+317	51	23	6
+318	51	24	7
+319	51	25	8
+320	51	26	9
+321	53	21	4
+322	53	23	3
+323	53	34	5
+324	53	35	0
+325	53	36	1
+326	53	37	2
+327	54	21	2
+328	54	33	6
+329	54	81	0
+330	54	82	5
+331	54	84	1
+332	54	85	3
+333	54	86	4
+334	54	87	7
+335	55	21	2
+336	55	23	5
+337	55	32	4
+338	55	50	0
+339	55	88	3
+340	55	91	1
+341	55	92	6
+342	58	18	1
+343	58	21	3
+344	58	23	5
+345	58	25	6
+346	58	31	2
+347	58	37	4
+348	58	54	0
+349	59	19	4
+350	59	34	12
+351	59	38	2
+352	59	40	6
+353	59	41	11
+354	59	53	3
+355	59	59	5
+356	59	72	7
+357	59	127	9
+358	59	137	1
+359	59	141	10
+360	59	159	8
+361	59	160	0
+362	60	8	16
+363	60	29	14
+364	60	31	6
+365	60	34	17
+366	60	35	3
+367	60	38	0
+368	60	41	15
+369	60	50	1
+370	60	53	2
+371	60	55	7
+372	60	59	9
+373	60	72	10
+374	60	94	5
+375	60	123	4
+376	60	127	12
+377	60	200	8
+378	60	202	11
+379	60	203	13
+380	61	17	3
+381	61	18	5
+382	61	19	10
+383	61	21	22
+384	61	23	23
+385	61	25	24
+386	61	29	20
+387	61	31	6
+388	61	35	2
+389	61	36	12
+390	61	38	0
+391	61	40	14
+392	61	51	13
+393	61	53	1
+394	61	54	4
+395	61	55	7
+396	61	56	8
+397	61	57	9
+398	61	58	11
+399	61	59	15
+400	61	60	16
+401	61	61	17
+402	61	62	18
+403	61	63	19
+404	61	65	21
+405	62	17	2
+406	62	19	7
+407	62	21	14
+408	62	22	13
+409	62	24	15
+410	62	26	16
+411	62	31	5
+412	62	35	1
+413	62	40	10
+414	62	49	3
+415	62	54	0
+416	62	59	12
+417	62	69	8
+418	62	78	4
+419	62	91	6
+420	62	194	9
+421	62	195	11
+422	67	7	0
+423	67	8	4
+424	67	21	5
+425	67	27	1
+426	67	28	2
+427	67	29	3
+428	67	30	6
+429	68	21	4
+430	68	29	2
+431	68	31	0
+432	68	32	1
+433	68	33	3
+434	68	34	5
+435	69	13	2
+436	69	21	3
+437	69	71	0
+438	69	72	1
+439	69	73	4
+440	69	74	5
+441	69	75	6
+442	69	76	7
+443	70	8	4
+444	70	21	5
+445	70	33	3
+446	70	51	1
+447	70	81	0
+448	70	82	2
+449	70	83	6
+450	71	21	2
+451	71	23	5
+452	71	31	1
+453	71	50	0
+454	71	88	3
+455	71	89	4
+456	71	90	6
+457	72	18	0
+458	72	21	6
+459	72	29	5
+460	72	51	2
+461	72	72	3
+462	72	94	1
+463	72	95	4
+464	72	96	7
+465	73	21	8
+466	73	22	7
+467	73	38	1
+468	73	50	0
+469	73	51	3
+470	73	55	2
+471	73	98	4
+472	73	99	5
+473	73	100	6
+474	73	101	9
+475	74	21	3
+476	74	29	5
+477	74	34	6
+478	74	51	2
+479	74	105	0
+480	74	106	1
+481	74	107	4
+482	75	7	0
+483	75	8	3
+484	75	21	4
+485	75	51	1
+486	75	105	2
+487	75	108	5
+488	77	23	7
+489	77	33	3
+490	77	34	8
+491	77	43	6
+492	77	50	1
+493	77	51	2
+494	77	65	5
+495	77	81	0
+496	77	113	4
+497	81	8	4
+498	81	39	2
+499	81	42	6
+500	81	59	3
+501	81	71	1
+502	81	133	0
+503	81	134	5
+504	81	135	7
+505	81	136	8
+506	82	8	2
+507	82	19	1
+508	82	81	0
+509	82	141	3
+510	82	142	4
+511	82	143	5
+512	82	144	6
+513	82	145	7
+514	83	8	8
+515	83	9	5
+516	83	10	6
+517	83	27	3
+518	83	137	1
+519	83	141	7
+520	83	156	0
+521	83	157	2
+522	83	158	4
+523	84	8	3
+524	84	10	4
+525	84	75	6
+526	84	133	0
+527	84	137	1
+528	84	158	5
+529	84	165	2
+530	85	8	2
+531	85	27	1
+532	85	119	3
+533	85	133	0
+534	85	176	4
+535	85	177	5
+536	85	178	6
+537	85	179	7
+538	86	7	0
+539	86	8	1
+540	86	9	2
+541	86	10	3
+542	86	11	4
+543	87	17	3
+544	87	18	5
+545	87	19	10
+546	87	21	22
+547	87	23	23
+548	87	25	24
+549	87	29	20
+550	87	31	6
+551	87	35	2
+552	87	36	12
+553	87	38	0
+554	87	40	14
+555	87	51	13
+556	87	53	1
+557	87	54	4
+558	87	55	7
+559	87	56	8
+560	87	57	9
+561	87	58	11
+562	87	59	15
+563	87	60	16
+564	87	61	17
+565	87	62	18
+566	87	63	19
+567	87	65	21
+568	116	10	4
+569	116	119	3
+570	116	13	2
+571	116	84	1
+572	116	81	0
+573	130	10	3
+574	130	105	2
+575	130	8	1
+576	130	81	0
+577	137	10	4
+578	137	105	3
+579	137	8	2
+580	137	27	1
+581	137	156	0
+582	146	10	4
+583	146	119	3
+584	146	8	2
+585	146	27	1
+586	146	133	0
+587	148	10	3
+588	148	115	2
+589	148	8	1
+590	148	27	0
+591	149	14	4
+592	149	13	3
+593	149	12	0
+594	149	11	1
+595	149	10	2
+596	150	77	5
+597	150	75	4
+598	150	73	3
+599	150	13	2
+600	150	72	1
+601	150	71	0
 \.
 
 
@@ -1317,189 +1452,6 @@ COPY public."Partners" (id, name, logo_path, website_url, sort_order, logo_capti
 
 
 --
--- Data for Name: PrintedBooks; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."PrintedBooks" (id, title_id, price, sold_out, is_published, publish_date, release_date, format, page_count, paper, cover_material, binding, illustrations, demo_path, discount, sold) FROM stdin;
-1	2	1000.00	f	f	2018-01-01	2025-11-12	\N	\N	\N	\N	\N	\N	\N	\N	f
-2	3	700.00	f	f	2024-01-01	2026-02-18	\N	\N	\N	\N	\N	\N	\N	\N	f
-4	13	1000.00	f	t	2021-01-01	2025-10-22	\N	\N	\N	\N	\N	\N	\N	\N	f
-5	15	600.00	f	t	2019-01-01	2025-08-01	\N	\N	\N	\N	\N	\N	\N	\N	f
-6	16	1000.00	f	t	2025-01-01	2025-10-23	\N	\N	\N	\N	\N	\N	\N	\N	f
-7	19	600.00	f	t	2023-01-01	2025-03-18	\N	\N	\N	\N	\N	\N	\N	\N	f
-8	20	600.00	f	t	2024-01-01	2024-12-25	\N	\N	\N	\N	\N	\N	\N	\N	f
-9	21	1000.00	f	t	2017-01-01	2017-10-26	\N	\N	\N	\N	\N	\N	\N	\N	f
-10	22	600.00	f	t	2018-01-01	2024-12-12	\N	\N	\N	\N	\N	\N	\N	\N	f
-11	24	900.00	f	t	2023-01-01	2023-02-02	\N	\N	\N	\N	\N	\N	\N	\N	f
-12	29	1000.00	f	t	2019-01-01	2019-12-10	\N	\N	\N	\N	\N	\N	\N	\N	f
-13	31	600.00	f	t	2019-01-01	2024-08-16	\N	\N	\N	\N	\N	\N	\N	\N	f
-14	33	3000.00	f	t	2023-01-01	\N	\N	\N	\N	\N	\N	\N	\N	\N	f
-15	38	800.00	f	t	2023-01-01	\N	\N	\N	\N	\N	\N	\N	\N	\N	f
-16	42	900.00	f	t	2023-01-01	2023-01-04	\N	\N	\N	\N	\N	\N	\N	\N	f
-17	45	1000.00	f	t	2019-01-01	2023-01-19	\N	\N	\N	\N	\N	\N	\N	\N	f
-18	52	900.00	f	t	2019-01-01	2019-06-10	\N	\N	\N	\N	\N	\N	\N	\N	f
-19	57	500.00	f	t	2021-01-01	2021-10-21	\N	\N	\N	\N	\N	\N	\N	\N	f
-21	62	700.00	f	t	2020-01-01	2020-07-22	\N	\N	\N	\N	\N	\N	\N	\N	f
-20	58	900.00	f	t	2019-01-01	2019-04-04	145x215 мм	200	офсетная 80 гр/кв. м.	мелованная, 250 гр./кв. м., матовое ламинирование, выборочный уф-лак	КШС (термоклей)	Чёрно-белые	\N	\N	f
-24	65	700.00	f	t	2025-01-01	2024-10-15	210×297 мм	204	офсетная, 80 гр/кв.м	мелованная, 250 гр/кв.м, матовое ламинирование	КБС, термопак поэкземплярно	чёрно-белые	\N	\N	f
-\.
-
-
---
--- Data for Name: PrintedBookWorkers; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public."PrintedBookWorkers" (id, printed_book_id, worker_id, sort_order) FROM stdin;
-1	1	7	0
-2	1	27	1
-3	1	28	2
-4	1	29	3
-5	1	8	4
-6	1	21	5
-7	1	30	6
-8	2	31	0
-9	2	32	1
-10	2	29	2
-11	2	33	3
-12	2	21	4
-13	2	34	5
-39	4	71	0
-40	4	72	1
-41	4	13	2
-42	4	21	3
-43	4	73	4
-44	4	74	5
-45	4	75	6
-46	4	76	7
-47	5	81	0
-48	5	51	1
-49	5	82	2
-50	5	33	3
-51	5	8	4
-52	5	21	5
-53	5	83	6
-54	6	50	0
-55	6	31	1
-56	6	21	2
-57	6	88	3
-58	6	89	4
-59	6	23	5
-60	6	90	6
-61	7	18	0
-62	7	94	1
-63	7	51	2
-64	7	72	3
-65	7	95	4
-66	7	29	5
-67	7	21	6
-68	7	96	7
-69	8	50	0
-70	8	38	1
-71	8	55	2
-72	8	51	3
-73	8	98	4
-74	8	99	5
-75	8	100	6
-76	8	22	7
-77	8	21	8
-78	8	101	9
-79	9	105	0
-80	9	106	1
-81	9	51	2
-82	9	21	3
-83	9	107	4
-84	9	29	5
-85	9	34	6
-86	10	7	0
-87	10	51	1
-88	10	105	2
-89	10	8	3
-90	10	21	4
-91	10	108	5
-92	12	81	0
-93	12	50	1
-94	12	51	2
-95	12	33	3
-96	12	113	4
-97	12	65	5
-98	12	43	6
-99	12	23	7
-100	12	34	8
-101	16	133	0
-102	16	71	1
-103	16	39	2
-104	16	59	3
-105	16	8	4
-106	16	134	5
-107	16	42	6
-108	16	135	7
-109	16	136	8
-110	17	81	0
-111	17	19	1
-112	17	8	2
-113	17	141	3
-114	17	142	4
-115	17	143	5
-116	17	144	6
-117	17	145	7
-118	18	156	0
-119	18	137	1
-120	18	157	2
-121	18	27	3
-122	18	158	4
-123	18	9	5
-124	18	10	6
-125	18	141	7
-126	18	8	8
-127	19	133	0
-128	19	137	1
-129	19	165	2
-130	19	8	3
-131	19	10	4
-132	19	158	5
-133	19	75	6
-134	20	7	0
-135	20	8	1
-136	20	9	2
-137	20	10	3
-138	20	11	4
-139	21	133	0
-140	21	27	1
-141	21	8	2
-142	21	119	3
-143	21	176	4
-144	21	177	5
-145	21	178	6
-146	21	179	7
-172	24	38	0
-173	24	53	1
-174	24	35	2
-175	24	17	3
-176	24	54	4
-177	24	18	5
-178	24	31	6
-179	24	55	7
-180	24	56	8
-181	24	57	9
-182	24	19	10
-183	24	58	11
-184	24	36	12
-185	24	51	13
-186	24	40	14
-187	24	59	15
-188	24	60	16
-189	24	61	17
-190	24	62	18
-191	24	63	19
-192	24	29	20
-193	24	65	21
-194	24	21	22
-195	24	23	23
-196	24	25	24
-\.
-
-
---
 -- Data for Name: PromoCodes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -1507,8 +1459,8 @@ COPY public."PromoCodes" (id, code, kind, target_title_id, target_product_id, di
 7b5db5ca-9833-4197-9339-7f62401f7ccf	SUMMER25	cart	\N	\N	20	2026-06-07 14:46:46.223431+00	2027-06-08 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
 8f4d30c2-67b4-4663-9e30-c0fd93e0d799	FREECART	cart	\N	\N	100	2026-06-07 14:46:46.223431+00	2026-07-08 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
 853afaf3-cb96-43c3-b896-0323496f281a	WHITE30	item	58	\N	30	2026-06-07 14:46:46.223431+00	2027-06-08 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
-37e64779-521f-414e-9339-8f4cd50f9bf3	AUDIO50	item	\N	AudioBook-4	50	2026-06-07 14:46:46.223431+00	2027-06-08 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
 1fcc820d-ce02-49a2-bc68-a9c012f790f6	OLDCODE	cart	\N	\N	50	2026-04-09 14:46:46.223431+00	2026-06-07 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
+37e64779-521f-414e-9339-8f4cd50f9bf3	AUDIO50	item	\N	AudioBook-66	50	2026-06-07 14:46:46.223431+00	2027-06-08 14:46:46.223431+00	2026-06-08 14:46:46.223431+00
 \.
 
 
@@ -1866,44 +1818,10 @@ COPY public."Titles_Awards" (id, title_id, award_id, "position") FROM stdin;
 
 
 --
--- Data for Name: featured_books; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.featured_books (id, title_id, sort_order, created_at) FROM stdin;
-6	13	1	2026-06-06 16:42:50.640633+00
-7	17	2	2026-06-06 16:42:50.640633+00
-8	18	3	2026-06-06 16:42:50.640633+00
-9	14	4	2026-06-06 16:42:50.640633+00
-10	19	5	2026-06-06 16:42:50.640633+00
-\.
-
-
---
--- Name: AdminAuditLog_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."AdminAuditLog_id_seq"', 8, true);
-
-
---
 -- Name: Articles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public."Articles_id_seq"', 84, true);
-
-
---
--- Name: AudiobookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."AudiobookWorkers_id_seq"', 1, false);
-
-
---
--- Name: Audiobooks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."Audiobooks_id_seq"', 1, false);
 
 
 --
@@ -1956,31 +1874,17 @@ SELECT pg_catalog.setval('public."BoxSets_id_seq"', 9, true);
 
 
 --
--- Name: CardBookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: EditionWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."CardBookWorkers_id_seq"', 34, true);
-
-
---
--- Name: CardBooks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."CardBooks_id_seq"', 66, false);
+SELECT pg_catalog.setval('public."EditionWorkers_id_seq"', 601, true);
 
 
 --
--- Name: EbookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: Editions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."EbookWorkers_id_seq"', 500, true);
-
-
---
--- Name: Ebooks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."Ebooks_id_seq"', 66, true);
+SELECT pg_catalog.setval('public."Editions_id_seq"', 150, true);
 
 
 --
@@ -2001,14 +1905,14 @@ SELECT pg_catalog.setval('public."OrderGiftCardApplications_id_seq"', 1, false);
 -- Name: OrderItems_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."OrderItems_id_seq"', 3, true);
+SELECT pg_catalog.setval('public."OrderItems_id_seq"', 1, true);
 
 
 --
 -- Name: Orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."Orders_id_seq"', 4, true);
+SELECT pg_catalog.setval('public."Orders_id_seq"', 1, true);
 
 
 --
@@ -2023,20 +1927,6 @@ SELECT pg_catalog.setval('public."Partners_id_seq"', 7, true);
 --
 
 SELECT pg_catalog.setval('public."Periodicals_id_seq"', 1, true);
-
-
---
--- Name: PrintedBookWorkers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."PrintedBookWorkers_id_seq"', 196, true);
-
-
---
--- Name: PrintedBooks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public."PrintedBooks_id_seq"', 25, false);
 
 
 --
@@ -2089,15 +1979,8 @@ SELECT pg_catalog.setval('public."Workers_id_seq"', 204, false);
 
 
 --
--- Name: featured_books_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.featured_books_id_seq', 10, true);
-
-
---
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 2u9Z9PhdLGENkL5cgYrrJmd0zi4QMa2EQWTTcfpYfUdTDO01lS69IyxLrVjV7dZ
+\unrestrict E31YAAODEYuTYZJHccJ3iK5DvLneZXvH88lLTcDifFrEufvMNuFCML82g0HJIdc
 

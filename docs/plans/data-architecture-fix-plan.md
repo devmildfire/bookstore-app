@@ -35,7 +35,7 @@ acceptance criteria, and a checklist tracker.
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ✅ |
 | 5 | Remove legacy `place_order` | F9 | Low | ✅ |
 | 5 | Boundary nits (AvatarUpload, `select('*')`) | F10 | Low | ✅ |
-| 6 | Editions-model consolidation — SPIKE | F5 | Medium | ✅ spike done → NO-GO now (see spike doc) |
+| 6 | Editions-model consolidation | F5 | Medium | ✅ EXECUTED (orders wiped; see execution plan) |
 
 ---
 

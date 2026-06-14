@@ -174,4 +174,26 @@ regenerated baseline as the single source of truth. Estimated as its own multi-c
 (roughly: A–B one commit, C one, D one, E one, F one), each `tsc`/lint/build-green with the
 Phase G gate before F's drop.
 
-**Decision:** ⬜ approve as-is · ⬜ approve with design choices (§2) changed · ⬜ adjust scope
+**Decision:** ✅ approved & EXECUTED (2026-06-14).
+
+## Execution log (all phases done + verified)
+- ✅ **A** `20260614160000_editions_table.sql` — `Editions`(150) + `EditionWorkers`(601),
+  RLS + indexes. Field-level parity vs the 4 old tables: **0 mismatches** across all kinds.
+- ✅ **B** `20260614170000_repoint_edition_refs.sql` — promo `AUDIO50` `AudioBook-4`→`AudioBook-66`
+  (resolves); 0 box-set refs.
+- ✅ **C** wiped disposable transactional tables (orders/cart/issued cards/subs) — backup first.
+- ✅ **D** `20260614180000_editions_functions.sql` — 10 functions rewritten to one table;
+  `search_books` fixed (now covers all kinds — `search('МРД')`→6 EBook titles).
+- ✅ **E** code: `bookProducts`/`getAdminBook`/`actions`/`ProductsManager` (table→kind),
+  `getDownloadUrl`/`getOrders` → `Editions`, `database.ts` `DbEdition`. `tsc`/lint/build green.
+- ✅ **G** full checkout re-verified against `Editions` (create_pending_order→mark_order_paid,
+  rolled back).
+- ✅ **F** `20260614190000_drop_old_edition_tables.sql` — dropped the 8 old tables; types
+  regenerated; RLS guard clean.
+- ✅ **Reproducibility:** `seed.sql` regenerated (carries `Editions`/`EditionWorkers`, no old
+  tables, promo ref repointed). Baseline+migrations+seed replays clean (migrations create
+  `Editions` before seed loads).
+- ⏳ **Deferred (non-blocking):** regenerate the consolidated *baseline* itself + archive the
+  transitional migrations so the baseline (not baseline+migrations) is the single source.
+  Skipped now because the baseline carries the storage schema and exact pg_dump format —
+  worth a dedicated pass with a stubbed-`db reset` dry-run. The repo is reproducible as-is.
