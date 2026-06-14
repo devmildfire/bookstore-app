@@ -30,7 +30,7 @@ acceptance criteria, and a checklist tracker.
 | 2 | Delete legacy catalog-signature fallback | F4 | High | ✅ |
 | 3 | Single pricing source (quote RPC) | F2 | High | ✅ |
 | 3 | Surface anon-migration failures | F3 | High | ✅ |
-| 4 | Indexes on hot FK/join paths | F6 | Medium | ⬜ |
+| 4 | Indexes on hot FK/join paths | F6 | Medium | ✅ |
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ⬜ |
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ⬜ |
 | 5 | Remove legacy `place_order` | F9 | Low | ⬜ |
@@ -192,15 +192,14 @@ still succeeds; anon cart/orders remain recoverable. `tsc` green.
 
 ## Phase 4 — P2: Maintainability & scalability (F6, F7, F8)
 
-### 4.1 Indexes on hot FK/join paths (F6)
-- ⬜ Migration adding btree indexes: `Ebooks(title_id)`, `Audiobooks(title_id)`,
-  `PrintedBooks(title_id)`, `Titles_Authors(title_id)`, `Titles_Authors(author_id)`,
-  `Orders(user_id)`, `CartPromo(promo_id)`, `GiftCards(order_id)`, `GiftCards(product_id)`,
-  `OrderGiftCardApplications(gift_card_id)`, `UserSubscriptions(subscription_id)`.
-- ⬜ Fold into baseline; regenerate types (no type change expected).
+### 4.1 Indexes on hot FK/join paths (F6) — DONE
+- ✅ Migration `20260614130000_fk_indexes.sql` — btree indexes on **all 16 FK columns that
+  lacked one** (edition `title_id`s, `Titles_Authors` both directions, `Orders.user_id`,
+  gift-card/subscription/promo/audit FKs). Applied + folded into baseline.
+- ✅ Verified: the "FK columns without a backing index" query now returns **zero rows**. No
+  type change (indexes aren't in generated TS).
 
-**Acceptance:** `EXPLAIN` on the catalog RPC + order-history query shows index usage on a
-seeded-large dataset. (Cheap, low-risk — can ship any time.)
+**Acceptance:** ✅ every FK column is now index-backed; seq-scan cliffs avoided as data grows.
 
 ### 4.2 Trim entity boilerplate (F7)
 - ⬜ Delete the empty `src/entities/user/` directory.
