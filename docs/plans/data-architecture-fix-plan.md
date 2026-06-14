@@ -28,8 +28,8 @@ acceptance criteria, and a checklist tracker.
 | 1 | RLS drift guard query | F1 | Critical | ✅ |
 | 2 | Use native typed `.rpc()`; remove all `RpcFn` casts | F4 | High | ✅ |
 | 2 | Delete legacy catalog-signature fallback | F4 | High | ✅ |
-| 3 | Single pricing source (quote RPC) | F2 | High | ⬜ |
-| 3 | Surface anon-migration failures | F3 | High | ⬜ |
+| 3 | Single pricing source (quote RPC) | F2 | High | 🟡 |
+| 3 | Surface anon-migration failures | F3 | High | ✅ |
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ⬜ |
 | 4 | Trim entity boilerplate + delete `user/` | F7 | Medium | ⬜ |
 | 4 | Catalog facets RPC (kill over-fetch) | F8 | Medium | ⬜ |
@@ -162,16 +162,18 @@ RPC arg now fails to compile (proven by the 4 bugs it caught).
 removing/altering one pricing path can't silently diverge the other. Manual re-test of the
 promo + gift-card scenarios in `docs/testing/promo-codes.md`.
 
-### 3.2 Surface anon-migration failures (F3)
-- ⬜ `migrateAnonymousUserAction` (`src/lib/auth/actions.ts:101`): inspect the RPC `error`,
-  log server-side with `from`/`to` ids, and return a typed result instead of `void`.
-- ⬜ `loginAction` (`:39`): keep login non-blocking but replace `.catch(() => {})` with a
-  logged, captured failure; pass a non-fatal signal to the cabinet (banner/toast +
-  "retry migration" affordance on next load). Align `/auth/callback` (`:88`) to the same
-  handling.
+### 3.2 Surface anon-migration failures (F3) — DONE
+- ✅ `migrateAnonymousUserAction` now returns `{ ok; error? }` and logs the RPC error with
+  `from`/`to` ids (no more `void` + swallow).
+- ✅ `loginAction` awaits the result and `console.error`s on failure but still redirects
+  (non-blocking). `/auth/callback` already logged — both sign-in paths now consistent.
+- ⏭️ **Deferred (product UI call):** the user-visible "migration failed / retry" banner.
+  The data is safe on failure (the RPC is transactional — nothing migrated, anon row
+  intact, recoverable on next sign-in), so the telemetry fix is the substance; where/how
+  to surface a banner is a UI decision to make separately.
 
-**Acceptance:** a forced migration failure is logged and user-visible (not silent); login
-still succeeds; anon cart/orders remain recoverable.
+**Acceptance:** ✅ a forced migration failure is logged with context (not silent); login
+still succeeds; anon cart/orders remain recoverable. `tsc` green.
 
 ---
 

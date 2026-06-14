@@ -33,9 +33,14 @@ export async function loginAction(_prev: AuthError | null, formData: FormData): 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: error.message }
 
-  // Best-effort — login must not fail if migration errors
+  // Best-effort — login must not fail if migration errors — but the failure is
+  // captured and logged (never silently swallowed): the anon user's cart/orders
+  // stay intact under the anon UID and can be re-migrated on a later sign-in.
   if (anonId) {
-    await migrateAnonymousUserAction(anonId).catch(() => {})
+    const result = await migrateAnonymousUserAction(anonId)
+    if (!result.ok) {
+      console.error(`[loginAction] anon migration failed (from=${anonId}):`, result.error)
+    }
   }
 
   redirect('/profile')
@@ -97,15 +102,30 @@ export async function logoutAction(): Promise<void> {
 // then deletes the anon row. Calls migrate_anonymous_user SECURITY DEFINER
 // (in the consolidated baseline schema). Same RPC used by /auth/callback for the
 // Google OAuth hand-off, so email/password and Google login behave the same.
-export async function migrateAnonymousUserAction(fromUserId: string): Promise<void> {
+//
+// Returns a typed result instead of throwing/swallowing — the caller decides
+// whether to block (it doesn't) but the error is always surfaced to logs. The
+// RPC is transactional: on failure nothing is migrated and the anon row is left
+// intact, so a later sign-in can retry.
+export async function migrateAnonymousUserAction(
+  fromUserId: string,
+): Promise<{ ok: boolean; error?: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.is_anonymous) return
+  if (!user || user.is_anonymous) return { ok: false, error: 'not_authenticated' }
 
-  await supabase.rpc('migrate_anonymous_user', {
+  const { error } = await supabase.rpc('migrate_anonymous_user', {
     from_user_id: fromUserId,
     to_user_id: user.id,
   })
+  if (error) {
+    console.error(
+      `[migrateAnonymousUserAction] migrate_anonymous_user failed (from=${fromUserId} to=${user.id}):`,
+      error.message,
+    )
+    return { ok: false, error: error.message }
+  }
+  return { ok: true }
 }
 
 const forgotSchema = z.object({ email: z.string().email('Введите корректный email') })
