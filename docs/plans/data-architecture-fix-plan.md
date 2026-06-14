@@ -26,8 +26,8 @@ acceptance criteria, and a checklist tracker.
 |------|------|---------|----------|--------|
 | 1 | Lock down catalog tables (RLS + revoke writes) | F1 | Critical | ✅ |
 | 1 | RLS drift guard query | F1 | Critical | ✅ |
-| 2 | Typed `rpc()` helper + remove casts | F4 | High | ⬜ |
-| 2 | Delete legacy catalog-signature fallback | F4 | High | ⬜ |
+| 2 | Use native typed `.rpc()`; remove all `RpcFn` casts | F4 | High | ✅ |
+| 2 | Delete legacy catalog-signature fallback | F4 | High | ✅ |
 | 3 | Single pricing source (quote RPC) | F2 | High | ⬜ |
 | 3 | Surface anon-migration failures | F3 | High | ⬜ |
 | 4 | Indexes on hot FK/join paths | F6 | Medium | ⬜ |
@@ -104,29 +104,45 @@ Phase 3 pricing/legacy refactors safe. The generated `supabase.ts` already conta
 RPC under `Database['public']['Functions']` (verified: `create_pending_order`,
 `mark_order_paid`, `apply_promo_code`, `migrate_anonymous_user`, … all present).
 
-### 2.1 One typed `rpc()` helper
-- ⬜ Add `src/lib/supabase/rpc.ts` exporting a thin, generically-typed wrapper that takes
-  the supabase client + an RPC name keyed to `Database['public']['Functions']` + typed
-  args, returns the typed `{ data, error }`. Centralize the `this`-binding note currently
-  inline in `getBooks.ts:25`.
-- ⬜ Replace all **16** `as unknown as RpcFn` casts (12 files: `api/books/*`,
-  `api/likes/toggleLike.ts`, `lib/auth/actions.ts`, `lib/email/sendOrderConfirmation.ts`,
-  `lib/subscribers/actions.ts`, `app/(site)/auth/callback/route.ts`,
-  `app/(site)/newsletter/{confirm,unsubscribe}/route.ts`) with the typed helper.
-- ⬜ Derive `BookServerRow` (`src/entities/book/server.ts`) from the catalog function's
-  return type instead of hand-maintaining it (where the generated return shape allows;
-  the JSONB columns stay `unknown` for `normalize.ts` to narrow).
+### 2.1 Use native typed `.rpc()`; remove all casts — DONE
+**Decision change (better than the original plan):** no wrapper helper was added. The
+clients are already typed with `<Database>` (`createClient`/`createDataClient`/
+`createAdminClient`), so the native `supabase.rpc(name, args)` is fully type-safe on its
+own. A wrapper would only re-add indirection over an already-typed method, and the
+`this`-binding hazard only existed because `getBooks` assigned `rpc` *unbound* — calling
+`supabase.rpc(...)` inline avoids it. So the fix was to **delete the escape hatch**, not
+wrap it.
 
-**Acceptance:** no `as unknown as RpcFn` remains; `tsc` green; a deliberately wrong RPC
-arg name fails to compile.
+- ✅ Removed all `RpcFn` type defs + `as unknown as RpcFn` casts — **14 files**:
+  `api/books/{getBook,getBooks,getBookProducts,getLatestBooks,getFeaturedBooks,searchBooks}.ts`,
+  `api/articles/getAuthorBooks.ts`, `api/likes/toggleLike.ts`, `lib/auth/actions.ts`,
+  `lib/email/sendOrderConfirmation.ts`, `lib/subscribers/actions.ts`,
+  `app/(site)/auth/callback/route.ts`, `app/(site)/newsletter/{confirm,unsubscribe}/route.ts`.
+  `grep RpcFn src` → none.
+- ✅ **Bonus — the casts were hiding real bugs.** Native types surfaced 4 latent arg
+  errors in `getBooks.ts` (passing `null` where the generated args want `string |
+  undefined` / `number | undefined`) → fixed to `undefined`/`?? undefined`.
+- ✅ `subscribe_newsletter.p_source` had no SQL default, so the generated type was a
+  required `string` while callers passed `null`. Added migration
+  `20260613160000_subscribe_newsletter_optional_source.sql` (`DEFAULT NULL`, body
+  unchanged) → regenerated types (minimal diff: `p_source?: string`) → caller passes the
+  optional value directly. No cast needed.
+- ⏭️ Deriving `BookServerRow` from the function return type: **deferred** — the three
+  catalog RPCs return overlapping-but-different shapes, so the hand-curated superset view
+  (with the divergent fields optional + JSONB as `unknown`) is the cleaner contract. The
+  call sites are now type-checked on name+args, which was the core F4 win.
 
-### 2.2 Delete the legacy catalog-signature fallback
-- ⬜ Remove `getCatalogBooksWithFallback`, `isMissingCatalogFunctionError`,
-  `getFirstParamValue`, `normalizeLegacySort` from `src/api/books/getBooks.ts`; call
-  `get_catalog_books` once with the current params.
+**Acceptance:** ✅ no `RpcFn` remains; `tsc`, `eslint`, `npm run build` all green; a wrong
+RPC arg now fails to compile (proven by the 4 bugs it caught).
 
-**Acceptance:** catalog loads/filters/sorts/paginates exactly as before; the runtime
-fallback branch is gone.
+### 2.2 Delete the legacy catalog-signature fallback — DONE
+- ✅ Removed `getCatalogBooksWithFallback`, `isMissingCatalogFunctionError`,
+  `getFirstParamValue`, `normalizeLegacySort` from `getBooks.ts`; calls `get_catalog_books`
+  once with the current params.
+
+**Acceptance:** ✅ `get_catalog_books`/`search_books` verified returning rows from the DB
+(catalog=12, `search_books('Абзац')`→ match). Note: discovered `search_books` only scans
+`CardBooks` (audit F5 addendum) — pre-existing, tracked, not addressed here.
 
 ---
 

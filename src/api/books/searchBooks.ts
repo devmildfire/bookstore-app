@@ -20,10 +20,7 @@ export async function searchBooks(
   if (query.length < 3) return { books: [], total: 0 }
 
   const supabase = createClient()
-  const { data, error } = await (supabase.rpc as unknown as (
-    name: string,
-    params: Record<string, unknown>,
-  ) => Promise<{ data: unknown; error: { message: string } | null }>)('search_books', {
+  const { data, error } = await supabase.rpc('search_books', {
     search_term: query,
     result_limit: limit,
     result_offset: offset,

@@ -3,11 +3,6 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { Database } from '@/types/supabase'
 import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
 
-type RpcFn = (
-  name: string,
-  params: Record<string, unknown>
-) => Promise<{ data: unknown; error: { message: string } | null }>
-
 // Server-side OAuth callback. Receives the PKCE `code` from Supabase after
 // the provider flow completes, exchanges it for a session server-side, and
 // writes the new auth cookies directly onto the redirect response so the
@@ -84,7 +79,7 @@ export async function GET(request: NextRequest) {
   const resolvedUserId = data?.user?.id
   if (pendingAnonId && resolvedUserId && pendingAnonId !== resolvedUserId) {
     try {
-      const { error: rpcError } = await (supabase.rpc as unknown as RpcFn)(
+      const { error: rpcError } = await supabase.rpc(
         'migrate_anonymous_user',
         { from_user_id: pendingAnonId, to_user_id: resolvedUserId }
       )

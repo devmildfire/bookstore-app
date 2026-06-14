@@ -1928,7 +1928,7 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       subscribe_newsletter: {
-        Args: { p_email: string; p_source: string }
+        Args: { p_email: string; p_source?: string }
         Returns: Json
       }
       toggle_like: {

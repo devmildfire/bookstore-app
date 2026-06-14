@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 type AuthError = { error: string }
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
 
 const loginSchema = z.object({
   email: z.string().email('Введите корректный email'),
@@ -103,7 +102,7 @@ export async function migrateAnonymousUserAction(fromUserId: string): Promise<vo
   const { data: { user } } = await supabase.auth.getUser()
   if (!user || user.is_anonymous) return
 
-  await (supabase.rpc as unknown as RpcFn)('migrate_anonymous_user', {
+  await supabase.rpc('migrate_anonymous_user', {
     from_user_id: fromUserId,
     to_user_id: user.id,
   })

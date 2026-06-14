@@ -238,6 +238,13 @@ Editions are four parallel tables — `Ebooks`, `Audiobooks`, `PrintedBooks`,
 - `normalizeBook` (200 LoC) does correspondingly heavy `unknown`-narrowing of the
   per-edition `jsonb` blobs.
 
+- **`search_books` only scans `CardBooks`** (`baseline:1888`, `FROM "CardBooks" cb`).
+  A title whose only published edition is an Ebook/Audiobook/PrintBook is **invisible to
+  search** — verified live: `search_books('Абзац')` (has a Book2.0) returns it, while
+  print/ebook-only titles return nothing. This is a direct consequence of the per-edition
+  table split (the author had to pick one table to scan) and is a latent correctness bug
+  in its own right.
+
 This is a defensible historical model (the editions genuinely differ), but it is the
 single biggest "hinders change" area. The four tables share a large common core
 (`title_id, price, discount, publish_date, release_date, is_published, sold_out,

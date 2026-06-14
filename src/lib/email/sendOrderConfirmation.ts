@@ -2,8 +2,6 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { sendEmail } from './send'
 import OrderConfirmation, { type OrderConfirmationItem } from '@/emails/OrderConfirmation'
 
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
-
 /**
  * Send the order confirmation email exactly once per paid order. Best-effort:
  * any failure is logged and swallowed so it can never break the payment path.
@@ -15,7 +13,7 @@ type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: 
 export async function sendOrderConfirmationEmail(orderId: number): Promise<void> {
   const admin = createAdminClient()
   try {
-    const { data: claimed, error: claimErr } = await (admin.rpc as unknown as RpcFn)(
+    const { data: claimed, error: claimErr } = await admin.rpc(
       'claim_order_confirmation_email',
       { p_order_id: orderId }
     )
@@ -62,7 +60,7 @@ export async function sendOrderConfirmationEmail(orderId: number): Promise<void>
       })
     } catch (sendErr) {
       // Release the claim so a replay can retry.
-      await (admin.rpc as unknown as RpcFn)('release_order_confirmation_email', { p_order_id: orderId })
+      await admin.rpc('release_order_confirmation_email', { p_order_id: orderId })
       throw sendErr
     }
   } catch (err) {

@@ -7,8 +7,6 @@ import type { BookServerRow } from '@/entities/book/server'
 export const booksQueryKey = (filters: BookFilters) => ['books', filters] as const
 
 type CatalogRpcRow = BookServerRow & { total_count: number }
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
-type RpcResult = Awaited<ReturnType<RpcFn>>
 type FilterOptions = {
   categories: ProductCategory[]
   authors: string[]
@@ -22,25 +20,19 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   const pageSize = filters.limit
   const offset = (filters.page - 1) * pageSize
 
-  // Keep `this` bound to the supabase instance — the SDK's rpc() reaches into
-  // `this.rest` internally, so an unbound reference crashes at call time.
-  // The generated rpc-name union doesn't admit a plain string; the fallback
-  // path calls `get_catalog_books` with both new and legacy params, so we widen.
-  type RpcName = Parameters<typeof supabase.rpc>[0]
-  const rpc: RpcFn = (name, params) => supabase.rpc(name as RpcName, params) as unknown as ReturnType<RpcFn>
   const [rpcResult, filterOptions] = await Promise.all([
-    getCatalogBooksWithFallback(rpc, {
+    supabase.rpc('get_catalog_books', {
       result_limit: pageSize,
       result_offset: offset,
-      search_term: filters.search || null,
+      search_term: filters.search || undefined,
       product_type_filters: filters.categories,
       author_names_filter: filters.authors,
       year_filters: filters.years,
-      price_from: filters.priceFrom,
-      price_to: filters.priceTo,
+      price_from: filters.priceFrom ?? undefined,
+      price_to: filters.priceTo ?? undefined,
       sort_by: filters.sort,
     }),
-    getCatalogFilterOptions(supabase, rpc),
+    getCatalogFilterOptions(supabase),
   ])
 
   if (rpcResult.error) throw new Error(`Не удалось загрузить каталог книг: ${rpcResult.error.message}`)
@@ -69,10 +61,9 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
 
 async function getCatalogFilterOptions(
   supabase: ReturnType<typeof createDataClient>,
-  rpc: RpcFn,
 ): Promise<FilterOptions> {
   const [result, categoryResults] = await Promise.all([
-    rpc('get_catalog_books', {
+    supabase.rpc('get_catalog_books', {
       result_limit: CATALOG_FILTER_OPTIONS_LIMIT,
       result_offset: 0,
       sort_by: 'newest',
@@ -117,37 +108,6 @@ async function getPublishedProductCategories(supabase: ReturnType<typeof createD
   return categoryQueries
     .filter((_, index) => (results[index].data ?? []).length > 0)
     .map(({ category }) => category)
-}
-
-async function getCatalogBooksWithFallback(rpc: RpcFn, params: Record<string, unknown>): Promise<RpcResult> {
-  const result = await rpc('get_catalog_books', params)
-
-  if (!isMissingCatalogFunctionError(result.error?.message)) return result
-
-  return rpc('get_catalog_books', {
-    result_limit: params.result_limit,
-    result_offset: params.result_offset,
-    search_term: params.search_term,
-    product_type_filter: getFirstParamValue(params.product_type_filters),
-    author_name: getFirstParamValue(params.author_names_filter),
-    price_from: params.price_from,
-    price_to: params.price_to,
-    sort_by: normalizeLegacySort(params.sort_by),
-  })
-}
-
-function isMissingCatalogFunctionError(message: string | undefined): boolean {
-  return Boolean(message?.includes('Could not find the function public.get_catalog_books'))
-}
-
-function getFirstParamValue(value: unknown): string | null {
-  return Array.isArray(value) && typeof value[0] === 'string' ? value[0] : null
-}
-
-function normalizeLegacySort(value: unknown): string {
-  if (value === 'price-asc' || value === 'price-desc') return value
-  if (value === 'author-asc' || value === 'author-desc') return 'title'
-  return 'newest'
 }
 
 // Map of titleId → "/books/<periodical-slug>#vol-<n>" for any catalog titles that

@@ -2,8 +2,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { addToAudience } from '@/lib/email/audience'
 
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
-
 // Double opt-in confirmation link target. Activates the subscriber, mirrors them
 // into the Resend Audience, then redirects to the /newsletter result page.
 export async function GET(request: NextRequest) {
@@ -13,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (!token) return result('invalid')
 
   const admin = createAdminClient()
-  const { data, error } = await (admin.rpc as unknown as RpcFn)('confirm_newsletter', { p_token: token })
+  const { data, error } = await admin.rpc('confirm_newsletter', { p_token: token })
   if (error) {
     console.error('[newsletter confirm] rpc failed:', error.message)
     return result('error')
@@ -24,7 +22,7 @@ export async function GET(request: NextRequest) {
   // Best-effort Audience sync (no-op until RESEND_AUDIENCE_ID is set).
   const contactId = await addToAudience(res.email)
   if (contactId) {
-    await (admin.rpc as unknown as RpcFn)('set_subscriber_resend_contact', {
+    await admin.rpc('set_subscriber_resend_contact', {
       p_email: res.email,
       p_contact_id: contactId,
     })

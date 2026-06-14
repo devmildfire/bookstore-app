@@ -6,8 +6,6 @@ import { sendEmail } from '@/lib/email/send'
 import { SITE_URL } from '@/lib/email/resend'
 import NewsletterConfirm from '@/emails/NewsletterConfirm'
 
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
-
 const schema = z.object({
   email: z.string().email('Введите корректный e-mail'),
   source: z.string().max(50).optional(),
@@ -26,9 +24,9 @@ export async function subscribeAction(input: { email: string; source?: string })
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message }
 
   const admin = createAdminClient()
-  const { data, error } = await (admin.rpc as unknown as RpcFn)('subscribe_newsletter', {
+  const { data, error } = await admin.rpc('subscribe_newsletter', {
     p_email: parsed.data.email,
-    p_source: parsed.data.source ?? null,
+    p_source: parsed.data.source,
   })
   if (error) return { ok: false, error: 'Не удалось оформить подписку' }
 

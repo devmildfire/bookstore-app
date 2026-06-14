@@ -5,8 +5,6 @@ import type { BookServerRow } from '@/entities/book/server'
 
 export const featuredBooksQueryKey = ['featuredBooks'] as const
 
-type RpcFn = (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>
-
 export async function getFeaturedBooks(): Promise<Book[]> {
   const supabase = createDataClient()
 
@@ -23,7 +21,7 @@ export async function getFeaturedBooks(): Promise<Book[]> {
 
   const titleIds = featured.map((f) => f.title_id)
 
-  const { data, error } = await (supabase.rpc as unknown as RpcFn)('get_catalog_books', {
+  const { data, error } = await supabase.rpc('get_catalog_books', {
     title_ids: titleIds,
     result_limit: titleIds.length,
     result_offset: 0,
