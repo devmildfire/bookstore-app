@@ -116,7 +116,8 @@ Status legend:
 
 - [x] `https://bookstore-app.mildfire.dev` loads app. (2026-06-15: 200, full SSR HTML ~2.38 MB, via Cloudflare Tunnel → nginx → app.)
 - [x] `https://api.mildfire.dev` serves Supabase API/Auth/Storage through Nginx. (auth health 200, REST `/Titles` 206/69, public cover 200 — all via the tunnel.)
-- [ ] Browser anonymous sign-in works.
+- [x] Browser anonymous sign-in works. (2026-06-15: `POST /auth/v1/signup` → 200, anon JWT `is_anonymous:true`, verified in a real browser session.)
+- [x] Client-side data loads in the browser. (Cart, Likes, CartPromo, GiftCards, `quote_cart` RPC, box-set books — all 200. **Required a kong CORS fix**: the minimal allow-list rejected the supabase-js preflight headers `Accept-Profile` / `Content-Profile` / `X-Retry-Count`, which blocked every browser query and hung the UI on "Загрузка…". curl smoke tests missed it — they skip the CORS preflight. **Lesson: always browser-test, not just curl.**)
 - [ ] Admin login works.
 - [ ] Admin role works.
 - [x] Public storage media loads. (`/storage/v1/object/public/covers/...` → 200 image/jpeg via api.mildfire.dev.)
