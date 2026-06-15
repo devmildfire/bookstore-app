@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
+import { SITE_ORIGIN } from '@/lib/siteUrl'
 
 // Verifies the token_hash from auth emails (signup / email_change / recovery)
 // rendered by the Send-Email hook, sets the resulting session on the redirect
@@ -19,12 +20,12 @@ export async function GET(request: NextRequest) {
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/profile'
 
   if (!tokenHash || !type || !VALID_TYPES.includes(type)) {
-    const errorUrl = new URL('/auth/login', request.url)
+    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
     errorUrl.searchParams.set('auth_error', 'Ссылка недействительна или устарела')
     return NextResponse.redirect(errorUrl)
   }
 
-  const response = NextResponse.redirect(new URL(safeNext, request.url))
+  const response = NextResponse.redirect(new URL(safeNext, SITE_ORIGIN))
 
   const supabase = createServerClient<Database>(
     // Server-side token verification — internal kong URL when set (no hairpin).
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
 
   const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
   if (error) {
-    const errorUrl = new URL('/auth/login', request.url)
+    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
     errorUrl.searchParams.set('auth_error', error.message)
     return NextResponse.redirect(errorUrl)
   }

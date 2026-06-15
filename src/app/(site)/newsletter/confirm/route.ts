@@ -1,12 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { addToAudience } from '@/lib/email/audience'
+import { SITE_ORIGIN } from '@/lib/siteUrl'
 
 // Double opt-in confirmation link target. Activates the subscriber, mirrors them
 // into the Resend Audience, then redirects to the /newsletter result page.
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  const result = (status: string) => NextResponse.redirect(new URL(`/newsletter?status=${status}`, request.url))
+  const result = (status: string) => NextResponse.redirect(new URL(`/newsletter?status=${status}`, SITE_ORIGIN))
 
   if (!token) return result('invalid')
 

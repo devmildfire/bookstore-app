@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
+import { SITE_ORIGIN } from '@/lib/siteUrl'
 
 // GET /api/auth/google
 //
@@ -25,18 +26,19 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const origin = request.nextUrl.origin
-
+  // Trusted public origin — request.nextUrl.origin resolves to the container
+  // bind address (0.0.0.0:3000) behind the tunnel, which would send Google an
+  // unreachable redirect_to.
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/auth/callback?next=/profile`,
+      redirectTo: `${SITE_ORIGIN}/auth/callback?next=/profile`,
       skipBrowserRedirect: true,
     },
   })
 
   if (error || !data?.url) {
-    const errorUrl = new URL('/auth/login', request.url)
+    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
     errorUrl.searchParams.set('auth_error', error?.message ?? 'Google OAuth недоступен')
     return NextResponse.redirect(errorUrl)
   }
