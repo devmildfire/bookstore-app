@@ -1,15 +1,9 @@
 import type { NextConfig } from 'next'
 
-const isProduction = process.env.NODE_ENV === 'production'
-
 const nextConfig: NextConfig = {
   output: 'standalone',
-  ...(isProduction && {
-    basePath: '/bookstore-app',
-    assetPrefix: '/bookstore-app',
-  }),
   images: {
-    ...(!isProduction && { dangerouslyAllowLocalIP: true }),
+    ...(process.env.NODE_ENV !== 'production' && { dangerouslyAllowLocalIP: true }),
     remotePatterns: [
       // Supabase Cloud — matches any project subdomain
       {
@@ -31,8 +25,11 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
       // Self-hosted Supabase on the same VPS — add your production hostname here.
-      // For example, if your Supabase API is at https://api.example.com:
-      // { protocol: 'https', hostname: 'api.example.com', pathname: '/storage/v1/object/public/**' },
+      {
+        protocol: 'https',
+        hostname: 'api.mildfire.dev',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
   webpack: (config) => {
