@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { attachEditions } from './attachEditions'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { Book } from '@/entities/book/client'
 import type { BookServerRow } from '@/entities/book/server'
@@ -32,7 +33,7 @@ export async function searchBooks(
   if (rows.length === 0) return { books: [], total: 0 }
 
   return {
-    books: rows.map(normalizeBook),
+    books: await attachEditions(rows.map(normalizeBook), supabase),
     total: rows[0].total_count,
   }
 }

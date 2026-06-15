@@ -1511,6 +1511,13 @@ export type Database = {
         }[]
       }
       get_catalog_facets: { Args: never; Returns: Json }
+      get_editions_for_titles: {
+        Args: { p_title_ids: number[] }
+        Returns: {
+          editions: Json
+          title_id: number
+        }[]
+      }
       get_or_create_profile: {
         Args: never
         Returns: {

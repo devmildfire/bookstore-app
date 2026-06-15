@@ -1,4 +1,5 @@
 import { createDataClient } from '@/lib/supabase/server'
+import { attachEditions } from './attachEditions'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { Book } from '@/entities/book/client'
 import type { BookServerRow } from '@/entities/book/server'
@@ -14,5 +15,5 @@ export async function getLatestBooks(limit: number): Promise<Book[]> {
 
   if (error) throw new Error(`Не удалось загрузить книги: ${error.message}`)
 
-  return ((data ?? []) as BookServerRow[]).map(normalizeBook)
+  return attachEditions(((data ?? []) as BookServerRow[]).map(normalizeBook), supabase)
 }

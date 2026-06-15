@@ -6,6 +6,7 @@ import type {
   Book,
   BookAward,
   BookContext,
+  BookEdition,
   BookTrailer,
   BookWorker,
 } from './client'
@@ -26,6 +27,8 @@ export function normalizeBook(raw: BookServerRow): Book {
     id: `${raw.product_type ?? 'Book2.0'}-${raw.id}`,
     titleId: raw.title_id,
     slug: raw.title_slug ?? String(raw.title_id),
+    // Attached server-side by attachEditions() for card grids; empty otherwise.
+    editions: [],
     periodicalHref: null,
     name: raw.title_name,
     description: raw.title_description,
@@ -64,6 +67,32 @@ export function normalizeBook(raw: BookServerRow): Book {
     authors: normalizeAuthors(raw.title_authors),
     contexts: normalizeContexts(raw.title_contexts),
   }
+}
+
+// Parse the jsonb array from get_editions_for_titles into BookEdition[],
+// applying the SAME id / price / originalPrice / inStock logic normalizeBook
+// uses for a single product, so a card's modal matches the book detail page.
+export function normalizeEditions(value: unknown): BookEdition[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((entry): BookEdition | null => {
+      if (!isRecord(entry)) return null
+      const editionId = readNumber(entry.id)
+      const productType = readString(entry.product_type)
+      if (editionId === null || !productType) return null
+      const price = readNumber(entry.price) ?? 0
+      const discount = readNumber(entry.discount)
+      const originalPrice = discount ? Math.round(price / (1 - discount / 100)) : null
+      return {
+        id: `${productType}-${editionId}`,
+        category: productType as ProductCategory,
+        price,
+        originalPrice,
+        discount,
+        inStock: entry.sold_out !== true,
+      }
+    })
+    .filter((e): e is BookEdition => e !== null)
 }
 
 function normalizeContexts(value: unknown): BookContext[] {

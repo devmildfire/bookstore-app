@@ -1,4 +1,5 @@
 import { createDataClient } from '@/lib/supabase/server'
+import { attachEditions } from './attachEditions'
 import type { Book } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { BookServerRow } from '@/entities/book/server'
@@ -41,5 +42,5 @@ export async function getSimilarBooks(titleId: number): Promise<Book[]> {
 
   if (error) throw new Error(`Не удалось загрузить похожие книги: ${error.message}`)
 
-  return ((data ?? []) as BookServerRow[]).map(normalizeBook)
+  return attachEditions(((data ?? []) as BookServerRow[]).map(normalizeBook), supabase)
 }

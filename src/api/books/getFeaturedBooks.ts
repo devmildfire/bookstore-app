@@ -1,4 +1,5 @@
 import { createDataClient } from '@/lib/supabase/server'
+import { attachEditions } from './attachEditions'
 import type { Book } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { BookServerRow } from '@/entities/book/server'
@@ -30,7 +31,7 @@ export async function getFeaturedBooks(): Promise<Book[]> {
 
   if (error) throw new Error(`Не удалось загрузить избранные книги: ${error.message}`)
 
-  const books = ((data ?? []) as BookServerRow[]).map(normalizeBook)
+  const books = await attachEditions(((data ?? []) as BookServerRow[]).map(normalizeBook), supabase)
 
   // Restore the explicit featured sort order
   return featured

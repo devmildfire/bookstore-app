@@ -1,4 +1,5 @@
 import { createDataClient } from '@/lib/supabase/server'
+import { attachEditions } from './attachEditions'
 import type { ProductCategory } from '@/types/database'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 import { normalizeBook } from '@/entities/book/normalize'
@@ -49,7 +50,7 @@ export async function getBooks(filters: BookFilters): Promise<BookCatalog> {
   }
 
   return {
-    books,
+    books: await attachEditions(books, supabase),
     total,
     page: filters.page,
     pageSize,

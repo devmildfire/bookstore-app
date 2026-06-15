@@ -65,10 +65,25 @@ export type BookFilters = {
   limit: number
 }
 
+// One purchasable edition (format) of a title — the minimal shape the
+// add-to-cart modal needs. Attached to catalog cards server-side (via
+// get_editions_for_titles) so the modal opens with no client round-trip.
+export type BookEdition = {
+  /** Cart id, `<Category>-<editionId>` — matches normalizeBook's Book.id. */
+  id: string
+  category: ProductCategory
+  price: number
+  originalPrice: number | null
+  discount: number | null
+  inStock: boolean
+}
+
 export type Book = {
   id: string
   titleId: number
   slug: string
+  /** Editions of this title (for the add-to-cart modal). Empty unless attached. */
+  editions: BookEdition[]
   /** For a periodical issue, the shared periodical page + anchor to link to instead of /books/<slug>. */
   periodicalHref: string | null
   name: string

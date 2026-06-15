@@ -4,11 +4,10 @@ import { useState } from 'react'
 import Modal from '@/components/common/Modal'
 import { useCart } from '@/contexts/cart'
 import { useToast } from '@/contexts/toast'
-import { useBookProducts } from '@/hooks/useBookProducts'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import { DIGITAL_CATEGORIES } from '@/consts/products'
 import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
-import type { Book } from '@/entities/book/client'
+import type { BookEdition } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
 import styles from './AddToCartModal.module.scss'
 
@@ -25,9 +24,12 @@ const CATEGORY_LABELS: Record<ProductCategory, string> = {
 
 
 type Props = {
-  slug: string
+  // Editions are provided by the card (fetched server-side via attachEditions),
+  // so the modal opens instantly with no client round-trip.
+  editions: BookEdition[]
   titleName: string
   authorNames: string[]
+  coverUrl: string | null
   isOpen: boolean
   onClose: () => void
 }
@@ -43,8 +45,7 @@ function formatAuthors(authorNames: string[]): string {
   return `${authorNames.slice(0, AUTHORS_PREVIEW).join(', ')} и другие`
 }
 
-export default function AddToCartModal({ slug, titleName, authorNames, isOpen, onClose }: Props) {
-  const { data: products = [], isLoading } = useBookProducts(slug, isOpen)
+export default function AddToCartModal({ editions, titleName, authorNames, coverUrl, isOpen, onClose }: Props) {
   const { addItem } = useCart()
   const { cartSuccess } = useToast()
   const [quantities, setQuantities] = useState<Record<string, number>>({})
@@ -56,30 +57,30 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
     }
   }
 
-  function setQty(bookId: string, value: number) {
-    setQuantities((prev) => ({ ...prev, [bookId]: Math.max(0, value) }))
+  function setQty(editionId: string, value: number) {
+    setQuantities((prev) => ({ ...prev, [editionId]: Math.max(0, value) }))
   }
 
-  function getQty(book: Book) {
-    return quantities[book.id] ?? 0
+  function getQty(edition: BookEdition) {
+    return quantities[edition.id] ?? 0
   }
 
   const totalItems = Object.values(quantities).reduce((s, q) => s + q, 0)
-  const totalPrice = products.reduce((s, b) => s + (quantities[b.id] ?? 0) * b.price, 0)
+  const totalPrice = editions.reduce((s, e) => s + (quantities[e.id] ?? 0) * e.price, 0)
 
   function handleConfirm() {
-    for (const book of products) {
-      const qty = quantities[book.id] ?? 0
+    for (const edition of editions) {
+      const qty = quantities[edition.id] ?? 0
       if (qty <= 0) continue
       addItem(
         {
-          id: book.id,
-          name: book.name,
-          subtitle: CATEGORY_LABELS[book.category] ?? book.category,
-          price: book.price,
-          picture: book.coverUrl,
-          discount: book.discount,
-          category: book.category,
+          id: edition.id,
+          name: titleName,
+          subtitle: CATEGORY_LABELS[edition.category] ?? edition.category,
+          price: edition.price,
+          picture: coverUrl,
+          discount: edition.discount,
+          category: edition.category,
         },
         qty,
       )
@@ -96,13 +97,10 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
           <p className={styles.sectionLabel}>Выберите тип издания</p>
 
           <div className={styles.rows}>
-            {isLoading && (
-              <div className={styles.loading}>Загрузка...</div>
-            )}
-            {!isLoading && products.map((book) => (
+            {editions.map((edition) => (
               <div
-                key={book.id}
-                className={`${styles.row} ${!book.inStock ? styles.rowSoldOut : ''}`}
+                key={edition.id}
+                className={`${styles.row} ${!edition.inStock ? styles.rowSoldOut : ''}`}
               >
 
                 <div className={styles.itemAndStepper}>
@@ -110,27 +108,27 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
                   <div className={styles.itemAndLabel}>
 
                     <div className={styles.rowIcon}>
-                      <ProductTypeIcon category={book.category} size={52} />
+                      <ProductTypeIcon category={edition.category} size={52} />
                     </div>
 
                     <span className={styles.rowLabel}>
-                      {CATEGORY_LABELS[book.category] ?? book.category}
-                      {!book.inStock && (
+                      {CATEGORY_LABELS[edition.category] ?? edition.category}
+                      {!edition.inStock && (
                         <span className={styles.soldOutTag}>нет в наличии</span>
                       )}
                     </span>
 
                   </div>
 
-                  {DIGITAL_CATEGORIES.has(book.category) ? (
+                  {DIGITAL_CATEGORIES.has(edition.category) ? (
                     <button
                       type="button"
-                      className={`${styles.toggleBtn} ${getQty(book) > 0 ? styles.toggleBtnActive : ''}`}
-                      onClick={() => setQty(book.id, getQty(book) > 0 ? 0 : 1)}
-                      disabled={!book.inStock}
-                      aria-label={getQty(book) > 0 ? 'Убрать' : 'Добавить'}
+                      className={`${styles.toggleBtn} ${getQty(edition) > 0 ? styles.toggleBtnActive : ''}`}
+                      onClick={() => setQty(edition.id, getQty(edition) > 0 ? 0 : 1)}
+                      disabled={!edition.inStock}
+                      aria-label={getQty(edition) > 0 ? 'Убрать' : 'Добавить'}
                     >
-                      {getQty(book) > 0 ? (
+                      {getQty(edition) > 0 ? (
                         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
                           <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                         </svg>
@@ -141,18 +139,18 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
                       <button
                         type="button"
                         className={styles.stepperBtn}
-                        onClick={() => setQty(book.id, getQty(book) - 1)}
-                        disabled={!book.inStock || getQty(book) === 0}
+                        onClick={() => setQty(edition.id, getQty(edition) - 1)}
+                        disabled={!edition.inStock || getQty(edition) === 0}
                         aria-label="Уменьшить"
                       >
                         −
                       </button>
-                      <span className={styles.stepperVal}>{getQty(book)}</span>
+                      <span className={styles.stepperVal}>{getQty(edition)}</span>
                       <button
                         type="button"
                         className={styles.stepperBtn}
-                        onClick={() => setQty(book.id, getQty(book) + 1)}
-                        disabled={!book.inStock}
+                        onClick={() => setQty(edition.id, getQty(edition) + 1)}
+                        disabled={!edition.inStock}
                         aria-label="Увеличить"
                       >
                         +
@@ -164,10 +162,10 @@ export default function AddToCartModal({ slug, titleName, authorNames, isOpen, o
 
 
                 <div className={styles.rowPrices}>
-                  {book.originalPrice && (
-                    <span className={styles.rowOriginalPrice}>{formatPrice(book.originalPrice)}</span>
+                  {edition.originalPrice && (
+                    <span className={styles.rowOriginalPrice}>{formatPrice(edition.originalPrice)}</span>
                   )}
-                  <span className={styles.rowPrice}>{formatProductPrice(book.price)}</span>
+                  <span className={styles.rowPrice}>{formatProductPrice(edition.price)}</span>
                 </div>
               </div>
             ))}
