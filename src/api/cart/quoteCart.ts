@@ -19,11 +19,8 @@ function readNumber(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : 0
 }
 
-export async function getCartQuote(): Promise<CartQuote> {
-  const supabase = createClient()
-  const { data, error } = await supabase.rpc('quote_cart')
-  if (error) throw new Error(`Не удалось рассчитать корзину: ${error.message}`)
-
+// Shared by the browser getCartQuote and the server getCartQuoteServer.
+export function parseCartQuote(data: unknown): CartQuote {
   if (typeof data !== 'object' || data === null || Array.isArray(data)) return EMPTY_QUOTE
   const q = data as Record<string, unknown>
   return {
@@ -32,4 +29,11 @@ export async function getCartQuote(): Promise<CartQuote> {
     total: readNumber(q.total),
     giftCardEligibleTotal: readNumber(q.giftCardEligibleTotal),
   }
+}
+
+export async function getCartQuote(): Promise<CartQuote> {
+  const supabase = createClient()
+  const { data, error } = await supabase.rpc('quote_cart')
+  if (error) throw new Error(`Не удалось рассчитать корзину: ${error.message}`)
+  return parseCartQuote(data)
 }
