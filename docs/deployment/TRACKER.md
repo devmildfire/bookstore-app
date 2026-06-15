@@ -91,7 +91,11 @@ Status legend:
 - [~] Add post-deploy smoke checks. (Workflow prints `docker compose ps app`. A real HTTP check is deferred — SSR 500s until the tunnel (#2) makes `api.mildfire.dev` reachable.)
 - [x] Document rollback command. (See below.)
 
-**First production deploy succeeded 2026-06-15** (build+push 7m17s, SSH roll 21s). App container runs the GHCR image; Next.js Ready. Homepage SSR currently returns 500 → Cloudflare **522** because the server calls `https://api.mildfire.dev` and the **tunnel isn't up yet** (#2). Expected; resolves once the tunnel is live. (Open optimization for #2: point the *server-side* Supabase client at internal `http://kong:8000` to avoid a public hairpin on every SSR call; the browser keeps the public URL.)
+**First production deploy succeeded 2026-06-15** (build+push 7m17s, SSH roll 21s). App container runs the GHCR image; Next.js Ready.
+
+**SSR hairpin fixed 2026-06-15** — server-side reads/auth now use `SUPABASE_INTERNAL_URL=http://kong:8000` (compose default) instead of the public host; `createAdminClient` stays public for browser-facing signed URLs. Homepage SSR **7.4 s → ~1.2 s** (book page 0.75 s), logs clean.
+
+**Deploy model caveat:** the workflow only rolls the app **image** (`compose pull app && up -d app`); it does NOT sync `/opt/chtivo` infra files. Changes to `docker-compose.yml`/`.env`/`nginx`/`volumes` must be synced by hand (`git archive HEAD:deploy/production | ssh … tar -x -C /opt/chtivo` → `docker compose up -d <svc>`). See `deploy/production/README.md` → "Deploy model".
 
 **Rollback:** images are tagged with the immutable git sha. To roll back, on the VPS edit `/opt/chtivo/.env` `APP_IMAGE=ghcr.io/devmildfire/bookstore-app:<previous-sha>` then `docker compose up -d app` — or re-run the deploy workflow from the known-good commit.
 

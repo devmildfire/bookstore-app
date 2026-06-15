@@ -18,6 +18,27 @@ Browser → Cloudflare (DNS/TLS/WAF) → Tunnel → cloudflared → nginx ┬─
 - `volumes/db/post-restore-grants.sql` — security re-grant pass; run after **every** restore (last).
 - `volumes/api/kong.yml` — minimal static API gateway config (routes + CORS), mounted read-only.
 
+## Deploy model — code is automated, infra is manual
+The GitHub Actions workflow (`.github/workflows/deploy-production.yml`, on push to
+`production`) **only rolls the app image**: it builds + pushes the GHCR image, then SSHes
+in and runs `docker compose pull app && docker compose up -d app`. It does **not** touch
+the files in `/opt/chtivo`.
+
+So changes to **`docker-compose.yml`, `.env`, `nginx/`, `volumes/`** are NOT picked up by a
+normal deploy — they must be synced to the VPS by hand, then the affected service recreated:
+
+```bash
+# From the repo (syncs all tracked deploy/ files; the gitignored .env is left untouched):
+git archive --format=tar HEAD:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'
+# Then recreate whatever changed, e.g.:
+ssh portfolio-vps 'cd /opt/chtivo && docker compose up -d app'
+```
+
+`.env` itself is never in git — edit `/opt/chtivo/.env` directly on the VPS and
+`docker compose up -d <service>` to apply. (This split is deliberate: image rolls are
+frequent + safe to automate; infra changes are rare and shouldn't restart the DB/auth on
+every code deploy.)
+
 ## Version pinning rationale
 Stateful services whose migration state is inside the restored dump are pinned to the
 **exact local versions**: `postgres 17.6.1.106`, `gotrue v2.188.1`, `storage-api v1.54.1`.
