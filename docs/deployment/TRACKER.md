@@ -100,8 +100,8 @@ Status legend:
 - [x] Confirm no public service ports besides SSH/HTTP/HTTPS. (2026-06-15: no chtivo container publishes to the host — all ports are docker-network-only.)
 - [x] Confirm Postgres is not public. (db `5432/tcp` exposed on the docker network only, no host mapping.)
 - [x] Confirm Studio is not public. (No nginx route, no host port; SSH tunnel only.)
-- [ ] Configure Nginx real visitor IP from Cloudflare ranges.
-- [ ] Tighten UFW 80/443 to Cloudflare ranges or replace with Tunnel/Auth Origin Pulls.
+- [x] Configure Nginx real visitor IP. (nginx `app.conf` reads `CF-Connecting-IP`, trusting only the private docker net — cloudflared is the sole client.)
+- [x] Tighten UFW 80/443 — replaced with Tunnel. (2026-06-15: deleted the `80/tcp` + `443/tcp` allow rules, v4+v6; UFW now allows OpenSSH only. Cloudflare Tunnel is the sole ingress, no inbound web ports. Site stays live; SSH intact.)
 - [ ] Add Cloudflare WAF verified-bot skip rule.
 - [ ] Add Cloudflare WAF challenge rules gradually.
 - [ ] Keep Bot Fight Mode off unless tested.
