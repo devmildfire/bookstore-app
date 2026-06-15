@@ -79,21 +79,21 @@ Status legend:
 
 ## 5. GitHub Actions / CI/CD
 
-- [ ] Create `master` integration branch if needed.
-- [ ] Create `production` deploy branch.
-- [ ] Add CI workflow for PRs/pushes to `master`.
-- [ ] Add production image workflow for `production`.
-- [ ] Publish app images to GHCR.
-- [ ] Add dedicated GitHub Actions deploy SSH key.
-- [ ] Add GitHub secrets:
-  - [ ] `VPS_HOST`
-  - [ ] `VPS_USER`
-  - [ ] `VPS_SSH_KEY`
-  - [ ] `VPS_SSH_PORT`
-- [ ] Decide image tag injection strategy.
-- [ ] Add VPS deploy workflow.
-- [ ] Add post-deploy smoke checks.
-- [ ] Document rollback command.
+- [x] Integration/trunk branch. (`update` is the de-facto trunk — 1864 commits ahead of the stale `main`. No separate `master` created; `production` branches from `update`.)
+- [x] Create `production` deploy branch. (Created from `update` HEAD 2026-06-15; push to it triggers the deploy workflow.)
+- [x] Add CI workflow for PRs/pushes. (Existing `docker-publish.yml` runs lint + build on `update`/`main`/`staging` + PRs.)
+- [x] Add production image workflow for `production`. (`.github/workflows/deploy-production.yml`: push to `production` or manual dispatch.)
+- [x] Publish app images to GHCR. (`ghcr.io/devmildfire/bookstore-app:production` + `:<sha>`, public — VPS pulls anonymously.)
+- [x] Add dedicated GitHub Actions deploy SSH key. (ed25519 `github-actions-deploy@chtivo`, authorized on VPS `deploy`; private key in `VPS_SSH_KEY` secret only.)
+- [x] Add GitHub secrets: `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_SSH_PORT` (+ `NEXT_PUBLIC_SUPABASE_ANON_KEY` secret + `NEXT_PUBLIC_SUPABASE_URL` variable).
+- [x] Decide image tag injection strategy. (`:production` rolling tag the compose pulls + immutable `:<git-sha>` for rollback.)
+- [x] Add VPS deploy workflow. (SSH → `cd /opt/chtivo && docker compose pull app && up -d app && image prune`.)
+- [~] Add post-deploy smoke checks. (Workflow prints `docker compose ps app`. A real HTTP check is deferred — SSR 500s until the tunnel (#2) makes `api.mildfire.dev` reachable.)
+- [x] Document rollback command. (See below.)
+
+**First production deploy succeeded 2026-06-15** (build+push 7m17s, SSH roll 21s). App container runs the GHCR image; Next.js Ready. Homepage SSR currently returns 500 → Cloudflare **522** because the server calls `https://api.mildfire.dev` and the **tunnel isn't up yet** (#2). Expected; resolves once the tunnel is live. (Open optimization for #2: point the *server-side* Supabase client at internal `http://kong:8000` to avoid a public hairpin on every SSR call; the browser keeps the public URL.)
+
+**Rollback:** images are tagged with the immutable git sha. To roll back, on the VPS edit `/opt/chtivo/.env` `APP_IMAGE=ghcr.io/devmildfire/bookstore-app:<previous-sha>` then `docker compose up -d app` — or re-run the deploy workflow from the known-good commit.
 
 ## 6. Security Hardening After App Works
 
