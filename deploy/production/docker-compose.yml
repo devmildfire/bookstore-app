@@ -43,6 +43,11 @@ services:
       NODE_ENV: production
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
       NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      # Server-side reads/auth hit kong directly over the docker network instead of
+      # hairpinning out to the public api.mildfire.dev → Cloudflare → tunnel. The
+      # browser still uses NEXT_PUBLIC_SUPABASE_URL; signed/public storage URLs
+      # (createAdminClient) deliberately stay on the public URL.
+      SUPABASE_INTERNAL_URL: ${SUPABASE_INTERNAL_URL:-http://kong:8000}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SEND_EMAIL_HOOK_SECRET: ${SEND_EMAIL_HOOK_SECRET}

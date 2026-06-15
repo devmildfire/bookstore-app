@@ -35,7 +35,10 @@ export async function proxy(request: NextRequest) {
   }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // Per-request session refresh — use the internal kong URL when set so this
+    // doesn't hairpin out to the public host on every request. Falls back to the
+    // public URL (local dev, or if the var isn't available in this runtime).
+    process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {

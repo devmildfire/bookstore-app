@@ -3,12 +3,23 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
 
+// Base URL for server-side Supabase API calls. In production the app container
+// reaches kong directly over the docker network (SUPABASE_INTERNAL_URL =
+// http://kong:8000) instead of hairpinning out to the public api.mildfire.dev →
+// Cloudflare → tunnel and back. Falls back to the public URL when unset (local
+// dev, or any path where the internal hostname isn't resolvable).
+//
+// NOTE: only for clients that *fetch data / manage auth* server-side.
+// createAdminClient stays on the PUBLIC url below — its createSignedUrl results
+// are handed to the browser and must be publicly reachable.
+const SERVER_SUPABASE_URL = process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!
+
 // Auth client — uses SSR for cookie-based session management (Server Components & Server Actions)
 export async function createClient() {
   const cookieStore = await cookies()
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    SERVER_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
@@ -47,7 +58,7 @@ export async function createClient() {
 // Data client — uses anon key directly, no session management (for data fetching only)
 export function createDataClient() {
   return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    SERVER_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       auth: {

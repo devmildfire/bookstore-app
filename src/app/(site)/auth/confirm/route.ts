@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
   const response = NextResponse.redirect(new URL(safeNext, request.url))
 
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // Server-side token verification — internal kong URL when set (no hairpin).
+    process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
