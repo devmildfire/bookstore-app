@@ -110,12 +110,12 @@ Status legend:
 
 ## 7. Launch Gate
 
-- [ ] `https://bookstore-app.mildfire.dev` loads app.
-- [ ] `https://api.mildfire.dev` serves Supabase API/Auth/Storage through Nginx.
+- [x] `https://bookstore-app.mildfire.dev` loads app. (2026-06-15: 200, full SSR HTML ~2.38 MB, via Cloudflare Tunnel → nginx → app.)
+- [x] `https://api.mildfire.dev` serves Supabase API/Auth/Storage through Nginx. (auth health 200, REST `/Titles` 206/69, public cover 200 — all via the tunnel.)
 - [ ] Browser anonymous sign-in works.
 - [ ] Admin login works.
 - [ ] Admin role works.
-- [ ] Public storage media loads.
+- [x] Public storage media loads. (`/storage/v1/object/public/covers/...` → 200 image/jpeg via api.mildfire.dev.)
 - [ ] Private/signed storage access works.
 - [ ] Avatar upload works.
 - [ ] Story submission upload works.
