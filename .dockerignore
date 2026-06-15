@@ -1,1 +1,23 @@
+# Keep the build context lean and never bake secrets/data into the image.
 **/node_modules
+.next
+.git
+.gitignore
+
+# Secrets / local env — NEXT_PUBLIC_* are passed as build args in CI instead.
+.env
+.env.*
+
+# Data + ops artifacts that must never enter the image layers.
+backups
+deploy
+supabase/migrations_archive
+.claude
+
+# Docs / CI / editor cruft not needed to build the app.
+docs
+*.md
+.github
+.vscode
+.idea
+npm-debug.log*
