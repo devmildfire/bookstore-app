@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import { resend, DEFAULT_FROM } from './resend'
+import { getResend, DEFAULT_FROM } from './resend'
 
 interface SendEmailArgs {
   to: string | string[]
@@ -18,7 +18,7 @@ interface SendEmailArgs {
  * Returns the Resend message id on success.
  */
 export async function sendEmail({ to, subject, react, from = DEFAULT_FROM, replyTo }: SendEmailArgs): Promise<string> {
-  const { data, error } = await resend.emails.send({ from, to, subject, react, replyTo })
+  const { data, error } = await getResend().emails.send({ from, to, subject, react, replyTo })
   if (error) throw new Error(`Resend send failed: ${error.message}`)
   if (!data?.id) throw new Error('Resend send returned no message id')
   return data.id
