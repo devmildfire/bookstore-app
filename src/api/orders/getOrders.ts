@@ -1,7 +1,9 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { normalizeOrder } from '@/entities/order/normalize'
 import { getCoverUrl, getGiftCardImageUrl, getSubscriptionImageUrl } from '@/lib/storage'
 import { ABZAC_COURSE } from '@/consts/abzacCourse'
+import type { Database } from '@/types/supabase'
 import type { Order } from '@/entities/order/client'
 import type { OrderItemServerRow, OrderServerRow } from '@/entities/order/server'
 
@@ -33,7 +35,7 @@ type Enriched = { coverUrl: string | null; titleSlug: string | null }
 // Paid orders only. This is the ownership source for the library ("Мои книги")
 // and courses — an unpaid order must never grant access to its items.
 export async function getOrders(): Promise<Order[]> {
-  return loadOrders(['paid'])
+  return loadOrders(createClient(), ['paid'])
 }
 
 // Full order history for the cabinet's "Заказы" view, INCLUDING unpaid
@@ -41,12 +43,16 @@ export async function getOrders(): Promise<Order[]> {
 // must still see the order exists and that it is NOT paid — otherwise they may
 // assume the purchase went through. Never feed this into the library views.
 export async function getOrderHistory(): Promise<Order[]> {
-  return loadOrders(null)
+  return loadOrders(createClient(), null)
 }
 
-async function loadOrders(statuses: readonly string[] | null): Promise<Order[]> {
-  const supabase = createClient()
-
+// Client-agnostic core — takes the Supabase client so it can run with the
+// browser client (getOrders/getOrderHistory) or the cookie-based server client
+// (getOrdersServer/getOrderHistoryServer, for prefetch + hydrate).
+export async function loadOrders(
+  supabase: SupabaseClient<Database>,
+  statuses: readonly string[] | null
+): Promise<Order[]> {
   // Resolve the current user explicitly and filter by user_id in the
   // WHERE clause as defense-in-depth. RLS on Orders / OrderItems also
   // enforces this (migration 20260522130000), but a future regression
@@ -115,7 +121,7 @@ async function loadOrders(statuses: readonly string[] | null): Promise<Order[]> 
 // query for Titles, no matter how many items. Gift card items are
 // resolved separately against GiftCardProducts.
 async function fetchItemEnrichments(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient<Database>,
   items: OrderItemServerRow[]
 ): Promise<Map<number, Enriched>> {
   const byEdition = new Map<number, number[]>() // editionId → itemIds

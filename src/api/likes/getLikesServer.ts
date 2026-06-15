@@ -4,6 +4,21 @@ import { normalizeBoxSet } from '@/entities/boxSet/normalize'
 import type { Book } from '@/entities/book/client'
 import type { BoxSet } from '@/entities/boxSet/client'
 import type { BoxSetRow } from '@/entities/boxSet/server'
+import type { LikeItemType } from './types'
+
+// Server counterpart of getLikedIds, for prefetch + hydrate in the (site)
+// layout so every card's LikeButton has its filled/outlined state at first
+// paint (no per-page Likes round-trip). Same queryKey as the browser version.
+export async function getLikedIdsServer(type: LikeItemType): Promise<Set<number>> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('Likes')
+    .select('item_id')
+    .eq('item_type', type)
+
+  if (error) throw new Error(error.message)
+  return new Set((data ?? []).map((row) => row.item_id))
+}
 
 // Server-side counterparts of getLikedTitles / getLikedBoxSets (the favorites
 // page renders server-side now — no client useQuery on mount). They use the
