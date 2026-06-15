@@ -44,18 +44,18 @@ Status legend:
 - [x] Remove production `basePath` and `assetPrefix`.
 - [x] Add `api.mildfire.dev` to Next image remote patterns.
 - [x] Verify `npm run build` succeeds.
-- [ ] Add production Docker Compose definitions.
-- [ ] Add production Nginx routing for `bookstore-app.mildfire.dev`.
-- [ ] Add production Nginx routing for `api.mildfire.dev`.
-- [ ] Define production env variables.
+- [~] Add production Docker Compose definitions. (Draft `deploy/production/docker-compose.yml` — full stack, Tunnel model, `docker compose config` validates. Needs local rehearsal.)
+- [~] Add production Nginx routing for `bookstore-app.mildfire.dev`. (Draft `deploy/production/nginx/conf.d/app.conf`.)
+- [~] Add production Nginx routing for `api.mildfire.dev`. (Same file; Kong upstream + websocket + upload limits.)
+- [~] Define production env variables. (`deploy/production/.env.example` — fresh-key generation documented.)
 - [ ] Verify app image runs locally or on VPS.
 
 ## 4. Supabase Production Bootstrap
 
-- [ ] Create production Supabase compose file.
-- [ ] Pin Supabase images to local versions.
-- [ ] Decide production container names.
-- [ ] Keep Studio private/no public route.
+- [~] Create production Supabase compose file. (In `deploy/production/docker-compose.yml`; draft, pending rehearsal.)
+- [x] Pin Supabase images to local versions. (Stateful: postgres 17.6.1.106 / gotrue v2.188.1 / storage v1.54.1 / realtime v2.86.3; stateless on tested official versions.)
+- [x] Decide production container names. (Compose project `chtivo`; services db/auth/rest/realtime/storage/meta/studio/kong/app/nginx/cloudflared.)
+- [x] Keep Studio private/no public route. (Studio has no nginx route + no host port; SSH tunnel only.)
 - [x] Discover local storage volume/path. (Docker volume `supabase_storage_chtivo-next`, mount `/mnt`, layout `/mnt/stub/stub/<bucket>/<key>/<version-uuid>`, ~1.0 GB / 572 files. Archive verbatim via throwaway container; keep DB dump + storage archive a consistent pair.)
 - [x] Clean local test orders/data. (Truncated Orders/OrderItems/OGCApps/Cart/CartPromo/GiftCards/UserSubscriptions + AdminAuditLog + Subscribers; deleted 110 non-admin auth users incl. anon. Pre-cleanup safety dump kept.)
 - [x] Create/verify production admin auth user locally. (Only `chtivoadmin@example.com` remains — password `<admin-password>`, email identity intact for password login.)
@@ -63,8 +63,8 @@ Status legend:
 - [x] Run RLS drift check. (`scripts/check-rls.mjs` → OK.)
 - [x] Export local full DB dump. (`backups/chtivo-local-full-20260615-122233.dump` (custom, for pg_restore) + `.sql` inspection. 1 auth user, 414 storage.objects rows, 150 editions.)
 - [x] Export local storage object archive. (`backups/chtivo-local-storage-20260615-122233.tar.gz`, ~1.0 GB / 572 file blobs — **consistent pair** with the DB dump above; do not regenerate separately.)
-- [ ] Transfer DB dump to VPS.
-- [ ] Transfer storage archive to VPS.
+- [x] Transfer DB dump to VPS. (`~/chtivo-bootstrap/chtivo-local-full-20260615-122233.dump`.)
+- [x] Transfer storage archive to VPS. (`~/chtivo-bootstrap/chtivo-local-storage-20260615-122233.tar.gz`, sha256 verified equal.)
 - [ ] Start production Supabase stack on VPS.
 - [ ] Restore DB dump into production DB.
 - [ ] Restore storage objects.

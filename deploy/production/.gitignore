@@ -1,0 +1,7 @@
+# Never commit real secrets or transferred data artifacts.
+.env
+*.dump
+*.sql
+*.tar.gz
+volumes/db/data/
+volumes/storage/
