@@ -14,14 +14,17 @@ Browser → Cloudflare (DNS/TLS/WAF) → Tunnel → cloudflared → nginx ┬─
 - `docker-compose.yml` — the full stack (Supabase trimmed + app + nginx + cloudflared).
 - `.env.example` — copy to `.env` on the VPS, fill real values, `chmod 600`. Never commit `.env`.
 - `nginx/conf.d/app.conf` — Host-based routing, real visitor IP, websocket + upload limits.
-- `volumes/db/*.sql` — first-init scripts (role passwords from `POSTGRES_PASSWORD`, JWT GUCs, realtime/webhooks).
-- `volumes/api/kong.yml`, `kong-entrypoint.sh` — Supabase API gateway routes (env-templated keys).
+- `volumes/db/*.sql` — first-init scripts (role passwords from `POSTGRES_PASSWORD`, JWT GUCs, webhooks).
+- `volumes/db/post-restore-grants.sql` — security re-grant pass; run after **every** restore (last).
+- `volumes/api/kong.yml` — minimal static API gateway config (routes + CORS), mounted read-only.
 
 ## Version pinning rationale
 Stateful services whose migration state is inside the restored dump are pinned to the
-**exact local versions**: `postgres 17.6.1.106`, `gotrue v2.188.1`, `storage-api v1.54.1`,
-`realtime v2.86.3`. The dump is Postgres 17 — it will **not** restore into Postgres 15.
-Stateless services (kong/rest/meta/studio) use tested official versions.
+**exact local versions**: `postgres 17.6.1.106`, `gotrue v2.188.1`, `storage-api v1.54.1`.
+The dump is Postgres 17 — it will **not** restore into Postgres 15. Stateless services
+(kong/rest/meta/studio) use tested official versions. **Realtime is not deployed** (the app
+uses none); Kong runs `kong/kong:3.9.1` with a minimal static config, not the Supabase Kong
+image.
 
 ## ⚠️ Generate FRESH production secrets (do NOT reuse local)
 The local dev stack uses the **public Supabase demo keys** (`…supabase-demo…` JWTs,
@@ -40,39 +43,52 @@ Token-based tunnel: create it in Zero Trust → Networks → Tunnels, put the to
 With the tunnel live, **close public 80/443 in UFW** (only SSH stays open) — the origin is
 no longer directly reachable.
 
-## Bootstrap restore (uses the staged pair in `~/chtivo-bootstrap`)
-The consistent dump+storage pair is already on the VPS at `/home/deploy/chtivo-bootstrap/`
-(`chtivo-local-full-20260615-122233.dump`, `chtivo-local-storage-20260615-122233.tar.gz`).
+## Bootstrap restore (rehearsed locally end-to-end 2026-06-15)
+Full sequence + rationale: [docs/deployment/supabase-production-bootstrap.md](../../docs/deployment/supabase-production-bootstrap.md#production-restore).
 
-1. `cp -r` this directory to `/opt/chtivo`, create `.env`, `docker compose up -d db` (let it
-   first-init: roles.sql sets role passwords).
-2. Restore the DB into the fresh `db`:
+> ⚠️ **Re-stage the corrected pair first.** The originally-staged files in
+> `~/chtivo-bootstrap/` are **both wrong** and must be replaced:
+> - DB dump `…-122233.dump` was made with `--no-owner --no-privileges` → breaks the Storage
+>   API. Use **`chtivo-local-full-20260615-owned.dump`** (dumped with ownership + privileges).
+> - Storage `…-122233.tar.gz` has **no xattrs** → every object GET 500s. Use
+>   **`chtivo-local-storage-20260615-140111-xattrs.tar.gz`** (created with `--xattrs`).
+
+1. `cp -r` the bundle to `/opt/chtivo`, create `.env` (`chmod 600`), `docker compose up -d db`
+   (let it first-init: `roles.sql` sets role passwords).
+2. Restore the DB into the fresh `db` — **as `supabase_admin`, with owners/privileges**:
    ```bash
-   cat ~/chtivo-bootstrap/chtivo-local-full-20260615-122233.dump | \
-     docker compose exec -T db pg_restore -U postgres -d postgres \
-       --clean --if-exists --no-owner --no-privileges
+   cat ~/chtivo-bootstrap/chtivo-local-full-20260615-owned.dump | \
+     docker compose exec -T db pg_restore -U supabase_admin -d postgres --clean --if-exists
    ```
-3. Restore storage into the `chtivo_storage-data` volume **before** starting `storage`:
+   (Benign: `role "supabase_realtime_admin" does not exist` + one `graphql` grant.)
+3. Re-apply the security grants (**last**, after the final restore):
+   ```bash
+   docker compose exec -T db psql -U supabase_admin -d postgres \
+     -v ON_ERROR_STOP=1 -f - < volumes/db/post-restore-grants.sql
+   ```
+4. Restore storage into the `chtivo_storage-data` volume **before** starting `storage`,
+   **with xattrs**:
    ```bash
    docker run --rm -v chtivo_storage-data:/to -v ~/chtivo-bootstrap:/from:ro \
-     alpine sh -c 'cd /to && tar xzf /from/chtivo-local-storage-20260615-122233.tar.gz'
+     alpine sh -c 'apk add -q tar attr gzip && cd /to && \
+       tar --xattrs --xattrs-include="user.*" -xzf /from/chtivo-local-storage-20260615-140111-xattrs.tar.gz'
    ```
-4. `docker compose up -d` (rest of the stack), then smoke-test via `api.mildfire.dev` and
+5. `docker compose up -d` (rest of the stack), then smoke-test via `api.mildfire.dev` and
    `bookstore-app.mildfire.dev`. Admin login: `chtivoadmin@example.com` / `<admin-password>`.
 
-## ⛔ NOT YET REHEARSED — verify locally before trusting this
-This draft has not been brought up end-to-end. Rehearse on the local machine with the
-pinned images + the dump, and confirm:
-- **DB restore + roles**: after `db` first-init (`roles.sql`) + `pg_restore --no-owner
-  --no-privileges`, do `auth`/`storage`/`rest` connect, and do RLS policies referencing
-  `anon`/`authenticated`/`service_role` still work? (Grants were stripped by
-  `--no-privileges` — may need a re-grant pass, or restore with privileges.)
-- **Storage layout**: does `storage-api v1.54.1` with `FILE_STORAGE_BACKEND_PATH=/mnt` +
-  `GLOBAL_S3_BUCKET=stub` resolve the restored `/mnt/stub/stub/<bucket>/...` files?
-- **Kong**: `kong/kong:3.9.1` + the env-templated `kong.yml` serve `/auth /rest /storage
-  /realtime` with the fresh keys.
-- **Send-email hook**: `GOTRUE_HOOK_SEND_EMAIL_URI=http://app:3000/...` reaches the app and
-  the Standard-Webhooks signature verifies with the prod `SEND_EMAIL_HOOK_SECRET`.
+## ✅ Rehearsed locally — what was verified
+Stood the whole compose up locally (tunnel disabled, temp host port `8088` on nginx),
+restored the pair, fixed every break. Confirmed through nginx (`Host: api.mildfire.dev`):
+- **DB restore + roles**: restore as `supabase_admin` with owners/privileges; `auth` /
+  `storage` / `rest` all connect; post-restore-grants re-locks anon writes + the admin RPC.
+- **REST**: `/rest/v1/Titles` → 206, 69 titles (PostgREST must start *after* the restore).
+- **Storage**: public cover → 200 `image/jpeg` (xattr-restored content-type); anon GET on a
+  private `digital-files` object → 400 (RLS); `service_role` signs a URL → fetch 200
+  `application/pdf` 11.7 MB.
+- **Auth**: `/auth/v1/health` → 200 (GoTrue v2.188.1); send-email hook URI uses the public
+  `https` base (GoTrue rejects non-loopback `http`).
+- **Kong**: minimal static `kong.yml` (routes + CORS) serves `/auth /rest /storage`.
+- **nginx**: resolver + variable upstreams; bad `Host` → `444`.
 
-Recommended: stand the whole compose up locally (override the tunnel with a temporary host
-port on nginx), restore the pair, fix what breaks, THEN deploy the verified config.
+Still unverified locally (needs the built app image — CI/CD builds it; prod will have it):
+the app container itself, OAuth, checkout/payment, and the live send-email hook signature.

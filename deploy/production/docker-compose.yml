@@ -61,19 +61,14 @@ services:
     restart: unless-stopped
     environment:
       KONG_DATABASE: "off"
+      # Static declarative config (no env templating); mounted read-only.
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
       KONG_DNS_ORDER: LAST,A,CNAME
-      KONG_PLUGINS: request-transformer,cors,key-auth,acl
+      KONG_PLUGINS: cors
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-      SUPABASE_ANON_KEY: ${ANON_KEY}
-      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
-      DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
-      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
     volumes:
-      - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
-      - ./volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro
-    entrypoint: ["/bin/sh", "/home/kong/kong-entrypoint.sh"]
+      - ./volumes/api/kong.yml:/home/kong/kong.yml:ro
     depends_on:
       auth: { condition: service_healthy }
       rest: { condition: service_started }
@@ -121,7 +116,7 @@ services:
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
       # Send-Email hook → the Next.js app (internal docker DNS), renders + sends via Resend.
       GOTRUE_HOOK_SEND_EMAIL_ENABLED: "true"
-      GOTRUE_HOOK_SEND_EMAIL_URI: http://app:3000/api/auth/hooks/send-email
+      GOTRUE_HOOK_SEND_EMAIL_URI: ${NEXT_PUBLIC_BASE_URL}/api/auth/hooks/send-email
       GOTRUE_HOOK_SEND_EMAIL_SECRETS: ${SEND_EMAIL_HOOK_SECRET}
 
   # ── PostgREST (stateless) ──────────────────────────────────────────────────────
@@ -140,29 +135,9 @@ services:
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
     command: ["postgrest"]
 
-  # ── Realtime (STATEFUL: pinned to local; creates _realtime schema) ─────────────
-  realtime:
-    image: public.ecr.aws/supabase/realtime:v2.86.3
-    restart: unless-stopped
-    depends_on:
-      db: { condition: service_healthy }
-    environment:
-      PORT: 4000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: supabase_admin
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: ${POSTGRES_DB}
-      DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
-      DB_ENC_KEY: supabaserealtime
-      API_JWT_SECRET: ${JWT_SECRET}
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-      ERL_AFLAGS: -proto_dist inet_tcp
-      DNS_NODES: "''"
-      RLIMIT_NOFILE: "10000"
-      APP_NAME: realtime
-      SEED_SELF_HOST: "true"
-      RUN_JANITOR: "true"
+  # Realtime: intentionally omitted — the app does not use Supabase realtime
+  # subscriptions (no .channel()/postgres_changes anywhere). Dropping it also avoids
+  # the supabase_realtime_admin role that the self-host postgres image doesn't create.
 
   # ── Storage (STATEFUL: pinned to local). Env MIRRORS local so the restored ──────
   #    /mnt/stub/stub/<bucket>/<key>/<version> files resolve. Image transforms off
@@ -174,7 +149,8 @@ services:
       db: { condition: service_healthy }
       rest: { condition: service_started }
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/status"]
+      # 127.0.0.1 not localhost: storage binds IPv4 only; localhost → ::1 first → refused.
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5000/status"]
       timeout: 5s
       interval: 5s
       retries: 5

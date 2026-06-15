@@ -1,7 +1,9 @@
 # Never commit real secrets or transferred data artifacts.
 .env
 *.dump
-*.sql
 *.tar.gz
+# Ignore stray SQL dumps at this dir root, but KEEP the tracked DB init + restore
+# scripts under volumes/db/ (roles/jwt/webhooks/realtime/post-restore-grants).
+/*.sql
 volumes/db/data/
 volumes/storage/

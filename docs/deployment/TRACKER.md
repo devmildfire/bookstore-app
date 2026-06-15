@@ -44,15 +44,17 @@ Status legend:
 - [x] Remove production `basePath` and `assetPrefix`.
 - [x] Add `api.mildfire.dev` to Next image remote patterns.
 - [x] Verify `npm run build` succeeds.
-- [~] Add production Docker Compose definitions. (Draft `deploy/production/docker-compose.yml` — full stack, Tunnel model, `docker compose config` validates. Needs local rehearsal.)
-- [~] Add production Nginx routing for `bookstore-app.mildfire.dev`. (Draft `deploy/production/nginx/conf.d/app.conf`.)
-- [~] Add production Nginx routing for `api.mildfire.dev`. (Same file; Kong upstream + websocket + upload limits.)
-- [~] Define production env variables. (`deploy/production/.env.example` — fresh-key generation documented.)
-- [ ] Verify app image runs locally or on VPS.
+- [x] Add production Docker Compose definitions. (`deploy/production/docker-compose.yml` — full stack, Tunnel model; **rehearsed locally end-to-end 2026-06-15**. Realtime dropped; Kong → minimal static config; storage healthcheck → 127.0.0.1.)
+- [x] Add production Nginx routing for `bookstore-app.mildfire.dev`. (`deploy/production/nginx/conf.d/app.conf` — resolver + variable upstream, survives app redeploys.)
+- [x] Add production Nginx routing for `api.mildfire.dev`. (Same file; Kong upstream + websocket + upload limits. Verified via `localhost:8088`.)
+- [~] Define production env variables. (`deploy/production/.env.example` — fresh-key generation documented; prod `.env` still to be filled with FRESH secrets on the VPS.)
+- [ ] Verify app image runs locally or on VPS. (Not yet built — nginx now tolerates its absence; CI/CD will build it.)
 
 ## 4. Supabase Production Bootstrap
 
-- [~] Create production Supabase compose file. (In `deploy/production/docker-compose.yml`; draft, pending rehearsal.)
+- [x] Create production Supabase compose file. (In `deploy/production/docker-compose.yml`; **rehearsed locally** — auth/rest/storage/kong all green through nginx.)
+- [x] Rehearse the bootstrap restore locally. (2026-06-15 — surfaced + fixed: restore as `supabase_admin` with owners/privileges; `post-restore-grants.sql` last; storage archive needs `tar --xattrs`; PostgREST starts after restore. Both staged bootstrap files re-created: `chtivo-local-full-20260615-owned.dump` + `chtivo-local-storage-20260615-140111-xattrs.tar.gz`.)
+- [ ] **Re-stage corrected pair to VPS** (replace the wrong `…-122233.*` files in `~/chtivo-bootstrap/` — owned dump + xattrs archive).
 - [x] Pin Supabase images to local versions. (Stateful: postgres 17.6.1.106 / gotrue v2.188.1 / storage v1.54.1 / realtime v2.86.3; stateless on tested official versions.)
 - [x] Decide production container names. (Compose project `chtivo`; services db/auth/rest/realtime/storage/meta/studio/kong/app/nginx/cloudflared.)
 - [x] Keep Studio private/no public route. (Studio has no nginx route + no host port; SSH tunnel only.)
