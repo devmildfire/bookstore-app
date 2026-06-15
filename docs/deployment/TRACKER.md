@@ -15,7 +15,8 @@ Status legend:
 - [x] Use local Supabase as launch source of truth.
 - [x] Include auth users in initial production dump.
 - [x] Clean local orders/test data before production dump.
-- [x] Keep/create only intended production admin user.
+- [x] Keep/create only intended production admin user. (Prod auth starts clean with ONLY `chtivoadmin@example.com`; all other/anon users removed locally before the dump.)
+- [x] Origin protection model: **Cloudflare Tunnel** (preferred — hides origin IP, no UFW Cloudflare-range upkeep). Compose/Nginx/firewall to be written for the tunnel model.
 - [x] Pin production Supabase images to current local versions for initial launch.
 - [x] Use GitHub Actions + GHCR for Next.js app deployment.
 - [x] Deploy from `production` branch.
@@ -56,12 +57,12 @@ Status legend:
 - [ ] Decide production container names.
 - [ ] Keep Studio private/no public route.
 - [x] Discover local storage volume/path. (Docker volume `supabase_storage_chtivo-next`, mount `/mnt`, layout `/mnt/stub/stub/<bucket>/<key>/<version-uuid>`, ~1.0 GB / 572 files. Archive verbatim via throwaway container; keep DB dump + storage archive a consistent pair.)
-- [ ] Clean local test orders/data.
-- [ ] Create/verify production admin auth user locally.
-- [ ] Verify admin app metadata role.
-- [ ] Run RLS drift check.
-- [ ] Export local full DB dump.
-- [ ] Export local storage object archive.
+- [x] Clean local test orders/data. (Truncated Orders/OrderItems/OGCApps/Cart/CartPromo/GiftCards/UserSubscriptions + AdminAuditLog + Subscribers; deleted 110 non-admin auth users incl. anon. Pre-cleanup safety dump kept.)
+- [x] Create/verify production admin auth user locally. (Only `chtivoadmin@example.com` remains — password `<admin-password>`, email identity intact for password login.)
+- [x] Verify admin app metadata role. (`app_metadata.role = admin`.)
+- [x] Run RLS drift check. (`scripts/check-rls.mjs` → OK.)
+- [x] Export local full DB dump. (`backups/chtivo-local-full-20260615-122233.dump` (custom, for pg_restore) + `.sql` inspection. 1 auth user, 414 storage.objects rows, 150 editions.)
+- [x] Export local storage object archive. (`backups/chtivo-local-storage-20260615-122233.tar.gz`, ~1.0 GB / 572 file blobs — **consistent pair** with the DB dump above; do not regenerate separately.)
 - [ ] Transfer DB dump to VPS.
 - [ ] Transfer storage archive to VPS.
 - [ ] Start production Supabase stack on VPS.
