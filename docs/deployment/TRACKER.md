@@ -65,16 +65,17 @@ Status legend:
 - [x] Run RLS drift check. (`scripts/check-rls.mjs` → OK.)
 - [x] Export local full DB dump. (`backups/chtivo-local-full-20260615-122233.dump` (custom, for pg_restore) + `.sql` inspection. 1 auth user, 414 storage.objects rows, 150 editions.)
 - [x] Export local storage object archive. (`backups/chtivo-local-storage-20260615-122233.tar.gz`, ~1.0 GB / 572 file blobs — **consistent pair** with the DB dump above; do not regenerate separately.)
-- [x] Transfer DB dump to VPS. (`~/chtivo-bootstrap/chtivo-local-full-20260615-122233.dump`.)
-- [x] Transfer storage archive to VPS. (`~/chtivo-bootstrap/chtivo-local-storage-20260615-122233.tar.gz`, sha256 verified equal.)
-- [ ] Start production Supabase stack on VPS.
-- [ ] Restore DB dump into production DB.
-- [ ] Restore storage objects.
-- [ ] Verify Supabase API/Auth/Storage/Realtime via `api.mildfire.dev`.
+- [x] Transfer DB dump to VPS. (**Corrected pair re-staged 2026-06-15**: `~/chtivo-bootstrap/chtivo-local-full-20260615-owned.dump` — dumped WITH ownership/privileges; sha256 verified. Old `…-122233.dump` removed.)
+- [x] Transfer storage archive to VPS. (`~/chtivo-bootstrap/chtivo-local-storage-20260615-140111-xattrs.tar.gz` — created with `tar --xattrs`; sha256 verified. Old `…-122233.tar.gz` removed.)
+- [x] Stage prod bundle + `.env` on VPS. (`git archive` → `/opt/chtivo`; `.env` (600) with FRESH secrets + signed anon/service JWTs. `RESEND_*`/`CLOUDFLARE_TUNNEL_TOKEN` still `__FILL__`. `deploy` added to `docker` group.)
+- [x] Start production Supabase stack on VPS. (db/auth/rest/storage/meta/kong/studio up + healthy. `app`+`cloudflared` deferred — need GHCR image + tunnel token. studio reports unhealthy: non-blocking, private/SSH-only.)
+- [x] Restore DB dump into production DB. (As `supabase_admin`, owners/privileges kept; 15 benign errors. Verified: 69 Titles, 150 Editions, 1 admin user `role=admin`, 414 storage.objects, 59 storage.migrations. post-restore-grants re-applied + verified locked.)
+- [x] Restore storage objects. (Extracted with `--xattrs` into `chtivo_storage-data`; 1.0 GB / 572 files, `user.supabase.*` xattrs verified.)
+- [x] Verify Supabase API/Auth/Storage via kong on VPS. (auth health 200, REST 69 titles, public cover 200, anon→private 400 (RLS), service_role signed fetch 200 PDF 11.7 MB. Full `api.mildfire.dev` path pending the tunnel.)
 - [ ] Verify Studio through SSH tunnel.
-- [ ] Create first production DB backup.
-- [ ] Create first production storage backup.
-- [ ] Copy backups offsite.
+- [x] Create first production DB backup. (`~/chtivo-backups/chtivo-prod-db-20260615-101234.dump`, 1.44 MB, custom format w/ ownership; TOC validated 1155 entries.)
+- [x] Create first production storage backup. (The bootstrap archive `…-140111-xattrs.tar.gz` IS the first storage backup — storage unchanged since restore, no writes yet.)
+- [ ] Copy backups offsite + move to `/backups/chtivo` (root-owned; needs sudo).
 
 ## 5. GitHub Actions / CI/CD
 
@@ -96,9 +97,9 @@ Status legend:
 
 ## 6. Security Hardening After App Works
 
-- [ ] Confirm no public service ports besides SSH/HTTP/HTTPS.
-- [ ] Confirm Postgres is not public.
-- [ ] Confirm Studio is not public.
+- [x] Confirm no public service ports besides SSH/HTTP/HTTPS. (2026-06-15: no chtivo container publishes to the host — all ports are docker-network-only.)
+- [x] Confirm Postgres is not public. (db `5432/tcp` exposed on the docker network only, no host mapping.)
+- [x] Confirm Studio is not public. (No nginx route, no host port; SSH tunnel only.)
 - [ ] Configure Nginx real visitor IP from Cloudflare ranges.
 - [ ] Tighten UFW 80/443 to Cloudflare ranges or replace with Tunnel/Auth Origin Pulls.
 - [ ] Add Cloudflare WAF verified-bot skip rule.
