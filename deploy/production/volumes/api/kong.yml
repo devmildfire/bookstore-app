@@ -21,7 +21,7 @@ services:
         config:
           origins: ["*"]
           methods: [GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS]
-          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Prefer, Range, X-Requested-With]
+          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Accept-Profile, Content-Profile, X-Retry-Count, Prefer, Range, Range-Unit, X-Requested-With]
           exposed_headers: [Content-Range, Content-Location]
           max_age: 3600
 
@@ -37,7 +37,7 @@ services:
         config:
           origins: ["*"]
           methods: [GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS]
-          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Prefer, Range, X-Requested-With]
+          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Accept-Profile, Content-Profile, X-Retry-Count, Prefer, Range, Range-Unit, X-Requested-With]
           exposed_headers: [Content-Range, Content-Location]
           max_age: 3600
 
@@ -53,6 +53,6 @@ services:
         config:
           origins: ["*"]
           methods: [GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS]
-          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Prefer, Range, X-Requested-With, Cache-Control, X-Upsert]
+          headers: [Accept, Authorization, Content-Type, apikey, x-client-info, x-supabase-api-version, Accept-Profile, Content-Profile, X-Retry-Count, Prefer, Range, Range-Unit, X-Requested-With, Cache-Control, X-Upsert]
           exposed_headers: [Content-Range, Content-Location]
           max_age: 3600
