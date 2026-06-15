@@ -1,4 +1,5 @@
 import { getBoxSets, getBoxSetsByTitleId } from '@/api/boxSets/getBoxSets'
+import { getBoxSetBooksMap } from '@/api/boxSets/getBoxSetBooksMap'
 import BoxSetsGrid from './BoxSetsGrid'
 import styles from './BoxSetsSection.module.scss'
 
@@ -13,6 +14,8 @@ export default async function BoxSetsSection({ titleId }: Props = {}) {
   const boxSets = titleId !== undefined ? await getBoxSetsByTitleId(titleId) : await getBoxSets()
   if (boxSets.length === 0) return null
 
+  const booksMap = await getBoxSetBooksMap(boxSets.map((b) => b.id))
+
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
@@ -21,7 +24,7 @@ export default async function BoxSetsSection({ titleId }: Props = {}) {
       </div>
       {/* BoxSetsGrid sits outside .inner so its expansion panel can span the full section width
           via a 3-column outer grid (side columns = padding) without causing overflow */}
-      <BoxSetsGrid boxSets={boxSets} />
+      <BoxSetsGrid boxSets={boxSets} booksMap={booksMap} />
     </section>
   )
 }

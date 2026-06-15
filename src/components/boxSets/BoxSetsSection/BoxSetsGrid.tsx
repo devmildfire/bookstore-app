@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Fragment } from 'react'
 import cn from 'classnames'
 import BoxSetCard from './BoxSetCard'
 import BoxSetPreview from './BoxSetPreview'
-import type { BoxSet } from '@/entities/boxSet/client'
+import type { BoxSet, BoxSetBook } from '@/entities/boxSet/client'
 import { BREAKPOINTS } from '@/consts/breakpoints'
 import styles from './BoxSetsSection.module.scss'
 
@@ -12,6 +12,9 @@ type Variant = 'page' | 'contained'
 
 type Props = {
   boxSets: BoxSet[]
+  // Books per box set, fetched server-side and keyed by box_set_id. Passed to
+  // the expansion preview so it renders with no client round-trip.
+  booksMap: Record<number, BoxSetBook[]>
   // 'page' (default): rigid 3/2/1 columns based on viewport, with page-
   // gutter side columns. Used on the homepage and the book detail page.
   // 'contained': fits the wrapper width, ResizeObserver-driven column
@@ -30,7 +33,7 @@ function getViewportColumns(): number {
   return 3
 }
 
-export default function BoxSetsGrid({ boxSets, variant = 'page' }: Props) {
+export default function BoxSetsGrid({ boxSets, booksMap, variant = 'page' }: Props) {
   const [openId, setOpenId] = useState<number | null>(null)
   const [columns, setColumns] = useState(variant === 'contained' ? 1 : 3)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -110,7 +113,7 @@ export default function BoxSetsGrid({ boxSets, variant = 'page' }: Props) {
             {/* spans all 3 outer columns = full wrapper width, zero overflow */}
             {openBoxSet && (
               <div className={styles.expansion}>
-                <BoxSetPreview boxSetId={openBoxSet.id} />
+                <BoxSetPreview books={booksMap[openBoxSet.id] ?? []} />
               </div>
             )}
           </Fragment>

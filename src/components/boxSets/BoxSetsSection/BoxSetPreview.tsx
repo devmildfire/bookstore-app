@@ -1,26 +1,16 @@
-'use client'
-
 import Image from 'next/image'
 import cn from 'classnames'
-import { useBoxSetBooks } from '@/hooks/useBoxSetBooks'
 import Scroller from '@/components/common/Scroller'
+import type { BoxSetBook } from '@/entities/boxSet/client'
 import styles from './BoxSetsSection.module.scss'
 
 type Props = {
-  boxSetId: number
+  // Books are fetched server-side (BoxSetsSection) and passed down, so the
+  // preview renders instantly on expand with no client round-trip.
+  books: BoxSetBook[]
 }
 
-export default function BoxSetPreview({ boxSetId }: Props) {
-  const { data: books = [], isLoading } = useBoxSetBooks(boxSetId)
-
-  if (isLoading) {
-    return (
-      <div className={styles.previewInner}>
-        <p className={styles.previewLoading}>Загрузка...</p>
-      </div>
-    )
-  }
-
+export default function BoxSetPreview({ books }: Props) {
   // The box set exists but has no BoxSetBooks rows yet (the seed file
   // only fills five named slugs; the rest were left empty). Render a
   // clear empty state so the expand-on-click doesn't look broken.
