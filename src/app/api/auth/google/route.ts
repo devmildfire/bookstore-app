@@ -54,5 +54,13 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  return NextResponse.redirect(data.url)
+  // data.url is built from the supabase client's base URL, which is the INTERNAL
+  // kong URL (SUPABASE_INTERNAL_URL) for server-side perf — the browser can't
+  // reach kong:8000. Rewrite the origin to the public API URL so the redirect to
+  // the GoTrue /authorize endpoint is reachable. Path + PKCE query are preserved.
+  const authorizeUrl = new URL(data.url)
+  const publicApi = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!)
+  authorizeUrl.protocol = publicApi.protocol
+  authorizeUrl.host = publicApi.host
+  return NextResponse.redirect(authorizeUrl.toString())
 }
