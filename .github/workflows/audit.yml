@@ -1,0 +1,33 @@
+name: Audit
+
+# Dependency vulnerability scan. Runs on every branch push and every PR, so feature
+# branches are checked before they reach the trunk. The same check gates the production
+# deploy (see deploy-production.yml -> job `audit`).
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  npm-audit:
+    name: npm audit (fail on high/critical)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # --audit-level=high fails the job on high/critical advisories only. The repo
+      # currently carries transitive moderate/low advisories (tar via the supabase dev
+      # CLI, js-yaml, @babel/core) that would otherwise hard-block every push/deploy.
+      # Tighten to `moderate` once those are cleared. Uses the committed lockfile — no
+      # npm ci needed, so this is fast.
+      - name: Audit dependencies
+        run: npm audit --audit-level=high

@@ -45,10 +45,26 @@ Notes:
 - Despite the filename `docker-publish.yml`, this workflow only lints + builds — it does **not**
   publish an image. Image build/push lives in the deploy workflow below.
 
+### 1b. Dependency Audit — `.github/workflows/audit.yml`
+
+Trigger: **every branch push and every PR** (so feature branches are scanned before they reach
+the trunk).
+
+Job `npm-audit`: checkout + `npm audit --audit-level=high` against the committed `package-lock.json`
+(no `npm ci` needed — fast).
+
+- **`--audit-level=high`** fails the job only on **high/critical** advisories. The repo currently
+  carries transitive **moderate/low** advisories (`tar` via the `supabase` dev CLI, `js-yaml`,
+  `@babel/core`) that would otherwise hard-block every push and deploy. Tighten to `moderate` once
+  those are cleared.
+- The **same check gates production** — `deploy-production.yml`'s `build-and-push` job has
+  `needs: audit`, so a failing audit stops the image build and therefore the deploy.
+
 > **Reality note:** the "Production Image Workflow" and "VPS Deploy Workflow" below are
-> implemented as **one** file — `.github/workflows/deploy-production.yml` — with two jobs:
-> `build-and-push` (builds + pushes the GHCR image) and `deploy` (`needs: build-and-push`,
-> SSH-rolls the app on the VPS). They are documented separately here for clarity.
+> implemented as **one** file — `.github/workflows/deploy-production.yml` — with three jobs:
+> `audit` (npm audit gate), `build-and-push` (`needs: audit`, builds + pushes the GHCR image) and
+> `deploy` (`needs: build-and-push`, SSH-rolls the app on the VPS). They are documented separately
+> here for clarity.
 
 ### 2. Production Image Workflow (job `build-and-push`)
 
