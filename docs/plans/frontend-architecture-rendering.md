@@ -201,7 +201,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Build robustness for mass-SSG: `experimental.staticGenerationRetryCount: 3` + `staticGenerationMaxConcurrency: 4` (mass prerender was overloading Supabase → transient upstream error failed the build).
 - [ ] `generateStaticParams` for `authors/[id]` + `dino-magazine/[slug]` (follow-up).
 - [ ] `unstable_cache`/`revalidate` for catalog/facets — deferred (admin writes already `revalidatePath`; add time-based ISR if needed). (D3)
-- [ ] Browser click-test add-to-cart on an SSG book page (low risk — client islands unchanged; build prerendered all pages cleanly).
+- [x] Browser-verified an SSG book page: renders (title/edition-tabs/content), anon sign-in fires, **add-to-cart → `POST /Cart 201`**, zero console errors.
 - [ ] Merge `feat/ppr-phase2-book-ssg` → `update`.
 
 ### Phase 3 — boundary / leaves
