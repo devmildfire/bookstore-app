@@ -1,0 +1,66 @@
+@use '@/styles/common' as *;
+
+.wrapper {
+  @include page-container;
+}
+
+// Mirrors NewProducts .title so the streamed grid doesn't shift the heading.
+.title {
+  display: flex;
+  justify-content: center;
+  margin: 100px 0 80px;
+  font-family: $font-cheque;
+  font-weight: 900;
+  font-size: 60px;
+  text-transform: uppercase;
+  line-height: 72px;
+  color: $color-text-on-dark;
+
+  @include breakpoint('tablet') {
+    margin: 80px 0 60px;
+    font-size: 48px;
+    line-height: 58px;
+  }
+
+  @include breakpoint('phone') {
+    margin: 60px 0 40px;
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+// Mirrors BookGrid .grid breakpoints.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 100px;
+  row-gap: 60px;
+
+  @include breakpoint('tablet') {
+    column-gap: 60px;
+    row-gap: 40px;
+  }
+
+  @include breakpoint('tablet-small') {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-6;
+    row-gap: $space-8;
+  }
+
+  @include breakpoint('phone') {
+    column-gap: $space-4;
+    row-gap: $space-6;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+}

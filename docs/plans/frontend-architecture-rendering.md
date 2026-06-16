@@ -213,10 +213,13 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Move co-located static cards out of client carousel modules (B2)
 - [ ] Extract `Header` static logo+nav to server sub-component (B5)
 
-### Phase 4 — Suspense / streaming
-- [ ] `loading.tsx` for home + catalog + high-traffic routes (R3/P5)
-- [ ] `<Suspense>` around `NewProducts`, book-detail secondary sections, per-user chrome island
-- [ ] `next/dynamic` for below-fold Swiper carousels (P4)
+### Phase 4 — Suspense / streaming — *(branch `feat/ppr-phase4-suspense`, browser-verified)*
+- [x] Home catalog isolated into `HomeCatalog` (async child) behind `<Suspense fallback={<HomeCatalogFallback/>}>` — `searchParams` read + heavy `getBooks` moved off the shell, so hero/subscriptions/box-sets stream first and the filtered grid streams behind a skeleton. Verified: all sections render, `?q=` filtering still works (empties the grid → "Книги не найдены"), no console errors. (`/` stays `ƒ` until `cacheComponents`/Phase 5 — same as Phase 0's cookie isolation.)
+- [ ] Route-level `loading.tsx` for home — NOT added: home is `(site)/page.tsx`, so a `(site)/loading.tsx` would over-broadly cover every `(site)` route (the route-group caveat in CLAUDE.md). The in-page Suspense fallback covers the catalog streaming. Revisit if a `(catalog)` route group is introduced.
+- [ ] `<Suspense>` around book-detail secondary sections (similar/box-sets) — follow-up.
+- [ ] `next/dynamic` for below-fold Swiper carousels (P4) — follow-up.
+- [x] Infra: bumped `actions/checkout` + `actions/setup-node` `@v4 → @v5` across all workflows (GitHub Node 20 deprecation).
+- [ ] Merge `feat/ppr-phase4-suspense` → `update`.
 
 ### Phase 5 — PPR + asymmetric JWT keys
 - [ ] `cacheComponents: true` + `'use cache'` on anon reads; clear build errors (R4)
