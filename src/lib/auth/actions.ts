@@ -69,8 +69,20 @@ export async function registerAction(_prev: AuthError | null, formData: FormData
   } else {
     // Fresh signup with confirmations on returns NO session — the account is
     // unusable until confirmed. Send them to the check-your-email screen.
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) return { error: error.message }
+
+    // GoTrue email-enumeration protection: when the address is ALREADY
+    // registered, signUp returns a success-shaped user with an EMPTY identities
+    // array and does NOT resend the confirmation. So a user whose first link
+    // expired would see "письмо отправлено" with nothing actually sent. Detect
+    // that and trigger an explicit resend. For an already-confirmed account
+    // resend() errors ("already confirmed") — swallow it so we never reveal
+    // whether the email exists (and still tell the user to check their inbox).
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      await supabase.auth.resend({ type: 'signup', email })
+    }
+
     redirect('/auth/login?check_email=1')
   }
 }
