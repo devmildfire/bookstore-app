@@ -2,7 +2,13 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-13.
+**Last reviewed:** 2026-06-16.
+
+> **Production went live 2026-06-15** (`bookstore-app.mildfire.dev` + `api.mildfire.dev` via
+> Cloudflare Tunnel). Deployment status — including which launch-gate items are still
+> unverified in prod — is tracked in [docs/deployment/TRACKER.md](deployment/TRACKER.md), the
+> authoritative source. Where this file and the TRACKER disagree, the TRACKER wins; the
+> prod-cutover notes in G2/P1/P2 below are reconciled against it.
 
 ---
 
@@ -214,12 +220,15 @@ Live testing fixed a launch-blocking bug: the Send-Email hook sent to the empty 
 on the `email_change` (anon→account) path, 500-ing every registration — now sends to
 `new_email` (commit 274694e8).
 
-**Still outstanding (production only):**
-- Set `NEXT_PUBLIC_BASE_URL` to the prod origin (email/confirm/unsubscribe links default to
-  `http://localhost:3000`).
-- Point the auth hook `uri` at the live origin and set `SEND_EMAIL_HOOK_SECRET` in prod.
-- Re-verify the sending domain / re-create the Audience under the prod Resend account if
-  different from the current one.
+**Production config — verified present on the VPS (2026-06-16):**
+- ✅ `NEXT_PUBLIC_BASE_URL=https://bookstore-app.mildfire.dev` (no longer localhost).
+- ✅ `SEND_EMAIL_HOOK_SECRET` set; `RESEND_API_KEY` set; `RESEND_FROM_EMAIL=Chtivo <no-reply@mildfire.dev>`;
+  `ADMIN_NOTIFICATIONS_EMAIL=admin@mildfire.dev`. The auth hook `uri` derives from
+  `NEXT_PUBLIC_BASE_URL` (now prod).
+
+**Still to confirm functionally in prod:** an actual outbound email has not been sent from the
+live stack (auth confirmation, order confirmation, newsletter) — config is in place but the
+end-to-end send + the prod Resend Audience/domain verification haven't been exercised live.
 
 ---
 
@@ -239,13 +248,26 @@ RPC, `GET /api/auth/google`, `tokens-only` cookie encoding). These deployment/op
 remain **outstanding** and are environment config, not repo state — they only matter once
 the VPS goes live:
 
-- **Prod Google OAuth client** — create the prod OAuth client + redirect URIs, set the
-  prod env vars; the Supabase Auth Google provider must point at them.
-- **Reverse-proxy `/auth/v1/*` routing + HTTPS end-to-end** — the proxy must forward Supabase
-  Auth routes to the Supabase container; OAuth requires HTTPS throughout.
-- **Anon-row garbage collection** — no `pg_cron` job exists to reap stale anonymous
-  `auth.users` rows. (Note: `expire_stale_pending_orders` reaps *orders*, not anon users —
-  unrelated.) Without it, abandoned anon sessions accumulate.
+- **Prod Google OAuth client** — ✅ **config present (verified 2026-06-16):** prod `.env` has
+  `GOOGLE_ENABLED=true` + `GOOGLE_CLIENT_ID`/`GOOGLE_SECRET` set. Still to confirm functionally:
+  the actual OAuth round-trip (consent → callback → session) against the live redirect URIs.
+- ~~**Reverse-proxy `/auth/v1/*` routing + HTTPS end-to-end**~~ ✅ **done (2026-06-15)** — Kong +
+  nginx behind the Cloudflare Tunnel forward `/auth/v1/*` to GoTrue; HTTPS is end-to-end
+  (`/auth/v1/health` 200, browser anonymous sign-in verified). The remaining auth items below
+  (prod Google client, anon GC) are still outstanding.
+- **Anon-row garbage collection** — ✅ **done (2026-06-16).** `public.gc_stale_anonymous_users(p_days)`
+  + a daily `pg_cron` job `gc-stale-anonymous-users` (`30 3 * * *`) reap anonymous `auth.users`
+  with **no sign of life for 35 days** (freshest of created_at / last_sign_in_at / updated_at /
+  any session's updated_at|refreshed_at — sessions bump on every proxy token-refresh, i.e. every
+  visit). A visitor who returns even monthly keeps a fresh session and is retained; 35 days (not
+  30) guarantees a calendar-month gap is never clipped. Migration:
+  `supabase/migrations/20260616120000_gc_stale_anonymous_users.sql`; applied to prod as
+  `supabase_admin` (fresh backup taken first), grants locked (anon/authenticated cannot execute),
+  dry-run + one live run both returned 0 (all current anon rows are fresh).
+  Caveat: retention is also bounded by GoTrue's session/refresh-token settings — the 35-day GC
+  assumes the anon refresh token still works (GoTrue default: refresh tokens have no hard TTL, so
+  a returning visitor refreshes fine). If a session inactivity timeout is ever configured below
+  35 days, lower `p_days` to match.
 - **Future (not started):** provider generalization (Google is wired + live in prod; Yandex/VK/Telegram
   still show a "Скоро" hint). **Yandex login has a detailed, resumable implementation plan +
   tracker: [docs/plans/yandex-oauth.md](plans/yandex-oauth.md)** (custom app-level OAuth — Yandex
@@ -261,8 +283,12 @@ The two-phase checkout + Robokassa integration is **implemented and shipped** be
 `PAYMENT_PROVIDER` (defaults to `mock`; the in-app mock gateway is fully interactive). The
 following are intentionally out of scope / stubbed and remain **outstanding** for production:
 
-- **Flip `PAYMENT_PROVIDER` → `robokassa`** and supply real PSP credentials (merchant login +
-  passwords) via env; the signature/recurring logic is ready (`src/lib/payments/robokassa/`).
+- **`PAYMENT_PROVIDER=mock` in prod is intentional, not a gap (confirmed 2026-06-16).** This
+  deployment is a **portfolio** — it exists to demonstrate a battle-tested, working,
+  fully-explainable codebase, not to take money. The in-app mock gateway is the *chosen*
+  production config and is fully interactive end-to-end. The Robokassa path stays wired and
+  ready (`src/lib/payments/robokassa/`) — flip `PAYMENT_PROVIDER` + supply real PSP creds *if*
+  real payments are ever wanted. **This is not a launch blocker.**
 - **Real fiscalization receipt** — `RobokassaReceipt` is a type-only stub (`receipt.ts` returns
   `undefined`); a real 54-ФЗ payload is needed for live fiscalization.
 - **Real cron infrastructure** — the recurring-charge route

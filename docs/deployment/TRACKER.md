@@ -20,7 +20,7 @@ Status legend:
 - [x] Pin production Supabase images to current local versions for initial launch.
 - [x] Use GitHub Actions + GHCR for Next.js app deployment.
 - [x] Deploy from `production` branch.
-- [x] Use `master` as integration/e2e branch.
+- [x] Use an integration/e2e branch. (Revised: **`update`** is the de-facto trunk — the planned `master` was never created; see §5.)
 - [x] Keep feature branches for active work.
 
 ## 2. VPS Baseline
@@ -48,19 +48,19 @@ Status legend:
 - [x] Add production Nginx routing for `bookstore-app.mildfire.dev`. (`deploy/production/nginx/conf.d/app.conf` — resolver + variable upstream, survives app redeploys.)
 - [x] Add production Nginx routing for `api.mildfire.dev`. (Same file; Kong upstream + websocket + upload limits. Verified via `localhost:8088`.)
 - [~] Define production env variables. (`deploy/production/.env.example` — fresh-key generation documented; prod `.env` still to be filled with FRESH secrets on the VPS.)
-- [ ] Verify app image runs locally or on VPS. (Not yet built — nginx now tolerates its absence; CI/CD will build it.)
+- [x] Verify app image runs locally or on VPS. (Done — first production deploy succeeded 2026-06-15; the GHCR image runs as the `app` container and Next.js reaches Ready. See §5.)
 
 ## 4. Supabase Production Bootstrap
 
 - [x] Create production Supabase compose file. (In `deploy/production/docker-compose.yml`; **rehearsed locally** — auth/rest/storage/kong all green through nginx.)
 - [x] Rehearse the bootstrap restore locally. (2026-06-15 — surfaced + fixed: restore as `supabase_admin` with owners/privileges; `post-restore-grants.sql` last; storage archive needs `tar --xattrs`; PostgREST starts after restore. Both staged bootstrap files re-created: `chtivo-local-full-20260615-owned.dump` + `chtivo-local-storage-20260615-140111-xattrs.tar.gz`.)
-- [ ] **Re-stage corrected pair to VPS** (replace the wrong `…-122233.*` files in `~/chtivo-bootstrap/` — owned dump + xattrs archive).
+- [x] **Re-stage corrected pair to VPS** (replaced the wrong `…-122233.*` files in `~/chtivo-bootstrap/` with the owned dump + xattrs archive — sha256 verified; see the "Transfer …" rows below).
 - [x] Pin Supabase images to local versions. (Stateful: postgres 17.6.1.106 / gotrue v2.188.1 / storage v1.54.1 / realtime v2.86.3; stateless on tested official versions.)
 - [x] Decide production container names. (Compose project `chtivo`; services db/auth/rest/realtime/storage/meta/studio/kong/app/nginx/cloudflared.)
 - [x] Keep Studio private/no public route. (Studio has no nginx route + no host port; SSH tunnel only.)
 - [x] Discover local storage volume/path. (Docker volume `supabase_storage_chtivo-next`, mount `/mnt`, layout `/mnt/stub/stub/<bucket>/<key>/<version-uuid>`, ~1.0 GB / 572 files. Archive verbatim via throwaway container; keep DB dump + storage archive a consistent pair.)
 - [x] Clean local test orders/data. (Truncated Orders/OrderItems/OGCApps/Cart/CartPromo/GiftCards/UserSubscriptions + AdminAuditLog + Subscribers; deleted 110 non-admin auth users incl. anon. Pre-cleanup safety dump kept.)
-- [x] Create/verify production admin auth user locally. (Only `chtivoadmin@example.com` remains — password `<admin-password>`, email identity intact for password login.)
+- [x] Create/verify production admin auth user locally. (Only `chtivoadmin@example.com` remains — password kept out of the repo (in the VPS `.env`/secret store), email identity intact for password login.)
 - [x] Verify admin app metadata role. (`app_metadata.role = admin`.)
 - [x] Run RLS drift check. (`scripts/check-rls.mjs` → OK.)
 - [x] Export local full DB dump. (`backups/chtivo-local-full-20260615-122233.dump` (custom, for pg_restore) + `.sql` inspection. 1 auth user, 414 storage.objects rows, 150 editions.)
@@ -118,15 +118,22 @@ Status legend:
 - [x] `https://api.mildfire.dev` serves Supabase API/Auth/Storage through Nginx. (auth health 200, REST `/Titles` 206/69, public cover 200 — all via the tunnel.)
 - [x] Browser anonymous sign-in works. (2026-06-15: `POST /auth/v1/signup` → 200, anon JWT `is_anonymous:true`, verified in a real browser session.)
 - [x] Client-side data loads in the browser. (Cart, Likes, CartPromo, GiftCards, `quote_cart` RPC, box-set books — all 200. **Required a kong CORS fix**: the minimal allow-list rejected the supabase-js preflight headers `Accept-Profile` / `Content-Profile` / `X-Retry-Count`, which blocked every browser query and hung the UI on "Загрузка…". curl smoke tests missed it — they skip the CORS preflight. **Lesson: always browser-test, not just curl.**)
-- [ ] Admin login works.
-- [ ] Admin role works.
-- [x] Public storage media loads. (`/storage/v1/object/public/covers/...` → 200 image/jpeg via api.mildfire.dev.)
-- [ ] Private/signed storage access works.
-- [ ] Avatar upload works.
-- [ ] Story submission upload works.
-- [ ] Checkout creates pending order.
-- [ ] Payment callback route tested.
-- [ ] Order confirmation email tested or explicitly deferred.
-- [ ] Production DB backup tested.
-- [ ] Production storage backup tested.
-- [ ] Rollback path documented.
+- [ ] Admin login works. (UI login flow not yet exercised end-to-end. The admin account + role are in place — see next item.)
+- [x] Admin role works. (2026-06-16: prod DB confirms `chtivoadmin@example.com` has `raw_app_meta_data.role = admin`, email identity intact for password login.)
+- [x] Public storage media loads. (`/storage/v1/object/public/covers/...` → 200 image/png via api.mildfire.dev.)
+- [x] Private/signed storage access works. (2026-06-16: anon GET on `digital-files/ebook/mrd-1.pdf` → 400 (RLS); `service_role` signs a URL → fetch 200 `application/pdf` 11.7 MB, all via api.mildfire.dev.)
+- [ ] Avatar upload works. (Authenticated write flow — not yet exercised against prod.)
+- [ ] Story submission upload works. (Authenticated write flow — not yet exercised against prod.)
+- [ ] Checkout creates pending order. (Write flow — not exercised against prod to avoid test rows. `PAYMENT_PROVIDER=mock` is the **intended** prod config for this portfolio — see CONCERNS P2; the mock gateway is interactive end-to-end.)
+- [ ] Payment callback route tested. (Mock gateway by design; Robokassa intentionally not flipped on — CONCERNS P2.)
+- [ ] Order confirmation email tested or explicitly deferred. (Resend config is present in prod `.env`; an actual prod order email has not been sent.)
+- [x] Production DB backup tested. (2026-06-16: 3 prod dumps present in `~/chtivo-backups/` — latest `…-164137.dump`; the first `…-101234.dump` was TOC-validated, 1155 entries. Restore-into-fresh-DB not re-run on prod.)
+- [ ] Production storage backup tested. (The bootstrap pair `…-140111-xattrs.tar.gz` (~1.0 GB) is staged in `~/chtivo-bootstrap/` and the restore was rehearsed locally; no separate prod-storage backup taken since — storage unchanged.)
+- [x] Rollback path documented. (See §5 "Rollback" + `docs/deployment/github-actions-ci-cd.md` → "Rollback Model".)
+
+> **Live verification 2026-06-16** (via `ssh portfolio-vps`, deploy user, read-only): all 10
+> containers up (studio unhealthy = documented non-blocker); `bookstore-app.mildfire.dev` →
+> 200 (2.4 MB SSR); `api.mildfire.dev/auth/v1/health` → 200 (GoTrue v2.188.1); public + signed
+> storage confirmed; admin role confirmed in DB. Remaining open items are authenticated
+> write-flows / UI actions deliberately not run against prod. Payments intentionally run on the
+> mock gateway (portfolio site — see CONCERNS P2), not an outstanding cutover.

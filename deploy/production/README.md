@@ -1,6 +1,7 @@
 # Production stack (`/opt/chtivo`) — DRAFT
 
-Single VPS (`<vps-ip>`, zone `mildfire.dev`). **Cloudflare Tunnel** is the only
+Single VPS (zone `mildfire.dev`; host IP kept in the `VPS_HOST` secret, not in docs).
+**Cloudflare Tunnel** is the only
 ingress; no host ports are published. `cloudflared → nginx → {app, kong}`. Postgres and
 Studio stay private.
 
@@ -95,7 +96,8 @@ Full sequence + rationale: [docs/deployment/supabase-production-bootstrap.md](..
        tar --xattrs --xattrs-include="user.*" -xzf /from/chtivo-local-storage-20260615-140111-xattrs.tar.gz'
    ```
 5. `docker compose up -d` (rest of the stack), then smoke-test via `api.mildfire.dev` and
-   `bookstore-app.mildfire.dev`. Admin login: `chtivoadmin@example.com` / `<admin-password>`.
+   `bookstore-app.mildfire.dev`. Admin login: the seeded admin account (`chtivoadmin@example.com`);
+   its password is in the VPS `.env`/secret store, never in the repo.
 
 ## ✅ Rehearsed locally — what was verified
 Stood the whole compose up locally (tunnel disabled, temp host port `8088` on nginx),

@@ -1,6 +1,6 @@
 # Production Deployment Overview
 
-This directory defines the production deployment plan for `bookstore-app` on the single VPS at `<vps-ip>` under the `mildfire.dev` Cloudflare zone.
+This directory defines the production deployment plan for `bookstore-app` on a single VPS under the `mildfire.dev` Cloudflare zone. (The VPS host IP lives in the `VPS_HOST` GitHub secret / the VPS itself — it is deliberately kept out of these public docs.)
 
 ## Target Architecture
 
@@ -79,19 +79,26 @@ After launch, production Supabase becomes the long-lived source of production da
 
 ## Git Flow
 
-The repository will use:
+The repository uses:
 
-- feature branches for work in progress, including the current `update` branch style;
-- `master` as the integration branch where feature branches are merged and tested;
-- `production` as the deploy branch.
+- feature branches for work in progress;
+- **`update`** as the de-facto trunk / integration branch (the planned `master` was never
+  created — `update` plays that role and is many hundreds of commits ahead of the stale
+  `main`);
+- `production` as the deploy branch (branched from `update`).
 
-There is no staging server. `master` is for aggregation and CI/e2e validation. `production` is the branch that deploys to the VPS.
+There is no staging server. `update` is for aggregation and CI validation. `production` is the
+branch that deploys to the VPS.
 
-Target flow:
+Actual flow:
 
 ```text
-feature branch -> pull request -> master -> tests/e2e -> production -> deploy
+feature branch -> pull request -> update (trunk, CI) -> production -> deploy
 ```
+
+CI (`.github/workflows/docker-publish.yml`, job name "CI") runs lint + build on pushes to
+`update`/`main`/`staging` and on PRs into `main`/`staging`. A push to `production` triggers the
+deploy workflow (`.github/workflows/deploy-production.yml`) — typically `git push origin update:production`.
 
 ## Container Registry
 

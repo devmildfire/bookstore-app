@@ -20,9 +20,12 @@ Local (Docker):
 supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" 2>/dev/null > "./src/types/supabase.ts"
 ```
 
-Production (once VPS is live):
+Production (Postgres is **private** — no public port, docker-network only; see [docs/deployment/](docs/deployment/)):
 ```bash
-supabase gen types typescript --db-url "postgresql://postgres:<password>@<vps-ip>:5432/postgres" 2>/dev/null > "./src/types/supabase.ts"
+# Run this from a shell ON the VPS, against the db container — prod Postgres is NOT
+# internet-exposed, so there is no public host:5432 to dial from your laptop, and we
+# never publish 5432 to do this. <db-host> is the db service on the compose network.
+supabase gen types typescript --db-url "postgresql://postgres:<password>@<db-host>:5432/postgres" 2>/dev/null > "./src/types/supabase.ts"
 ```
 
 This overwrites `src/types/supabase.ts` (generated — do not edit manually).
