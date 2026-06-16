@@ -56,11 +56,11 @@ export async function GET(request: NextRequest) {
 
   // data.url is built from the supabase client's base URL, which is the INTERNAL
   // kong URL (SUPABASE_INTERNAL_URL) for server-side perf — the browser can't
-  // reach kong:8000. Rewrite the origin to the public API URL so the redirect to
-  // the GoTrue /authorize endpoint is reachable. Path + PKCE query are preserved.
-  const authorizeUrl = new URL(data.url)
-  const publicApi = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!)
-  authorizeUrl.protocol = publicApi.protocol
-  authorizeUrl.host = publicApi.host
+  // reach kong:8000. Rebuild the authorize URL on the PUBLIC origin (path + PKCE
+  // query preserved). Using URL(path, origin) — not .host — so kong's :8000 port
+  // is dropped (the host setter would otherwise retain it).
+  const src = new URL(data.url)
+  const publicOrigin = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).origin
+  const authorizeUrl = new URL(src.pathname + src.search, publicOrigin)
   return NextResponse.redirect(authorizeUrl.toString())
 }
