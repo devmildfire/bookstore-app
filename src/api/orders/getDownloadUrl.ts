@@ -1,5 +1,4 @@
 import { createAdminClient, createClient } from '@/lib/supabase/server'
-import type { ProductCategory } from '@/types/database'
 
 export type DownloadUrlResult =
   | { status: 'ok'; url: string; expiresIn: number }
@@ -7,6 +6,10 @@ export type DownloadUrlResult =
 
 // Edition kinds that have a downloadable digital file (PrintBook is physical).
 const DIGITAL_KINDS = new Set<string>(['EBook', 'AudioBook', 'Book2.0'])
+
+// When the owned edition is physical (PrintBook), we gift the title's digital
+// edition. Prefer the most universally readable kind first.
+const GIFT_DIGITAL_PREFERENCE = ['EBook', 'Book2.0', 'AudioBook'] as const
 
 // Per-category placeholder objects in the `digital-files` bucket.
 // Used when the edition's file_path is null (the real file hasn't been
@@ -48,30 +51,57 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
     return { status: 'error', reason: 'not_owner' }
   }
 
-  const category = (item.category ?? '') as ProductCategory
-  if (!DIGITAL_KINDS.has(category)) {
-    return { status: 'error', reason: 'not_digital' }
-  }
-
   // book_id format: '<Category>-<edition_id>'
   const editionId = Number(item.book_id.split('-').slice(1).join('-'))
   if (!Number.isFinite(editionId)) {
     return { status: 'error', reason: 'no_file' }
   }
 
-  const { data: edition, error: editionError } = await supabase
+  // Resolve the purchased edition (kind + file + its title).
+  const { data: ownEdition } = await supabase
     .from('Editions')
-    .select('file_path')
+    .select('kind, file_path, title_id')
     .eq('id', editionId)
-    .eq('kind', category)
     .single()
+
+  if (!ownEdition?.title_id) {
+    return { status: 'error', reason: 'no_file' }
+  }
+
+  // Decide which digital file to serve:
+  //   - bought a digital edition → serve exactly that edition's file;
+  //   - bought a physical edition (PrintBook) → gift the title's digital
+  //     edition (we always include the digital with a print purchase),
+  //     preferring EBook → Book2.0 → AudioBook.
+  let kind = ownEdition.kind ?? ''
+  let filePath = ownEdition.file_path
+
+  if (!DIGITAL_KINDS.has(kind)) {
+    const { data: digitalEditions } = await supabase
+      .from('Editions')
+      .select('kind, file_path')
+      .eq('title_id', ownEdition.title_id)
+      .in('kind', [...GIFT_DIGITAL_PREFERENCE])
+      .eq('is_published', true)
+
+    const gifted = GIFT_DIGITAL_PREFERENCE.map((k) =>
+      (digitalEditions ?? []).find((e) => e.kind === k)
+    ).find(Boolean)
+
+    // No digital edition exists for this title — nothing to gift.
+    if (!gifted) {
+      return { status: 'error', reason: 'no_file' }
+    }
+    kind = gifted.kind ?? ''
+    filePath = gifted.file_path
+  }
 
   // Fall back to the per-category placeholder when the row has no
   // file_path yet (real files get uploaded one by one as titles are
   // published). The placeholder is still a real object in the bucket,
   // so the signed URL works exactly the same way.
-  const filePath = (!editionError && edition?.file_path) || PLACEHOLDER_FILE[category]
-  if (!filePath) {
+  const resolvedPath = filePath || PLACEHOLDER_FILE[kind]
+  if (!resolvedPath) {
     return { status: 'error', reason: 'no_file' }
   }
 
@@ -89,7 +119,7 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
   // player, which isn't a download).
   const { data: signed, error: signError } = await admin.storage
     .from('digital-files')
-    .createSignedUrl(filePath, SIGNED_URL_TTL_SECONDS, { download: true })
+    .createSignedUrl(resolvedPath, SIGNED_URL_TTL_SECONDS, { download: true })
 
   if (signError || !signed) {
     return { status: 'error', reason: 'sign_failed', message: signError?.message }

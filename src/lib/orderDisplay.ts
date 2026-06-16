@@ -67,6 +67,22 @@ export function fulfillmentLabel(f: FulfillmentStatus): string {
   }
 }
 
+// Friendlier, book-centric phrasing for the «Мои книги» library, where a
+// physical copy's shipping state is shown alongside its (gifted) digital
+// download.
+export function libraryShippingLabel(f: FulfillmentStatus): string {
+  switch (f) {
+    case 'processing':
+      return 'Печатный экземпляр готовится к отправке'
+    case 'shipped':
+      return 'Печатный экземпляр в пути'
+    case 'delivered':
+      return 'Печатный экземпляр доставлен'
+    case 'completed':
+      return 'Печатный экземпляр отправлен'
+  }
+}
+
 // Where an order line links to — its product in the relevant section.
 export function itemLink(item: OrderItem): string | null {
   if (BOOK_CATEGORIES.has(item.category) || item.category === 'BoxSet') {

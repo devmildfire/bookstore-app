@@ -2,19 +2,43 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import cn from 'classnames'
 import { useQuery } from '@tanstack/react-query'
 import { getOrders, ordersQueryKey } from '@/api/orders'
 import { getDownloadUrlAction } from '@/lib/orders/actions'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
-import { BOOK_CATEGORIES, CATEGORY_LABEL, DIGITAL_CATEGORIES } from '@/lib/orderDisplay'
-import type { OrderItem } from '@/entities/order/client'
+import {
+  BOOK_CATEGORIES,
+  CATEGORY_LABEL,
+  DIGITAL_CATEGORIES,
+  libraryShippingLabel,
+} from '@/lib/orderDisplay'
+import type { ProductCategory } from '@/types/database'
+import type { FulfillmentStatus } from '@/entities/order/client'
 import styles from './MyBooksList.module.scss'
 
-// The library: every book edition the user owns (digital + physical), pulled
-// from their paid orders and de-duplicated by edition. Digital books get a
-// download; physical ones are shown as owned with a link to their page.
+// One owned book, merged across editions/orders. A title may have been bought
+// as print and/or digital; we show a single tile that always offers the digital
+// download (print buyers are gifted the digital edition) and, when a physical
+// copy is owned, its shipping state.
+type LibraryBook = {
+  key: string
+  name: string
+  coverUrl: string | null
+  // Order item the download is issued against. Prefers a digital edition (so the
+  // user gets the exact file they bought); for a print-only purchase the server
+  // resolves the title's gifted digital edition from this item.
+  downloadItemId: number
+  // Category used for the download icon/label — the digital edition owned, or
+  // EBook for a print-only purchase (the gifted format).
+  downloadCategory: ProductCategory
+  ownsDigital: boolean
+  // Physical copy's shipping state, null when the user owns no physical edition.
+  shipping: FulfillmentStatus | null
+}
+
+// The library: every book the user owns, pulled from their paid orders and
+// merged by title.
 export default function MyBooksList() {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ordersQueryKey,
@@ -23,40 +47,66 @@ export default function MyBooksList() {
 
   if (isLoading) return <p className={styles.empty}>Загрузка…</p>
 
-  const byBookId = new Map<string, OrderItem>()
+  const byTitle = new Map<string, LibraryBook>()
+  // Orders arrive newest-first, so the first physical line seen for a title is
+  // its most recent purchase — the shipping state we want to surface.
   for (const order of orders) {
     for (const item of order.items) {
-      if (BOOK_CATEGORIES.has(item.category) && !byBookId.has(item.bookId)) {
-        byBookId.set(item.bookId, item)
+      if (!BOOK_CATEGORIES.has(item.category)) continue
+      const key = item.titleSlug ?? item.bookId
+      const isDigital = DIGITAL_CATEGORIES.has(item.category)
+      const existing = byTitle.get(key)
+
+      if (!existing) {
+        byTitle.set(key, {
+          key,
+          name: item.name,
+          coverUrl: item.coverUrl,
+          downloadItemId: item.id,
+          downloadCategory: isDigital ? item.category : 'EBook',
+          ownsDigital: isDigital,
+          shipping: isDigital ? null : order.fulfillmentStatus,
+        })
+        continue
       }
+
+      // Prefer a digital edition's own file for the download action.
+      if (isDigital && !existing.ownsDigital) {
+        existing.downloadItemId = item.id
+        existing.downloadCategory = item.category
+        existing.ownsDigital = true
+      }
+      // First physical line wins (most recent order).
+      if (!isDigital && existing.shipping === null) {
+        existing.shipping = order.fulfillmentStatus
+      }
+      if (!existing.coverUrl && item.coverUrl) existing.coverUrl = item.coverUrl
     }
   }
-  const books = Array.from(byBookId.values())
 
+  const books = Array.from(byTitle.values())
   if (books.length === 0) return <p className={styles.empty}>Пока ничего нет</p>
 
   return (
     <div className={styles.grid}>
-      {books.map((item) => (
-        <BookCard key={item.bookId} item={item} />
+      {books.map((book) => (
+        <BookCard key={book.key} book={book} />
       ))}
     </div>
   )
 }
 
-function BookCard({ item }: { item: OrderItem }) {
+function BookCard({ book }: { book: LibraryBook }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const isDigital = DIGITAL_CATEGORIES.has(item.category)
-  const href = item.titleSlug ? `/books/${item.titleSlug}` : null
-  const categoryLabel = CATEGORY_LABEL[item.category] ?? item.category
+  const categoryLabel = CATEGORY_LABEL[book.downloadCategory] ?? book.downloadCategory
 
   async function handleDownload() {
     if (busy) return
     setBusy(true)
     setError(null)
-    const result = await getDownloadUrlAction(item.id)
+    const result = await getDownloadUrlAction(book.downloadItemId)
     setBusy(false)
     if (result.status === 'ok') {
       const a = document.createElement('a')
@@ -71,74 +121,59 @@ function BookCard({ item }: { item: OrderItem }) {
     const messages: Record<string, string> = {
       not_authenticated: 'Нужно войти.',
       not_owner: 'Не ваш заказ.',
-      not_digital: 'Файл недоступен.',
-      no_file: 'Файл ещё не загружен.',
+      not_digital: 'Цифровая версия недоступна.',
+      no_file: 'Цифровая версия пока недоступна.',
       sign_failed: 'Не удалось создать ссылку.',
     }
     setError(messages[result.reason] ?? 'Ошибка.')
   }
 
-  const cover = (
-    <div className={styles.cover}>
-      {item.coverUrl ? (
-        <Image
-          src={item.coverUrl}
-          alt={`Обложка: ${item.name}`}
-          fill
-          sizes='(max-width: 532px) 45vw, 200px'
-          className={styles.coverImg}
-          unoptimized
-        />
-      ) : (
-        <div className={styles.coverPlaceholder} aria-hidden />
-      )}
-    </div>
-  )
-
-  // The category icon doubles as the action: digital → download; physical →
-  // open the book page. The icon's strokes turn accent-red on hover/focus.
-  const icon = <ProductTypeIcon category={item.category} size={30} className={styles.icon} />
-
   return (
     <div className={styles.card}>
-      {href ? (
-        <Link href={href} className={styles.coverLink} aria-label={item.name}>
-          {cover}
-        </Link>
-      ) : (
-        cover
-      )}
+      {/* The cover is the primary download trigger. */}
+      <button
+        type='button'
+        className={cn(styles.cover, busy && styles.coverBusy)}
+        onClick={handleDownload}
+        disabled={busy}
+        aria-label={`Скачать «${book.name}» · ${categoryLabel}`}
+        aria-busy={busy}
+        title={`Скачать · ${categoryLabel}`}
+      >
+        {book.coverUrl ? (
+          <Image
+            src={book.coverUrl}
+            alt={`Обложка: ${book.name}`}
+            fill
+            sizes='(max-width: 532px) 45vw, 200px'
+            className={styles.coverImg}
+            unoptimized
+          />
+        ) : (
+          <div className={styles.coverPlaceholder} aria-hidden />
+        )}
+        <span className={styles.coverOverlay} aria-hidden>
+          {busy ? 'Загрузка…' : 'Скачать'}
+        </span>
+      </button>
 
       <div className={styles.body}>
-        <span className={styles.name}>{item.name}</span>
+        <span className={styles.name}>{book.name}</span>
 
-        {isDigital ? (
-          <button
-            type='button'
-            className={cn(styles.iconBtn, busy && styles.iconBtnBusy)}
-            onClick={handleDownload}
-            disabled={busy}
-            title={`Скачать · ${categoryLabel}`}
-            aria-label={`Скачать «${item.name}» · ${categoryLabel}`}
-            aria-busy={busy}
-          >
-            {icon}
-          </button>
-        ) : href ? (
-          <Link
-            href={href}
-            className={styles.iconBtn}
-            title={categoryLabel}
-            aria-label={`${categoryLabel}: открыть страницу «${item.name}»`}
-          >
-            {icon}
-          </Link>
-        ) : (
-          <span className={styles.iconStatic} title={categoryLabel} aria-label={categoryLabel}>
-            {icon}
-          </span>
-        )}
+        <button
+          type='button'
+          className={cn(styles.iconBtn, busy && styles.iconBtnBusy)}
+          onClick={handleDownload}
+          disabled={busy}
+          title={`Скачать · ${categoryLabel}`}
+          aria-label={`Скачать «${book.name}» · ${categoryLabel}`}
+          aria-busy={busy}
+        >
+          <ProductTypeIcon category={book.downloadCategory} size={30} className={styles.icon} />
+        </button>
       </div>
+
+      {book.shipping && <p className={styles.shipping}>{libraryShippingLabel(book.shipping)}</p>}
       {error && <p className={styles.error}>{error}</p>}
     </div>
   )

@@ -30,12 +30,37 @@
   min-width: 0;
 }
 
+// The cover doubles as the download trigger.
 .cover {
   position: relative;
+  display: block;
+  width: 100%;
   aspect-ratio: 2 / 3;
+  padding: 0;
   background: rgba($color-text-on-dark, 0.06);
+  border: none;
   border-radius: $radius-sm;
   overflow: hidden;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 4px;
+  }
+
+  // Reveal the "Скачать" hint on hover/focus.
+  &:hover .coverOverlay,
+  &:focus-visible .coverOverlay {
+    opacity: 1;
+  }
+}
+
+.coverBusy {
+  cursor: progress;
+
+  .coverOverlay {
+    opacity: 1;
+  }
 }
 
 .coverImg {
@@ -48,14 +73,20 @@
   background: linear-gradient(135deg, $neutral-800 0%, $neutral-700 100%);
 }
 
-.coverLink {
-  display: block;
-  border-radius: $radius-sm;
-
-  &:focus-visible {
-    outline: 2px solid $color-accent-on-dark;
-    outline-offset: 4px;
-  }
+// Centred label fading in over the cover on hover/focus.
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-text-on-dark;
+  background: rgba($neutral-900, 0.55);
+  opacity: 0;
+  transition: opacity 150ms ease;
 }
 
 .body {
@@ -113,6 +144,14 @@
 
 .icon {
   display: block;
+}
+
+.shipping {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+  color: rgba($color-text-on-dark, 0.7);
 }
 
 .error {
