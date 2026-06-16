@@ -29,11 +29,19 @@ const privJwk = { ...privateKey.export({ format: 'jwk' }), kid, alg: 'ES256', us
 // 2. Legacy HS256 `oct` key (keeps existing HS256 tokens valid)
 const octJwk = { kty: 'oct', k: b64url(legacySecret), alg: 'HS256', use: 'sig', kid: 'legacy-hs256' }
 
-// 3. Keysets
-const privateKeyset = { keys: [privJwk, octJwk] }
-const publicKeyset = { keys: [pubJwk, octJwk] }
-writeFileSync(`${outDir}/signing_keys.json`, JSON.stringify(privateKeyset, null, 2))
-writeFileSync(`${outDir}/jwks.public.json`, JSON.stringify(publicKeyset, null, 2))
+// 3. Keysets — exact formats per the Supabase self-hosting docs:
+//    JWT_KEYS (GoTrue GOTRUE_JWT_KEYS) is a BARE ARRAY of signing JWKs (EC private + legacy oct).
+//    JWT_JWKS (PostgREST/Storage verifiers) is a {"keys":[...]} object (EC public + legacy oct).
+const jwtKeys = [privJwk, octJwk] // -> JWT_KEYS
+const jwtJwks = { keys: [pubJwk, octJwk] } // -> JWT_JWKS
+// Single-line JSON, ready to paste as .env values.
+writeFileSync(`${outDir}/JWT_KEYS.json`, JSON.stringify(jwtKeys))
+writeFileSync(`${outDir}/JWT_JWKS.json`, JSON.stringify(jwtJwks))
+// .env-ready lines (the migration sets these two; the compose `:-` fallbacks stay HS256 until then).
+writeFileSync(
+  `${outDir}/jwt-keys.env`,
+  `JWT_KEYS=${JSON.stringify(jwtKeys)}\nJWT_JWKS=${JSON.stringify(jwtJwks)}\n`,
+)
 
 // 4. Self-test — prove the artifacts are sound before they touch any service.
 const data = Buffer.from('header.payload')
@@ -45,5 +53,5 @@ const hsFromJwk = createHmac('sha256', Buffer.from(octJwk.k, 'base64url')).updat
 console.log(`ES256 kid: ${kid}`)
 console.log(`ES256 sign/verify roundtrip: ${esOk ? 'OK' : 'FAIL'}`)
 console.log(`HS256 oct key == legacy secret: ${hsLegacy === hsFromJwk ? 'OK' : 'FAIL'}`)
-console.log(`wrote ${outDir}/signing_keys.json (PRIVATE keyset) + ${outDir}/jwks.public.json (public keyset)`)
+console.log(`wrote ${outDir}/jwt-keys.env (JWT_KEYS + JWT_JWKS — SECRET) + JWT_KEYS.json + JWT_JWKS.json`)
 if (!esOk || hsLegacy !== hsFromJwk) process.exit(1)
