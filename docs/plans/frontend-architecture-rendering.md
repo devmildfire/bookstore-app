@@ -183,16 +183,19 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Browser smoke test: fresh-visitor anon sign-in fires; reload preserves same anon user (hint 0→1, no clobber); cart/likes 200; zero console errors.
 - [ ] Merge `feat/ppr-phase0-layout` → `update`.
 
-### Phase 1 — quick wins
-- [ ] `metadataBase` in root metadata (P2)
-- [ ] `robots.ts` (P1)
-- [ ] `sitemap.ts` enumerating books/authors/articles (P1)
-- [ ] QueryClient `refetchOnWindowFocus:false` (P10)
-- [ ] Dynamic-guard `ReactQueryDevtools` (P11)
-- [ ] `experimental.optimizePackageImports` for Radix/TanStack (P8)
-- [ ] `priority` on first ~4-6 `BookCard`s (P9)
-- [ ] Remove `HeroVideo.tsx:17` `console.log` (B6)
-- [ ] Drop false `'use client'` on `Marquee` (B4)
+### Phase 1 — quick wins — **DONE (merged to `update`, CI green)**
+- [x] `metadataBase` in root metadata (P2)
+- [x] `robots.ts` (P1)
+- [x] `sitemap.ts` — static public routes + books (`getAllBookSlugs`) + authors + articles; ISR `revalidate=3600`; each source guarded. `robots.txt`/`sitemap.xml` build as static `○`. (P1)
+- [x] QueryClient `refetchOnWindowFocus:false` (P10)
+- [x] Dynamic-guard `ReactQueryDevtools` (next/dynamic + NODE_ENV) (P11)
+- [x] `experimental.optimizePackageImports` for Radix (6) + TanStack (P8)
+- [x] Remove `HeroVideo` `console.log` (B6)
+- [x] Drop false `'use client'` on `Marquee` (B4)
+- [~] **P9 (`priority` on `BookCard`s) — intentionally SKIPPED.** There is no grid-first catalog page (the catalog *is* the home page, where the grid sits below the hero `Slider` LCP). Prioritizing grid covers would compete with the hero LCP and hurt, not help. Reconsider only if a grid-first listing page is ever added.
+
+### Phase 0 follow-up — admin prerender CI fix — **DONE (merged, CI green)**
+- [x] `admin/(panel)/layout.tsx` → `export const dynamic = 'force-dynamic'`. Making the root layout auth-free (Phase 0) let the build's prerender pass descend into admin pages and execute `getAdminNavCounts()` → `createAdminClient()` → `SUPABASE_SERVICE_ROLE_KEY`, which is **server-only and absent from the CI build env** → `supabaseKey is required`. Admin is auth-gated/per-request — `force-dynamic` is the correct mode (the service key belongs at runtime, never in the build). Storefront SSG is unaffected (it uses the public anon key). Reproduced + verified locally with the service key blanked.
 
 ### Phase 2 — SSG + caching + waterfall — *(branch `feat/ppr-phase2-book-ssg`, build-verified)*
 - [x] `generateStaticParams` for `books/[slug]` (`getAllBookSlugs` — published, non-issue slugs; returns [] on error → degrades to on-demand). Build now prerenders `/books/[slug]` as **● SSG** (+ `ƒ` on-demand fallback via dynamicParams). (R2)
