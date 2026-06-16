@@ -105,6 +105,21 @@ See also [docs/DATABASE_BACKUP.md](DATABASE_BACKUP.md) (backup-before-destructiv
 
 ---
 
+## FE1 🟡 Frontend rendering strategy — audit done, phased plan pending
+
+A four-part audit (client/server boundary, PPR feasibility, data-fetching, perf) found the
+storefront fundamentally sound (server pages, correct prefetch/hydrate, fonts + LCP images
+right) but with clear wins: the **`(site)` layout reads cookies in render → forces the whole
+storefront dynamic** (keystone blocker), **no `generateStaticParams`** (book pages never
+prebuilt), a **duplicate `get_catalog_book_by_slug` RPC** per book render, **no `cache()`/
+`revalidate`** in the read path, **card-fusion** components that should split into server body
++ client leaf (BookCard first), missing **Suspense/`loading.tsx`**, and SEO gaps
+(`metadataBase`, `sitemap.ts`/`robots.ts`). PPR in Next 16.2.6 = `cacheComponents:true`
+(`experimental.ppr` throws) — a project-wide migration, sequenced last. Full findings + phased
+plan + tracker: [docs/plans/frontend-architecture-rendering.md](plans/frontend-architecture-rendering.md).
+
+---
+
 ## D2 🟠 Post-wipe content & storage not fully restored
 
 The 2026-06-06 wipe emptied all storage buckets and some catalog content. Restored
