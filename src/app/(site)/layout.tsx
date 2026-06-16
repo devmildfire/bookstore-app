@@ -13,6 +13,7 @@ import { boxSetPhysicalFlagsQueryKey } from '@/api/orders'
 import type { CartItem } from '@/entities/cart/client'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import ScrollToTopOnNavigate from '@/components/layout/ScrollToTopOnNavigate/ScrollToTopOnNavigate'
 import styles from './layout.module.scss'
 
 // Storefront chrome. Lives in the (site) route group so it wraps every public
@@ -55,6 +56,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>
+      <ScrollToTopOnNavigate />
       <Header />
       <main className={styles.main}>{children}</main>
       <Footer />
