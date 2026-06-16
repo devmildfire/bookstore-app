@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getBook, getSimilarBooks, getEditionPhotos, getBookEditions } from '@/api/books'
+import { getBook, getSimilarBooks, getEditionPhotos, getBookEditions, getAllBookSlugs } from '@/api/books'
 import { getPeriodical, getPeriodicalIssueRedirect } from '@/api/periodicals'
 import PeriodicalView from './PeriodicalView'
 import BookGrid from '@/components/book/BookGrid'
@@ -48,22 +48,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// Prebuild every published, non-issue book detail page at build (SSG). New/unlisted
+// slugs still render on demand (dynamicParams defaults to true); getAllBookSlugs returns
+// [] on a Supabase error, so a build never fails on a transient outage.
+export async function generateStaticParams() {
+  const slugs = await getAllBookSlugs()
+  return slugs.map((slug) => ({ slug }))
+}
+
 export default async function BookDetailPage({ params }: Props) {
   const { slug } = await params
 
   // A periodical (e.g. «Могучий Русский Динозавр») renders one shared page with a
-  // section per issue; an individual issue slug redirects to its anchor there.
-  const periodical = await getPeriodical(slug)
+  // section per issue; an individual issue slug redirects to its anchor there. These
+  // three slug lookups are independent — fire them together instead of in series
+  // (cache() dedupes getPeriodical/getBook against generateMetadata, so no extra calls).
+  const [periodical, issueRedirect, book] = await Promise.all([
+    getPeriodical(slug),
+    getPeriodicalIssueRedirect(slug),
+    getBook(slug),
+  ])
+
   if (periodical) {
     return <PeriodicalView periodical={periodical} />
   }
-  const issueRedirect = await getPeriodicalIssueRedirect(slug)
   if (issueRedirect) {
     redirect(`/books/${issueRedirect.periodicalSlug}#vol-${issueRedirect.volumeNumber}`)
   }
-
-  const book = await getBook(slug)
-
   if (!book) {
     notFound()
   }
