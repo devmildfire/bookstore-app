@@ -40,7 +40,7 @@ internal service ports
 Supabase Studio access should be through SSH tunnel for launch. Example shape:
 
 ```bash
-ssh -L 54323:127.0.0.1:54323 deploy@<vps-ip>
+ssh -L 54323:127.0.0.1:54323 deploy@<VPS_HOST>
 ```
 
 The final tunnel command depends on how Studio is bound in production compose.
@@ -170,8 +170,8 @@ extracts straight into the production volume root.
 Use `scp` or `rsync` from the local machine to `/backups/chtivo` on the VPS:
 
 ```bash
-scp backups/chtivo-local-full-*.dump deploy@<vps-ip>:/backups/chtivo/
-scp backups/chtivo-local-storage-*.tar.gz deploy@<vps-ip>:/backups/chtivo/
+scp backups/chtivo-local-full-*.dump deploy@<VPS_HOST>:/backups/chtivo/
+scp backups/chtivo-local-storage-*.tar.gz deploy@<VPS_HOST>:/backups/chtivo/
 ```
 
 If `/backups/chtivo` is root-owned and not writable by `deploy`, copy to `/home/deploy` first, then move with `sudo`.
