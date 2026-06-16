@@ -85,15 +85,25 @@ cookie-free and Suspense boundaries exist.
 
 ## Plan (phased)
 
-### Phase 0 — De-dynamize the `(site)` layout *(keystone; unblocks all static/PPR)*
-- Move the per-user prefetch (cart/likes/promo/gift-cards/quote) **out of the layout
-  render path** so `cookies()` is not read in the static shell. Target shape: keep the
-  server prefetch but relocate it into a `<Suspense>`-wrapped child island so the layout
-  shell stays static and the per-user chrome streams. (Preserves the no-spinner hydration
-  the cart already enjoys, and is the PPR-aligned design.)
-- Reduce the root layout's `getUser()` to `getClaims()` (P3) — only `is_anonymous` is needed.
-- **Acceptance:** `books/[slug]` and `/` no longer render dynamic *solely* because of the
-  layout; `next build` shows them as candidates for static/streamed output.
+### Phase 0 — Remove all cookie reads from the storefront render path *(keystone; unblocks all static/PPR)* — **DONE + browser-verified**
+- **`(site)` layout:** remove the per-user server prefetch entirely; `CartProvider`/`LikeButton`
+  client-fetch (they already do). *(Initially tried a Suspense-wrapped server-prefetch island —
+  Option A — but a browser test proved that pre-PPR the consumers mount before the late island
+  hydrates, so they client-fetch **anyway**, making the server prefetch pure redundant work
+  (~12 fetches) AND keeping a cookie read in the tree. Pivoted to client-fetch — Option B.)*
+  Server-prefetch-hydrate is fundamentally incompatible with static rendering (it reads cookies
+  in render); per-user data must be client-fetched (or, under PPR, a dedicated cart-badge island).
+- **Root `app/layout.tsx`:** removed `getUser()` (it duplicated the proxy's per-request call).
+  The proxy sets a non-HttpOnly `bookstore_has_session` hint cookie; `providers.tsx` reads it
+  client-side to gate anonymous sign-in (stays client-side, so JS-less bots don't create anon users).
+- `getUser()→getClaims()` is **moot under HS256** (proven from SDK source — falls back to network
+  `getUser`); local verify needs asymmetric keys → Solution B (Phase 5).
+- **Result (verified):** static routes 3 → **13** (`/cart`, `/checkout`, `/auth/*`, `/contacts`,
+  `/investors`, `/abzac`, …). `/`, `/books/[slug]`, `/about` remain `ƒ` only because of
+  `searchParams` (home → Phase 4) and missing `generateStaticParams` (dynamic segments → Phase 2),
+  **no longer because of cookies**. Browser smoke test green: anon sign-in fires for a fresh
+  visitor, reload preserves the same anon user (no clobber, hint flips 0→1), cart/likes fetch 200,
+  no console errors.
 
 ### Phase 1 — Quick wins (low-risk, independent)
 - P2 `metadataBase`, P1 `robots.ts` + `sitemap.ts` (enumerate books/authors/articles).
@@ -165,11 +175,13 @@ forces dynamic, not the verification algorithm).*
 
 Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 
-### Phase 0 — keystone
-- [~] Relocate `(site)/layout.tsx` per-user prefetch into a Suspense-wrapped island (no `cookies()` in the static shell). **Implemented on branch `feat/ppr-phase0-layout`** (`src/app/(site)/UserStateHydrator.tsx` + slimmed `layout.tsx`); tsc/lint/`npm run build` green. **Immediate win:** the shell + page content no longer block on the ~6 per-user prefetches — they stream first, per-user state hydrates a beat later. **Pending: browser smoke test** (cart badge + like buttons hydrate from the streamed island, no console errors) before merge — needs local Supabase (Docker).
-- [~] **Make root `app/layout.tsx` auth-free (Solution A — done on branch).** Removed `getUser()` from the root layout entirely (it was a *duplicate* of the proxy's per-request `getUser`). The proxy now sets a non-HttpOnly `bookstore_has_session` hint cookie from the `user` it already has; `providers.tsx` reads that hint client-side to gate anonymous sign-in. Result: root layout reads no cookies → PPR-friendly; duplicate auth call gone (the P3 win); anon sign-in stays client-side so JS-less bots never create anon users. **Pending: same browser smoke test** (anon bootstrap still fires for a fresh visitor; existing session not clobbered).
-  - Note: `getUser()→getClaims()` is **moot under HS256** — proven from the SDK source, `getClaims()` falls back to a network `getUser()` for HS256. Local verification needs asymmetric keys → folded into **Solution B (Phase 5)**.
-- [ ] Verify `books/[slug]` + `/` are no longer layout-forced-dynamic (now blocked only by the `(site)` `UserStateHydrator` cookie read, which is intentional — it becomes a streamed dynamic island once `cacheComponents` is on; see Phase 5)
+### Phase 0 — keystone — **DONE (browser-verified) on branch `feat/ppr-phase0-layout`**
+- [x] `(site)` layout reads no cookies — removed the per-user server prefetch; `CartProvider`/`LikeButton` client-fetch. *(Pivoted from the Option-A Suspense island after a browser test showed it double-fetched (server prefetch + client refetch ≈ 12 requests) and didn't hydrate pre-PPR. Server-prefetch-hydrate is incompatible with static rendering; per-user data must be client-fetched — or a dedicated cart-badge island under PPR.)*
+- [x] Root `app/layout.tsx` auth-free — removed `getUser()` (duplicated the proxy's per-request call). Proxy sets non-HttpOnly `bookstore_has_session` hint cookie; `providers.tsx` gates anon sign-in client-side off it (stays client-side, so JS-less bots don't create anon users). Duplicate auth call gone = the **P3 win**.
+- [x] `getUser()→getClaims()` confirmed **moot under HS256** (SDK falls back to network `getUser`) → asymmetric-key migration is **Solution B (Phase 5)**.
+- [x] `books/[slug]` + `/` no longer cookie-forced-dynamic — static routes **3 → 13**; remaining `ƒ` on hero pages is `searchParams` (home → Phase 4) + missing `generateStaticParams` (dynamic segments → Phase 2), not cookies.
+- [x] Browser smoke test: fresh-visitor anon sign-in fires; reload preserves same anon user (hint 0→1, no clobber); cart/likes 200; zero console errors.
+- [ ] Merge `feat/ppr-phase0-layout` → `update`.
 
 ### Phase 1 — quick wins
 - [ ] `metadataBase` in root metadata (P2)
