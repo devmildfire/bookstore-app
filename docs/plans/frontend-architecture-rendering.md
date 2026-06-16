@@ -226,6 +226,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Verify home + book detail prerendered shell + streamed islands
 - [ ] **Solution B:** migrate self-hosted Supabase HS256 → asymmetric signing keys (ES256 + JWKS): GoTrue signs + exposes JWKS; PostgREST + Storage validate via JWKS; transition anon/service keys; then proxy `getUser()` → local `getClaims()`. Backup + staged rollout; smoke-test prod auth/REST/storage.
 
-### Phase 6 — build/cleanup (optional)
+### Phase 6 — build/cleanup (optional, **after all other phases**)
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)
 - [ ] Unify profile data source (D5); server-derive MyBooks/MyCourses (D4/D7)
+- [ ] **DRY the CI audit into a reusable workflow** (`workflow_call`). The `npm audit --audit-level=high` step is currently duplicated in `audit.yml` (standalone, all-branches) and as the `audit` gate job in `deploy-production.yml`. Extract one reusable workflow both `uses:`. Deferred until the rendering phases (3, 5) are complete so it doesn't churn the CI mid-stream.
