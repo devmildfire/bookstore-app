@@ -1,0 +1,62 @@
+# Solution B — migrate self-hosted Supabase HS256 → asymmetric JWT signing keys
+
+**Status:** planned + feasibility-verified (2026-06-16). NOT executed. Phase 5b of
+[../plans/frontend-architecture-rendering.md](../plans/frontend-architecture-rendering.md).
+
+## Why
+Today every service signs/validates JWTs with one shared symmetric secret (`JWT_SECRET`,
+HS256). Consequences:
+- `supabase.auth.getClaims()` can't verify locally for HS256 → it falls back to a network
+  `getUser()` (proven from the `@supabase/auth-js` source). So our P3 optimization (proxy
+  `getUser()` → local `getClaims()`) is **moot** until keys are asymmetric.
+- The same secret is shared across auth/rest/storage; no key rotation.
+
+Asymmetric keys (ES256 + JWKS): GoTrue signs with a **private** key; rest/storage/realtime
+verify with the **public** key from `/.well-known/jwks.json` (cached, no network per request),
+enabling local `getClaims()`, key rotation, and no shared secret.
+
+## Feasibility (verified for the installed versions)
+- GoTrue **v2.188.1** supports asymmetric signing via `GOTRUE_JWT_KEYS` (+ `GOTRUE_JWT_VALID_METHODS`).
+- PostgREST **v14.10** + Storage **v1.54.1** verify via a JWKS keyset (`PGRST_JWT_SECRET` /
+  `JWT_JWKS` accept a JWK set, not just a raw secret).
+- **Coexistence is supported** (the key de-risker): a JWKS keyset can hold BOTH the new ES256
+  key AND the legacy HS256 `oct` key. New tokens are signed ES256; existing HS256 tokens —
+  including the **anon/service keys baked into the deployed app bundle** and all live sessions —
+  keep validating. So **no app rebuild/redeploy is forced** and no session is invalidated.
+
+## Target config (per service)
+- **auth (GoTrue):** `GOTRUE_JWT_KEYS` = JWKS *with private material* = `[ES256 signing key, legacy HS256 oct key]`; `GOTRUE_JWT_VALID_METHODS=ES256,HS256`. Keep `GOTRUE_JWT_SECRET` only until the legacy key is dropped.
+- **rest (PostgREST):** `PGRST_JWT_SECRET` + `PGRST_APP_SETTINGS_JWT_SECRET` = public JWKS (ES256 public + legacy HS256).
+- **storage:** `JWT_JWKS` = public JWKS. **realtime** (not deployed): `API_JWT_JWKS` if ever added.
+- **kong:** expose `/auth/v1/.well-known/jwks.json` (add an open route to `http://auth:9999/.well-known/jwks.json`).
+
+## Staged plan (NEVER skip the rehearsal — repo culture)
+1. **Generate** the ES256 key pair in JWK format; build two JWKS keysets — a private one (auth)
+   and a public one (verifiers) — each also containing the legacy HS256 `oct` key.
+2. **Rehearse on the prod-compose stack locally** (the bootstrap-rehearsal pattern: temp host
+   port, tunnel off). Verify: a NEW login mints an ES256 token; an OLD HS256 token (re-use a
+   captured anon JWT) still validates on rest+storage; `getClaims()` verifies ES256 locally
+   (no network); `/auth/v1/.well-known/jwks.json` serves the public set.
+3. **Prod cutover** (backup first — `~/chtivo-backup.sh`): sync the env + kong changes to
+   `/opt/chtivo`, recreate auth/rest/storage/kong. Smoke-test auth health, a REST read, a public
+   cover, a signed URL, a fresh browser login, and an existing session (must NOT be logged out).
+4. **Flip** the proxy `getUser()` → `getClaims()` once ES256 is live; re-check TTFB.
+5. **(Later, optional)** drop the legacy HS256 key from the keysets after all old sessions
+   expire + the app is rebuilt with a new ES256-era anon key. Until then, coexistence stands.
+
+## Rollback
+Revert the service env to `*_JWT_SECRET=${JWT_SECRET}` (HS256) + remove the kong jwks route +
+recreate the services. Because old HS256 tokens never stopped working, rollback is non-breaking.
+
+## Risk / reward (read before executing)
+- **Reward (portfolio):** modest — local `getClaims()` saves ~1 auth-server round-trip in the
+  proxy (already fast over the internal kong URL); key rotation + no shared secret are hygiene.
+- **Risk:** it reconfigures **live auth signing** across 3–4 services. The coexistence path makes
+  it non-breaking *if done correctly*, but a malformed JWKS keyset or a missed verifier could
+  reject tokens and break login/REST/storage site-wide. Mandatory: local prod-compose rehearsal +
+  fresh backup + staged smoke tests.
+
+Sources: [Supabase: self-hosted auth keys](https://supabase.com/docs/guides/self-hosting/self-hosted-auth-keys) ·
+[JWT Signing Keys](https://supabase.com/docs/guides/auth/signing-keys) ·
+[Configure Asymmetric JWTs on Self-Hosted Supabase (dev.to)](https://dev.to/vpcano/how-to-configure-asymmetric-jwts-on-self-hosted-supabase-53ed) ·
+[Migrating from Static JWT Secrets to JWKS (objectgraph)](https://objectgraph.com/blog/migrating-supabase-jwt-jwks/)
