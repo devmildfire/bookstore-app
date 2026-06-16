@@ -21,6 +21,9 @@ const cheque = localFont({
 })
 
 export const metadata: Metadata = {
+  // Resolves relative OpenGraph/canonical/Twitter URLs to absolute ones. NEXT_PUBLIC_BASE_URL
+  // is the prod origin (set in prod .env); falls back to localhost in dev.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'),
   title: {
     default: 'Книжный магазин',
     template: '%s | Книжный магазин',

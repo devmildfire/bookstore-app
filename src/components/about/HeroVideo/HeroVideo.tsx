@@ -14,8 +14,6 @@ export default function HeroVideo({ videoUrl, posterUrl }: Props) {
   const [isPlaying, setIsPlaying] = useState(false)
 
   const handlePlay = () => {
-    console.log('play button clicked')
-
     const node = videoRef.current
     if (!node) return
     void node.play()

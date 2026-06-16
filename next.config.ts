@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
     // (matters for CI prerendering against the prod DB too).
     staticGenerationRetryCount: 3,
     staticGenerationMaxConcurrency: 4,
+    // Tree-shake barrel imports so only the used members ship to the client bundle.
+    optimizePackageImports: [
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-select',
+      '@radix-ui/react-toast',
+      '@tanstack/react-query',
+    ],
   },
   images: {
     ...(process.env.NODE_ENV !== 'production' && { dangerouslyAllowLocalIP: true }),

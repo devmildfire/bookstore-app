@@ -1,5 +1,5 @@
-'use client'
-
+// Server component — pure CSS-keyframe marquee (pause-on-hover is CSS too); no hooks,
+// state, or events, so no 'use client' needed. Children (logos/cards) are passed in.
 import cn from 'classnames'
 import type { ReactNode } from 'react'
 import styles from './Marquee.module.scss'
