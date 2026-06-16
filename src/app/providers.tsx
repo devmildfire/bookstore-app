@@ -29,16 +29,24 @@ function getQueryClient() {
 
 type Props = {
   children: React.ReactNode
-  hasSession: boolean
 }
 
-export default function Providers({ children, hasSession }: Props) {
+// Whether a session (anon or real) already exists, per the proxy-set hint cookie.
+// Read client-side so the root layout stays auth-free / PPR-friendly. With
+// `tokens-only` encoding the real session cookies are HttpOnly (unreadable here),
+// which is exactly why we rely on this boolean hint instead of getSession().
+function hasExistingSession(): boolean {
+  if (typeof document === 'undefined') return false
+  return document.cookie.split('; ').includes('bookstore_has_session=1')
+}
+
+export default function Providers({ children }: Props) {
   const queryClient = getQueryClient()
   const anonymousSignInStarted = useRef(false)
 
   useEffect(() => {
-    if (hasSession) return
     if (anonymousSignInStarted.current) return
+    if (hasExistingSession()) return
 
     anonymousSignInStarted.current = true
 
@@ -48,7 +56,7 @@ export default function Providers({ children, hasSession }: Props) {
       anonymousSignInStarted.current = false
       console.error(error)
     })
-  }, [hasSession])
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>

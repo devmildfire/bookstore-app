@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 const CART_COOKIE = 'bookstore_cart_id'
+// Non-HttpOnly hint read by the client (Providers) to gate anonymous sign-in,
+// so the root layout doesn't need to read auth cookies (PPR-friendly).
+const HAS_SESSION_COOKIE = 'bookstore_has_session'
 
 // /profile is intentionally NOT protected here — anonymous users need to
 // reach their cabinet to see orders + download links. The page itself
@@ -86,6 +89,21 @@ export async function proxy(request: NextRequest) {
       path: '/',
     })
   }
+
+  // Non-HttpOnly hint cookie: does a session (anon OR real) already exist? The
+  // client reads this in Providers to gate anonymous sign-in WITHOUT the root
+  // layout reading auth cookies — which is what keeps app/layout static / PPR-
+  // friendly (and drops the duplicate getUser() the layout used to make). It is
+  // NOT a token, just a boolean. Refreshed every request so it stays accurate.
+  // Anon sign-in stays client-side, so bots that don't run JS never create anon
+  // users. (Skipped on the /auth/callback early-return above; the next request
+  // re-syncs it.)
+  response.cookies.set(HAS_SESSION_COOKIE, user ? '1' : '0', {
+    httpOnly: false,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+  })
 
   // Gate the admin area: only users whose JWT carries app_metadata.role ===
   // 'admin' may pass. Everyone else is sent to the admin login. /admin/login
