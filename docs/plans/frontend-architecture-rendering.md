@@ -145,9 +145,9 @@ cookie-free and Suspense boundaries exist.
 Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 
 ### Phase 0 — keystone
-- [ ] Relocate `(site)/layout.tsx` per-user prefetch into a Suspense-wrapped island (no `cookies()` in the static shell)
-- [ ] Root layout `getUser()` → `getClaims()` (P3)
-- [ ] Verify `books/[slug]` + `/` are no longer layout-forced-dynamic
+- [~] Relocate `(site)/layout.tsx` per-user prefetch into a Suspense-wrapped island (no `cookies()` in the static shell). **Implemented on branch `feat/ppr-phase0-layout`** (`src/app/(site)/UserStateHydrator.tsx` + slimmed `layout.tsx`); tsc/lint/`npm run build` green. **Immediate win:** the shell + page content no longer block on the ~6 per-user prefetches — they stream first, per-user state hydrates a beat later. **Pending: browser smoke test** (cart badge + like buttons hydrate from the streamed island, no console errors) before merge — needs local Supabase (Docker).
+- [ ] Root layout `getUser()` → `getClaims()` (P3). **Caveat:** this project uses legacy **HS256** keys, where `getClaims()` may still do a network verify (unlike asymmetric keys, where it's local) — verify it's actually cheaper before adopting. Note: the root layout's cookie read still forces all routes dynamic, so isolating/removing it (or moving anon-session bootstrap into the proxy) is the remaining blocker for static — pair with Phase 5.
+- [ ] Verify `books/[slug]` + `/` are no longer layout-forced-dynamic (only fully realized once the root-layout cookie read is also isolated + `cacheComponents` is on — see Phase 5)
 
 ### Phase 1 — quick wins
 - [ ] `metadataBase` in root metadata (P2)
