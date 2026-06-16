@@ -9,6 +9,16 @@
 // "not_authenticated"). Pin the cookie name to the PUBLIC-url-derived value so it
 // matches the browser regardless of which host the server calls. Edge-safe (no
 // Node-only imports) so proxy.ts can import it.
-const PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321'
+function deriveCookieName(url: string | undefined): string {
+  // `||` (not `??`) so an empty-string env (e.g. a CI build with the var unset)
+  // falls back instead of throwing on `new URL('')`. try/catch guards anything
+  // else malformed — at runtime the real public URL is always present.
+  try {
+    const hostname = new URL(url || 'http://127.0.0.1:54321').hostname
+    return `sb-${hostname.split('.')[0]}-auth-token`
+  } catch {
+    return 'sb-api-auth-token'
+  }
+}
 
-export const SUPABASE_AUTH_COOKIE_NAME = `sb-${new URL(PUBLIC_SUPABASE_URL).hostname.split('.')[0]}-auth-token`
+export const SUPABASE_AUTH_COOKIE_NAME = deriveCookieName(process.env.NEXT_PUBLIC_SUPABASE_URL)

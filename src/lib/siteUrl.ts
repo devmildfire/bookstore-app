@@ -6,4 +6,7 @@
 // redirect_to values. Always build cross-page redirects from this explicit
 // origin instead. (Read at runtime on the server — NEXT_PUBLIC_BASE_URL is set
 // in the container env; same source the payments config + email links use.)
-export const SITE_ORIGIN = (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
+// `||` (not `??`) so an empty-string env (CI build with the var unset) falls
+// back to a valid origin instead of '' (which would make `new URL(path, '')`
+// throw in the redirect routes). At runtime the real base URL is always present.
+export const SITE_ORIGIN = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/$/, '')
