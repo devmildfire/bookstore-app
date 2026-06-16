@@ -10,7 +10,8 @@ import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import {
   BOOK_CATEGORIES,
   CATEGORY_LABEL,
-  DIGITAL_CATEGORIES,
+  DOWNLOADABLE_BOOK_CATEGORIES,
+  SHIPPED_BOOK_CATEGORIES,
   libraryShippingLabel,
 } from '@/lib/orderDisplay'
 import type { ProductCategory } from '@/types/database'
@@ -18,23 +19,26 @@ import type { FulfillmentStatus } from '@/entities/order/client'
 import styles from './MyBooksList.module.scss'
 
 // One owned book, merged across editions/orders. A title may have been bought
-// as print and/or digital; we show a single tile that always offers the digital
-// download (print buyers are gifted the digital edition) and, when a physical
-// copy is owned, its shipping state.
+// as print, card and/or digital; we show a single tile that always offers the
+// digital download (print buyers are gifted the digital edition; a card book is
+// itself a digital edition on a drive) and, when a physical copy is owned (print
+// or card), its shipping state.
 type LibraryBook = {
   key: string
   name: string
   coverUrl: string | null
-  // Order item the download is issued against. Prefers a digital edition (so the
-  // user gets the exact file they bought); for a print-only purchase the server
-  // resolves the title's gifted digital edition from this item.
+  // Order item the download is issued against. Prefers an edition that carries
+  // its own file (so the user gets the exact file they bought); for a print-only
+  // purchase the server resolves the title's gifted digital edition from this item.
   downloadItemId: number
-  // Category used for the download icon/label — the digital edition owned, or
-  // EBook for a print-only purchase (the gifted format).
+  // Category used for the download icon/label — the downloadable edition owned,
+  // or EBook for a print-only purchase (the gifted format).
   downloadCategory: ProductCategory
-  ownsDigital: boolean
-  // Physical copy's shipping state, null when the user owns no physical edition.
+  ownsFile: boolean
+  // Physical copy's shipping state + which physical edition it is (print/card),
+  // null when the user owns no physical edition.
   shipping: FulfillmentStatus | null
+  shippedCategory: ProductCategory | null
 }
 
 // The library: every book the user owns, pulled from their paid orders and
@@ -54,7 +58,8 @@ export default function MyBooksList() {
     for (const item of order.items) {
       if (!BOOK_CATEGORIES.has(item.category)) continue
       const key = item.titleSlug ?? item.bookId
-      const isDigital = DIGITAL_CATEGORIES.has(item.category)
+      const hasFile = DOWNLOADABLE_BOOK_CATEGORIES.has(item.category)
+      const isShipped = SHIPPED_BOOK_CATEGORIES.has(item.category)
       const existing = byTitle.get(key)
 
       if (!existing) {
@@ -63,22 +68,24 @@ export default function MyBooksList() {
           name: item.name,
           coverUrl: item.coverUrl,
           downloadItemId: item.id,
-          downloadCategory: isDigital ? item.category : 'EBook',
-          ownsDigital: isDigital,
-          shipping: isDigital ? null : order.fulfillmentStatus,
+          downloadCategory: hasFile ? item.category : 'EBook',
+          ownsFile: hasFile,
+          shipping: isShipped ? order.fulfillmentStatus : null,
+          shippedCategory: isShipped ? item.category : null,
         })
         continue
       }
 
-      // Prefer a digital edition's own file for the download action.
-      if (isDigital && !existing.ownsDigital) {
+      // Prefer an edition that carries its own file for the download action.
+      if (hasFile && !existing.ownsFile) {
         existing.downloadItemId = item.id
         existing.downloadCategory = item.category
-        existing.ownsDigital = true
+        existing.ownsFile = true
       }
       // First physical line wins (most recent order).
-      if (!isDigital && existing.shipping === null) {
+      if (isShipped && existing.shipping === null) {
         existing.shipping = order.fulfillmentStatus
+        existing.shippedCategory = item.category
       }
       if (!existing.coverUrl && item.coverUrl) existing.coverUrl = item.coverUrl
     }
@@ -173,7 +180,11 @@ function BookCard({ book }: { book: LibraryBook }) {
         </button>
       </div>
 
-      {book.shipping && <p className={styles.shipping}>{libraryShippingLabel(book.shipping)}</p>}
+      {book.shipping && book.shippedCategory && (
+        <p className={styles.shipping}>
+          {libraryShippingLabel(book.shipping, book.shippedCategory)}
+        </p>
+      )}
       {error && <p className={styles.error}>{error}</p>}
     </div>
   )

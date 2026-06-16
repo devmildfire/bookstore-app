@@ -14,8 +14,17 @@ export const CATEGORY_LABEL: Partial<Record<ProductCategory, string>> = {
   Course: 'Курс',
 }
 
-// In-app readable/downloadable editions.
-export const DIGITAL_CATEGORIES = new Set<ProductCategory>(['EBook', 'AudioBook', 'Book2.0'])
+// Book editions that carry their own downloadable digital file: the pure-digital
+// EBook/AudioBook, plus the card book (Book2.0 — a physical USB/key-card whose
+// media IS a digital edition). A PrintBook has no own file but is gifted one.
+export const DOWNLOADABLE_BOOK_CATEGORIES = new Set<ProductCategory>([
+  'EBook',
+  'AudioBook',
+  'Book2.0',
+])
+// Physical book editions that ship to the buyer (and thus have a shipping
+// state): the printed copy and the card book. A card book ALSO downloads.
+export const SHIPPED_BOOK_CATEGORIES = new Set<ProductCategory>(['PrintBook', 'Book2.0'])
 // Everything that counts as a "book" for the «Мои книги» library (incl. physical).
 export const BOOK_CATEGORIES = new Set<ProductCategory>([
   'EBook',
@@ -68,18 +77,19 @@ export function fulfillmentLabel(f: FulfillmentStatus): string {
 }
 
 // Friendlier, book-centric phrasing for the «Мои книги» library, where a
-// physical copy's shipping state is shown alongside its (gifted) digital
-// download.
-export function libraryShippingLabel(f: FulfillmentStatus): string {
+// physical copy's shipping state is shown alongside the digital download. The
+// noun matches the edition: a printed copy vs a card book (USB/key-card).
+export function libraryShippingLabel(f: FulfillmentStatus, category: ProductCategory): string {
+  const isCard = category === 'Book2.0'
+  const noun = isCard ? 'Карточное издание' : 'Печатный экземпляр'
   switch (f) {
     case 'processing':
-      return 'Печатный экземпляр готовится к отправке'
+      return `${noun} готовится к отправке`
     case 'shipped':
-      return 'Печатный экземпляр в пути'
+      return `${noun} в пути`
     case 'delivered':
-      return 'Печатный экземпляр доставлен'
     case 'completed':
-      return 'Печатный экземпляр отправлен'
+      return isCard ? 'Карточное издание доставлено' : 'Печатный экземпляр доставлен'
   }
 }
 
