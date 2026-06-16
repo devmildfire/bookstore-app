@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
+import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 const CART_COOKIE = 'bookstore_cart_id'
 
@@ -41,6 +42,9 @@ export async function proxy(request: NextRequest) {
     process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // Pin cookie name to the public-url-derived value (the internal kong URL
+      // would otherwise derive sb-kong-… and miss the browser's session cookie).
+      cookieOptions: { name: SUPABASE_AUTH_COOKIE_NAME },
       cookies: {
         // `tokens-only` keeps only the access/refresh tokens in cookies and
         // pulls the user object via getUser() from the auth server. Keeps

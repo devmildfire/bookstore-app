@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
+import { SUPABASE_AUTH_COOKIE_NAME } from './authCookie'
 
 // Base URL for server-side Supabase API calls. In production the app container
 // reaches kong directly over the docker network (SUPABASE_INTERNAL_URL =
@@ -22,6 +23,10 @@ export async function createClient() {
     SERVER_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // Pin the cookie name to the PUBLIC-url-derived value (sb-api-auth-token).
+      // SERVER_SUPABASE_URL points at kong internally, which would otherwise make
+      // @supabase/ssr look for sb-kong-auth-token and miss the browser's session.
+      cookieOptions: { name: SUPABASE_AUTH_COOKIE_NAME },
       cookies: {
         // Must match proxy.ts + /auth/callback so cookies are written and
         // read with the same encoding (tokens-only, no user-in-cookie).

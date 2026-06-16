@@ -3,6 +3,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { Database } from '@/types/supabase'
 import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
 import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 // Server-side OAuth callback. Receives the PKCE `code` from Supabase after
 // the provider flow completes, exchanges it for a session server-side, and
@@ -46,6 +47,7 @@ export async function GET(request: NextRequest) {
     process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: { name: SUPABASE_AUTH_COOKIE_NAME },
       cookies: {
         // See proxy.ts for the why — keeps cookies small to avoid chunking.
         encode: 'tokens-only',

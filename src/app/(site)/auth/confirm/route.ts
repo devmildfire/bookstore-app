@@ -3,6 +3,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
 import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 // Verifies the token_hash from auth emails (signup / email_change / recovery)
 // rendered by the Send-Email hook, sets the resulting session on the redirect
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
     process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: { name: SUPABASE_AUTH_COOKIE_NAME },
       cookies: {
         encode: 'tokens-only',
         getAll() {
