@@ -1,11 +1,20 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createAuthClient } from '@/lib/supabase/client'
 import { ToastProvider } from '@/contexts/toast'
 import { CartProvider } from '@/contexts/cart'
+
+// Dev-only. Dynamically imported + statically guarded by NODE_ENV so the devtools
+// bundle is never shipped to production (the import() is dead-code-eliminated in prod).
+const ReactQueryDevtools =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(() => import('@tanstack/react-query-devtools').then((m) => m.ReactQueryDevtools), {
+        ssr: false,
+      })
+    : () => null
 
 function makeQueryClient() {
   return new QueryClient({
@@ -13,6 +22,9 @@ function makeQueryClient() {
       queries: {
         staleTime: 60 * 1000,
         retry: 1,
+        // Server-hydrated/cached queries shouldn't re-hit Supabase just because the tab
+        // regained focus.
+        refetchOnWindowFocus: false,
       },
     },
   })
