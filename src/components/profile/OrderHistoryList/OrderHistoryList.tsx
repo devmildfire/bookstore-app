@@ -8,13 +8,16 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrderHistory, orderHistoryQueryKey } from '@/api/orders'
 import { cancelOrderAction, resumeCheckoutAction } from '@/lib/orders/actions'
 import { submitPaymentRedirect } from '@/lib/payments/submitRedirect'
+import useDigitalDownload from '@/hooks/useDigitalDownload'
 import { formatPrice, formatProductPrice } from '@/lib/formatPrice'
 import {
+  BOOK_CATEGORIES,
   CATEGORY_LABEL,
   formatOrderDate,
   fulfillmentLabel,
   itemLink,
   paymentStatusLabel,
+  SHIPPED_BOOK_CATEGORIES,
 } from '@/lib/orderDisplay'
 import type { Order, OrderItem, OrderStatus } from '@/entities/order/client'
 import styles from './OrderHistoryList.module.scss'
@@ -107,10 +110,8 @@ function OrderCard({
             <span className={cn(styles.badge, PAYMENT_BADGE_CLASS[order.status])}>
               {paymentStatusLabel(order.status)}
             </span>
-            {/* Fulfillment only means something once the order is paid. */}
-            {order.status === 'paid' && (
-              <span className={styles.badge}>{fulfillmentLabel(order.fulfillmentStatus)}</span>
-            )}
+            {/* Per-edition fulfillment (download / shipping state) is shown on each
+                item row below, so no order-level fulfillment badge here. */}
           </div>
           <div className={styles.total}>{formatPrice(order.total)}</div>
         </div>
@@ -140,7 +141,7 @@ function OrderCard({
 
       <ul className={styles.items}>
         {order.items.map((item) => (
-          <ItemRow key={item.id} item={item} subscriptionStatus={order.subscriptionStatus} />
+          <ItemRow key={item.id} item={item} order={order} />
         ))}
       </ul>
     </article>
@@ -205,17 +206,20 @@ function PendingActions({ orderId }: { orderId: number }) {
   )
 }
 
-function ItemRow({
-  item,
-  subscriptionStatus,
-}: {
-  item: OrderItem
-  subscriptionStatus: string | null
-}) {
-  const href = itemLink(item)
+function ItemRow({ item, order }: { item: OrderItem; order: Order }) {
+  const isBook = BOOK_CATEGORIES.has(item.category)
+  const isBoxSet = item.category === 'BoxSet'
+  const isShipped = SHIPPED_BOOK_CATEGORIES.has(item.category)
+  const paid = order.status === 'paid'
+
+  // Order history must NOT bounce the buyer back to the store. Books and
+  // box-sets drop their /books link; gift cards, subscriptions and courses keep
+  // their in-cabinet / access links.
+  const href = isBook || isBoxSet ? null : itemLink(item)
+
   const subNote =
-    item.category === 'Subscription' && subscriptionStatus
-      ? SUBSCRIPTION_STATUS_LABEL[subscriptionStatus] ?? subscriptionStatus
+    item.category === 'Subscription' && order.subscriptionStatus
+      ? SUBSCRIPTION_STATUS_LABEL[order.subscriptionStatus] ?? order.subscriptionStatus
       : null
 
   const body = (
@@ -255,6 +259,11 @@ function ItemRow({
     </>
   )
 
+  // Once paid: digital editions (incl. the gifted digital of a print purchase)
+  // are downloadable; physical editions show where the shipment is.
+  const showDownload = paid && isBook
+  const showShipping = paid && (isShipped || isBoxSet)
+
   return (
     <li className={styles.item}>
       {href ? (
@@ -264,6 +273,59 @@ function ItemRow({
       ) : (
         <div className={styles.itemLink}>{body}</div>
       )}
+
+      {(showDownload || showShipping) && (
+        <ItemFulfillment
+          item={item}
+          order={order}
+          showDownload={showDownload}
+          showShipping={showShipping}
+        />
+      )}
     </li>
+  )
+}
+
+// Per-item footer: a download button for owned digital editions and/or the
+// physical edition's shipping state (with tracking when available).
+function ItemFulfillment({
+  item,
+  order,
+  showDownload,
+  showShipping,
+}: {
+  item: OrderItem
+  order: Order
+  showDownload: boolean
+  showShipping: boolean
+}) {
+  const { download, busy, error } = useDigitalDownload()
+
+  const tracking =
+    showShipping && order.trackingNumber
+      ? `${order.trackingCarrier ? `${order.trackingCarrier} ` : ''}${order.trackingNumber}`
+      : null
+
+  return (
+    <div className={styles.fulfillment}>
+      {showDownload && (
+        <button
+          type='button'
+          className={styles.downloadButton}
+          onClick={() => download(item.id)}
+          disabled={busy}
+          aria-busy={busy}
+        >
+          {busy ? 'Загрузка…' : 'Скачать цифровое издание'}
+        </button>
+      )}
+      {showShipping && (
+        <span className={styles.shipStatus}>
+          {fulfillmentLabel(order.fulfillmentStatus)}
+          {tracking ? ` · ${tracking}` : ''}
+        </span>
+      )}
+      {error && <span className={styles.actionError}>{error}</span>}
+    </div>
   )
 }

@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import cn from 'classnames'
 import { useQuery } from '@tanstack/react-query'
 import { getOrders, ordersQueryKey } from '@/api/orders'
-import { getDownloadUrlAction } from '@/lib/orders/actions'
+import useDigitalDownload from '@/hooks/useDigitalDownload'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import {
   BOOK_CATEGORIES,
@@ -104,36 +103,10 @@ export default function MyBooksList() {
 }
 
 function BookCard({ book }: { book: LibraryBook }) {
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { download, busy, error } = useDigitalDownload()
+  const handleDownload = () => download(book.downloadItemId)
 
   const categoryLabel = CATEGORY_LABEL[book.downloadCategory] ?? book.downloadCategory
-
-  async function handleDownload() {
-    if (busy) return
-    setBusy(true)
-    setError(null)
-    const result = await getDownloadUrlAction(book.downloadItemId)
-    setBusy(false)
-    if (result.status === 'ok') {
-      const a = document.createElement('a')
-      a.href = result.url
-      a.rel = 'noopener'
-      a.download = ''
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      return
-    }
-    const messages: Record<string, string> = {
-      not_authenticated: 'Нужно войти.',
-      not_owner: 'Не ваш заказ.',
-      not_digital: 'Цифровая версия недоступна.',
-      no_file: 'Цифровая версия пока недоступна.',
-      sign_failed: 'Не удалось создать ссылку.',
-    }
-    setError(messages[result.reason] ?? 'Ошибка.')
-  }
 
   return (
     <div className={styles.card}>

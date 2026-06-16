@@ -274,3 +274,43 @@ a.itemLink:hover {
   color: $color-text-on-dark;
   white-space: nowrap;
 }
+
+// Per-item footer: download action and/or shipping state.
+.fulfillment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3 $space-4;
+  padding: 0 0 $space-3;
+}
+
+.downloadButton {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-2 $space-4;
+  font-family: $font-montserrat;
+  font-size: 13px;
+  color: $color-accent-on-dark;
+  background: transparent;
+  border: 1px solid rgba($color-accent-on-dark, 0.5);
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: rgba($color-accent-on-dark, 0.12);
+    border-color: $color-accent-on-dark;
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.6;
+  }
+}
+
+.shipStatus {
+  font-family: $font-montserrat;
+  font-size: 13px;
+  color: rgba($color-text-on-dark, 0.7);
+}
