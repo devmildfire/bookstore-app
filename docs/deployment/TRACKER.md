@@ -75,7 +75,14 @@ Status legend:
 - [ ] Verify Studio through SSH tunnel.
 - [x] Create first production DB backup. (`~/chtivo-backups/chtivo-prod-db-20260615-101234.dump`, 1.44 MB, custom format w/ ownership; TOC validated 1155 entries.)
 - [x] Create first production storage backup. (The bootstrap archive `…-140111-xattrs.tar.gz` IS the first storage backup — storage unchanged since restore, no writes yet.)
-- [ ] Copy backups offsite + move to `/backups/chtivo` (root-owned; needs sudo).
+- [x] Copy backups offsite (automated, 2026-06-16). Two-tier pull-only scheme: a VPS systemd
+  `--user` timer (`chtivo-backup.timer`, daily 04:00 UTC, linger on) runs `~/chtivo-backup.sh`
+  → DB dump + `tar --xattrs` storage archive into `~deploy/chtivo-backups/` (keep 30d/7d); the
+  workstation pulls them daily (systemd `--user` timer + `Persistent`, `ssh`+`scp`, `flock`) into
+  `~/backups/chtivo-prod/` (keep 90d/30d). Repo: `deploy/production/backup.sh` +
+  `deploy/production/systemd/`; full scheme in `deploy/production/README.md` → "Backups". (Did
+  **not** use `/backups/chtivo` — it's root-owned and `deploy` has no sudo; `~deploy/chtivo-backups`
+  is the on-VPS location, the workstation is the offsite copy.)
 
 ## 5. GitHub Actions / CI/CD
 

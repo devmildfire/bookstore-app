@@ -115,3 +115,27 @@ restored the pair, fixed every break. Confirmed through nginx (`Host: api.mildfi
 
 Still unverified locally (needs the built app image — CI/CD builds it; prod will have it):
 the app container itself, OAuth, checkout/payment, and the live send-email hook signature.
+
+## Backups
+Two tiers, **pull-only** (the VPS never reaches into the workstation — one-way trust):
+
+**1. On the VPS (daily 04:00 UTC).** `backup.sh` (installed at `~deploy/chtivo-backup.sh`) dumps
+the DB (`pg_dump -Fc`, with ownership for self-host restore) and archives the `chtivo_storage-data`
+volume (`tar --xattrs` — mandatory, or restored objects 500) into `~deploy/chtivo-backups/`, then
+rotates (keep 30d DB / 7d storage). Scheduled by a **systemd `--user` timer** (`systemd/chtivo-backup.{service,timer}`),
+not cron — the VPS has no cron installed and `deploy` has no sudo. Linger is enabled
+(`loginctl enable-linger`) so the timer runs unattended. (DB row-level GC of stale anon users is a
+separate pg_cron job inside Postgres — see `docs/CONCERNS.md` P1.)
+
+**2. On the workstation (daily 05:00 + ~3 min after login/resume).** `~/bin/chtivo-pull-backups.sh`
+copies any backups it doesn't already hold off the VPS via `ssh`+`scp` (no rsync on the VPS) into
+`~/backups/chtivo-prod/`, keeping a longer history (90d DB / 30d storage). A `flock` serializes
+overlapping runs; transfers are atomic (`.part` → `mv`). Scheduled by a systemd `--user` timer with
+`Persistent=true`: a **suspended machine runs no timer**, but the missed run is caught up shortly
+after resume/boot, and the script grabs *all* missing files so multi-day gaps heal in one run.
+(These workstation files are machine-specific — they hard-code the `portfolio-vps` ssh alias — so
+they live on the box, not in this repo; the logic is documented here.)
+
+**Restore:** the bootstrap restore procedure (DB as `supabase_admin` with owners; storage extracted
+`--xattrs`) is in [docs/deployment/supabase-production-bootstrap.md](../../docs/deployment/supabase-production-bootstrap.md#production-restore)
+— the daily dumps + tarballs are drop-in inputs to it.

@@ -1,0 +1,6 @@
+[Unit]
+Description=chtivo prod backup (DB + storage volume)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "%h/chtivo-backup.sh >> %h/chtivo-backups/backup.log 2>&1"
