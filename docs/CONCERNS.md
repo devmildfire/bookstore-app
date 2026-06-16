@@ -246,9 +246,12 @@ the VPS goes live:
 - **Anon-row garbage collection** — no `pg_cron` job exists to reap stale anonymous
   `auth.users` rows. (Note: `expire_stale_pending_orders` reaps *orders*, not anon users —
   unrelated.) Without it, abandoned anon sessions accumulate.
-- **Future (not started):** provider generalization (only Google is wired; Yandex/VK/Telegram
-  show a "Скоро" hint), an add-a-provider UX, a `Profiles.first_seen_at` audit column, and
-  field-level profile merge on migration.
+- **Future (not started):** provider generalization (Google is wired + live in prod; Yandex/VK/Telegram
+  still show a "Скоро" hint). **Yandex login has a detailed, resumable implementation plan +
+  tracker: [docs/plans/yandex-oauth.md](plans/yandex-oauth.md)** (custom app-level OAuth — Yandex
+  isn't a GoTrue-native provider; VK reuses the pattern, Telegram is a separate widget flow).
+  Also future: an add-a-provider UX, a `Profiles.first_seen_at` audit column, and field-level
+  profile merge on migration.
 
 ---
 
