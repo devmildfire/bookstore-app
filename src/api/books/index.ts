@@ -1,5 +1,5 @@
 export { getBooks, booksQueryKey } from './getBooks'
-export { getBook, bookQueryKey, getSimilarBooks, getBookEditions } from './getBook'
+export { getBook, bookQueryKey, getSimilarBooks, getBookEditions, getAllBookSlugs } from './getBook'
 export { searchBooks, searchBooksQueryKey } from './searchBooks'
 export { getFeaturedBooks, featuredBooksQueryKey } from './getFeaturedBooks'
 export { parseBookFilters } from './parseBookFilters'

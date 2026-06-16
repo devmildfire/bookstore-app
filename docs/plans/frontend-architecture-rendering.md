@@ -194,11 +194,15 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Remove `HeroVideo.tsx:17` `console.log` (B6)
 - [ ] Drop false `'use client'` on `Marquee` (B4)
 
-### Phase 2 — SSG + caching + waterfall
-- [ ] `generateStaticParams` for `books/[slug]` (+ authors, dino-magazine) (R2)
-- [ ] React `cache()` on `getBook`/`getPeriodical`/facets (fixes D2 + metadata re-fetch) (D3)
-- [ ] `unstable_cache`/`revalidate` for catalog/facets (D3)
-- [ ] Collapse book-detail head waterfall (D1)
+### Phase 2 — SSG + caching + waterfall — *(branch `feat/ppr-phase2-book-ssg`, build-verified)*
+- [x] `generateStaticParams` for `books/[slug]` (`getAllBookSlugs` — published, non-issue slugs; returns [] on error → degrades to on-demand). Build now prerenders `/books/[slug]` as **● SSG** (+ `ƒ` on-demand fallback via dynamicParams). (R2)
+- [x] React `cache()` on the `get_catalog_book_by_slug` rows (`getBook`+`getBookEditions` share one call) and on `getPeriodical`/`getPeriodicalIssueRedirect` → fixes the duplicate RPC (D2) + the `generateMetadata` re-fetch. (D3)
+- [x] Collapse book-detail head waterfall — `getPeriodical`/`getPeriodicalIssueRedirect`/`getBook` now run via `Promise.all` instead of in series. (D1)
+- [x] Build robustness for mass-SSG: `experimental.staticGenerationRetryCount: 3` + `staticGenerationMaxConcurrency: 4` (mass prerender was overloading Supabase → transient upstream error failed the build).
+- [ ] `generateStaticParams` for `authors/[id]` + `dino-magazine/[slug]` (follow-up).
+- [ ] `unstable_cache`/`revalidate` for catalog/facets — deferred (admin writes already `revalidatePath`; add time-based ISR if needed). (D3)
+- [x] Browser-verified an SSG book page: renders (title/edition-tabs/content), anon sign-in fires, **add-to-cart → `POST /Cart 201`**, zero console errors.
+- [ ] Merge `feat/ppr-phase2-book-ssg` → `update`.
 
 ### Phase 3 — boundary / leaves
 - [ ] Split `BookCard` → server body + client add-to-cart leaf (B1)

@@ -2,6 +2,14 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  experimental: {
+    // Book detail pages are prebuilt via generateStaticParams (SSG). Prerendering the
+    // whole catalog concurrently hammers Supabase, which can return transient upstream
+    // errors. Retry those failures and cap concurrency so a blip doesn't fail the build
+    // (matters for CI prerendering against the prod DB too).
+    staticGenerationRetryCount: 3,
+    staticGenerationMaxConcurrency: 4,
+  },
   images: {
     ...(process.env.NODE_ENV !== 'production' && { dangerouslyAllowLocalIP: true }),
     remotePatterns: [

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { createDataClient } from '@/lib/supabase/server'
 import { getBook, getBookEditions } from '@/api/books/getBook'
 import { getEditionPhotos } from '@/api/books/getBookPhotos'
@@ -30,7 +31,9 @@ type StoryRow = { slug: string; title: string; Authors: { name: string } | null 
 // A periodical (e.g. «Могучий Русский Динозавр») and its issues, newest volume
 // first. Each issue is a Title, so we reuse the book RPC for its editions/authors
 // and fetch its linked stories (Articles).
-export async function getPeriodical(slug: string): Promise<Periodical | null> {
+// cache(): the book page calls getPeriodical in BOTH generateMetadata and the page
+// body — memoize per request so the periodical lookup (+ its per-issue fetches) runs once.
+export const getPeriodical = cache(async (slug: string): Promise<Periodical | null> => {
   const supabase = createDataClient()
 
   const { data: p } = await supabase
@@ -67,7 +70,7 @@ export async function getPeriodical(slug: string): Promise<Periodical | null> {
   }
 
   return { id: p.id, slug: p.slug ?? slug, name: p.name, description: p.description, thesis: p.thesis, issues }
-}
+})
 
 async function getIssueStories(
   supabase: ReturnType<typeof createDataClient>,
@@ -87,9 +90,9 @@ async function getIssueStories(
 }
 
 // If `slug` is a periodical issue, where to redirect (the periodical page anchor).
-export async function getPeriodicalIssueRedirect(
+export const getPeriodicalIssueRedirect = cache(async (
   slug: string,
-): Promise<{ periodicalSlug: string; volumeNumber: number | null } | null> {
+): Promise<{ periodicalSlug: string; volumeNumber: number | null } | null> => {
   const supabase = createDataClient()
   const { data: title } = await supabase
     .from('Titles')
@@ -107,4 +110,4 @@ export async function getPeriodicalIssueRedirect(
   if (!p?.slug) return null
 
   return { periodicalSlug: p.slug, volumeNumber: title.volume_number }
-}
+})
