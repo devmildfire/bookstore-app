@@ -221,10 +221,24 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Infra: bumped `actions/checkout` + `actions/setup-node` `@v4 → @v5` across all workflows (GitHub Node 20 deprecation).
 - [ ] Merge `feat/ppr-phase4-suspense` → `update`.
 
-### Phase 5 — PPR + asymmetric JWT keys
-- [ ] `cacheComponents: true` + `'use cache'` on anon reads; clear build errors (R4)
-- [ ] Verify home + book detail prerendered shell + streamed islands
-- [ ] **Solution B:** migrate self-hosted Supabase HS256 → asymmetric signing keys (ES256 + JWKS): GoTrue signs + exposes JWKS; PostgREST + Storage validate via JWKS; transition anon/service keys; then proxy `getUser()` → local `getClaims()`. Backup + staged rollout; smoke-test prod auth/REST/storage.
+### Phase 5a — PPR (`cacheComponents`) — **DEFERRED (measured 2026-06-16)**
+- Enabling `cacheComponents` (top-level flag in 16.2.6; experimental, all-or-nothing) was
+  trial-enabled and the build's blast radius measured: it forbids the 9 `force-dynamic` routes
+  (admin layout + payments), needs `'use cache'` on the 9 anon API modules, and cacheComponents-
+  compatible dynamic handling across ~48 service-client files / 41 admin pages / 9 profile-checkout-
+  cart pages — essentially the whole app, most of it admin/payments/profile where static has no value.
+- **Decision: defer.** Storefront static is already largely achieved (book pages SSG, 15 static
+  routes, streaming home, all dynamic reads isolated → PPR-ready). The marginal gain (mainly the
+  home shell) doesn't justify an app-wide migration into an experimental feature for a portfolio
+  that values a battle-tested, explainable codebase. Flip the flag when `cacheComponents` leaves
+  experimental — the isolation work makes it a small change then.
+
+### Phase 5b — asymmetric JWT keys (Solution B) — **feasibility-verified; awaiting go-ahead**
+- Full verified procedure + risk/reward: [docs/deployment/asymmetric-jwt-migration.md](../deployment/asymmetric-jwt-migration.md).
+- Feasible for the installed versions (GoTrue v2.188.1 / PostgREST v14.10 / Storage v1.54.1); the
+  HS256↔ES256 **coexistence** path means the deployed app's baked anon key keeps working (no rebuild).
+- Risk/reward for a portfolio is modest-reward / live-auth-risk → execute only via a local
+  prod-compose rehearsal + fresh backup + staged smoke tests. Pending the go-ahead.
 
 ### Phase 6 — build/cleanup (optional, **after all other phases**)
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)
