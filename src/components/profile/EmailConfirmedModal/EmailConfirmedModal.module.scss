@@ -1,0 +1,20 @@
+@use '@/styles/common' as *;
+
+// Modal chrome (overlay/panel/title/close) comes from common/Modal.
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  p {
+    margin: 0;
+    font-family: $font-montserrat;
+    font-size: $font-size-base;
+    line-height: 1.55;
+    color: rgba($color-text-on-dark, 0.85);
+
+    @include breakpoint(phone) {
+      font-size: $font-size-sm;
+    }
+  }
+}

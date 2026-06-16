@@ -12,7 +12,10 @@ import ResetPassword from '@/emails/ResetPassword'
 interface HookPayload {
   // `email` is empty for an email_change (incl. the anon→account upgrade); the
   // target address is in `new_email`. Always prefer new_email when present.
-  user: { email: string; new_email?: string }
+  // is_anonymous distinguishes a first-time registration (anon→account upgrade,
+  // which GoTrue routes as an email_change) from a real email change by an
+  // existing account.
+  user: { email: string; new_email?: string; is_anonymous?: boolean }
   email_data: {
     token_hash: string
     redirect_to: string
@@ -70,7 +73,10 @@ export async function POST(request: Request): Promise<Response> {
         react: ResetPassword({ resetUrl: confirmLink(token_hash, 'recovery', '/auth/reset-password') }),
       })
     } else {
-      const isEmailChange = email_action_type === 'email_change'
+      // An anonymous user "registering" goes through updateUser → GoTrue emits
+      // an email_change, but to the user it's a first-time signup — so only show
+      // the "email change" wording for a real change by a non-anonymous account.
+      const isEmailChange = email_action_type === 'email_change' && user.is_anonymous !== true
       await sendEmail({
         to: recipient,
         subject: isEmailChange ? 'Подтвердите смену email — Чтиво' : 'Подтвердите ваш email — Чтиво',

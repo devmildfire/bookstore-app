@@ -26,7 +26,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(errorUrl)
   }
 
-  const response = NextResponse.redirect(new URL(safeNext, SITE_ORIGIN))
+  // On success we land on `next` (the cabinet for signup/email_change). Mark it
+  // so the destination can show a one-time "email confirmed" success modal.
+  // Recovery goes to the reset-password screen — no success modal there.
+  const successUrl = new URL(safeNext, SITE_ORIGIN)
+  if (type !== 'recovery') successUrl.searchParams.set('email_confirmed', '1')
+  const response = NextResponse.redirect(successUrl)
 
   const supabase = createServerClient<Database>(
     // Server-side token verification — internal kong URL when set (no hairpin).
