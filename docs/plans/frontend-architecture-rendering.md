@@ -124,10 +124,31 @@ cookie-free and Suspense boundaries exist.
 - P4 defer below-fold Swiper carousels via `next/dynamic`.
 - **Acceptance:** static shells paint immediately; dynamic/below-fold content streams; smaller first-load JS on home.
 
-### Phase 5 — Enable PPR (`cacheComponents`) *(last)*
+### Phase 5 — Enable PPR (`cacheComponents`) + asymmetric JWT keys *(last)*
 - Set `cacheComponents: true`; annotate anon catalog reads with `'use cache'`; fix every
   remaining build-surfaced uncached dynamic read (Suspense-wrap or `'use cache'`).
 - **Acceptance:** home + book detail serve a prerendered static shell with dynamic islands streamed; build is green under cacheComponents.
+
+#### Solution B — migrate self-hosted Supabase off legacy HS256 → asymmetric signing keys
+*Separate security+perf initiative; pairs with PPR because it makes the auth reads in the
+remaining dynamic islands cheap. NOT a blocker for static rendering (the cookie read is what
+forces dynamic, not the verification algorithm).*
+
+- **Why:** with HS256, `supabase.auth.getClaims()` falls back to a network `getUser()` (proven
+  from `@supabase/auth-js` source — `header.alg.startsWith('HS') ⇒ signingKey=null ⇒ getUser`).
+  Asymmetric keys (ES256 + JWKS) let `getClaims()` verify **locally** (cached JWKS, no
+  auth-server round-trip) — speeds the proxy's per-request check and any island auth reads.
+  Also a security win: rotatable keys, public JWKS, no shared `JWT_SECRET` across services.
+- **Scope (deployment-level, prod-touching — do with a backup + staged rollout):**
+  - GoTrue: enable asymmetric signing key, expose JWKS (`/auth/v1/.well-known/jwks.json`).
+  - PostgREST: validate via JWKS (`PGRST_JWT_SECRET` → JWKS URL / key set) instead of the shared secret.
+  - Storage (+ any other JWT-validating service): same JWKS validation.
+  - Anon/service API keys: these are themselves `JWT_SECRET`-signed today — decide transition
+    (keep legacy keys validating during a dual-key window, or move to the publishable/secret
+    key model). Update `deploy/production/.env(.example)` + Kong if needed.
+  - Then swap the proxy's `getUser()` → `getClaims()` (now local) and re-check TTFB.
+- **Acceptance:** `getClaims()` verifies with no network call; all services validate via JWKS;
+  prod auth/REST/storage smoke tests still green; documented in `deploy/production/`.
 
 ### Phase 6 — Build system (optional, decoupled)
 - P7 evaluate Turbopack-compatible SVGR (`turbopack.rules`) to drop the Webpack pin; D5/D7
@@ -146,8 +167,9 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 
 ### Phase 0 — keystone
 - [~] Relocate `(site)/layout.tsx` per-user prefetch into a Suspense-wrapped island (no `cookies()` in the static shell). **Implemented on branch `feat/ppr-phase0-layout`** (`src/app/(site)/UserStateHydrator.tsx` + slimmed `layout.tsx`); tsc/lint/`npm run build` green. **Immediate win:** the shell + page content no longer block on the ~6 per-user prefetches — they stream first, per-user state hydrates a beat later. **Pending: browser smoke test** (cart badge + like buttons hydrate from the streamed island, no console errors) before merge — needs local Supabase (Docker).
-- [ ] Root layout `getUser()` → `getClaims()` (P3). **Caveat:** this project uses legacy **HS256** keys, where `getClaims()` may still do a network verify (unlike asymmetric keys, where it's local) — verify it's actually cheaper before adopting. Note: the root layout's cookie read still forces all routes dynamic, so isolating/removing it (or moving anon-session bootstrap into the proxy) is the remaining blocker for static — pair with Phase 5.
-- [ ] Verify `books/[slug]` + `/` are no longer layout-forced-dynamic (only fully realized once the root-layout cookie read is also isolated + `cacheComponents` is on — see Phase 5)
+- [~] **Make root `app/layout.tsx` auth-free (Solution A — done on branch).** Removed `getUser()` from the root layout entirely (it was a *duplicate* of the proxy's per-request `getUser`). The proxy now sets a non-HttpOnly `bookstore_has_session` hint cookie from the `user` it already has; `providers.tsx` reads that hint client-side to gate anonymous sign-in. Result: root layout reads no cookies → PPR-friendly; duplicate auth call gone (the P3 win); anon sign-in stays client-side so JS-less bots never create anon users. **Pending: same browser smoke test** (anon bootstrap still fires for a fresh visitor; existing session not clobbered).
+  - Note: `getUser()→getClaims()` is **moot under HS256** — proven from the SDK source, `getClaims()` falls back to a network `getUser()` for HS256. Local verification needs asymmetric keys → folded into **Solution B (Phase 5)**.
+- [ ] Verify `books/[slug]` + `/` are no longer layout-forced-dynamic (now blocked only by the `(site)` `UserStateHydrator` cookie read, which is intentional — it becomes a streamed dynamic island once `cacheComponents` is on; see Phase 5)
 
 ### Phase 1 — quick wins
 - [ ] `metadataBase` in root metadata (P2)
@@ -177,9 +199,10 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] `<Suspense>` around `NewProducts`, book-detail secondary sections, per-user chrome island
 - [ ] `next/dynamic` for below-fold Swiper carousels (P4)
 
-### Phase 5 — PPR
+### Phase 5 — PPR + asymmetric JWT keys
 - [ ] `cacheComponents: true` + `'use cache'` on anon reads; clear build errors (R4)
 - [ ] Verify home + book detail prerendered shell + streamed islands
+- [ ] **Solution B:** migrate self-hosted Supabase HS256 → asymmetric signing keys (ES256 + JWKS): GoTrue signs + exposes JWKS; PostgREST + Storage validate via JWKS; transition anon/service keys; then proxy `getUser()` → local `getClaims()`. Backup + staged rollout; smoke-test prod auth/REST/storage.
 
 ### Phase 6 — build/cleanup (optional)
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)
