@@ -76,8 +76,17 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // Refresh Supabase session — must run before any route checks
-  const { data: { user } } = await supabase.auth.getUser()
+  // Refresh the session + read its claims. getClaims() verifies the JWT LOCALLY against the
+  // JWKS public key (ES256 asymmetric — see docs/deployment/asymmetric-jwt-migration.md),
+  // avoiding the per-request auth-server round-trip getUser() makes. It still calls
+  // getSession() internally, so the SSR session refresh + cookie write are preserved. This
+  // runs on every request, so trimming the round-trip cuts TTFB site-wide (notably on `/`).
+  // Note: claims reflect token-issuance state — a *revoked* admin's token passes this cheap
+  // pre-gate until it refreshes (≤ JWT TTL); the /admin (panel) layout's requireAdmin() is the
+  // live, authoritative gate. (Under the legacy HS256 fallback getClaims behaves like getUser.)
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const claims = claimsData?.claims as (Record<string, unknown> | undefined)
+  const hasSession = Boolean(claims)
 
   // Set cart cookie on first visit (persists for 1 year)
   if (!request.cookies.has(CART_COOKIE)) {
@@ -98,7 +107,7 @@ export async function proxy(request: NextRequest) {
   // Anon sign-in stays client-side, so bots that don't run JS never create anon
   // users. (Skipped on the /auth/callback early-return above; the next request
   // re-syncs it.)
-  response.cookies.set(HAS_SESSION_COOKIE, user ? '1' : '0', {
+  response.cookies.set(HAS_SESSION_COOKIE, hasSession ? '1' : '0', {
     httpOnly: false,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -113,7 +122,7 @@ export async function proxy(request: NextRequest) {
   const isAdminLogin = pathname === ADMIN_LOGIN_PATH
 
   if (isAdminArea && !isAdminLogin) {
-    const role = (user?.app_metadata as { role?: unknown } | undefined)?.role
+    const role = (claims?.app_metadata as { role?: unknown } | undefined)?.role
     if (role !== 'admin') {
       const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url)
       if (pathname !== '/admin') loginUrl.searchParams.set('returnTo', pathname)
