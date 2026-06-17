@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     ...(process.env.NODE_ENV !== 'production' && { dangerouslyAllowLocalIP: true }),
+    // The Supabase storage upstream serves covers with a 4 h max-age — PSI flags that as a
+    // short cache lifetime. Raise the optimized-image cache floor to 7 days (covers rarely
+    // change). With `must-revalidate`, a cover replaced under the same filename refreshes via
+    // a conditional request after the window — so worst-case staleness is bounded, not permanent.
+    minimumCacheTTL: 604800,
     remotePatterns: [
       // Supabase Cloud — matches any project subdomain
       {

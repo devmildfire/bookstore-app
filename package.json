@@ -5,6 +5,12 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "//browserslist": "Modern targets (browsers from the last 4 years natively support ES2021+) so SWC stops shipping legacy transforms/polyfills (PSI 'legacy JavaScript'). ~95.6% global coverage incl. mobile — verified with `npx browserslist --coverage`. Pinned via caniuse-lite in the lockfile.",
+  "browserslist": [
+    "last 4 years",
+    "not dead",
+    "> 0.2%"
+  ],
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",

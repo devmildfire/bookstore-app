@@ -1,6 +1,6 @@
 import { getSubscriptions } from '@/api/subscriptions/getSubscriptions'
 import SubscriptionCard from './SubscriptionCard'
-import SubscriptionsCarousel from './SubscriptionsCarousel'
+import SubscriptionsCarouselLazy from './SubscriptionsCarouselLazy'
 import styles from './SubscriptionsSection.module.scss'
 
 export default async function SubscriptionsSection() {
@@ -20,7 +20,7 @@ export default async function SubscriptionsSection() {
       </div>
 
       <div className={styles.mobileCarousel}>
-        <SubscriptionsCarousel items={subscriptions} />
+        <SubscriptionsCarouselLazy items={subscriptions} />
       </div>
     </section>
   )
