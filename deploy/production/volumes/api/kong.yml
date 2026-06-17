@@ -9,6 +9,23 @@ _transform: true
 # step, no writable /home/kong needed).
 
 services:
+  # Public JWKS endpoint (asymmetric JWT verification — Solution B). More-specific path than
+  # /auth/v1/ so it matches first; serves only the EC public key (the symmetric key is excluded).
+  - name: auth-v1-open-jwks
+    url: http://auth:9999/.well-known/jwks.json
+    routes:
+      - name: auth-v1-open-jwks
+        strip_path: true
+        paths:
+          - /auth/v1/.well-known/jwks.json
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, HEAD, OPTIONS]
+          headers: [Accept, Content-Type, apikey]
+          max_age: 3600
+
   - name: auth-v1
     url: http://auth:9999/
     routes:

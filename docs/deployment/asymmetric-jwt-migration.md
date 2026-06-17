@@ -1,7 +1,15 @@
 # Solution B — migrate self-hosted Supabase HS256 → asymmetric JWT signing keys
 
-**Status:** planned + feasibility-verified (2026-06-16). NOT executed. Phase 5b of
-[../plans/frontend-architecture-rendering.md](../plans/frontend-architecture-rendering.md).
+**Status:** **rehearsed end-to-end on the prod-compose stack locally (2026-06-16, PASS)**;
+prod cutover next. Phase 5b of [../plans/frontend-architecture-rendering.md](../plans/frontend-architecture-rendering.md).
+
+**Rehearsal result (full prod-compose stack, fresh DB, exact env wiring):** JWKS endpoint
+serves EC/ES256 public only; a new anonymous signup mints an **`alg: ES256`** token; PostgREST
+and Storage both return **200 for the ES256 token AND for the legacy HS256 anon key** (coexistence
+confirmed — the deployed app's baked anon key + live sessions keep validating), while a garbage
+token gets **401** (validation is real). The one gotcha: GoTrue rejects a signing JWK without
+`key_ops:["sign","verify"]` ("no signing key detected") — the generator now emits the exact
+`supabase gen signing-key` field set.
 
 ## Why
 Today every service signs/validates JWTs with one shared symmetric secret (`JWT_SECRET`,

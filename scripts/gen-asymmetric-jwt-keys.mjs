@@ -23,11 +23,14 @@ const b64url = (buf) => Buffer.from(buf).toString('base64url')
 // 1. ES256 (EC P-256) signing key
 const { publicKey, privateKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
 const kid = randomUUID()
-const pubJwk = { ...publicKey.export({ format: 'jwk' }), kid, alg: 'ES256', use: 'sig' }
-const privJwk = { ...privateKey.export({ format: 'jwk' }), kid, alg: 'ES256', use: 'sig' }
+// Field set matches `supabase gen signing-key --algorithm ES256` exactly — GoTrue identifies
+// the SIGNING key by key_ops:["sign","verify"]; without key_ops it reports "no signing key detected".
+const privJwk = { kty: 'EC', kid, use: 'sig', key_ops: ['sign', 'verify'], alg: 'ES256', ext: true, ...privateKey.export({ format: 'jwk' }) }
+const pubJwk = { kty: 'EC', kid, use: 'sig', key_ops: ['verify'], alg: 'ES256', ext: true, ...publicKey.export({ format: 'jwk' }) }
 
-// 2. Legacy HS256 `oct` key (keeps existing HS256 tokens valid)
-const octJwk = { kty: 'oct', k: b64url(legacySecret), alg: 'HS256', use: 'sig', kid: 'legacy-hs256' }
+// 2. Legacy HS256 `oct` key — VERIFY-ONLY, so GoTrue signs new tokens with the ES256 key
+// above (not this one) while still validating existing HS256 tokens (the baked anon key + sessions).
+const octJwk = { kty: 'oct', kid: 'legacy-hs256', use: 'sig', key_ops: ['verify'], alg: 'HS256', ext: true, k: b64url(legacySecret) }
 
 // 3. Keysets — exact formats per the Supabase self-hosting docs:
 //    JWT_KEYS (GoTrue GOTRUE_JWT_KEYS) is a BARE ARRAY of signing JWKs (EC private + legacy oct).
