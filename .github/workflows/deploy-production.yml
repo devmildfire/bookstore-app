@@ -16,22 +16,10 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
+  # Hard gate: if this fails, build-and-push (and therefore deploy) never run.
+  # Delegates to the shared reusable workflow (same audit as audit.yml).
   audit:
-    name: npm audit gate (fail on high/critical)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-
-      # Hard gate: if this fails, build-and-push (and therefore deploy) never run.
-      # high/critical only — see .github/workflows/audit.yml for the level rationale.
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+    uses: ./.github/workflows/audit-reusable.yml
 
   build-and-push:
     name: Build & push image

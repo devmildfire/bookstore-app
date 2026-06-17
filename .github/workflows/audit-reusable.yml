@@ -1,0 +1,27 @@
+name: Audit (reusable)
+
+# Single source of truth for the dependency vulnerability scan, called by:
+#   - audit.yml (every branch push + PR)
+#   - deploy-production.yml (hard gate before build-and-push)
+on:
+  workflow_call:
+
+jobs:
+  npm-audit:
+    name: npm audit (fail on high/critical)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      # --audit-level=high fails on high/critical only. The repo carries transitive
+      # moderate/low advisories (tar via the supabase dev CLI, js-yaml, @babel/core) that
+      # would otherwise hard-block every push/deploy. Tighten to `moderate` once cleared.
+      # Uses the committed lockfile — no npm ci needed, so this is fast.
+      - name: Audit dependencies
+        run: npm audit --audit-level=high

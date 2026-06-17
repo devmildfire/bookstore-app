@@ -239,9 +239,9 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - Rehearsed end-to-end on the prod-compose stack locally, then cut over prod: new sessions sign
   ES256, JWKS endpoint live, PostgREST+Storage validate both ES256 + the legacy HS256 anon key
   (coexistence — nothing broke), RLS intact. ~40s 502 gateway blip during the kong recreate.
-- [ ] **Optional perf follow-up:** flip proxy `getUser()` → local `getClaims()` (app code + redeploy).
+- [x] Proxy `getUser()` → local `getClaims()` (committed to `update`) — local ES256 verify, no per-request auth RTT → lower TTFB on every request (notably `/`). Session refresh preserved; admin pre-gate reads the JWT claim, `requireAdmin()` stays the live gate. **Goes live on the next `update`→`production` deploy.**
 
 ### Phase 6 — build/cleanup (optional, **after all other phases**)
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)
 - [ ] Unify profile data source (D5); server-derive MyBooks/MyCourses (D4/D7)
-- [ ] **DRY the CI audit into a reusable workflow** (`workflow_call`). The `npm audit --audit-level=high` step is currently duplicated in `audit.yml` (standalone, all-branches) and as the `audit` gate job in `deploy-production.yml`. Extract one reusable workflow both `uses:`. Deferred until the rendering phases (3, 5) are complete so it doesn't churn the CI mid-stream.
+- [x] **DRY'd the CI audit into a reusable workflow** — `audit-reusable.yml` (`workflow_call`) holds the single `npm audit --audit-level=high` definition; `audit.yml` (all-branches/PR) and `deploy-production.yml`'s gate job both `uses:` it. No more duplicated step.
