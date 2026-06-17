@@ -6,28 +6,11 @@ export const boxSetsQueryKey = ['box-sets'] as const
 export const boxSetsByTitleQueryKey = (titleId: number) =>
   ['box-sets', 'by-title', titleId] as const
 
-// Box-set images are stored in the `box-sets` bucket. For SVGs we inline the
-// markup (so it themes/scales cleanly); raster images render via imageUrl.
-function sanitizeSvg(svg: string): string | null {
-  const start = svg.indexOf('<svg')
-  if (start === -1) return null
-  return svg.slice(start).replace(/<script[\s\S]*?<\/script>/gi, '')
-}
-
-async function withInlineSvg(boxSets: BoxSet[]): Promise<BoxSet[]> {
-  return Promise.all(
-    boxSets.map(async (b) => {
-      if (!b.imageUrl || !b.imageUrl.toLowerCase().endsWith('.svg')) return b
-      try {
-        const res = await fetch(b.imageUrl, { cache: 'force-cache' })
-        if (!res.ok) return b
-        return { ...b, imageSvg: sanitizeSvg(await res.text()) }
-      } catch {
-        return b
-      }
-    })
-  )
-}
+// Box-set images live in the `box-sets` storage bucket and are referenced by `imageUrl`
+// (SVG or raster). They are rendered as <img> — NOT fetched + inlined — so their markup
+// (100-277 KB each) never lands in the HTML / RSC flight and they load lazily, cached as
+// their own files. (Previously the SVG text was fetched and inlined via dangerouslySetInnerHTML,
+// which serialized hundreds of KB per card into the document and tanked mobile FCP/LCP.)
 
 export async function getBoxSets(): Promise<BoxSet[]> {
   const supabase = await createClient()
@@ -37,7 +20,7 @@ export async function getBoxSets(): Promise<BoxSet[]> {
     .eq('is_active', true)
     .order('position')
   if (error) throw error
-  return withInlineSvg(data.map(normalizeBoxSet))
+  return data.map(normalizeBoxSet)
 }
 
 export async function getBoxSetsByTitleId(titleId: number): Promise<BoxSet[]> {
@@ -49,5 +32,5 @@ export async function getBoxSetsByTitleId(titleId: number): Promise<BoxSet[]> {
     .eq('BoxSetBooks.title_id', titleId)
     .order('position')
   if (error) throw error
-  return withInlineSvg(data.map(normalizeBoxSet))
+  return data.map(normalizeBoxSet)
 }

@@ -3,10 +3,11 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
-    // Inline CSS into the HTML instead of emitting many render-blocking <link> stylesheets
-    // (the storefront ships ~13 CSS chunks from SCSS-modules-per-component). On mobile each
-    // is a render-blocking round-trip → big FCP/LCP hit; inlining removes that critical chain.
-    inlineCss: true,
+    // NOTE: experimental.inlineCss was tried and REVERTED — it inlines *all* route CSS (~170 KB)
+    // into the HTML, not just the critical above-fold subset. On this content-heavy home page
+    // (already a ~2.7 MB document, half of it RSC payload) that bloated the render-blocking
+    // document and regressed FCP/LCP/Speed Index on real mobile PSI (78→74). External CSS loads
+    // in parallel over HTTP/2; the real bottleneck is the RSC payload, not the CSS links.
     // Book detail pages are prebuilt via generateStaticParams (SSG). Prerendering the
     // whole catalog concurrently hammers Supabase, which can return transient upstream
     // errors. Retry those failures and cap concurrency so a blip doesn't fail the build

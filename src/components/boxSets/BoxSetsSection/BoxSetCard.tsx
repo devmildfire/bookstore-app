@@ -44,19 +44,19 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       aria-label={isOpen ? `Свернуть ${boxSet.name}` : `Развернуть ${boxSet.name}`}
     >
       <div className={styles.imageWrap}>
-        {boxSet.imageSvg ? (
-          // Trusted, admin-uploaded SVG from the box-sets bucket — inlined so it
-          // scales and themes cleanly.
-          <span
-            className={styles.imageSvg}
-            role="img"
-            aria-label={boxSet.name}
-            dangerouslySetInnerHTML={{ __html: boxSet.imageSvg }}
+        {boxSet.imageUrl && (
+          // Reference the storage image (never inline its markup). WebP/raster sources go
+          // through the next/image optimizer (resize + AVIF/WebP); legacy .svg sources are
+          // served as-is (`unoptimized`) until migrated. Below the fold → lazy by default.
+          <Image
+            src={boxSet.imageUrl}
+            alt={boxSet.name}
+            width={300}
+            height={220}
+            sizes="(max-width: 600px) 45vw, 300px"
+            className={styles.image}
+            unoptimized={boxSet.imageUrl.toLowerCase().endsWith('.svg')}
           />
-        ) : (
-          boxSet.imageUrl && (
-            <Image src={boxSet.imageUrl} alt={boxSet.name} width={160} height={160} className={styles.image} />
-          )
         )}
       </div>
 
