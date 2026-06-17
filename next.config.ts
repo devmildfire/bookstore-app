@@ -36,9 +36,12 @@ const nextConfig: NextConfig = {
     // change). With `must-revalidate`, a cover replaced under the same filename refreshes via
     // a conditional request after the window — so worst-case staleness is bounded, not permanent.
     minimumCacheTTL: 604800,
-    // Negotiate AVIF first (≈20-30% smaller than WebP) — PSI flags several covers as
-    // over-compressible. Browsers that don't accept AVIF fall back to WebP automatically.
-    formats: ['image/avif', 'image/webp'],
+    // WebP-only (not AVIF). On Cloudflare's free plan we can't add `Accept` to the cache key
+    // (Enterprise-only), so to edge-cache /_next/image safely there must be effectively ONE
+    // negotiated format. WebP (~97% browser support since ~2020) is the safe single format to
+    // serve from a shared edge cache; AVIF (~93%) would break more old browsers when one cached
+    // variant is served to all. Edge-caching the LCP cover beats AVIF's ~few-KB size win.
+    formats: ['image/webp'],
     remotePatterns: [
       // Supabase Cloud — matches any project subdomain
       {
