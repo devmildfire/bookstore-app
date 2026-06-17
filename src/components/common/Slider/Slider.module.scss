@@ -6,6 +6,17 @@
   width: 100%;
   background-color: $color-surface-dark;
 
+  // The hero cover is the LCP. Swiper's base CSS sets `.swiper-wrapper { height: 100% }`,
+  // which resolves to 0 before Swiper's JS runs (the parent `.swiper` has no defined height)
+  // — and `.swiper` has `overflow: hidden`, so the cover is CLIPPED to invisible until
+  // hydration + Swiper init un-collapse it. On a cold/throttled mobile load that's several
+  // seconds after FCP → the LCP killer (it's render-blocked by JS, not the network). Force the
+  // wrapper to fit its content so the cover paints straight from SSR/CSS with no JS dependency;
+  // Swiper's `autoHeight` still sets the exact per-slide height inline once it initializes.
+  :global(.swiper-wrapper) {
+    height: auto;
+  }
+
   :global(.swiper-slide) {
     height: auto;
   }
