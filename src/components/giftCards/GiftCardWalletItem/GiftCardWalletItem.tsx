@@ -1,8 +1,6 @@
-'use client'
-
 import Image from 'next/image'
 import SendGiftCardDialog from '@/components/giftCards/SendGiftCardDialog'
-import { useToast } from '@/contexts/toast'
+import CopyClaimLink from './CopyClaimLink'
 import { formatPrice } from '@/lib/formatPrice'
 import type { GiftCard } from '@/entities/giftCard'
 import styles from './GiftCardWalletItem.module.scss'
@@ -22,15 +20,10 @@ function formatDate(value: string | null): string | null {
   return new Date(value).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
+// Server component — body renders on the server; the only client islands are the leaf
+// <CopyClaimLink> (pending) and <SendGiftCardDialog> (active).
 export default function GiftCardWalletItem({ card }: Props) {
-  const { success } = useToast()
   const claimUrl = card.claimToken ? `/redeem/${card.claimToken}` : null
-
-  async function copyClaim() {
-    if (!claimUrl) return
-    await navigator.clipboard.writeText(`${window.location.origin}${claimUrl}`)
-    success('Ссылка скопирована')
-  }
 
   return (
     <article className={styles.card} data-status={card.status}>
@@ -62,11 +55,7 @@ export default function GiftCardWalletItem({ card }: Props) {
           <div className={styles.pending}>
             {card.recipientEmail && <p>Получатель: {card.recipientEmail}</p>}
             {formatDate(card.sentAt) && <p>Отправлено: {formatDate(card.sentAt)}</p>}
-            {claimUrl && (
-              <button type='button' className={styles.copyLink} onClick={copyClaim}>
-                Скопировать ссылку
-              </button>
-            )}
+            {claimUrl && <CopyClaimLink claimUrl={claimUrl} />}
           </div>
         )}
 
