@@ -265,3 +265,11 @@ chain + render-blocking, not LCP-the-element. Insights + fixes:
 - LCP hero: exactly **1** `preload as=image` with responsive `imageSrcSet` (priority-on-first worked). Residual: `fetchpriority="high"` not literally on the preload (Swiper clones the first slide; the priority original emits the preload) — minor, preloads are High priority by default.
 - `email-decode.min.js`: **0 refs** (CF Email-Obfuscation off).
 - cache TTL / browserslist / Swiper-defer shipped in the same image (build green).
+
+**Regression + recovery 2026-06-17 (real PSI: 78→74, FCP 2.7→3.6s, LCP 4.5→5.1s, SI 4.0→7.1s):**
+- `experimental.inlineCss` was the wrong tool — it inlines *all* ~170 KB of route CSS (not a critical subset) into an already-huge render-blocking document. **Reverted** to external CSS (HTTP/2 parallel).
+- Breaking down the 2.71 MB home HTML showed the real bottleneck: **RSC flight = 1.42 MB (51%)**, dominated by **box-set illustration SVGs (100-277 KB each) inlined per card via `dangerouslySetInnerHTML`** — serialized into HTML *and* flight.
+  - Why not SVGR? These are admin-uploaded *runtime* storage assets, not build-time source imports — SVGR can't see them.
+  - Why not inline SVG? XSS surface + the bloat above.
+  - **Fix = WebP + next/image** (measured winner vs SVGR: SVGR would dump ~438 KB gz into first-load JS; WebP is lazy/below-fold/AVIF-negotiated/resized). Converted the 9 SVGs → WebP (`scripts/boxsets-svg-to-webp.mjs`, 1063 KB → 365 KB source), uploaded to the `box-sets` bucket (`scripts/upload-boxset-webp.mjs`), repointed `BoxSets.image` `.svg`→`.webp` (prod, backed up first; local; `seed.sql`). `BoxSetCard` renders `imageUrl` via next/image (`unoptimized` only for legacy `.svg`, so the swap needed no redeploy).
+- **Verified live: home HTML 2.71 MB → 0.21 MB (−92%); RSC flight 1.42 MB → 89 KB; 0 inline box-set SVGs; box-set images now optimized lazy WebP via /_next/image.** Re-run real PSI to confirm the metric recovery.
