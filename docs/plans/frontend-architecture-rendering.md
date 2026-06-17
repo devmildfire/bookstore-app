@@ -258,3 +258,10 @@ chain + render-blocking, not LCP-the-element. Insights + fixes:
 - [x] **Legacy JavaScript** → modern `browserslist` (`last 4 years, not dead, > 0.2%` = **95.64%** global coverage incl. mobile) so SWC stops emitting legacy transforms/polyfills. Rejected an explicit `chrome>=91` list that `--coverage` exposed as only 45.9% (it excluded mobile browser keys). *(clearance to verify on real PSI)*
 - [x] **Cache lifetimes** → `images.minimumCacheTTL: 604800` (7 d) raises the optimized-image cache floor above the Supabase upstream's 4 h; `must-revalidate` bounds staleness.
 - Note: re-measure via **real PSI after deploy** — local Lighthouse can't replicate Google's mobile lab latency. Legacy-JS + forced-reflow are low-weight diagnostics (not first-load LCP/FCP); the render-blocking-CSS inline is the metric mover.
+
+**Deployed to prod 2026-06-17 (`update`→`production`, run 27669622818, all jobs green) + verified on the live page:**
+- `inlineCss` **confirmed working**: **0 render-blocking `<link rel="stylesheet">`**; all route CSS in one ~174 KB inline `<style>`. (Interim self-check error: I first counted CSS *paths* in preload/href attrs and wrongly thought it failed — precise tag parsing showed zero blocking links.) **Tradeoff:** ~174 KB inlined per HTML doc (no cross-page CSS cache) — a deliberate FCP-over-repeat-visit trade; switch to critical-only (`optimizeCss`/Beasties) if navigation/repeat cost matters.
+- `preconnect` to `api.mildfire.dev` live as an HTTP `Link:` header (better than a tag — pre-parse).
+- LCP hero: exactly **1** `preload as=image` with responsive `imageSrcSet` (priority-on-first worked). Residual: `fetchpriority="high"` not literally on the preload (Swiper clones the first slide; the priority original emits the preload) — minor, preloads are High priority by default.
+- `email-decode.min.js`: **0 refs** (CF Email-Obfuscation off).
+- cache TTL / browserslist / Swiper-defer shipped in the same image (build green).
