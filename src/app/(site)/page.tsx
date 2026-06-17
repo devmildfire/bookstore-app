@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getFeaturedBooks } from '@/api/books'
-import Slider from '@/components/common/Slider'
+import HeroScrollSlider from '@/components/common/HeroScrollSlider'
 import HomeCatalog from './HomeCatalog'
 import HomeCatalogFallback from './HomeCatalogFallback'
 import SubscriptionsSection from '@/components/subscriptions/SubscriptionsSection/SubscriptionsSection'
@@ -40,7 +40,9 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <div className={styles.page}>
-      <Slider items={slides} />
+      {/* EXPERIMENT: scroll-snap hero (zero-JS LCP) replacing the Swiper Slider. The old
+          @/components/common/Slider is kept for easy rollback. */}
+      <HeroScrollSlider items={slides} />
       <Suspense fallback={<HomeCatalogFallback />}>
         <HomeCatalog searchParams={searchParams} />
       </Suspense>
