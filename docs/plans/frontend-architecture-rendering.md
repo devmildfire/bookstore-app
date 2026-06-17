@@ -233,12 +233,12 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
   that values a battle-tested, explainable codebase. Flip the flag when `cacheComponents` leaves
   experimental — the isolation work makes it a small change then.
 
-### Phase 5b — asymmetric JWT keys (Solution B) — **feasibility-verified; awaiting go-ahead**
-- Full verified procedure + risk/reward: [docs/deployment/asymmetric-jwt-migration.md](../deployment/asymmetric-jwt-migration.md).
-- Feasible for the installed versions (GoTrue v2.188.1 / PostgREST v14.10 / Storage v1.54.1); the
-  HS256↔ES256 **coexistence** path means the deployed app's baked anon key keeps working (no rebuild).
-- Risk/reward for a portfolio is modest-reward / live-auth-risk → execute only via a local
-  prod-compose rehearsal + fresh backup + staged smoke tests. Pending the go-ahead.
+### Phase 5b — asymmetric JWT keys (Solution B) — ✅ **DONE (live in prod 2026-06-17)**
+- Full procedure + verified results: [docs/deployment/asymmetric-jwt-migration.md](../deployment/asymmetric-jwt-migration.md).
+- Rehearsed end-to-end on the prod-compose stack locally, then cut over prod: new sessions sign
+  ES256, JWKS endpoint live, PostgREST+Storage validate both ES256 + the legacy HS256 anon key
+  (coexistence — nothing broke), RLS intact. ~40s 502 gateway blip during the kong recreate.
+- [ ] **Optional perf follow-up:** flip proxy `getUser()` → local `getClaims()` (app code + redeploy).
 
 ### Phase 6 — build/cleanup (optional, **after all other phases**)
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)

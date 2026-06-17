@@ -1,7 +1,21 @@
 # Solution B — migrate self-hosted Supabase HS256 → asymmetric JWT signing keys
 
-**Status:** **rehearsed end-to-end on the prod-compose stack locally (2026-06-16, PASS)**;
-prod cutover next. Phase 5b of [../plans/frontend-architecture-rendering.md](../plans/frontend-architecture-rendering.md).
+**Status:** ✅ **LIVE IN PRODUCTION (2026-06-17).** Rehearsed end-to-end locally (PASS), then cut
+over prod. Phase 5b of [../plans/frontend-architecture-rendering.md](../plans/frontend-architecture-rendering.md).
+
+**Prod cutover result (verified on the live api.mildfire.dev):** new sessions sign **`alg: ES256`**;
+the JWKS endpoint serves the EC public key; PostgREST + Storage validate **both** the new ES256
+tokens AND the legacy HS256 anon key (the key baked into the deployed app — **200**, so nothing
+broke); RLS intact (anon→private storage = 400). Keys generated from the *prod* `JWT_SECRET` on the
+VPS (in a node container — secret never left the box); appended to `/opt/chtivo/.env`; compose+kong
+synced via `git archive`; auth/rest/storage/kong recreated. **Caveat: recreating kong caused a ~40s
+502 blip at the gateway** (auto-recovered when kong went healthy) — a graceful kong reload would
+avoid it next time. Loose private-key files removed from the VPS (the ES256 key lives only in `.env`);
+one pre-migration `.env.bak` kept for rollback.
+
+**Remaining (optional perf): flip the proxy `getUser()` → `getClaims()`** — now that tokens are
+ES256 with a published JWKS, `getClaims()` verifies locally (no auth-server round-trip). That's an
+app **code** change (`src/proxy.ts`) + rebuild/redeploy, not infra — separate follow-up.
 
 **Rehearsal result (full prod-compose stack, fresh DB, exact env wiring):** JWKS endpoint
 serves EC/ES256 public only; a new anonymous signup mints an **`alg: ES256`** token; PostgREST
