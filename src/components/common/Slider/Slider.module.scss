@@ -17,8 +17,15 @@
     height: auto;
   }
 
+  // Give the slides a full CSS layout (width + height) so the FIRST slide + its cover (the LCP)
+  // lay out and paint from SSR — before the JS bundle downloads and Swiper assigns slide widths.
+  // Without an explicit width the slide has no layout pre-JS (Lighthouse measures the cover 0×0),
+  // so the LCP waits ~5s for the JS on throttled mobile. Swiper overrides width inline on init;
+  // the others are clipped by `.swiper { overflow: hidden }`, so only the first shows pre-JS.
   :global(.swiper-slide) {
     height: auto;
+    width: 100%;
+    flex-shrink: 0;
   }
 }
 
