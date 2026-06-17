@@ -143,10 +143,9 @@
 
 .wordmarkAccent {
   font-family: $font-cheque;
-  // Brand red ($color-accent-on-dark #A10202) is only ~2.4:1 on the near-black footer (#0a0a0a)
-  // — fails WCAG AA even for large text (3:1). A slightly brighter red clears 3:1 (~3.5:1) and is
-  // genuinely more legible; footer-local override so the global accent token is untouched.
-  color: #c62828;
+  // Brand $color-accent-on-dark (#A10202) is only ~2.4:1 on the footer's #0a0a0a — fails WCAG AA
+  // even for large text. $color-accent-on-dark-strong clears 3:1 for the 62px wordmark.
+  color: $color-accent-on-dark-strong;
 }
 
 // ─── Socials ─────────────────────────────────────────────────────────────────
@@ -280,10 +279,9 @@
 .hash {
   font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   font-size: 12px;
-  color: $color-text-on-dark;
-  // 0.4 made #DCDCDC ≈ #5e5e5e on #0a0a0a → ~3.0:1, fails WCAG AA for body text (needs 4.5:1).
-  // 0.6 → ≈ #888 → ~5.5:1. Still visually muted, but accessible.
-  opacity: 0.6;
+  // Was $color-text-on-dark @ opacity 0.4 → ~3.0:1, fails WCAG AA. The muted-text token (0.7
+  // alpha) is the semantic choice and reaches ~7:1 on #0a0a0a.
+  color: $color-text-muted-on-dark;
 
   @include breakpoint(tablet-small) {
     font-size: 9px;

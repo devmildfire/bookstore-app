@@ -21,6 +21,9 @@ $color-text-on-dark: #DCDCDC;
 $color-accent-on-dark: #A10202;
 $color-accent-hover-on-dark: #930000;
 $color-accent-bright: #C20000;     // brighter red — inline-link hover (Figma rgb(202,0,0))
+$color-accent-on-dark-strong: #C62828;  // accent legible on the deepest surface (#0a0a0a): brand
+                                         // #A10202 is only ~2.4:1 there; this clears WCAG AA for
+                                         // large text (~3.5:1). Used for the footer wordmark.
 
 // Figma design palette
 $color-gray-5: #E0E0E0; // Figma "Gray 5" — titles on dark surfaces
