@@ -245,3 +245,16 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Turbopack-compatible SVGR; drop Webpack pin (P7)
 - [ ] Unify profile data source (D5); server-derive MyBooks/MyCourses (D4/D7)
 - [x] **DRY'd the CI audit into a reusable workflow** — `audit-reusable.yml` (`workflow_call`) holds the single `npm audit --audit-level=high` definition; `audit.yml` (all-branches/PR) and `deploy-production.yml`'s gate job both `uses:` it. No more duplicated step.
+
+### Phase 7 — mobile web vitals (from real PageSpeed Insights, 2026-06-17)
+Real PSI mobile (Slow-4G + real device, not local Lighthouse which has instant network):
+**FCP 2.7 s, LCP 4.5 s (Poor), Speed Index 4.0 s, CLS 0, Perf ≈ 70.** Bottleneck = critical-path
+chain + render-blocking, not LCP-the-element. Insights + fixes:
+- [x] **Render-blocking CSS (13 chunks)** → `experimental.inlineCss: true` (inline into HTML; biggest FCP lever). *(verified building)*
+- [x] **No preconnect** → `react-dom` `preconnect('api.mildfire.dev', crossOrigin)` in the root layout.
+- [x] **LCP `fetchpriority=high` FAILED** (hero cover queued ~late) → `priority` on the **first** Slider slide only (was on all → none preloaded).
+- [ ] **Cloudflare `email-decode.min.js` on the critical path (~2.2 s!)** — Cloudflare **Email Address Obfuscation** (Scrape Shield) injects it. **Disable it in the Cloudflare dashboard** (Scrape Shield → Email Address Obfuscation → Off). Biggest single FCP/LCP win; no code. (Can't toggle from the repo.)
+- [ ] **Forced reflow 90 ms** = Swiper `updateSize`/`updateAutoHeight` → defer below-fold carousels via `next/dynamic`; consider dropping the hero's `autoHeight`.
+- [ ] **Legacy JavaScript** (PSI) → investigate browserslist / which dep ships legacy code (measure, don't over-tighten).
+- [ ] **Cache lifetimes** (PSI) → review `next/image` `minimumCacheTTL` + flagged resources.
+- Note: re-measure via **real PSI after deploy** — local Lighthouse can't replicate Google's mobile lab latency.

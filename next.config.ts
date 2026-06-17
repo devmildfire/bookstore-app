@@ -3,6 +3,10 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
+    // Inline CSS into the HTML instead of emitting many render-blocking <link> stylesheets
+    // (the storefront ships ~13 CSS chunks from SCSS-modules-per-component). On mobile each
+    // is a render-blocking round-trip → big FCP/LCP hit; inlining removes that critical chain.
+    inlineCss: true,
     // Book detail pages are prebuilt via generateStaticParams (SSG). Prerendering the
     // whole catalog concurrently hammers Supabase, which can return transient upstream
     // errors. Retry those failures and cap concurrency so a blip doesn't fail the build

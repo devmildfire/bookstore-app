@@ -27,7 +27,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   return (
     <div className={styles.wrapper}>
       <BaseSlider slideCount={items.length} loop={items.length > 2} autoplay={4000}>
-        {items.map((item) => (
+        {items.map((item, index) => (
           <SwiperSlide key={item.id}>
             <div className={styles.slide}>
               <div className={styles.coverWrap}>
@@ -38,7 +38,9 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                     width={355}
                     height={533}
                     className={styles.cover}
-                    priority
+                    // Only the first slide is the LCP — preload just it (fetchpriority=high).
+                    // priority on every slide preloads none effectively; the rest stay lazy.
+                    priority={index === 0}
                     placeholder={item.coverBlurDataUrl ? 'blur' : 'empty'}
                     blurDataURL={item.coverBlurDataUrl ?? undefined}
                   />

@@ -1,8 +1,14 @@
 import type { Metadata } from 'next'
+import { preconnect } from 'react-dom'
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 import Providers from './providers'
 import '@/styles/globals.scss'
+
+// Warm the connection to the Supabase origin early — client-side cart/likes/quote calls + image
+// upstreams hit api.mildfire.dev cross-origin, and PSI flagged no preconnects. crossOrigin
+// 'anonymous' matches supabase-js's CORS (Authorization-header) fetches.
+const SUPABASE_PUBLIC_ORIGIN = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '')
 
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
@@ -37,6 +43,8 @@ export const metadata: Metadata = {
 // cookie (see proxy.ts + providers.tsx), so the layout never needs getUser() here
 // (which also removes the duplicate auth-server call the proxy already makes).
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  if (SUPABASE_PUBLIC_ORIGIN) preconnect(SUPABASE_PUBLIC_ORIGIN, { crossOrigin: 'anonymous' })
+
   return (
     <html lang='ru' className={`${montserrat.variable} ${cheque.variable}`}>
       <body>
