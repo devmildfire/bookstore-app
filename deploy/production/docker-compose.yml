@@ -103,6 +103,10 @@ services:
       GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
       GOTRUE_JWT_EXP: ${JWT_EXPIRY}
       GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      # Asymmetric signing (Solution B): when JWT_KEYS is a non-empty array, GoTrue signs new
+      # session JWTs with the ES256 key in it and validates both ES256 + the legacy HS256 oct
+      # key it also contains. Empty (default) → stays HS256 via GOTRUE_JWT_SECRET above.
+      GOTRUE_JWT_KEYS: "${JWT_KEYS:-[]}"
       GOTRUE_JWT_ISSUER: ${API_EXTERNAL_URL}/auth/v1
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP}
       GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: ${ENABLE_ANONYMOUS_USERS}
@@ -142,7 +146,8 @@ services:
       PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       PGRST_DB_SCHEMAS: public,storage,graphql_public
       PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: ${JWT_SECRET}
+      # JWKS verify set (ES256 public + legacy HS256 oct) when JWT_JWKS is set; else HS256.
+      PGRST_JWT_SECRET: ${JWT_JWKS:-${JWT_SECRET}}
       PGRST_DB_USE_LEGACY_GUCS: "false"
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
@@ -172,6 +177,8 @@ services:
       SERVICE_KEY: ${SERVICE_ROLE_KEY}
       POSTGREST_URL: http://rest:3000
       AUTH_JWT_SECRET: ${JWT_SECRET}
+      # JWKS verify set (ES256 public + legacy HS256 oct) when set; else HS256 via AUTH_JWT_SECRET.
+      JWT_JWKS: '${JWT_JWKS:-{"keys":[]}}'
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       FILE_SIZE_LIMIT: 52428800
       STORAGE_BACKEND: file
