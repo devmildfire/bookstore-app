@@ -15,5 +15,5 @@ export default async function HomeCatalog({ searchParams }: Props) {
   const filters = parseBookFilters(resolvedSearchParams)
   const catalog = await getBooks(filters)
 
-  return <NewProducts catalog={catalog} filters={filters} searchParams={resolvedSearchParams} />
+  return <NewProducts catalog={catalog} filters={filters} />
 }

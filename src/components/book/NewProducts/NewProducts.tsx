@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import BookGrid from '@/components/book/BookGrid'
+import BookCard from '@/components/book/BookCard'
+import BooksFeed from '@/components/book/BooksFeed'
 import { CatalogControlsRouter } from '@/components/book/CatalogControls'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 import styles from './NewProducts.module.scss'
@@ -7,15 +7,10 @@ import styles from './NewProducts.module.scss'
 type Props = {
   catalog: BookCatalog
   filters: BookFilters
-  searchParams: Record<string, string | string[] | undefined>
 }
 
-const BOOKS_LOAD_MORE_INCREMENT = 12
-
-export default function NewProducts({ catalog, filters, searchParams }: Props) {
+export default function NewProducts({ catalog, filters }: Props) {
   const books = catalog.books
-  const hasMoreBooks = books.length < catalog.total
-  const loadMoreHref = getLoadMoreHref(searchParams, catalog.pageSize + BOOKS_LOAD_MORE_INCREMENT)
 
   return (
     <section className={styles.wrapper}>
@@ -27,37 +22,23 @@ export default function NewProducts({ catalog, filters, searchParams }: Props) {
         years={catalog.years}
       />
 
-      { books.length > 0
-        ? <BookGrid books={books} />
-        : <p className={styles.subtitle}>Книги не найдены</p> }
-
-      {hasMoreBooks && (
-        <div className={styles.buttonContainer}>
-          <Link href={loadMoreHref} className={styles.button} scroll={false}>
-            Загрузить больше
-          </Link>
-        </div>
+      {books.length > 0 ? (
+        // First page = server-rendered BookCards passed as children. BooksFeed appends later
+        // pages client-side with anticipatory prefetch — instant "load more", no navigation,
+        // no whole-page reload. Keyed by filters so a filter/sort change remounts + resets it.
+        <BooksFeed
+          key={JSON.stringify(filters)}
+          filters={filters}
+          initialCount={books.length}
+          total={catalog.total}
+        >
+          {books.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </BooksFeed>
+      ) : (
+        <p className={styles.subtitle}>Книги не найдены</p>
       )}
     </section>
   )
-}
-
-function getLoadMoreHref(searchParams: Props['searchParams'], nextLimit: number): string {
-  const params = new URLSearchParams()
-
-  Object.entries(searchParams).forEach(([key, value]) => {
-    if (value === undefined) return
-
-    if (Array.isArray(value)) {
-      value.forEach((item) => params.append(key, item))
-    } else {
-      params.set(key, value)
-    }
-  })
-
-  params.set('limit', String(nextLimit))
-  params.delete('page')
-
-  const serialized = params.toString()
-  return serialized ? `/?${serialized}` : '/'
 }
