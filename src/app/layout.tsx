@@ -1,25 +1,24 @@
 import type { Metadata } from 'next'
-import { preconnect } from 'react-dom'
 import { Montserrat } from 'next/font/google'
 import localFont from 'next/font/local'
 import Providers from './providers'
 import '@/styles/globals.scss'
 
-// Warm the connection to the Supabase origin early — client-side cart/likes/quote calls + image
-// upstreams hit api.mildfire.dev cross-origin, and PSI flagged no preconnects. crossOrigin
-// 'anonymous' matches supabase-js's CORS (Authorization-header) fetches.
-const SUPABASE_PUBLIC_ORIGIN = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '')
-
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
-  weight: ['400', '500', '600', '700'],
+  // Match the weights actually used in the styles: 400/600/700/900 (900 is the most-used
+  // heading weight and was previously faux-bolded; 500 was declared but never used). Keeping
+  // the count at 4 means no extra preloaded font vs before.
+  weight: ['400', '600', '700', '900'],
   style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-montserrat',
 })
 
 const cheque = localFont({
-  src: './fonts/Chequeblack.ttf',
+  // woff2 (≈12 KB) instead of the 44 KB .ttf — it's a preloaded font, so this trims the
+  // critical path directly. Generated from Chequeblack.ttf via ttf2woff2.
+  src: './fonts/Chequeblack.woff2',
   weight: '400',
   style: 'normal',
   display: 'swap',
@@ -43,8 +42,6 @@ export const metadata: Metadata = {
 // cookie (see proxy.ts + providers.tsx), so the layout never needs getUser() here
 // (which also removes the duplicate auth-server call the proxy already makes).
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  if (SUPABASE_PUBLIC_ORIGIN) preconnect(SUPABASE_PUBLIC_ORIGIN, { crossOrigin: 'anonymous' })
-
   return (
     <html lang='ru' className={`${montserrat.variable} ${cheque.variable}`}>
       <body>
