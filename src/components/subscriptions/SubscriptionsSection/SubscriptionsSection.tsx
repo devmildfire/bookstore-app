@@ -1,5 +1,5 @@
 import { getSubscriptions } from '@/api/subscriptions/getSubscriptions'
-import { SubscriptionCard } from './SubscriptionsCarousel'
+import SubscriptionCard from './SubscriptionCard'
 import SubscriptionsCarousel from './SubscriptionsCarousel'
 import styles from './SubscriptionsSection.module.scss'
 
