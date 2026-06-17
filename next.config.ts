@@ -35,6 +35,9 @@ const nextConfig: NextConfig = {
     // change). With `must-revalidate`, a cover replaced under the same filename refreshes via
     // a conditional request after the window — so worst-case staleness is bounded, not permanent.
     minimumCacheTTL: 604800,
+    // Negotiate AVIF first (≈20-30% smaller than WebP) — PSI flags several covers as
+    // over-compressible. Browsers that don't accept AVIF fall back to WebP automatically.
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       // Supabase Cloud — matches any project subdomain
       {

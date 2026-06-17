@@ -37,6 +37,11 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                     alt={`Обложка книги: ${item.title}`}
                     width={355}
                     height={533}
+                    // Without `sizes`, next/image uses 1x/2x density descriptors off the 355px
+                    // intrinsic width → serves w=750 on mobile for a ~174px display (4× too big,
+                    // and this is the LCP). `sizes` switches it to width-descriptors so mobile
+                    // gets ~w=384 instead. ~42vw on a 412px PSI viewport ≈ the 174px display.
+                    sizes="(max-width: 767px) 45vw, 355px"
                     className={styles.cover}
                     // First slide is the LCP. `priority` emits the preload + eager-loads, but in
                     // this Next version it does NOT set fetchpriority — only the explicit
