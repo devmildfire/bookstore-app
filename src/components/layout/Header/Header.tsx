@@ -28,7 +28,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={cn(styles.inner, searchExpanded && styles.searchExpanded)}>
-        <Link href='/' className={cn(styles.logoLink, searchExpanded && styles.hiddenOnPhone)}>
+        <Link href='/' aria-label='Чтиво — на главную' className={cn(styles.logoLink, searchExpanded && styles.hiddenOnPhone)}>
           <Logo className={styles.logo} />
         </Link>
 

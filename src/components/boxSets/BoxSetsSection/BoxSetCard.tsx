@@ -41,7 +41,9 @@ export default function BoxSetCard({ boxSet, isOpen, onToggle }: Props) {
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle() } }}
       aria-expanded={isOpen}
-      aria-label={isOpen ? `Свернуть ${boxSet.name}` : `Развернуть ${boxSet.name}`}
+      // No aria-label: the card's visible text (name + description + price) becomes its accessible
+      // name, so it can't conflict with it (WCAG 2.5.3 / axe label-content-name-mismatch). The
+      // expand/collapse state is conveyed by aria-expanded.
     >
       <div className={styles.imageWrap}>
         {boxSet.imageUrl && (

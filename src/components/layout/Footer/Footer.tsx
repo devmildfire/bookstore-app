@@ -53,7 +53,7 @@ export default function Footer() {
             </a>
           </div>
 
-          <a href="https://t.me/russiandino" className={styles.credit} target="_blank" rel="noopener noreferrer" aria-label="Russkiy Dinozavr on Telegram">
+          <a href="https://t.me/russiandino" className={styles.credit} target="_blank" rel="noopener noreferrer" aria-label="made by Russkiy Dinozavr — Telegram">
             <MrdIcon className={styles.mrdIcon} />
             <span className={styles.creditText}>made by<br/>Russkiy<br/>Dinozavr</span>
           </a>

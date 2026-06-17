@@ -28,7 +28,10 @@
       rgba(0, 0, 0, 0.78) 70%,
       rgba(0, 0, 0, 0.65) 100%
     ),
-    url('../../../assets/about/rorschach-bg.jpg') lightgray 50% 0% / cover no-repeat;
+    // Served from /public (not a bundler `url()` import): Next mis-emits the public-path for CSS
+    // url() background images as /static/media/… (missing the /_next prefix) → 404. A /public path
+    // is processed by no loader, so it's always correct. Image lives at public/images/.
+    url('/images/rorschach-bg.jpg') lightgray 50% 0% / cover no-repeat;
 
   @include breakpoint(tablet) { padding: 80px 0 110px; }
   @include breakpoint(tablet-small) { padding: 60px 0 80px; }
