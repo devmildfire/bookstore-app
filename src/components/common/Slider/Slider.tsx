@@ -38,9 +38,13 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                     width={355}
                     height={533}
                     className={styles.cover}
-                    // Only the first slide is the LCP — preload just it (fetchpriority=high).
-                    // priority on every slide preloads none effectively; the rest stay lazy.
+                    // First slide is the LCP. `priority` emits the preload + eager-loads, but in
+                    // this Next version it does NOT set fetchpriority — only the explicit
+                    // `fetchPriority` prop does (get-img-props → ImagePreload's getDynamicProps).
+                    // Without it the preload ships with no fetchpriority=high → PSI "LCP request
+                    // discovery" fails. The rest stay lazy/auto.
                     priority={index === 0}
+                    fetchPriority={index === 0 ? 'high' : undefined}
                     placeholder={item.coverBlurDataUrl ? 'blur' : 'empty'}
                     blurDataURL={item.coverBlurDataUrl ?? undefined}
                   />
