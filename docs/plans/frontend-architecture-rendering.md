@@ -207,11 +207,12 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] Browser-verified an SSG book page: renders (title/edition-tabs/content), anon sign-in fires, **add-to-cart → `POST /Cart 201`**, zero console errors.
 - [ ] Merge `feat/ppr-phase2-book-ssg` → `update`.
 
-### Phase 3 — boundary / leaves
-- [ ] Split `BookCard` → server body + client add-to-cart leaf (B1)
-- [ ] Split `GiftCardTierCard`, `SubscriptionCard`, `GiftCardWalletItem`, `BoxSetCard` (B1)
-- [ ] Move co-located static cards out of client carousel modules (B2)
-- [ ] Extract `Header` static logo+nav to server sub-component (B5)
+### Phase 3 — boundary / leaves — *(branch `feat/ppr-phase3-card-splits`, browser-verified)*
+- [x] `BookCard` → server body + client `AddToCartTrigger` leaf (the highest-value card — every catalog/home tile). Verified: cards render server-side, add-to-cart leaf hydrates + opens the modal. (B1)
+- [x] `GiftCardTierCard` → server + `GiftCardBuyTrigger` leaf; `GiftCardWalletItem` → server + `CopyClaimLink` leaf (SendGiftCardDialog already client). (B1)
+- [~] `BoxSetCard` — **intentionally left client**: the whole card is a parent-controlled expand/collapse toggle + `useCart`/`useToast`; only its inner markup is static, so splitting adds indirection for little gain.
+- [ ] `SubscriptionCard` (co-located inside the `'use client'` carousel module — B1+B2) — follow-up.
+- [ ] Extract `Header` static logo+nav to a server sub-component (B5) — follow-up (global, `usePathname` + dialogs/dropdowns; more involved).
 
 ### Phase 4 — Suspense / streaming — *(branch `feat/ppr-phase4-suspense`, browser-verified)*
 - [x] Home catalog isolated into `HomeCatalog` (async child) behind `<Suspense fallback={<HomeCatalogFallback/>}>` — `searchParams` read + heavy `getBooks` moved off the shell, so hero/subscriptions/box-sets stream first and the filtered grid streams behind a skeleton. Verified: all sections render, `?q=` filtering still works (empties the grid → "Книги не найдены"), no console errors. (`/` stays `ƒ` until `cacheComponents`/Phase 5 — same as Phase 0's cookie isolation.)
