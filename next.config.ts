@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import path from 'node:path'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -89,6 +90,14 @@ const nextConfig: NextConfig = {
         },
       ],
     })
+    // Exclude the unused Supabase Realtime client from the bundle (see realtime-stub.js):
+    // supabase-js hard-instantiates RealtimeClient + `export *`s realtime-js, dragging the
+    // websocket/presence bundle + its inlined core-js polyfills into the client chunk. We use
+    // realtime 0×, so alias it to a no-op. Exact match ($) so only the bare import is replaced.
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@supabase/realtime-js$': path.resolve('src/lib/supabase/realtime-stub.js'),
+    }
     return config
   },
 }
