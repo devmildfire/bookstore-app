@@ -7,12 +7,16 @@ import '@/styles/globals.scss'
 const montserrat = Montserrat({
   subsets: ['cyrillic', 'latin'],
   // Match the weights actually used in the styles: 400/600/700/900 (900 is the most-used
-  // heading weight and was previously faux-bolded; 500 was declared but never used). Keeping
-  // the count at 4 means no extra preloaded font vs before.
+  // heading weight and was previously faux-bolded; 500 was declared but never used).
   weight: ['400', '600', '700', '900'],
   style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-montserrat',
+  // Do NOT preload Montserrat. Preloading emitted ~5 High-priority woff2 requests (~127 KB)
+  // that competed with the LCP hero cover for Slow-4G bandwidth in its exact load window.
+  // The hero's defining text is Chequeblack (preloaded below); Montserrat covers thesis/
+  // button/below-the-fold text, which can swap in (display:swap) without delaying the LCP.
+  preload: false,
 })
 
 const cheque = localFont({
