@@ -95,6 +95,36 @@ serialization is the whole story.
 - The number is intrinsically noisy (±4 s) because Load Delay dominates and is
   connection-state sensitive — chasing a single PSI run is misleading; use medians.
 
+## Deferred / backlog (stored for later)
+
+- **Render-blocking CSS (~750 ms est. savings on PSI).** Even on `/perf-min`, 2 CSS
+  files (`d0a58e7f…` 3.2 KB + `0c3fce7b…` 6.8 KB) are render-blocking on the critical
+  path. Candidate fixes: inline the tiny critical CSS, or reduce/split. Not yet done —
+  deferred by decision (2026-06-18) after the font win.
+
+## CSS strategy: defer-shed YES, inline NO (both tested)
+
+The question "can we inline above-the-fold CSS and defer the rest?" was answered empirically:
+
+- **Render-blocking CSS grows with eager (above-the-fold) components**, not unboundedly. Floor
+  (layout chrome) ≈ 8.8 KB on every route; the home adds ~5–7 KB of its eager content CSS.
+- **Deferring a component's render does NOT defer its CSS** unless no *eagerly-rendered* component
+  imports that CSS module. The increment-B `Deferred*` wrappers imported the section SCSS (for the
+  `.section` class), leaking it into render-blocking. **Fix:** move the `.section` wrapper into the
+  lazy body; the placeholder uses inline `width/align-self/min-height` only. Result: box-sets +
+  subscriptions CSS left the render-blocking bundle (home 15.7→13.7 KB), loading with the body on
+  scroll. Full-bleed preserved. ✅ kept.
+- **`inlineCss` — tested twice, rejected twice.** Even with the above-fold set shrunk to ~14 KB,
+  inlining inflated the home document 22→65 KB gz (inlined CSS + RSC-flight duplication). On Slow-4G
+  the document is the critical path, so that pushed **FCP 1.4→2.7 s and LCP ~2→~5 s** (3 runs each)
+  — strictly worse. External CSS (parallel, HTTP/3-multiplexed, cacheable) wins here. ❌ reverted.
+
+## Progress log
+
+- 2026-06-18 — `preload: false` on Montserrat (font preloads 6→1, Chequeblack only).
+  Home LCP median ~5–6 s → ~2 s (best run 1.7 s / perf 92); `/perf-min` PSI LCP 5.7 s →
+  2.3 s. Biggest single LCP win so far. CLS unchanged (~0.001).
+
 ## Method notes / reproducibility
 
 - `/perf-min` is a temporary diagnostic route (noindex), removed after this writeup.
