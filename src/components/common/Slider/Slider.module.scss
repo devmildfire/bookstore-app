@@ -54,7 +54,12 @@
     align-items: center;
     gap: 0;
     padding: 24px $layout-px-phone 0;
-    min-height: 480px;
+    // Tall enough that the book-grid's first row sits fully BELOW the mobile fold (~823px on the
+    // PSI Moto-G viewport). Otherwise the grid's top covers peek ~40px above the fold, and the
+    // browser eager-loads them at High priority right inside the LCP image's download window —
+    // stealing Slow-4G bandwidth from the hero cover (the LCP). Keeping the grid below the fold
+    // lets those covers stay lazy until scroll. See docs/perf/home-lcp-trace-findings.md.
+    min-height: 580px;
   }
 }
 
