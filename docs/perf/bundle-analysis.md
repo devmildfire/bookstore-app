@@ -68,7 +68,13 @@ the Turbopack migration is the recommended follow-up to drop the hack and gain b
 | Session start | ~600 KB | with next-devtools |
 | − next-devtools (webpack stub) | 327 KB | dead dev-overlay |
 | − zod (defer mutations + bust api barrels) | 313 KB | barrels defeated tree-shaking |
-| − overlayscrollbars (lazy `<Scroller>`) | **299 KB** | native scroll → custom bar on first interaction |
+| − overlayscrollbars (lazy `<Scroller>`) | 299 KB | native scroll → custom bar on first interaction |
+| − Supabase off eager (lazy client) | **295 KB** | `getBrowserClient()` dynamic-import in cart queries + search + anon-auth; bust the `@/api/orders` barrel. **Total ~flat** (cart query still runs on mount → loads the Supabase chunk *then*), but it's off the **eager critical path** → **bootup 1.1→0.8 s**, home good-run perf 88→**94–95**. Cart / search / add-to-cart verified working on live. |
+
+The "free" eager-shed is done. Fully removing Supabase from the *loaded* set needs deferring the
+cart query off mount → the badge would show empty until interaction (bad on `/cart`), so it's left
+loading on mount. Last shell dep is **Radix (~22 KB)** (nav dropdowns + mobile dialog — a11y
+refactor). Floor ≈ ~170 KB React/Next.
 
 **>50% of the starting JS removed.** Remaining toward the ~190 KB framework floor:
 
