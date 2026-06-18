@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazyClient'
 import { attachEditions } from './attachEditions'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { Book } from '@/entities/book/client'
@@ -20,7 +20,7 @@ export async function searchBooks(
 ): Promise<SearchBooksResult> {
   if (query.length < 3) return { books: [], total: 0 }
 
-  const supabase = createClient()
+  const supabase = await getBrowserClient()
   const { data, error } = await supabase.rpc('search_books', {
     search_term: query,
     result_limit: limit,

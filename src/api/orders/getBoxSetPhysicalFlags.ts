@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazyClient'
 
 export const boxSetPhysicalFlagsQueryKey = (boxSetIds: readonly number[]) =>
   ['cart', 'boxSetPhysical', [...boxSetIds].sort((a, b) => a - b)] as const
@@ -12,7 +12,7 @@ export async function getBoxSetPhysicalFlags(
   const result = new Map<number, boolean>()
   if (boxSetIds.length === 0) return result
 
-  const supabase = createClient()
+  const supabase = await getBrowserClient()
   const unique = Array.from(new Set(boxSetIds))
 
   const results = await Promise.all(

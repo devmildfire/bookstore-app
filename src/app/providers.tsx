@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createAuthClient } from '@/lib/supabase/client'
 import { ToastProvider } from '@/contexts/toast'
 import { CartProvider } from '@/contexts/cart'
 
@@ -62,11 +61,13 @@ export default function Providers({ children }: Props) {
 
     anonymousSignInStarted.current = true
 
-    const supabase = createAuthClient()
-
-    supabase.auth.signInAnonymously().catch((error) => {
-      anonymousSignInStarted.current = false
-      console.error(error)
+    // Dynamic-import keeps @supabase/ssr out of the eager bundle; it loads as its own chunk
+    // when the anon sign-in actually runs (post-hydration), not in the first-load critical path.
+    import('@/lib/supabase/client').then(({ createAuthClient }) => {
+      createAuthClient().auth.signInAnonymously().catch((error) => {
+        anonymousSignInStarted.current = false
+        console.error(error)
+      })
     })
   }, [])
 

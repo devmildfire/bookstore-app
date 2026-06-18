@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazyClient'
 import { normalizeAppliedPromo } from '@/entities/promo/normalize'
 import type { AppliedPromo } from '@/entities/promo/client'
 import type { PromoCodeServerRow } from '@/entities/promo/server'
@@ -6,7 +6,7 @@ import type { PromoCodeServerRow } from '@/entities/promo/server'
 export const activePromoQueryKey = ['cart', 'promo'] as const
 
 export async function getActivePromo(): Promise<AppliedPromo | null> {
-  const supabase = createClient()
+  const supabase = await getBrowserClient()
 
   const { data, error } = await supabase
     .from('CartPromo')

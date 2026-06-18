@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazyClient'
 
 export const cartQuoteQueryKey = ['cart', 'quote'] as const
 
@@ -32,7 +32,7 @@ export function parseCartQuote(data: unknown): CartQuote {
 }
 
 export async function getCartQuote(): Promise<CartQuote> {
-  const supabase = createClient()
+  const supabase = await getBrowserClient()
   const { data, error } = await supabase.rpc('quote_cart')
   if (error) throw new Error(`Не удалось рассчитать корзину: ${error.message}`)
   return parseCartQuote(data)
