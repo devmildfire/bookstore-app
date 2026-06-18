@@ -4,6 +4,16 @@ import path from 'node:path'
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
+    // CSS isolation per route. The default ('loose') merges CSS Modules across routes into a few
+    // shared render-blocking bundles via webpack SplitChunks — so the storefront home shipped
+    // admin-panel, article, gift-card and book-detail CSS it never paints (~12 KB dead weight).
+    // 'strict' does NOT fix this (it only changes merge ordering, not co-location). 'false' emits
+    // one stylesheet per CSS Module, included only on routes that import it: measured home
+    // render-blocking CSS 30.8 KB → 18.9 KB (−39%, 9 files → 4), with the cross-route leak gone.
+    // Verified no cascade regression — gift-cards/book detail pixel-identical, home diff 0.09%
+    // (async cover/badge load timing only). CSS Modules are scoped, so cross-module cascade order
+    // doesn't matter here. See docs/perf/home-lcp-trace-findings.md.
+    cssChunking: false,
     // inlineCss REVERTED: it inlines the route CSS into the <head> AND duplicates it into the RSC
     // flight, tripling the home document (0.21 MB → 0.66 MB). On Slow-4G that big doc/head delays
     // the LCP cover's preload discovery (PSI doesn't act on the 103 Early Hints, so it only finds
