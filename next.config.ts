@@ -18,12 +18,12 @@ const nextConfig: NextConfig = {
     // (async cover/badge load timing only). CSS Modules are scoped, so cross-module cascade order
     // doesn't matter here. See docs/perf/home-lcp-trace-findings.md.
     cssChunking: false,
-    // Inline the (now small) above-the-fold render-blocking CSS into <head>, removing the
-    // render-blocking CSS round-trips (PSI flagged ~750 ms). Viable NOW because the two reasons
-    // it was reverted before are fixed: (1) the box-set SVGs that inlined ~2.7 MB are WebP files;
-    // (2) below-the-fold sections (box-sets/subscriptions) are deferred AND no longer leak their
-    // CSS into the eager bundle, so the inlined set is just the above-fold ~14 KB — not everything.
-    inlineCss: true,
+    // inlineCss MEASURED AND REJECTED (2026-06-18, second attempt). Even with the above-fold set
+    // shrunk to ~14 KB (box-set SVGs now WebP; deferred-section CSS no longer leaking), enabling
+    // it inflated the home document 22→65 KB gz (inlined CSS + RSC-flight duplication). On Slow-4G
+    // the document IS the critical path, so that bloat pushed FCP 1.4→2.7 s and LCP ~2→~5 s across
+    // 3 runs each — strictly worse. External CSS (parallel, HTTP/3-multiplexed, cacheable) wins
+    // here; PSI's "~750 ms render-blocking" estimate does not account for the doc-size cost.
     // Book detail pages are prebuilt via generateStaticParams (SSG). Prerendering the
     // whole catalog concurrently hammers Supabase, which can return transient upstream
     // errors. Retry those failures and cap concurrency so a blip doesn't fail the build
