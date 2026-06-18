@@ -59,6 +59,31 @@ likely dedupes commons into shared chunks, but confirm with a per-route first-lo
 For now the **webpack + next-devtools stub** is the shipped, validated win (−45% client JS);
 the Turbopack migration is the recommended follow-up to drop the hack and gain build speed.
 
+## Shell-dep shedding progress (2026-06-18)
+
+`/perf-min` first-load JS (a near-empty page = the global shell cost), over the session:
+
+| Step | JS | Note |
+|---|---|---|
+| Session start | ~600 KB | with next-devtools |
+| − next-devtools (webpack stub) | 327 KB | dead dev-overlay |
+| − zod (defer mutations + bust api barrels) | 313 KB | barrels defeated tree-shaking |
+| − overlayscrollbars (lazy `<Scroller>`) | **299 KB** | native scroll → custom bar on first interaction |
+
+**>50% of the starting JS removed.** Remaining toward the ~190 KB framework floor:
+
+- **Supabase (~47 KB)** — pulled by the cart **queries** (run on mount for the badge count) + the
+  Providers' anon-auth. Deferring it has a real **product tradeoff**: either the cart badge shows
+  empty until after first paint (defer the query past interaction to escape the PSI run), or the
+  count is server-rendered from the cookie (which makes pages dynamic). Not a free win.
+- **Radix (~22 KB)** — Header's desktop nav `DropdownMenu` + mobile-menu `Dialog`. Options:
+  CSS-only hover/focus dropdowns + a custom mobile overlay (removes Radix, **a11y tradeoff** —
+  loses arrow-key menu nav + focus trap), or dynamic-import-on-interaction (keeps a11y, complex).
+- **~170 KB React/Next framework** — irreducible for a React/Next app.
+
+Both remaining items are **central-component refactors** (nav, cart/auth) with UX/a11y tradeoffs —
+unlike the pure-win deferrals above. They warrant focused work + live smoke-tests.
+
 ## Method / repro
 
 ```bash
