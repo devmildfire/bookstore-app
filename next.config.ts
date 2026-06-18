@@ -90,6 +90,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // EXPERIMENT: Turbopack-equivalent config (ignored by the webpack builder). Lets us run
+  // `next build` (Turbopack, Next 16 default) to compare bundle composition vs --webpack.
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+    resolveAlias: {
+      '@supabase/realtime-js': './src/lib/supabase/realtime-stub.js',
+    },
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,

@@ -35,6 +35,30 @@ rest (React+ReactDOM ≈ 45 KB; Next runtime ≈ 65–85 KB per page).
   (`turbopack.resolveAlias`), build, and compare bundle composition. This may make the
   next-devtools stub unnecessary and fix the duplication at once.
 
+## Turbopack comparison (2026-06-18)
+
+Tested `next build` (Turbopack, Next 16 default) with `turbopack.rules` for `@svgr` SVG +
+`turbopack.resolveAlias` for the realtime stub. Result:
+
+- **Builds cleanly** — SVG imports + aliases work; **~3× faster** (21 s vs 56–75 s for `--webpack`).
+- **Natively does NOT ship the next-devtools blob** — no 221 KB chunk, no devtools refs in the
+  output. So the webpack `next-devtools` stub is a workaround for the **`--webpack` builder
+  specifically**; Turbopack doesn't need it.
+- **Better chunking** — biggest chunk 77 KB (vs webpack's 221 KB monster).
+- **`/perf-min` first-load: 348 KB JS** (Turbopack, no stub) vs **327 KB** (webpack + stub) —
+  comparable; both eliminate the 228 KB devtools.
+
+**Recommendation:** Turbopack is the cleaner path — it removes the devtools natively (no hack),
+is much faster, and is Next 16's supported builder (`--webpack` is deprecated). Migration is
+low-friction (the SVG/alias config ports as shown). **Before switching, validate:** (1) SVG
+components render with the full `svgoConfig` (`removeViewBox: false`) ported to the Turbopack
+rule; (2) `output: 'standalone'` + the deploy pipeline work under Turbopack; (3) whether
+Turbopack also resolves the cross-chunk duplication (~140 KB) — its many-small-chunks model
+likely dedupes commons into shared chunks, but confirm with a per-route first-load comparison.
+
+For now the **webpack + next-devtools stub** is the shipped, validated win (−45% client JS);
+the Turbopack migration is the recommended follow-up to drop the hack and gain build speed.
+
 ## Method / repro
 
 ```bash

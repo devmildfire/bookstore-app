@@ -7,23 +7,19 @@ import {
   useQueryClient,
   keepPreviousData,
 } from '@tanstack/react-query'
-import {
-  getCart,
-  cartQueryKey,
-  addToCart,
-  removeFromCart,
-  updateCartQuantity,
-  clearCart,
-  getCartQuote,
-  cartQuoteQueryKey,
-} from '@/api/cart'
-import {
-  activePromoQueryKey,
-  applyPromoCode,
-  getActivePromo,
-  removePromoCode,
-  type ApplyPromoResult,
-} from '@/api/promo'
+// Queries + keys are imported statically (they run on mount for the cart state). The cart
+// MUTATIONS (addToCart/removeFromCart/updateCartQuantity/clearCart/applyPromoCode/
+// removePromoCode) are dynamic-imported inside their mutationFn below — they only run on a
+// user action, and optimistic onMutate updates the UI instantly, so the import adds no
+// perceived delay. This keeps the mutation code (and zod, pulled by applyPromoCode's schema)
+// out of the eager first-load bundle.
+// Import queries from their SPECIFIC files, not the @/api/cart and @/api/promo barrels — the
+// barrels re-export the mutations (addToCart, applyPromoCode → zod), so a barrel import drags
+// all of that into the eager bundle and defeats the dynamic-import deferral below.
+import { getCart, cartQueryKey } from '@/api/cart/getCart'
+import { getCartQuote, cartQuoteQueryKey } from '@/api/cart/quoteCart'
+import { getActivePromo, activePromoQueryKey } from '@/api/promo/getActivePromo'
+import type { ApplyPromoResult } from '@/api/promo/applyPromoCode'
 import { boxSetPhysicalFlagsQueryKey, getBoxSetPhysicalFlags } from '@/api/orders'
 import { getUserGiftCards, userGiftCardsQueryKey } from '@/api/giftCards/getUserGiftCards'
 import { isSinglePurchaseCategory } from '@/consts/products'
@@ -161,7 +157,7 @@ export function CartProvider({ children }: Props) {
 
   const addMutation = useMutation({
     mutationFn: ({ item, quantity }: { item: AddToCartInput; quantity: number }) =>
-      addToCart(item, quantity),
+      import('@/api/cart/addToCart').then((m) => m.addToCart(item, quantity)),
     onMutate: ({ item, quantity }) =>
       optimisticCart((items) => {
         const existing = items.find((i) => i.id === item.id)
@@ -186,7 +182,8 @@ export function CartProvider({ children }: Props) {
   })
 
   const removeMutation = useMutation({
-    mutationFn: removeFromCart,
+    mutationFn: (id: string) =>
+      import('@/api/cart/removeFromCart').then((m) => m.removeFromCart(id)),
     onMutate: (id: string) => optimisticCart((items) => items.filter((i) => i.id !== id)),
     onError: (_e, _v, ctx) => rollbackCart(ctx),
     onSettled: invalidateCart,
@@ -194,7 +191,7 @@ export function CartProvider({ children }: Props) {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
-      updateCartQuantity(id, quantity),
+      import('@/api/cart/updateCartQuantity').then((m) => m.updateCartQuantity(id, quantity)),
     onMutate: ({ id, quantity }) =>
       optimisticCart((items) =>
         quantity <= 0
@@ -206,14 +203,15 @@ export function CartProvider({ children }: Props) {
   })
 
   const clearMutation = useMutation({
-    mutationFn: clearCart,
+    mutationFn: () => import('@/api/cart/clearCart').then((m) => m.clearCart()),
     onMutate: () => optimisticCart(() => []),
     onError: (_e, _v, ctx) => rollbackCart(ctx),
     onSettled: invalidateCart,
   })
 
   const applyPromoMutation = useMutation({
-    mutationFn: applyPromoCode,
+    mutationFn: (rawInput: string) =>
+      import('@/api/promo/applyPromoCode').then((m) => m.applyPromoCode(rawInput)),
     onSuccess: (result) => {
       if (result.status === 'ok') {
         queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
@@ -223,7 +221,7 @@ export function CartProvider({ children }: Props) {
   })
 
   const removePromoMutation = useMutation({
-    mutationFn: removePromoCode,
+    mutationFn: () => import('@/api/promo/removePromoCode').then((m) => m.removePromoCode()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: activePromoQueryKey })
       queryClient.invalidateQueries({ queryKey: cartQuoteQueryKey })
