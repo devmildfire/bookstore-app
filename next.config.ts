@@ -1,5 +1,13 @@
 import type { NextConfig } from 'next'
 import path from 'node:path'
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+// Gated on ANALYZE=true so it has zero effect on normal builds. Writes static
+// treemap reports to .next/analyze/ (client.html = the browser bundle).
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: false,
+})
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -112,9 +120,12 @@ const nextConfig: NextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@supabase/realtime-js$': path.resolve('src/lib/supabase/realtime-stub.js'),
+      // Next 16's webpack prod build ships the ~228 KB (gz) dev-overlay/devtools into the
+      // client bundle as dead code. Alias it to a no-op so it never reaches production users.
+      'next/dist/compiled/next-devtools': path.resolve('src/lib/next-devtools-stub.js'),
     }
     return config
   },
 }
 
-export default nextConfig
+export default withBundleAnalyzer(nextConfig)
