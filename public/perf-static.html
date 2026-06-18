@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>perf-static — zero-JS ceiling test</title>
+<!-- Preload the LCP cover (same optimized 30KB WebP the real hero uses), high priority -->
+<link rel="preload" as="image" fetchpriority="high"
+  href="/_next/image?url=https%3A%2F%2Fapi.mildfire.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fcovers%2Fmurlo.jpg&w=384&q=75">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:#1a0f0f;color:#fff;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.4}
+  .header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#0a0a0a}
+  .logo{font-size:22px;font-weight:800;letter-spacing:.04em;color:#fff;text-decoration:none}
+  .nav{display:flex;gap:18px;font-size:13px}
+  .nav a{color:#cfcfcf;text-decoration:none}
+  .hero{display:flex;flex-direction:column;align-items:center;padding:24px 20px 0;min-height:580px}
+  .coverWrap{width:174px;height:255px;overflow:hidden;background:rgba(255,255,255,.08);
+    box-shadow:0 8px 24px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.3)}
+  .cover{width:100%;height:100%;object-fit:cover;display:block}
+  .title{font-size:24px;line-height:1.2;letter-spacing:.03em;text-align:center;margin-top:24px;text-transform:uppercase}
+  .author{font-size:12px;letter-spacing:.03em;text-align:center;margin-top:10px;color:#eee}
+  .thesis{font-size:10px;font-style:italic;text-align:center;margin-top:10px;color:#bdbdbd}
+  .cta{display:inline-flex;align-items:center;justify-content:center;width:95px;height:22px;margin-top:auto;
+    background:#c62828;color:#fff;font-size:8px;letter-spacing:.05em;text-decoration:none;margin-bottom:24px}
+  .footer{padding:28px 20px;background:#0a0a0a;text-align:center;color:#bdbdbd;font-size:12px}
+  .footer .wm{font-size:20px;font-weight:800;color:#fff;letter-spacing:.04em}
+</style>
+</head>
+<body>
+  <header class="header">
+    <a class="logo" href="/">ЧТИВО</a>
+    <nav class="nav">
+      <a href="/about">О Чтиве</a>
+      <a href="/books">Издания</a>
+      <a href="/authors">Авторы</a>
+      <a href="/contacts">Контакты</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <div class="coverWrap">
+      <img class="cover" width="174" height="255" fetchpriority="high" decoding="async"
+        alt="Обложка книги: Мурло"
+        src="/_next/image?url=https%3A%2F%2Fapi.mildfire.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fcovers%2Fmurlo.jpg&w=384&q=75">
+    </div>
+    <h1 class="title">Мурло</h1>
+    <p class="author">Владислав Несветаев</p>
+    <p class="thesis">Самое честное зеркало — чужое лицо</p>
+    <a class="cta" href="/books/murlo">Познать</a>
+  </main>
+
+  <footer class="footer">
+    <div class="wm">ЧТИВО</div>
+    <p style="margin-top:10px">© 2017–2026 Чтиво. Санкт-Петербург. Все права защищены.</p>
+  </footer>
+</body>
+</html>
