@@ -3,6 +3,10 @@ import path from 'node:path'
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Ship browser source maps in production so chunk bytes can be attributed to their
+  // source modules (Lighthouse script-treemap, DevTools). Source maps are separate
+  // .map files fetched only by devtools — they do not add to the page's JS payload.
+  productionBrowserSourceMaps: true,
   experimental: {
     // CSS isolation per route. The default ('loose') merges CSS Modules across routes into a few
     // shared render-blocking bundles via webpack SplitChunks — so the storefront home shipped
