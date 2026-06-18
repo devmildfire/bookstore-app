@@ -1,27 +1,11 @@
 import { getSubscriptions } from '@/api/subscriptions/getSubscriptions'
-import SubscriptionCard from './SubscriptionCard'
-import SubscriptionsCarouselLazy from './SubscriptionsCarouselLazy'
-import styles from './SubscriptionsSection.module.scss'
+import DeferredSubscriptions from './DeferredSubscriptions'
 
+// Server component: fetches the subscription data, then hands it to the client
+// DeferredSubscriptions wrapper, which mounts the heavy body (cards/carousel/
+// images/DOM) only when the section approaches the viewport — out of the LCP window.
 export default async function SubscriptionsSection() {
   const subscriptions = await getSubscriptions()
 
-  return (
-    <section className={styles.section}>
-      <div className={styles.inner}>
-        <h2 className={styles.heading}>Чудеса подписки</h2>
-        <p className={styles.subtitle}>Красиво и просто, как в сказке: деньги ежемесячно снимаются с вашей карты (надоест — отключим), а вам тем временем приходят все наши новые уникальные издания, теперь об этом можно не только мечтать.</p>
-
-        <div className={styles.cards}>
-          {subscriptions.map((sub) => (
-            <SubscriptionCard key={sub.id} sub={sub} />
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.mobileCarousel}>
-        <SubscriptionsCarouselLazy items={subscriptions} />
-      </div>
-    </section>
-  )
+  return <DeferredSubscriptions subscriptions={subscriptions} />
 }
