@@ -119,6 +119,29 @@ The question "can we inline above-the-fold CSS and defer the rest?" was answered
   the document is the critical path, so that pushed **FCP 1.4→2.7 s and LCP ~2→~5 s** (3 runs each)
   — strictly worse. External CSS (parallel, HTTP/3-multiplexed, cacheable) wins here. ❌ reverted.
 
+## Catalog deferral + the TTFB ceiling (2026-06-18)
+
+Deferred the home catalog grid (`NewProducts`) via `dynamic(ssr:false)` mounted on
+`requestIdleCallback` — **time-based**, not IntersectionObserver, because the catalog's top
+(`ИЗДАНИЯ` heading) is at/above the mobile fold so an observer fires on load. Result: catalog
+JS/CSS/images/DOM leave the initial document (render-blocking 13.7→11.5 KB, BookCards out of
+initial HTML), and it mounts after the LCP/hydration window. Grid + filters verified on prod.
+
+Home, 5 Lantern passes after: **LCP 1.9 / 4.9 / 1.7 / 4.9 / 1.5 s** (perf 83/59/86/58/88).
+
+**The verdict: we've exhausted the JS/CSS/DOM/image levers.** The home's *good* runs (~1.5–1.9 s)
+now match the perf-min floor's good runs. The remaining problem is **variance**: the bad runs
+(~4.9 s, FCP ~3 s) are slow-document runs — **TTFB**, from the dynamic SSR (the public queries use
+the cookie-reading server Supabase client, forcing `ƒ`) plus the Cloudflare tunnel (even static
+perf-min has 0.6–1.1 s TTFB). No amount of JS/CSS/image deferral moves that.
+
+Trade-offs noted: catalog hydration on idle pushed TBT ~300→~500 ms (post-LCP work); and the
+above-the-fold `ИЗДАНИЯ` area is empty until the idle mount (acceptable "for now" per decision).
+
+**Remaining lever = TTFB**: make the home statically renderable (cookie-free data client for the
+public hero/subscriptions/box-sets queries so the route can be `○`/edge-cached) and/or edge-cache
+the HTML at Cloudflare. Structural; touches the data-fetch layer or infra.
+
 ## Progress log
 
 - 2026-06-18 — `preload: false` on Montserrat (font preloads 6→1, Chequeblack only).
