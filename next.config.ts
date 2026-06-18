@@ -4,14 +4,11 @@ import path from 'node:path'
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
-    // Inline CSS into the <head> so there are ZERO render-blocking stylesheet *requests* — the
-    // only built-in way to eliminate render-blocking CSS in the App Router (CSS <link>s block
-    // first paint even when split/streamed per component). First attempt was reverted because the
-    // home doc was then ~2.7 MB (box-set SVGs inlined per card); that bloat is now fixed (doc is
-    // ~0.21 MB), so inlining the ~25 KB-gz CSS into the head stream removes the CSS round-trip
-    // (~0.5-1s of FCP on Slow 4G) instead of adding to a monster. (Critters/optimizeCss, the
-    // critical-only alternative, is Pages-Router-only — unavailable here.)
-    inlineCss: true,
+    // inlineCss REVERTED: it inlines the route CSS into the <head> AND duplicates it into the RSC
+    // flight, tripling the home document (0.21 MB → 0.66 MB). On Slow-4G that big doc/head delays
+    // the LCP cover's preload discovery (PSI doesn't act on the 103 Early Hints, so it only finds
+    // the preload after downloading the bloated head). External CSS loads in parallel over HTTP/2
+    // and keeps the document small — net better here.
     // Book detail pages are prebuilt via generateStaticParams (SSG). Prerendering the
     // whole catalog concurrently hammers Supabase, which can return transient upstream
     // errors. Retry those failures and cap concurrency so a blip doesn't fail the build
