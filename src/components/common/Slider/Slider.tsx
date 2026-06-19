@@ -10,7 +10,6 @@ export type SliderProps = {
   items: SlideItem[]
 }
 
-const AUTOPLAY_MS = 4000
 const ENHANCE_AFTER_SCROLL_MS = 180
 
 type EmblaComponent = ComponentType<{ items: SlideItem[]; initialIndex: number }>
@@ -28,14 +27,14 @@ function loadEmbla(): Promise<EmblaComponent> {
 
 // Native CSS scroll-snap carousel — replaces Swiper (~24 KB gz) on the home hero, the only place it
 // sat on the critical path. Every slide renders in the SSR HTML, so the LCP cover paints with zero
-// carousel-library dependency; JS only drives autoplay + dots until the user interacts, then Embla
-// is dynamically loaded for looping and controlled drag behavior.
+// carousel-library dependency. The baseline does NOT auto-advance — it stays on the first slide
+// until the user interacts (swipe / dot), at which point Embla is dynamically loaded for looping +
+// controlled drag. JS only tracks the active dot until then.
 const Slider = memo(function Slider({ items }: SliderProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const enhanceTimerRef = useRef<number | null>(null)
   const [active, setActive] = useState(0)
-  const [autoplayStopped, setAutoplayStopped] = useState(false)
   const [enhanced, setEnhanced] = useState(false)
   const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
   const [reservedHeight, setReservedHeight] = useState<number>()
@@ -48,15 +47,10 @@ const Slider = memo(function Slider({ items }: SliderProps) {
     void loadEmbla()
   }, [])
 
-  const stopAutoplay = useCallback(() => {
-    setAutoplayStopped(true)
-  }, [])
-
   const startEnhancement = useCallback((index: number) => {
     // Reserve the current rendered height so the swap can't change layout (no CLS).
     const h = wrapperRef.current?.offsetHeight
     if (h) setReservedHeight(h)
-    stopAutoplay()
     setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
     // Load the Embla chunk BEFORE flipping to it. The baseline (showing the target slide) stays on
     // screen during the fetch, then we swap atomically to an already-loaded component — so there's
@@ -67,7 +61,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         setEnhanced(true)
       })
       .catch(() => {})
-  }, [count, stopAutoplay])
+  }, [count])
 
   const scheduleEnhancement = useCallback((index: number) => {
     if (enhanced || count <= 1) return
@@ -91,8 +85,9 @@ const Slider = memo(function Slider({ items }: SliderProps) {
     if (!track) return
     const next = Math.max(0, Math.min(Math.round(track.scrollLeft / track.clientWidth), count - 1))
     setActive(next)
-    if (autoplayStopped) scheduleEnhancement(next)
-  }, [autoplayStopped, count, scheduleEnhancement])
+    // A scroll means a user swipe (the baseline doesn't auto-advance) → enhance once it settles.
+    scheduleEnhancement(next)
+  }, [count, scheduleEnhancement])
 
   const handlePointerEnter = useCallback(() => {
     preloadEnhanced()
@@ -100,34 +95,16 @@ const Slider = memo(function Slider({ items }: SliderProps) {
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (isInteractiveTarget(event.target)) return
-    stopAutoplay()
     preloadEnhanced()
-  }, [preloadEnhanced, stopAutoplay])
+  }, [preloadEnhanced])
 
   const handlePointerUp = useCallback(() => {
-    if (!autoplayStopped) return
     scheduleEnhancement(active)
-  }, [active, autoplayStopped, scheduleEnhancement])
+  }, [active, scheduleEnhancement])
 
   const handleFocus = useCallback(() => {
     preloadEnhanced()
   }, [preloadEnhanced])
-
-  useEffect(() => {
-    if (count <= 1) return
-    if (autoplayStopped) return
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const id = window.setInterval(() => {
-      const track = trackRef.current
-      if (!track) return
-      const current = Math.round(track.scrollLeft / track.clientWidth)
-      const next = (current + 1) % count
-      track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' })
-    }, AUTOPLAY_MS)
-
-    return () => window.clearInterval(id)
-  }, [autoplayStopped, count])
 
   useEffect(() => {
     return () => {
