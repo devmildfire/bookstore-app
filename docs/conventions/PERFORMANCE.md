@@ -1,5 +1,11 @@
 # Performance Conventions
 
+> These are the **coding rules** (how to write a fast component). For the **strategy** behind our
+> optimization — the decision framework, what PSI actually measures, the defer-behind-interaction
+> lever, techniques + rationale, and rejected approaches — read the playbook:
+> [`docs/perf/README.md`](../perf/README.md). Optimize per these rules; decide *what* to optimize per
+> the playbook.
+
 ## Core Web Vitals Targets
 
 Every public-facing page should hit these thresholds:

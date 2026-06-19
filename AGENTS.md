@@ -272,7 +272,7 @@ All blur scripts are idempotent — re-running on a fully-seeded DB is a no-op.
 | [docs/conventions/TYPESCRIPT.md](docs/conventions/TYPESCRIPT.md) | Strict TypeScript, type design, `any` policy |
 | [docs/conventions/COMPONENTS.md](docs/conventions/COMPONENTS.md) | Component structure, Radix UI, forms, layouts |
 | [docs/conventions/DATA.md](docs/conventions/DATA.md) | TanStack Query, Supabase, Server Actions, entity layer |
-| [docs/conventions/PERFORMANCE.md](docs/conventions/PERFORMANCE.md) | Core Web Vitals, dynamic imports, images, fonts, Suspense |
+| [docs/conventions/PERFORMANCE.md](docs/conventions/PERFORMANCE.md) | Core Web Vitals, dynamic imports, images, fonts, Suspense (coding rules). **Strategy + rationale → [docs/perf/README.md](docs/perf/README.md)** (what PSI measures, defer-behind-interaction, techniques, rejected approaches) |
 | [docs/conventions/SEO.md](docs/conventions/SEO.md) | Metadata API, accessibility (WCAG 2.1 AA), security |
 | [docs/conventions/ERROR_HANDLING.md](docs/conventions/ERROR_HANDLING.md) | Error boundaries, Server Actions, loading/not-found patterns |
 
