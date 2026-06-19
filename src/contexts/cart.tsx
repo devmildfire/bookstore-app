@@ -1,7 +1,8 @@
 'use client'
 
-import { createContext, useContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useCallback, useMemo, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import useSessionActive from '@/hooks/useSessionActive'
 import {
   useQuery,
   useMutation,
@@ -86,31 +87,10 @@ export function CartProvider({ children }: Props) {
   // @supabase/ssr + auth-js (~43 KB gz) onto the page. Gate them so a cookieless, no-interaction
   // visit (the PSI scenario) loads none of it: run only where the cart is actually shown
   // (/cart, /checkout), once the user interacts, or when a session already exists (returning
-  // visitor → keep an instant, correct badge with no flash). getAuthedClient ensures the session
-  // before each query resolves, so there's no read-before-sign-in race.
+  // visitor → instant, correct badge, no flash). getAuthedClient ensures the session before each
+  // query resolves, so there's no read-before-sign-in race.
   const onCartRoute = pathname === '/cart' || pathname === '/checkout'
-  // Returning visitor (session-hint cookie present) → start active so the badge is correct with no
-  // flash. New/cookieless visitor → start inactive; first interaction flips it. SSR renders inactive
-  // and the badge shows 0 until data loads either way, so there's no hydration mismatch.
-  const [cartActive, setCartActive] = useState(
-    () =>
-      typeof document !== 'undefined' &&
-      document.cookie.split('; ').includes('bookstore_has_session=1'),
-  )
-
-  useEffect(() => {
-    if (cartActive || onCartRoute) return
-    const activate = () => {
-      setCartActive(true)
-      cleanup()
-    }
-    const events = ['pointerdown', 'keydown', 'touchstart', 'wheel', 'scroll'] as const
-    const cleanup = () => events.forEach((e) => window.removeEventListener(e, activate))
-    events.forEach((e) => window.addEventListener(e, activate, { once: true, passive: true }))
-    return cleanup
-  }, [cartActive, onCartRoute])
-
-  const cartEnabled = cartActive || onCartRoute
+  const cartEnabled = useSessionActive() || onCartRoute
 
   const { data: items = [] } = useQuery({
     queryKey: cartQueryKey,

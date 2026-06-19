@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 import type { LikeItemType } from './types'
 
 // ─── Query keys ─────────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ export const allLikesQueryKey = () => ['likes', 'all'] as const
 // likes (optimistic updates in useToggleLike). The favorites *page* lists are
 // server-rendered instead — see getLikesServer.ts.
 export async function getLikedIds(type: LikeItemType): Promise<Set<number>> {
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
   const { data, error } = await supabase
     .from('Likes')
     .select('item_id')

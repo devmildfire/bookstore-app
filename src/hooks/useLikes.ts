@@ -8,14 +8,20 @@ import {
   toggleLike,
   type LikeItemType,
 } from '@/api/likes'
+import useSessionActive from '@/hooks/useSessionActive'
 
 // Returns the set of liked item_ids for the current user for one type.
 // Cached client-side; cards consume this to decide filled-vs-outlined.
+// Gated like the cart: a cookieless, no-interaction visitor has no likes to show, so we don't run
+// it (and thus don't load Supabase) until a session exists or the user interacts. Card hearts
+// render outlined until then — correct for a visitor who has liked nothing.
 export function useLikedIds(type: LikeItemType) {
+  const enabled = useSessionActive()
   return useQuery({
     queryKey: likedIdsQueryKey(type),
     queryFn: () => getLikedIds(type),
     staleTime: 60 * 1000,
+    enabled,
   })
 }
 
