@@ -109,12 +109,32 @@ Acting on the coverage findings above, two of the three remaining items shipped 
   autoplay (respects `prefers-reduced-motion`) + pagination dots. `BaseSlider` deleted (was unused
   after the swap). Live-verified: 5 slides, dots scroll, autoplay snaps one slide/tick, no swiper
   signature in the home's initial chunks.
-- **Supabase (~43 KB) — deferred by decision.** Investigation showed it's anchored to the
-  **anonymous-session bootstrap** (`providers.tsx` signs in every cookieless visitor on mount — the
-  exact PSI scenario), not just the cart-badge query. Deferring it safely means reworking anon
-  sign-in to first-interaction + `ensureSession()` before the first cart write. Genuinely invasive
-  (touches the auth core the CLAUDE.md guards); held pending an explicit decision rather than risk
-  the cart/auth flow for ~43 KB on a portfolio.
+- **Supabase (~43 KB) — done.** It had three anchors, all on the no-interaction load: the anon
+  sign-in (`providers.tsx`, on mount), the cart-badge queries (`CartProvider`, on mount), and the
+  `Likes` query (`LikeButton` in the deferred catalog, ~10 s). All now gate on a shared
+  `useSessionActive()` signal — *session-hint cookie = 1 (returning visitor) OR first interaction* —
+  plus the cart routes. New chokepoint `ensureAnonSession()`/`getAuthedClient()` (memoized) routes
+  every RLS read+write (cart, promo, gift cards, likes) so the session is guaranteed before the op,
+  which also closes the first-add-to-cart race (the write awaits the in-flight sign-in). The anon
+  sign-in moved from on-mount to first-interaction.
+  **Live-verified:** cookieless passive home held 12.5 s loads zero Supabase / zero rest / zero auth
+  (the coverage scenario); a fresh visitor whose first action is add-to-cart gets a single anon
+  sign-in, the write persists (item shows on `/cart`), and the toast fires; returning visitors
+  (cookie = 1) keep an instant, correct badge. a11y/BP/SEO stayed 100.
+
+### Cumulative (home critical-path JS, gzip)
+
+```
+~600 KB  session start (with next-devtools)
+~309 KB  after devtools/zod/oss/supabase-eager-import shed (measured, browser-joined)
+~252 KB  after Radix + Swiper interaction-deferral
+~209 KB  after Supabase + Likes defer — for a cookieless, no-interaction visit (the PSI scenario)
+~173 KB  React/Next framework floor (~83% of what remains — irreducible)
+```
+
+So above the framework floor, the cookieless first load now carries ~36 KB of app code — TanStack
+Query + our own components. Supabase, Radix, and Swiper all load on demand (interaction / cart
+routes / returning session), never on the passive first paint a lab tool measures.
 
 ## Definitive home-page breakdown (2026-06-19) — ground truth
 
