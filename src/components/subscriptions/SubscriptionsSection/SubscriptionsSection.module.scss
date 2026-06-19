@@ -264,23 +264,45 @@
   }
 }
 
-// ─── Swiper ───────────────────────────────────────────────────────────────────
+// ─── Mobile carousel ──────────────────────────────────────────────────────────
 
-.swiper {
+.carouselViewport,
+.carouselEmblaViewport {
   width: 100%;
-  padding-bottom: 24px !important;
+  overflow: hidden;
+}
 
-  :global(.swiper-wrapper) {
-    align-items: stretch;
+.carouselScrollTrack {
+  display: flex;
+  align-items: stretch;
+  gap: $space-4;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20%;
+  padding: 0 20% 24px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-.swiperSlide {
+.carouselEmblaTrack {
+  display: flex;
+  align-items: stretch;
+  gap: $space-4;
+  padding-bottom: 24px;
+}
+
+.carouselSlide {
+  flex: 0 0 62.5%;
   height: auto;
+  min-width: 0;
+  scroll-snap-align: center;
   transition: opacity 0.3s ease;
   opacity: 0.4;
+}
 
-  &:global(.swiper-slide-active) {
-    opacity: 1;
-  }
+.carouselSlideActive {
+  opacity: 1;
 }

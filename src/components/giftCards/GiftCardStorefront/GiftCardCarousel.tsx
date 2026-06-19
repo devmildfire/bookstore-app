@@ -1,7 +1,6 @@
 'use client'
 
-import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
+import ProgressiveEmblaCarousel from '@/components/common/ProgressiveEmblaCarousel'
 import GiftCardTierCard from '@/components/giftCards/GiftCardTierCard'
 import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardStorefront.module.scss'
@@ -12,17 +11,17 @@ type Props = {
 
 export default function GiftCardCarousel({ products }: Props) {
   return (
-    <Swiper
-      slidesPerView={1.6}
-      centeredSlides
-      spaceBetween={16}
-      className={styles.swiper}
-    >
-      {products.map((product) => (
-        <SwiperSlide key={product.id} className={styles.swiperSlide}>
-          <GiftCardTierCard product={product} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <ProgressiveEmblaCarousel
+      items={products}
+      getKey={(product) => String(product.id)}
+      renderItem={(product) => <GiftCardTierCard product={product} />}
+      baselineViewportClassName={styles.carouselViewport}
+      baselineContainerClassName={styles.carouselScrollTrack}
+      emblaViewportClassName={styles.carouselEmblaViewport}
+      emblaContainerClassName={styles.carouselEmblaTrack}
+      slideClassName={styles.carouselSlide}
+      activeSlideClassName={styles.carouselSlideActive}
+      options={{ align: 'center', loop: products.length > 1 }}
+    />
   )
 }

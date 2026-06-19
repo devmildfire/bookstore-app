@@ -1,8 +1,6 @@
 'use client'
 
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay } from 'swiper/modules'
-import 'swiper/css'
+import ProgressiveEmblaCarousel from '@/components/common/ProgressiveEmblaCarousel'
 import ArticleCard from '@/components/articles/ArticleCard'
 import type { ArticleSummary } from '@/entities/article/client'
 import styles from './AuthorArticlesCarousel.module.scss'
@@ -28,29 +26,18 @@ export default function AuthorArticlesCarousel({ articles }: Props) {
       <h2 className={styles.heading}>Рассказы и статьи</h2>
 
       <div className={styles.fullBleed}>
-        <Swiper
-          className={styles.swiper}
-          modules={[Autoplay]}
-          loop
-          spaceBetween={0}
-          centeredSlides
-          slidesPerView={1.4}
-          breakpoints={{
-            768: { slidesPerView: 2.2 },
-            1200: { slidesPerView: 3 },
-          }}
-          autoplay={{
-            delay: 3500,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-        >
-          {slides.map((article, index) => (
-            <SwiperSlide key={`${article.id}-${index}`} className={styles.slide}>
-              <ArticleCard article={article} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <ProgressiveEmblaCarousel
+          items={slides}
+          getKey={(article, index) => `${article.id}-${index}`}
+          renderItem={(article) => <ArticleCard article={article} />}
+          baselineViewportClassName={styles.carouselViewport}
+          baselineContainerClassName={styles.carouselScrollTrack}
+          emblaViewportClassName={styles.carouselEmblaViewport}
+          emblaContainerClassName={styles.carouselEmblaTrack}
+          slideClassName={styles.slide}
+          options={{ align: 'center', loop: slides.length > 1 }}
+          autoplayMs={3500}
+        />
       </div>
     </section>
   )

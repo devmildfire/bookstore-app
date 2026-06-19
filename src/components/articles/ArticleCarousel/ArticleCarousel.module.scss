@@ -45,15 +45,40 @@
   overflow: hidden;
 }
 
-.swiper {
+.carouselViewport,
+.carouselEmblaViewport {
   width: 100%;
-  padding-bottom: 0 !important;
+  overflow: hidden;
+}
 
-  :global(.swiper-wrapper) {
-    align-items: stretch;
+.carouselScrollTrack {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
+.carouselEmblaTrack {
+  display: flex;
+  align-items: stretch;
+}
+
 .slide {
+  flex: 0 0 33.3333%;
   height: auto;
+  min-width: 0;
+  scroll-snap-align: center;
+
+  @include breakpoint(tablet) {
+    flex-basis: 45.4545%;
+  }
+
+  @include breakpoint(tablet-small) {
+    flex-basis: 71.4286%;
+  }
 }

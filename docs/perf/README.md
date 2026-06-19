@@ -134,11 +134,15 @@ For any client dependency or query, ask in order:
   `ensureAnonSession()` / `getAuthedClient()` chokepoint guarantees the session before any RLS op.
 
 ### CSS over JS
-- **Hero carousel: CSS scroll-snap, not Swiper** (~24 KB gz). All slides render in the **SSR HTML**,
-  so the LCP cover paints with **zero JS dependency** (Swiper used to gate the hero on hydration —
-  this *improved* LCP). JS only drives autoplay (respects `prefers-reduced-motion`) + the dots. The
-  other 4 carousels keep Swiper — they're on other routes / the deferred below-fold, not the home
-  critical path.
+- **Carousels: CSS scroll-snap baseline + interaction-gated Embla, not Swiper.** All slides render in
+  the **SSR HTML**, so the home hero's LCP cover paints with **zero carousel-library dependency**
+  (Swiper used to gate the hero on hydration — this *improved* LCP). The baseline drives autoplay
+  (respects `prefers-reduced-motion`) + dots; on the first carousel interaction (swipe / dot tap /
+  drag) **Embla is dynamically imported** to take over looping + controlled drag. A passive,
+  no-interaction view (the PSI scenario) ships **no carousel library at all**. **Swiper was removed
+  entirely** — all 5 carousels (hero + subscriptions + gift cards + article + author strips) now use
+  this model: the hero via `Slider`/`SliderEmbla`, the rest via the shared
+  `ProgressiveEmblaCarousel`. Full plan + tracker: [`docs/plans/embla-carousel-migration.md`](../plans/embla-carousel-migration.md).
 
 ### LCP (the hero cover)
 - **`priority` + an explicit `fetchPriority="high"`** on the LCP image. In this Next version

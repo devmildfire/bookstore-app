@@ -26,6 +26,17 @@
   }
 }
 
+.emblaViewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.emblaContainer {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
 .slideOuter {
   flex: 0 0 100%;
   display: flex;

@@ -5,7 +5,7 @@ import type { Subscription } from '@/entities/subscription'
 import styles from './SubscriptionsSection.module.scss'
 
 // Directive-less (shared) component: renders on the SERVER in the desktop grid
-// (SubscriptionsSection) and as CLIENT inside the mobile Swiper (SubscriptionsCarousel).
+// (SubscriptionsSection) and as CLIENT inside the mobile carousel (SubscriptionsCarousel).
 // The only interactive part — the connect button — is the client leaf below.
 export default function SubscriptionCard({ sub }: { sub: Subscription }) {
   return (
