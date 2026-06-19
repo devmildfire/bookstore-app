@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getBookEditions } from '@/api/books'
+import { attachEditions } from '@/api/books/attachEditions'
 import { normalizeBoxSet } from '@/entities/boxSet/normalize'
 import type { Book } from '@/entities/book/client'
 import type { BoxSet } from '@/entities/boxSet/client'
@@ -54,7 +55,9 @@ export async function getLikedTitlesServer(): Promise<Book[]> {
     .filter((s): s is string => !!s)
 
   const results = await Promise.all(orderedSlugs.map((slug) => getBookEditions(slug)))
-  return results.map((books) => books[0]).filter((b): b is Book => Boolean(b))
+  const books = results.map((bookEditions) => bookEditions[0]).filter((b): b is Book => Boolean(b))
+
+  return attachEditions(books, supabase)
 }
 
 export async function getLikedBoxSetsServer(): Promise<BoxSet[]> {
