@@ -1,7 +1,6 @@
 'use client'
 
-import { memo, useRef, useState, useEffect, useCallback } from 'react'
-import dynamic from 'next/dynamic'
+import { memo, useRef, useState, useEffect, useCallback, type ComponentType } from 'react'
 import cn from 'classnames'
 import SliderSlide from './SliderSlide'
 import type { SlideItem } from './types'
@@ -14,7 +13,18 @@ export type SliderProps = {
 const AUTOPLAY_MS = 4000
 const ENHANCE_AFTER_SCROLL_MS = 180
 
-const SliderEmbla = dynamic(() => import('./SliderEmbla'), { ssr: false })
+type EmblaComponent = ComponentType<{ items: SlideItem[]; initialIndex: number }>
+
+// Load the Embla layer once, on demand, caching the promise so hover-preload and the actual
+// enhancement share a single chunk fetch. `import()` keeps Embla out of the eager bundle (its own
+// chunk, fetched only on carousel intent) — same guarantee next/dynamic gave. The difference: we
+// swap to it only AFTER it resolves (see startEnhancement), so the baseline stays visible the whole
+// time and there's no null render — no black-background blink.
+let emblaModulePromise: Promise<EmblaComponent> | null = null
+function loadEmbla(): Promise<EmblaComponent> {
+  if (!emblaModulePromise) emblaModulePromise = import('./SliderEmbla').then((m) => m.default)
+  return emblaModulePromise
+}
 
 // Native CSS scroll-snap carousel — replaces Swiper (~24 KB gz) on the home hero, the only place it
 // sat on the critical path. Every slide renders in the SSR HTML, so the LCP cover paints with zero
@@ -29,12 +39,13 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   const [enhanced, setEnhanced] = useState(false)
   const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
   const [reservedHeight, setReservedHeight] = useState<number>()
+  const [EmblaComp, setEmblaComp] = useState<EmblaComponent | null>(null)
 
   const count = items?.length ?? 0
   const showPagination = count > 1
 
   const preloadEnhanced = useCallback(() => {
-    void import('./SliderEmbla')
+    void loadEmbla()
   }, [])
 
   const stopAutoplay = useCallback(() => {
@@ -42,17 +53,21 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   }, [])
 
   const startEnhancement = useCallback((index: number) => {
-    // Reserve the current rendered height before swapping in the dynamically-imported Embla layer.
-    // next/dynamic(ssr:false) renders null while its chunk resolves (a frame or two on touch, where
-    // there's no hover lead time to warm it), which would collapse the hero and shove the next
-    // section up — a visible jump. The persistent wrapper holds this min-height across the swap.
+    // Reserve the current rendered height so the swap can't change layout (no CLS).
     const h = wrapperRef.current?.offsetHeight
     if (h) setReservedHeight(h)
     stopAutoplay()
-    preloadEnhanced()
     setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
-    setEnhanced(true)
-  }, [count, preloadEnhanced, stopAutoplay])
+    // Load the Embla chunk BEFORE flipping to it. The baseline (showing the target slide) stays on
+    // screen during the fetch, then we swap atomically to an already-loaded component — so there's
+    // never an empty/null frame (the black-background blink the user saw).
+    loadEmbla()
+      .then((Comp) => {
+        setEmblaComp(() => Comp)
+        setEnhanced(true)
+      })
+      .catch(() => {})
+  }, [count, stopAutoplay])
 
   const scheduleEnhancement = useCallback((index: number) => {
     if (enhanced || count <= 1) return
@@ -130,8 +145,8 @@ const Slider = memo(function Slider({ items }: SliderProps) {
       className={styles.wrapper}
       style={reservedHeight ? { minHeight: reservedHeight } : undefined}
     >
-      {enhanced ? (
-        <SliderEmbla items={items} initialIndex={enhancedInitialIndex} />
+      {enhanced && EmblaComp ? (
+        <EmblaComp items={items} initialIndex={enhancedInitialIndex} />
       ) : (
         <>
           <div

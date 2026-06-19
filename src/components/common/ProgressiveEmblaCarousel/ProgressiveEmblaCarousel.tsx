@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react'
-import dynamic from 'next/dynamic'
 import cn from 'classnames'
 
 type LightweightEmblaOptions = {
@@ -26,7 +25,16 @@ export type ProgressiveEmblaCarouselProps<T> = {
 
 const ENHANCE_AFTER_SCROLL_MS = 180
 
-const ProgressiveEmblaCarouselEnhanced = dynamic(() => import('./ProgressiveEmblaCarouselEnhanced'), { ssr: false })
+// Load the Embla layer once, on demand, caching the promise (shared by hover-preload + the actual
+// enhancement). `import()` keeps Embla out of the eager bundle; we swap to it only after it resolves
+// so the baseline stays visible during the fetch — no null render, no black-background blink.
+let enhancedModulePromise: Promise<unknown> | null = null
+function loadEnhanced(): Promise<unknown> {
+  if (!enhancedModulePromise) {
+    enhancedModulePromise = import('./ProgressiveEmblaCarouselEnhanced').then((m) => m.default)
+  }
+  return enhancedModulePromise
+}
 
 export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarouselProps<T>) {
   const {
@@ -49,11 +57,14 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
   const [enhanced, setEnhanced] = useState(false)
   const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
   const [reservedHeight, setReservedHeight] = useState<number>()
+  const [EnhancedComp, setEnhancedComp] = useState<
+    ComponentType<ProgressiveEmblaCarouselProps<T> & { initialIndex: number }> | null
+  >(null)
 
   const count = items.length
 
   const preloadEnhanced = useCallback(() => {
-    void import('./ProgressiveEmblaCarouselEnhanced')
+    void loadEnhanced()
   }, [])
 
   const stopAutoplay = useCallback(() => {
@@ -62,16 +73,20 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
 
   const startEnhancement = useCallback((index: number) => {
     if (count <= 1) return
-    // Reserve current height so the dynamic Embla swap's null frame can't collapse the strip and
-    // jump the page (next/dynamic ssr:false renders null until its chunk resolves). See the hero
-    // Slider for the same fix.
+    // Reserve current height so the swap can't change layout (no CLS).
     const h = outerRef.current?.offsetHeight
     if (h) setReservedHeight(h)
     stopAutoplay()
-    preloadEnhanced()
     setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
-    setEnhanced(true)
-  }, [count, preloadEnhanced, stopAutoplay])
+    // Load the Embla chunk BEFORE swapping: the baseline stays visible during the fetch, then we
+    // flip to an already-loaded component — no empty/null frame (no black-background blink).
+    loadEnhanced()
+      .then((mod) => {
+        setEnhancedComp(() => mod as ComponentType<ProgressiveEmblaCarouselProps<T> & { initialIndex: number }>)
+        setEnhanced(true)
+      })
+      .catch(() => {})
+  }, [count, stopAutoplay])
 
   const scheduleEnhancement = useCallback((index: number) => {
     if (enhanced || count <= 1) return
@@ -157,20 +172,17 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
 
   if (count === 0) return null
 
-  const Enhanced = ProgressiveEmblaCarouselEnhanced as ComponentType<
-    ProgressiveEmblaCarouselProps<T> & { initialIndex: number }
-  >
-
   // Persistent outer wrapper: stays mounted across the baseline→Embla swap and holds the reserved
-  // height, so the dynamic import's null frame can't collapse the strip and jump the page.
+  // height (no CLS). EnhancedComp is set together with `enhanced` only once its chunk has loaded, so
+  // the swap renders an already-loaded component — no null/empty frame.
   return (
     <div
       ref={outerRef}
       className={className}
       style={reservedHeight ? { minHeight: reservedHeight } : undefined}
     >
-      {enhanced ? (
-        <Enhanced {...props} initialIndex={enhancedInitialIndex} />
+      {enhanced && EnhancedComp ? (
+        <EnhancedComp {...props} initialIndex={enhancedInitialIndex} />
       ) : (
         <div
           className={baselineViewportClassName}
