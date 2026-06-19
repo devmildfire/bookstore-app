@@ -75,11 +75,11 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                     alt={`Обложка книги: ${item.title}`}
                     width={355}
                     height={533}
-                    // Accurate per-breakpoint widths matching .coverWrap (phone 174 / tablet-small
-                    // 180 / tablet 220 / desktop 355). The old `45vw` over-stated the cover width —
-                    // especially on tablet, where it claimed 355px for a 220px cover — so next/image
+                    // Accurate per-breakpoint widths matching .coverWrap (phone 230 / tablet-small
+                    // 240 / tablet 260 / desktop 355). The old `45vw` over-stated the cover width —
+                    // especially on tablet, where it claimed 355px for a 260px cover — so next/image
                     // served larger files than displayed. PSI "improve image delivery" flagged it.
-                    sizes="(max-width: 532px) 174px, (max-width: 767px) 180px, (max-width: 1200px) 220px, 355px"
+                    sizes="(max-width: 532px) 230px, (max-width: 767px) 240px, (max-width: 1200px) 260px, 355px"
                     className={styles.cover}
                     // First slide is the LCP. `priority` emits the preload + eager-loads, but in
                     // this Next version it does NOT set fetchpriority — only the explicit

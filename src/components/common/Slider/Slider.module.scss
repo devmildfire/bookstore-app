@@ -56,6 +56,7 @@
   @include breakpoint(phone) {
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     gap: 0;
     padding: 24px $layout-px-phone 0;
     // Tall enough that the book-grid's first row sits fully BELOW the mobile fold (~823px on the
@@ -63,7 +64,7 @@
     // browser eager-loads them at High priority right inside the LCP image's download window —
     // stealing Slow-4G bandwidth from the hero cover (the LCP). Keeping the grid below the fold
     // lets those covers stay lazy until scroll. See docs/perf/home-lcp-trace-findings.md.
-    min-height: 580px;
+    min-height: 650px;
   }
 }
 
@@ -78,18 +79,18 @@
     0 2px 8px rgba(0, 0, 0, 0.3);
 
   @include breakpoint(tablet) {
-    width: 220px;
-    height: 331px;
+    width: 260px;
+    height: 390px;
   }
 
   @include breakpoint(tablet-small) {
-    width: 180px;
-    height: 270px;
+    width: 240px;
+    height: 360px;
   }
 
   @include breakpoint(phone) {
-    width: 174px;
-    height: 255px;
+    width: 230px;
+    height: 345px;
   }
 }
 
@@ -113,8 +114,7 @@
 
   @include breakpoint(phone) {
     align-items: center;
-    flex-grow: 1;
-    max-width: 300px;
+    max-width: 340px;
     justify-content: flex-start;
   }
 }
@@ -136,10 +136,10 @@
   }
 
   @include breakpoint(phone) {
-    font-size: 24px;
-    line-height: 1.2;
+    font-size: 32px;
+    line-height: 1.1;
     text-align: center;
-    margin-top: 24px;
+    margin-top: 28px;
   }
 }
 
@@ -163,11 +163,11 @@
   }
 
   @include breakpoint(phone) {
-    font-size: 12px;
-    line-height: 1.5;
-    letter-spacing: 0.03em;
+    font-size: 16px;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
   }
 }
 
@@ -188,11 +188,11 @@
   }
 
   @include breakpoint(phone) {
-    font-size: 10px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.45;
     letter-spacing: 0.03em;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 16px;
   }
 }
 
@@ -228,10 +228,10 @@
   }
 
   @include breakpoint(phone) {
-    margin-top: auto;
-    width: 95px;
-    height: 22px;
-    font-size: 8px;
+    margin-top: 28px;
+    width: 112px;
+    height: 30px;
+    font-size: 9px;
   }
 }
 
@@ -245,6 +245,10 @@
   gap: 35px;
   height: 11px;
   margin-top: $space-4;
+
+  @include breakpoint(phone) {
+    margin-top: $space-8;
+  }
 }
 
 .bullet {
