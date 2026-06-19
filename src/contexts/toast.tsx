@@ -1,9 +1,14 @@
 'use client'
 
 import { createContext, useContext, type ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import { useToastState } from '@/hooks/useToast'
 import type { ToastItem, ToastVariant } from '@/hooks/useToast'
-import Toaster from '@/components/common/Toast/Toaster'
+
+// The Radix toast machinery (@radix-ui/react-toast + shared dismissable-layer/portal) is ~5 KB gz
+// of JS that, on a no-interaction page view, never runs — yet it used to hydrate eagerly in the
+// global provider (Chrome Coverage: loaded, ~0% executed). Mount it lazily on the first toast.
+const Toaster = dynamic(() => import('@/components/common/Toast/Toaster'), { ssr: false })
 
 type ToastContextValue = {
   toast: (item: Omit<ToastItem, 'id'>) => void
@@ -26,7 +31,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast, success, error, cartSuccess }}>
       {children}
-      <Toaster toasts={toasts} onRemove={removeToast} />
+      {toasts.length > 0 && <Toaster toasts={toasts} onRemove={removeToast} />}
     </ToastContext.Provider>
   )
 }
