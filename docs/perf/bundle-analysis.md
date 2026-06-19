@@ -90,9 +90,49 @@ refactor). Floor ≈ ~170 KB React/Next.
 Both remaining items are **central-component refactors** (nav, cart/auth) with UX/a11y tradeoffs —
 unlike the pure-win deferrals above. They warrant focused work + live smoke-tests.
 
+## Definitive home-page breakdown (2026-06-19) — ground truth
+
+Method: `ANALYZE=true npm run build` → parse `.next/analyze/client.html` `chartData` for
+per-chunk gzip, **joined to the actual chunk list the browser loads on the live home**
+(captured via `performance.getEntriesByType('resource')`, mobile-emulated). The numbered/vendor
+chunk hashes are identical between the local analyzer build and the live deploy (same commit),
+so the join is exact. This is what a **real mobile visitor downloads**, not a synthetic total.
+
+**Home page over-the-wire JS (gzip):**
+
+| Phase | When | Size | What |
+|---|---|---|---|
+| **Initial (critical)** | <0.5 s, blocks paint/LCP | **~309 KB** | framework + hero + cart/auth bootstrap |
+| Prefetch | ~0.9 s idle | ~10 KB | Next `<Link>` prefetch of `/cart` + book error boundary (intended) |
+| Deferred | ~10.7 s idle fallback | ~26 KB | catalog grid + box-sets + subscriptions (our below-fold deferral — lands **after** the PSI window) |
+| **Total eventually** | | **~345 KB** | |
+
+**The ~309 KB critical bundle, by package (proportions exact; the framework is the floor):**
+
+| Package | ~gzip | % | Sheddable? |
+|---|---|---|---|
+| **Next / React framework** | ~173 KB | 56% | ❌ irreducible floor |
+| **Supabase** (`auth-js` + `ssr`) | ~35 KB | 11% | ⚠️ loads @0.4 s for the cart badge (query on mount). Defer = empty badge or dynamic pages. |
+| **Radix UI** (popper+dropdown+dialog+toast) | ~31 KB | 10% | ⚠️ Header nav + mobile menu + toast. a11y tradeoff or complex lazy-load. |
+| **Swiper** (hero carousel) | ~24 KB | 8% | ✅ **best clean shed** — rewrite `BaseSlider` → CSS scroll-snap (keeps a11y, may *improve* LCP by dropping hero hydration). Used by 5 carousels via one shared `BaseSlider`. |
+| **TanStack Query** | ~14 KB | 5% | ❌ core data layer |
+| **Our app code** (components/contexts/api) | ~19 KB | 6% | ❌ already lean |
+| misc (classnames, swc-helpers, cookie…) | ~13 KB | 4% | ❌ runtime |
+
+**Conclusions:**
+- **No dead/wasted code remains on the critical path.** Everything loaded is a real, used dep.
+  The big waste (next-devtools 228 K, zod, overlayscrollbars) is already shed; this is now a
+  *lean* bundle whose bulk (56%) is the unavoidable React/Next framework.
+- The below-fold deferral works: catalog/box-sets/subscriptions load at ~10.7 s idle, **outside**
+  the Lighthouse trace window.
+- Three sheddable items remain, all dependencies (not waste): **Swiper (~24 K, lowest tradeoff)**,
+  Supabase (~35 K, cart-badge UX tradeoff), Radix (~31 K, a11y tradeoff). Max theoretical
+  additional shed ≈ 90 K, but only Swiper is a clean pure-frontend win.
+
 ## Method / repro
 
 ```bash
 ANALYZE=true npm run build      # writes .next/analyze/client.html (gated; no effect on normal builds)
-# parse window.chartData from client.html for per-module gzip sizes
+# parse window.chartData from client.html for per-module gzip sizes, then join to the
+# browser-loaded chunk list (performance.getEntriesByType('resource')) for the real per-page figure
 ```
