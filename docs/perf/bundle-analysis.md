@@ -129,6 +129,37 @@ so the join is exact. This is what a **real mobile visitor downloads**, not a sy
   Supabase (~35 K, cart-badge UX tradeoff), Radix (~31 K, a11y tradeoff). Max theoretical
   additional shed ≈ 90 K, but only Swiper is a clean pure-frontend win.
 
+## Chrome Coverage cross-check (2026-06-19) — eager-but-unused
+
+A DevTools Coverage capture on the live home (no scroll, no interaction) — the real PSI scenario —
+showed **53% of downloaded JS/CSS unused** (637 K used / 710 K unused, uncompressed). Coverage
+counts *un-executed* code, so some "unused" is legitimate (click handlers, error paths). The
+*actionable* signal is **chunks loaded eagerly but barely executed** — code on the critical path
+for interactions that never happened:
+
+| Chunk | gzip | used | Module | Loaded by |
+|---|---|---|---|---|
+| `4733` | 12.9 K | **5%** | `@radix-ui/react-popper` | nav dropdown positioning |
+| `3294` | 7.9 K | **8%** | `@radix-ui/react-dropdown-menu` | desktop nav dropdown |
+| `9483` | 8.5 K | **6%** | `@radix-ui/react-dialog` (+remove-scroll, focus-scope) | mobile menu |
+| `7042` | 4.4 K | low | `@radix-ui/react-toast` | global toast provider |
+| `9267` | 3.0 K | low | Radix dismissable-layer/portal/collection | shared |
+| `1134`+`44530001` | ~25 K | **~24%** | `@supabase/ssr` + `@supabase/auth-js` | cart query + anon auth |
+
+**Finding:** ~33 K gzip of **Radix** hydrates eagerly though no dropdown/menu/toast was ever
+opened (94% dead on a no-interaction view), because `Header.tsx` imports
+`@radix-ui/react-dropdown-menu` + `@radix-ui/react-dialog` at module top and `Header` is
+always-rendered chrome; the Toast provider is mounted globally in `providers.tsx`. And the full
+Supabase `GoTrueClient` (OAuth / Ethereum / Solana / OTP / MFA / passkey — none used on the
+storefront) ships for the **cart-badge query that runs client-side on mount**.
+
+**Corrected recommendation (supersedes the "remove Radix, lose a11y" framing above):** the fix is
+**not to remove Radix — it's to stop loading it eagerly.** Dynamic-import each piece on first
+interaction (trigger is plain SSR HTML; Radix mounts on hover/focus/tap), keeping full a11y. A
+no-interaction visitor — i.e. the Lighthouse trace — downloads none of it. Same lever as the lazy
+`<Scroller>`. Supabase/TanStack (~50 K together) are anchored to the on-mount cart query; deferring
+that is the only way to move them, at the cost of the cart badge count on first paint.
+
 ## Method / repro
 
 ```bash
