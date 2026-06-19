@@ -1,7 +1,8 @@
 'use client'
 
-import { memo, useRef, useState, useEffect, useCallback, type ComponentType } from 'react'
+import { memo, useRef, useState, useEffect, useCallback } from 'react'
 import cn from 'classnames'
+import type { EmblaCarouselType } from 'embla-carousel'
 import SliderSlide from './SliderSlide'
 import type { SlideItem } from './types'
 import styles from './Slider.module.scss'
@@ -10,153 +11,162 @@ export type SliderProps = {
   items: SlideItem[]
 }
 
-const ENHANCE_AFTER_SCROLL_MS = 180
+const ATTACH_AFTER_SCROLL_MS = 180
 
-type EmblaComponent = ComponentType<{ items: SlideItem[]; initialIndex: number }>
-
-// Load the Embla layer once, on demand, caching the promise so hover-preload and the actual
-// enhancement share a single chunk fetch. `import()` keeps Embla out of the eager bundle (its own
-// chunk, fetched only on carousel intent) — same guarantee next/dynamic gave. The difference: we
-// swap to it only AFTER it resolves (see startEnhancement), so the baseline stays visible the whole
-// time and there's no null render — no black-background blink.
-let emblaModulePromise: Promise<EmblaComponent> | null = null
-function loadEmbla(): Promise<EmblaComponent> {
-  if (!emblaModulePromise) emblaModulePromise = import('./SliderEmbla').then((m) => m.default)
-  return emblaModulePromise
+// embla-carousel CORE (framework-agnostic). Its default export attaches imperatively to an existing
+// DOM node — so we enhance the SSR'd carousel IN PLACE rather than swapping to a second React
+// component. `import()` keeps it out of the eager bundle (its own chunk, fetched only on carousel
+// interaction — never on a passive/PSI load). The promise is cached so hover-preload and the actual
+// attach share one fetch.
+let emblaCorePromise: Promise<typeof import('embla-carousel')['default']> | null = null
+function loadEmbla() {
+  if (!emblaCorePromise) emblaCorePromise = import('embla-carousel').then((m) => m.default)
+  return emblaCorePromise
 }
 
-// Native CSS scroll-snap carousel — replaces Swiper (~24 KB gz) on the home hero, the only place it
-// sat on the critical path. Every slide renders in the SSR HTML, so the LCP cover paints with zero
-// carousel-library dependency. The baseline does NOT auto-advance — it stays on the first slide
-// until the user interacts (swipe / dot), at which point Embla is dynamically loaded for looping +
-// controlled drag. JS only tracks the active dot until then.
+// Native CSS scroll-snap carousel for the home hero — replaces Swiper (~24 KB gz) on the critical
+// path. Every slide renders in the SSR HTML (LCP cover paints with no carousel-library dependency)
+// and the baseline is swipeable with zero JS. It does NOT auto-advance. On the first carousel
+// interaction, Embla is attached to the SAME viewport node (no swap, no DOM recreation) to add
+// looping + controlled drag — preserving the current scroll position, so there's no blink, no
+// layout jump, and no slide-index reset.
 const Slider = memo(function Slider({ items }: SliderProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
-  const enhanceTimerRef = useRef<number | null>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
+  const emblaApiRef = useRef<EmblaCarouselType | null>(null)
+  const attachingRef = useRef(false)
+  const attachTimerRef = useRef<number | null>(null)
+  const pendingScrollToRef = useRef<number | null>(null)
   const [active, setActive] = useState(0)
-  const [enhanced, setEnhanced] = useState(false)
-  const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
-  const [reservedHeight, setReservedHeight] = useState<number>()
-  const [EmblaComp, setEmblaComp] = useState<EmblaComponent | null>(null)
 
   const count = items?.length ?? 0
   const showPagination = count > 1
 
-  const preloadEnhanced = useCallback(() => {
+  const preload = useCallback(() => {
     void loadEmbla()
   }, [])
 
-  const startEnhancement = useCallback((index: number) => {
-    // Reserve the current rendered height so the swap can't change layout (no CLS).
-    const h = wrapperRef.current?.offsetHeight
-    if (h) setReservedHeight(h)
-    setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
-    // Load the Embla chunk BEFORE flipping to it. The baseline (showing the target slide) stays on
-    // screen during the fetch, then we swap atomically to an already-loaded component — so there's
-    // never an empty/null frame (the black-background blink the user saw).
-    loadEmbla()
-      .then((Comp) => {
-        setEmblaComp(() => Comp)
-        setEnhanced(true)
-      })
-      .catch(() => {})
+  // The slide the baseline is actually on right now, read straight from the DOM (source of truth —
+  // React state can lag a fast swipe).
+  const currentBaselineIndex = useCallback(() => {
+    const vp = viewportRef.current
+    if (!vp || vp.clientWidth === 0) return 0
+    return Math.max(0, Math.min(Math.round(vp.scrollLeft / vp.clientWidth), count - 1))
   }, [count])
 
-  const scheduleEnhancement = useCallback((index: number) => {
-    if (enhanced || count <= 1) return
-    if (enhanceTimerRef.current) window.clearTimeout(enhanceTimerRef.current)
-    enhanceTimerRef.current = window.setTimeout(() => {
-      startEnhancement(index)
-    }, ENHANCE_AFTER_SCROLL_MS)
-  }, [count, enhanced, startEnhancement])
+  // Attach Embla to the existing viewport node. Switches it from native scroll-snap to
+  // Embla-controlled and inits at `startIndex` — all synchronous in one block before the next paint,
+  // so the on-screen slide never changes during the handoff (no blink / jump / index reset).
+  const attachEmbla = useCallback((startIndex: number) => {
+    if (attachingRef.current || emblaApiRef.current || count <= 1) return
+    attachingRef.current = true
+    if (attachTimerRef.current) window.clearTimeout(attachTimerRef.current)
+    loadEmbla()
+      .then((EmblaCarousel) => {
+        const vp = viewportRef.current
+        if (!vp) {
+          attachingRef.current = false
+          return
+        }
+        const idx = Math.max(0, Math.min(startIndex, count - 1))
+        // Hand off from native scroll → Embla transform without a visual jump.
+        vp.scrollLeft = 0
+        vp.style.overflowX = 'hidden'
+        vp.style.scrollSnapType = 'none'
+        const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
+        const onSelect = () => setActive(api.selectedScrollSnap())
+        api.on('select', onSelect)
+        api.on('reInit', onSelect)
+        emblaApiRef.current = api
+        setActive(idx)
+        if (pendingScrollToRef.current != null) {
+          api.scrollTo(pendingScrollToRef.current)
+          pendingScrollToRef.current = null
+        }
+      })
+      .catch(() => {
+        attachingRef.current = false
+      })
+  }, [count])
+
+  // After a swipe settles, attach Embla at the LIVE landed slide (read when the timer fires).
+  const scheduleAttach = useCallback(() => {
+    if (attachingRef.current || emblaApiRef.current || count <= 1) return
+    if (attachTimerRef.current) window.clearTimeout(attachTimerRef.current)
+    attachTimerRef.current = window.setTimeout(() => {
+      attachEmbla(currentBaselineIndex())
+    }, ATTACH_AFTER_SCROLL_MS)
+  }, [count, currentBaselineIndex, attachEmbla])
 
   const goTo = useCallback((index: number) => {
-    startEnhancement(index)
     setActive(index)
-    const track = trackRef.current
-    if (!track) return
-    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' })
-  }, [startEnhancement])
+    const api = emblaApiRef.current
+    if (api) {
+      api.scrollTo(index)
+      return
+    }
+    // Not attached yet: attach at the current position (seamless), then let Embla animate to the
+    // clicked slide once it's live.
+    pendingScrollToRef.current = index
+    attachEmbla(currentBaselineIndex())
+  }, [attachEmbla, currentBaselineIndex])
 
-  // Keep the active dot in sync with manual swipes/scrolls.
   const handleScroll = useCallback(() => {
-    const track = trackRef.current
-    if (!track) return
-    const next = Math.max(0, Math.min(Math.round(track.scrollLeft / track.clientWidth), count - 1))
-    setActive(next)
-    // A scroll means a user swipe (the baseline doesn't auto-advance) → enhance once it settles.
-    scheduleEnhancement(next)
-  }, [count, scheduleEnhancement])
-
-  const handlePointerEnter = useCallback(() => {
-    preloadEnhanced()
-  }, [preloadEnhanced])
+    if (emblaApiRef.current) return // Embla owns the viewport now (native scroll is off)
+    setActive(currentBaselineIndex())
+    scheduleAttach()
+  }, [currentBaselineIndex, scheduleAttach])
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (isInteractiveTarget(event.target)) return
-    preloadEnhanced()
-  }, [preloadEnhanced])
+    preload()
+  }, [preload])
 
   const handlePointerUp = useCallback(() => {
-    scheduleEnhancement(active)
-  }, [active, scheduleEnhancement])
-
-  const handleFocus = useCallback(() => {
-    preloadEnhanced()
-  }, [preloadEnhanced])
+    scheduleAttach()
+  }, [scheduleAttach])
 
   useEffect(() => {
     return () => {
-      if (enhanceTimerRef.current) window.clearTimeout(enhanceTimerRef.current)
+      if (attachTimerRef.current) window.clearTimeout(attachTimerRef.current)
+      emblaApiRef.current?.destroy()
     }
   }, [])
 
   if (!items || items.length === 0) return null
 
-  // Persistent wrapper: it stays mounted across the baseline→Embla swap and holds the reserved
-  // height, so the dynamic import's null frame can't collapse the hero (no layout jump / CLS).
   return (
-    <div
-      ref={wrapperRef}
-      className={styles.wrapper}
-      style={reservedHeight ? { minHeight: reservedHeight } : undefined}
-    >
-      {enhanced && EmblaComp ? (
-        <EmblaComp items={items} initialIndex={enhancedInitialIndex} />
-      ) : (
-        <>
-          <div
-            className={styles.track}
-            ref={trackRef}
-            onScroll={handleScroll}
-            onPointerEnter={handlePointerEnter}
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            onFocusCapture={handleFocus}
-          >
-            {items.map((item, index) => (
-              <div className={styles.slideOuter} key={item.id}>
-                <SliderSlide item={item} priority={index === 0} />
-              </div>
-            ))}
-          </div>
-
-          {showPagination && (
-            <div className={styles.pagination}>
-              {items.map((item, index) => (
-                <button
-                  type='button'
-                  key={item.id}
-                  className={cn(styles.bullet, index === active && styles.bulletActive)}
-                  aria-label={`Перейти к слайду ${index + 1}`}
-                  aria-current={index === active ? 'true' : undefined}
-                  onClick={() => goTo(index)}
-                />
-              ))}
+    <div className={styles.wrapper}>
+      <div
+        className={styles.viewport}
+        ref={viewportRef}
+        onScroll={handleScroll}
+        onPointerEnter={preload}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onFocusCapture={preload}
+      >
+        <div className={styles.container}>
+          {items.map((item, index) => (
+            <div className={styles.slideOuter} key={item.id}>
+              <SliderSlide item={item} priority={index === 0} />
             </div>
-          )}
-        </>
+          ))}
+        </div>
+      </div>
+
+      {showPagination && (
+        <div className={styles.pagination}>
+          {items.map((item, index) => (
+            <button
+              type='button'
+              key={item.id}
+              className={cn(styles.bullet, index === active && styles.bulletActive)}
+              aria-label={`Перейти к слайду ${index + 1}`}
+              aria-current={index === active ? 'true' : undefined}
+              onClick={() => goTo(index)}
+            />
+          ))}
+        </div>
       )}
     </div>
   )

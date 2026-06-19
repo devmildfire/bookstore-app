@@ -9,11 +9,11 @@
   background-color: $color-surface-dark;
 }
 
-// Native horizontal scroll-snap track. The hero cover (LCP) lays out and paints straight from SSR
-// — no JS gates it (Swiper used to). Off-screen slides are scrollable; their covers stay lazy.
-.track {
-  display: flex;
-  align-items: stretch;
+// Viewport = the scroll container. Baseline: native horizontal scroll-snap (swipeable, no JS) — the
+// hero cover (LCP) lays out and paints straight from SSR. When Embla attaches on interaction it
+// sets `overflow-x: hidden` + `scroll-snap-type: none` inline on this element and drives `.container`
+// by transform instead. Structure (viewport › container › slides) is what Embla's core requires.
+.viewport {
   width: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -26,19 +26,14 @@
   }
 }
 
-.emblaViewport {
-  width: 100%;
-  overflow: hidden;
-}
-
-.emblaContainer {
+.container {
   display: flex;
   align-items: stretch;
-  width: 100%;
 }
 
 .slideOuter {
   flex: 0 0 100%;
+  min-width: 0;
   display: flex;
   scroll-snap-align: start;
 }
