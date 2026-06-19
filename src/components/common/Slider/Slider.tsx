@@ -21,12 +21,14 @@ const SliderEmbla = dynamic(() => import('./SliderEmbla'), { ssr: false })
 // carousel-library dependency; JS only drives autoplay + dots until the user interacts, then Embla
 // is dynamically loaded for looping and controlled drag behavior.
 const Slider = memo(function Slider({ items }: SliderProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const enhanceTimerRef = useRef<number | null>(null)
   const [active, setActive] = useState(0)
   const [autoplayStopped, setAutoplayStopped] = useState(false)
   const [enhanced, setEnhanced] = useState(false)
   const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
+  const [reservedHeight, setReservedHeight] = useState<number>()
 
   const count = items?.length ?? 0
   const showPagination = count > 1
@@ -40,6 +42,12 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   }, [])
 
   const startEnhancement = useCallback((index: number) => {
+    // Reserve the current rendered height before swapping in the dynamically-imported Embla layer.
+    // next/dynamic(ssr:false) renders null while its chunk resolves (a frame or two on touch, where
+    // there's no hover lead time to warm it), which would collapse the hero and shove the next
+    // section up — a visible jump. The persistent wrapper holds this min-height across the swap.
+    const h = wrapperRef.current?.offsetHeight
+    if (h) setReservedHeight(h)
     stopAutoplay()
     preloadEnhanced()
     setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
@@ -113,39 +121,50 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   }, [])
 
   if (!items || items.length === 0) return null
-  if (enhanced) return <SliderEmbla items={items} initialIndex={enhancedInitialIndex} />
 
+  // Persistent wrapper: it stays mounted across the baseline→Embla swap and holds the reserved
+  // height, so the dynamic import's null frame can't collapse the hero (no layout jump / CLS).
   return (
-    <div className={styles.wrapper}>
-      <div
-        className={styles.track}
-        ref={trackRef}
-        onScroll={handleScroll}
-        onPointerEnter={handlePointerEnter}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onFocusCapture={handleFocus}
-      >
-        {items.map((item, index) => (
-          <div className={styles.slideOuter} key={item.id}>
-            <SliderSlide item={item} priority={index === 0} />
+    <div
+      ref={wrapperRef}
+      className={styles.wrapper}
+      style={reservedHeight ? { minHeight: reservedHeight } : undefined}
+    >
+      {enhanced ? (
+        <SliderEmbla items={items} initialIndex={enhancedInitialIndex} />
+      ) : (
+        <>
+          <div
+            className={styles.track}
+            ref={trackRef}
+            onScroll={handleScroll}
+            onPointerEnter={handlePointerEnter}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onFocusCapture={handleFocus}
+          >
+            {items.map((item, index) => (
+              <div className={styles.slideOuter} key={item.id}>
+                <SliderSlide item={item} priority={index === 0} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {showPagination && (
-        <div className={styles.pagination}>
-          {items.map((item, index) => (
-            <button
-              type='button'
-              key={item.id}
-              className={cn(styles.bullet, index === active && styles.bulletActive)}
-              aria-label={`Перейти к слайду ${index + 1}`}
-              aria-current={index === active ? 'true' : undefined}
-              onClick={() => goTo(index)}
-            />
-          ))}
-        </div>
+          {showPagination && (
+            <div className={styles.pagination}>
+              {items.map((item, index) => (
+                <button
+                  type='button'
+                  key={item.id}
+                  className={cn(styles.bullet, index === active && styles.bulletActive)}
+                  aria-label={`Перейти к слайду ${index + 1}`}
+                  aria-current={index === active ? 'true' : undefined}
+                  onClick={() => goTo(index)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

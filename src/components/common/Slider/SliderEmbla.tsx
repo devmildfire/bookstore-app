@@ -44,8 +44,11 @@ export default function SliderEmbla({ items, initialIndex }: Props) {
 
   if (items.length === 0) return null
 
+  // No own `.wrapper` — the parent Slider renders the persistent wrapper (it reserves height across
+  // the baseline→Embla swap so the dynamic-import null frame can't collapse the hero). This renders
+  // only the Embla viewport + dots into it.
   return (
-    <div className={styles.wrapper}>
+    <>
       <div className={styles.emblaViewport} ref={emblaRef}>
         <div className={styles.emblaContainer}>
           {items.map((item) => (
@@ -70,6 +73,6 @@ export default function SliderEmbla({ items, initialIndex }: Props) {
           ))}
         </div>
       )}
-    </div>
+    </>
   )
 }

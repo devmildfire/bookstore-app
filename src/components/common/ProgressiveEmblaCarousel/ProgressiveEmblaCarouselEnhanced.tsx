@@ -13,7 +13,6 @@ export default function ProgressiveEmblaCarouselEnhanced<T>({
   items,
   getKey,
   renderItem,
-  className,
   emblaViewportClassName,
   emblaContainerClassName,
   slideClassName,
@@ -45,19 +44,19 @@ export default function ProgressiveEmblaCarouselEnhanced<T>({
     }
   }, [emblaApi, updateActive])
 
+  // No own outer wrapper — the parent ProgressiveEmblaCarousel renders the persistent `className`
+  // container (it reserves height across the baseline→Embla swap). This renders only the viewport.
   return (
-    <div className={className}>
-      <div className={emblaViewportClassName} ref={emblaRef}>
-        <div className={emblaContainerClassName}>
-          {items.map((item, index) => (
-            <div
-              className={cn(slideClassName, index === active && activeSlideClassName)}
-              key={getKey(item, index)}
-            >
-              {renderItem(item, index)}
-            </div>
-          ))}
-        </div>
+    <div className={emblaViewportClassName} ref={emblaRef}>
+      <div className={emblaContainerClassName}>
+        {items.map((item, index) => (
+          <div
+            className={cn(slideClassName, index === active && activeSlideClassName)}
+            key={getKey(item, index)}
+          >
+            {renderItem(item, index)}
+          </div>
+        ))}
       </div>
     </div>
   )

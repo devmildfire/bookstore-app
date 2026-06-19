@@ -41,12 +41,14 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
     autoplayMs,
   } = props
 
+  const outerRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const enhanceTimerRef = useRef<number | null>(null)
   const [active, setActive] = useState(0)
   const [autoplayStopped, setAutoplayStopped] = useState(false)
   const [enhanced, setEnhanced] = useState(false)
   const [enhancedInitialIndex, setEnhancedInitialIndex] = useState(0)
+  const [reservedHeight, setReservedHeight] = useState<number>()
 
   const count = items.length
 
@@ -60,6 +62,11 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
 
   const startEnhancement = useCallback((index: number) => {
     if (count <= 1) return
+    // Reserve current height so the dynamic Embla swap's null frame can't collapse the strip and
+    // jump the page (next/dynamic ssr:false renders null until its chunk resolves). See the hero
+    // Slider for the same fix.
+    const h = outerRef.current?.offsetHeight
+    if (h) setReservedHeight(h)
     stopAutoplay()
     preloadEnhanced()
     setEnhancedInitialIndex(Math.max(0, Math.min(index, count - 1)))
@@ -150,35 +157,42 @@ export default function ProgressiveEmblaCarousel<T>(props: ProgressiveEmblaCarou
 
   if (count === 0) return null
 
-  if (enhanced) {
-    const Enhanced = ProgressiveEmblaCarouselEnhanced as ComponentType<
-      ProgressiveEmblaCarouselProps<T> & { initialIndex: number }
-    >
-    return <Enhanced {...props} initialIndex={enhancedInitialIndex} />
-  }
+  const Enhanced = ProgressiveEmblaCarouselEnhanced as ComponentType<
+    ProgressiveEmblaCarouselProps<T> & { initialIndex: number }
+  >
 
+  // Persistent outer wrapper: stays mounted across the baseline→Embla swap and holds the reserved
+  // height, so the dynamic import's null frame can't collapse the strip and jump the page.
   return (
-    <div className={className}>
-      <div
-        className={baselineViewportClassName}
-        ref={viewportRef}
-        onScroll={handleScroll}
-        onPointerEnter={preloadEnhanced}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onFocusCapture={handleFocus}
-      >
-        <div className={baselineContainerClassName}>
-          {items.map((item, index) => (
-            <div
-              className={cn(slideClassName, index === active && activeSlideClassName)}
-              key={getKey(item, index)}
-            >
-              {renderItem(item, index)}
-            </div>
-          ))}
+    <div
+      ref={outerRef}
+      className={className}
+      style={reservedHeight ? { minHeight: reservedHeight } : undefined}
+    >
+      {enhanced ? (
+        <Enhanced {...props} initialIndex={enhancedInitialIndex} />
+      ) : (
+        <div
+          className={baselineViewportClassName}
+          ref={viewportRef}
+          onScroll={handleScroll}
+          onPointerEnter={preloadEnhanced}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onFocusCapture={handleFocus}
+        >
+          <div className={baselineContainerClassName}>
+            {items.map((item, index) => (
+              <div
+                className={cn(slideClassName, index === active && activeSlideClassName)}
+                key={getKey(item, index)}
+              >
+                {renderItem(item, index)}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
