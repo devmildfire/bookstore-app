@@ -90,6 +90,32 @@ refactor). Floor ≈ ~170 KB React/Next.
 Both remaining items are **central-component refactors** (nav, cart/auth) with UX/a11y tradeoffs —
 unlike the pure-win deferrals above. They warrant focused work + live smoke-tests.
 
+## Interaction-deferral pass (2026-06-19) — shipped
+
+Acting on the coverage findings above, two of the three remaining items shipped as
+**interaction-deferred** (loaded on first interaction, so a no-interaction PSI view ships none):
+
+- **Radix — done (~33 KB gz off the critical path).** Nav dropdown + mobile-menu dialog + global
+  toast now dynamic-import on first interaction; the Header renders plain SSR triggers (hover/focus
+  warms the dropdown chunk, first tap opens the dialog, first toast mounts the viewport). **No a11y
+  loss** — full Radix keyboard/focus behaviour once mounted. Live-verified: dropdown, mobile menu,
+  and add-to-cart toast all functional; zero `react-dropdown-menu`/`DismissableLayer`/`react-toast`
+  signatures in the home's initial chunks. `Header.tsx` + `NavDropdown.tsx` + `MobileMenu.tsx` +
+  `contexts/toast.tsx`.
+- **Swiper — done (~24 KB gz off the critical path).** The home hero `Slider` was the only thing
+  putting Swiper on the home critical path (the other 4 carousels use Swiper directly and live on
+  other routes / the lazy below-fold sections). Replaced with a **native CSS scroll-snap** track:
+  all slides render in SSR HTML (LCP cover no longer gated on Swiper hydration), JS only drives
+  autoplay (respects `prefers-reduced-motion`) + pagination dots. `BaseSlider` deleted (was unused
+  after the swap). Live-verified: 5 slides, dots scroll, autoplay snaps one slide/tick, no swiper
+  signature in the home's initial chunks.
+- **Supabase (~43 KB) — deferred by decision.** Investigation showed it's anchored to the
+  **anonymous-session bootstrap** (`providers.tsx` signs in every cookieless visitor on mount — the
+  exact PSI scenario), not just the cart-badge query. Deferring it safely means reworking anon
+  sign-in to first-interaction + `ensureSession()` before the first cart write. Genuinely invasive
+  (touches the auth core the CLAUDE.md guards); held pending an explicit decision rather than risk
+  the cart/auth flow for ~43 KB on a portfolio.
+
 ## Definitive home-page breakdown (2026-06-19) — ground truth
 
 Method: `ANALYZE=true npm run build` → parse `.next/analyze/client.html` `chartData` for
