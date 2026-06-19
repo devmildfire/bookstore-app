@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 import { promoCodeInputSchema } from '@/entities/promo/validation'
 import { normalizeAppliedPromo } from '@/entities/promo/normalize'
 import type { AppliedPromo } from '@/entities/promo/client'
@@ -34,7 +34,7 @@ export async function applyPromoCode(rawInput: string): Promise<ApplyPromoResult
     return { status: 'error', reason: 'invalid_input' }
   }
 
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
   const { data, error } = await supabase.rpc('apply_promo_code', { input_code: parsed.data })
 
   if (error) {

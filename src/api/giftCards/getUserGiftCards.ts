@@ -1,4 +1,4 @@
-import { getBrowserClient } from '@/lib/supabase/lazyClient'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 import { normalizeGiftCard, type GiftCard, type GiftCardRow } from '@/entities/giftCard'
 
 const SELECT = '*, GiftCardProducts(*)'
@@ -6,7 +6,7 @@ const SELECT = '*, GiftCardProducts(*)'
 export const userGiftCardsQueryKey = ['giftCards', 'user'] as const
 
 export async function getUserGiftCards(): Promise<GiftCard[]> {
-  const supabase = await getBrowserClient()
+  const supabase = await getAuthedClient()
 
   const { data, error } = await supabase
     .from('GiftCards')

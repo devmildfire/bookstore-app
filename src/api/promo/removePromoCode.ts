@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 
 export async function removePromoCode(): Promise<void> {
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError) {

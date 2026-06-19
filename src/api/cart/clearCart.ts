@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 
 export async function clearCart(): Promise<void> {
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
 
   const { error } = await supabase
     .from('Cart')

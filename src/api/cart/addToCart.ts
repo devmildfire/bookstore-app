@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 import { isSinglePurchaseCategory } from '@/consts/products'
 import type { AddToCartInput } from '@/entities/cart/validation'
 
@@ -11,7 +11,7 @@ import type { AddToCartInput } from '@/entities/cart/validation'
 // one round-trip and removes the race.
 export async function addToCart(item: AddToCartInput, quantity = 1): Promise<void> {
   if (quantity <= 0) return
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
 
   const { data: existing } = await supabase
     .from('Cart')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastProvider } from '@/contexts/toast'
@@ -53,22 +53,28 @@ function hasExistingSession(): boolean {
 
 export default function Providers({ children }: Props) {
   const queryClient = getQueryClient()
-  const anonymousSignInStarted = useRef(false)
 
   useEffect(() => {
-    if (anonymousSignInStarted.current) return
     if (hasExistingSession()) return
 
-    anonymousSignInStarted.current = true
-
-    // Dynamic-import keeps @supabase/ssr out of the eager bundle; it loads as its own chunk
-    // when the anon sign-in actually runs (post-hydration), not in the first-load critical path.
-    import('@/lib/supabase/client').then(({ createAuthClient }) => {
-      createAuthClient().auth.signInAnonymously().catch((error) => {
-        anonymousSignInStarted.current = false
-        console.error(error)
+    // Defer the anonymous sign-in until the first real interaction. A passive, cookieless visit
+    // (exactly what a PSI/Lighthouse trace is) never signs in, so @supabase/ssr + auth-js (~43 KB
+    // gz, the full GoTrueClient) stays off the no-interaction critical path. ensureAnonSession is
+    // memoized, so this and the first cart op resolve to a single sign-in. (Cart reads also call it
+    // via getAuthedClient — this trigger just warms the session on any interaction, cart or not.)
+    let triggered = false
+    const trigger = () => {
+      if (triggered) return
+      triggered = true
+      cleanup()
+      import('@/lib/supabase/authedClient').then(({ ensureAnonSession }) => {
+        ensureAnonSession().catch((error) => console.error(error))
       })
-    })
+    }
+    const events = ['pointerdown', 'keydown', 'touchstart', 'wheel', 'scroll'] as const
+    const cleanup = () => events.forEach((e) => window.removeEventListener(e, trigger))
+    events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }))
+    return cleanup
   }, [])
 
   return (

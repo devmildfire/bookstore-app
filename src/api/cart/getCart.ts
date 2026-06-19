@@ -1,11 +1,11 @@
-import { getBrowserClient } from '@/lib/supabase/lazyClient'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 import { normalizeCartItem } from '@/entities/cart/normalize'
 import type { CartItem } from '@/entities/cart/client'
 
 export const cartQueryKey = ['cart'] as const
 
 export async function getCart(): Promise<CartItem[]> {
-  const supabase = await getBrowserClient()
+  const supabase = await getAuthedClient()
 
   const { data, error } = await supabase
     .from('Cart')

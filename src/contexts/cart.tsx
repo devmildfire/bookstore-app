@@ -1,6 +1,7 @@
 'use client'
 
-import { createContext, useContext, useCallback, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import {
   useQuery,
   useMutation,
@@ -79,15 +80,48 @@ type Props = {
 
 export function CartProvider({ children }: Props) {
   const queryClient = useQueryClient()
+  const pathname = usePathname()
+
+  // The cart queries are RLS-scoped → they need a Supabase session, and running them pulls
+  // @supabase/ssr + auth-js (~43 KB gz) onto the page. Gate them so a cookieless, no-interaction
+  // visit (the PSI scenario) loads none of it: run only where the cart is actually shown
+  // (/cart, /checkout), once the user interacts, or when a session already exists (returning
+  // visitor → keep an instant, correct badge with no flash). getAuthedClient ensures the session
+  // before each query resolves, so there's no read-before-sign-in race.
+  const onCartRoute = pathname === '/cart' || pathname === '/checkout'
+  // Returning visitor (session-hint cookie present) → start active so the badge is correct with no
+  // flash. New/cookieless visitor → start inactive; first interaction flips it. SSR renders inactive
+  // and the badge shows 0 until data loads either way, so there's no hydration mismatch.
+  const [cartActive, setCartActive] = useState(
+    () =>
+      typeof document !== 'undefined' &&
+      document.cookie.split('; ').includes('bookstore_has_session=1'),
+  )
+
+  useEffect(() => {
+    if (cartActive || onCartRoute) return
+    const activate = () => {
+      setCartActive(true)
+      cleanup()
+    }
+    const events = ['pointerdown', 'keydown', 'touchstart', 'wheel', 'scroll'] as const
+    const cleanup = () => events.forEach((e) => window.removeEventListener(e, activate))
+    events.forEach((e) => window.addEventListener(e, activate, { once: true, passive: true }))
+    return cleanup
+  }, [cartActive, onCartRoute])
+
+  const cartEnabled = cartActive || onCartRoute
 
   const { data: items = [] } = useQuery({
     queryKey: cartQueryKey,
     queryFn: getCart,
+    enabled: cartEnabled,
   })
 
   const { data: appliedPromo = null } = useQuery({
     queryKey: activePromoQueryKey,
     queryFn: getActivePromo,
+    enabled: cartEnabled,
   })
 
   // User's gift-card wallet — used by the cart-page picker. Empty for users
@@ -95,6 +129,7 @@ export function CartProvider({ children }: Props) {
   const { data: userGiftCardsData } = useQuery({
     queryKey: userGiftCardsQueryKey,
     queryFn: getUserGiftCards,
+    enabled: cartEnabled,
   })
   const userGiftCards = useMemo<GiftCard[]>(() => userGiftCardsData ?? [], [userGiftCardsData])
 
@@ -110,6 +145,7 @@ export function CartProvider({ children }: Props) {
     queryKey: cartQuoteQueryKey,
     queryFn: getCartQuote,
     placeholderData: keepPreviousData,
+    enabled: cartEnabled,
   })
   const totals = quote ?? { subtotal: 0, discountAmount: 0, total: 0, giftCardEligibleTotal: 0 }
 
@@ -128,7 +164,7 @@ export function CartProvider({ children }: Props) {
   const { data: boxSetFlags } = useQuery({
     queryKey: boxSetPhysicalFlagsQueryKey(boxSetIds),
     queryFn: () => getBoxSetPhysicalFlags(boxSetIds),
-    enabled: boxSetIds.length > 0,
+    enabled: cartEnabled && boxSetIds.length > 0,
   })
 
   // Invalidate both the cart items and the server price quote after any cart write.

@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/client'
+import { getAuthedClient } from '@/lib/supabase/authedClient'
 
 export async function updateCartQuantity(id: string, quantity: number): Promise<void> {
-  const supabase = createClient()
+  const supabase = await getAuthedClient()
 
   if (quantity <= 0) {
     // Remove item if quantity is 0 or negative
