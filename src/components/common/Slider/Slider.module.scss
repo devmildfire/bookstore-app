@@ -3,33 +3,37 @@
 // ─── Slider ──────────────────────────────────────────────────────────────────
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   background-color: $color-surface-dark;
+}
 
-  // The hero cover is the LCP. Swiper's base CSS sets `.swiper-wrapper { height: 100% }`,
-  // which resolves to 0 before Swiper's JS runs (the parent `.swiper` has no defined height)
-  // — and `.swiper` has `overflow: hidden`, so the cover is CLIPPED to invisible until
-  // hydration + Swiper init un-collapse it. On a cold/throttled mobile load that's several
-  // seconds after FCP → the LCP killer (it's render-blocked by JS, not the network). Force the
-  // wrapper to fit its content so the cover paints straight from SSR/CSS with no JS dependency;
-  // Swiper's `autoHeight` still sets the exact per-slide height inline once it initializes.
-  :global(.swiper-wrapper) {
-    height: auto;
-  }
+// Native horizontal scroll-snap track. The hero cover (LCP) lays out and paints straight from SSR
+// — no JS gates it (Swiper used to). Off-screen slides are scrollable; their covers stay lazy.
+.track {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  // Hide the native scrollbar — the dots are the affordance.
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
-  // Give the slides a full CSS layout (width + height) so the FIRST slide + its cover (the LCP)
-  // lay out and paint from SSR — before the JS bundle downloads and Swiper assigns slide widths.
-  // Without an explicit width the slide has no layout pre-JS (Lighthouse measures the cover 0×0),
-  // so the LCP waits ~5s for the JS on throttled mobile. Swiper overrides width inline on init;
-  // the others are clipped by `.swiper { overflow: hidden }`, so only the first shows pre-JS.
-  :global(.swiper-slide) {
-    height: auto;
-    width: 100%;
-    flex-shrink: 0;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
+.slideOuter {
+  flex: 0 0 100%;
+  display: flex;
+  scroll-snap-align: start;
+}
+
 .slide {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,4 +233,39 @@
     height: 22px;
     font-size: 8px;
   }
+}
+
+// ─── Pagination dots (Figma node 2648-6467) ──────────────────────────────────
+// Active: 11×11 red circle; inactive: 6×6 grey circle; 35px gaps.
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 35px;
+  height: 11px;
+  margin-top: $space-4;
+}
+
+.bullet {
+  display: block;
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: $radius-full;
+  background: $color-text-on-dark;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    background-color 0.2s ease;
+}
+
+// Compound selector (specificity 0,2,0) always beats .bullet alone (0,1,0)
+.bullet.bulletActive {
+  width: 11px;
+  height: 11px;
+  background: $color-accent-hover-on-dark;
 }

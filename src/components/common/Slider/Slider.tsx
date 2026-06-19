@@ -1,10 +1,9 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useRef, useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { SwiperSlide } from 'swiper/react'
-import BaseSlider from '@/components/common/BaseSlider'
+import cn from 'classnames'
 import styles from './Slider.module.scss'
 
 type SlideItem = {
@@ -21,14 +20,53 @@ export type SliderProps = {
   items: SlideItem[]
 }
 
+const AUTOPLAY_MS = 4000
+
+// Native CSS scroll-snap carousel — replaces Swiper (~24 KB gz) on the home hero, the only place it
+// sat on the critical path. Every slide renders in the SSR HTML, so the LCP cover paints with zero
+// JS dependency (Swiper used to gate the hero on hydration); JS only drives autoplay + the dots.
 const Slider = memo(function Slider({ items }: SliderProps) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(0)
+
+  const count = items?.length ?? 0
+  const showPagination = count > 1
+
+  const goTo = useCallback((index: number) => {
+    const track = trackRef.current
+    if (!track) return
+    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' })
+  }, [])
+
+  // Keep the active dot in sync with manual swipes/scrolls.
+  const handleScroll = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    setActive(Math.round(track.scrollLeft / track.clientWidth))
+  }, [])
+
+  useEffect(() => {
+    if (count <= 1) return
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const id = window.setInterval(() => {
+      const track = trackRef.current
+      if (!track) return
+      const current = Math.round(track.scrollLeft / track.clientWidth)
+      const next = (current + 1) % count
+      track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' })
+    }, AUTOPLAY_MS)
+
+    return () => window.clearInterval(id)
+  }, [count])
+
   if (!items || items.length === 0) return null
 
   return (
     <div className={styles.wrapper}>
-      <BaseSlider slideCount={items.length} loop={items.length > 2} autoplay={4000}>
+      <div className={styles.track} ref={trackRef} onScroll={handleScroll}>
         {items.map((item, index) => (
-          <SwiperSlide key={item.id}>
+          <div className={styles.slideOuter} key={item.id}>
             <div className={styles.slide}>
               <div className={styles.coverWrap}>
                 {item.coverUrl ? (
@@ -68,9 +106,24 @@ const Slider = memo(function Slider({ items }: SliderProps) {
                 </Link>
               </div>
             </div>
-          </SwiperSlide>
+          </div>
         ))}
-      </BaseSlider>
+      </div>
+
+      {showPagination && (
+        <div className={styles.pagination}>
+          {items.map((item, index) => (
+            <button
+              type='button'
+              key={item.id}
+              className={cn(styles.bullet, index === active && styles.bulletActive)}
+              aria-label={`Перейти к слайду ${index + 1}`}
+              aria-current={index === active ? 'true' : undefined}
+              onClick={() => goTo(index)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 })
