@@ -27,7 +27,7 @@ export default function SliderSlide({ item, priority = false }: Props) {
             // First baseline slide is the LCP. `priority` emits the preload + eager-loads, but in
             // this Next version it does NOT set fetchpriority — only the explicit
             // `fetchPriority` prop does (get-img-props → ImagePreload's getDynamicProps).
-            // The Embla-enhanced version mounts only after interaction and leaves priority false.
+            // The slide renders in SSR HTML, so the cover paints before Embla hydrates.
             priority={priority}
             fetchPriority={priority ? 'high' : undefined}
             placeholder={item.coverBlurDataUrl ? 'blur' : 'empty'}

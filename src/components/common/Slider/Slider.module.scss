@@ -9,21 +9,12 @@
   background-color: $color-surface-dark;
 }
 
-// Viewport = the scroll container. Baseline: native horizontal scroll-snap (swipeable, no JS) — the
-// hero cover (LCP) lays out and paints straight from SSR. When Embla attaches on interaction it
-// sets `overflow-x: hidden` + `scroll-snap-type: none` inline on this element and drives `.container`
-// by transform instead. Structure (viewport › container › slides) is what Embla's core requires.
+// Viewport = the Embla viewport (`embla-carousel-react` attaches here via ref). The hero cover (LCP,
+// first slide) lays out + paints straight from the SSR HTML; Embla then drives `.container` by
+// transform. `overflow: hidden` is what Embla requires. Structure (viewport › container › slides).
 .viewport {
   width: 100%;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  // Hide the native scrollbar — the dots are the affordance.
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow: hidden;
 }
 
 .container {
@@ -35,11 +26,6 @@
   flex: 0 0 100%;
   min-width: 0;
   display: flex;
-  scroll-snap-align: start;
-  // Force the native baseline (pre-Embla) to advance at most one slide per swipe — without this a
-  // fast flick's momentum can skip past a slide and snap two over, which reads as a "double swipe".
-  // Embla (post-attach) already constrains to one slide per drag, so this keeps both consistent.
-  scroll-snap-stop: always;
 }
 
 .slide {
