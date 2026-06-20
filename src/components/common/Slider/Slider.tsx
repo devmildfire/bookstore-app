@@ -85,7 +85,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         vp.scrollLeft = 0
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
-        const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
+        const api = EmblaCarousel(vp, { loop: false, startIndex: idx, align: 'start', containScroll: false })
         // [TEMP DEBUG] Compare Embla's INDEX (selectedSnap) against the actual rendered TRANSLATE of
         // the track. translateX / clientWidth = the visual slide. If selectedSnap=1 but visualSlide=0,
         // the index is right while the pixels are wrong → measurement/transform mismatch.
@@ -113,6 +113,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
         requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
         window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual(), '| physical', physical()), 200)
+        window.setTimeout(() => console.log('[hero] +500ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual(), '| physical', physical()), 500)
         const onSelect = () => setActive(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)
