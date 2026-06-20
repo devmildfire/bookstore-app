@@ -1,0 +1,31 @@
+@use '@/styles/common' as *;
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-4;
+  padding: $space-8;
+  max-width: 600px;
+}
+
+.title {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-on-dark;
+}
+
+.msg {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-base;
+  color: rgba($color-text-on-dark, 0.6);
+}
+
+.actions {
+  display: flex;
+  gap: $space-3;
+  margin-top: $space-2;
+}
