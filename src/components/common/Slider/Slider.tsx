@@ -91,10 +91,12 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         // the index is right while the pixels are wrong → measurement/transform mismatch.
         const visual = () => {
           const c = vp.firstElementChild as HTMLElement | null
-          if (!c) return { tx: 'n/a', slide: 'n/a' }
+          if (!c) return { tx: 'n/a', slide: 'n/a', vpConnected: vp.isConnected }
           const tf = getComputedStyle(c).transform
           const tx = tf === 'none' ? 0 : new DOMMatrixReadOnly(tf).m41
-          return { tx: Math.round(tx), slide: vp.clientWidth ? +(tx / vp.clientWidth).toFixed(2) : 'n/a' }
+          // vpConnected=false ⇒ this viewport was detached from the DOM ⇒ the Slider REMOUNTED
+          // (a fresh native Slider replaced it); the tx/snap we read here are from the orphaned node.
+          return { tx: Math.round(tx), slide: vp.clientWidth ? +(tx / vp.clientWidth).toFixed(2) : 'n/a', vpConnected: vp.isConnected }
         }
         // [TEMP DEBUG] Ground truth: which book is physically at the viewport's left edge, plus how
         // loop has laid out every slide. DOM order is stable (slide 0..N); loop shifts each slide via
