@@ -4,7 +4,7 @@
   @include page-container;
 }
 
-// Mirrors NewProducts .title so the streamed grid doesn't shift the heading.
+// Mirrors NewProducts .title so the real grid doesn't shift the heading when it swaps in.
 .title {
   display: flex;
   justify-content: center;
@@ -26,6 +26,42 @@
     margin: 60px 0 40px;
     font-size: 32px;
     line-height: 38px;
+  }
+}
+
+// Ghost stand-in for the CatalogControls filter/sort bar — the affordance, without the real Radix
+// (Dialog/Popover) that the bundle-shedding work keeps off the critical path.
+.filterBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: 40px;
+
+  @include breakpoint('phone') {
+    margin-bottom: 24px;
+  }
+}
+
+.filterPill {
+  width: 180px;
+  height: 44px;
+  border-radius: $radius-full;
+
+  @include breakpoint('phone') {
+    width: 130px;
+    height: 38px;
+  }
+}
+
+.sortPill {
+  width: 140px;
+  height: 44px;
+  border-radius: $radius-full;
+
+  @include breakpoint('phone') {
+    width: 96px;
+    height: 38px;
   }
 }
 

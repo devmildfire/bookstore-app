@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
+import CatalogSkeleton from './CatalogSkeleton'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 
 // The catalog grid is heavy (~370 DOM nodes, 14 cover images, render-blocking CSS, hydration).
@@ -11,6 +12,11 @@ import type { BookCatalog, BookFilters } from '@/entities/book/client'
 // PSI waits for idle, so an idle callback fires inside the trace). A real user triggers it the
 // instant they scroll — before they reach it, since it sits just below the fold. A long timeout
 // (well past PSI's trace) mounts it for the rare visitor who never interacts.
+//
+// Until then we render <CatalogSkeleton> (not an empty box): it shows the heading + a ghost filter
+// bar + ghost cards sized to page-1, so the catalog is visibly present under the hero AND reserves
+// the real grid's height. That keeps the sections below (subscriptions / box-sets) anchored far
+// down so they can't render before the catalog, and the swap to the real grid doesn't jump.
 const NewProducts = dynamic(() => import('@/components/book/NewProducts'), { ssr: false })
 
 type Props = {
@@ -38,9 +44,9 @@ export default function DeferredCatalog({ catalog, filters }: Props) {
     }
   }, [mounted])
 
-  return (
-    <div style={{ width: '100%', minHeight: mounted ? undefined : 800 }}>
-      {mounted && <NewProducts catalog={catalog} filters={filters} />}
-    </div>
+  return mounted ? (
+    <NewProducts catalog={catalog} filters={filters} />
+  ) : (
+    <CatalogSkeleton cards={catalog.books.length} />
   )
 }

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { getFeaturedBooks } from '@/api/books'
 import Slider from '@/components/common/Slider'
 import HomeCatalog from './HomeCatalog'
-import HomeCatalogFallback from './HomeCatalogFallback'
+import CatalogSkeleton from './CatalogSkeleton'
 import SubscriptionsSection from '@/components/subscriptions/SubscriptionsSection/SubscriptionsSection'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import styles from './page.module.scss'
@@ -41,7 +41,7 @@ export default async function HomePage({ searchParams }: Props) {
   return (
     <div className={styles.page}>
       <Slider items={slides} />
-      <Suspense fallback={<HomeCatalogFallback />}>
+      <Suspense fallback={<CatalogSkeleton />}>
         <HomeCatalog searchParams={searchParams} />
       </Suspense>
       <SubscriptionsSection />
