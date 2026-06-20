@@ -102,16 +102,18 @@ Acting on the coverage findings above, two of the three remaining items shipped 
   and add-to-cart toast all functional; zero `react-dropdown-menu`/`DismissableLayer`/`react-toast`
   signatures in the home's initial chunks. `Header.tsx` + `NavDropdown.tsx` + `MobileMenu.tsx` +
   `contexts/toast.tsx`.
-- **Swiper — removed entirely (~24 KB gz off the home critical path; gone from every route).** The
-  home hero `Slider` first moved to a native CSS scroll-snap baseline (LCP cover no longer gated on
-  carousel hydration; JS only drives autoplay + dots). Then **all 5 carousels migrated to
-  Embla under progressive enhancement** and Swiper was dropped from `package.json`: the SSR/CSS
-  baseline renders the slides, and **Embla is dynamically imported only on the first carousel
-  interaction** (swipe / dot / drag) to add looping + controlled drag. So a passive home load ships
-  **no carousel library**, and Embla (smaller than Swiper) only ever loads after intent on any route.
-  The hero uses `Slider`/`SliderEmbla`; the other four (subscriptions, gift cards, article, author)
-  use the shared `ProgressiveEmblaCarousel`. Verified: passive home has no Embla chunk; dot tap loads
-  it lazily and loops; gift-cards swipe enhances. See [`docs/plans/embla-carousel-migration.md`](../plans/embla-carousel-migration.md).
+- **Swiper — removed entirely (~24 KB gz off the home critical path; gone from every route).**
+  Replaced by **eager `embla-carousel-react`** (~5 KB core). Every slide renders in the SSR HTML, so
+  the hero LCP cover paints with no carousel JS in the way; Embla hydrates the same nodes. The hero
+  uses `src/components/common/Slider/`; the four card strips (subscriptions, gift cards, article,
+  author) use the shared `src/components/common/CardCarousel/`. All loop.
+  - *History:* carousels first went to a CSS-baseline + interaction-gated-Embla model
+    (`ProgressiveEmblaCarousel`) to keep Embla off the passive load. That was later **reverted to
+    eager Embla** once the [100-run PSI baseline](./psi-baseline.md) showed the score is LCP-bound
+    with large TBT headroom → eager measured PSI-neutral, is far simpler, and fixed the
+    "broken-until-tapped" + no-loop bugs. `ProgressiveEmblaCarousel` was deleted. Deferral now lives
+    only at the home **section** level (catalog/subscriptions/box-sets), where it measurably pays.
+    Full story: [`hero-carousel-remount.md`](./hero-carousel-remount.md).
 - **Supabase (~43 KB) — done.** It had three anchors, all on the no-interaction load: the anon
   sign-in (`providers.tsx`, on mount), the cart-badge queries (`CartProvider`, on mount), and the
   `Likes` query (`LikeButton` in the deferred catalog, ~10 s). All now gate on a shared

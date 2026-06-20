@@ -1,13 +1,44 @@
-# Hero carousel & catalog deferral — architecture, the remount bug, and the open simplification
+# Home carousels & catalog deferral — architecture, rationale, and the bug saga
 
-This documents the home page's two perf-motivated mechanisms (hero carousel + deferred catalog),
-the **"spring back to the first slide"** bug they produced together, the root cause (measured), the
-fix that shipped, and an honest assessment of what here is load-bearing vs. over-engineered.
+The canonical record of the home page's carousel + below-fold-deferral architecture: what ships today
+and *why*, plus the measured saga (a remount bug → a simplification → an SSR A/B) that got us here.
+Read [`README.md`](./README.md) for the overall perf strategy.
 
-Read [`README.md`](./README.md) first for the overall perf strategy (PSI lab score is the only
-number; defer work behind the first interaction so it lands outside the PSI trace).
+## Current state (2026-06-20) — read this first
+
+**Carousels — all eager `embla-carousel-react`, all loop:**
+- **Home hero** — `src/components/common/Slider/`. Eager `useEmblaCarousel`; slides render in SSR HTML
+  so the LCP cover paints before Embla hydrates; loop + drag; a `memo(Slider, slidesEqual)` guard so a
+  Next route re-render can't recreate the live viewport (that was the "spring-back" bug — §2).
+- **Card strips** (subscriptions, articles, author articles, gift cards) — the shared eager
+  `src/components/common/CardCarousel/`: always loops (repeats items when too few), optional autoplay
+  (pauses on drag, respects `prefers-reduced-motion`). The old baseline→tap handoff
+  (`ProgressiveEmblaCarousel`) is **deleted**.
+- Only the **home page** is allowed deferral, and only at the **section** level (never the carousel
+  library itself).
+
+**Below-fold deferral (home only):**
+- **Catalog (ИЗДАНИЯ)** — `DeferredCatalog`: the real heading + a filter-bar replica
+  (`CatalogFilterBarSkeleton`) + a reserved-height spacer render immediately; the heavy grid
+  (`NewProducts`) mounts on the first interaction (scroll/pointer/key, 10 s fallback). The heading is
+  rendered *outside* the swap so it never re-mounts (**no blink**); the reserved height keeps the
+  sections below anchored far down (**no "next section before catalog" flash**) and makes the
+  skeleton→grid swap shift-free. Same skeleton is the `<Suspense>` fallback (`CatalogSectionSkeleton`).
+- **Subscriptions / box-sets** — mount on viewport-approach (`useInView`, 600 px margin); their bodies
+  are `dynamic(ssr:false)`.
+
+**Key measured facts** (see [`psi-baseline.md`](./psi-baseline.md)): the score is **LCP-bound** and
+TBT has ~170 ms of headroom. ⇒ eager Embla is **PSI-neutral**; deferring the catalog is worth **~3.7
+perf pts** (SSR-streaming it was measured and **rejected**); the catalog skeleton placeholder is
+PSI-neutral too.
 
 ---
+
+## History & rationale (how we got here)
+
+> Sections below are the saga + the measurements behind the decisions above. **§1 describes the
+> hero's *original* design** (CSS baseline + Embla "hydrate-in-place"); it was replaced by eager Embla
+> in **Move 2** (§3). Kept for the rationale and the bug it produced.
 
 ## 1. The two mechanisms and *why* each exists
 

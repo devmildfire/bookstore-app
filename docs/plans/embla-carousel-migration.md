@@ -1,6 +1,15 @@
 # Embla carousel migration and progressive enhancement
 
-Status: **complete** (started + finished 2026-06-19).
+> **⚠️ SUPERSEDED (2026-06-20).** This plan's end-state — a CSS-baseline → interaction-gated Embla
+> handoff (`ProgressiveEmblaCarousel`), "no eager Embla on the home route" — was **later reverted to
+> eager Embla everywhere**. The 100-run PSI baseline showed the score is LCP-bound with large TBT
+> headroom, so eager Embla measured PSI-neutral, is much simpler, and fixed real bugs
+> (carousels "broken until tapped", sliders not looping). `ProgressiveEmblaCarousel` was deleted; the
+> hero uses `Slider/` and the card strips use the shared `CardCarousel/`, both eager. Deferral now
+> lives only at the home *section* level. This file is kept as a historical record of the Swiper→Embla
+> removal. **Current architecture + rationale: [`../perf/hero-carousel-remount.md`](../perf/hero-carousel-remount.md).**
+
+Status: **complete** (started + finished 2026-06-19); **superseded 2026-06-20** (see banner above).
 
 The app currently uses two carousel approaches:
 

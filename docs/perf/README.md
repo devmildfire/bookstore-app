@@ -90,7 +90,9 @@ For any client dependency or query, ask in order:
    - Yes → it's on the critical path; optimize it in place (§4 LCP techniques).
    - No → it's a defer candidate. Continue.
 2. **Does deferring it have a UX / a11y / correctness tradeoff?**
-   - No tradeoff → **dynamic-import on interaction** (Radix, Swiper-replacement, scrollbars).
+   - No tradeoff → **dynamic-import on interaction** (Radix, custom scrollbars). Note: defer at the
+     right *granularity* — for the carousels we defer the heavy *section* (catalog/subscriptions),
+     not the carousel library itself (Embla is eager; see the Carousels note in §4).
    - Has a tradeoff → still defer, but **add a correctness chokepoint and a returning-user fast
      path** instead of degrading. E.g. Supabase: gate the queries, but route every RLS op through
      `getAuthedClient()` so the session is guaranteed (closes the first-write race), and let
@@ -134,16 +136,26 @@ For any client dependency or query, ask in order:
   deferred catalog. All gated via `useSessionActive()`; anon sign-in moved to first interaction;
   `ensureAnonSession()` / `getAuthedClient()` chokepoint guarantees the session before any RLS op.
 
-### CSS over JS
-- **Carousels: CSS scroll-snap baseline + interaction-gated Embla, not Swiper.** All slides render in
-  the **SSR HTML**, so the home hero's LCP cover paints with **zero carousel-library dependency**
-  (Swiper used to gate the hero on hydration — this *improved* LCP). The baseline drives autoplay
-  (respects `prefers-reduced-motion`) + dots; on the first carousel interaction (swipe / dot tap /
-  drag) **Embla is dynamically imported** to take over looping + controlled drag. A passive,
-  no-interaction view (the PSI scenario) ships **no carousel library at all**. **Swiper was removed
-  entirely** — all 5 carousels (hero + subscriptions + gift cards + article + author strips) now use
-  this model: the hero via `Slider`/`SliderEmbla`, the rest via the shared
-  `ProgressiveEmblaCarousel`. Full plan + tracker: [`docs/plans/embla-carousel-migration.md`](../plans/embla-carousel-migration.md).
+### Carousels — eager Embla, defer the *section* not the library
+- **All carousels use eager `embla-carousel-react`, not Swiper, not a baseline→Embla handoff.** Every
+  slide renders in the **SSR HTML**, so the home hero's LCP cover paints with **no carousel JS in the
+  way**; Embla then hydrates the same nodes. Swiper (~24 KB gz) was removed entirely. Every carousel
+  **always loops** (the shared `CardCarousel` repeats items when there are too few). Two pieces:
+  - **Home hero** — `src/components/common/Slider/` (`useEmblaCarousel`, eager). The home page is the
+    only place allowed any deferral, and it defers at the **section** level, not the carousel: the
+    catalog mounts on first interaction behind a skeleton (`DeferredCatalog` + `CatalogSkeleton`),
+    subscriptions/box-sets mount on viewport-approach (`useInView`). So the measured PSI window still
+    ships no below-fold carousel/grid work.
+  - **All card strips** (subscriptions, articles, author articles, gift cards) — the shared eager
+    `src/components/common/CardCarousel/` (loop + optional autoplay, pauses on drag, respects
+    `prefers-reduced-motion`). Off-home carousels do **not** defer (they're eager on their own pages).
+  - **Why eager (the rationale that matters):** carousels used to defer Embla itself behind the first
+    interaction (`ProgressiveEmblaCarousel`, since deleted). The [100-run PSI baseline](./psi-baseline.md)
+    showed the score is **LCP-bound with ~170 ms of unused TBT headroom**, so eager Embla measured
+    **PSI-neutral** — and it removed real bugs (carousels "broken until tapped", the article slider
+    not looping). Deferral now lives only where it measurably pays: the heavy home *sections*
+    (deferring the catalog is worth ~3.7 perf pts; SSR-streaming it was measured and rejected).
+    Full story + measurements: [`hero-carousel-remount.md`](./hero-carousel-remount.md).
 
 ### LCP (the hero cover)
 - **`priority` + an explicit `fetchPriority="high"`** on the LCP image. In this Next version
