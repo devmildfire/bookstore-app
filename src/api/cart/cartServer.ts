@@ -12,7 +12,7 @@ export async function getCartServer(): Promise<CartItem[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('Cart')
-    .select('*')
+    .select('id, name, subtitle, price, quantity, picture, discount, category')
     .order('created_at', { ascending: true })
     .order('id', { ascending: true })
   if (error) throw new Error(`Не удалось загрузить корзину: ${error.message}`)

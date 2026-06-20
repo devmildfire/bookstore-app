@@ -9,7 +9,7 @@ export async function getCart(): Promise<CartItem[]> {
 
   const { data, error } = await supabase
     .from('Cart')
-    .select('*')
+    .select('id, name, subtitle, price, quantity, picture, discount, category')
     .order('created_at', { ascending: true })
     .order('id', { ascending: true }) // tiebreaker for rows inserted in the same millisecond
 

@@ -75,13 +75,13 @@ export async function getLikedBoxSetsServer(): Promise<BoxSet[]> {
   const ids = likes.map((l) => l.item_id)
   const { data, error: boxSetsError } = await supabase
     .from('BoxSets')
-    .select('*')
+    .select('id, slug, name, description, price, discount, image, position, publish_date')
     .in('id', ids)
 
   if (boxSetsError) throw new Error(boxSetsError.message)
 
   const byId = new Map<number, BoxSetRow>()
-  for (const row of (data as unknown as BoxSetRow[]) ?? []) {
+  for (const row of (data ?? []) as BoxSetRow[]) {
     byId.set(row.id, row)
   }
   return ids

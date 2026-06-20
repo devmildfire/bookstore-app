@@ -1,7 +1,9 @@
 import type { Profile } from './client'
 import type { ProfileServerRow } from './server'
 
-export function normalizeProfile(raw: ProfileServerRow): Profile {
+export function normalizeProfile(
+  raw: Pick<ProfileServerRow, 'user_id' | 'nickname' | 'avatar_path' | 'full_name' | 'phone' | 'birthday' | 'city' | 'about' | 'recovery_email' | 'created_at' | 'updated_at'>,
+): Profile {
   return {
     userId: raw.user_id,
     nickname: raw.nickname,

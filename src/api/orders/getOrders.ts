@@ -62,7 +62,7 @@ export async function loadOrders(
 
   let query = supabase
     .from('Orders')
-    .select('*')
+    .select('id, status, fulfillment_status, total, original_total, book_discount_total, promo_code, promo_discount, gift_card_total_applied, amount_due, delivery_method, delivery_email, shipping_name, shipping_phone, shipping_city, shipping_street, shipping_building, shipping_postal_code, tracking_number, tracking_carrier, admin_note, paid_at, created_at')
     .eq('user_id', user.id)
   // `null` = every status (full history); an explicit list narrows it.
   if (statuses) query = query.in('status', statuses)
@@ -79,7 +79,7 @@ export async function loadOrders(
   const orderIds = orders.map((o) => o.id)
   const { data: items, error: itemsError } = await supabase
     .from('OrderItems')
-    .select('*')
+    .select('id, book_id, name, price, quantity, category, box_set_name, order_id')
     .in('order_id', orderIds)
 
   if (itemsError) {

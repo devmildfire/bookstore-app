@@ -7,7 +7,16 @@ import type {
   OrderStatus,
   ShippingAddress,
 } from './client'
-import type { OrderItemServerRow, OrderServerRow } from './server'
+
+type OrderRow = Pick<
+  import('./server').OrderServerRow,
+  'id' | 'status' | 'fulfillment_status' | 'total' | 'original_total' | 'book_discount_total' | 'promo_code' | 'promo_discount' | 'gift_card_total_applied' | 'amount_due' | 'delivery_method' | 'delivery_email' | 'shipping_name' | 'shipping_phone' | 'shipping_city' | 'shipping_street' | 'shipping_building' | 'shipping_postal_code' | 'tracking_number' | 'tracking_carrier' | 'admin_note' | 'paid_at' | 'created_at'
+>
+
+type OrderItemRow = Pick<
+  import('./server').OrderItemServerRow,
+  'id' | 'book_id' | 'name' | 'price' | 'quantity' | 'category' | 'box_set_name' | 'order_id'
+>
 
 function asNumber(value: string | number | null | undefined): number {
   if (value == null) return 0
@@ -43,7 +52,7 @@ function asDeliveryMethod(raw: string | null): DeliveryMethod | null {
   return null
 }
 
-function buildShipping(raw: OrderServerRow): ShippingAddress | null {
+function buildShipping(raw: OrderRow): ShippingAddress | null {
   if (!raw.shipping_name) return null
   return {
     name: raw.shipping_name,
@@ -56,7 +65,7 @@ function buildShipping(raw: OrderServerRow): ShippingAddress | null {
 }
 
 export function normalizeOrderItem(
-  raw: OrderItemServerRow,
+  raw: OrderItemRow,
   enriched?: { coverUrl: string | null; titleSlug: string | null } | null
 ): OrderItem {
   return {
@@ -73,8 +82,8 @@ export function normalizeOrderItem(
 }
 
 export function normalizeOrder(
-  raw: OrderServerRow,
-  items: OrderItemServerRow[],
+  raw: OrderRow,
+  items: OrderItemRow[],
   enrichedByItemId?: Map<number, { coverUrl: string | null; titleSlug: string | null }>,
   subscriptionStatus?: string | null
 ): Order {

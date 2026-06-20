@@ -51,7 +51,7 @@ export async function createArticleAction(_prev: ArticleActionResult | null, for
     title: parsed.data.title,
     slug: parsed.data.slug,
     author_id: parsed.data.authorId,
-    content_blocks: [] as unknown as Json,
+    content_blocks: [] as Json,
     published_at: new Date().toISOString(),
   })
   if (error) {

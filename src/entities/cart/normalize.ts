@@ -1,7 +1,9 @@
 import type { CartItem } from './client'
 import type { CartServerRow } from './server'
 
-export function normalizeCartItem(raw: CartServerRow): CartItem {
+export function normalizeCartItem(
+  raw: Pick<CartServerRow, 'id' | 'name' | 'subtitle' | 'price' | 'quantity' | 'picture' | 'discount' | 'category'>,
+): CartItem {
   return {
     id: raw.id,
     name: raw.name,

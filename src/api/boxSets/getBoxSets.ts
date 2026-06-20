@@ -16,7 +16,7 @@ export async function getBoxSets(): Promise<BoxSet[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('BoxSets')
-    .select('*')
+    .select('id, slug, name, description, price, discount, image, position, publish_date')
     .eq('is_active', true)
     .order('position')
   if (error) throw error
@@ -27,7 +27,7 @@ export async function getBoxSetsByTitleId(titleId: number): Promise<BoxSet[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('BoxSets')
-    .select('*, BoxSetBooks!inner(title_id)')
+    .select('id, slug, name, description, price, discount, image, position, publish_date, BoxSetBooks!inner(title_id)')
     .eq('is_active', true)
     .eq('BoxSetBooks.title_id', titleId)
     .order('position')

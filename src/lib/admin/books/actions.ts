@@ -11,7 +11,6 @@ import { getCoverUrl, BOOK_PHOTOS_BUCKET } from '@/lib/storage'
 import { getAdminBookPhotos, type AdminEditionPhotos } from '@/api/admin/books'
 import { isBookPhotoFolder, BOOK_PHOTO_FOLDERS } from '@/consts/bookPhotos'
 import { EDITION_FILE_FOLDER, EDITION_HAS_DEMO, EDITION_HAS_SOLD_OUT, ALL_EDITION_KINDS, type EditionKind } from '@/lib/admin/bookProducts'
-import type { Json } from '@/types/supabase'
 
 export type AdminActionResult = { status: 'ok' } | { status: 'error'; message: string }
 export type UploadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
@@ -207,7 +206,7 @@ export async function uploadBookPhotoAction(formData: FormData): Promise<PhotosR
   } catch {
     // leave blur out; the carousel falls back to no placeholder
   }
-  await admin.from('Titles').update({ book_photos_blurs: blurs as unknown as Json }).eq('id', titleId)
+  await admin.from('Titles').update({ book_photos_blurs: blurs }).eq('id', titleId)
 
   revalidatePath(`/admin/books/${titleId}`)
   revalidatePath(`/books/${slug}`)
@@ -240,7 +239,7 @@ export async function deleteBookPhotoAction(formData: FormData): Promise<PhotosR
 
   const blurs = asStringMap(title?.book_photos_blurs)
   delete blurs[`${folder}/${name}`]
-  await admin.from('Titles').update({ book_photos_blurs: blurs as unknown as Json }).eq('id', titleId)
+  await admin.from('Titles').update({ book_photos_blurs: blurs }).eq('id', titleId)
 
   revalidatePath(`/admin/books/${titleId}`)
   revalidatePath(`/books/${slug}`)

@@ -2,7 +2,9 @@ import { getBoxSetImageUrl } from '@/lib/storage'
 import type { BoxSetRow } from './server'
 import type { BoxSet } from './client'
 
-export function normalizeBoxSet(raw: BoxSetRow): BoxSet {
+export function normalizeBoxSet(
+  raw: Pick<BoxSetRow, 'id' | 'slug' | 'name' | 'description' | 'price' | 'discount' | 'image' | 'position' | 'publish_date'>,
+): BoxSet {
   const discount = raw.discount ?? null
   const originalPrice = discount ? Math.round(raw.price / (1 - discount / 100)) : null
   return {

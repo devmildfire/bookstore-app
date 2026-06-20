@@ -39,7 +39,7 @@ export async function updateProfile(input: UpdateProfileInput): Promise<Profile>
     .from('Profiles')
     .update(patch)
     .eq('user_id', user.id)
-    .select('*')
+    .select('user_id, nickname, avatar_path, full_name, phone, birthday, city, about, recovery_email, created_at, updated_at')
     .single()
 
   if (error || !data) {
