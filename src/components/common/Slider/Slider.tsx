@@ -88,11 +88,20 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
         const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
-        // [TEMP DEBUG] Embla's resolved slide right after init, after one frame, and after settle.
-        console.log('[hero] embla inited, selectedSnap=', api.selectedScrollSnap(), 'expected', idx)
-        api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap()))
-        requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap()))
-        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap()), 200)
+        // [TEMP DEBUG] Compare Embla's INDEX (selectedSnap) against the actual rendered TRANSLATE of
+        // the track. translateX / clientWidth = the visual slide. If selectedSnap=1 but visualSlide=0,
+        // the index is right while the pixels are wrong → measurement/transform mismatch.
+        const visual = () => {
+          const c = vp.firstElementChild as HTMLElement | null
+          if (!c) return { tx: 'n/a', slide: 'n/a' }
+          const tf = getComputedStyle(c).transform
+          const tx = tf === 'none' ? 0 : new DOMMatrixReadOnly(tf).m41
+          return { tx: Math.round(tx), slide: vp.clientWidth ? +(tx / vp.clientWidth).toFixed(2) : 'n/a' }
+        }
+        console.log('[hero] embla inited, selectedSnap=', api.selectedScrollSnap(), 'expected', idx, '| visual', visual())
+        api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
+        requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
+        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual()), 200)
         const onSelect = () => setActive(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)

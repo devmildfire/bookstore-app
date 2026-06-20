@@ -314,4 +314,29 @@ following are intentionally out of scope / stubbed and remain **outstanding** fo
 
 ---
 
+## PERF1 🟡 Hero LCP-image preload may not match the rendered `srcSet` candidate (wasted preload)
+
+Observed 2026-06-20 in a Firefox console on the live home (phone resolution): the LCP cover
+preload was flagged *"preloaded with link preload was not used within a few seconds"* —
+specifically `/_next/image?url=…murlo.jpg&w=320`. If the rendered `<img>` actually picks a
+different `srcSet` candidate than the preloaded width on a given viewport/DPR, then **the LCP
+preload is wasted and the real LCP image isn't the preloaded one** — so the preload buys no LCP
+benefit (and costs a redundant fetch competing on Slow-4G).
+
+- The hero cover uses `next/image` `priority` + `fetchPriority="high"` with
+  `sizes="(max-width: 532px) 230px, (max-width: 767px) 240px, (max-width: 1200px) 260px, 355px"`
+  and a custom `imageSizes` that includes `320` (`next.config.ts`). The preload emitted `w=320`,
+  but the **rendered** width depends on the live viewport × DPR — verify they agree on the PSI
+  mobile profile (412 px @ DPR 1.75) and at the resolution where the warning appeared.
+- **To investigate:** load the home at the target viewport, read the cover `<img>.currentSrc`
+  width, and compare to the `<link rel=preload>` href width. If they differ, align `sizes` /
+  `imageSizes` so the preload matches the chosen candidate. (See `SliderSlide.tsx` + the
+  "improve image delivery" work in `docs/perf/`.)
+- **Also noise, lower priority:** many CSS + woff2 `preload`-not-used warnings. Largely a
+  side-effect of `experimental.cssChunking: false` (many small per-module CSS files, some for
+  deferred/below-fold modules) plus Next's route prefetch. Mostly benign; revisit only if it
+  proves to cost real bandwidth in the LCP window.
+
+---
+
 *Migrated from `docs/AUDIT.md` (historical audit snapshot, deleted 2026-06-06).*
