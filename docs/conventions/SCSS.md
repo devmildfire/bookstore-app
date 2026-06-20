@@ -86,7 +86,7 @@ Available mixins:
 | Mixin | Purpose |
 |-------|---------|
 | `section-title` | Cheque display heading at 57px with full responsive scaling |
-| `text-body` | Base body text (16px, Inter) |
+| `text-body` | Base body text (16px, Montserrat) |
 | `text-body-lg` | Large body text (18px) |
 | `text-body-sm` | Small body text (14px) |
 | `text-heading` | Bold heading text |

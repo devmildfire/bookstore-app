@@ -135,12 +135,12 @@ field through the entity's `client.ts` / `normalize.ts` and pass it to
 
 ```tsx
 // src/app/layout.tsx
-import { Inter } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 
-const inter = Inter({
+const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-montserrat',
 })
 ```
 
