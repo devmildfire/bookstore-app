@@ -46,13 +46,29 @@ function nowMs() {
   return typeof performance !== 'undefined' ? performance.now() : 0
 }
 
+// [TEMP] mount counter — a second instance means the component was remounted (the springback).
+let sliderMountSeq = 0
+
+// The hero's slides are static for the session. A Next App Router route re-render (which fires on the
+// first interaction — see docs/perf/hero-carousel-remount.md) hands us a NEW `items` array with the
+// SAME content; without this, React would re-render the Slider and, in Firefox, reconcile the
+// Embla-mutated viewport into a fresh one (the remount → spring back to slide 1). Bailing on
+// equal-by-id content keeps React from ever touching the live viewport, while still allowing a real
+// content change to flow through.
+function slidesEqual(prev: SliderProps, next: SliderProps): boolean {
+  const a = prev.items, b = next.items
+  if (a === b) return true
+  if ((a?.length ?? 0) !== (b?.length ?? 0)) return false
+  return a.every((it, i) => it.id === b[i].id)
+}
+
 // Native CSS scroll-snap carousel for the home hero — replaces Swiper (~24 KB gz) on the critical
 // path. Every slide renders in the SSR HTML (LCP cover paints with no carousel-library dependency)
 // and the baseline is swipeable with zero JS. It does NOT auto-advance. On the first carousel
 // interaction, Embla is attached to the SAME viewport node (no swap, no DOM recreation) to add
 // looping + controlled drag — preserving the current scroll position, so there's no blink, no
 // layout jump, and no slide-index reset.
-const Slider = memo(function Slider({ items }: SliderProps) {
+function Slider({ items }: SliderProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const emblaApiRef = useRef<EmblaCarouselType | null>(null)
   const attachingRef = useRef(false)
@@ -66,6 +82,11 @@ const Slider = memo(function Slider({ items }: SliderProps) {
 
   const count = items?.length ?? 0
   const showPagination = count > 1
+
+  // [TEMP] confirm whether the remount still happens with the memo guard in place.
+  useEffect(() => {
+    console.log(`[hero] Slider MOUNT #${++sliderMountSeq}`)
+  }, [])
 
   // Single source for the active slide: updates React state AND the remount-surviving record.
   const setActiveIndex = useCallback((index: number) => {
@@ -223,10 +244,14 @@ const Slider = memo(function Slider({ items }: SliderProps) {
       )}
     </div>
   )
-})
+}
+
+// Custom comparator: skip re-renders that only change the items array reference (e.g. a route
+// re-render), re-render only on a real content change. See slidesEqual above.
+const MemoSlider = memo(Slider, slidesEqual)
 
 function isInteractiveTarget(target: EventTarget): boolean {
   return target instanceof Element && Boolean(target.closest('a, button'))
 }
 
-export default Slider
+export default MemoSlider
