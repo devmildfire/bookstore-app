@@ -1,6 +1,6 @@
 'use client'
 
-import ProgressiveEmblaCarousel from '@/components/common/ProgressiveEmblaCarousel'
+import CardCarousel from '@/components/common/CardCarousel'
 import GiftCardTierCard from '@/components/giftCards/GiftCardTierCard'
 import type { GiftCardProduct } from '@/entities/giftCardProduct'
 import styles from './GiftCardStorefront.module.scss'
@@ -11,17 +11,14 @@ type Props = {
 
 export default function GiftCardCarousel({ products }: Props) {
   return (
-    <ProgressiveEmblaCarousel
+    <CardCarousel
       items={products}
       getKey={(product) => String(product.id)}
       renderItem={(product) => <GiftCardTierCard product={product} />}
-      baselineViewportClassName={styles.carouselViewport}
-      baselineContainerClassName={styles.carouselScrollTrack}
-      emblaViewportClassName={styles.carouselEmblaViewport}
-      emblaContainerClassName={styles.carouselEmblaTrack}
+      viewportClassName={styles.carouselEmblaViewport}
+      containerClassName={styles.carouselEmblaTrack}
       slideClassName={styles.carouselSlide}
       activeSlideClassName={styles.carouselSlideActive}
-      options={{ align: 'center', loop: products.length > 1 }}
     />
   )
 }
