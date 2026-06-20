@@ -74,7 +74,14 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           return
         }
         const idx = Math.max(0, Math.min(startIndex, count - 1))
-        // Hand off from native scroll → Embla transform without a visual jump.
+        // Hand off from native scroll → Embla transform without a visual flash. Pre-position the
+        // container at the target slide FIRST, so that even if Embla applies its own transform a
+        // frame later, no paint ever shows slide 0 (the "flash back to the first slide"). Then drop
+        // native scroll (overflow hidden + scrollLeft 0) and let Embla take over the transform.
+        const container = vp.firstElementChild as HTMLElement | null
+        if (container) {
+          container.style.transform = `translate3d(${-idx * vp.clientWidth}px, 0, 0)`
+        }
         vp.scrollLeft = 0
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
