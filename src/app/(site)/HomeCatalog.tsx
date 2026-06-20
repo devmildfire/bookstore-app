@@ -1,5 +1,5 @@
 import { getBooks, parseBookFilters } from '@/api/books'
-import DeferredCatalog from './DeferredCatalog'
+import NewProducts from '@/components/book/NewProducts'
 
 type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -15,8 +15,10 @@ export default async function HomeCatalog({ searchParams }: Props) {
   const filters = parseBookFilters(resolvedSearchParams)
   const catalog = await getBooks(filters)
 
-  // Data fetched server-side (no client round-trip); the heavy render — grid DOM, cover
-  // images, CSS, hydration — is deferred to scroll by DeferredCatalog, keeping it out of
-  // the LCP window. The catalog is below the fold on mobile after the tall hero.
-  return <DeferredCatalog catalog={catalog} filters={filters} />
+  // [TRIAL 2026-06-20] SSR-stream the catalog directly (like subscriptions/box-sets) instead of
+  // the interaction-deferred DeferredCatalog, to measure how much the deferral actually buys on
+  // PSI. The grid's cover images are below the fold + lazy, so LCP should hold; the open question
+  // is TBT (hydrating ~14 cards on load). Compare 100-run PSI vs the deferred baseline before
+  // deciding. Revert to DeferredCatalog if TBT/score regresses.
+  return <NewProducts catalog={catalog} filters={filters} />
 }
