@@ -10,11 +10,11 @@ If this documentation conflicts with tooling config (ESLint, TypeScript, Prettie
 
 | Document | Covers |
 |----------|--------|
-| [CODE_STYLE.md](CODE_STYLE.md) | Formatting, naming, component design, React/Next.js rules |
+| [CODE_STYLE.md](CODE_STYLE.md) | Formatting, naming, component design, React/Next.js rules, Server vs Client |
 | [SCSS.md](SCSS.md) | SCSS Modules, tokens, breakpoints, responsive strategy |
-| [TYPESCRIPT.md](TYPESCRIPT.md) | TypeScript strict conventions, type design, `any` policy |
-| [COMPONENTS.md](COMPONENTS.md) | Component structure, Server vs Client, Radix UI, forms |
-| [DATA.md](DATA.md) | TanStack Query, Supabase, data fetching, mutations |
-| [PERFORMANCE.md](PERFORMANCE.md) | Core Web Vitals targets, dynamic imports, images, fonts, Suspense |
+| [TYPESCRIPT.md](TYPESCRIPT.md) | Strict TypeScript, type design, `any` policy |
+| [COMPONENTS.md](COMPONENTS.md) | Component structure, Server vs Client, Radix UI, forms, layouts |
+| [DATA.md](DATA.md) | TanStack Query, Supabase, data fetching, Server Actions, entity layer |
+| [PERFORMANCE.md](PERFORMANCE.md) | Core Web Vitals, dynamic imports, images, fonts, Suspense (coding rules) |
 | [SEO.md](SEO.md) | Metadata API, accessibility (WCAG 2.1 AA), security |
-| [ERROR_HANDLING.md](ERROR_HANDLING.md) | Error boundaries, Server Action errors, TanStack Query errors, loading/not-found |
+| [ERROR_HANDLING.md](ERROR_HANDLING.md) | Error boundaries, Server Actions, TanStack Query errors, loading/not-found |
