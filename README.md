@@ -2,12 +2,9 @@
 
 Новый сайт Чтива
 
-Почти всё ниже устарело. Это нужно переписать, так как едва ли что-то из этого действительно относится к проекту
-
-самое главное - скрипт который берёт типы для объектов проекта из БД supabase
-запускать только из корня проекта, иначе он не найдёт нужный файл.
-
-supabase gen types typescript --db-url "postgresql://postgres:postgres@127.0.0.1:54322/postgres" > "./api/books/types.ts"; node  --env-file .env  ./src/utils/createEnumsFile.cjs
+> Содержимое ниже устарело (описывает старую Pages-Router архитектуру: `pages/api`,
+> `FC`-тип, `styles.ts`, `models/` MobX-стор и т.п.). Актуальная архитектура, стек и
+> команды (включая регенерацию типов Supabase) — в [AGENTS.md](AGENTS.md).
 
 
 ## Getting Started
