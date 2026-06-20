@@ -157,18 +157,24 @@ Simplest structurally; removes `DeferredCatalog` and the remount trigger outrigh
   possible LCP competition). **Must be measured**, not assumed. This trades simplicity for a likely
   PSI regression and is the least aligned with "same or better perf."
 
-**Status:** loop + drag + snap are non-negotiable, so native-only (Option A) is off the table — Embla
-stays. **Move 1 is done** via the `memo` guard (§2d): it neutralises the remount without removing
-Embla, the deferral, or any function, and it deleted the resilience hack — so the bug is fixed at the
-source with *less* code than the checkpoint. This is a cleaner outcome than Option B (it doesn't need
-to chase/stop the Next-internal route re-render — it just makes the hero inert to it).
+**Status: DONE.** loop + drag + snap are non-negotiable, so native-only (Option A) was off the table —
+Embla stays. Both moves shipped (2026-06-20, user-confirmed on Firefox):
 
-**Still open (Move 2, gated on measurement):** whether the hero's "hydrate-in-place" machinery
-(attach handoff / `scrollend` / preload) can be replaced by a plain eager `embla-carousel-react`. The
-[2026-06-20 PSI baseline](./psi-baseline.md) shows the score is LCP-bound and TBT has ~170 ms of
-unused headroom, so eager Embla is *likely* PSI-neutral — but measure 100 cache-busted runs
-before/after before committing. Option C (SSR-stream the catalog) remains the risky one (TBT is
-30%-weighted).
+- **Move 1** — `memo` guard (§2d): neutralised the remount and deleted the resilience hack.
+- **Move 2** — replaced the entire hydrate-in-place machinery (deferred Embla core + manual
+  `attachEmbla`/`scrollend`/`preload`/`currentBaselineIndex`/fallback) with the standard eager
+  `useEmblaCarousel` hook from `embla-carousel-react`. The slides still render in SSR HTML so the LCP
+  cover paints before Embla hydrates; loop + drag + snap intact; the `memo` guard kept. The unused
+  direct `embla-carousel` core dep was dropped (still pulled transitively by `-react`).
+  - **PSI: neutral.** 100 cache-busted runs vs baseline — mean perf **96.4 → 96.3** (within noise),
+    LCP p50 2401 both, TBT actually a touch lower (the ~5 KB eager Embla disappears into the TBT
+    headroom; LCP, the score driver, is untouched). The hypothesis from the baseline held.
+  - **Tradeoff:** the hero is now swipeable *after hydration* rather than zero-JS. The hero hydrates
+    early (top of the tree) so the window is small; PSI doesn't interact so the score is unaffected.
+
+The result is **substantially less code than the rollback checkpoint at equal performance and equal
+function** — the goal. Option C (SSR-stream the catalog) was never pursued: it's the risky one (TBT is
+30%-weighted) and unnecessary now.
 
 ---
 
