@@ -13,6 +13,11 @@ export type SliderProps = {
 
 const ATTACH_AFTER_SCROLL_MS = 180
 
+// [TEMP DEBUG] count Slider component instances across the page lifetime. A second instance =
+// the component was unmounted + remounted (the spring-back: the new instance is the native
+// baseline at slide 0). Module-level so it survives the unmount.
+let sliderMountSeq = 0
+
 // embla-carousel CORE (framework-agnostic). Its default export attaches imperatively to an existing
 // DOM node — so we enhance the SSR'd carousel IN PLACE rather than swapping to a second React
 // component. `import()` keeps it out of the eager bundle (its own chunk, fetched only on carousel
@@ -46,6 +51,14 @@ const Slider = memo(function Slider({ items }: SliderProps) {
 
   const count = items?.length ?? 0
   const showPagination = count > 1
+
+  // [TEMP DEBUG] mount/unmount of THIS Slider instance, to catch the remount + its timing relative
+  // to the Suspense/catalog logs (RenderLog) below.
+  useEffect(() => {
+    const id = ++sliderMountSeq
+    console.log(`[hero] Slider MOUNT #${id} @${Math.round(performance.now())}ms`)
+    return () => console.log(`[hero] Slider UNMOUNT #${id} @${Math.round(performance.now())}ms`)
+  }, [])
 
   const preload = useCallback(() => {
     void loadEmbla()
