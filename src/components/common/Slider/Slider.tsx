@@ -74,6 +74,8 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           return
         }
         const idx = Math.max(0, Math.min(startIndex, count - 1))
+        // [TEMP DEBUG] verify the index read + Embla's resolved slide through the attach.
+        console.log('[hero] attach.then', { startIndex, idx, scrollLeftAtAttach: vp.scrollLeft, clientWidth: vp.clientWidth })
         // Hand off from native scroll → Embla transform without a visual flash. Pre-position the
         // container at the target slide FIRST, so that even if Embla applies its own transform a
         // frame later, no paint ever shows slide 0 (the "flash back to the first slide"). Then drop
@@ -86,6 +88,11 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
         const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
+        // [TEMP DEBUG] Embla's resolved slide right after init, after one frame, and after settle.
+        console.log('[hero] embla inited, selectedSnap=', api.selectedScrollSnap(), 'expected', idx)
+        api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap()))
+        requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap()))
+        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap()), 200)
         const onSelect = () => setActive(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)
@@ -141,7 +148,10 @@ const Slider = memo(function Slider({ items }: SliderProps) {
     if (!vp || !SCROLLEND_SUPPORTED) return
     const onScrollEnd = () => {
       if (emblaApiRef.current) return
-      attachEmbla(currentBaselineIndex())
+      const idx = currentBaselineIndex()
+      // [TEMP DEBUG] what the settled scroll position reads as, at the moment of attach.
+      console.log('[hero] scrollend', { scrollLeft: vp.scrollLeft, clientWidth: vp.clientWidth, idx })
+      attachEmbla(idx)
     }
     vp.addEventListener('scrollend', onScrollEnd)
     return () => vp.removeEventListener('scrollend', onScrollEnd)
