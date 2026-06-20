@@ -535,6 +535,22 @@ matching what each normalizer reads (same approach as fix-plan §5.2 used for
 `getParters`/`getTeam`/`getSubscriptions`/`getGiftCardProducts`). The 10 admin
 single-row fetches are lower priority (admin payload size is not a perf concern).
 
+**Blocker (2026-06-21):** The fix requires coordinated changes to both the `select()`
+calls AND the normalizer parameter types — narrowing from the full generated `Row` type
+to `Pick<Row, 'col1' | 'col2' | …>` so `tsc` enforces the projection covers what the
+normalizer reads (same pattern as fix-plan §5.2). This cannot be safely done without
+running `tsc`/`npm run build` to verify the type narrowing, and `node_modules` is not
+installed in the current environment. **Defer to when CI can verify** — make the change
+on a branch, push, and let the `docker-publish.yml` CI workflow (lint + build) catch any
+type mismatch. The 7 storefront/API `select('*')` calls to tighten:
+1. `src/api/cart/getCart.ts:12` — Cart (normalizer reads: id, name, subtitle, price, quantity, picture, discount, category; query also orders by created_at, id)
+2. `src/api/cart/cartServer.ts:15` — Cart (same as above)
+3. `src/api/boxSets/getBoxSets.ts:19` — BoxSets (normalizer reads: id, slug, name, description, price, discount, image, position, publish_date)
+4. `src/api/likes/getLikesServer.ts:78` — BoxSets (same columns as above, in getLikedBoxSetsServer)
+5. `src/api/orders/getOrders.ts:65` — Orders (normalizer reads 20+ columns: id, status, fulfillment_status, total, original_total, book_discount_total, promo_code, promo_discount, gift_card_total_applied, amount_due, delivery_method, delivery_email, shipping_name, shipping_phone, shipping_city, shipping_street, shipping_building, shipping_postal_code, tracking_number, tracking_carrier, admin_note, paid_at, created_at)
+6. `src/api/orders/getOrders.ts:82` — OrderItems (normalizer reads: id, book_id, name, price, quantity, category, box_set_name, order_id)
+7. `src/api/profile/updateProfile.ts:42` — Profiles (single-row after update; normalizer reads: user_id, nickname, avatar_path, full_name, phone, birthday, city, about, recovery_email, created_at, updated_at)
+
 ---
 
 ### CA4 🟡 25 barrel imports from `@/api/<domain>` instead of specific files (MEDIUM)
@@ -738,6 +754,14 @@ in two places. Maintenance burden + drift risk.
 both the client and server variants call, passing in the appropriate Supabase client.
 ~50 lines saved per file.
 
+**Investigated (2026-06-21): false positive.** `getOrdersServer.ts` is 16 lines and
+already delegates to the shared `loadOrders(supabase, statuses)` function in
+`getOrders.ts`. The client (`getOrders`/`getOrderHistory`) and server
+(`getOrdersServer`/`getOrderHistoryServer`) variants all call `loadOrders` with
+different clients + status filters — no query builder duplication exists. The 243-line
+file length is from the `fetchItemEnrichments` helper (edition → title → cover lookup),
+which is shared logic, not duplicated. **No fix needed.**
+
 ---
 
 ### Summary table
@@ -761,6 +785,28 @@ both the client and server variants call, passing in the appropriate Supabase cl
 low risk) → CA1 (highest impact, route-group error.tsx first) → CA3 + CA12 (data layer
 hygiene) → CA2 (type safety, largest effort) → CA5 + CA7 + CA8 (refactors, batch) →
 CA10 (page-level client boundaries, lowest priority).
+
+### Fix progress (2026-06-21)
+
+| # | Status | Notes |
+|---|--------|-------|
+| CA1 | ✅ Fixed | Added `src/app/error.tsx` (root) + `src/app/(site)/error.tsx` (storefront) + `src/app/(site)/loading.tsx` — 4 new files cover all 69 previously-uncovered routes. |
+| CA2 | 🟡 Blocked | Requires adding RPC return types to generated types or hand-curated supertypes + narrowing. Needs `tsc`/`npm run build` to verify (no `node_modules` in current env). Defer to a branch with CI verification. |
+| CA3 | 🟡 Blocked | Requires coordinated `select()` + normalizer `Pick<Row, …>` type changes. Needs `tsc` verification (see blocker note above). |
+| CA4 | ✅ Fixed | All 25 barrel imports replaced with specific-file imports across 27 files. |
+| CA5 | 🟡 Blocked | 69 hex replacements across ~30 SCSS files. Pure SCSS (compiles independently), but replacing `#fff`→`$color-text-title` (`#E0E0E0`) etc. changes visual appearance — needs visual review to confirm the semantic token matches the intent (some `#fff` may be intentionally pure white on accent backgrounds). |
+| CA6 | ✅ Fixed | 2 `overflow: auto` replaced with `<Scroller>` in `CatalogControls.tsx` (+ `.filterModal` restructured to flex column with Scroller on `filterPanels`). |
+| CA7 | 🟡 Blocked | Splitting `admin/books/actions.ts` (753 lines) into 4 files. Needs `tsc`/`npm run build` to verify `'use server'` directive + import paths. |
+| CA8 | 🟡 Blocked | Splitting `CatalogControls.tsx` (470 lines) into 5-6 sub-components. Needs visual testing to confirm the filter modal + sidebar render identically. |
+| CA9 | ✅ Fixed | 1 `<img>` in `ImageUploader.tsx` replaced with `<Image unoptimized>` (SVG + raster unified). |
+| CA10 | 🟡 Blocked | Restructuring 6 page-level `'use client'` pages to Server Components with client leaf forms. Needs `tsc`/build verification. |
+| CA11 | ✅ Fixed | Swallowed `.catch(() => {})` in `StorySubmitModal.tsx` replaced with `console.error` logging. |
+| CA12 | ✅ False positive | `getOrdersServer.ts` already delegates to shared `loadOrders` — no duplication exists. |
+
+**Summary:** 5 fixed (CA1, CA4, CA6, CA9, CA11), 1 false positive (CA12), 6 blocked
+(CA2, CA3, CA5, CA7, CA8, CA10) — all blocked by the inability to run `tsc`/`npm run
+build`/visual testing in the current environment. The blocked fixes should be attempted
+on a branch with CI verification (`docker-publish.yml` runs lint + build).
 
 ---
 
