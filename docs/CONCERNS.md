@@ -393,4 +393,375 @@ benefit (and costs a redundant fetch competing on Slow-4G).
 
 ---
 
+## CA — Code audit (2026-06-21): convention compliance + code smells
+
+A full-codebase audit against the convention docs (`docs/conventions/*.md`) plus a scan
+for antipatterns, code smells, redundant complexity, and coding mistakes. Findings are
+grouped by severity and each item is independently assessable + fixable. **Nothing below
+is a launch blocker** — the app runs, the money path works, RLS is enforced. These are
+maintainability/readability/consistency items.
+
+**Method:** grep + glob + graph (code-review-graph SQLite at `.code-review-graph/graph.db`,
+1980 nodes / 12079 edges / 738 files) + targeted file reads. Every finding cites the
+convention it violates and the file(s) involved.
+
+### What passed clean (no issues)
+
+- **No `any` usage** in any `.ts/.tsx` file — `TYPESCRIPT.md` `any` policy holds. ✅
+- **No `enum` usage** — all use `const` object + `typeof` union per `TYPESCRIPT.md`. ✅
+- **No `console.log`/`debug`/`info`** — `CODE_STYLE.md` rule holds (21 `console.error`/`warn`, allowed for error logging). ✅
+- **No `dangerouslySetInnerHTML`** — `CODE_STYLE.md` rule holds. ✅
+- **No class components** — `CODE_STYLE.md` rule holds. ✅
+- **No `@ts-ignore`/`@ts-expect-error`** — no suppressed type errors. ✅
+- **No `TODO`/`FIXME`/`HACK`/`XXX`** — no outstanding inline markers. ✅
+- **No `@import` in SCSS** — all use `@use`/`@forward` per `SCSS.md`. ✅
+- **No direct Supabase calls in components** — `DATA.md` boundary holds (all go through `src/api/*`). ✅
+- **No `'use client'` in layout files** — layouts are Server Components per `COMPONENTS.md`. ✅
+- **All Server Actions use `return { error }` pattern** — `ERROR_HANDLING.md` rule holds (no throws to client). ✅
+- **No `<Image>` without `alt`** — `SEO.md` accessibility rule holds. ✅
+- **No `@supabase/realtime-js` usage** — correctly stubbed via `next.config.ts` alias. ✅
+- **No dead code** — graph analysis finds no unreferenced exported functions (the 17 "no edge" hits are all entry points: `error.tsx`/`loading.tsx`/`robots.ts` exports, JSX-imported components, or the intentional devtools stub). ✅
+- **The `{...props}` spreads are typed/whitelisted** — `icons/index.tsx` uses `SVGProps<SVGSVGElement>`, `Button.tsx` destructs custom props before spreading rest. Per `CODE_STYLE.md` "whitelist props explicitly" — acceptable. ✅
+- **The 11 `.catch(() => {})` on storage cleanup** are explicitly allowed by `data-architecture-fix-plan.md` §5.2 ("Leave the deliberate best-effort `.catch(() => {})` storage-cleanup calls as-is"). ✅
+- **Dependencies are exact-pinned** — `CODE_STYLE.md` rule holds (no `^`/`~`/`latest` in `package.json`). ✅
+
+---
+
+### CA1 🟠 69 route segments with NO `loading.tsx` AND NO `error.tsx` (HIGH)
+
+**Convention violated:** `ERROR_HANDLING.md` — "Every route segment that performs async
+data fetching should have a co-located `error.tsx`" + "Every route that fetches data
+should have a `loading.tsx`".
+
+**Finding:** 69 of 72 `page.tsx` files have **neither** a co-located `loading.tsx` **nor**
+an `error.tsx`. Only 3 routes have error boundaries: `src/app/(site)/books/[slug]/error.tsx`
+and `src/app/admin/(panel)/error.tsx` exist. No route-segment-level `loading.tsx` exists
+except the catalog's `(catalog)/loading.tsx` and `books/[slug]/loading.tsx`.
+
+**Impact:** A Supabase timeout or RPC error on any of these 69 routes renders a blank
+page or an unformatted server error — no skeleton, no retry UI. The `error.tsx` gap is
+the more serious half: without an error boundary, a fetch failure in a Server Component
+crashes the **entire route tree** up to the nearest boundary (which, for most routes, is
+the root `app/error.tsx` — which also doesn't exist).
+
+**Files affected:** every `page.tsx` under `src/app/(site)/` (except `books/[slug]/`) +
+every `page.tsx` under `src/app/admin/(panel)/` (except the shared `error.tsx`). Full
+list in the audit output. Key high-traffic routes missing both: `/` (home), `/about`,
+`/cart`, `/checkout`, `/profile/*`, `/authors/[id]`, `/dino-magazine/*`, all admin
+sections (`/admin/books`, `/admin/orders`, `/admin/articles`, …).
+
+**Proposed fix:** Add `error.tsx` (Client Component, `'use client'`, with a Russian
+"Не удалось загрузить страницу" + retry button) to each route group that doesn't have
+one — at minimum: `src/app/(site)/error.tsx` (storefront-wide), `src/app/admin/(panel)/error.tsx`
+(already exists). Then add `loading.tsx` skeletons to the high-traffic routes (home,
+catalog, book detail, profile, admin list pages). The route-group-level `error.tsx`
+covers all child routes, so 2-3 files fix the storefront + admin gaps; per-route
+`loading.tsx` is the larger effort.
+
+---
+
+### CA2 🟠 25 `as unknown as` type casts without narrowing (HIGH)
+
+**Convention violated:** `TYPESCRIPT.md` — "Use `unknown` at unsafe boundaries, then
+narrow" + "Never use `any` in new code". The `as unknown as T` pattern is a double-cast
+that bypasses the type system without any narrowing — it's the `any` escape hatch in
+disguise.
+
+**Finding:** 25 `as unknown as` casts across 13 files. They fall into 3 categories:
+
+1. **RPC return-type casts (8 occurrences)** — `supabase.rpc()` returns `unknown` for
+   RPCs whose return type isn't in the generated types; the code casts directly to the
+   row type without a runtime check:
+   - `src/api/articles/getArticleBySlug.ts:33` — `data as unknown as ArticleRow`
+   - `src/api/articles/getArticlesPage.ts:59` — `data as unknown as ArticleRow[]`
+   - `src/api/articles/getMoreArticlesForAuthor.ts:47,69` — same pattern
+   - `src/api/periodicals/getPeriodical.ts:85` — `data as unknown as StoryRow[]`
+   - `src/api/likes/getLikesServer.ts:84` — `data as unknown as BoxSetRow[]`
+   - `src/api/boxSets/getBoxSetBooksMap.ts:48` — `data as unknown as Row[]`
+   - `src/api/admin/subscribers/index.ts:29,37` — `admin.from as unknown as …` + `data as unknown as SubscriberRow[]`
+
+2. **JSON field casts (5 occurrences)** — casting `Record<string, unknown>` or plain
+   objects to the generated `Json` type:
+   - `src/lib/admin/books/actions.ts:210,243` — `blurs as unknown as Json`
+   - `src/lib/admin/articles/actions.ts:54` — `[] as unknown as Json`
+   - `src/lib/admin/audit.ts:49` — `metadata as unknown as Json`
+
+3. **"Loose writer" table-access casts (12 occurrences)** — admin actions that write to
+   tables/fields not fully covered by generated types, using a hand-rolled `LooseWriter`
+   type to work around the type system:
+   - `src/lib/admin/books/actions.ts:258,636,678,725`
+   - `src/lib/admin/authors/actions.ts:26,190`
+   - `src/lib/admin/boxSets/actions.ts:28,165`
+   - `src/lib/admin/subscriptions/actions.ts:20`
+   - `src/lib/admin/giftCards/actions.ts:19`
+   - `src/lib/admin/articles/actions.ts:23`
+   - `src/lib/admin/featured/actions.ts:40`
+
+**Impact:** A schema change (column rename, type change, RPC signature change) will not
+be caught by `tsc` at these call sites — the cast silences the compiler. The data-architecture
+audit (F4) already flagged the RPC cast pattern and the fix-plan resolved it for the
+catalog RPCs, but these 25 casts remain in non-catalog paths.
+
+**Proposed fix:** For category 1 (RPC returns): add the RPC return types to the generated
+`Database['public']['Functions']` (or a hand-curated supertype) and drop the cast. For
+category 2 (JSON): use `JSON.stringify`/`JSON.parse` with a validation function or a
+`zod` schema. For category 3 (loose writers): regenerate types to cover the admin
+tables/fields, or add a typed wrapper. This is a medium effort (~13 files) but
+high-value — it closes the last type-safety gap from the data-architecture audit.
+
+---
+
+### CA3 🟡 19 `select('*')` calls — DATA.md says use explicit projections (MEDIUM)
+
+**Convention violated:** `DATA.md` — "Tighten the handful of list-feeding `select('*')`
+into explicit projections" + `data-architecture-fix-plan.md` §5.2 (F10) which was marked
+✅ for storefront lists but left admin single-row fetches as-is.
+
+**Finding:** 19 `select('*')` calls remain. Breakdown:
+- **Admin single-row fetches (10)** — `getAdminBook`, `getAdminOrder` (×3), `getAdminBoxSet`,
+  `getAdminAuthor`, admin subscriptions, admin gift cards, admin promo codes, admin
+  articles, admin subscribers, admin audit. These were intentionally left as-is in
+  fix-plan §5.2 ("Left single-row admin edit fetches (`…eq('id').maybeSingle()`)… as-is").
+- **Storefront/API paths (9)** — `getCart`, `cartServer`, `getBoxSets`, `getLikesServer`,
+  `getOrders` (×2), `updateProfile`, `getAdminBook`. Some of these should have been
+  tightened in F10 but were missed.
+
+**Impact:** `select('*')` returns all columns, including ones the normalizer doesn't
+read — larger payloads + a schema change (new column) silently inflates the wire payload.
+Not a correctness bug, but a drift risk.
+
+**Proposed fix:** Tighten the 9 storefront/API `select('*')` to explicit column lists
+matching what each normalizer reads (same approach as fix-plan §5.2 used for
+`getParters`/`getTeam`/`getSubscriptions`/`getGiftCardProducts`). The 10 admin
+single-row fetches are lower priority (admin payload size is not a perf concern).
+
+---
+
+### CA4 🟡 25 barrel imports from `@/api/<domain>` instead of specific files (MEDIUM)
+
+**Convention violated:** `docs/perf/README.md` §4 "Bundle hygiene" — "Bust barrel
+imports. `@/api/<domain>` barrels re-export everything (mutations → zod, etc.), so a
+barrel import drags it all into the eager chunk and defeats tree-shaking. Import query
+keys / functions from their specific file, not the barrel."
+
+**Finding:** 25 imports from `@/api/<domain>` (barrel) instead of `@/api/<domain>/specificFile`.
+Examples:
+- `import { getOrders, ordersQueryKey } from '@/api/orders'` (×3: MyBooksList,
+  MyCoursesList, OrderHistoryList)
+- `import { uploadAvatar } from '@/api/profile'` (AvatarUpload)
+- `import { getBook, getSimilarBooks, getEditionPhotos, getBookEditions, getAllBookSlugs } from '@/api/books'` (book detail page)
+- `import { getFeaturedBooks } from '@/api/books'` (home page)
+- `import { getAuthor } from '@/api/authors'` (author page)
+- Plus 18 more.
+
+**Impact:** Each barrel import pulls the entire `index.ts` re-export graph into the
+caller's chunk, including modules the caller doesn't use (e.g., importing `getBook` from
+`@/api/books` also pulls `searchBooks`, `getBooks`, `getCatalogFacets`…). On the client
+bundle, this is a perf regression (more bytes shipped). On the server, it's a cold-start
+cost. The perf playbook says this was measured as ~5% deps, but it's still a hygiene rule.
+
+**Proposed fix:** Mechanically replace `from '@/api/<domain>'` with
+`from '@/api/<domain>/<specificFile>'` for each named import. 25 files, trivial `sed`-class
+change. Verify with `npm run build` + bundle analyzer.
+
+---
+
+### CA5 🟡 69 hardcoded hex colors in component SCSS files (MEDIUM)
+
+**Convention violated:** `SCSS.md` — "All design tokens live in `src/styles/params.scss`.
+Use them; do not hardcode values." + "When introducing a new token, add it to
+`params.scss` — never scatter literals."
+
+**Finding:** 69 hardcoded hex color literals (`#fff`, `#000`, `#ffffff`, `#8e8e8e`,
+`#b1b1b1`, `#ff6b6b`, `#1c1c1c`, `#2a1414`, `#120a0a`, `#a10202`) across ~30 component
+`.module.scss` files. The worst offenders:
+- `Button.module.scss` (4), `ArticleCard.module.scss` (4), `AdminSideNav.module.scss` (4)
+- `ProfileSideNav.module.scss` (3), `ProfileMainPanel.module.scss` (3),
+  `EmailConfirmBanner.module.scss` (3), `StorySubmitModal.module.scss` (3),
+  `ArticleBody.module.scss` (3), `PartnerLogo.module.scss` (3)
+
+Most common violations: `#fff`/`#ffffff` (should be `$color-text-title` or a semantic
+token), `#000` (should be `$color-bg-deep`), `#8e8e8e` (should be a `$color-text-muted`
+token). Some are in comments (referencing Figma values) — those are informational, not
+violations. The `params.scss` literals themselves are correct (that IS the token file).
+
+**Impact:** A theme change (e.g., shifting the dark palette) requires touching every
+component file instead of just `params.scss`. Also makes it harder to audit contrast
+ratios for WCAG compliance — the tokens in `params.scss` are the audit surface.
+
+**Proposed fix:** Add missing semantic tokens to `params.scss` (e.g., `$color-text-on-card`,
+`$color-text-muted`, `$color-overlay-dark`) and replace the 69 literals across ~30 files.
+Mechanical but touches many files; batch into one commit.
+
+---
+
+### CA6 🟡 2 `overflow: auto` in `CatalogControls.module.scss` — should use `<Scroller>` (MEDIUM)
+
+**Convention violated:** `SCSS.md` — "never write raw `overflow: auto` on a container.
+Wrap it with `<Scroller>` instead." + `AGENTS.md` — "Custom scrollbars via `<Scroller>`.
+Wrap overflow containers with `<Scroller>` from `@/components/common/Scroller` instead of
+raw `overflow: auto`."
+
+**Finding:** `src/components/book/CatalogControls/CatalogControls.module.scss:73,228`
+both use `overflow: auto` — these should be wrapped with the `<Scroller>` component
+instead, so they get the custom `os-theme-chtivo` scrollbar.
+
+**Proposed fix:** Wrap the two overflow containers in `CatalogControls.tsx` with
+`<Scroller>` and remove the `overflow: auto` from the SCSS. 2 lines of TSX + 2 lines of
+SCSS.
+
+---
+
+### CA7 🟡 `src/lib/admin/books/actions.ts` is 753 lines — exceeds the ~200-line guideline (MEDIUM)
+
+**Convention violated:** `CODE_STYLE.md` — "If a component exceeds ~200 lines of JSX +
+logic, split it into smaller focused sub-components" (applies to any module, not just
+components) + `COMPONENTS.md` component-size rule.
+
+**Finding:** `src/lib/admin/books/actions.ts` is 753 lines — 3.7× the guideline. It
+contains all book/edition/worker/trailer/book-photo/demo CRUD actions in one file:
+`createBook`, `updateBook`, `deleteBook`, `updateProduct`, `uploadBookCover`,
+`uploadBookPhotos`, `deleteBookPhoto`, `syncBookPhotoBlurs`, `uploadTrailer`,
+`deleteTrailer`, `uploadDemo`, `deleteDemo`, `uploadWorkers`, `deleteWorker`, etc.
+
+**Impact:** Hard to navigate, hard to review changes, high risk of merge conflicts.
+Also concentrates all the `as unknown as LooseWriter` casts (CA2 category 3) in one file.
+
+**Proposed fix:** Split into `src/lib/admin/books/` as a directory:
+`actions.ts` (book CRUD), `editions.ts` (edition/product actions), `media.ts` (cover/
+photo/trailer/demo upload + delete), `workers.ts` (worker CRUD). Each file ~150-200
+lines. The `'use server'` directive goes at the top of each. Re-export from an
+`index.ts` barrel if callers import by directory.
+
+---
+
+### CA8 🟡 `CatalogControls.tsx` is 470 lines — exceeds the ~200-line guideline (MEDIUM)
+
+**Convention violated:** `CODE_STYLE.md` + `COMPONENTS.md` — ~200-line limit.
+
+**Finding:** `src/components/book/CatalogControls/CatalogControls.tsx` is 470 lines.
+It renders the catalog sidebar (filters + sorting + category + price range) and manages
+all the URL-search-params sync + local state. Contains inline `useMemo` for filtered
+authors, category labels, and multiple `useState` hooks.
+
+**Proposed fix:** Extract sub-components: `FilterSection` (collapsible section wrapper),
+`AuthorFilter` (author multi-select),`CategoryFilter`, `PriceRangeFilter`,
+`SortControls`. Each ~50-80 lines. `CatalogControls` becomes the orchestrator (~100
+lines) that manages URL state + composes the sub-components. Co-locate sub-components in
+the same folder per `COMPONENTS.md`.
+
+---
+
+### CA9 🟡 1 `<img>` in `ImageUploader.tsx` — should use `next/image` (MEDIUM)
+
+**Convention violated:** `CODE_STYLE.md` — "Use `next/image` instead of `<img>` for all
+images" + `PERFORMANCE.md` — "Always use `next/image` instead of `<img>`."
+
+**Finding:** `src/components/admin/ImageUploader/ImageUploader.tsx:60` uses
+`<img src={url} alt={label ?? 'Изображение'} className={styles.svg} />` — a raw `<img>`
+for the preview of an uploaded image. The `className={styles.svg}` suggests it's
+rendering an SVG preview, which may be the reason `next/image` was skipped (SVGs via
+`next/image` require `unoptimized`).
+
+**Proposed fix:** Replace with `<Image src={url} alt={label ?? 'Изображение'} unoptimized fill className={styles.svg} />` (or `width`/`height` if the dimensions are known). The
+`unoptimized` prop handles the SVG case. 1 line change.
+
+---
+
+### CA10 🟡 6 page-level `'use client'` on form pages (LOW)
+
+**Convention violated:** `CODE_STYLE.md` — "Keep `'use client'` boundaries as deep in
+the tree as possible — push them to leaf components, not layouts" + `COMPONENTS.md` —
+"Add `'use client'` only at the lowest boundary that requires it."
+
+**Finding:** 6 `page.tsx` files are full Client Components:
+- `src/app/(site)/auth/register/page.tsx`
+- `src/app/(site)/auth/forgot-password/page.tsx`
+- `src/app/(site)/auth/reset-password/page.tsx`
+- `src/app/(site)/cart/page.tsx`
+- `src/app/(site)/checkout/page.tsx`
+- `src/app/admin/login/page.tsx`
+
+These are form-heavy interactive pages, so `'use client'` is functionally correct. But
+the convention says to push the boundary to a leaf component (e.g., `LoginForm.tsx` is
+already a client leaf — `auth/login/` does it right). The form pages could be Server
+Components that render a client leaf form, passing in any server-fetched data as props.
+
+**Impact:** Minor — these pages ship more JS than necessary (the page-level framework
+code is client-side). For auth pages this is negligible (small pages). For `cart` and
+`checkout` it's slightly more impactful (the page shell + form validation logic is
+client-side). Not a perf emergency given the defer-behind-interaction strategy.
+
+**Proposed fix:** For `cart` and `checkout`: extract the interactive form into a
+`CartView.tsx`/`CheckoutForm.tsx` client leaf, make the `page.tsx` a Server Component
+that fetches any needed data (cart, profile, box-set flags) and passes it as props. For
+the auth pages: same pattern but lower priority (pages are tiny). 6 files, medium effort.
+
+---
+
+### CA11 🟡 1 swallowed non-storage error — `notifyStorySubmissionAction.catch(() => {})` (LOW)
+
+**Convention violated:** `ERROR_HANDLING.md` — "Never swallow errors silently — always
+propagate, log, or surface them" + `CODE_STYLE.md` — "Do not swallow errors silently."
+
+**Finding:** `src/components/authors/StorySubmit/StorySubmitModal.tsx:117`:
+```ts
+void notifyStorySubmissionAction({ authorName, coverLetter, path: result.path }).catch(() => {})
+```
+This swallows the admin email notification error completely — no `console.error`, no
+toast. The action itself (`src/lib/stories/actions.ts`) logs a `console.warn` if
+`ADMIN_NOTIFICATIONS_EMAIL` is unset, but if the Resend send itself fails (API error,
+network), the error is lost here.
+
+**Note:** The 11 `.catch(() => {})` on **storage cleanup** calls in admin actions are
+explicitly allowed by `data-architecture-fix-plan.md` §5.2 — those are best-effort
+storage deletes where a failure is non-actionable. This one is different: it's an email
+notification where a failure could mean the editorial team never sees a submission.
+
+**Proposed fix:** Replace `.catch(() => {})` with `.catch((err) => console.error('[story submission] notification failed', err))` — log it server-side so it's visible in
+logs, even if the user doesn't see a toast (the upload succeeded, so the author's action
+is complete). 1 line change.
+
+---
+
+### CA12 🟡 `src/api/orders/getOrders.ts` is 243 lines with duplicated query logic (LOW)
+
+**Finding:** `src/api/orders/getOrders.ts` (243 lines) builds two nearly-identical
+Supabase queries — one for the client-side `getOrders` (via browser client) and one for
+`getOrdersServer` (via server client). The query builder, column selection, and
+normalization are duplicated. Same pattern in `getOrderHistory.ts`.
+
+**Impact:** A change to the order query (new column, new filter, new join) must be made
+in two places. Maintenance burden + drift risk.
+
+**Proposed fix:** Extract a shared `buildOrdersQuery(client, userId, opts)` helper that
+both the client and server variants call, passing in the appropriate Supabase client.
+~50 lines saved per file.
+
+---
+
+### Summary table
+
+| # | Finding | Severity | Convention | Files | Effort |
+|---|---------|----------|------------|-------|--------|
+| CA1 | 69 routes with no loading.tsx + no error.tsx | 🟠 HIGH | ERROR_HANDLING.md | 69 routes (fix with 2-3 route-group error.tsx + per-route loading.tsx) | Medium |
+| CA2 | 25 `as unknown as` casts without narrowing | 🟠 HIGH | TYPESCRIPT.md | 13 files | Medium |
+| CA3 | 19 `select('*')` calls | 🟡 MED | DATA.md | 10 files (9 storefront + 10 admin) | Low |
+| CA4 | 25 barrel imports | 🟡 MED | perf/README.md | 25 files | Low (mechanical) |
+| CA5 | 69 hardcoded hex colors in component SCSS | 🟡 MED | SCSS.md | ~30 files | Medium (batch) |
+| CA6 | 2 `overflow: auto` instead of `<Scroller>` | 🟡 MED | SCSS.md | 1 file | Trivial |
+| CA7 | `admin/books/actions.ts` 753 lines | 🟡 MED | CODE_STYLE.md | 1 file (split into 4) | Medium |
+| CA8 | `CatalogControls.tsx` 470 lines | 🟡 MED | CODE_STYLE.md | 1 file (split into 5-6) | Medium |
+| CA9 | 1 `<img>` instead of `next/image` | 🟡 MED | CODE_STYLE.md | 1 file | Trivial |
+| CA10 | 6 page-level `'use client'` form pages | 🟡 LOW | CODE_STYLE.md | 6 files | Medium |
+| CA11 | 1 swallowed non-storage error | 🟡 LOW | ERROR_HANDLING.md | 1 file | Trivial |
+| CA12 | Duplicated order query logic | 🟡 LOW | DRY | 2 files | Low |
+
+**Recommended fix order:** CA6 + CA9 + CA11 (trivial, ship first) → CA4 (mechanical,
+low risk) → CA1 (highest impact, route-group error.tsx first) → CA3 + CA12 (data layer
+hygiene) → CA2 (type safety, largest effort) → CA5 + CA7 + CA8 (refactors, batch) →
+CA10 (page-level client boundaries, lowest priority).
+
+---
+
 *Migrated from `docs/AUDIT.md` (historical audit snapshot, deleted 2026-06-06).*
