@@ -34,7 +34,17 @@ pre-commit hook on staged files (`AGENTS.md`). This doc is the plan for changing
 - **No test framework is installed yet.** The stack below is the proposal.
 - **Self-hosted Supabase, not Supabase Cloud.** The local dev stack runs via
   `supabase start` (Docker) — Postgres 17, GoTrue, PostgREST, Storage, Kong, Realtime.
-  E2E tests must spin this up in CI.
+  E2E and integration tests spin this up in CI.
+- **Developer machines are NOT assumed to have the full Supabase stack running.** A
+  developer may have only Node.js installed (e.g., working on a pure frontend component
+  fix with no local Supabase). Therefore **all testing is CI-authoritative** — CI is the
+  source of truth for whether tests pass, and CI gates deployment. Unit tests are the only
+  layer that can optionally run locally (they're pure, no Supabase dependency);
+  integration and E2E tests run in CI only. See §5 for the CI design and §9 for the local
+  dev workflow (unit-only).
+- **CI must gate production deployment.** The existing `deploy-production.yml` workflow
+  must require the test workflows (`test.yml` + `test-e2e.yml`) to pass before the
+  build-and-push + deploy jobs run. No green tests → no deploy. See §5.7.
 - **591 TS/TSX source files, 72 pages, 14 API routes, 30 SQL RPC functions, 20 Server
   Action files.** Full coverage is not realistic day-one; the plan below prioritizes the
   high-risk surfaces first.
@@ -119,11 +129,14 @@ pre-commit hook on staged files (`AGENTS.md`). This doc is the plan for changing
     "test:unit": "vitest run --dir src",
     "test:integration": "vitest run --dir tests/integration",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:ci": "vitest run --coverage && playwright test"
+    "test:e2e:ui": "playwright test --ui"
   }
 }
 ```
+
+> No `test:ci` script — CI runs the three layers as separate workflow jobs (`unit` →
+> `integration` → `e2e`), not a combined command. This lets each layer fail and report
+> independently, and matches the CI design in §5.
 
 ---
 
@@ -536,7 +549,9 @@ jobs:
 
 This runs on every push to `update`/`main`/`staging` + PRs. Unit tests (~5s) gate
 integration tests (~60s with Supabase warm). Total ~2-3 min. The existing `docker-publish.yml`
-CI workflow (lint + build) stays as-is; this adds the test gate alongside it.
+CI workflow (lint + build) stays as-is; this adds the test gate alongside it. Neither this
+workflow nor the E2E workflow below assumes the developer ran any tests locally — CI is the
+authoritative runner.
 
 ### 5.6 The `audit.yml` extension
 
@@ -567,6 +582,75 @@ new reusable workflow) to also run the RLS drift check:
 
 This makes the RLS invariant (`AGENTS.md` — "every public table must be RLS-protected") a
 CI-enforced gate, not just a local script.
+
+### 5.7 Deploy gate — tests must pass before production deploy
+
+The existing `deploy-production.yml` workflow already has a hard gate: the `audit` job
+(calls `audit-reusable.yml` for `npm audit`) must pass before `build-and-push` runs. The
+test workflows are added as additional hard gates.
+
+**Approach A — `workflow_run` trigger (cleanest, no coupling between workflow files):**
+
+`deploy-production.yml` adds a guard job that waits for the test workflows to complete on
+the same SHA before allowing build-and-push:
+
+```yaml
+  # Add as the FIRST job, before build-and-push. Hard gate: no green tests → no deploy.
+  tests-pass:
+    name: Require green tests
+    runs-on: ubuntu-latest
+    # Check out the repo so we can query the GitHub API for workflow run status
+    steps:
+      - uses: actions/checkout@v5
+      - name: Wait for test.yml + test-e2e.yml on this SHA
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const required = ['Tests', 'E2E tests'];
+            const sha = context.sha;
+            for (let attempt = 0; attempt < 60; attempt++) {
+              const runs = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: sha,
+                status: 'completed',
+                per_page: 100,
+              });
+              const done = required.every(name => {
+                const run = runs.data.workflow_runs.find(r => r.name === name);
+                return run && run.conclusion === 'success';
+              });
+              if (done) return core.info('All required test workflows are green.');
+              const failed = required.find(name => {
+                const run = runs.data.workflow_runs.find(r => r.name === name);
+                return run && run.conclusion === 'failure';
+              });
+              if (failed) throw new Error(`Required workflow '${failed}' failed for ${sha}`);
+              core.info(`Waiting for test workflows (attempt ${attempt + 1}/60)...`);
+              await new Promise(r => setTimeout(r, 30000)); // 30s poll
+            }
+            throw new Error('Timed out waiting for test workflows to complete.');
+  build-and-push:
+    needs: [audit, tests-pass]   # ← add tests-pass here
+```
+
+**Approach B — inline the test jobs into `deploy-production.yml` (simpler, more coupling):**
+
+Copy the `unit`, `integration`, and `e2e` jobs directly into `deploy-production.yml` as
+jobs that `build-and-push` depends on. This duplicates the job definitions but avoids the
+polling logic. **Not recommended** — duplication drifts.
+
+**Approach C — reusable test workflow (best long-term):**
+
+Convert `test.yml` + `test-e2e.yml` jobs into a reusable workflow
+(`test-reusable.yml`, called via `workflow_call`), then have `deploy-production.yml` call
+it as a gate — same pattern as the existing `audit-reusable.yml`. This is the cleanest
+once the test jobs stabilize. Migrate to this after Phase 1.
+
+**Regardless of approach, the invariant is:** a push to `production` cannot build or
+deploy unless the test workflows for that exact SHA have all passed. A developer who
+pushes a frontend-only fix with no local Supabase gets the same gate as everyone else —
+CI runs the full stack and gates the deploy.
 
 ---
 
@@ -793,32 +877,46 @@ export default defineConfig({
 
 ## 9. Local development workflow
 
-### Running tests locally
+### CI is the authoritative test runner
+
+**All test layers run in CI.** A developer is never required to run tests locally to
+verify a change — CI is the gate. This is deliberate: a developer working on a frontend
+component fix may not have the local Supabase stack running (or installed at all), and
+should still be able to push a branch and get full test feedback from CI.
+
+### What a developer runs locally (optional, convenience only)
+
+**Unit tests** are the only layer that runs locally without infrastructure — they're pure
+functions with no Supabase/Next.js/browser dependencies:
 
 ```bash
-# Unit tests (no dependencies, instant)
+# Unit tests — no dependencies, instant, works on any machine with Node.js
 npm run test:unit
 
-# Integration tests (requires Supabase local stack running)
-supabase start                          # if not already running
-npm run test:integration
-
-# E2E tests (requires Supabase + starts Next.js dev server automatically)
-supabase start
-npm run test:e2e
-
-# E2E with Playwright UI (interactive debugging)
-npm run test:e2e:ui
-
-# Everything (CI-equivalent)
-supabase start
-npm run test:ci
+# Watch mode during TDD on a pure function
+npm run test:watch
 ```
 
-### Pre-commit hook extension
+**Integration and E2E tests do NOT run locally.** They require the full Supabase stack
+(Postgres, GoTrue, PostgREST, Storage, Kong, Inbucket) + a running Next.js server. A
+developer who wants to run them locally (e.g., debugging a flaky test) can — but it's
+opt-in, never required:
+
+```bash
+# ONLY if the developer has the full local stack installed and wants to debug locally:
+supabase start                          # requires Docker + supabase CLI
+npm run test:integration                # integration tests against local Supabase
+npm run test:e2e                        # E2E — Playwright starts the Next.js dev server
+npm run test:e2e:ui                     # interactive Playwright UI for debugging
+```
+
+The normal workflow is: push the branch → CI runs all three layers → review the Playwright
+report artifact if a test fails.
+
+### Pre-commit hook (unit-only)
 
 The existing `lint-staged` config runs ESLint on staged `.ts/.tsx/.js/.jsx` files. Extend
-it to also run unit tests on staged files (via `vitest related`):
+it to also run **unit tests only** on staged files (via `vitest related`):
 
 ```jsonc
 {
@@ -831,9 +929,23 @@ it to also run unit tests on staged files (via `vitest related`):
 }
 ```
 
-`vitest related` runs only the tests that import the staged file — fast, no need to run
-the full suite on every commit. Integration and E2E tests are not in the pre-commit hook
-(they need the Supabase stack).
+`vitest related` runs only the unit tests that import the staged file — fast, no Supabase
+dependency. If a staged file has no related unit tests, `vitest related` is a no-op (no
+failure). Integration and E2E tests are **not** in the pre-commit hook — they need the
+Supabase stack and are CI's job.
+
+### What happens when a developer pushes without running anything
+
+1. Developer pushes a feature branch (e.g., a frontend component fix, no local Supabase).
+2. `test.yml` triggers: runs `unit` job (~5s) → if green, runs `integration` job (~60s,
+   CI spins up the Supabase stack).
+3. `test-e2e.yml` triggers (feature-branch push): runs E2E (~10 min, CI spins up Supabase
+   + Next.js + Playwright).
+4. If any job fails, the PR is blocked from merging to `update` (required status check).
+5. If the developer later pushes to `production`, `deploy-production.yml` requires all
+   test workflows for that SHA to be green (§5.7) before build-and-push + deploy run.
+6. The developer never had to install Supabase, Docker, or run a single test command
+   locally. CI was the gate.
 
 ---
 
@@ -847,22 +959,32 @@ This is a large change. Do it in this order, each step independently shippable:
 
 2. **Write the first unit tests.** `src/lib/formatPrice.test.ts`,
    `src/lib/storage.test.ts`, `src/entities/book/normalize.test.ts`. ~20 tests. Verify
-   `npm run test:unit` passes. Add the `test.yml` CI workflow (unit-only job).
+   `npm run test:unit` passes locally (unit tests are pure, no Supabase needed). Add the
+   `test.yml` CI workflow (unit-only job). Confirm it passes in CI.
 
 3. **Write the first integration tests.** `tests/integration/rpc/catalog.test.ts` +
-   `tests/integration/rpc/pricing.test.ts`. Verify `npm run test:integration` passes
-   against the local Supabase stack. Add the integration job to `test.yml`.
+   `tests/integration/rpc/pricing.test.ts`. Add the integration job to `test.yml`.
+   **Verify in CI only** — do not assume a local Supabase stack. If a developer wants to
+   debug locally, they can opt-in via `supabase start && npm run test:integration`, but
+   the CI run is the authoritative verification.
 
 4. **Write the first E2E test.** `tests/e2e/home.spec.ts` (home → catalog → book detail).
-   Verify `npm run test:e2e` passes locally. Add the `test-e2e.yml` CI workflow.
+   Add the `test-e2e.yml` CI workflow. **Verify in CI only** — the workflow spins up the
+   full Supabase stack + Next.js + Playwright. Download the Playwright report artifact to
+   debug failures.
 
-5. **Expand.** Follow the Phase 1 → 2 → 3 priorities from §8. Each test is independently
-   mergeable — no "big bang" test PR.
+5. **Add the deploy gate.** Wire `deploy-production.yml` to require the test workflows
+   (§5.7). Start with Approach A (`workflow_run` poll) for Phase 1; migrate to Approach C
+   (reusable workflow) once the test jobs stabilize.
 
-6. **Add coverage thresholds.** Once Phase 1 is green, add the `coverage.thresholds` to
-   `vitest.config.ts` and enforce in CI.
+6. **Expand.** Follow the Phase 1 → 2 → 3 priorities from §8. Each test is independently
+   mergeable — no "big bang" test PR. CI is the gate throughout.
 
-7. **Extend `audit-reusable.yml`** with the RLS drift check job.
+7. **Add coverage thresholds.** Once Phase 1 is green in CI, add the `coverage.thresholds`
+   to `vitest.config.ts` and enforce in CI.
+
+8. **Extend `audit-reusable.yml`** with the RLS drift check job (or add it to `test.yml`
+   per §5.6).
 
 ---
 
