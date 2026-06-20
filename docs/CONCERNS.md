@@ -163,6 +163,60 @@ is ever shared out-of-band.)
 
 ---
 
+## S2 🟡 Git history contained a leaked DB credential — scrubbed locally + pushed to `update-scrubbed`; 7 branches still need force-push on GitHub
+
+`README.md` carried a hardcoded Supabase Postgres connection string with the **live DB
+password and VPS IP** (`postgresql://postgres:x8Hfa…@<vps-ip>:5432/...`) from
+2024-11-13 (commit `58d9a8ac`, "Workers Dashboard") through 2026-06-20. The password is
+the production Postgres credential — it lives only in the VPS `.env` on a separate
+machine, prod Postgres has no public port (docker-network-only), and the repo anon key
+is public-by-design. S1 still holds (`.env` was never committed); the leak was the
+README only. Note: the credential was **not rotated** — see the rotation note below.
+
+**Done 2026-06-20:**
+- Removed the credential from `README.md` on disk (the stale block → a pointer to
+  `AGENTS.md`) — commit `8d60940c` on `update`.
+- Rewrote all of git history with `git filter-branch --index-filter` (replaced the
+  password + IP in every `README.md`/`AGENTS.md` blob across all 2095 commits, all
+  refs). Verified clean: no blob reachable from any rewritten branch contains `x8Hfa`
+  (pickaxe + full blob scan both empty). `main` and `develop` never contained it
+  (their SHAs are unchanged).
+- Full mirror backup taken first → `/tmp/opencode/bookstore-app-backup-20260620-235314.git`
+  (all refs, 23292 objects); plus filter-branch's `refs/original/*` safety refs locally.
+- Pushed the scrubbed history to a **new branch `update-scrubbed`** (`0168c8bb`) — a
+  plain push (no force, no deploy trigger). `origin/update-scrubbed` verified clean.
+
+**Still pending — force-push to overwrite the leaky history on GitHub.** 7 branches on
+GitHub still carry the password in their history (local rewrite not pushed to them yet):
+
+| Branch | GitHub SHA (leaky) | Scrubbed SHA | Force-push impact |
+|--------|-------------------|--------------|-------------------|
+| `update` | `a47443a6…` | `0168c8bb…` | CI lint/build only |
+| `production` | `32c297cb…` | `2bebaff6…` | **triggers `deploy-production.yml`** (GHCR rebuild + VPS `app` restart) |
+| `feat/asymmetric-jwt-keys` | `d8449247…` | `da31d207…` | none (feature branch) |
+| `feat/ppr-phase0-layout` | `f938b06a…` | `61713985…` | none |
+| `feat/ppr-phase2-book-ssg` | `82131dac…` | `223352cd…` | none |
+| `feature/Workers` | `58d9a8ac…` | `eeee978a…` | none |
+| `feature/giveAdmin` | `2de1e80f…` | `c7010368…` | none |
+
+The 6 non-`production` branches are safe to force-push anytime. `production` is the
+only one with a side effect; the redeploy image content is **identical to the current
+deploy** (only `README.md`/`AGENTS.md` changed — no app/deploy files), so the restart
+is safe-but-real (~seconds). Options for `production`: (a) force-push directly and
+accept the rebuild; (b) temporarily disable `deploy-production.yml` on GitHub, force-push
+`production` (no redeploy), re-enable the workflow.
+
+**Password rotation:** not done. The credential lives only in the VPS `.env` (separate
+machine), prod Postgres is private-network-only, and the repo anon key is public-by-design.
+Rotation is **optional once the force-push completes**; do rotate if the pre-scrub
+GitHub history was cloned/forked externally before the overwrite.
+
+**Undo path:** `refs/original/*` (local) + the mirror backup at
+`/tmp/opencode/bookstore-app-backup-20260620-235314.git`. To restore a branch to its
+pre-rewrite SHA: `git branch -f <branch> refs/original/refs/…/<branch>` then push.
+
+---
+
 ## ✅ RESOLVED (2026-06-09) — `npm run build` broke under Next 16.2.6 (Turbopack default)
 
 The Next bump to 16.2.6 (commit `95918bf`) made Turbopack the default builder. The
