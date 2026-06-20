@@ -284,9 +284,12 @@ export async function loginAction(formData: FormData) {
 Gift-card cart rows use the existing `Cart.category = 'GiftCard'` enum value.
 They count toward the amount owed, but never toward promo-code discount bases.
 
-Pricing code must apply this invariant in both places:
-- client totals (`src/lib/cartTotals.ts`)
-- server checkout totals (`place_order` RPC)
+Pricing has a single server-side source of truth: the `compute_cart_totals(p_user_id)`
+RPC (migration `20260614120000`), which both `create_pending_order` and the read-only
+`quote_cart()` RPC call. The cart UI reads `quote_cart()` via `src/api/cart/quoteCart.ts`
+and composes optimistically — there is no client-side price math. (The old
+`src/lib/cartTotals.ts` and the legacy `place_order` RPC were removed in the
+data-architecture fix — see `docs/plans/data-architecture-fix-plan.md` F2/F9.)
 
 Wallet gift cards can pay only for the non-gift-card portion of the cart. A
 buyer cannot use a gift-card balance to buy new gift cards.

@@ -70,6 +70,11 @@ Place `error.tsx` files at the route level — they must be Client Components (`
 
 ## Client-Side Error Boundary
 
+> **Not yet implemented.** There is currently no app-root React Error Boundary in the
+> project (`src/components/common/ErrorBoundary/` does not exist). The pattern below is
+> the intended design when one is added. Until then, uncaught client-side render errors
+> propagate to Next.js's nearest `error.tsx` boundary.
+
 Wrap the application root with a React Error Boundary to catch unexpected client-side
 render errors. This prevents a single component crash from taking down the whole page.
 

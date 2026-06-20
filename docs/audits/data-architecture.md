@@ -7,6 +7,12 @@
 (`supabase_db_chtivo-next`) to verify RLS, grants, indexes, and scale.
 **Date:** 2026-06-13. **Branch:** `update`.
 
+> **Status (2026-06-20): all findings F1–F10 are resolved.** This audit is the
+> analysis snapshot; the remediation is tracked in
+> [data-architecture-fix-plan.md](../plans/data-architecture-fix-plan.md) (all phases ✅)
+> and the high-level backlog in [data-architecture-refactor.md](../plans/data-architecture-refactor.md).
+> Read the findings below as the *historical* problem statements, not open issues.
+
 > This is an analysis document. The actionable, prioritized backlog lives in
 > [docs/plans/data-architecture-refactor.md](../plans/data-architecture-refactor.md).
 

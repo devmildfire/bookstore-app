@@ -215,7 +215,6 @@ import Scroller from '@/components/common/Scroller'
 |-----------|----------|---------|
 | `Modal` | `components/common/Modal/` | Radix Dialog wrapper with Scroller for content |
 | `Skeleton` | `components/common/Skeleton/` | Loading placeholder (`text`, `rect`, `circle` variants) |
-| `ErrorBoundary` | `components/common/ErrorBoundary/` | Class-based React error boundary at app root |
 
 ## Layout Components
 
