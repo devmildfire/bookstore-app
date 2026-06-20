@@ -150,8 +150,8 @@ RPC arg now fails to compile (proven by the 4 bugs it caught).
 
 ### 3.1 Single source of truth for money (F2) — DONE
 **Approach (user-chosen):** single server-side pricing source, but keep the UI snappy via
-optimistic composition + a deferred price (no blocking round-trip per change). See
-[[feedback_optimistic_over_blocking]].
+optimistic composition + a deferred price (no blocking round-trip per change). See the
+"optimistic over blocking" feedback note.
 
 - ✅ Migration `20260614120000_compute_cart_totals.sql`:
   - `compute_cart_totals(p_user_id)` — the **one** pricing implementation (subtotal,

@@ -36,7 +36,7 @@ revenue metric.
 - **Lab scores fluctuate run-to-run**, mostly from TTFB (dynamic SSR + the Cloudflare tunnel) and
   Slow-4G variance — we've seen the same commit score 72 and 95. **Judge by a distribution, not one
   run.** (We sample the real PSI API on a cadence to get the spread — service-account auth, scope
-  `openid`; see [[reference-psi-api-access]] / the memory note.)
+  `openid`; see the PSI API access memory note.)
 
 **Reading DevTools Coverage correctly** (we got burned twice here):
 

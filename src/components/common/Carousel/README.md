@@ -131,9 +131,10 @@ is auto-disabled.
 
 ## Drag & click
 
-Custom pointer handlers on the viewport (Embla et al were tried and dropped —
-their loop modes didn't compose with `position: absolute` slides + centered
-preview at small slide counts):
+Custom pointer handlers on the viewport (Embla was tried and dropped for *this*
+component — its loop modes didn't compose with `position: absolute` slides + centered
+preview at small slide counts. Embla is still used elsewhere in the app — `Slider`
+and `CardCarousel` — just not here):
 
 * **`onPointerDown`** — captures the pointer and the starting X. Records
   whether the press started on the active slide (needed for fullscreen).

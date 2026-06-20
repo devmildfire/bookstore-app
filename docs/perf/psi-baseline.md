@@ -7,7 +7,7 @@ Slow-4G), so each snapshot is a **distribution over N runs**, not a single numbe
 against; don't overwrite old ones.
 
 Method: PSI API v5 `runPagespeed`, `strategy=mobile`, service-account OAuth (scope `openid` — see
-[[reference-psi-api-access]]). Script: `/tmp/psi/run.mjs`.
+the PSI API access memory note). Script: `/tmp/psi/run.mjs`.
 
 > **⚠️ The PSI API caches results per URL.** Rapid repeated calls to the *same* URL return the same
 > cached analysis (we saw 100 calls return *identical* LCP/FCP/TTI — zero variance, an artifact, not

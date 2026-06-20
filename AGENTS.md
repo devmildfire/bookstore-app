@@ -89,6 +89,8 @@ Note: `supabase db reset` does NOT restore auth users (re-run
 - **TanStack Query v5** for server-state caching and client-side data fetching
 - **SCSS Modules** for all styling; **Radix UI** primitives for accessible components
 - **OverlayScrollbars** v2 (`overlayscrollbars` + `overlayscrollbars-react`) for custom scrollbars via the shared `<Scroller>` wrapper
+- **Embla Carousel** (`embla-carousel-react`) for all carousels — the home hero (`Slider`) and every card strip (`CardCarousel`); eager, SSR-renders slides, loops. (The standalone `Carousel` in `common/Carousel/` is a custom no-dependency implementation for the book photo gallery — see its README.)
+- **Lexical** (`lexical` + `@lexical/react`) for the rich-text article editor in admin (`ArticleContentEditor`)
 - No MobX, no Tailwind, no styled-components, no Redux in the codebase
 
 ### Directory layout
