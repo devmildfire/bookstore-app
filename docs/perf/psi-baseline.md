@@ -9,7 +9,67 @@ against; don't overwrite old ones.
 Method: PSI API v5 `runPagespeed`, `strategy=mobile`, service-account OAuth (scope `openid` — see
 [[reference-psi-api-access]]). Script: `/tmp/psi/run.mjs`.
 
+> **⚠️ The PSI API caches results per URL.** Rapid repeated calls to the *same* URL return the same
+> cached analysis (we saw 100 calls return *identical* LCP/FCP/TTI — zero variance, an artifact, not
+> a stable site). To sample real run-to-run variance you **must bust the cache with a unique query
+> param** per run (`?psi=<salt>-<i>`); the home page ignores unknown params so it renders identically.
+> The 100-run snapshot below uses cache-busting; the 10-run one above (spaced ~3 min apart) avoided
+> the cache by timing instead.
+
 ---
+
+## 2026-06-20 — 100 independent mobile traces (cache-busted)
+
+`n=100`, cache-busted unique URLs, run concurrently. Raw data:
+[`data/psi-2026-06-20-mobile-100.jsonl`](./data/psi-2026-06-20-mobile-100.jsonl).
+
+| Metric | min | p10 | **p50** | p90 | max | mean | sd | CV% | budget |
+|---|---|---|---|---|---|---|---|---|---|
+| **Performance** | 92 | 93 | **97** | 98 | 100 | 96 | 2 | 2% | — |
+| **LCP** (ms) | 1727 | 2401 | **2401** | 3151 | 3226 | 2548 | 325 | 13% | < 2500 |
+| **FCP** (ms) | 920 | 1203 | **1501** | 1501 | 1652 | 1447 | 166 | 11% | < 1800 |
+| **TBT** (ms) | 0 | 5 | **28** | 49 | 163 | 28 | 21 | 75% | < 200 |
+| **CLS** | 0 | 0 | **0** | 0 | 0 | 0 | 0 | 0% | < 0.1 |
+| **Speed Index** (ms) | 920 | 1203 | **1501** | 2365 | 2749 | 1542 | 346 | 22% | — |
+| **TTI** (ms) | 2566 | 2824 | **2921** | 3166 | 3478 | 2945 | 129 | 4% | — |
+| **TTFB** (ms) | 4 | 11 | **16** | 55 | 229 | 28 | 36 | 130% | — |
+
+Perf histogram: `92:3  93:12  95:3  96:17  97:55  98:1  99:5  100:4`.
+LCP buckets (ms): `<2000:4  2000-2500:55  2500-3000:26  3000-3500:15  >3500:0`.
+
+**Which vitals are stable vs noisy:**
+
+- **Pinned / stable:** CLS (always 0), TTI (CV 4%), and the **score itself is tight** (CV 2%, bounded
+  92–100 — never leaves green).
+- **Moderate, and they *drive the score*:** LCP (CV 13%) and FCP (CV 11%).
+- **Noisy in relative terms but negligible in absolute impact:** TBT (CV 75% but max 163 ms — still
+  under the 200 ms "good" line), Speed Index (CV 22%, tracks LCP/FCP), and TTFB (CV 130% but median
+  only 16 ms; the 229 ms max is a one-off network spike).
+
+**What moves the score** (perf ≥ 97 vs ≤ 94 runs):
+
+| | LCP | FCP | TBT | SI | TTFB |
+|---|---|---|---|---|---|
+| perf ≥ 97 (65 runs) | **2361** | 1422 | 28 | 1424 | 23 |
+| perf ≤ 94 (15 runs) | **3161** | 1521 | 38 | 2137 | 26 |
+
+**Interpretation — important for the simplification work:**
+
+- **The score is LCP-bound.** The only metric that separates a 97 from a 93 is LCP (and SI, which
+  tracks it). FCP/TBT/TTFB barely differ between high and low scorers. To *raise* the median, target
+  LCP (the hero cover download + dynamic-SSR/tunnel TTFB), not more JS work.
+- **TBT is already deep in the green (median 28 ms, max 163 ms) and is NOT the score driver** — even
+  though it carries ~30% of the Lighthouse weight, we're using almost none of that headroom. This
+  means the JS-deferral machinery is protecting a metric that has enormous slack. Concretely:
+  - **Eager Embla on the hero is very likely PSI-safe** — ~5 KB + a tiny hydration against ~170 ms of
+    TBT headroom, and the LCP cover paints from SSR HTML regardless. (Still measure before/after.)
+  - **SSR-streaming the catalog (option C in [`hero-carousel-remount.md`](./hero-carousel-remount.md))
+    is the genuinely risky one** — hydrating ~14 cards could eat that TBT headroom and, because TBT is
+    30%-weighted, drag the score. Avoid unless measured.
+  - **Stopping the route re-render (option B) is PSI-neutral** — it changes *what* re-renders, not
+    *what loads*.
+- Because the lab score is a tight distribution (CV 2%), A/B-testing any change is reliable: run
+  100 cache-busted traces before and after and the median shift is trustworthy.
 
 ## 2026-06-19 — after the interaction-deferral work (Radix + Swiper + Supabase + Likes)
 
