@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useCart } from '@/contexts/cart'
 import Input from '@/components/common/Input'
-import type { ApplyPromoErrorReason } from '@/api/promo'
+import type { ApplyPromoErrorReason } from '@/api/promo/applyPromoCode'
 import styles from './PromoCodeForm.module.scss'
 
 const ERROR_LABELS: Record<ApplyPromoErrorReason, string> = {

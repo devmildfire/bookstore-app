@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getBookEditions } from '@/api/books'
+import { getBookEditions } from '@/api/books/getBook'
 import { attachEditions } from '@/api/books/attachEditions'
 import { normalizeBoxSet } from '@/entities/boxSet/normalize'
 import type { Book } from '@/entities/book/client'

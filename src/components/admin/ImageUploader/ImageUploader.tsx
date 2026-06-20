@@ -54,13 +54,14 @@ export default function ImageUploader({
     <div className={styles.wrap}>
       <div className={cn(styles.preview, styles[aspect])}>
         {url ? (
-          isSvg(url) ? (
-            // next/image can't render remote SVG; show it as a plain element.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={url} alt={label ?? 'Изображение'} className={styles.svg} />
-          ) : (
-            <Image src={url} alt={label ?? 'Изображение'} fill sizes='200px' className={styles.img} unoptimized />
-          )
+          <Image
+            src={url}
+            alt={label ?? 'Изображение'}
+            fill
+            sizes='200px'
+            className={isSvg(url) ? styles.svg : styles.img}
+            unoptimized
+          />
         ) : (
           <div className={styles.placeholder} aria-hidden />
         )}

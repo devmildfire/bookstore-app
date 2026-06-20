@@ -114,7 +114,9 @@ function StoryForm({
     if (result.status === 'ok') {
       setDone(true)
       // Notify the editorial team — best-effort, must not block or fail the UI.
-      void notifyStorySubmissionAction({ authorName, coverLetter, path: result.path }).catch(() => {})
+      void notifyStorySubmissionAction({ authorName, coverLetter, path: result.path }).catch((err) => {
+        console.error('[story submission] notification failed', err)
+      })
     } else {
       setFormError(result.message)
     }

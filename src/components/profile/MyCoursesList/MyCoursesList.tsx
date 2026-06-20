@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { getOrders, ordersQueryKey } from '@/api/orders'
+import { getOrders, ordersQueryKey } from '@/api/orders/getOrders'
 import { itemLink } from '@/lib/orderDisplay'
 import type { OrderItem } from '@/entities/order/client'
 import styles from './MyCoursesList.module.scss'

@@ -1,13 +1,9 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  allLikesQueryKey,
-  getLikedIds,
-  likedIdsQueryKey,
-  toggleLike,
-  type LikeItemType,
-} from '@/api/likes'
+import { allLikesQueryKey, getLikedIds, likedIdsQueryKey } from '@/api/likes/getLikes'
+import { toggleLike } from '@/api/likes/toggleLike'
+import type { LikeItemType } from '@/api/likes/types'
 import useSessionActive from '@/hooks/useSessionActive'
 
 // Returns the set of liked item_ids for the current user for one type.

@@ -4,7 +4,7 @@ import { useRef, useLayoutEffect, useState } from 'react'
 import Link from 'next/link'
 import cn from 'classnames'
 import BookCover from './BookCover'
-import type { PeriodicalIssue } from '@/api/periodicals'
+import type { PeriodicalIssue } from '@/api/periodicals/getPeriodical'
 import styles from './PeriodicalView.module.scss'
 
 // Cover + «Содержание» side-by-side. On desktop/tablet the story list (often 12

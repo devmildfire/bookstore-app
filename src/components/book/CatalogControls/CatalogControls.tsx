@@ -6,6 +6,7 @@ import * as Popover from '@radix-ui/react-popover'
 import cn from 'classnames'
 import type { BookFilters, BookSort } from '@/entities/book/client'
 import type { ProductCategory } from '@/types/database'
+import Scroller from '@/components/common/Scroller'
 import styles from './CatalogControls.module.scss'
 
 export type CatalogFilterDraft = {
@@ -141,9 +142,9 @@ export default function CatalogControls({
                 </button>
               </div>
 
-              <div className={styles.filterPanels}>
+              <Scroller className={styles.filterPanels} axis='vertical'>
                 <div>
-                  <FilterPanel
+                    <FilterPanel
                     title='Авторы'
                     isCollapsed={collapsedPanels.includes('authors')}
                     onToggle={() => togglePanel('authors')}
@@ -207,7 +208,7 @@ export default function CatalogControls({
                     onRemove={removeChip}
                   />
                 </div>
-              </div>
+              </Scroller>
 
               <div className={styles.modalActions}>
                 <button className={styles.actionButton} type='button' onClick={clearFilters} aria-label='Сбросить фильтры'>
@@ -349,7 +350,7 @@ function AuthorList({
   onToggle: (value: string) => void
 }) {
   return (
-    <div className={styles.plainOptionList}>
+    <Scroller className={styles.plainOptionList} axis='vertical'>
       {values.map((value) => (
         <button
           className={cn(styles.plainOption, selectedValues.includes(value) && styles.selected)}
@@ -360,7 +361,7 @@ function AuthorList({
           {value}
         </button>
       ))}
-    </div>
+    </Scroller>
   )
 }
 
@@ -376,7 +377,7 @@ function PlainOptionList<T extends string>({
   onToggle: (value: T) => void
 }) {
   return (
-    <div className={styles.plainOptionList}>
+    <Scroller className={styles.plainOptionList} axis='vertical'>
       {values.map((value) => (
         <button
           className={cn(styles.plainOption, selectedValues.includes(value) && styles.selected)}
@@ -387,7 +388,7 @@ function PlainOptionList<T extends string>({
           {getLabel(value)}
         </button>
       ))}
-    </div>
+    </Scroller>
   )
 }
 

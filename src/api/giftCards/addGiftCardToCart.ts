@@ -1,4 +1,4 @@
-import { addToCart } from '@/api/cart'
+import { addToCart } from '@/api/cart/addToCart'
 import type { GiftCardProduct } from '@/entities/giftCardProduct'
 
 export async function addGiftCardToCart(product: GiftCardProduct, quantity = 1): Promise<void> {

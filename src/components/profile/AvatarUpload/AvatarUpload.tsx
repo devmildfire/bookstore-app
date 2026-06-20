@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Image from 'next/image'
-import { uploadAvatar } from '@/api/profile'
+import { uploadAvatar } from '@/api/profile/uploadAvatar'
 import { getAvatarUrl } from '@/lib/storage'
 import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'

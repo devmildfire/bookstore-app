@@ -2,7 +2,7 @@
 
 import cn from 'classnames'
 import { useLikedIds, useToggleLike } from '@/hooks/useLikes'
-import type { LikeItemType } from '@/api/likes'
+import type { LikeItemType } from '@/api/likes/types'
 import styles from './LikeButton.module.scss'
 
 type Props = {

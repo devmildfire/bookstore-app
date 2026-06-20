@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
 import { getServerQueryClient } from '@/lib/query/getServerQueryClient'
 import { getOrdersServer } from '@/api/orders/getOrdersServer'
-import { ordersQueryKey } from '@/api/orders'
+import { ordersQueryKey } from '@/api/orders/getOrders'
 import MyBooksList from '@/components/profile/MyBooksList'
 import styles from './page.module.scss'
 

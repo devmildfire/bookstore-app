@@ -7,7 +7,8 @@ import { buildInitRedirect } from '@/lib/payments/robokassa/client'
 import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation'
 import type { PaymentRedirect } from '@/lib/payments/robokassa/types'
-import type { PlaceOrderInput, DownloadUrlResult } from '@/api/orders'
+import type { PlaceOrderInput } from '@/api/orders/createPendingOrder'
+import type { DownloadUrlResult } from '@/api/orders/getDownloadUrl'
 
 export async function getDownloadUrlAction(orderItemId: number): Promise<DownloadUrlResult> {
   return getDownloadUrl(orderItemId)

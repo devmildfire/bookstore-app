@@ -5,11 +5,9 @@ import ArticleBody from '@/components/articles/ArticleBody'
 import ArticleAuthorCard from '@/components/articles/ArticleAuthorCard'
 import ArticleCarousel from '@/components/articles/ArticleCarousel'
 import AuthorBooksRow from '@/components/articles/AuthorBooksRow'
-import {
-  getArticleBySlug,
-  getAuthorBooks,
-  getMoreArticlesForAuthor,
-} from '@/api/articles'
+import { getArticleBySlug } from '@/api/articles/getArticleBySlug'
+import { getAuthorBooks } from '@/api/articles/getAuthorBooks'
+import { getMoreArticlesForAuthor } from '@/api/articles/getMoreArticlesForAuthor'
 import styles from './page.module.scss'
 
 type Props = {

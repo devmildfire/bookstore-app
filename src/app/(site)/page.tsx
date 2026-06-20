@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { getFeaturedBooks } from '@/api/books'
+import { getFeaturedBooks } from '@/api/books/getFeaturedBooks'
 import Slider from '@/components/common/Slider'
 import HomeCatalog from './HomeCatalog'
 import CatalogSectionSkeleton from './CatalogSectionSkeleton'

@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import cn from 'classnames'
 import { useQuery } from '@tanstack/react-query'
-import { getOrders, ordersQueryKey } from '@/api/orders'
+import { getOrders, ordersQueryKey } from '@/api/orders/getOrders'
 import useDigitalDownload from '@/hooks/useDigitalDownload'
 import ProductTypeIcon from '@/components/common/icons/ProductTypeIcon'
 import {

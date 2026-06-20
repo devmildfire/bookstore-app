@@ -1,4 +1,5 @@
-import { getBooks, parseBookFilters } from '@/api/books'
+import { getBooks } from '@/api/books/getBooks'
+import { parseBookFilters } from '@/api/books/parseBookFilters'
 import DeferredCatalog from './DeferredCatalog'
 
 type Props = {

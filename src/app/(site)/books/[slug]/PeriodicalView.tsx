@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { Periodical } from '@/api/periodicals'
+import type { Periodical } from '@/api/periodicals/getPeriodical'
 import BookEditionTabs from './BookEditionTabs'
 import Numero from './Numero'
 import PeriodicalIssueMain from './PeriodicalIssueMain'

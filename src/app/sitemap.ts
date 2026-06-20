@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { createDataClient } from '@/lib/supabase/server'
-import { getAllBookSlugs } from '@/api/books'
+import { getAllBookSlugs } from '@/api/books/getBook'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 

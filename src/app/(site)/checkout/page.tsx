@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useCart } from '@/contexts/cart'
-import { getProfile, profileQueryKey } from '@/api/profile'
+import { getProfile, profileQueryKey } from '@/api/profile/getProfile'
 import useSupabaseUser from '@/hooks/useSupabaseUser'
 import DeliveryForm from '@/components/checkout/DeliveryForm'
 import EmailOnlyForm from '@/components/checkout/EmailOnlyForm'
@@ -17,7 +17,7 @@ import type {
   EmailOnlyFormValues,
   ShippingFormValues,
 } from '@/entities/order/validation'
-import type { PlaceOrderInput } from '@/api/orders'
+import type { PlaceOrderInput } from '@/api/orders/createPendingOrder'
 import styles from './page.module.scss'
 
 type PendingOrder = {
