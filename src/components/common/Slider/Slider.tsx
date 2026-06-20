@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useRef, useState, useEffect, useCallback } from 'react'
+import { memo, useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import cn from 'classnames'
 import type { EmblaCarouselType } from 'embla-carousel'
 import SliderSlide from './SliderSlide'
@@ -12,11 +12,6 @@ export type SliderProps = {
 }
 
 const ATTACH_AFTER_SCROLL_MS = 180
-
-// [TEMP DEBUG] count Slider component instances across the page lifetime. A second instance =
-// the component was unmounted + remounted (the spring-back: the new instance is the native
-// baseline at slide 0). Module-level so it survives the unmount.
-let sliderMountSeq = 0
 
 // embla-carousel CORE (framework-agnostic). Its default export attaches imperatively to an existing
 // DOM node — so we enhance the SSR'd carousel IN PLACE rather than swapping to a second React
@@ -35,6 +30,22 @@ function loadEmbla() {
 // debounced-scroll fallback only where scrollend is unsupported.
 const SCROLLEND_SUPPORTED = typeof window !== 'undefined' && 'onscrollend' in window
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
+
+// Survives a remount. The slide the carousel was last on + when it was set. The Next.js App Router
+// re-renders the home route on the first interaction (its own internal history sync); in Firefox
+// that commit unmounts + remounts this Slider as the zero-JS SSR baseline — which starts at slide 0,
+// i.e. the "spring back to the first slide". A freshly-mounted instance reads this and, if the
+// remount is recent, restores the slide it was on so the swap is invisible. Never mutated during SSR
+// (only client event handlers/effects write it), so the server always renders slide 0 → hydration
+// matches.
+let lastSlide = { index: 0, at: 0 }
+const REMOUNT_RESTORE_MS = 2500
+
+function nowMs() {
+  return typeof performance !== 'undefined' ? performance.now() : 0
+}
+
 // Native CSS scroll-snap carousel for the home hero — replaces Swiper (~24 KB gz) on the critical
 // path. Every slide renders in the SSR HTML (LCP cover paints with no carousel-library dependency)
 // and the baseline is swipeable with zero JS. It does NOT auto-advance. On the first carousel
@@ -47,17 +58,19 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   const attachingRef = useRef(false)
   const attachTimerRef = useRef<number | null>(null)
   const pendingScrollToRef = useRef<number | null>(null)
-  const [active, setActive] = useState(0)
+  // Seed from the last-known slide on a quick remount (see lastSlide above), else slide 0. SSR and
+  // the first client mount both see at=0 → slide 0, so hydration matches.
+  const [active, setActive] = useState(() =>
+    nowMs() - lastSlide.at < REMOUNT_RESTORE_MS ? lastSlide.index : 0,
+  )
 
   const count = items?.length ?? 0
   const showPagination = count > 1
 
-  // [TEMP DEBUG] mount/unmount of THIS Slider instance, to catch the remount + its timing relative
-  // to the Suspense/catalog logs (RenderLog) below.
-  useEffect(() => {
-    const id = ++sliderMountSeq
-    console.log(`[hero] Slider MOUNT #${id} @${Math.round(performance.now())}ms`)
-    return () => console.log(`[hero] Slider UNMOUNT #${id} @${Math.round(performance.now())}ms`)
+  // Single source for the active slide: updates React state AND the remount-surviving record.
+  const setActiveIndex = useCallback((index: number) => {
+    lastSlide = { index, at: nowMs() }
+    setActive(index)
   }, [])
 
   const preload = useCallback(() => {
@@ -87,84 +100,29 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           return
         }
         const idx = Math.max(0, Math.min(startIndex, count - 1))
-        // [TEMP DEBUG] verify the index read + Embla's resolved slide through the attach.
-        console.log('[hero] attach.then', { startIndex, idx, scrollLeftAtAttach: vp.scrollLeft, clientWidth: vp.clientWidth })
         // Hand off from native scroll → Embla. Drop native scroll (overflow hidden + scrollLeft 0)
-        // and let Embla measure the UN-transformed DOM, then position itself via startIndex.
-        // NOTE: we must NOT pre-set a transform on the container here. Doing so poisons Embla's slide
-        // measurement — it would measure the shifted slides, conclude "slide idx lives at offset 0",
-        // and settle the track to tx=0 (showing slide 0) while reporting selectedScrollSnap=idx. That
-        // index/pixel desync was the "snap-back to the first slide". Clean DOM → correct positioning.
+        // and let Embla measure the UN-transformed DOM, then position itself via startIndex. We must
+        // NOT pre-set a transform on the container: it poisons Embla's slide measurement — it would
+        // measure the shifted slides, conclude "slide idx lives at offset 0", and settle the track to
+        // tx=0 (showing slide 0) while reporting selectedScrollSnap=idx. Clean DOM → correct position.
         vp.scrollLeft = 0
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
         const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
-        // [TEMP DEBUG] Compare Embla's INDEX (selectedSnap) against the actual rendered TRANSLATE of
-        // the track. translateX / clientWidth = the visual slide. If selectedSnap=1 but visualSlide=0,
-        // the index is right while the pixels are wrong → measurement/transform mismatch.
-        const visual = () => {
-          const c = vp.firstElementChild as HTMLElement | null
-          if (!c) return { tx: 'n/a', slide: 'n/a', vpConnected: vp.isConnected }
-          const tf = getComputedStyle(c).transform
-          const tx = tf === 'none' ? 0 : new DOMMatrixReadOnly(tf).m41
-          // vpConnected=false ⇒ this viewport was detached from the DOM ⇒ the Slider REMOUNTED
-          // (a fresh native Slider replaced it); the tx/snap we read here are from the orphaned node.
-          return { tx: Math.round(tx), slide: vp.clientWidth ? +(tx / vp.clientWidth).toFixed(2) : 'n/a', vpConnected: vp.isConnected }
-        }
-        // [TEMP DEBUG] Ground truth: which book is physically at the viewport's left edge, plus how
-        // loop has laid out every slide. DOM order is stable (slide 0..N); loop shifts each slide via
-        // its own transform, so we read each slide's real rect to find what's actually visible.
-        const physical = () => {
-          const vpLeft = vp.getBoundingClientRect().left
-          const slides = Array.from((vp.firstElementChild?.children ?? []) as unknown as HTMLElement[])
-          const rows = slides.map((s, domIdx) => {
-            const alt = s.querySelector('img')?.getAttribute('alt')?.replace('Обложка книги: ', '') ?? '?'
-            return { domIdx, alt, left: Math.round(s.getBoundingClientRect().left - vpLeft) }
-          })
-          const visible = rows.reduce((a, b) => (Math.abs(b.left) < Math.abs(a.left) ? b : a), rows[0])
-          return { visibleDomIdx: visible?.domIdx, visibleBook: visible?.alt, slidesInView: api.slidesInView(), layout: rows }
-        }
-        console.log('[hero] embla inited, selectedSnap=', api.selectedScrollSnap(), 'expected', idx, '| visual', visual())
-        api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
-        requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
-        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual(), '| physical', physical()), 200)
-        window.setTimeout(() => console.log('[hero] +500ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual(), '| physical', physical()), 500)
-        const onSelect = () => setActive(api.selectedScrollSnap())
+        const onSelect = () => setActiveIndex(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)
         emblaApiRef.current = api
-        setActive(idx)
+        setActiveIndex(idx)
         if (pendingScrollToRef.current != null) {
           api.scrollTo(pendingScrollToRef.current)
           pendingScrollToRef.current = null
         }
-        // [TEMP DEBUG] catch WHO moves the track to slide 0. Tag the track; watch the viewport for
-        // the container being replaced (React re-create) and for any inline-style/transform change.
-        const track0 = vp.firstElementChild as HTMLElement | null
-        track0?.setAttribute('data-hero-track', '1')
-        const mo = new MutationObserver((muts) => {
-          for (const mu of muts) {
-            if (mu.type === 'childList' && mu.target === vp) {
-              const nf = vp.firstElementChild as HTMLElement | null
-              console.log('[hero] MUT viewport childList — container REPLACED?', {
-                removed: mu.removedNodes.length, added: mu.addedNodes.length,
-                stillTagged: nf?.getAttribute('data-hero-track'),
-              })
-            } else if (mu.type === 'attributes' && mu.attributeName === 'style') {
-              const el = mu.target as HTMLElement
-              if (el === vp.firstElementChild || el === track0) {
-                console.log('[hero] MUT track style →', el.style.transform || '(empty)')
-              }
-            }
-          }
-        })
-        mo.observe(vp, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] })
-        window.setTimeout(() => mo.disconnect(), 1200)
       })
       .catch(() => {
         attachingRef.current = false
       })
-  }, [count])
+  }, [count, setActiveIndex])
 
   // Fallback only (browsers without `scrollend`): attach a short debounce after the last scroll
   // event. Reads the index at fire time, not when scheduled.
@@ -177,7 +135,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
   }, [count, currentBaselineIndex, attachEmbla])
 
   const goTo = useCallback((index: number) => {
-    setActive(index)
+    setActiveIndex(index)
     const api = emblaApiRef.current
     if (api) {
       api.scrollTo(index)
@@ -187,18 +145,27 @@ const Slider = memo(function Slider({ items }: SliderProps) {
     // clicked slide once it's live.
     pendingScrollToRef.current = index
     attachEmbla(currentBaselineIndex())
-  }, [attachEmbla, currentBaselineIndex])
+  }, [attachEmbla, currentBaselineIndex, setActiveIndex])
 
   const handleScroll = useCallback(() => {
     if (emblaApiRef.current) return // Embla owns the viewport now (native scroll is off)
-    setActive(currentBaselineIndex()) // keep the active dot live during the drag
+    setActiveIndex(currentBaselineIndex()) // keep the active dot live during the drag
     if (!SCROLLEND_SUPPORTED) scheduleAttachFallback()
-  }, [currentBaselineIndex, scheduleAttachFallback])
+  }, [currentBaselineIndex, scheduleAttachFallback, setActiveIndex])
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (isInteractiveTarget(event.target)) return
     preload()
   }, [preload])
+
+  // On (re)mount, if a recent instance had advanced past the first slide, restore the native scroll
+  // to that slide BEFORE paint — so a route-commit remount lands on the slide the user was on, not
+  // slide 0. No-op on the initial load (lastSlide.at is 0) and on stale state.
+  useIsomorphicLayoutEffect(() => {
+    if (lastSlide.index <= 0 || nowMs() - lastSlide.at >= REMOUNT_RESTORE_MS) return
+    const vp = viewportRef.current
+    if (vp && vp.clientWidth) vp.scrollLeft = lastSlide.index * vp.clientWidth
+  }, [])
 
   // Attach Embla once the swipe has truly settled (scrollend), at the final landed slide.
   useEffect(() => {
@@ -206,10 +173,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
     if (!vp || !SCROLLEND_SUPPORTED) return
     const onScrollEnd = () => {
       if (emblaApiRef.current) return
-      const idx = currentBaselineIndex()
-      // [TEMP DEBUG] what the settled scroll position reads as, at the moment of attach.
-      console.log('[hero] scrollend', { scrollLeft: vp.scrollLeft, clientWidth: vp.clientWidth, idx })
-      attachEmbla(idx)
+      attachEmbla(currentBaselineIndex())
     }
     vp.addEventListener('scrollend', onScrollEnd)
     return () => vp.removeEventListener('scrollend', onScrollEnd)

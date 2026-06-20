@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-import RenderLog from '@/components/common/RenderLog'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 
 // The catalog grid is heavy (~370 DOM nodes, 14 cover images, render-blocking CSS, hydration).
@@ -41,13 +40,7 @@ export default function DeferredCatalog({ catalog, filters }: Props) {
 
   return (
     <div style={{ width: '100%', minHeight: mounted ? undefined : 800 }}>
-      <RenderLog tag='DeferredCatalog-wrapper' />
-      {mounted && (
-        <>
-          <RenderLog tag='NewProducts-committed' />
-          <NewProducts catalog={catalog} filters={filters} />
-        </>
-      )}
+      {mounted && <NewProducts catalog={catalog} filters={filters} />}
     </div>
   )
 }
