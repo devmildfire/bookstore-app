@@ -10,6 +10,7 @@ instead of re-deriving or undoing it.
   - [`bundle-analysis.md`](./bundle-analysis.md) — per-route bundle composition, the shedding log, coverage findings.
   - [`lcp-investigation.md`](./lcp-investigation.md) — why mobile LCP was high and how it was fixed.
   - [`home-lcp-trace-findings.md`](./home-lcp-trace-findings.md) — the DevTools trace that drove the fold/lazy-image decisions.
+  - [`hero-carousel-remount.md`](./hero-carousel-remount.md) — hero carousel + catalog deferral architecture, the "spring back to slide 1" remount bug (root cause + fix), and the open simplification (drop Embla / stop the route re-render).
 
 If you change something here, **measure on live and update the investigation docs** — the numbers
 are the authority, this doc is the interpretation.
