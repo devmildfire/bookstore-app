@@ -95,17 +95,32 @@ one specific cause (dynamic-import suspension vs. link-prefetch settle vs. anon-
 change) is unreliable. The *class* — a Next App Router route re-render driven by first-interaction
 work — is solid and reproduced.
 
-### 2c. The fix that shipped (symptom-level, robust)
+### 2c. First fix (shipped then removed): remount-resilience hack
 
-`Slider.tsx`: a module-scoped `lastSlide = { index, at }` survives a remount. Every slide change
-records it; a freshly-mounted instance seeds its active dot from it and restores the native scroll
-position to that slide **before paint**, but only if the remount is recent (`< 2.5 s`) so a genuine
-navigate-away-and-back still opens fresh on slide 1. Hydration-safe: the record is never written
-during SSR, so the server always renders slide 1 and the markup matches. Verified: in the
-reproduced remount the hero now lands on the swiped slide with Embla cleanly re-attached.
+The initial fix treated the symptom: a module-scoped `lastSlide = { index, at }` survived the remount,
+and a freshly-mounted instance restored the native scroll position to that slide before paint. It
+worked, but left the trigger in place and added state to paper over a remount. **Removed in Move 1**
+(below) — kept here only as the record of what the rollback checkpoint shipped.
 
-This fixes the **symptom** reliably. The **trigger** (the route re-render) is still there, just
-harmless.
+### 2d. Move 1 (current fix): a `memo` guard so the route re-render can't recreate the hero
+
+`Slider.tsx` is wrapped in `memo(Slider, slidesEqual)` with a **content-aware comparator** (equal by
+slide `id`). The remount is *hero-only* — the route re-render re-renders the `<Slider>` (handing it a
+new `items` array with identical content), and once Embla has imperatively mutated the viewport, that
+re-render makes React reconcile the mutated DOM and, in Firefox, recreate it. The comparator bails on
+equal-by-id content, so **the route re-render never re-renders the Slider** → React never touches the
+live viewport → no recreate, no remount, no springback. A genuine featured-books change still flows
+through (ids differ).
+
+Validated in the fresh-no-session Chrome repro that previously reproduced the remount: after the
+catalog mounts, the hero wrapper is the **same element** (`sameWrapper: true`), Embla's transform is
+intact, and it stays on the swiped slide. The resilience hack (§2c) and all temp instrumentation were
+then deleted. Net result: **simpler than the rollback checkpoint, and the bug is gone at its source**
+(the route re-render still fires — it's just inert for the hero now).
+
+**PSI:** neutral. 100 cache-busted mobile runs before/after were identical at the center (perf p50
+97 / mean 96 both; LCP p50 2401 both; TBT/FCP/CLS within run-to-run noise) — the comparator costs
+nothing. Validated 2026-06-20.
 
 ---
 
@@ -142,10 +157,18 @@ Simplest structurally; removes `DeferredCatalog` and the remount trigger outrigh
   possible LCP competition). **Must be measured**, not assumed. This trades simplicity for a likely
   PSI regression and is the least aligned with "same or better perf."
 
-**Recommended direction (to be confirmed + measured): A + B** — native-only hero *and* bound the
-catalog mount so it doesn't re-render the route. That deletes the most code, keeps PSI flat, and
-removes the bug at its source rather than papering over it. Validate B in the fresh-no-session Chrome
-repro and re-run PSI before/after.
+**Status:** loop + drag + snap are non-negotiable, so native-only (Option A) is off the table — Embla
+stays. **Move 1 is done** via the `memo` guard (§2d): it neutralises the remount without removing
+Embla, the deferral, or any function, and it deleted the resilience hack — so the bug is fixed at the
+source with *less* code than the checkpoint. This is a cleaner outcome than Option B (it doesn't need
+to chase/stop the Next-internal route re-render — it just makes the hero inert to it).
+
+**Still open (Move 2, gated on measurement):** whether the hero's "hydrate-in-place" machinery
+(attach handoff / `scrollend` / preload) can be replaced by a plain eager `embla-carousel-react`. The
+[2026-06-20 PSI baseline](./psi-baseline.md) shows the score is LCP-bound and TBT has ~170 ms of
+unused headroom, so eager Embla is *likely* PSI-neutral — but measure 100 cache-busted runs
+before/after before committing. Option C (SSR-stream the catalog) remains the risky one (TBT is
+30%-weighted).
 
 ---
 
