@@ -71,6 +71,31 @@ LCP buckets (ms): `<2000:4  2000-2500:55  2500-3000:26  3000-3500:15  >3500:0`.
 - Because the lab score is a tight distribution (CV 2%), A/B-testing any change is reliable: run
   100 cache-busted traces before and after and the median shift is trustworthy.
 
+## 2026-06-20 — does deferring the ИЗДАНИЯ catalog matter? (A/B, 100 runs each)
+
+Tested by SSR-streaming the catalog directly (rendering `<NewProducts>` in `HomeCatalog` behind the
+existing Suspense, like subscriptions/box-sets) vs the current `DeferredCatalog` interaction-gate.
+**Reverted** — the deferral is a real, significant lever:
+
+| Metric | **Deferred** p50 / mean / sd | **SSR-streamed** p50 / mean / sd |
+|---|---|---|
+| Performance | 97 / **96.4** / 2 | 96 / **92.7** / 6 |
+| LCP (ms) | 2401 / 2548 / 325 | 2701 / **3009** / 680  (p90 **4127**) |
+| FCP (ms) | 1501 / 1447 | 1651 / 1661 |
+| TBT (ms) | 28 / 28 (p90 49) | 30 / **55** (p90 93, max >300) |
+| TTI (ms) | 2921 / 2945 | 3379 / **3557** |
+| CLS | 0 | 0 |
+
+- **Deferring the catalog is worth ~3.7 mean perf points (96.4 → 92.7)** and, more importantly,
+  **consistency**: deferred sd=2 and never dropped below 92; SSR-streamed sd=6 with a long tail of
+  bad runs (68, 73, 74, 78, 80…). SSR-streaming regressed LCP (~+460 ms mean, p90 into the "poor"
+  >4000 band), TBT (mean doubled, tail past 300 ms), TTI (+600 ms).
+- **Why the catalog but not subscriptions/box-sets?** The 14-cover grid + its hydration (BookCard ×
+  14, BooksFeed, CatalogControls) is the heavy block; subscriptions/box-sets are lighter and lower.
+  The interaction-gate (`DeferredCatalog`) keeps that weight out of the PSI trace entirely (PSI never
+  scrolls/interacts). It is **not** over-engineering — it's the second-biggest PSI lever after LCP.
+- Decision: **keep `DeferredCatalog`.** Do not SSR-stream the catalog.
+
 ## 2026-06-19 — after the interaction-deferral work (Radix + Swiper + Supabase + Likes)
 
 10 runs, ~3-min cadence, 08:27–08:51 UTC.

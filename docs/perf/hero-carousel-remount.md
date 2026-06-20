@@ -173,8 +173,13 @@ Embla stays. Both moves shipped (2026-06-20, user-confirmed on Firefox):
     early (top of the tree) so the window is small; PSI doesn't interact so the score is unaffected.
 
 The result is **substantially less code than the rollback checkpoint at equal performance and equal
-function** — the goal. Option C (SSR-stream the catalog) was never pursued: it's the risky one (TBT is
-30%-weighted) and unnecessary now.
+function** — the goal.
+
+**Option C (SSR-stream the catalog) — tested 2026-06-20, REJECTED.** Measured directly (100 runs):
+SSR-streaming the ИЗДАНИЯ grid instead of the `DeferredCatalog` interaction-gate cost ~3.7 mean perf
+points (96.4 → 92.7) and wrecked consistency (sd 2 → 6, long tail of bad runs), with LCP +460 ms mean
+(p90 into "poor"), TBT mean doubled, TTI +600 ms. The deferral is a real lever — kept. Full A/B in
+[`psi-baseline.md`](./psi-baseline.md).
 
 ---
 
