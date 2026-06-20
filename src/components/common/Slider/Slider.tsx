@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react'
+import { memo, useRef, useState, useEffect, useCallback } from 'react'
 import cn from 'classnames'
 import type { EmblaCarouselType } from 'embla-carousel'
 import SliderSlide from './SliderSlide'
@@ -30,31 +30,13 @@ function loadEmbla() {
 // debounced-scroll fallback only where scrollend is unsupported.
 const SCROLLEND_SUPPORTED = typeof window !== 'undefined' && 'onscrollend' in window
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
-
-// Survives a remount. The slide the carousel was last on + when it was set. The Next.js App Router
-// re-renders the home route on the first interaction (its own internal history sync); in Firefox
-// that commit unmounts + remounts this Slider as the zero-JS SSR baseline — which starts at slide 0,
-// i.e. the "spring back to the first slide". A freshly-mounted instance reads this and, if the
-// remount is recent, restores the slide it was on so the swap is invisible. Never mutated during SSR
-// (only client event handlers/effects write it), so the server always renders slide 0 → hydration
-// matches.
-let lastSlide = { index: 0, at: 0 }
-const REMOUNT_RESTORE_MS = 2500
-
-function nowMs() {
-  return typeof performance !== 'undefined' ? performance.now() : 0
-}
-
-// [TEMP] mount counter — a second instance means the component was remounted (the springback).
-let sliderMountSeq = 0
-
-// The hero's slides are static for the session. A Next App Router route re-render (which fires on the
-// first interaction — see docs/perf/hero-carousel-remount.md) hands us a NEW `items` array with the
-// SAME content; without this, React would re-render the Slider and, in Firefox, reconcile the
-// Embla-mutated viewport into a fresh one (the remount → spring back to slide 1). Bailing on
-// equal-by-id content keeps React from ever touching the live viewport, while still allowing a real
-// content change to flow through.
+// memo comparator — bail on a new `items` array with identical content. The hero's slides are static
+// for the session, but a Next App Router route re-render (which fires on the first interaction, when
+// the deferred catalog mounts — see docs/perf/hero-carousel-remount.md) hands us a fresh array. Once
+// Embla has imperatively mutated the viewport, re-rendering the Slider made React reconcile that
+// mutated DOM and, in Firefox, recreate it (the remount → "spring back to the first slide"). Bailing
+// on equal-by-id content means the route re-render never re-renders the Slider, so React never
+// touches the live viewport. A genuine content change still flows through.
 function slidesEqual(prev: SliderProps, next: SliderProps): boolean {
   const a = prev.items, b = next.items
   if (a === b) return true
@@ -74,25 +56,10 @@ function Slider({ items }: SliderProps) {
   const attachingRef = useRef(false)
   const attachTimerRef = useRef<number | null>(null)
   const pendingScrollToRef = useRef<number | null>(null)
-  // Seed from the last-known slide on a quick remount (see lastSlide above), else slide 0. SSR and
-  // the first client mount both see at=0 → slide 0, so hydration matches.
-  const [active, setActive] = useState(() =>
-    nowMs() - lastSlide.at < REMOUNT_RESTORE_MS ? lastSlide.index : 0,
-  )
+  const [active, setActive] = useState(0)
 
   const count = items?.length ?? 0
   const showPagination = count > 1
-
-  // [TEMP] confirm whether the remount still happens with the memo guard in place.
-  useEffect(() => {
-    console.log(`[hero] Slider MOUNT #${++sliderMountSeq}`)
-  }, [])
-
-  // Single source for the active slide: updates React state AND the remount-surviving record.
-  const setActiveIndex = useCallback((index: number) => {
-    lastSlide = { index, at: nowMs() }
-    setActive(index)
-  }, [])
 
   const preload = useCallback(() => {
     void loadEmbla()
@@ -130,11 +97,11 @@ function Slider({ items }: SliderProps) {
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
         const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
-        const onSelect = () => setActiveIndex(api.selectedScrollSnap())
+        const onSelect = () => setActive(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)
         emblaApiRef.current = api
-        setActiveIndex(idx)
+        setActive(idx)
         if (pendingScrollToRef.current != null) {
           api.scrollTo(pendingScrollToRef.current)
           pendingScrollToRef.current = null
@@ -143,7 +110,7 @@ function Slider({ items }: SliderProps) {
       .catch(() => {
         attachingRef.current = false
       })
-  }, [count, setActiveIndex])
+  }, [count])
 
   // Fallback only (browsers without `scrollend`): attach a short debounce after the last scroll
   // event. Reads the index at fire time, not when scheduled.
@@ -156,7 +123,7 @@ function Slider({ items }: SliderProps) {
   }, [count, currentBaselineIndex, attachEmbla])
 
   const goTo = useCallback((index: number) => {
-    setActiveIndex(index)
+    setActive(index)
     const api = emblaApiRef.current
     if (api) {
       api.scrollTo(index)
@@ -166,27 +133,18 @@ function Slider({ items }: SliderProps) {
     // clicked slide once it's live.
     pendingScrollToRef.current = index
     attachEmbla(currentBaselineIndex())
-  }, [attachEmbla, currentBaselineIndex, setActiveIndex])
+  }, [attachEmbla, currentBaselineIndex])
 
   const handleScroll = useCallback(() => {
     if (emblaApiRef.current) return // Embla owns the viewport now (native scroll is off)
-    setActiveIndex(currentBaselineIndex()) // keep the active dot live during the drag
+    setActive(currentBaselineIndex()) // keep the active dot live during the drag
     if (!SCROLLEND_SUPPORTED) scheduleAttachFallback()
-  }, [currentBaselineIndex, scheduleAttachFallback, setActiveIndex])
+  }, [currentBaselineIndex, scheduleAttachFallback])
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (isInteractiveTarget(event.target)) return
     preload()
   }, [preload])
-
-  // On (re)mount, if a recent instance had advanced past the first slide, restore the native scroll
-  // to that slide BEFORE paint — so a route-commit remount lands on the slide the user was on, not
-  // slide 0. No-op on the initial load (lastSlide.at is 0) and on stale state.
-  useIsomorphicLayoutEffect(() => {
-    if (lastSlide.index <= 0 || nowMs() - lastSlide.at >= REMOUNT_RESTORE_MS) return
-    const vp = viewportRef.current
-    if (vp && vp.clientWidth) vp.scrollLeft = lastSlide.index * vp.clientWidth
-  }, [])
 
   // Attach Embla once the swipe has truly settled (scrollend), at the final landed slide.
   useEffect(() => {
@@ -246,8 +204,8 @@ function Slider({ items }: SliderProps) {
   )
 }
 
-// Custom comparator: skip re-renders that only change the items array reference (e.g. a route
-// re-render), re-render only on a real content change. See slidesEqual above.
+// memo with a content-aware comparator so a route re-render (new array, same slides) can't recreate
+// the live Embla viewport. See slidesEqual.
 const MemoSlider = memo(Slider, slidesEqual)
 
 function isInteractiveTarget(target: EventTarget): boolean {
