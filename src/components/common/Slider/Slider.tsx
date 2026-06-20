@@ -85,7 +85,7 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         vp.scrollLeft = 0
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
-        const api = EmblaCarousel(vp, { loop: false, startIndex: idx, align: 'start', containScroll: false })
+        const api = EmblaCarousel(vp, { loop: true, startIndex: idx, align: 'start', containScroll: false })
         // [TEMP DEBUG] Compare Embla's INDEX (selectedSnap) against the actual rendered TRANSLATE of
         // the track. translateX / clientWidth = the visual slide. If selectedSnap=1 but visualSlide=0,
         // the index is right while the pixels are wrong → measurement/transform mismatch.
@@ -123,6 +123,28 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           api.scrollTo(pendingScrollToRef.current)
           pendingScrollToRef.current = null
         }
+        // [TEMP DEBUG] catch WHO moves the track to slide 0. Tag the track; watch the viewport for
+        // the container being replaced (React re-create) and for any inline-style/transform change.
+        const track0 = vp.firstElementChild as HTMLElement | null
+        track0?.setAttribute('data-hero-track', '1')
+        const mo = new MutationObserver((muts) => {
+          for (const mu of muts) {
+            if (mu.type === 'childList' && mu.target === vp) {
+              const nf = vp.firstElementChild as HTMLElement | null
+              console.log('[hero] MUT viewport childList — container REPLACED?', {
+                removed: mu.removedNodes.length, added: mu.addedNodes.length,
+                stillTagged: nf?.getAttribute('data-hero-track'),
+              })
+            } else if (mu.type === 'attributes' && mu.attributeName === 'style') {
+              const el = mu.target as HTMLElement
+              if (el === vp.firstElementChild || el === track0) {
+                console.log('[hero] MUT track style →', el.style.transform || '(empty)')
+              }
+            }
+          }
+        })
+        mo.observe(vp, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] })
+        window.setTimeout(() => mo.disconnect(), 1200)
       })
       .catch(() => {
         attachingRef.current = false
