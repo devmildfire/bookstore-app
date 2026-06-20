@@ -38,7 +38,7 @@ rendering** — even though catalog/book data uses a cookie-free anon client and
 cacheable. **Nothing under `(site)` can be static or PPR until this is fixed.** This is
 Phase 0 and unblocks everything else.
 
-**PPR mechanism in Next 16.2.6 (verified against `node_modules/next`):** the old
+**PPR mechanism in Next 16.2.9 (verified against `node_modules/next`):** the old
 `experimental.ppr` opt-in **throws at startup** — it has been merged into the top-level
 **`cacheComponents: true`** flag (which also enables `'use cache'`). It is *all-or-nothing*,
 project-wide: once on, every uncached dynamic read must be `<Suspense>`-wrapped or
@@ -223,7 +223,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [ ] Merge `feat/ppr-phase4-suspense` → `update`.
 
 ### Phase 5a — PPR (`cacheComponents`) — **DEFERRED (measured 2026-06-16)**
-- Enabling `cacheComponents` (top-level flag in 16.2.6; experimental, all-or-nothing) was
+- Enabling `cacheComponents` (top-level flag in 16.2.9; experimental, all-or-nothing) was
   trial-enabled and the build's blast radius measured: it forbids the 9 `force-dynamic` routes
   (admin layout + payments), needs `'use cache'` on the 9 anon API modules, and cacheComponents-
   compatible dynamic handling across ~48 service-client files / 41 admin pages / 9 profile-checkout-

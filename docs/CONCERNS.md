@@ -2,7 +2,7 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-16.
+**Last reviewed:** 2026-06-20.
 
 > **Production went live 2026-06-15** (`bookstore-app.mildfire.dev` + `api.mildfire.dev` via
 > Cloudflare Tunnel). Deployment status — including which launch-gate items are still
@@ -114,7 +114,7 @@ storefront dynamic** (keystone blocker), **no `generateStaticParams`** (book pag
 prebuilt), a **duplicate `get_catalog_book_by_slug` RPC** per book render, **no `cache()`/
 `revalidate`** in the read path, **card-fusion** components that should split into server body
 + client leaf (BookCard first), missing **Suspense/`loading.tsx`**, and SEO gaps
-(`metadataBase`, `sitemap.ts`/`robots.ts`). PPR in Next 16.2.6 = `cacheComponents:true`
+(`metadataBase`, `sitemap.ts`/`robots.ts`). PPR in Next 16.2.9 = `cacheComponents:true`
 (`experimental.ppr` throws) — a project-wide migration, sequenced last. Full findings + phased
 plan + tracker: [docs/plans/frontend-architecture-rendering.md](plans/frontend-architecture-rendering.md).
 

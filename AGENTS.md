@@ -84,7 +84,7 @@ Note: `supabase db reset` does NOT restore auth users (re-run
 
 ### Stack
 
-- **Next.js 16.2.6** (App Router, Russian content — no i18n framework, locale is handled by content only)
+- **Next.js 16.2.9** (App Router, Russian content — no i18n framework, locale is handled by content only)
 - **Supabase** for database + auth (anonymous login on first visit, promoting to real user on account creation)
 - **TanStack Query v5** for server-state caching and client-side data fetching
 - **SCSS Modules** for all styling; **Radix UI** primitives for accessible components
@@ -188,7 +188,7 @@ Key invariants:
 - Anonymous users complete checkout fine — `Orders.user_id` accepts the anon UID. The anon→OAuth/email migration (see auth flow above) moves those orders to the real user on sign-in.
 - **Failed/cancelled payment ≠ cancelled order.** A gateway FailURL hit leaves the order `pending` so the buyer can resume payment from order history (`src/app/(site)/payments/fail/route.ts`); cancellation is a separate explicit user action (`cancelOrderAction` → `cancel_pending_order` RPC). Stale `pending` orders auto-expire after 7 days (`expire_stale_pending_orders`).
 - A paid order sends one idempotent **order-confirmation email** (Resend — see Email below). Out of scope and stubbed: BoxSet/GiftCard/Subscription/Course file downloads. (The single-shot `place_order` RPC + `src/api/orders/placeOrder.ts` were legacy and have been removed — migration `20260614150000_drop_legacy_place_order.sql` drops both overloads; the two-phase flow above is the checkout path.)
-- See also: schema/RPCs in the consolidated baseline (`supabase/migrations/20260101000000_baseline_schema.sql`), plus follow-ups `20260611180000_order_fulfillment_physical.sql` + `20260611190000_expire_stale_pending_orders.sql`; `src/app/(site)/checkout/`; `src/api/orders/createPendingOrder.ts`; `src/lib/payments/`.
+- See also: schema/RPCs in the consolidated baseline (`supabase/migrations/20260101000000_baseline_schema.sql`), plus follow-ups `20260611180000_order_fulfillment_physical.sql` + `20260611190000_expire_stale_pending_orders.sql` (both archived under `supabase/migrations_archive/`, folded into the baseline); `src/app/(site)/checkout/`; `src/api/orders/createPendingOrder.ts`; `src/lib/payments/`.
 
 ### Email (Resend)
 
@@ -198,7 +198,7 @@ All outbound email — transactional + the mailing-list scaffold — flows throu
 - **App emails** are sent straight from server code via `send.ts`: order confirmation (`src/lib/email/sendOrderConfirmation.ts`, idempotent claim-then-send on `Orders.confirmation_email_sent_at`), admin story-submission notify (`ADMIN_NOTIFICATIONS_EMAIL`), and the newsletter confirm/welcome.
 - **Mailing list**: own `Subscribers` table (double opt-in, `confirm_token`/`unsubscribe_token`, RLS + SECURITY DEFINER RPCs) synced to a **Resend Audience** (`RESEND_AUDIENCE_ID`) via `src/lib/email/audience.ts`. Routes: `/newsletter/confirm`, `/newsletter/unsubscribe`. Wired into the /about + /contacts forms; read-only admin view at `/admin/subscribers`.
 - Env: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `SEND_EMAIL_HOOK_SECRET`, `ADMIN_NOTIFICATIONS_EMAIL`, `RESEND_AUDIENCE_ID`, `NEXT_PUBLIC_BASE_URL` (absolute links). Prod cutover remainder (prod hook URL/secret, `NEXT_PUBLIC_BASE_URL`) tracked in [docs/CONCERNS.md](docs/CONCERNS.md) G2.
-- See also: [docs/plans/email-system.md](docs/plans/email-system.md) (full plan + per-phase acceptance); migrations `20260613120000_order_confirmation_email.sql` + `20260613130000_subscribers.sql` (applied).
+- See also: [docs/plans/email-system.md](docs/plans/email-system.md) (full plan + per-phase acceptance); migrations `20260613120000_order_confirmation_email.sql` + `20260613130000_subscribers.sql` (applied; archived under `supabase/migrations_archive/`, folded into the baseline).
 
 ### Promo codes
 

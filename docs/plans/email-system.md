@@ -170,7 +170,7 @@ the table status when a phase's boxes are all ✅.
 
 ## P4 — Order/payment confirmation email ✅ (code; migration not yet applied)
 
-- [x] Migration `supabase/migrations/20260613120000_order_confirmation_email.sql` —
+- [x] Migration `supabase/migrations_archive/20260613120000_order_confirmation_email.sql` —
       `Orders.confirmation_email_sent_at` + SECURITY DEFINER `claim_order_confirmation_email`
       (atomic transition, returns true once) + `release_order_confirmation_email` (retry on
       send failure). Granted to `service_role` only. (RPC-based so no generated-types
@@ -215,7 +215,7 @@ the table status when a phase's boxes are all ✅.
 
 ## P6 — Mailing list (scaffold, double opt-in) ✅ (code; migration not yet applied)
 
-- [x] Migration `supabase/migrations/20260613130000_subscribers.sql` — `Subscribers` table
+- [x] Migration `supabase/migrations_archive/20260613130000_subscribers.sql` — `Subscribers` table
       (`email text unique` normalized lower in SQL; nullable `user_id`; status check;
       `confirm_token`/`unsubscribe_token`; `resend_contact_id`). RLS on, no policies. All
       access via SECURITY DEFINER fns granted to `service_role`: `subscribe_newsletter`,
