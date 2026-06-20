@@ -36,6 +36,10 @@
   min-width: 0;
   display: flex;
   scroll-snap-align: start;
+  // Force the native baseline (pre-Embla) to advance at most one slide per swipe — without this a
+  // fast flick's momentum can skip past a slide and snap two over, which reads as a "double swipe".
+  // Embla (post-attach) already constrains to one slide per drag, so this keeps both consistent.
+  scroll-snap-stop: always;
 }
 
 .slide {

@@ -24,6 +24,12 @@ function loadEmbla() {
   return emblaCorePromise
 }
 
+// `scrollend` fires exactly when a scroll (incl. touch momentum + scroll-snap) finishes settling —
+// the only reliable signal for "which slide did the swipe land on". A fixed timer after pointerup
+// fires mid-settle and reads a transient position → Embla would init on the wrong slide. We use a
+// debounced-scroll fallback only where scrollend is unsupported.
+const SCROLLEND_SUPPORTED = typeof window !== 'undefined' && 'onscrollend' in window
+
 // Native CSS scroll-snap carousel for the home hero — replaces Swiper (~24 KB gz) on the critical
 // path. Every slide renders in the SSR HTML (LCP cover paints with no carousel-library dependency)
 // and the baseline is swipeable with zero JS. It does NOT auto-advance. On the first carousel
@@ -88,8 +94,9 @@ const Slider = memo(function Slider({ items }: SliderProps) {
       })
   }, [count])
 
-  // After a swipe settles, attach Embla at the LIVE landed slide (read when the timer fires).
-  const scheduleAttach = useCallback(() => {
+  // Fallback only (browsers without `scrollend`): attach a short debounce after the last scroll
+  // event. Reads the index at fire time, not when scheduled.
+  const scheduleAttachFallback = useCallback(() => {
     if (attachingRef.current || emblaApiRef.current || count <= 1) return
     if (attachTimerRef.current) window.clearTimeout(attachTimerRef.current)
     attachTimerRef.current = window.setTimeout(() => {
@@ -112,18 +119,26 @@ const Slider = memo(function Slider({ items }: SliderProps) {
 
   const handleScroll = useCallback(() => {
     if (emblaApiRef.current) return // Embla owns the viewport now (native scroll is off)
-    setActive(currentBaselineIndex())
-    scheduleAttach()
-  }, [currentBaselineIndex, scheduleAttach])
+    setActive(currentBaselineIndex()) // keep the active dot live during the drag
+    if (!SCROLLEND_SUPPORTED) scheduleAttachFallback()
+  }, [currentBaselineIndex, scheduleAttachFallback])
 
   const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (isInteractiveTarget(event.target)) return
     preload()
   }, [preload])
 
-  const handlePointerUp = useCallback(() => {
-    scheduleAttach()
-  }, [scheduleAttach])
+  // Attach Embla once the swipe has truly settled (scrollend), at the final landed slide.
+  useEffect(() => {
+    const vp = viewportRef.current
+    if (!vp || !SCROLLEND_SUPPORTED) return
+    const onScrollEnd = () => {
+      if (emblaApiRef.current) return
+      attachEmbla(currentBaselineIndex())
+    }
+    vp.addEventListener('scrollend', onScrollEnd)
+    return () => vp.removeEventListener('scrollend', onScrollEnd)
+  }, [attachEmbla, currentBaselineIndex])
 
   useEffect(() => {
     return () => {
@@ -142,7 +157,6 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         onScroll={handleScroll}
         onPointerEnter={preload}
         onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
         onFocusCapture={preload}
       >
         <div className={styles.container}>
