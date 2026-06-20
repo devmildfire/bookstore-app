@@ -1,0 +1,45 @@
+@use '@/styles/common' as *;
+
+// Shared shell for the catalog section (ИЗДАНИЯ): the wrapper + heading are rendered eagerly and
+// permanently (by DeferredCatalog and the Suspense fallback), so the heading never swaps → no blink
+// when the deferred grid mounts. Moved here from NewProducts.module.scss.
+.wrapper {
+  @include page-container;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin: 100px 0 80px;
+  font-family: $font-cheque;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 60px;
+  text-transform: uppercase;
+  line-height: 72px;
+  color: $color-text-on-dark;
+
+  @include breakpoint('tablet') {
+    margin: 80px 0 60px;
+    font-size: 48px;
+    line-height: 58px;
+  }
+
+  @include breakpoint('phone') {
+    margin: 60px 0 40px;
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+// Reserves the deferred grid's height so the sections below (subscriptions / box-sets) stay anchored
+// far down — they can't render before the catalog, and the swap to the real grid is shift-free. The
+// real page-1 grid is ~1.7k–2.2k px depending on column count; reserve close to that. Empty (no ghost
+// cards) per design — the user sees the heading + filter bar, then dark space, then the grid fills in.
+.reserve {
+  min-height: 1700px;
+
+  @include breakpoint('tablet-small') {
+    min-height: 2200px;
+  }
+}

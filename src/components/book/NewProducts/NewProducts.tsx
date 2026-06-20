@@ -9,12 +9,14 @@ type Props = {
   filters: BookFilters
 }
 
+// The catalog body (filter bar + grid). The ИЗДАНИЯ heading + section wrapper live in DeferredCatalog
+// (rendered eagerly + permanently there, so the heading never re-mounts/blinks). This is the heavy
+// part that's deferred to interaction.
 export default function NewProducts({ catalog, filters }: Props) {
   const books = catalog.books
 
   return (
-    <section className={styles.wrapper}>
-      <h2 className={styles.title}>ИЗДАНИЯ</h2>
+    <>
       <CatalogControlsRouter
         filters={filters}
         categories={catalog.categories}
@@ -39,6 +41,6 @@ export default function NewProducts({ catalog, filters }: Props) {
       ) : (
         <p className={styles.subtitle}>Книги не найдены</p>
       )}
-    </section>
+    </>
   )
 }

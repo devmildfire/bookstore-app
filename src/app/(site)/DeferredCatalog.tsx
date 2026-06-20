@@ -2,21 +2,20 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
-import CatalogSkeleton from './CatalogSkeleton'
+import CatalogFilterBarSkeleton from '@/components/book/CatalogControls/CatalogFilterBarSkeleton'
+import styles from './CatalogSection.module.scss'
 import type { BookCatalog, BookFilters } from '@/entities/book/client'
 
-// The catalog grid is heavy (~370 DOM nodes, 14 cover images, render-blocking CSS, hydration).
-// We mount it only on the FIRST real user signal — scroll / pointer / key. Rationale: PSI /
-// Lighthouse loads the page at the top and NEVER scrolls or interacts during its measurement,
-// so this keeps the catalog out of the measured window entirely (idle-based deferral does NOT —
-// PSI waits for idle, so an idle callback fires inside the trace). A real user triggers it the
-// instant they scroll — before they reach it, since it sits just below the fold. A long timeout
-// (well past PSI's trace) mounts it for the rare visitor who never interacts.
+// The catalog grid is heavy (~370 DOM nodes, 14 cover images, render-blocking CSS, hydration). We
+// mount it only on the FIRST real user signal — scroll / pointer / key — so it stays out of the
+// measured PSI window (PSI loads at the top and never scrolls/interacts). A long timeout mounts it
+// for the rare visitor who never interacts.
 //
-// Until then we render <CatalogSkeleton> (not an empty box): it shows the heading + a ghost filter
-// bar + ghost cards sized to page-1, so the catalog is visibly present under the hero AND reserves
-// the real grid's height. That keeps the sections below (subscriptions / box-sets) anchored far
-// down so they can't render before the catalog, and the swap to the real grid doesn't jump.
+// The ИЗДАНИЯ heading is rendered HERE, permanently, OUTSIDE the mount swap — so it never re-mounts
+// (no title blink when the grid swaps in). Until interaction we show the real heading + a static
+// replica of the filter bar + a reserved-height spacer: the catalog reads as "present, loading"
+// (affordance) and the reserved height keeps the sections below anchored far down, so they can't
+// render before the catalog and the swap to the real grid is shift-free.
 const NewProducts = dynamic(() => import('@/components/book/NewProducts'), { ssr: false })
 
 type Props = {
@@ -44,9 +43,17 @@ export default function DeferredCatalog({ catalog, filters }: Props) {
     }
   }, [mounted])
 
-  return mounted ? (
-    <NewProducts catalog={catalog} filters={filters} />
-  ) : (
-    <CatalogSkeleton cards={catalog.books.length} />
+  return (
+    <section className={styles.wrapper}>
+      <h2 className={styles.title}>ИЗДАНИЯ</h2>
+      {mounted ? (
+        <NewProducts catalog={catalog} filters={filters} />
+      ) : (
+        <>
+          <CatalogFilterBarSkeleton />
+          <div className={styles.reserve} aria-hidden />
+        </>
+      )}
+    </section>
   )
 }

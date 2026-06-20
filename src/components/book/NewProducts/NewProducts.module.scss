@@ -1,33 +1,7 @@
 @use '@/styles/common' as *;
 
-.wrapper {
-  @include page-container;
-}
-
-.title {
-  display: flex;
-  justify-content: center;
-  margin: 100px 0 80px;
-  font-family: $font-cheque;
-  font-style: normal;
-  font-weight: 900;
-  font-size: 60px;
-  text-transform: uppercase;
-  line-height: 72px;
-  color: $color-text-on-dark;
-
-  @include breakpoint('tablet') {
-    margin: 80px 0 60px;
-    font-size: 48px;
-    line-height: 58px;
-  }
-
-  @include breakpoint('phone') {
-    margin: 60px 0 40px;
-    font-size: 32px;
-    line-height: 38px;
-  }
-}
+// .wrapper + .title moved to src/app/(site)/CatalogSection.module.scss (the heading is now rendered
+// by DeferredCatalog, outside this deferred body, so it never re-mounts).
 
 .subtitle {
   text-align: center;

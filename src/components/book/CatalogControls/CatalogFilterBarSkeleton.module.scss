@@ -1,0 +1,43 @@
+@use '@/styles/common' as *;
+
+// Mirrors the real CatalogControls bar (.wrapper / .controlBar / .controlButton / .divider) so the
+// static replica is pixel-identical and the swap to the real (interactive) bar is invisible. Kept in
+// sync with CatalogControls.module.scss — change both together.
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-12;
+}
+
+.controlBar {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  width: min(766px, 100%);
+  height: 66px;
+  overflow: hidden;
+  color: rgba($color-text-on-dark, 0.68);
+  background: rgba(18, 18, 18, 0.96);
+  border-radius: $radius-full;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(3px);
+
+  @include breakpoint('phone') {
+    height: 54px;
+  }
+}
+
+.controlButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba($color-text-on-dark, 0.2);
+}
