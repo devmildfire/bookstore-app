@@ -76,14 +76,12 @@ const Slider = memo(function Slider({ items }: SliderProps) {
         const idx = Math.max(0, Math.min(startIndex, count - 1))
         // [TEMP DEBUG] verify the index read + Embla's resolved slide through the attach.
         console.log('[hero] attach.then', { startIndex, idx, scrollLeftAtAttach: vp.scrollLeft, clientWidth: vp.clientWidth })
-        // Hand off from native scroll → Embla transform without a visual flash. Pre-position the
-        // container at the target slide FIRST, so that even if Embla applies its own transform a
-        // frame later, no paint ever shows slide 0 (the "flash back to the first slide"). Then drop
-        // native scroll (overflow hidden + scrollLeft 0) and let Embla take over the transform.
-        const container = vp.firstElementChild as HTMLElement | null
-        if (container) {
-          container.style.transform = `translate3d(${-idx * vp.clientWidth}px, 0, 0)`
-        }
+        // Hand off from native scroll → Embla. Drop native scroll (overflow hidden + scrollLeft 0)
+        // and let Embla measure the UN-transformed DOM, then position itself via startIndex.
+        // NOTE: we must NOT pre-set a transform on the container here. Doing so poisons Embla's slide
+        // measurement — it would measure the shifted slides, conclude "slide idx lives at offset 0",
+        // and settle the track to tx=0 (showing slide 0) while reporting selectedScrollSnap=idx. That
+        // index/pixel desync was the "snap-back to the first slide". Clean DOM → correct positioning.
         vp.scrollLeft = 0
         vp.style.overflowX = 'hidden'
         vp.style.scrollSnapType = 'none'
