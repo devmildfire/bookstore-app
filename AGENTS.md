@@ -11,7 +11,9 @@ npm run lint         # ESLint check
 npm run lint:fix     # ESLint auto-fix
 ```
 
-There is no test suite. Lint runs automatically on staged `.ts/.tsx/.js/.jsx` files via pre-commit hook.
+There is no test suite yet. Lint runs automatically on staged `.ts/.tsx/.js/.jsx` files via pre-commit hook.
+
+The testing strategy — proposed stack (Vitest + Playwright + MSW), layering (unit → integration → E2E), and the CI plan for reproducing the full Next.js + Supabase stack on GitHub Actions — is documented in [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md). The existing manual-test fixture reference for promo codes is [docs/testing/promo-codes.md](docs/testing/promo-codes.md).
 
 ### Regenerate Supabase types (run from repo root)
 
