@@ -98,10 +98,23 @@ const Slider = memo(function Slider({ items }: SliderProps) {
           const tx = tf === 'none' ? 0 : new DOMMatrixReadOnly(tf).m41
           return { tx: Math.round(tx), slide: vp.clientWidth ? +(tx / vp.clientWidth).toFixed(2) : 'n/a' }
         }
+        // [TEMP DEBUG] Ground truth: which book is physically at the viewport's left edge, plus how
+        // loop has laid out every slide. DOM order is stable (slide 0..N); loop shifts each slide via
+        // its own transform, so we read each slide's real rect to find what's actually visible.
+        const physical = () => {
+          const vpLeft = vp.getBoundingClientRect().left
+          const slides = Array.from((vp.firstElementChild?.children ?? []) as unknown as HTMLElement[])
+          const rows = slides.map((s, domIdx) => {
+            const alt = s.querySelector('img')?.getAttribute('alt')?.replace('Обложка книги: ', '') ?? '?'
+            return { domIdx, alt, left: Math.round(s.getBoundingClientRect().left - vpLeft) }
+          })
+          const visible = rows.reduce((a, b) => (Math.abs(b.left) < Math.abs(a.left) ? b : a), rows[0])
+          return { visibleDomIdx: visible?.domIdx, visibleBook: visible?.alt, slidesInView: api.slidesInView(), layout: rows }
+        }
         console.log('[hero] embla inited, selectedSnap=', api.selectedScrollSnap(), 'expected', idx, '| visual', visual())
         api.on('reInit', () => console.log('[hero] embla reInit → selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
         requestAnimationFrame(() => console.log('[hero] +1rAF selectedSnap=', api.selectedScrollSnap(), '| visual', visual()))
-        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual()), 200)
+        window.setTimeout(() => console.log('[hero] +200ms selectedSnap=', api.selectedScrollSnap(), '| visual', visual(), '| physical', physical()), 200)
         const onSelect = () => setActive(api.selectedScrollSnap())
         api.on('select', onSelect)
         api.on('reInit', onSelect)
