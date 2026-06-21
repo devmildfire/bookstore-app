@@ -188,10 +188,10 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       media.push(coverEl(card.imageUrl!, { right, top, width: cw, height: ch }))
       contentRight = w - right - cw - (cp ? 26 : 40)
     } else if (visual === 'circle' && hasImage) {
-      // Big circular photo bleeding off the right edge (clipped by the card's overflow:hidden),
-      // like the authors page — stays a perfect circle, only the outer arc is cut.
-      const D = R(h * (cp ? 1.14 : 1.12))
-      const left = w - R(D * (cp ? 0.6 : 0.64))
+      // Big circular photo on the right that OVERFLOWS the card top & bottom (D > card
+      // height) and bleeds a little off the right — clipped to a perfect circle in circleEl.
+      const D = R(h * (cp ? 1.16 : 1.18))
+      const left = w - R(D * 0.82) + (cp ? 24 : 35)
       media.push(circleEl(card.imageUrl!, { left, top: R((h - D) / 2), width: D, height: D }))
       contentRight = w - left + (cp ? 22 : 40)
     } else if (visual === 'landscape' && hasImage) {
@@ -341,9 +341,25 @@ function coverEl(src: string, box: Box): ReactElement {
 }
 
 function circleEl(src: string, box: Box): ReactElement {
+  // Clip to a circle via border-radius ON THE IMG. satori does NOT clip an <img>
+  // child to a parent's overflow:hidden + border-radius (that only rounds the
+  // border, leaving the photo a rectangle) — the radius must be on the image itself.
   return (
-    <div key="circle" style={{ position: 'absolute', ...box, borderRadius: box.width, overflow: 'hidden', border: '1px solid rgba(220,220,220,0.14)', boxShadow: '0 24px 60px rgba(0,0,0,0.55)', display: 'flex', zIndex: 2 }}>
-      <img src={src} alt="" width={box.width} height={box.height} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+    <div key="circle" style={{ position: 'absolute', ...box, display: 'flex', zIndex: 2 }}>
+      <img
+        src={src}
+        alt=""
+        width={box.width}
+        height={box.height}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: '50%',
+          border: '1px solid rgba(220,220,220,0.14)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.55)',
+        }}
+      />
     </div>
   )
 }
