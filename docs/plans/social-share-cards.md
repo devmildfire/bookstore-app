@@ -15,6 +15,11 @@ Status: **redesigned per Claude-design handoff; verified locally; production pro
 - Shared renderer/data: `src/lib/socialCards/`.
 - Admin QA gallery: `src/app/admin/(panel)/social-cards/page.tsx`.
 - Cache header: `public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400`.
+- **Resilient render:** the route renders eagerly to a buffer inside try/catch; if satori
+  fails on a cover/photo (some source images are huge or have headers resvg rejects — e.g. a
+  3200×4800 PNG threw "corrupt header"), it re-renders the card WITHOUT the image so the route
+  returns a text-only card instead of streaming a broken response (which the gateway turns into
+  a 502). Oversized source covers should still be optimized so their cards show the artwork.
 - Card art: redesigned from the Claude-design handoff — real 5-diamond ЧТИВО glyph +
   Cheque wordmark, flat near-black surface, single red accent, 3-leaf «Русский Динозавр»
   mark on литжурнал/рассказ kickers, author photo in a ring-less circle. Fonts: Cheque +

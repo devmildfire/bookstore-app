@@ -51,14 +51,28 @@ export async function GET(_request: Request, { params }: Context): Promise<Respo
 
   const config = SOCIAL_CARD_VARIANTS[variant]
   const card = await resolveSocialCard(kind, target ?? [])
-  const response = new ImageResponse(renderSocialCard(card, config), {
-    width: config.width,
-    height: config.height,
-    fonts: await loadFonts(),
+  const fonts = await loadFonts()
+
+  // Render EAGERLY (to a buffer) so any satori failure is catchable. Some source
+  // cover/photo images are huge (e.g. a 3200×4800 PNG) and make satori throw mid-
+  // render — streaming that aborts the response and the gateway returns 502. If the
+  // render fails, retry once WITHOUT the image so the card always renders (text-only)
+  // instead of 502-ing. See docs/plans/social-share-cards.md.
+  const toPng = (c: typeof card) =>
+    new ImageResponse(renderSocialCard(c, config), {
+      width: config.width,
+      height: config.height,
+      fonts,
+    }).arrayBuffer()
+
+  let png: ArrayBuffer
+  try {
+    png = await toPng(card)
+  } catch {
+    png = await toPng({ ...card, imageUrl: null })
+  }
+
+  return new Response(png, {
+    headers: { 'Cache-Control': SOCIAL_CARD_CACHE_CONTROL, 'Content-Type': 'image/png' },
   })
-
-  response.headers.set('Cache-Control', SOCIAL_CARD_CACHE_CONTROL)
-  response.headers.set('Content-Type', 'image/png')
-
-  return response
 }
