@@ -161,7 +161,7 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       media.push(coverEl(card.imageUrl!, { left, top: sqTop, width: cw, height: ch }))
       contentTop = sqTop + ch + R(h * 0.05)
     } else if (visual === 'circle' && hasImage) {
-      const D = R(w * 0.48)
+      const D = R(w * 0.56)
       media.push(circleEl(card.imageUrl!, { left: R((w - D) / 2), top: sqTop, width: D, height: D }))
       contentTop = sqTop + D + R(h * 0.05)
     } else if (visual === 'landscape' && hasImage) {
@@ -188,10 +188,12 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       media.push(coverEl(card.imageUrl!, { right, top, width: cw, height: ch }))
       contentRight = w - right - cw - (cp ? 26 : 40)
     } else if (visual === 'circle' && hasImage) {
-      const D = Math.min(areaH, R(w * 0.48))
-      const right = cp ? 40 : R(w * 0.05)
-      media.push(circleEl(card.imageUrl!, { right, top: R((h - D) / 2), width: D, height: D }))
-      contentRight = w - right - D - (cp ? 24 : 40)
+      // Big circular photo bleeding off the right edge (clipped by the card's overflow:hidden),
+      // like the authors page — stays a perfect circle, only the outer arc is cut.
+      const D = R(h * (cp ? 1.14 : 1.12))
+      const left = w - R(D * (cp ? 0.6 : 0.64))
+      media.push(circleEl(card.imageUrl!, { left, top: R((h - D) / 2), width: D, height: D }))
+      contentRight = w - left + (cp ? 22 : 40)
     } else if (visual === 'landscape' && hasImage) {
       const lw = R(w * 0.47)
       const lh = R(lw * 0.68)

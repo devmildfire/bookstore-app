@@ -27,9 +27,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const periodical = await getPeriodical(slug)
   if (periodical) {
+    const description = periodical.description?.slice(0, 160) ?? periodical.name
     return {
       title: periodical.name,
-      description: periodical.description?.slice(0, 160) ?? periodical.name,
+      description,
+      openGraph: {
+        type: 'website',
+        title: periodical.name,
+        description,
+        url: getAbsoluteSiteUrl(`/books/${periodical.slug}`),
+        siteName: 'Чтиво',
+        locale: 'ru_RU',
+        images: getOpenGraphImages('book', periodical.slug, periodical.name),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: periodical.name,
+        description,
+        images: getTwitterImages('book', periodical.slug),
+      },
     }
   }
 

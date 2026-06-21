@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getArticlesPage } from '@/api/articles/getArticlesPage'
 import { getFeaturedBooks } from '@/api/books'
+import { getAuthor } from '@/api/authors'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import {
   OPEN_GRAPH_VARIANTS,
@@ -24,9 +25,12 @@ type PreviewTarget = {
 }
 
 export default async function AdminSocialCardsPage() {
-  const [featuredBooks, articlesPage] = await Promise.all([getFeaturedBooks(), getArticlesPage(null, 1)])
+  const [featuredBooks, articlesPage, author] = await Promise.all([
+    getFeaturedBooks(),
+    getArticlesPage(null, 1),
+    getAuthor(10),
+  ])
   const firstBook = featuredBooks[0]
-  const firstAuthor = firstBook?.authors[0]
   const firstArticle = articlesPage.items[0]
 
   const targets: PreviewTarget[] = [
@@ -54,20 +58,20 @@ export default async function AdminSocialCardsPage() {
           title: 'Книга Чтиво',
           description: 'Fallback',
         },
-    firstAuthor
+    author
       ? {
           kind: 'author',
           label: 'Автор',
-          pageUrl: getAbsoluteSiteUrl(`/authors/${firstAuthor.id}`),
-          target: String(firstAuthor.id),
-          title: `${firstAuthor.name} — автор`,
-          description: firstAuthor.city ?? 'Автор Чтиво',
+          pageUrl: getAbsoluteSiteUrl(`/authors/${author.id}`),
+          target: String(author.id),
+          title: `${author.name} — автор`,
+          description: author.city ?? 'Автор Чтиво',
         }
       : {
           kind: 'author',
           label: 'Автор — fallback',
-          pageUrl: getAbsoluteSiteUrl('/authors/0'),
-          target: '0',
+          pageUrl: getAbsoluteSiteUrl('/authors/10'),
+          target: '10',
           title: 'Автор Чтиво',
           description: 'Fallback',
         },
