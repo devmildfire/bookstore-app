@@ -1,0 +1,132 @@
+@use '@/styles/common' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.note {
+  margin: 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-muted-on-dark;
+}
+
+.target {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  padding: $space-6;
+  background: $color-panel;
+  border: 1px solid $color-border-faint;
+}
+
+.targetHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-5;
+
+  @include breakpoint('tablet-small') {
+    flex-direction: column;
+  }
+}
+
+.targetTitle {
+  margin: 0 0 $space-2;
+  font-family: $font-cheque;
+  font-size: 34px;
+  font-weight: $font-weight-normal;
+  line-height: 0.95;
+  color: $color-text-title;
+}
+
+.pageLink,
+.url {
+  font-family: $font-montserrat;
+  color: $color-text-muted-on-dark;
+  text-decoration: none;
+  transition: color 0.14s ease;
+
+  &:hover {
+    color: $color-accent-bright;
+  }
+}
+
+.pageLink {
+  font-size: $font-size-sm;
+}
+
+.targetDescription {
+  margin: $space-2 0 0;
+  font-family: $font-montserrat;
+  font-size: $font-size-sm;
+  color: $color-text-faint;
+}
+
+.metaBox {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 160px;
+  padding: $space-3 $space-4;
+  font-family: $font-montserrat;
+  font-size: 12px;
+  color: $color-text-faint;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-faint;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-5;
+
+  @include breakpoint('tablet') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+  padding: $space-4;
+  background: $color-bg-inset;
+  border: 1px solid $color-border-faint;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-3;
+  font-family: $font-montserrat;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-base;
+    color: $color-text-title;
+  }
+
+  span {
+    font-size: 12px;
+    color: $color-text-faint;
+  }
+}
+
+.preview {
+  width: 100%;
+  height: auto;
+  background: $color-bg-deep;
+  border: 1px solid $color-border-faint;
+}
+
+.url {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}

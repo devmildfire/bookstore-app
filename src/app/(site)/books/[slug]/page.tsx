@@ -15,6 +15,7 @@ import BookContext from './BookContext'
 import BookCover from './BookCover'
 import BookEditionTabs from './BookEditionTabs'
 import BookTrailer from './BookTrailer'
+import { getAbsoluteSiteUrl, getOpenGraphImages, getTwitterImages } from '@/lib/socialCards/cardTypes'
 import styles from './page.module.scss'
 
 type Props = {
@@ -42,9 +43,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: book.name,
     description: book.description?.slice(0, 160) ?? `${book.authorName} — ${book.name}`,
     openGraph: {
+      type: 'website',
       title: book.name,
       description: book.description?.slice(0, 160),
-      images: book.coverUrl ? [{ url: book.coverUrl }] : [],
+      url: getAbsoluteSiteUrl(`/books/${book.slug}`),
+      siteName: 'Чтиво',
+      locale: 'ru_RU',
+      images: getOpenGraphImages('book', book.slug, `${book.name} — ${book.authorName}`),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: book.name,
+      description: book.description?.slice(0, 160) ?? `${book.authorName} — ${book.name}`,
+      images: getTwitterImages('book', book.slug),
     },
   }
 }
