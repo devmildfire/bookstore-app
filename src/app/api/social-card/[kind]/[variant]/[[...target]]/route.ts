@@ -28,13 +28,16 @@ type ImageFont = NonNullable<ConstructorParameters<typeof ImageResponse>[1]>['fo
 let fontsPromise: Promise<ImageFont> | null = null
 
 function loadFonts(): Promise<ImageFont> {
-  fontsPromise ??= readFile(join(process.cwd(), 'src/app/fonts/Chequeblack.ttf')).then((cheque) => [
-    {
-      name: 'Cheque',
-      data: cheque,
-      weight: 400,
-      style: 'normal',
-    },
+  // Cheque (display) + Montserrat 400/700 (kicker / subtitle / description).
+  // Loaded once and cached at module level.
+  fontsPromise ??= Promise.all([
+    readFile(join(process.cwd(), 'src/app/fonts/Chequeblack.ttf')),
+    readFile(join(process.cwd(), 'public/fonts/Montserrat-Regular.ttf')),
+    readFile(join(process.cwd(), 'public/fonts/Montserrat-Bold.ttf')),
+  ]).then(([cheque, montserrat, montserratBold]) => [
+    { name: 'Cheque', data: cheque, weight: 400, style: 'normal' },
+    { name: 'Montserrat', data: montserrat, weight: 400, style: 'normal' },
+    { name: 'Montserrat', data: montserratBold, weight: 700, style: 'normal' },
   ])
   return fontsPromise
 }

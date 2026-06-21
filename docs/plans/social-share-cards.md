@@ -1,6 +1,6 @@
 # Social Share Cards
 
-Status: **implemented locally; verification in progress**.
+Status: **redesigned per Claude-design handoff; verified locally; production promotion pending**.
 
 ## Scope
 
@@ -15,6 +15,15 @@ Status: **implemented locally; verification in progress**.
 - Shared renderer/data: `src/lib/socialCards/`.
 - Admin QA gallery: `src/app/admin/(panel)/social-cards/page.tsx`.
 - Cache header: `public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400`.
+- Card art: redesigned from the Claude-design handoff — real 5-diamond ЧТИВО glyph +
+  Cheque wordmark, flat near-black surface, single red accent, 3-leaf «Русский Динозавр»
+  mark on литжурнал/рассказ kickers, author photo in a ring-less circle. Fonts: Cheque +
+  Montserrat 400/700 (loaded in `route.ts`).
+- **satori gotchas hit & fixed during wiring** (keep in mind if editing `renderSocialCard.tsx`):
+  brand marks are data-URI `<img>` (inline `<svg>` also works but img is the safe path);
+  never set a style value to `undefined` (e.g. `right: cond ? 0 : undefined`) — satori calls
+  `.trim()` on every value and crashes on `undefined`, so spread the key in conditionally;
+  every `<div>` wrapping children needs explicit `display: 'flex'`.
 
 ## Variants
 
@@ -35,8 +44,7 @@ Status: **implemented locally; verification in progress**.
 
 ## Remaining
 
-- **Redesign the card visuals.** The current card layout/colors in `renderSocialCard.tsx`
-  are a working prototype, not final design — replace with a proper designed treatment.
+- Promote `update` → `production` to deploy (held by choice; redesign now done).
 - Verify with production data and production `NEXT_PUBLIC_BASE_URL`.
 - Record deployed SHA after merge.
 - Confirm Cloudflare caches `/api/social-card/*` responses.

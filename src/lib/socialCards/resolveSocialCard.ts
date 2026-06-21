@@ -11,6 +11,8 @@ export type SocialCardData = {
   subtitle: string | null
   description: string | null
   imageUrl: string | null
+  // periodical + article cards show the 3-leaf «Русский Динозавр» mark in the kicker
+  kickerMark?: boolean
 }
 
 function truncateDescription(value: string | null | undefined): string | null {
@@ -37,12 +39,13 @@ export async function resolveSocialCard(
   targetParts: readonly string[] = [],
 ): Promise<SocialCardData> {
   if (kind === 'home') {
+    // The wordmark already says ЧТИВО, so the tagline goes in the title slot.
     return {
       kind,
       kicker: 'Независимое издательство',
-      title: 'Чтиво',
-      subtitle: 'Книги, которые меняют взгляд на мир',
-      description: 'Независимое издательство и книжный магазин.',
+      title: 'Книги, которые меняют взгляд на мир',
+      subtitle: 'Независимое издательство и книжный магазин.',
+      description: null,
       imageUrl: null,
     }
   }
@@ -65,11 +68,12 @@ export async function resolveSocialCard(
     if (periodical) {
       return {
         kind,
-        kicker: 'Периодика',
+        kicker: 'Литжурнал',
         title: periodical.name,
         subtitle: 'Чтиво',
         description: truncateDescription(periodical.description),
-        imageUrl: null,
+        imageUrl: periodical.issues[0]?.book.coverUrl ?? null,
+        kickerMark: true,
       }
     }
     return genericCard(kind)
@@ -93,10 +97,11 @@ export async function resolveSocialCard(
   if (!article) return genericCard(kind)
   return {
     kind,
-    kicker: 'Статья',
+    kicker: 'Рассказ',
     title: article.title,
     subtitle: article.author.name,
     description: truncateDescription(article.excerpt),
     imageUrl: article.coverUrl,
+    kickerMark: true,
   }
 }
