@@ -20,10 +20,12 @@ Status: **redesigned per Claude-design handoff; verified locally; production pro
   mark on литжурнал/рассказ kickers, author photo in a ring-less circle. Fonts: Cheque +
   Montserrat 400/700 (loaded in `route.ts`).
 - **satori gotchas hit & fixed during wiring** (keep in mind if editing `renderSocialCard.tsx`):
-  brand marks are data-URI `<img>` (inline `<svg>` also works but img is the safe path);
+  brand marks are inline `<svg>` with explicit `width`/`height` (satori scales the viewBox);
   never set a style value to `undefined` (e.g. `right: cond ? 0 : undefined`) — satori calls
   `.trim()` on every value and crashes on `undefined`, so spread the key in conditionally;
-  every `<div>` wrapping children needs explicit `display: 'flex'`.
+  every `<div>` wrapping children needs explicit `display: 'flex'`; **satori does not center a
+  near-full-width child via `justify-content: center`, and cannot size an `inset:0` absolute box**
+  — the home watermark is positioned with an explicit computed `left`/`top` from the card size.
 
 ## Variants
 

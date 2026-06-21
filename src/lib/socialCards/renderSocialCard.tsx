@@ -26,28 +26,9 @@ import type { SocialCardData } from './resolveSocialCard'
 const R = Math.round
 const ACCENT = '#A10202' // oxblood. brighter link-red is #C20000.
 
-// satori (next/og) chokes on inline <svg> in this build (throws "reading 'trim'"),
-// so brand marks are rendered as data-URI <img> of the same SVG instead.
-function svgImg(svg: string, width: number, height: number, style?: CSSProperties): ReactElement {
-  const uri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
-  return <img src={uri} width={width} height={height} alt="" style={{ display: 'flex', ...style }} />
-}
-
-const DIAMOND_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 119 26" fill="none">' +
-  '<path d="M47 18.5L35.5 12.5L24 18.5L24 6.5L35.5 0L47 6.5L47 18.5Z" fill="#930000"/>' +
-  '<path d="M95 18.5L83.5 12.5L72 18.5L72 6.5L83.5 0L95 6.5L95 18.5Z" fill="#F7F7F7"/>' +
-  '<path d="M48 7L59.5 13L71 7V19L59.5 25.5L48 19V7Z" fill="#930000"/>' +
-  '<path d="M96 7L107.5 13L119 7V19L107.5 25.5L96 19V7Z" fill="#F7F7F7"/>' +
-  '<path d="M0 7L11.5 13L23 7V19L11.5 25.5L0 19V7Z" fill="#930000"/></svg>'
-
-const WATERMARK_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 119 26" fill="none">' +
-  '<path d="M47 18.5L35.5 12.5L24 18.5L24 6.5L35.5 0L47 6.5L47 18.5Z" fill="#C20000" fill-opacity="0.8"/>' +
-  '<path d="M95 18.5L83.5 12.5L72 18.5L72 6.5L83.5 0L95 6.5L95 18.5Z" fill="#F2F2F2" fill-opacity="0.2"/>' +
-  '<path d="M48 7L59.5 13L71 7V19L59.5 25.5L48 19V7Z" fill="#C20000" fill-opacity="0.8"/>' +
-  '<path d="M96 7L107.5 13L119 7V19L107.5 25.5L96 19V7Z" fill="#F2F2F2" fill-opacity="0.2"/>' +
-  '<path d="M0 7L11.5 13L23 7V19L11.5 25.5L0 19V7Z" fill="#C20000" fill-opacity="0.8"/></svg>'
+// Brand marks use INLINE <svg> with explicit width/height (satori scales the
+// viewBox deterministically). NOTE: never give a style value `undefined` anywhere
+// in this file — satori calls `.trim()` on every value and crashes on undefined.
 
 /* ---------- type sizing ---------------------------------------------------- */
 
@@ -62,7 +43,18 @@ function titleFontSize(title: string, sq: boolean, cp: boolean): number {
 /* ---------- brand lockup (diamond glyph + ЧТИВО) --------------------------- */
 
 function diamondGlyph(height: number): ReactElement {
-  return svgImg(DIAMOND_SVG, R(height * 4.577), height)
+  const width = R(height * 4.577)
+  return (
+    <div style={{ width, height, display: 'flex' }}>
+      <svg viewBox="0 0 119 26" width={width} height={height} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M47 18.5L35.5 12.5L24 18.5L24 6.5L35.5 0L47 6.5L47 18.5Z" fill="#930000" />
+        <path d="M95 18.5L83.5 12.5L72 18.5L72 6.5L83.5 0L95 6.5L95 18.5Z" fill="#F7F7F7" />
+        <path d="M48 7L59.5 13L71 7V19L59.5 25.5L48 19V7Z" fill="#930000" />
+        <path d="M96 7L107.5 13L119 7V19L107.5 25.5L96 19V7Z" fill="#F7F7F7" />
+        <path d="M0 7L11.5 13L23 7V19L11.5 25.5L0 19V7Z" fill="#930000" />
+      </svg>
+    </div>
+  )
 }
 
 function brandLockup(brandFont: number, showGlyph: boolean): ReactElement {
@@ -83,18 +75,32 @@ const MRD_PATH =
 
 function mrdMark(height: number, color: string, fillOpacity = 1): ReactElement {
   const width = R(height * 0.522)
-  const svg =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 67" fill="none">' +
-    `<path fill-rule="evenodd" clip-rule="evenodd" d="${MRD_PATH}" fill="${color}" fill-opacity="${fillOpacity}"/></svg>`
-  return svgImg(svg, width, height)
+  return (
+    <div style={{ width, height, display: 'flex' }}>
+      <svg viewBox="0 0 35 67" width={width} height={height} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d={MRD_PATH} fill={color} fillOpacity={fillOpacity} />
+      </svg>
+    </div>
+  )
 }
 
 /* The big translucent watermark logo used on the home cards. */
-function watermarkLogo(width: number): ReactElement {
-  const height = R(width / 4.577)
+// Centered via EXPLICIT left/top (not flex justify-center): satori does not reliably
+// center a near-full-width child, and it can't size a `inset:0` absolute box — both
+// left-anchored the watermark. Compute the offset from the card dimensions instead.
+function watermarkLogo(glyphW: number, cardW: number, cardH: number): ReactElement {
+  const glyphH = R(glyphW / 4.577)
+  const left = R((cardW - glyphW) / 2)
+  const top = R((cardH - glyphH) / 2)
   return (
-    <div style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 0 }}>
-      {svgImg(WATERMARK_SVG, width, height)}
+    <div style={{ position: 'absolute', left, top, width: glyphW, height: glyphH, display: 'flex', zIndex: 0 }}>
+      <svg viewBox="0 0 119 26" width={glyphW} height={glyphH} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M47 18.5L35.5 12.5L24 18.5L24 6.5L35.5 0L47 6.5L47 18.5Z" fill="#C20000" fillOpacity={0.8} />
+        <path d="M95 18.5L83.5 12.5L72 18.5L72 6.5L83.5 0L95 6.5L95 18.5Z" fill="#F2F2F2" fillOpacity={0.2} />
+        <path d="M48 7L59.5 13L71 7V19L59.5 25.5L48 19V7Z" fill="#C20000" fillOpacity={0.8} />
+        <path d="M96 7L107.5 13L119 7V19L107.5 25.5L96 19V7Z" fill="#F2F2F2" fillOpacity={0.2} />
+        <path d="M0 7L11.5 13L23 7V19L11.5 25.5L0 19V7Z" fill="#C20000" fillOpacity={0.8} />
+      </svg>
     </div>
   )
 }
@@ -163,7 +169,7 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       contentTop = sqTop + lh + R(h * 0.05)
     } else {
       // home / no image: centered watermark logo
-      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * 0.9))}</div>)
+      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * 0.9), w, h)}</div>)
       contentTop = R(h * 0.45)
     }
   } else {
@@ -189,7 +195,7 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       media.push(landscapeEl(card.imageUrl!, { right, top: R((h - lh) / 2), width: lw, height: lh }))
       contentRight = w - right - lw - (cp ? 24 : 40)
     } else {
-      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * (cp ? 1.0 : 0.96)))}</div>)
+      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * (cp ? 1.0 : 0.96)), w, h)}</div>)
       contentRight = padL
     }
     contentTop = brandTop + brandFont + (cp ? 24 : 42)
