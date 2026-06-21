@@ -799,7 +799,7 @@ CA10 (page-level client boundaries, lowest priority).
 | CA7 | ✅ Fixed | Split 752-line `actions.ts` into 4 files: `shared.ts` (119 lines — types, schemas, helpers, constants), `bookActions.ts` (300 — book CRUD + cover + photos), `productActions.ts` (162 — editions + digital/demo files), `contributorActions.ts` (170 — awards + workers + trailer). Updated 8 importers. `tsc` + lint verified. |
 | CA8 | ✅ Fixed | Split 471-line `CatalogControls.tsx` into 4 files: `CatalogControls.tsx` (264 — main component + state), `FilterParts.tsx` (125 — FilterPanel, SelectedChips, AuthorSearch, AuthorList, PlainOptionList), `icons.tsx` (65 — 7 inline SVG icons), `helpers.ts` (36 — types, constants, helper functions). `tsc` + lint verified. |
 | CA9 | ✅ Fixed | 1 `<img>` in `ImageUploader.tsx` replaced with `<Image unoptimized>` (SVG + raster unified). `tsc` verified. |
-| CA10 | 🟡 Blocked | Restructuring 6 page-level `'use client'` pages to Server Components with client leaf forms. `tsc` can verify but each page needs careful data-flow analysis (what data the server can prefetch vs what must be client-fetched). |
+| CA10 | ✅ Fixed | All 6 page-level `'use client'` pages converted to Server Components + client leaf forms: `RegisterForm.tsx`, `ForgotPasswordForm.tsx`, `ResetPasswordForm.tsx`, `AdminLoginForm.tsx`, `CartView.tsx`, `CheckoutView.tsx`. Zero `'use client'` in any `page.tsx` now. `tsc` + lint verified. |
 | CA11 | ✅ Fixed | Swallowed `.catch(() => {})` in `StorySubmitModal.tsx` replaced with `console.error` logging. |
 | CA12 | ✅ False positive | `getOrdersServer.ts` already delegates to shared `loadOrders` — no duplication exists. |
 
