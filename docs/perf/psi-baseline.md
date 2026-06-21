@@ -18,6 +18,32 @@ the PSI API access memory note). Script: `/tmp/psi/run.mjs`.
 
 ---
 
+## 2026-06-21 — CLS regression from a `(site)/loading.tsx` (found + reverted)
+
+A storefront-wide `src/app/(site)/loading.tsx` (a tiny `Загрузка…` spinner) shipped in audit fix
+CA1 and **tanked the score via CLS**. Because the home `page.tsx` `await`s `getFeaturedBooks`, the
+route-group fallback became a Suspense ancestor of the whole page: the spinner painted first, then
+the full hero+catalog swapped in — one discrete layout shift. 100 cache-busted traces each:
+
+| Metric | mobile p50 (mean) | desktop p50 (mean) | prior baseline |
+|---|---|---|---|
+| **Performance** | **73** (79) | **86** (87) | 97 mobile |
+| **CLS** | **0.435** (0.309) | **0.270** (0.232) | **0** |
+| LCP (ms) | 3301 (3064) | 673 (685) | 2401 mobile |
+| FCP (ms) | 1351 | 321 | 1501 |
+| TBT (ms) | 34 | 19 | 28 |
+
+- **CLS is the entire regression.** Desktop FCP/LCP/TBT are all excellent — the 86 is *purely*
+  CLS 0.27. The CLS is **bimodal** (mobile buckets `0: 28, ≥0.25: 71`; desktop `≥0.25: 86, 0-0.1: 14`)
+  — the signature of a single Suspense-fallback swap that sometimes races ahead of first paint (→0)
+  and usually doesn't (→0.27+). Confirmed: the live home HTML contained *both* `Загрузка…` and the
+  real `Slider` hero.
+- **Fix: deleted `(site)/loading.tsx`** (+ its `.module.scss`). Restores the one-shot document render
+  that scored 97. `books/(catalog)/` and `books/[slug]/` keep their own layout-mirroring `loading.tsx`
+  — those are fine because their fallbacks reserve the real layout. See the guardrails in
+  [AGENTS.md](../../AGENTS.md) (directory layout) and
+  [conventions/PERFORMANCE.md](../conventions/PERFORMANCE.md) (Streaming and Suspense).
+
 ## 2026-06-20 — 100 independent mobile traces (cache-busted)
 
 `n=100`, cache-busted unique URLs, run concurrently. Raw data:

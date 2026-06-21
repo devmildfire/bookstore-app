@@ -150,6 +150,17 @@ Use `loading.tsx` files and `<Suspense>` boundaries to stream page content incre
 Slow data (e.g. personalized recommendations) should be wrapped in Suspense so the
 rest of the page renders immediately.
 
+> **⚠ Do NOT add a `loading.tsx` to the `(site)` storefront route group, nor any segment
+> that is a Suspense ancestor of the home page.** The home `page.tsx` `await`s server data,
+> so a route-group `loading.tsx` makes its tiny fallback (a spinner) paint first, then the
+> full hero+catalog page swaps in — a discrete layout shift. We measured CLS jump from a
+> stable **0** to **0.27 (desktop) / 0.44 (mobile)**, with perf **97 → 73**, the day a
+> well-meaning `(site)/loading.tsx` was added (audit fix CA1, 2026-06-21). It was reverted.
+> Reserve space with an **in-page** skeleton inside the page (a `<Suspense>` whose fallback
+> mirrors the real layout's dimensions — e.g. `CatalogSectionSkeleton`), not a route-level
+> spinner. `loading.tsx` is only safe on a segment whose *whole* visible layout the fallback
+> faithfully reserves (see `books/(catalog)/loading.tsx`, `books/[slug]/loading.tsx`).
+
 ```tsx
 // app/books/page.tsx
 import { Suspense } from 'react'

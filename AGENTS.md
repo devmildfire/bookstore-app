@@ -101,6 +101,11 @@ Note: `supabase db reset` does NOT restore auth users (re-run
 src/
   app/          Next.js App Router. Root layout = html/body/Providers ONLY (no chrome).
     (site)/     Storefront route group — owns the Header/Footer chrome via its layout.
+                ⚠ NO (site)/loading.tsx. A route-group loading fallback becomes a Suspense
+                ancestor of the streamed home page (page.tsx awaits getFeaturedBooks), so the
+                tiny spinner→full-page swap caused CLS 0.27 (desktop) / 0.44 (mobile) and
+                perf 97→73 — see docs/perf/psi-baseline.md. Pages defer with IN-PAGE
+                space-reserving skeletons (e.g. CatalogSectionSkeleton), not a route spinner.
       auth/       login/, register/, forgot-password/, reset-password/, confirm/ routes
       profile/    User cabinet (books/, courses/, subscriptions/, orders/, gift-cards/, favorites/)
       books/      Catalog
