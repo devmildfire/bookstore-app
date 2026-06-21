@@ -8,7 +8,7 @@
 .count { font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
 .create {
   margin-left: auto; padding: $space-2 $space-4; background: $color-accent-on-dark;
-  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: #fff; text-decoration: none;
+  border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-accent; text-decoration: none;
   &:hover { opacity: 0.9; }
 }
 .empty { margin: 0; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }

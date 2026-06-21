@@ -96,7 +96,7 @@
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 .card {
-  background-color: #000;
+  background-color: $color-bg-deep;
   border-radius: 0;
   overflow: hidden;
   display: flex;
@@ -108,7 +108,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 2;
-  background-color: #000;
+  background-color: $color-bg-deep;
   overflow: hidden;
 }
 

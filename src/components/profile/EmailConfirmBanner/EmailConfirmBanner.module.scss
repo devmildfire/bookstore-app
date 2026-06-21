@@ -8,10 +8,10 @@
   gap: 12px 20px;
   margin: 0 0 24px;
   padding: 14px 18px;
-  border: 1px solid rgba($color: #a10202, $alpha: 0.5);
+  border: 1px solid rgba($color: $color-accent-on-dark, $alpha: 0.5);
   border-left: 3px solid $color-accent-on-dark;
   border-radius: 8px;
-  background: rgba($color: #a10202, $alpha: 0.08);
+  background: rgba($color: $color-accent-on-dark, $alpha: 0.08);
 }
 
 .text {
@@ -46,7 +46,7 @@
 
   &:hover:not(:disabled) {
     background: $color-accent-on-dark;
-    color: #fff;
+    color: $color-text-title;
   }
 
   &:disabled {

@@ -23,7 +23,7 @@
   width: 100%;
   max-width: 1553px;
   aspect-ratio: 1553 / 794;
-  background: #b1b1b1;
+  background: $color-control-muted;
   overflow: hidden;
 
   @include breakpoint(tablet)        { aspect-ratio: 823 / 463; }   // 16:9
@@ -36,7 +36,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #b1b1b1;
+  background: $color-control-muted;
 }
 
 .playOverlay {

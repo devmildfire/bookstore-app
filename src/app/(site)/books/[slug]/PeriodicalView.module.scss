@@ -44,7 +44,7 @@
   font-weight: $font-weight-bold;
   line-height: 1.02;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: $color-text-title;
   font-size: 72px;
 
   @include breakpoint(tablet) { font-size: 52px; }
@@ -111,7 +111,7 @@
 }
 
 // ── Composed numero (Cheque has no № glyph) ──
-.numero { font-family: $font-cheque; font-weight: $font-weight-bold; line-height: 0.82; color: #fff; white-space: nowrap; }
+.numero { font-family: $font-cheque; font-weight: $font-weight-bold; line-height: 0.82; color: $color-text-title; white-space: nowrap; }
 .numeroNo { white-space: nowrap; }
 .numeroDigits { font-family: inherit; }
 .numeroO {
@@ -204,5 +204,5 @@
   bottom: 0;
   height: 44px;
   pointer-events: none;
-  background: linear-gradient(to top, #121212, transparent);
+  background: linear-gradient(to top, $color-bg-page, transparent);
 }

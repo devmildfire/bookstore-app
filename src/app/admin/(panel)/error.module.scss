@@ -3,5 +3,5 @@
 .msg { margin: 0; font-family: $font-montserrat; font-size: $font-size-base; color: $color-text-on-dark; }
 .retry {
   padding: $space-2 $space-4; background: $color-accent-on-dark; border: none; border-radius: 0;
-  font-family: $font-montserrat; font-size: $font-size-sm; color: #fff; cursor: pointer; &:hover { opacity: 0.9; }
+  font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-accent; cursor: pointer; &:hover { opacity: 0.9; }
 }

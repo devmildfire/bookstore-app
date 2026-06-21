@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: $color-text-title;
 
   @include breakpoint(tablet) { width: 200px; height: 200px; }
   @include breakpoint(tablet-small) { width: 150px; height: 150px; }
@@ -64,7 +64,7 @@
   letter-spacing: 1.6px;
   text-align: center;
   text-transform: uppercase;
-  color: #ffffff;
+  color: $color-text-title;
   pointer-events: none;
 
   @include breakpoint(tablet) { bottom: 14px; font-size: 14px; letter-spacing: 1.4px; }
@@ -95,7 +95,7 @@
   letter-spacing: 1.6px;
   text-align: center;
   text-transform: uppercase;
-  color: #ffffff;
+  color: $color-text-title;
   pointer-events: none;
 
   @include breakpoint(tablet) {

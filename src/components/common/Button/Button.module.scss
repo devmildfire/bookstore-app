@@ -54,7 +54,7 @@
 
   &.primary {
     background-color: $color-accent-on-dark;
-    color: #ffffff;
+    color: $color-text-on-accent;
 
     &:hover:not(:disabled) {
       background-color: $color-accent-bright;
@@ -64,8 +64,8 @@
     }
 
     .buttonSpinner {
-      color: #ffffff;
-      border-top-color: #ffffff;
+      color: $color-text-on-accent;
+      border-top-color: $color-text-on-accent;
     }
   }
 
@@ -106,7 +106,7 @@
     &:hover:not(:disabled) {
       background-color: rgba(161, 2, 2, 0.14);
       border-color: $color-accent-on-dark;
-      color: #ffffff;
+      color: $color-text-on-accent;
     }
 
     .buttonSpinner {

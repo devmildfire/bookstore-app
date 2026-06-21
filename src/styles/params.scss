@@ -44,9 +44,25 @@ $color-brand-pressed: #930000;
 
 // Text tones (warm white #DCDCDC at decreasing alpha — never pure #FFF for body)
 $color-text-title:  #E0E0E0;
+$color-text-on-accent: #ffffff; // pure white on accent/red button backgrounds only
 $color-text-muted-on-dark: rgba(220, 220, 220, 0.7);
 $color-text-faint:  rgba(220, 220, 220, 0.5);
 $color-text-ghost:  rgba(220, 220, 220, 0.4);
+
+// Form feedback
+$color-form-success: #4caf7d; // admin form "saved" indicator
+$color-form-error:   #ff6b6b; // story submit error text
+
+// Muted controls / labels
+$color-control-muted: #b1b1b1; // hero video scrubber bars
+$color-label-muted:   #8e8e8e; // Figma label gray (profile cabinet)
+
+// Sidebar gradient endpoints
+$color-sidebar-gradient-start: #2a1414;
+$color-sidebar-gradient-end:   #120a0a;
+
+// Toast gradient start
+$color-toast-start: #1c1c1c;
 
 // Borders
 $color-border-strong:   rgba(220, 220, 220, 0.4);

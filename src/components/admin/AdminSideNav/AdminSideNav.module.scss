@@ -152,7 +152,7 @@
 }
 
 .itemActive {
-  color: #fff;
+  color: $color-text-title;
   background: rgba(161, 2, 2, 0.22);
 
   .icon {
@@ -173,7 +173,7 @@
 
   .count {
     background: $color-accent-on-dark;
-    color: #fff;
+    color: $color-text-title;
   }
 }
 
@@ -194,7 +194,7 @@
   height: 32px;
   border-radius: 0;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #2a1414, #120a0a);
+  background: linear-gradient(135deg, $color-sidebar-gradient-start, $color-sidebar-gradient-end);
   border: 1px solid $color-border-faint;
   display: flex;
   align-items: center;
@@ -244,7 +244,7 @@
   }
 
   &:hover {
-    color: #fff;
+    color: $color-text-title;
     background: $color-accent-on-dark;
   }
 }

@@ -58,7 +58,7 @@
   font-size: 40px;
   line-height: 1.2;
   letter-spacing: 0;
-  color: #ffffff;
+  color: $color-text-title;
 
   @include breakpoint(tablet) {
     font-size: 28px;

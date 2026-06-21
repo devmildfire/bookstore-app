@@ -19,7 +19,7 @@
   font-weight: $font-weight-normal;
   font-size: 18px;
   line-height: 1.6;
-  color: #fff;
+  color: $color-text-title;
 
   @include breakpoint(tablet) {
     font-size: 16px;
@@ -64,7 +64,7 @@
   height: auto;
   max-height: inherit;
   object-fit: contain;
-  background-color: #000;
+  background-color: $color-bg-deep;
 }
 
 // Caption strip overlaid on the bottom of the image — matches Figma:
@@ -81,7 +81,7 @@
   font-weight: $font-weight-normal;
   font-size: 18px;
   line-height: 1.6;
-  color: #fff;
+  color: $color-text-title;
   text-align: right;
 
   @include breakpoint(tablet) {

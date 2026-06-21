@@ -64,7 +64,7 @@
   height: 343px;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #000;
+  background-color: $color-bg-deep;
   transition: opacity 0.15s ease;
 
   &:hover,

@@ -20,10 +20,10 @@
   width: 100%;
   padding: 120px 0 160px;
   background:
-    linear-gradient(180deg, #121212 0%, rgba(0, 0, 0, 0) 30%),
+    linear-gradient(180deg, $color-bg-page 0%, rgba(0, 0, 0, 0) 30%),
     linear-gradient(
       0deg,
-      #121212 0%,
+      $color-bg-page 0%,
       rgba(0, 0, 0, 0.88) 35%,
       rgba(0, 0, 0, 0.78) 70%,
       rgba(0, 0, 0, 0.65) 100%

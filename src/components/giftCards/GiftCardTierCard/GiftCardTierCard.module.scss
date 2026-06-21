@@ -1,7 +1,7 @@
 @use '@/styles/common' as *;
 
 .card {
-  background-color: #000;
+  background-color: $color-bg-deep;
   border: 1px solid rgba($color-text-on-dark, 0.16);
   display: flex;
   flex-direction: column;
@@ -21,7 +21,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 2 / 3;
-  background-color: #000;
+  background-color: $color-bg-deep;
   overflow: hidden;
 }
 

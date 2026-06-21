@@ -73,7 +73,7 @@
   }
 
   &:hover {
-    color: #fff;
+    color: $color-text-title;
     background: $color-accent-on-dark;
   }
 }
@@ -301,7 +301,7 @@
     transition: color 0.14s ease, background 0.14s ease;
 
     &:hover {
-      color: #fff;
+      color: $color-text-title;
       background: $color-accent-on-dark;
     }
   }

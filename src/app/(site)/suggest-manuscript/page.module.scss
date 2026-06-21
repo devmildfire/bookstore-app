@@ -18,7 +18,7 @@
   display: flex;
   align-items: stretch;
   flex: 1 1 auto;
-  background-color: #121212;
+  background-color: $color-bg-page;
   color: $color-text-on-dark;
 
   @include breakpoint(tablet-small) {
@@ -59,7 +59,7 @@
   font-weight: $font-weight-bold;
   font-size: 60px;
   line-height: 1;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 50px; margin-bottom: 58px; }
   @media (max-width: 1199px) { font-size: 40px; margin-bottom: 57px; }
@@ -187,7 +187,7 @@
   font-size: 24px;
   line-height: 1.4;
   white-space: nowrap;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 20px; }
   @media (max-width: 1199px) { font-size: 16px; letter-spacing: 0.8px; }
@@ -204,7 +204,7 @@
   font-weight: $font-weight-bold;
   font-size: 40px;
   line-height: 1;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 30px; margin-bottom: 67px; }
   @media (max-width: 1199px) { font-size: 30px; margin-bottom: 39px; }
@@ -223,7 +223,7 @@
   font-weight: $font-weight-bold;
   font-size: 30px;
   line-height: 1;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { margin-bottom: 55px; }
   @media (max-width: 1199px) { font-size: 20px; margin-bottom: 36px; }
@@ -325,7 +325,7 @@
   font-size: 24px;
   line-height: 1.2;
   letter-spacing: 0.72px;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 20px; margin-bottom: 30px; }
   @media (max-width: 1199px) { font-size: 16px; letter-spacing: 0; margin-bottom: 25px; }
@@ -342,7 +342,7 @@
   &:hover,
   &:focus,
   &:focus-visible {
-    color: #ca0000;
+    color: $color-accent-bright;
     text-decoration: none;
     outline: none;
   }

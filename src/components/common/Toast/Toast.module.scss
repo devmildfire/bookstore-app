@@ -24,7 +24,7 @@
   align-items: center;
   gap: $space-3;
   padding: $space-4;
-  background: linear-gradient(160deg, #1c1c1c 0%, $color-panel 65%);
+  background: linear-gradient(160deg, $color-toast-start 0%, $color-panel 65%);
   border: 1px solid rgba($color-text-on-dark, 0.1);
   border-radius: 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);

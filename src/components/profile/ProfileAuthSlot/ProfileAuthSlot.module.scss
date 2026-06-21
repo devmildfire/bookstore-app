@@ -68,7 +68,7 @@
   &:hover,
   &:focus-visible {
     background: $color-accent-on-dark;
-    color: #ffffff;
+    color: $color-text-title;
     outline: none;
   }
 }

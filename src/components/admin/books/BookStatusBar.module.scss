@@ -31,7 +31,7 @@
 .primary {
   background: $color-accent-on-dark;
   border: 1px solid $color-accent-on-dark;
-  color: #fff;
+  color: $color-text-title;
 
   &:hover {
     opacity: 0.9;

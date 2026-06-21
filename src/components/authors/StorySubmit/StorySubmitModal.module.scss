@@ -18,7 +18,7 @@
   font-weight: $font-weight-bold;
   font-size: 24px;
   line-height: 1.2;
-  color: #fff;
+  color: $color-text-title;
 
   @include breakpoint(tablet-small) {
     font-size: 20px;
@@ -38,7 +38,7 @@
   font-weight: $font-weight-normal;
   font-size: 24px;
   line-height: 1.4;
-  color: #fff;
+  color: $color-text-title;
 
   @include breakpoint(tablet) {
     font-size: 20px;
@@ -127,7 +127,7 @@
   font-family: $font-montserrat;
   font-size: 16px;
   line-height: 1.4;
-  color: #ff6b6b;
+  color: $color-form-error;
 
   @include breakpoint(tablet-small) {
     font-size: 14px;

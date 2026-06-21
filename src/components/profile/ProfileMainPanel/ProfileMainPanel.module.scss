@@ -60,7 +60,7 @@
   font-weight: $font-weight-bold;
   font-size: 50px;
   line-height: 1.1;
-  color: #ffffff;
+  color: $color-text-title;
   text-align: center;
 
   @include breakpoint(tablet) {
@@ -152,7 +152,7 @@
   font-weight: $font-weight-normal;
   font-size: $font-size-2xl;
   line-height: 1.4;
-  color: #8e8e8e;
+  color: $color-label-muted;
 
   @include breakpoint(tablet) {
     font-size: $font-size-lg;

@@ -6,7 +6,7 @@
   display: flex;
   align-items: stretch;
   flex: 1 1 auto;
-  background-color: #121212;
+  background-color: $color-bg-page;
   color: $color-text-on-dark;
 
   @include breakpoint(tablet-small) {
@@ -86,7 +86,7 @@
   font-weight: $font-weight-bold;
   font-size: 40px;
   line-height: 1;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 30px; margin-bottom: 44px; }
   @media (max-width: 1199px) { font-size: 30px; margin-bottom: 40px; }
@@ -206,7 +206,7 @@
   font-weight: $font-weight-bold;
   font-size: 30px;
   line-height: 1.15;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) { font-size: 24px; }
   @media (max-width: 1199px) { font-size: 20px; }
@@ -231,7 +231,7 @@
   font-weight: $font-weight-bold;
   font-size: 30px;
   line-height: 1.15;
-  color: #fff;
+  color: $color-text-title;
   text-align: right;
 
   @media (max-width: 1440px) { font-size: 24px; }

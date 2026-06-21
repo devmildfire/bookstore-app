@@ -8,7 +8,7 @@
   &:focus-visible { outline: 2px solid $color-accent-on-dark; outline-offset: 1px; }
 }
 .actions { display: flex; align-items: center; gap: $space-4; }
-.ok { font-family: $font-montserrat; font-size: $font-size-sm; color: #4caf7d; }
+.ok { font-family: $font-montserrat; font-size: $font-size-sm; color: $color-form-success; }
 .err { font-family: $font-montserrat; font-size: $font-size-sm; color: $color-accent-on-dark; }
 .danger { display: flex; align-items: center; gap: $space-3; padding-top: $space-4; border-top: 1px solid rgba($color-text-on-dark, 0.1); }
 .delete {

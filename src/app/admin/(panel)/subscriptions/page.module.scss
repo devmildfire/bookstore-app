@@ -5,7 +5,7 @@
   @include admin-page-title;
 }
 .count { font-family: $font-montserrat; font-size: $font-size-sm; color: rgba($color-text-on-dark, 0.55); }
-.create { margin-left: auto; padding: $space-2 $space-4; background: $color-accent-on-dark; border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: #fff; text-decoration: none; &:hover { opacity: 0.9; } }
+.create { margin-left: auto; padding: $space-2 $space-4; background: $color-accent-on-dark; border-radius: 0; font-family: $font-montserrat; font-size: $font-size-sm; color: $color-text-on-accent; text-decoration: none; &:hover { opacity: 0.9; } }
 .empty { margin: 0; font-family: $font-montserrat; color: rgba($color-text-on-dark, 0.6); }
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid rgba($color-text-on-dark, 0.1); border-radius: 0; overflow: hidden; }
 .item { border-bottom: 1px solid rgba($color-text-on-dark, 0.07); &:last-child { border-bottom: none; } }

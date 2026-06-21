@@ -60,7 +60,7 @@
   font-weight: $font-weight-bold;
   font-size: 40px;
   line-height: 1;
-  color: #fff;
+  color: $color-text-title;
 
   @media (max-width: 1440px) {
     font-size: 30px;

@@ -6,7 +6,7 @@
   width: 100%;
   text-decoration: none;
   color: inherit;
-  background-color: #000;
+  background-color: $color-bg-deep;
   overflow: hidden;
 
   &:focus-visible {
@@ -17,7 +17,7 @@
 .cover {
   position: relative;
   width: 100%;
-  background-color: #000;
+  background-color: $color-bg-deep;
 }
 
 // Slightly brighten the artwork on hover. The card itself stays put;
@@ -67,7 +67,7 @@
   font-weight: $font-weight-bold;
   font-size: 16px;
   line-height: 1.3;
-  color: #fff;
+  color: $color-text-title;
 
   @include breakpoint(tablet) {
     font-size: 14px;
@@ -81,7 +81,7 @@
 .separator,
 .author {
   font-weight: $font-weight-bold;
-  color: #fff;
+  color: $color-text-title;
 }
 
 // Excerpt is hidden by default and slides into view on card hover. We
