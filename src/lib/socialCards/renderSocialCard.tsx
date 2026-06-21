@@ -88,10 +88,12 @@ function mrdMark(height: number, color: string, fillOpacity = 1): ReactElement {
 // Centered via EXPLICIT left/top (not flex justify-center): satori does not reliably
 // center a near-full-width child, and it can't size a `inset:0` absolute box — both
 // left-anchored the watermark. Compute the offset from the card dimensions instead.
-function watermarkLogo(glyphW: number, cardW: number, cardH: number): ReactElement {
+// `centerY` overrides the vertical center (default: card middle). Square raises the
+// watermark into the band between the wordmark and the content block.
+function watermarkLogo(glyphW: number, cardW: number, cardH: number, centerY?: number): ReactElement {
   const glyphH = R(glyphW / 4.577)
   const left = R((cardW - glyphW) / 2)
-  const top = R((cardH - glyphH) / 2)
+  const top = R((centerY ?? cardH / 2) - glyphH / 2)
   return (
     <div style={{ position: 'absolute', left, top, width: glyphW, height: glyphH, display: 'flex', zIndex: 0 }}>
       <svg viewBox="0 0 119 26" width={glyphW} height={glyphH} fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -168,9 +170,11 @@ export function renderSocialCard(card: SocialCardData, variant: SocialCardVarian
       media.push(landscapeEl(card.imageUrl!, { left: padL, top: sqTop, width: lw, height: lh }))
       contentTop = sqTop + lh + R(h * 0.05)
     } else {
-      // home / no image: centered watermark logo
-      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * 0.9), w, h)}</div>)
+      // home / no image: watermark raised into the band between the wordmark and the
+      // content block (below the site name, above the slogan).
       contentTop = R(h * 0.45)
+      const wmCenterY = R((brandTop + brandFont + contentTop) / 2)
+      media.push(<div key="wm" style={{ display: 'flex' }}>{watermarkLogo(R(w * 0.9), w, h, wmCenterY)}</div>)
     }
   } else {
     const mTop = cp ? 34 : 44
