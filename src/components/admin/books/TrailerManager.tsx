@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { uploadTrailerFileAction, removeTrailerAction } from '@/lib/admin/books/actions'
+import { uploadTrailerFileAction, removeTrailerAction } from '@/lib/admin/books/contributorActions'
 import styles from './TrailerManager.module.scss'
 
 type Props = {

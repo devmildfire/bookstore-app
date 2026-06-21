@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { addAwardAction, removeAwardAction } from '@/lib/admin/books/actions'
+import { addAwardAction, removeAwardAction } from '@/lib/admin/books/contributorActions'
 import Select from '@/components/common/Select'
 import type { AdminAward } from '@/lib/admin/bookProducts'
 import styles from './AwardsManager.module.scss'

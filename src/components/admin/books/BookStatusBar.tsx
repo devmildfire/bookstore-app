@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { setBookStatusAction, deleteBookAction } from '@/lib/admin/books/actions'
+import { setBookStatusAction, deleteBookAction } from '@/lib/admin/books/bookActions'
 import Badge, { type BadgeTone } from '@/components/common/Badge'
 import type { BookStatus } from '@/api/admin/books'
 import styles from './BookStatusBar.module.scss'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
-import { createBookAction } from '@/lib/admin/books/actions'
+import { createBookAction } from '@/lib/admin/books/bookActions'
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import styles from './BookCreateForm.module.scss'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
-import { updateBookAction } from '@/lib/admin/books/actions'
+import { updateBookAction } from '@/lib/admin/books/bookActions'
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'

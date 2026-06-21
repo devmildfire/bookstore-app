@@ -10,9 +10,8 @@ import {
   removeProductFileAction,
   uploadDemoFileAction,
   removeDemoFileAction,
-  addWorkerAction,
-  removeWorkerAction,
-} from '@/lib/admin/books/actions'
+} from '@/lib/admin/books/productActions'
+import { addWorkerAction, removeWorkerAction } from '@/lib/admin/books/contributorActions'
 import Button from '@/components/common/Button'
 import Checkbox from '@/components/common/Checkbox'
 import NumberStepper from '@/components/common/NumberStepper'

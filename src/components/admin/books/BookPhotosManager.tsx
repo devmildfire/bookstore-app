@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { uploadBookPhotoAction, deleteBookPhotoAction } from '@/lib/admin/books/actions'
+import { uploadBookPhotoAction, deleteBookPhotoAction } from '@/lib/admin/books/bookActions'
 import type { AdminBookPhoto, AdminEditionPhotos } from '@/api/admin/books'
 import { BOOK_PHOTO_SECTIONS, type BookPhotoFolder } from '@/consts/bookPhotos'
 import styles from './BookPhotosManager.module.scss'

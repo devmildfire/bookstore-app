@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getAdminBook, getAdminBookPhotos, getAwardsCatalog } from '@/api/admin/books'
-import { uploadBookCoverAction } from '@/lib/admin/books/actions'
+import { uploadBookCoverAction } from '@/lib/admin/books/bookActions'
 import { getBooktrailerUrls } from '@/lib/storage'
 import ImageUploader from '@/components/admin/ImageUploader'
 import {
