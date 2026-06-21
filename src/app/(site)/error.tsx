@@ -1,26 +1,25 @@
 'use client'
 
-import Button from '@/components/common/Button'
-import styles from './error.module.scss'
+import HalError from '@/components/common/HalError'
+import css from './error.module.scss'
 
 type Props = {
   error: Error & { digest?: string }
   reset: () => void
 }
 
+// Storefront error boundary — renders inside the (site) layout, so Header/Footer
+// chrome is present. The root error.tsx (chromeless) handles /admin, /api, and
+// other non-storefront errors; global-error.tsx fires when the root layout
+// itself throws.
 export default function StorefrontError({ reset }: Props) {
   return (
-    <section className={styles.error} role='alert'>
-      <h1 className={styles.title}>Не удалось загрузить страницу</h1>
-      <p className={styles.msg}>Попробуйте обновить страницу или вернуться на главную.</p>
-      <div className={styles.actions}>
-        <Button type='button' onClick={reset}>
-          Попробовать снова
-        </Button>
-        <Button type='button' variant='secondary' href='/'>
-          На главную
-        </Button>
-      </div>
-    </section>
+    <div className={css.error}>
+      <HalError
+        code='500'
+        phrase='Мне жаль, Дейв, боюсь, я не могу этого сделать'
+        onRetry={reset}
+      />
+    </div>
   )
 }

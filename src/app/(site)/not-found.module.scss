@@ -1,39 +1,11 @@
 @use '@/styles/common' as *;
 
+// Storefront 404 — sits inside the (site) layout's <main>, so it inherits the
+// Header/Footer chrome. Centered in the viewport (minus the chrome height).
 .page {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: $space-4;
-  padding: $space-16 $space-6;
-  text-align: center;
   min-height: 60vh;
-}
-
-.code {
-  font-family: $font-cheque;
-  font-size: 120px;
-  font-weight: 900;
-  line-height: 1;
-  color: $color-accent-on-dark;
-
-  @include breakpoint('phone') {
-    font-size: 80px;
-  }
-}
-
-.title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-
-  @include breakpoint('phone') {
-    font-size: $font-size-xl;
-  }
-}
-
-.subtitle {
-  font-size: $font-size-lg;
-  color: $color-text-secondary;
-  max-width: 400px;
+  padding: $space-12 $space-6;
 }

@@ -1,0 +1,15 @@
+@use '@/styles/common' as *;
+
+// global-error.tsx replaces the root layout, so <body> needs the page background
+// and full-viewport centering that the root layout would normally provide.
+.body {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $space-8 $space-6;
+  background: $color-bg-page;
+  color: $color-text-on-dark;
+  font-family: $font-montserrat;
+}

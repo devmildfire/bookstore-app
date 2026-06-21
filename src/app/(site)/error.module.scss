@@ -1,31 +1,12 @@
 @use '@/styles/common' as *;
 
+// Storefront error boundary — sits inside the (site) layout's <main>, so it
+// inherits the Header/Footer chrome. Centered in the viewport (minus the chrome
+// height). The HalError component carries the eye, nameplate, phrase, and CTAs.
 .error {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $space-4;
-  padding: $space-8;
-  max-width: 600px;
-}
-
-.title {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-on-dark;
-}
-
-.msg {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: rgba($color-text-on-dark, 0.6);
-}
-
-.actions {
-  display: flex;
-  gap: $space-3;
-  margin-top: $space-2;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: $space-12 $space-6;
 }

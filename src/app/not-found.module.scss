@@ -1,0 +1,13 @@
+@use '@/styles/common' as *;
+
+// Root 404 — full-viewport chromeless shell. The (site) route group has its own
+// not-found.tsx with Header/Footer chrome; this one covers everything else
+// (/admin, /api, unmatched roots) where there is no site chrome to inherit.
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $space-8 $space-6;
+  background: $color-bg-page;
+}

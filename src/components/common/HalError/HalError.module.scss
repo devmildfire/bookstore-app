@@ -1,0 +1,120 @@
+@use '@/styles/common' as *;
+
+// HAL 9000 error surface — nameplate + eye + phrase + CTAs.
+// The eye pulses with a slow red glow (reduced-motion disables the animation).
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-6;
+  padding: $space-12 $space-6;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+// ─── Nameplate ────────────────────────────────────────────────────────────────
+// Sits ABOVE the eye. Two cells side-by-side: left = solid blue "HAL",
+// right = transparent blue-bordered code (404/500). Letters use the Syncopate
+// font (geometric, open counters) with -webkit-text-stroke for clean hollow
+// outlines — Montserrat's counters fill in at bold weights; Syncopate's don't.
+
+.nameplate {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.halCell,
+.codeCell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-5;
+  font-family: sans-serif;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  font-size: clamp(20px, 4vw, 28px);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px $color-hal-letter;
+}
+
+@supports not (-webkit-text-stroke: 1px #fff) {
+  .halCell,
+  .codeCell {
+    color: $color-hal-letter;
+    -webkit-text-stroke: 0;
+  }
+}
+
+.halCell {
+  background: $color-hal-blue;
+  border: 1px solid $color-hal-blue;
+}
+
+.codeCell {
+  background: transparent;
+  border: 1px solid $color-hal-blue;
+}
+
+// ─── Eye ──────────────────────────────────────────────────────────────────────
+// The SVG has a viewBox (0 0 256 256) and no fixed width/height — CSS controls
+// sizing. aspect-ratio: 1 keeps the container square; max-width: 100% prevents
+// overflow on narrow viewports.
+
+.eye {
+  display: block;
+  width: clamp(180px, 40vw, 280px);
+  max-width: 100%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 0 16px rgba($color-hal-red, 0.55));
+  animation: halPulse 4s ease-in-out infinite;
+  will-change: filter;
+}
+
+.eyeSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes halPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 16px rgba($color-hal-red, 0.45));
+  }
+  50% {
+    filter: drop-shadow(0 0 32px rgba($color-hal-red, 0.75));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eye {
+    animation: none;
+    filter: drop-shadow(0 0 16px rgba($color-hal-red, 0.55));
+  }
+}
+
+// ─── Phrase ───────────────────────────────────────────────────────────────────
+// Styled as a page title (section-title mixin: Cheque display face, 60px → 24px
+// responsive). The HAL phrase is the page's primary heading.
+
+.phrase {
+  @include section-title;
+  margin: 0;
+  max-width: 900px;
+}
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  justify-content: center;
+  margin-top: $space-2;
+}

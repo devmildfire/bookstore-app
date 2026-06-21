@@ -1,37 +1,13 @@
 @use '@/styles/common' as *;
 
+// Root error boundary — full-viewport chromeless shell. The (site) route group
+// has its own error.tsx with Header/Footer chrome; this one covers everything
+// else (/admin, /api) where there is no site chrome to inherit.
 .wrap {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $space-4;
-  padding: $space-8;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
-}
-
-.title {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-on-dark;
-}
-
-.msg {
-  margin: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-base;
-  color: rgba($color-text-on-dark, 0.6);
-}
-
-.retry {
-  padding: $space-2 $space-4;
-  background: $color-accent-on-dark;
-  border: none;
-  border-radius: 0;
-  font-family: $font-montserrat;
-  font-size: $font-size-sm;
-  color: $color-text-on-accent;
-  cursor: pointer;
-  &:hover { opacity: 0.9; }
+  padding: $space-8 $space-6;
+  background: $color-bg-page;
 }

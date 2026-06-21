@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Montserrat } from 'next/font/google'
+import { Montserrat, Syncopate } from 'next/font/google'
 import localFont from 'next/font/local'
 import Providers from './providers'
 import '@/styles/globals.scss'
@@ -16,6 +16,15 @@ const montserrat = Montserrat({
   // that competed with the LCP hero cover for Slow-4G bandwidth in its exact load window.
   // The hero's defining text is Chequeblack (preloaded below); Montserrat covers thesis/
   // button/below-the-fold text, which can swap in (display:swap) without delaying the LCP.
+  preload: false,
+})
+
+const syncopate = Syncopate({
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+  variable: '--font-syncopate',
+  // Used only on the HAL error pages' nameplate — not critical, don't preload.
   preload: false,
 })
 
@@ -47,7 +56,7 @@ export const metadata: Metadata = {
 // (which also removes the duplicate auth-server call the proxy already makes).
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='ru' className={`${montserrat.variable} ${cheque.variable}`}>
+    <html lang='ru' className={`${montserrat.variable} ${cheque.variable} ${syncopate.variable}`}>
       <body>
         {/* Storefront chrome (Header/Footer) lives in the (site) route group,
             not here — so /admin can render its own header-free layout. */}
