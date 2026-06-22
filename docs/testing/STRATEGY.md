@@ -1,8 +1,11 @@
 # Testing Strategy
 
 **Status:** Phase 1 implemented (unit + integration + E2E harness, first tests, CI
-workflows — §8/§10 steps 1–4); deploy gate (§10 step 5) and Phase 2+ pending. Last
-updated: 2026-06-22.
+workflows, coverage with a ratchet — §8/§10 steps 1–4 + 7) **and the production deploy
+gate (§10 step 5)**: `deploy-production.yml` blocks build/deploy until the `Tests` + `E2E
+tests` workflows are green for the deployed SHA (E2E now also runs on `main` so the
+promoted SHA has a result). Phase 2+ (component tests, money-path integration, broader
+E2E) pending. Last updated: 2026-06-22.
 
 > **Branch model (as of 2026-06-22):** the trunk is `main`; production deploys are the
 > `production` branch. The old `update`/`develop`/`staging` branches are retired — wherever
