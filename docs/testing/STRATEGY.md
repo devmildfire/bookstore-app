@@ -1,6 +1,10 @@
 # Testing Strategy
 
-**Status:** proposed (not yet implemented). Last updated: 2026-06-21.
+**Status:** proposed (not yet implemented). Last updated: 2026-06-22.
+
+> **Branch model (as of 2026-06-22):** the trunk is `main`; production deploys are the
+> `production` branch. The old `update`/`develop`/`staging` branches are retired — wherever
+> an example workflow below targets a trunk branch, it means `main`.
 
 This document defines the testing strategy for the bookstore-app: the stack, the layering
 (unit → integration → E2E), what gets tested where, and how the full Next.js + Supabase
@@ -18,7 +22,7 @@ pre-commit hook on staged files (`AGENTS.md`). This doc is the plan for changing
 
 ### Goals
 
-- **Catch regressions early** — on every push to a feature branch, before merge to `update`.
+- **Catch regressions early** — on every push to a feature branch, before merge to `main`.
 - **Lock down the money path** — cart pricing, order creation, payment callback, gift-card
   redemption, promo-code application. These are the highest-risk areas (immutable price
   snapshots, idempotent payment RPCs, anon→user migration).
@@ -226,7 +230,7 @@ asserts on the rendered DOM.
 | **404 / error boundaries** | Navigate to `/books/nonexistent-slug` → 404 page; force a server error → `error.tsx` | `notFound()` renders the 404; server errors render the nearest `error.tsx` |
 
 **Browser matrix:** Chromium (primary), Firefox (secondary — the OAuth RSC bug
-historically hit Firefox), WebKit (smoke only — run on `update` branch, not every PR).
+historically hit Firefox), WebKit (smoke only — run on `main` branch pushes, not every PR).
 
 **Goal:** ~30-50 E2E tests covering the critical user journeys. Slowest layer (~2-5 min
 per browser), but the highest-fidelity because they test the real rendered app.
@@ -352,9 +356,9 @@ name: E2E tests
 
 on:
   push:
-    branches: ['feature/**', 'feat/**', 'update']
+    branches: ['feature/**', 'feat/**']
   pull_request:
-    branches: ['update']
+    branches: ['main']
 
 jobs:
   e2e:
@@ -494,7 +498,7 @@ across 2 browsers, the full E2E job is **~8-12 minutes** — well within GitHub 
 | Postgres migration replay fails on a drift | Fail fast — the migration step is the first thing that runs; if it fails, the job fails in <2 min with a clear error (this is itself a valuable CI signal) |
 | Port conflicts (54321, 54322, 3000) | `ubuntu-latest` is a clean runner — no services on these ports. `supabase start` binds to 127.0.0.1 only. |
 | Flaky tests (network timing, carousel animation) | Playwright's auto-wait + `waitForResponse` + `expect` with retries. The mock payment gateway is deterministic. Carousel tests use `data-testid` anchors and `waitForSelector` not animation timing. |
-| CI minutes cost | E2E runs on `feature/**` and `feat/**` pushes + PRs into `update` — not on every push to `update` (which gets the lighter `test.yml`). ~10 min per E2E run × ~5 PRs/week = ~50 CI minutes/week. GitHub free tier includes 2000 min/month for private repos; this is well within budget. |
+| CI minutes cost | E2E runs on `feature/**` and `feat/**` pushes + PRs into `main` — not on every push to `main` (which gets the lighter `test.yml`). ~10 min per E2E run × ~5 PRs/week = ~50 CI minutes/week. GitHub free tier includes 2000 min/month for private repos; this is well within budget. |
 | Storage test fixtures (cover images) | A small set of test covers committed under `tests/fixtures/covers/` (~5 images, <1 MB). Uploaded to the `covers` bucket in the CI seed step via `scripts/upload-covers-to-supabase.mjs` (or a dedicated test-fixture uploader). |
 
 ### 5.5 The lighter CI workflow: `test.yml` (unit + integration, every push)
@@ -504,9 +508,9 @@ name: Tests
 
 on:
   push:
-    branches: ['update', 'main', 'staging']
+    branches: ['main']
   pull_request:
-    branches: ['update', 'main', 'staging']
+    branches: ['main']
 
 jobs:
   unit:
@@ -547,7 +551,7 @@ jobs:
         if: always()
 ```
 
-This runs on every push to `update`/`main`/`staging` + PRs. Unit tests (~5s) gate
+This runs on every push to `main` + PRs into `main`. Unit tests (~5s) gate
 integration tests (~60s with Supabase warm). Total ~2-3 min. The existing `docker-publish.yml`
 CI workflow (lint + build) stays as-is; this adds the test gate alongside it. Neither this
 workflow nor the E2E workflow below assumes the developer ran any tests locally — CI is the
@@ -941,7 +945,7 @@ Supabase stack and are CI's job.
    CI spins up the Supabase stack).
 3. `test-e2e.yml` triggers (feature-branch push): runs E2E (~10 min, CI spins up Supabase
    + Next.js + Playwright).
-4. If any job fails, the PR is blocked from merging to `update` (required status check).
+4. If any job fails, the PR is blocked from merging to `main` (required status check).
 5. If the developer later pushes to `production`, `deploy-production.yml` requires all
    test workflows for that SHA to be green (§5.7) before build-and-push + deploy run.
 6. The developer never had to install Supabase, Docker, or run a single test command
@@ -1020,9 +1024,9 @@ This is a large change. Do it in this order, each step independently shippable:
    `audit-reusable.yml`. **Recommendation:** new `rls-check` job in `test.yml` (not
    `audit-reusable.yml`) to keep the audit reusable workflow fast and dependency-free.
 
-4. **Browser matrix for PRs vs `update` branch.** Running Chromium + Firefox + WebKit on
+4. **Browser matrix for PRs vs `main` branch.** Running Chromium + Firefox + WebKit on
    every PR triples the E2E time. **Recommendation:** Chromium only on PRs; Chromium +
-   Firefox + WebKit on `update` branch pushes (nightly or on-merge).
+   Firefox + WebKit on `main` branch pushes (nightly or on-merge).
 
 5. **Test admin user credentials.** `scripts/seed-admin.mjs` creates the admin auth user
    with a password. In CI, this password is in `.env.test` (committed, test-only). Is a
