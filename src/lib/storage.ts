@@ -1,125 +1,58 @@
-const COVERS_BUCKET = 'covers'
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 
-/**
- * Convert a cover filename (or legacy full URL) into a public Supabase Storage URL.
- *
- * The `Titles.cover` column stores bare filenames (e.g., "murlo.jpg").
- * This function constructs the full URL using NEXT_PUBLIC_SUPABASE_URL,
- * so it works in any environment — local dev, self-hosted, or Supabase Cloud.
- *
- * For self-hosted Supabase on the same VPS behind a reverse proxy,
- * set NEXT_PUBLIC_SUPABASE_URL to the public-facing URL (e.g., https://api.example.com).
- */
-export function getCoverUrl(filename: string | null): string | null {
-  if (!filename) return null
-
-  // Already a full URL (legacy data or external URL) — return as-is
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-
-  // Bare filename — construct Storage URL
-  return `${supabaseUrl}/storage/v1/object/public/${COVERS_BUCKET}/${filename}`
-}
-
-/**
- * Extract the bare filename from a URL or pass through a bare filename.
- * Used when writing cover values to the database.
- */
-export function getCoverFilename(value: string | null): string | null {
-  if (!value) return null
-  if (value.startsWith('http://') || value.startsWith('https://')) {
-    const lastSegment = value.split('/').pop()
-    return lastSegment ?? null
-  }
-  return value
-}
-
+const COVERS_BUCKET = 'covers'
 const AVATARS_BUCKET = 'avatars'
+const SUBSCRIPTIONS_BUCKET = 'subscriptions'
+const GIFT_CARDS_BUCKET = 'gift-cards'
+const ARTICLES_BUCKET = 'articles'
+const BOX_SETS_BUCKET = 'box-sets'
+const BOOK_PHOTOS_BUCKET = 'book-photos'
+const AUTHORS_BUCKET = 'authors'
+const AWARDS_BUCKET = 'awards'
+const BOOKTRAILERS_BUCKET = 'booktrailers'
+const VIDEOS_BUCKET = 'videos'
+const PARTNERS_BUCKET = 'partners'
+const WORKERS_BUCKET = 'workers'
+const DEMOS_BUCKET = 'demos'
 
 /**
- * Returns the public Storage URL for a user's avatar.
- *
- * Mirror of getCoverUrl: builds the URL deterministically from
- * NEXT_PUBLIC_SUPABASE_URL so callers don't have to instantiate the
- * supabase-js browser client at render time (which crashes during SSR
- * because the browser client needs `window`). The path stored in
- * `Profiles.avatar_path` is a bare object key like `{user_id}/avatar.jpg`.
+ * Build a public Supabase Storage URL from a bare object key (or pass through a
+ * value that is already a full URL). Most columns store bare keys (e.g.
+ * `murlo.jpg`, `{user_id}/avatar.jpg`); we build the URL from
+ * NEXT_PUBLIC_SUPABASE_URL at runtime so callers don't instantiate the
+ * supabase-js browser client at render time (it needs `window` and crashes
+ * during SSR). Set NEXT_PUBLIC_SUPABASE_URL to the public-facing URL when
+ * self-hosting behind a reverse proxy.
  */
-export function getAvatarUrl(path: string | null): string | null {
+function publicUrl(bucket: string, path: string | null): string | null {
   if (!path) return null
   if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${AVATARS_BUCKET}/${path}`
+  return `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}`
 }
 
-const SUBSCRIPTIONS_BUCKET = 'subscriptions'
-
-export function getSubscriptionImageUrl(filename: string | null): string | null {
-  if (!filename) return null
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-  return `${supabaseUrl}/storage/v1/object/public/${SUBSCRIPTIONS_BUCKET}/${filename}`
-}
-
-const GIFT_CARDS_BUCKET = 'gift-cards'
-
-export function getGiftCardImageUrl(filename: string | null): string | null {
-  if (!filename) return null
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-  return `${supabaseUrl}/storage/v1/object/public/${GIFT_CARDS_BUCKET}/${filename}`
-}
-
-const ARTICLES_BUCKET = 'articles'
-
-export function getArticleImageUrl(filename: string | null): string | null {
-  if (!filename) return null
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-  return `${supabaseUrl}/storage/v1/object/public/${ARTICLES_BUCKET}/${filename}`
-}
-
-const BOX_SETS_BUCKET = 'box-sets'
-
-export function getBoxSetImageUrl(filename: string | null): string | null {
-  if (!filename) return null
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-  return `${supabaseUrl}/storage/v1/object/public/${BOX_SETS_BUCKET}/${filename}`
-}
-
-const BOOK_PHOTOS_BUCKET = 'book-photos'
-
-const AUTHORS_BUCKET = 'authors'
+export const getCoverUrl = (filename: string | null) => publicUrl(COVERS_BUCKET, filename)
+export const getAvatarUrl = (path: string | null) => publicUrl(AVATARS_BUCKET, path)
+export const getSubscriptionImageUrl = (filename: string | null) => publicUrl(SUBSCRIPTIONS_BUCKET, filename)
+export const getGiftCardImageUrl = (filename: string | null) => publicUrl(GIFT_CARDS_BUCKET, filename)
+export const getArticleImageUrl = (filename: string | null) => publicUrl(ARTICLES_BUCKET, filename)
+export const getBoxSetImageUrl = (filename: string | null) => publicUrl(BOX_SETS_BUCKET, filename)
+export const getAuthorPhotoUrl = (filename: string | null) => publicUrl(AUTHORS_BUCKET, filename)
+export const getVideoUrl = (path: string | null) => publicUrl(VIDEOS_BUCKET, path)
+export const getWorkerPhotoUrl = (path: string | null) => publicUrl(WORKERS_BUCKET, path)
+export const getPartnerLogoUrl = (path: string | null) => publicUrl(PARTNERS_BUCKET, path)
+export const getDemoUrl = (path: string | null) => publicUrl(DEMOS_BUCKET, path)
 
 /**
- * Convert an author photo filename into a public Supabase Storage URL.
- * Mirrors the covers pattern: `Authors.photo` stores a bare filename
- * (e.g. `staroobryadtsev.jpg`) and we build the URL at runtime.
+ * Award badges additionally allow legacy `/awards/...` public paths, returned
+ * untouched. `Awards.image` otherwise stores a bare filename.
  */
-export function getAuthorPhotoUrl(filename: string | null): string | null {
-  if (!filename) return null
-  if (filename.startsWith('http://') || filename.startsWith('https://')) return filename
-  return `${supabaseUrl}/storage/v1/object/public/${AUTHORS_BUCKET}/${filename}`
-}
-
-const AWARDS_BUCKET = 'awards'
+export const getAwardUrl = (image: string | null) =>
+  image?.startsWith('/') ? image : publicUrl(AWARDS_BUCKET, image)
 
 /**
- * Convert an award badge filename into a public Supabase Storage URL.
- * `Awards.image` stores a bare filename (e.g. `book_of_the_year_2019.svg`).
- * Absolute URLs and legacy `/awards/...` public paths are returned untouched.
- */
-export function getAwardUrl(image: string | null): string | null {
-  if (!image) return null
-  if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('/')) {
-    return image
-  }
-  return `${supabaseUrl}/storage/v1/object/public/${AWARDS_BUCKET}/${image}`
-}
-
-const BOOKTRAILERS_BUCKET = 'booktrailers'
-
-/**
- * URLs for a book's promotional video. The video is served in two encodings
- * (MP4 for universal support, WebM/VP9 for browsers that prefer it) plus a
- * poster image shown before play. Files always live at:
+ * URLs for a book's promotional video. Served in two encodings (MP4 for
+ * universal support, WebM/VP9 where preferred) plus a poster image shown before
+ * play. Files always live at:
  *   booktrailers/{slug}/video.mp4
  *   booktrailers/{slug}/video.webm
  *   booktrailers/{slug}/poster.jpg   (only when has_poster is true)
@@ -132,53 +65,6 @@ export function getBooktrailerUrls(slug: string, hasPoster: boolean) {
     webm: `${base}/video.webm`,
     poster: hasPoster ? `${base}/poster.jpg` : null,
   }
-}
-
-const VIDEOS_BUCKET = 'videos'
-const PARTNERS_BUCKET = 'partners'
-const WORKERS_BUCKET = 'workers'
-
-/**
- * URL for an object in the public `videos` bucket. Paths are bare object keys
- * stored verbatim (e.g. `about/chtivo.mp4`).
- */
-export function getVideoUrl(path: string | null): string | null {
-  if (!path) return null
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${VIDEOS_BUCKET}/${path}`
-}
-
-/**
- * Convert a worker photo filename into a public Storage URL.
- * `Workers.photo_path` stores bare filenames; the placeholder SVG is used
- * client-side when this returns null.
- */
-export function getWorkerPhotoUrl(path: string | null): string | null {
-  if (!path) return null
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${WORKERS_BUCKET}/${path}`
-}
-
-/**
- * Convert a partner logo filename into a public Storage URL.
- * `Partners.logo_path` is allowed to be null; component handles fallback.
- */
-export function getPartnerLogoUrl(path: string | null): string | null {
-  if (!path) return null
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${PARTNERS_BUCKET}/${path}`
-}
-
-const DEMOS_BUCKET = 'demos'
-
-/**
- * Convert a demo_path bare key into a public Supabase Storage URL.
- * Demo files live in the public `demos` bucket — no signed URL needed.
- */
-export function getDemoUrl(path: string | null): string | null {
-  if (!path) return null
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${DEMOS_BUCKET}/${path}`
 }
 
 export {
