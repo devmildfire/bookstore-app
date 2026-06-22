@@ -1,8 +1,8 @@
 name: Deploy production
 
 # Promote to deploy: push to the `production` branch (e.g. `git push origin main:production`)
-# or run manually from the Actions tab. Builds the app image, pushes it to GHCR,
-# then SSHes to the VPS and rolls the `app` container.
+# or run manually from the Actions tab. Owns its own test jobs so it never polls other
+# pipelines. Builds the app image, pushes it to GHCR, then SSHes to the VPS to roll.
 on:
   push:
     branches: [production]
@@ -16,91 +16,22 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
-  # Hard gate: if this fails, build-and-push (and therefore deploy) never run.
-  # Delegates to the shared reusable workflow (same audit as audit.yml).
   audit:
     uses: ./.github/workflows/audit-reusable.yml
 
-  # Hard gate: require the Tests + E2E workflows to be green for THIS exact SHA
-  # (or its parents — a --no-ff merge creates a merge commit without its own runs)
-  # before building/deploying. Test workflows run on main pushes, so their runs
-  # exist for the non-merge parent SHAs. No green tests → no deploy.
-  require-tests:
-    name: Require green tests
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 2
-      - name: Wait for Tests + E2E to pass on this SHA
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const required = ['Tests', 'E2E tests']
+  unit:
+    uses: ./.github/workflows/test-unit-reusable.yml
 
-            // Walk the commit ancestry (up to 30) to find a SHA with test runs.
-            // The production commit itself won't have runs — its ancestors from
-            // main do. Start from newest (the production commit) so the first
-            // ancestor with green tests passes the gate.
-            const { execSync } = require('child_process')
-            const shas = [
-              ...new Set(
-                execSync('git rev-list --max-count=30 ' + context.sha, { encoding: 'utf-8' })
-                  .trim().split(/\s+/)
-              ),
-            ]
+  integration:
+    needs: unit
+    uses: ./.github/workflows/test-integration-reusable.yml
 
-            core.info(`Gating deploy on [${required.join(', ')}] for [${shas.join(', ')}]`)
-            const latest = (runs, name) =>
-              runs
-                .filter((r) => r.name === name)
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
-
-            for (let attempt = 1; attempt <= 40; attempt++) {
-              const allRuns = []
-              for (const sha of shas) {
-                const { data } = await github.rest.actions.listWorkflowRunsForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  head_sha: sha,
-                  per_page: 100,
-                })
-                allRuns.push({ sha, runs: data.workflow_runs || [] })
-              }
-              // Check if ANY SHA satisfies all required workflows
-              for (const { sha, runs } of allRuns) {
-                for (const name of required) {
-                  const run = latest(runs, name)
-                  if (run && run.status === 'completed' && run.conclusion !== 'success') {
-                    throw new Error(`Required workflow "${name}" concluded "${run.conclusion}" for ${sha} — blocking deploy.`)
-                  }
-                }
-                const done = required.every((name) => {
-                  const run = latest(runs, name)
-                  return run && run.status === 'completed' && run.conclusion === 'success'
-                })
-                if (done) {
-                  core.info(`✅ All required test workflows are green for ${sha}.`)
-                  return
-                }
-              }
-              const pending = required
-                .filter((name) => allRuns.every(({ runs }) => {
-                  const run = latest(runs, name)
-                  return !run || run.status !== 'completed'
-                }))
-                .join(', ')
-              core.info(`Attempt ${attempt}/40 — waiting on: ${pending || '(none)'}`)
-              await new Promise((r) => setTimeout(r, 30000))
-            }
-            throw new Error('Timed out waiting for required test workflows to complete for this SHA.')
+  e2e:
+    uses: ./.github/workflows/test-e2e-reusable.yml
 
   build-and-push:
     name: Build & push image
-    needs: [audit, require-tests]
+    needs: [audit, unit, integration, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -127,8 +58,6 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:production
             ${{ env.IMAGE }}:${{ github.sha }}
-          # NEXT_PUBLIC_* are baked into the client bundle at build time.
-          # The anon key is public by design; the URL falls back if no repo var is set.
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

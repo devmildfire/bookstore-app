@@ -1,9 +1,7 @@
 name: E2E tests
 
-# Playwright E2E against the full stack (local Supabase + Next.js dev server that
-# Playwright launches via webServer). Runs on feature-branch pushes, PRs into main,
-# and main pushes — the last so the SHA promoted to `production` already has an E2E
-# result for the deploy gate to require (deploy-production.yml). See STRATEGY.md §5.7.
+# Playwright E2E against the full stack (local Supabase + Next.js dev server).
+# Runs on feature-branch pushes, PRs into main, and main pushes.
 on:
   push:
     branches: ['main', 'feature/**', 'feat/**']
@@ -16,50 +14,4 @@ concurrency:
 
 jobs:
   e2e:
-    name: Playwright E2E
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    # config.toml's send-email hook validates this at `supabase start`/`stop`.
-    # Test-only dummy, not a real secret. (Also passed to the web server via
-    # playwright.config.ts so checkout/auth pages render.)
-    env:
-      SEND_EMAIL_HOOK_SECRET: 'v1,whsec_MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - uses: supabase/setup-cli@v2
-        with:
-          version: 2.98.0
-      # See test.yml: start can't replay a pg_dump seed, so seed via psql.
-      - name: Disable seed-on-start
-        run: sed -i '/^\[db\.seed\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
-      - name: Boot stack (migrations only)
-        run: supabase start
-      # `status -o env` emits KEY="value" (quoted); strip quotes for $GITHUB_ENV.
-      - name: Export Supabase env
-        run: |
-          supabase status -o env \
-            --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
-            --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
-            --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
-            | sed -E 's/="(.*)"$/=\1/' >> "$GITHUB_ENV"
-      - name: Load seed (pg_dump → psql restore)
-        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql -f supabase/seed-test.sql
-      - name: Run E2E (chromium)
-        run: npm run test:e2e -- --project=chromium
-      - name: Publish results to job summary
-        if: always()
-        run: node scripts/junit-summary.mjs results.junit.xml "🎭 E2E tests" >> "$GITHUB_STEP_SUMMARY"
-      - if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-      - if: always()
-        run: supabase stop --no-backup
+    uses: ./.github/workflows/test-e2e-reusable.yml

@@ -1,7 +1,7 @@
 name: Tests
 
-# Unit + integration tests on every push/PR to main. Unit (pure, fast) gates
-# integration (real local Supabase stack). See docs/testing/STRATEGY.md §5.5.
+# Unit + integration tests on every push/PR to main. Both are now reusable
+# workflows, so deploy-production.yml can call them directly — no polling needed.
 on:
   push:
     branches: ['main']
@@ -14,65 +14,8 @@ concurrency:
 
 jobs:
   unit:
-    name: Unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - name: Unit tests
-        run: npm run test:unit -- --coverage --reporter=verbose --reporter=junit --outputFile=results.junit.xml
-      - name: Publish results to job summary
-        if: always()
-        run: |
-          node scripts/junit-summary.mjs results.junit.xml "🧪 Unit tests" >> "$GITHUB_STEP_SUMMARY"
-          node scripts/coverage-summary.mjs coverage/coverage-summary.json >> "$GITHUB_STEP_SUMMARY"
+    uses: ./.github/workflows/test-unit-reusable.yml
 
   integration:
-    name: Integration tests
-    runs-on: ubuntu-latest
     needs: unit
-    # config.toml's send-email hook validates this at `supabase start`/`stop`
-    # (and the hook isn't exercised by tests). Test-only dummy, not a real secret.
-    env:
-      SEND_EMAIL_HOOK_SECRET: 'v1,whsec_MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - uses: supabase/setup-cli@v2
-        with:
-          version: 2.98.0
-      # supabase start's seeder applies SQL over a direct connection (not psql),
-      # so it can't replay a pg_dump seed (COPY FROM stdin). Disable seed-on-start
-      # and load seed.sql via psql below. Migrations are plain DDL and replay fine.
-      - name: Disable seed-on-start
-        run: sed -i '/^\[db\.seed\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
-      - name: Boot stack (migrations only)
-        run: supabase start
-      # Export the deterministic local-stack URL + keys into the job env (no
-      # committed keys, no secrets). These are ephemeral CI-only credentials.
-      # `status -o env` emits KEY="value" (quoted); $GITHUB_ENV stores values
-      # verbatim, so strip the surrounding quotes or they leak into the values.
-      - name: Export Supabase env
-        run: |
-          supabase status -o env \
-            --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
-            --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
-            --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
-            | sed -E 's/="(.*)"$/=\1/' >> "$GITHUB_ENV"
-      - name: Load seed (pg_dump → psql restore)
-        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql -f supabase/seed-test.sql
-      - name: Integration tests
-        run: npm run test:integration -- --reporter=verbose --reporter=junit --outputFile=results.junit.xml
-      - name: Publish results to job summary
-        if: always()
-        run: node scripts/junit-summary.mjs results.junit.xml "🔌 Integration tests" >> "$GITHUB_STEP_SUMMARY"
-      - if: always()
-        run: supabase stop --no-backup
+    uses: ./.github/workflows/test-integration-reusable.yml
