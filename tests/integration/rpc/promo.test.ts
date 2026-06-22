@@ -1,31 +1,22 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
+import { hasStack, adminClient, signInAnon, type Client } from '../stack'
 import { parseCartQuote } from '@/api/cart/quoteCart'
 
 // Money path against the real local Supabase stack (CI). Exercises apply_promo_code
 // over the 5 seeded codes (docs/testing/promo-codes.md) + quote_cart math, with a
 // real anonymous session (both RPCs resolve the cart from auth.uid()). Skipped
 // without the stack. See docs/testing/STRATEGY.md §3 Layer 2.
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const hasStack = Boolean(url && anonKey && serviceKey)
-
 type PromoPayload = { status: 'ok' | 'error'; reason?: string }
 const promo = (data: unknown) => data as PromoPayload
 
 describe.skipIf(!hasStack)('apply_promo_code + quote_cart (anon session)', () => {
-  let user: SupabaseClient<Database> // anon-authed: its cart is the unit under test
-  let admin: SupabaseClient<Database> // service role: teardown
+  let user: Client // anon-authed: its cart is the unit under test
+  let admin: Client // service role: teardown
   let uid: string
 
   beforeAll(async () => {
-    user = createClient<Database>(url!, anonKey!)
-    admin = createClient<Database>(url!, serviceKey!)
-    const { data, error } = await user.auth.signInAnonymously()
-    if (error) throw error
-    uid = data.user!.id
+    admin = adminClient()
+    ;({ client: user, uid } = await signInAnon())
     // WHITE30 targets *title* 58 ("Белый цветок"). A cart id is `<kind>-<editionId>`
     // and the promo maps edition → title, so the line must be title 58's print
     // edition. Derive its id from the seed (robust to id changes).

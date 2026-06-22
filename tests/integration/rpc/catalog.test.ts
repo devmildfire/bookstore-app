@@ -1,20 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
+import { hasStack, anonClient, type Client } from '../stack'
 
-// Integration tests run against the real local Supabase stack (CI: `supabase start`,
-// keys exported into the env). Skipped when the stack env is absent, so a plain
-// `npm test` / local run stays green without Docker. See docs/testing/STRATEGY.md §5.
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const hasStack = Boolean(url && anonKey)
-
+// Runs against the real local Supabase stack (CI). See docs/testing/STRATEGY.md §5.
 describe.skipIf(!hasStack)('get_catalog_books (anon role)', () => {
-  // Created in beforeAll so a skipped suite never constructs a client with
-  // undefined env (the describe factory still runs at collection time).
-  let supabase: SupabaseClient<Database>
+  // Created in beforeAll so a skipped suite never builds a client (the describe
+  // factory still runs at collection time).
+  let supabase: Client
   beforeAll(() => {
-    supabase = createClient<Database>(url!, anonKey!)
+    supabase = anonClient()
   })
 
   it('returns a non-empty page of catalog books for the seeded DB', async () => {

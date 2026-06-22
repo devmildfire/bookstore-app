@@ -1,21 +1,15 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
+import { hasStack, adminClient, signInAnon, type Client } from '../stack'
 
 // Two-phase order lifecycle against the real local Supabase stack (CI):
 // create_pending_order → mark_order_paid (idempotent, amount-checked) →
 // cancel_pending_order → expire_stale_pending_orders. Digital-only cart (EBook,
 // no shipping). Skipped without the stack. See docs/testing/STRATEGY.md §3.
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const hasStack = Boolean(url && anonKey && serviceKey)
-
 const EBOOK = { id: 'EBook-41', name: 'Белый цветок', price: 1000, category: 'EBook' as const, quantity: 1 }
 
 describe.skipIf(!hasStack)('order lifecycle (anon session)', () => {
-  let user: SupabaseClient<Database>
-  let admin: SupabaseClient<Database>
+  let user: Client
+  let admin: Client
   let uid: string
 
   const addItem = () => user.from('Cart').insert({ ...EBOOK })
@@ -39,11 +33,8 @@ describe.skipIf(!hasStack)('order lifecycle (anon session)', () => {
   }
 
   beforeAll(async () => {
-    user = createClient<Database>(url!, anonKey!)
-    admin = createClient<Database>(url!, serviceKey!)
-    const { data, error } = await user.auth.signInAnonymously()
-    if (error) throw error
-    uid = data.user!.id
+    admin = adminClient()
+    ;({ client: user, uid } = await signInAnon())
     const { error: insertError } = await addItem()
     if (insertError) throw insertError
   })
