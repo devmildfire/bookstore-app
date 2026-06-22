@@ -57,6 +57,7 @@ jobs:
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
 
             for (let attempt = 1; attempt <= 40; attempt++) {
+              const allRuns = []
               for (const sha of shas) {
                 const { data } = await github.rest.actions.listWorkflowRunsForRepo({
                   owner: context.repo.owner,
@@ -64,14 +65,18 @@ jobs:
                   head_sha: sha,
                   per_page: 100,
                 })
+                allRuns.push({ sha, runs: data.workflow_runs || [] })
+              }
+              // Check if ANY SHA satisfies all required workflows
+              for (const { sha, runs } of allRuns) {
                 for (const name of required) {
-                  const run = latest(data.workflow_runs, name)
+                  const run = latest(runs, name)
                   if (run && run.status === 'completed' && run.conclusion !== 'success') {
                     throw new Error(`Required workflow "${name}" concluded "${run.conclusion}" for ${sha} — blocking deploy.`)
                   }
                 }
                 const done = required.every((name) => {
-                  const run = latest(data.workflow_runs, name)
+                  const run = latest(runs, name)
                   return run && run.status === 'completed' && run.conclusion === 'success'
                 })
                 if (done) {
@@ -80,8 +85,8 @@ jobs:
                 }
               }
               const pending = required
-                .filter((name) => shas.every((sha) => {
-                  const run = latest(data.workflow_runs, name)
+                .filter((name) => allRuns.every(({ runs }) => {
+                  const run = latest(runs, name)
                   return !run || run.status !== 'completed'
                 }))
                 .join(', ')
