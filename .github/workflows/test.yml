@@ -29,6 +29,10 @@ jobs:
     name: Integration tests
     runs-on: ubuntu-latest
     needs: unit
+    # config.toml's send-email hook validates this at `supabase start`/`stop`
+    # (and the hook isn't exercised by tests). Test-only dummy, not a real secret.
+    env:
+      SEND_EMAIL_HOOK_SECRET: 'v1,whsec_MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

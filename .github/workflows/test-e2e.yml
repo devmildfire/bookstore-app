@@ -20,6 +20,11 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # config.toml's send-email hook validates this at `supabase start`/`stop`.
+    # Test-only dummy, not a real secret. (Also passed to the web server via
+    # playwright.config.ts so checkout/auth pages render.)
+    env:
+      SEND_EMAIL_HOOK_SECRET: 'v1,whsec_MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
