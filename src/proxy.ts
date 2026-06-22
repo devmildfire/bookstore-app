@@ -1,6 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { v4 as uuidv4 } from 'uuid'
 import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 const CART_COOKIE = 'bookstore_cart_id'
@@ -27,7 +26,7 @@ export async function proxy(request: NextRequest) {
   // sole authority for session cookies on the OAuth return leg.
   if (request.nextUrl.pathname.startsWith('/auth/callback')) {
     if (!request.cookies.has(CART_COOKIE)) {
-      response.cookies.set(CART_COOKIE, uuidv4(), {
+      response.cookies.set(CART_COOKIE, crypto.randomUUID(), {
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
@@ -90,7 +89,7 @@ export async function proxy(request: NextRequest) {
 
   // Set cart cookie on first visit (persists for 1 year)
   if (!request.cookies.has(CART_COOKIE)) {
-    response.cookies.set(CART_COOKIE, uuidv4(), {
+    response.cookies.set(CART_COOKIE, crypto.randomUUID(), {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
