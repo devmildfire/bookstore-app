@@ -10,9 +10,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 2 : undefined,
-  // CI: `list` prints a line per test (captured into the GitHub job summary),
-  // `github` adds inline failure annotations, `html` is uploaded as an artifact.
-  reporter: process.env.CI ? [['list'], ['github'], ['html']] : 'list',
+  // CI: `list` prints a line per test to the log, `junit` feeds the Markdown
+  // job-summary table (scripts/junit-summary.mjs), `github` adds inline failure
+  // annotations, `html` is uploaded as an artifact.
+  reporter: process.env.CI
+    ? [['list'], ['junit', { outputFile: 'results.junit.xml' }], ['github'], ['html']]
+    : 'list',
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',

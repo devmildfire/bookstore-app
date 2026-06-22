@@ -72,3 +72,6 @@ storage-assets/digital-files/
 /test-results/
 /blob-report/
 /playwright/.cache/
+
+# JUnit test reports (CI)
+results.junit.xml
