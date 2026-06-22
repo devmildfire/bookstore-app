@@ -21,9 +21,62 @@ jobs:
   audit:
     uses: ./.github/workflows/audit-reusable.yml
 
+  # Hard gate: require the Tests + E2E workflows to be green for THIS exact SHA
+  # before building/deploying. `production` is a fast-forward of `main`, and both
+  # workflows run on main pushes, so their runs exist for this SHA (we poll until
+  # they finish). No green tests → no deploy. See docs/testing/STRATEGY.md §5.7.
+  require-tests:
+    name: Require green tests
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    steps:
+      - name: Wait for Tests + E2E to pass on this SHA
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const required = ['Tests', 'E2E tests']
+            const sha = context.sha
+            core.info(`Gating deploy on [${required.join(', ')}] for ${sha}`)
+            const latest = (runs, name) =>
+              runs
+                .filter((r) => r.name === name)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
+            for (let attempt = 1; attempt <= 40; attempt++) {
+              const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: sha,
+                per_page: 100,
+              })
+              for (const name of required) {
+                const run = latest(data.workflow_runs, name)
+                if (run && run.status === 'completed' && run.conclusion !== 'success') {
+                  throw new Error(`Required workflow "${name}" concluded "${run.conclusion}" for ${sha} — blocking deploy.`)
+                }
+              }
+              const done = required.every((name) => {
+                const run = latest(data.workflow_runs, name)
+                return run && run.status === 'completed' && run.conclusion === 'success'
+              })
+              if (done) {
+                core.info('✅ All required test workflows are green for this SHA.')
+                return
+              }
+              const pending = required
+                .filter((name) => {
+                  const run = latest(data.workflow_runs, name)
+                  return !run || run.status !== 'completed'
+                })
+                .join(', ')
+              core.info(`Attempt ${attempt}/40 — waiting on: ${pending || '(none)'}`)
+              await new Promise((r) => setTimeout(r, 30000))
+            }
+            throw new Error('Timed out waiting for required test workflows to complete for this SHA.')
+
   build-and-push:
     name: Build & push image
-    needs: audit
+    needs: [audit, require-tests]
     runs-on: ubuntu-latest
     permissions:
       contents: read

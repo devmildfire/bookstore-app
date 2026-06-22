@@ -1,13 +1,12 @@
 name: E2E tests
 
 # Playwright E2E against the full stack (local Supabase + Next.js dev server that
-# Playwright launches via webServer). Runs on feature-branch pushes and PRs into
-# main — not on every main push (that gets the lighter Tests workflow). The
-# production deploy gate (a hard requirement on these) is a follow-up step once
-# the suite proves stable — see docs/testing/STRATEGY.md §5.7 / §10 step 5.
+# Playwright launches via webServer). Runs on feature-branch pushes, PRs into main,
+# and main pushes — the last so the SHA promoted to `production` already has an E2E
+# result for the deploy gate to require (deploy-production.yml). See STRATEGY.md §5.7.
 on:
   push:
-    branches: ['feature/**', 'feat/**']
+    branches: ['main', 'feature/**', 'feat/**']
   pull_request:
     branches: ['main']
 
