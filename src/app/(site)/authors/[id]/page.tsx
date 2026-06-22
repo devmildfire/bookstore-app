@@ -7,7 +7,7 @@ import { getAuthor } from '@/api/authors/getAuthor'
 import { getAuthorBooks } from '@/api/articles/getAuthorBooks'
 import { getMoreArticlesForAuthor } from '@/api/articles/getMoreArticlesForAuthor'
 import styles from './page.module.scss'
-import { getAbsoluteSiteUrl, getOpenGraphImages, getTwitterImages } from '@/lib/socialCards/cardTypes'
+import { getAbsoluteSiteUrl, socialMeta } from '@/lib/socialCards/cardTypes'
 
 type Params = { id: string }
 
@@ -24,24 +24,20 @@ export async function generateMetadata({
   const { id } = await params
   const authorId = parseId(id)
   const author = authorId ? await getAuthor(authorId) : null
+  const title = author ? `${author.name} — автор` : 'Страница автора'
+  const description = author?.bio?.slice(0, 160) ?? undefined
   return {
-    title: author ? `${author.name} — автор` : 'Страница автора',
-    description: author?.bio?.slice(0, 160) ?? undefined,
-    openGraph: {
+    title,
+    description,
+    ...socialMeta({
+      kind: 'author',
+      target: id,
       type: 'profile',
-      title: author ? `${author.name} — автор` : 'Страница автора',
-      description: author?.bio?.slice(0, 160) ?? undefined,
       url: getAbsoluteSiteUrl(`/authors/${id}`),
-      siteName: 'Чтиво',
-      locale: 'ru_RU',
-      images: getOpenGraphImages('author', id, author ? `${author.name} — автор Чтиво` : 'Автор Чтиво'),
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: author ? `${author.name} — автор` : 'Страница автора',
-      description: author?.bio?.slice(0, 160) ?? undefined,
-      images: getTwitterImages('author', id),
-    },
+      title,
+      description,
+      imageAlt: author ? `${author.name} — автор Чтиво` : 'Автор Чтиво',
+    }),
   }
 }
 

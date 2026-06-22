@@ -4,7 +4,7 @@ import { SITE_ORIGIN } from '@/lib/siteUrl'
 export const SOCIAL_CARD_KINDS = ['home', 'book', 'author', 'article'] as const
 export type SocialCardKind = (typeof SOCIAL_CARD_KINDS)[number]
 
-export type SocialCardVariant = 'og-wide' | 'og-square' | 'x-wide' | 'compact'
+export type SocialCardVariant = 'og-wide' | 'og-square' | 'x-wide'
 
 export type SocialCardVariantConfig = {
   id: SocialCardVariant
@@ -17,16 +17,15 @@ export const SOCIAL_CARD_VARIANTS: Record<SocialCardVariant, SocialCardVariantCo
   'og-wide': { id: 'og-wide', width: 1200, height: 630, label: 'Open Graph wide' },
   'og-square': { id: 'og-square', width: 1200, height: 1200, label: 'Open Graph square' },
   'x-wide': { id: 'x-wide', width: 1200, height: 675, label: 'X wide' },
-  compact: { id: 'compact', width: 800, height: 418, label: 'Compact landscape' },
 }
 
-export const OPEN_GRAPH_VARIANTS: SocialCardVariant[] = ['og-wide', 'og-square', 'compact']
+export const OPEN_GRAPH_VARIANTS: SocialCardVariant[] = ['og-wide', 'og-square']
 export const TWITTER_VARIANTS: SocialCardVariant[] = ['x-wide']
-export const PREVIEW_VARIANTS: SocialCardVariant[] = ['og-wide', 'og-square', 'x-wide', 'compact']
+export const PREVIEW_VARIANTS: SocialCardVariant[] = ['og-wide', 'og-square', 'x-wide']
 
 export const SOCIAL_CARD_CACHE_CONTROL = 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=86400'
 
-export type SocialCardTarget = string | readonly string[] | null | undefined
+export type SocialCardTarget = string | null | undefined
 
 export function isSocialCardKind(value: string): value is SocialCardKind {
   return SOCIAL_CARD_KINDS.includes(value as SocialCardKind)
@@ -41,9 +40,7 @@ export function getAbsoluteSiteUrl(path: string = '/'): string {
 }
 
 function normalizeTargetParts(target: SocialCardTarget): string[] {
-  if (!target) return []
-  if (typeof target === 'string') return target ? [target] : []
-  return target.filter((part) => part.length > 0)
+  return target ? [target] : []
 }
 
 // Same-origin path — use for in-app previews (admin gallery) so they resolve on
@@ -95,4 +92,35 @@ export function getSocialPreviewRows(kind: SocialCardKind, target?: SocialCardTa
       url: getSocialCardPath(kind, variant, target),
     }
   })
+}
+
+// Builds the openGraph + twitter halves of a page's Metadata. Same shape for
+// every page kind — pass the page-specific copy + target, get the social block.
+export function socialMeta(input: {
+  kind: SocialCardKind
+  url: string
+  title: string
+  imageAlt: string
+  target?: SocialCardTarget
+  description?: string
+  type?: 'website' | 'article' | 'profile'
+}): Pick<Metadata, 'openGraph' | 'twitter'> {
+  const { kind, url, title, imageAlt, target, description, type = 'website' } = input
+  return {
+    openGraph: {
+      type,
+      title,
+      description,
+      url,
+      siteName: 'Чтиво',
+      locale: 'ru_RU',
+      images: getOpenGraphImages(kind, target ?? null, imageAlt),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: getTwitterImages(kind, target),
+    },
+  }
 }

@@ -15,7 +15,7 @@ import BookContext from './BookContext'
 import BookCover from './BookCover'
 import BookEditionTabs from './BookEditionTabs'
 import BookTrailer from './BookTrailer'
-import { getAbsoluteSiteUrl, getOpenGraphImages, getTwitterImages } from '@/lib/socialCards/cardTypes'
+import { getAbsoluteSiteUrl, socialMeta } from '@/lib/socialCards/cardTypes'
 import styles from './page.module.scss'
 
 type Props = {
@@ -31,21 +31,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: periodical.name,
       description,
-      openGraph: {
-        type: 'website',
-        title: periodical.name,
-        description,
+      ...socialMeta({
+        kind: 'book',
+        target: periodical.slug,
         url: getAbsoluteSiteUrl(`/books/${periodical.slug}`),
-        siteName: 'Чтиво',
-        locale: 'ru_RU',
-        images: getOpenGraphImages('book', periodical.slug, periodical.name),
-      },
-      twitter: {
-        card: 'summary_large_image',
         title: periodical.name,
         description,
-        images: getTwitterImages('book', periodical.slug),
-      },
+        imageAlt: periodical.name,
+      }),
     }
   }
 
@@ -55,24 +48,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Книга не найдена' }
   }
 
+  const description = book.description?.slice(0, 160) ?? `${book.authorName} — ${book.name}`
   return {
     title: book.name,
-    description: book.description?.slice(0, 160) ?? `${book.authorName} — ${book.name}`,
-    openGraph: {
-      type: 'website',
-      title: book.name,
-      description: book.description?.slice(0, 160),
+    description,
+    ...socialMeta({
+      kind: 'book',
+      target: book.slug,
       url: getAbsoluteSiteUrl(`/books/${book.slug}`),
-      siteName: 'Чтиво',
-      locale: 'ru_RU',
-      images: getOpenGraphImages('book', book.slug, `${book.name} — ${book.authorName}`),
-    },
-    twitter: {
-      card: 'summary_large_image',
       title: book.name,
-      description: book.description?.slice(0, 160) ?? `${book.authorName} — ${book.name}`,
-      images: getTwitterImages('book', book.slug),
-    },
+      description,
+      imageAlt: `${book.name} — ${book.authorName}`,
+    }),
   }
 }
 

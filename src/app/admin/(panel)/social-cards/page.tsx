@@ -33,6 +33,8 @@ export default async function AdminSocialCardsPage() {
   const firstBook = featuredBooks[0]
   const firstArticle = articlesPage.items[0]
 
+  // QA gallery: skip a kind whose sample row is missing rather than carry a
+  // parallel set of fallback objects — on a seeded DB they always resolve.
   const targets: PreviewTarget[] = [
     {
       kind: 'home',
@@ -41,58 +43,31 @@ export default async function AdminSocialCardsPage() {
       title: 'Чтиво — независимое издательство',
       description: 'Книги, которые меняют взгляд на мир.',
     },
-    firstBook
-      ? {
-          kind: 'book',
-          label: 'Книга',
-          pageUrl: getAbsoluteSiteUrl(`/books/${firstBook.slug}`),
-          target: firstBook.slug,
-          title: firstBook.name,
-          description: firstBook.authorName,
-        }
-      : {
-          kind: 'book',
-          label: 'Книга — fallback',
-          pageUrl: getAbsoluteSiteUrl('/books/example'),
-          target: 'example',
-          title: 'Книга Чтиво',
-          description: 'Fallback',
-        },
-    author
-      ? {
-          kind: 'author',
-          label: 'Автор',
-          pageUrl: getAbsoluteSiteUrl(`/authors/${author.id}`),
-          target: String(author.id),
-          title: `${author.name} — автор`,
-          description: author.city ?? 'Автор Чтиво',
-        }
-      : {
-          kind: 'author',
-          label: 'Автор — fallback',
-          pageUrl: getAbsoluteSiteUrl('/authors/10'),
-          target: '10',
-          title: 'Автор Чтиво',
-          description: 'Fallback',
-        },
-    firstArticle
-      ? {
-          kind: 'article',
-          label: 'Статья',
-          pageUrl: getAbsoluteSiteUrl(`/dino-magazine/${firstArticle.slug}`),
-          target: firstArticle.slug,
-          title: firstArticle.title,
-          description: firstArticle.author.name,
-        }
-      : {
-          kind: 'article',
-          label: 'Статья — fallback',
-          pageUrl: getAbsoluteSiteUrl('/dino-magazine/example'),
-          target: 'example',
-          title: 'Статья Чтиво',
-          description: 'Fallback',
-        },
-  ]
+    firstBook && {
+      kind: 'book',
+      label: 'Книга',
+      pageUrl: getAbsoluteSiteUrl(`/books/${firstBook.slug}`),
+      target: firstBook.slug,
+      title: firstBook.name,
+      description: firstBook.authorName,
+    },
+    author && {
+      kind: 'author',
+      label: 'Автор',
+      pageUrl: getAbsoluteSiteUrl(`/authors/${author.id}`),
+      target: String(author.id),
+      title: `${author.name} — автор`,
+      description: author.city ?? 'Автор Чтиво',
+    },
+    firstArticle && {
+      kind: 'article',
+      label: 'Статья',
+      pageUrl: getAbsoluteSiteUrl(`/dino-magazine/${firstArticle.slug}`),
+      target: firstArticle.slug,
+      title: firstArticle.title,
+      description: firstArticle.author.name,
+    },
+  ].filter((t): t is PreviewTarget => Boolean(t))
 
   return (
     <section className={styles.page}>

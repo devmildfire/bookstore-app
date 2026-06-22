@@ -7,7 +7,7 @@ import CatalogSectionSkeleton from './CatalogSectionSkeleton'
 import SubscriptionsSection from '@/components/subscriptions/SubscriptionsSection/SubscriptionsSection'
 import BoxSetsSection from '@/components/boxSets/BoxSetsSection'
 import styles from './page.module.scss'
-import { getAbsoluteSiteUrl, getOpenGraphImages, getTwitterImages } from '@/lib/socialCards/cardTypes'
+import { getAbsoluteSiteUrl, socialMeta } from '@/lib/socialCards/cardTypes'
 
 const HOME_TITLE = 'Чтиво — независимое издательство'
 const HOME_DESCRIPTION = 'Книги, которые меняют взгляд на мир.'
@@ -15,21 +15,13 @@ const HOME_DESCRIPTION = 'Книги, которые меняют взгляд �
 export const metadata: Metadata = {
   title: HOME_TITLE,
   description: HOME_DESCRIPTION,
-  openGraph: {
-    title: HOME_TITLE,
-    description: HOME_DESCRIPTION,
+  ...socialMeta({
+    kind: 'home',
     url: getAbsoluteSiteUrl('/'),
-    siteName: 'Чтиво',
-    locale: 'ru_RU',
-    type: 'website',
-    images: getOpenGraphImages('home', null, HOME_TITLE),
-  },
-  twitter: {
-    card: 'summary_large_image',
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: getTwitterImages('home'),
-  },
+    imageAlt: HOME_TITLE,
+  }),
 }
 
 type Props = {
