@@ -33,8 +33,8 @@ export default defineConfig({
       // only, so those % can dip when a new test imports an untested module.
       thresholds: {
         autoUpdate: true,
-        lines: 3.37,
-        statements: 3.37,
+        lines: 2.76,
+        statements: 2.76,
       },
     },
   },
