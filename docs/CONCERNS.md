@@ -807,4 +807,13 @@ CA10 (page-level client boundaries, lowest priority).
 
 ---
 
+## CI1 ✅ RESOLVED (2026-06-22) — Double Docker build in deploy pipeline
+
+The `main` CI now builds + pushes the Docker image after tests pass.
+`deploy-production.yml` resolves the `main` SHA from the merge commit and promotes the
+pre-built image to the `production` tag — no rebuild needed. See
+`.github/workflows/build-push-reusable.yml`.
+
+---
+
 *Migrated from `docs/AUDIT.md` (historical audit snapshot, deleted 2026-06-06).*

@@ -29,44 +29,45 @@ jobs:
   e2e:
     uses: ./.github/workflows/test-e2e-reusable.yml
 
-  build-and-push:
-    name: Build & push image
+  # Resolve the main SHA from the merge commit and promote the pre-built
+  # image (built by main CI) to the production tag — no rebuild needed.
+  promote:
+    name: Promote pre-built image
     needs: [audit, unit, integration, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    outputs:
+      source_sha: ${{ steps.resolve.outputs.source_sha }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v4
-
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 10
+      - name: Resolve main SHA from merge commit
+        id: resolve
+        run: |
+          # On a --no-ff merge commit parents[0]=old_production, parents[1]=main_sha
+          MAIN_SHA=$(git rev-list --parents -1 HEAD | awk '{print $3}')
+          echo "source_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
+          echo "Resolved main SHA: $MAIN_SHA"
       - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:production
-            ${{ env.IMAGE }}:${{ github.sha }}
-          build-args: |
-            NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
-            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Pull pre-built image and tag as production
+        env:
+          SOURCE_SHA: ${{ steps.resolve.outputs.source_sha }}
+        run: |
+          docker pull ${{ env.IMAGE }}:$SOURCE_SHA
+          docker tag  ${{ env.IMAGE }}:$SOURCE_SHA ${{ env.IMAGE }}:production
+          docker push ${{ env.IMAGE }}:production
 
   deploy:
     name: Deploy to VPS
-    needs: build-and-push
+    needs: promote
     runs-on: ubuntu-latest
     steps:
       - name: Roll the app container over SSH
