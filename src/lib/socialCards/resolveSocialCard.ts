@@ -1,5 +1,5 @@
 import { getArticleBySlug } from '@/api/articles/getArticleBySlug'
-import { getAuthor } from '@/api/authors'
+import { getAuthor } from '@/api/authors/getAuthor'
 import { getBook } from '@/api/books'
 import { getPeriodical } from '@/api/periodicals'
 import type { SocialCardKind } from './cardTypes'

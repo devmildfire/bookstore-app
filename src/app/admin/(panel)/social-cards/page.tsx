@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getArticlesPage } from '@/api/articles/getArticlesPage'
 import { getFeaturedBooks } from '@/api/books'
-import { getAuthor } from '@/api/authors'
+import { getAuthor } from '@/api/authors/getAuthor'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 import {
   OPEN_GRAPH_VARIANTS,

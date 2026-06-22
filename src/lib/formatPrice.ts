@@ -13,7 +13,7 @@ export function formatPrice(amount: number): string {
 }
 
 // Shown in place of a 0₽ price for free products — they are "priceless", not free-of-charge.
-export const FREE_PRICE_LABEL = 'Бесценно'
+const FREE_PRICE_LABEL = 'Бесценно'
 
 /**
  * Format a *product's* price for display. A price of 0 (or less) renders as

@@ -10,13 +10,9 @@ import type { ProductCategory } from '@/types/database'
 // quantities like any other physical product.
 export const DIGITAL_CATEGORIES = new Set<ProductCategory>(['EBook', 'AudioBook'])
 
-export function isDigitalCategory(category: ProductCategory): boolean {
-  return DIGITAL_CATEGORIES.has(category)
-}
-
 // Categories a buyer can only own one of: digital files, subscriptions and
 // courses. The cart fixes them at quantity 1 (no stepper) and `addToCart`
 // never increments them.
 export function isSinglePurchaseCategory(category: ProductCategory): boolean {
-  return isDigitalCategory(category) || category === 'Subscription' || category === 'Course'
+  return DIGITAL_CATEGORIES.has(category) || category === 'Subscription' || category === 'Course'
 }

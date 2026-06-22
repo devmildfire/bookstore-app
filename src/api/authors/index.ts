@@ -1,1 +1,0 @@
-export { getAuthor } from './getAuthor'

@@ -3,7 +3,7 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import { useToastState } from '@/hooks/useToast'
-import type { ToastItem, ToastVariant } from '@/hooks/useToast'
+import type { ToastItem } from '@/hooks/useToast'
 
 // The Radix toast machinery (@radix-ui/react-toast + shared dismissable-layer/portal) is ~5 KB gz
 // of JS that, on a no-interaction page view, never runs — yet it used to hydrate eagerly in the
@@ -41,5 +41,3 @@ export function useToast(): ToastContextValue {
   if (!ctx) throw new Error('useToast must be used within ToastProvider')
   return ctx
 }
-
-export type { ToastVariant }

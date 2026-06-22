@@ -32,11 +32,3 @@ export function useProfile(): ProfileContextValue {
   }
   return ctx
 }
-
-// For places that may not be inside a provider (e.g. checkout autofill that
-// renders even when /profile is not in the route tree). Returns null instead
-// of throwing.
-export function useOptionalProfile(): Profile | null {
-  const ctx = useContext(ProfileContext)
-  return ctx?.profile ?? null
-}
