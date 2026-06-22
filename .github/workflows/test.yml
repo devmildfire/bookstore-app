@@ -52,16 +52,17 @@ jobs:
         run: supabase start
       # Export the deterministic local-stack URL + keys into the job env (no
       # committed keys, no secrets). These are ephemeral CI-only credentials.
+      # `status -o env` emits KEY="value" (quoted); $GITHUB_ENV stores values
+      # verbatim, so strip the surrounding quotes or they leak into the values.
       - name: Export Supabase env
         run: |
           supabase status -o env \
             --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
             --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
-            --override-name db.url=SUPABASE_DB_URL \
-            >> "$GITHUB_ENV"
+            | sed -E 's/="(.*)"$/=\1/' >> "$GITHUB_ENV"
       - name: Load seed (pg_dump → psql restore)
-        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql
       - run: npm run test:integration
       - if: always()
         run: supabase stop --no-backup
