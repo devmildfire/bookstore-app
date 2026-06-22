@@ -18,8 +18,8 @@ type Props = {
 // and `error.tsx`/`global-error.tsx` (Client). The eye is the cleaned Wikimedia
 // HAL9000.svg (CC-BY 3.0, attribution in the SVG file). The nameplate ABOVE the
 // eye mirrors HAL's two-part panel: solid blue "HAL" cell (left) + transparent
-// blue-bordered code cell (right). Letters use the Syncopate font (geometric,
-// open counters) with -webkit-text-stroke for clean hollow outlines.
+// blue-bordered code cell (right). Letters are the system sans-serif with
+// -webkit-text-stroke for clean hollow outlines (no web font — intentional).
 export default function HalError({ code, phrase, onRetry, className }: Props) {
   return (
     <div className={cn(css.wrap, className)} role='alert'>

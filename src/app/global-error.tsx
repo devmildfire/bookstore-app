@@ -1,43 +1,17 @@
 'use client'
 
-import { Montserrat, Syncopate } from 'next/font/google'
-import localFont from 'next/font/local'
 import HalError from '@/components/common/HalError'
 import '@/styles/globals.scss'
 import css from './global-error.module.scss'
 
 // global-error.tsx is the LAST-RESORT error boundary — it replaces the root
-// layout entirely when the root layout itself throws. So it must render its own
-// <html>/<body> shell, re-declare the fonts (so the phrase + nameplate typeset
-// correctly), and import globals.scss. It is a Client Component by requirement.
+// layout entirely when the root layout itself throws, so it renders its own
+// <html>/<body> shell and imports globals.scss. It is a Client Component by
+// requirement.
 //
-// The font config mirrors src/app/layout.tsx exactly (same variables, same
-// weights, same preload flags) so the error page looks like the rest of the site.
-
-const montserrat = Montserrat({
-  subsets: ['cyrillic', 'latin'],
-  weight: ['400', '600', '700', '900'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-montserrat',
-  preload: false,
-})
-
-const cheque = localFont({
-  src: './fonts/Chequeblack.woff2',
-  weight: '400',
-  style: 'normal',
-  display: 'swap',
-  variable: '--font-cheque',
-})
-
-const syncopate = Syncopate({
-  subsets: ['latin'],
-  weight: ['700'],
-  display: 'swap',
-  variable: '--font-syncopate',
-  preload: false,
-})
+// It deliberately does NOT declare next/font: `next/font` is disallowed in a
+// 'use client' module (Turbopack enforces this; webpack didn't). No loss here —
+// HalError typography is the system sans-serif by design (see HalError.module.scss).
 
 type Props = {
   error: Error & { digest?: string }
@@ -46,7 +20,7 @@ type Props = {
 
 export default function GlobalError({ reset }: Props) {
   return (
-    <html lang='ru' className={`${montserrat.variable} ${cheque.variable} ${syncopate.variable}`}>
+    <html lang='ru'>
       <body className={css.body}>
         <HalError
           code='500'

@@ -94,19 +94,39 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // EXPERIMENT: Turbopack-equivalent config (ignored by the webpack builder). Lets us run
-  // `next build` (Turbopack, Next 16 default) to compare bundle composition vs --webpack.
+  // PRODUCTION BUILD runs on Turbopack (`next build`, no `--webpack`) — it natively
+  // keeps dev-only code (next-devtools overlay, HMR/hot-reloader) out of the prod
+  // bundle, which the webpack builder leaked (see docs/perf/bundle-analysis.md).
+  // DEV stays on `next dev --webpack` (the webpack block below): the storefront E2E
+  // (Playwright) is reliable against the webpack dev server but flaky against
+  // Turbopack dev (anon-session/hydration timing on add-to-cart). Both blocks
+  // coexist; each builder reads its own.
   turbopack: {
     rules: {
+      // @svgr for `import Icon from './x.svg'`. Preserve viewBox (removeViewBox:false)
+      // so icons scale — matches the prior webpack svgo config.
       '*.svg': {
-        loaders: ['@svgr/webpack'],
+        loaders: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              svgoConfig: {
+                plugins: [{ name: 'preset-default', params: { overrides: { removeViewBox: false } } }],
+              },
+            },
+          },
+        ],
         as: '*.js',
       },
     },
+    // supabase-js `export *`s realtime-js (websocket/presence + core-js polyfills) but we
+    // use realtime 0×; alias it to a no-op stub to keep it out of the client bundle.
     resolveAlias: {
       '@supabase/realtime-js': './src/lib/supabase/realtime-stub.js',
     },
   },
+  // Used only by `next dev --webpack` (the dev script). The Turbopack build ignores
+  // this and reads the `turbopack` block above.
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,
@@ -115,30 +135,15 @@ const nextConfig: NextConfig = {
           loader: '@svgr/webpack',
           options: {
             svgoConfig: {
-              plugins: [
-                {
-                  name: 'preset-default',
-                  params: {
-                    overrides: {
-                      removeViewBox: false,
-                    },
-                  },
-                },
-              ],
+              plugins: [{ name: 'preset-default', params: { overrides: { removeViewBox: false } } }],
             },
           },
         },
       ],
     })
-    // Exclude the unused Supabase Realtime client from the bundle (see realtime-stub.js):
-    // supabase-js hard-instantiates RealtimeClient + `export *`s realtime-js, dragging the
-    // websocket/presence bundle + its inlined core-js polyfills into the client chunk. We use
-    // realtime 0×, so alias it to a no-op. Exact match ($) so only the bare import is replaced.
     config.resolve.alias = {
       ...config.resolve.alias,
       '@supabase/realtime-js$': path.resolve('src/lib/supabase/realtime-stub.js'),
-      // Next 16's webpack prod build ships the ~228 KB (gz) dev-overlay/devtools into the
-      // client bundle as dead code. Alias it to a no-op so it never reaches production users.
       'next/dist/compiled/next-devtools': path.resolve('src/lib/next-devtools-stub.js'),
     }
     return config
