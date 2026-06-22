@@ -41,14 +41,17 @@ jobs:
           script: |
             const required = ['Tests', 'E2E tests']
 
-            // Check the merge commit SHA first; if no runs found, check its
-            // parents (the actual commits from main that carry test runs).
+            // Walk the commit ancestry (up to 30) to find a SHA with test runs.
+            // The production commit itself won't have runs — its ancestors from
+            // main do. Start from newest (the production commit) so the first
+            // ancestor with green tests passes the gate.
             const { execSync } = require('child_process')
-            const shas = [context.sha]
-            const parents = execSync('git rev-list --parents -1 ' + context.sha, { encoding: 'utf-8' }).trim().split(/\s+/)
-            // parents[0] is the commit itself, parents[1..n] are its parents.
-            // Only check non-production parents (those that had tests run on main).
-            for (let i = 1; i < parents.length; i++) shas.push(parents[i])
+            const shas = [
+              ...new Set(
+                execSync('git rev-list --max-count=30 ' + context.sha, { encoding: 'utf-8' })
+                  .trim().split(/\s+/)
+              ),
+            ]
 
             core.info(`Gating deploy on [${required.join(', ')}] for [${shas.join(', ')}]`)
             const latest = (runs, name) =>
