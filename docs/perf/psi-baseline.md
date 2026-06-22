@@ -18,6 +18,67 @@ the PSI API access memory note). Script: `/tmp/psi/run.mjs`.
 
 ---
 
+## 2026-06-22 — re-check after a manual run showed 81 (verdict: tail noise, no regression)
+
+A manual single PSI run reported **81 mobile**, suspected a regression. 100 cache-busted mobile
+traces say otherwise. Raw: [`data/psi-2026-06-22-mobile-100.jsonl`](./data/psi-2026-06-22-mobile-100.jsonl).
+
+| Metric | p50 | mean | p90 | max | **06-20 baseline p50 (mean)** |
+|---|---|---|---|---|---|
+| **Performance** | **96** | 95 | 98 | 100 | **97 (96)** |
+| LCP (ms) | 2551 | 2733 | 3319 | 4055 | 2401 (2548) |
+| FCP (ms) | 1651 | 1580 | 1651 | 2036 | 1501 (1447) |
+| TBT (ms) | 30 | 37 | 88 | 125 | 28 (28) |
+| **CLS** | **0** | **0** | 0 | 0 | **0** |
+| Speed Index (ms) | 1651 | 1867 | 2904 | 4820 | 1501 (1542) |
+| TTFB (ms) | 16 | 35 | **117** | **277** | 16 (28), p90 **55** |
+
+Perf histogram: `82:1  90:6  91:14  92:3  94:4  95:7  96:41  97:14  98:7  99:1  100:2`.
+LCP buckets (ms): `<2000:3  2000-2500:17  2500-3000:52  3000-3500:27  >3500:1` (06-20 was centred a
+bucket lower: `2000-2500:55  2500-3000:26  3000-3500:15`).
+
+**Verdict: no real regression.**
+
+1. **Median is still green (96 ≈ baseline 97); CLS is 0.** The prior `(site)/loading.tsx` CLS
+   regression has **not** returned. The score never leaves green at the median.
+2. **The "81" was the noisy low tail.** Lab PSI swings run-to-run (TTFB + Slow-4G). Across 100 runs:
+   min 82, p10 91, **p50 96**, max 100 — ~79% of runs are ≥95, ~21% ≤91. A single manual run landing
+   at 81 is one unlucky trace, not a systematic drop (exactly the variance this doc exists to filter).
+3. **Minor LCP/FCP drift (~+150 ms p50), all in the tail.** The LCP distribution shifted up ~one
+   bucket (3000 ms+ runs grew 15→28). It is **not** a frontend regression: the `lcp-discovery-insight`
+   is healthy (LCP image eager-loaded, `fetchpriority=high`, discoverable in the initial HTML). The
+   drift tracks a **heavier TTFB tail** — p90 117 ms (vs 55) and max 277 ms — i.e. occasional slow
+   server responses (VPS/network), which feed straight into LCP. Infrastructure variance, not code.
+
+**Action:** none required for the frontend. If the LCP tail matters, the lever is server response
+time (TTFB tail), not the page. Re-sample if the median (not a single run) drops below ~94.
+Method/script: same service-account PSI runner as before (rebuilt; in the session scratchpad).
+
+### Diagnostics deep-dive — the "Reduce unused JavaScript (64 KiB)" chunks
+
+A follow-up flagged the unused-JS diagnostic + repeated 81/91 on the bare URL. Investigated the two
+chunks PSI named (`3794-…js` 84 KB gz, `4bd1b696-…js` 61 KB gz) by fetching the deployed files,
+listing what `/` actually loads, and re-running the `ANALYZE=true` bundle (chunk hashes matched the
+deployed build → identical content).
+
+- **They're framework, not app code or a heavy lib.** `4bd1b696` = **React + ReactDOM**; `3794` =
+  **Next App Router client runtime** (`next/dist/client/components`: segment-cache/prefetch/error
+  boundaries/action-queue ≈ 38 KB gz, `@swc/helpers`, **+ ~6 KB `next/dist/client/dev` HMR code**).
+  (A grep "framer" hit was a false positive — React's internal `DetermineComponentFrameRoot`.)
+- **The "unused 64 KB" is mostly post-LCP framework code** (router prefetch / segment cache / error
+  handling) — needed for navigation, so not removable. The one genuine waste is **~6 KB of dev-mode
+  HMR** leaking into prod via `next build --webpack` (same class as the next-devtools leak; Turbopack
+  avoids it — see [bundle-analysis.md](./bundle-analysis.md)).
+- **No heavy lib in the home bundle**: `lexical` 0 (admin-only ✓), no framer-motion; the 38 KB
+  `polyfills` chunk is `noModule` so modern Chrome/Lighthouse never downloads it. Deps *shrank* this
+  session (removed `uuid` + 4 dead components). **Not a regression.**
+- **Why the repeated 81:** PSI **caches per-URL**, so the bare `/` replays one pinned trace (two
+  runs shared an identical `fetchTime`). It pinned an LCP-tail trace (LCP ~3300–3470 → 89–91; a worse
+  one → 81). Cache-busted runs give the true p50 96. The LCP tail tracks the **TTFB tail** (server),
+  not JS.
+
+---
+
 ## 2026-06-21 — CLS regression from a `(site)/loading.tsx` (found + reverted)
 
 A storefront-wide `src/app/(site)/loading.tsx` (a tiny `Загрузка…` spinner) shipped in audit fix
