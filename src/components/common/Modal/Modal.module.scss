@@ -41,10 +41,14 @@
   }
 }
 
-// Scrollable body — Scroller wrapper handles the custom scrollbar.
+// Scrollable body — takes its natural content height but can shrink
+// when the modal exceeds the viewport (the max-height on .content).
+// overflow-y:auto creates a scroll context so the Scroller's lazy
+// overlayscrollbars enhancement has something to work with.
 .body {
-  flex: 1 1 0;
+  flex-shrink: 1;
   min-height: 0;
+  overflow-y: auto;
 }
 
 // Width presets.
