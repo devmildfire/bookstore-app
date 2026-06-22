@@ -71,7 +71,7 @@
     "sass": "1.99.0",
     "supabase": "2.98.0",
     "typescript": "5.9.3",
-    "vitest": "3.2.1"
+    "vitest": "3.2.6"
   },
   "overrides": {
     "postcss": "8.5.14"
