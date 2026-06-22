@@ -50,7 +50,7 @@ jobs:
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
             | sed -E 's/="(.*)"$/=\1/' >> "$GITHUB_ENV"
       - name: Load seed (pg_dump → psql restore)
-        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql -f supabase/seed-test.sql
       - name: Run E2E (chromium)
         run: npm run test:e2e -- --project=chromium
       - if: always()
