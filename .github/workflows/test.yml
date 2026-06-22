@@ -43,9 +43,13 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.98.0
-      # Boots Postgres + GoTrue + PostgREST + Storage + Kong and applies
-      # migrations + seed.sql (full dump → populated catalog).
-      - run: supabase start
+      # supabase start's seeder applies SQL over a direct connection (not psql),
+      # so it can't replay a pg_dump seed (COPY FROM stdin). Disable seed-on-start
+      # and load seed.sql via psql below. Migrations are plain DDL and replay fine.
+      - name: Disable seed-on-start
+        run: sed -i '/^\[db\.seed\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
+      - name: Boot stack (migrations only)
+        run: supabase start
       # Export the deterministic local-stack URL + keys into the job env (no
       # committed keys, no secrets). These are ephemeral CI-only credentials.
       - name: Export Supabase env
@@ -54,7 +58,10 @@ jobs:
             --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
             --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
+            --override-name db.url=SUPABASE_DB_URL \
             >> "$GITHUB_ENV"
+      - name: Load seed (pg_dump → psql restore)
+        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
       - run: npm run test:integration
       - if: always()
         run: supabase stop --no-backup

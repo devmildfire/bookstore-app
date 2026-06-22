@@ -36,14 +36,21 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.98.0
-      - run: supabase start
+      # See test.yml: start can't replay a pg_dump seed, so seed via psql.
+      - name: Disable seed-on-start
+        run: sed -i '/^\[db\.seed\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
+      - name: Boot stack (migrations only)
+        run: supabase start
       - name: Export Supabase env
         run: |
           supabase status -o env \
             --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
             --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
             --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
+            --override-name db.url=SUPABASE_DB_URL \
             >> "$GITHUB_ENV"
+      - name: Load seed (pg_dump → psql restore)
+        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
       - name: Run E2E (chromium)
         run: npm run test:e2e -- --project=chromium
       - if: always()
