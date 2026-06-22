@@ -12,6 +12,14 @@ test('home page renders', async ({ page }) => {
 
 test('header navigates to the profile cabinet', async ({ page }) => {
   await page.goto('/')
-  await page.locator('header a[href="/profile"]').first().click()
-  await expect(page).toHaveURL(/\/profile/)
+  const profileLink = page.locator('header a[href="/profile"]').first()
+  await expect(profileLink).toBeVisible()
+
+  // Retry click→navigation: during the Next.js App Router hydration window a
+  // <Link> click can be preventDefault-ed before the client router is ready (a
+  // "dead click" that leaves the URL unchanged). toPass re-clicks once hydrated.
+  await expect(async () => {
+    await profileLink.click()
+    await expect(page).toHaveURL(/\/profile/, { timeout: 2000 })
+  }).toPass({ timeout: 15_000 })
 })
