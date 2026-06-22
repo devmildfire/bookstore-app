@@ -40,7 +40,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2
         with:
           version: 2.98.0
       # supabase start's seeder applies SQL over a direct connection (not psql),
