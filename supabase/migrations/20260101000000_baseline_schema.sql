@@ -11,7 +11,6 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 -- PostgreSQL database dump
 --
 
-\restrict 5P0yUkeD1aiPP9qRDjj8x2uqDsCkdW7ro1XegDzqzJbhuCaV16jlkfa3LXydPUZ
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -4149,7 +4148,6 @@ CREATE POLICY promo_codes_select ON public."PromoCodes" FOR SELECT TO authentica
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 5P0yUkeD1aiPP9qRDjj8x2uqDsCkdW7ro1XegDzqzJbhuCaV16jlkfa3LXydPUZ
 
 
 --

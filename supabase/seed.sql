@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict E31YAAODEYuTYZJHccJ3iK5DvLneZXvH88lLTcDifFrEufvMNuFCML82g0HJIdc
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -1982,5 +1981,4 @@ SELECT pg_catalog.setval('public."Workers_id_seq"', 204, false);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict E31YAAODEYuTYZJHccJ3iK5DvLneZXvH88lLTcDifFrEufvMNuFCML82g0HJIdc
 
