@@ -23,7 +23,18 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - run: npm run test:unit
+      - name: Unit tests
+        run: npm run test:unit -- --reporter=verbose 2>&1 | tee test-output.log
+      - name: Publish results to job summary
+        if: always()
+        run: |
+          {
+            echo "## 🧪 Unit tests"
+            echo ''
+            echo '```'
+            sed -E 's/\x1b\[[0-9;]*m//g' test-output.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
   integration:
     name: Integration tests
@@ -63,6 +74,17 @@ jobs:
             | sed -E 's/="(.*)"$/=\1/' >> "$GITHUB_ENV"
       - name: Load seed (pg_dump → psql restore)
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/seed.sql -f supabase/seed-test.sql
-      - run: npm run test:integration
+      - name: Integration tests
+        run: npm run test:integration -- --reporter=verbose 2>&1 | tee test-output.log
+      - name: Publish results to job summary
+        if: always()
+        run: |
+          {
+            echo "## 🔌 Integration tests"
+            echo ''
+            echo '```'
+            sed -E 's/\x1b\[[0-9;]*m//g' test-output.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
       - if: always()
         run: supabase stop --no-backup
