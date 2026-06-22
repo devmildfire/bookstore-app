@@ -1,0 +1,56 @@
+name: Tests
+
+# Unit + integration tests on every push/PR to main. Unit (pure, fast) gates
+# integration (real local Supabase stack). See docs/testing/STRATEGY.md §5.5.
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:unit
+
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.98.0
+      # Boots Postgres + GoTrue + PostgREST + Storage + Kong and applies
+      # migrations + seed.sql (full dump → populated catalog).
+      - run: supabase start
+      # Export the deterministic local-stack URL + keys into the job env (no
+      # committed keys, no secrets). These are ephemeral CI-only credentials.
+      - name: Export Supabase env
+        run: |
+          supabase status -o env \
+            --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
+            --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY \
+            --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY \
+            >> "$GITHUB_ENV"
+      - run: npm run test:integration
+      - if: always()
+        run: supabase stop --no-backup

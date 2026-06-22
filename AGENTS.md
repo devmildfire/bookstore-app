@@ -5,15 +5,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # start dev server (localhost:3000)
-npm run build        # production build
-npm run lint         # ESLint check
-npm run lint:fix     # ESLint auto-fix
+npm run dev              # start dev server (localhost:3000)
+npm run build            # production build
+npm run lint             # ESLint check
+npm run lint:fix         # ESLint auto-fix
+npm run test:unit        # unit tests (Vitest, pure — no infra, runs anywhere)
+npm run test:integration # integration tests (Vitest vs local Supabase stack — CI)
+npm run test:e2e         # E2E (Playwright vs full stack — CI)
 ```
 
-There is no test suite yet. Lint runs automatically on staged `.ts/.tsx/.js/.jsx` files via pre-commit hook.
+**Phase 1 of the testing strategy is implemented** (Vitest unit + integration, Playwright
+E2E). Unit tests are co-located (`src/**/*.test.ts`), pure, and run anywhere. Integration
+(`tests/integration/`) and E2E (`tests/e2e/`) need the local Supabase stack and are
+**CI-authoritative** — they `describe.skipIf` / no-op without the stack, so `npm test`
+stays green locally without Docker. CI: `.github/workflows/test.yml` (unit → integration
+on push/PR to main) + `test-e2e.yml` (feature branches + PRs). Lint + unit-related tests
+run on staged files via the pre-commit hook. The hard production-deploy test gate is the
+next step (not yet wired) — see [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md) §10
+step 5.
 
-The testing strategy — proposed stack (Vitest + Playwright + MSW), layering (unit → integration → E2E), and the CI plan for reproducing the full Next.js + Supabase stack on GitHub Actions — is documented in [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md). The existing manual-test fixture reference for promo codes is [docs/testing/promo-codes.md](docs/testing/promo-codes.md).
+The full testing strategy — stack, layering (unit → integration → E2E), and the CI plan
+for reproducing the full Next.js + Supabase stack on GitHub Actions — is in
+[docs/testing/STRATEGY.md](docs/testing/STRATEGY.md). The manual-test fixture reference for
+promo codes is [docs/testing/promo-codes.md](docs/testing/promo-codes.md).
 
 ### Regenerate Supabase types (run from repo root)
 

@@ -66,3 +66,9 @@ backups/
 # Re-supply from the original PDF/EPUB files, then run
 # scripts/upload-storage-assets-to-supabase.mjs to push them to the digital-files bucket.
 storage-assets/digital-files/
+
+# Playwright (E2E)
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/.cache/

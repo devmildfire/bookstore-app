@@ -1,6 +1,8 @@
 # Testing Strategy
 
-**Status:** proposed (not yet implemented). Last updated: 2026-06-22.
+**Status:** Phase 1 implemented (unit + integration + E2E harness, first tests, CI
+workflows — §8/§10 steps 1–4); deploy gate (§10 step 5) and Phase 2+ pending. Last
+updated: 2026-06-22.
 
 > **Branch model (as of 2026-06-22):** the trunk is `main`; production deploys are the
 > `production` branch. The old `update`/`develop`/`staging` branches are retired — wherever
