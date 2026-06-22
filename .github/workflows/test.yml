@@ -24,10 +24,12 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: Unit tests
-        run: npm run test:unit -- --reporter=verbose --reporter=junit --outputFile=results.junit.xml
+        run: npm run test:unit -- --coverage --reporter=verbose --reporter=junit --outputFile=results.junit.xml
       - name: Publish results to job summary
         if: always()
-        run: node scripts/junit-summary.mjs results.junit.xml "🧪 Unit tests" >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          node scripts/junit-summary.mjs results.junit.xml "🧪 Unit tests" >> "$GITHUB_STEP_SUMMARY"
+          node scripts/coverage-summary.mjs coverage/coverage-summary.json >> "$GITHUB_STEP_SUMMARY"
 
   integration:
     name: Integration tests
