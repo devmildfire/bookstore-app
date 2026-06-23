@@ -51,10 +51,13 @@ const nextConfig: NextConfig = {
   },
   images: {
     ...(process.env.NODE_ENV !== 'production' && { dangerouslyAllowLocalIP: true }),
-    // Add a 320 candidate between the default 256 and 384. The hero covers display at 174 px on
-    // phones → at DPR 1.75 they need ~305 px, and without 320 the browser jumps to 384 (PSI's
+    // Add a 320 candidate between the default 256 and 384. The book-card covers display at 174 px
+    // on phones → at DPR 1.75 they need ~305 px, and without 320 the browser jumps to 384 (PSI's
     // "improve image delivery" flag). 320 (≥305, still crisp) is served instead, ~25% smaller.
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 320, 384],
+    // Add a 448 candidate above 384: the HOME HERO cover displays at 230 px → at DPR 1.75 it needs
+    // ~402 px, and without 448 the browser jumps to deviceSizes' 640 (the LCP image, ~55% heavier).
+    // 448 (≥402, crisp at the emulated DPR) is served instead — the single biggest LCP lever.
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 320, 384, 448],
     // The Supabase storage upstream serves covers with a 4 h max-age — PSI flags that as a
     // short cache lifetime. Raise the optimized-image cache floor to 7 days (covers rarely
     // change). With `must-revalidate`, a cover replaced under the same filename refreshes via

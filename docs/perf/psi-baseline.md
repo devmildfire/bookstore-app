@@ -18,6 +18,77 @@ the PSI API access memory note). Script: `/tmp/psi/run.mjs`.
 
 ---
 
+## 2026-06-23 — manual run showed 79 after Turbopack+audit deploy (verdict: NO code/build regression; PSI-side render variance)
+
+A manual run reported **79 mobile** after the Turbopack-prod-build (`f302bcd3`) + ponytail-audit
+(`74afa6cf`) merges deployed to prod (`dd38c598`, 01:56). Suspected the new code degraded perf.
+100 cache-busted mobile traces + a webpack-vs-turbopack local A/B say the code/build is **not** the
+cause. Raw: [`data/psi-2026-06-23-mobile-100.jsonl`](./data/psi-2026-06-23-mobile-100.jsonl).
+
+| Metric | p50 | mean | p90 | max | **06-22 p50** | Δ |
+|---|---|---|---|---|---|---|
+| **Performance** | **93** | 93 | 95 | 99 | **96** | **−3** |
+| LCP (ms) | 3076 | 3072 | 3376 | 3781 | 2551 | +525 |
+| FCP (ms) | 1801 | 1724 | 1801 | 1961 | 1651 | +150 |
+| **TBT (ms)** | **18** | 32 | 45 | 854 | 30 | **−12 (better)** |
+| **CLS** | **0** | 0 | 0 | 0 | 0 | — |
+| **TTFB (ms)** | **16** | 25 | **39** | 176 | 16 (p90 **116**) | same / tail better |
+
+Perf hist: `75:1 84:1 87:2 88:4 90:3 91:3 92:31 93:32 94:7 95:6 96:4 97:3 98:1 99:2`.
+LCP buckets shifted up ~one: `2500-3000:20 3000-3500:66` (06-22 was `2500-3000:52 3000-3500:27`).
+
+**The lab median did drop ~3 pts — but it is NOT the deployed code.** Evidence:
+
+1. **Bundle SHRANK.** Live initial JS ~273 KB gz (18 chunks) vs the ~309 KB webpack baseline —
+   Turbopack natively drops the next-devtools leak (no 221 KB monster; biggest chunk 74 KB). The
+   "bigger bundle" hypothesis is false.
+2. **Local webpack-vs-Turbopack A/B (same machine/network/Supabase, only the builder differs)** —
+   Turbopack is **faster**, and the home document + critical-path head are **byte-identical**:
+
+   | | webpack | Turbopack (now) |
+   |---|---|---|
+   | perf (5-run median) | 88 | **100** |
+   | LCP / FCP / TBT | 3763 / 1228 / 92 | **1221 / 1065 / 0** |
+   | doc gz / head | 42330 B · 3 CSS · 1 img-preload · 50 scripts | **42330 B · 3 CSS · 1 img-preload · 50 scripts** |
+
+   Turbopack's smaller bundle = **TBT 0 vs 92**. `cssChunking:false` is honored by both builders
+   (the build-log `⨯ cssChunking` just means "set to false", not "unsupported"). The audit was
+   barrel renames + a `classnames`→`cn.ts` swap — zero render-tree change (local current-code = 100).
+3. **The LCP image always loads fast** (firstImgEnd 137–443 ms across runs) while LCP is 2000–3700 ms
+   → **LCP is render-bound (CPU under the 4× throttle), not image- or network-bound.** Image +
+   delivery exonerated.
+4. **TTFB is fine** (p50 16 ms, p90 *better* than 06-22). PSI renders Lighthouse on **Google's**
+   servers — the VPS only serves bytes — so render-bound LCP variance is Google-PSI-side, not ours.
+
+### Root cause: PageSpeed rolled out **Lighthouse 13.4.0** (not our code)
+
+The 3-pt median drop is real and persistent (a same-day re-run held p50 93, LCP 3114 — not noise),
+but it is a **measurement-version change**, proven by the *observed* (un-simulated) trace:
+
+- The PSI response reports `lighthouseVersion: 13.4.0`. **Lighthouse 13.4.0 released 2026-06-09 and
+  ships to PSI "within ~2 weeks"** (→ ~06-16…06-23) — it landed exactly across the 06-22→06-23 line.
+  LH 13 is also the release that **migrated the Performance panel to the new "insight" audits**
+  (the "Avoid long main-thread tasks" / "Duplicated JavaScript" insights that appeared "out of nowhere").
+- **The real browser render is unchanged and excellent.** PSI's `metrics` audit exposes the observed
+  (pre-Lantern) timings: **observed FCP 291 ms, observed LCP 365 ms**, observed SI 330 ms. The LCP
+  element is the hero cover (`murlo.jpg`); `lcp-discovery-insight` scores **1.0** (eager ✓, discoverable
+  ✓, `fetchpriority=high` ✓). Observed LCP phases: TTFB 31 + loadDelay 125 + loadDuration 36 +
+  renderDelay 173 ≈ 365 ms.
+- **The reported LCP 3076 ms is 100 % Lantern simulation** of one cross-origin image download on
+  Slow-4G: `resourceLoadDuration 36 ms → simulated 1618 ms` (45×) + `loadDelay 125 → 1323 ms`. When
+  Lighthouse's simulation model changes between versions, that estimate moves even though the bytes
+  and the real render do not.
+
+**Verdict: no frontend/build/infra regression.** Turbopack + the audit are net-neutral-to-better
+(smaller bundle, TBT 30→18, byte-identical critical path, real LCP ~365 ms). The 96→93 is the PSI
+Lighthouse 13.4.0 rollout recalibrating the simulated score; real users (who experience the observed
+~365 ms LCP, not the simulated 3 s) are unaffected. The manual "79" is the low tail (100-run min 75).
+**This 93 is the new baseline under LH 13.x** — compare future runs against it, not the LH-12-era 96/97.
+Re-sample the *median*, never a single run. Runner rebuilt in the session scratchpad (`psi-batch.mjs` +
+`stats.mjs`; local webpack-vs-Turbopack A/B via the `lighthouse` CLI).
+
+---
+
 ## 2026-06-22 — re-check after a manual run showed 81 (verdict: tail noise, no regression)
 
 A manual single PSI run reported **81 mobile**, suspected a regression. 100 cache-busted mobile
