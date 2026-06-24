@@ -133,7 +133,8 @@ signal in the project. Thresholds remain correct for binary "fix-now" infra cond
 *No alerting, dashboards only* — rejected: defeats the utility goal.
 
 **Consequences.** Requires recording rules + an error-budget model; SLO targets are initial guesses to
-tune after a baseline. Alert channel (Telegram vs ntfy vs email) is a pending sub-decision.
+tune after a baseline. Alert channel: **Telegram** (free, rich formatting, simple bot, pairs cleanly
+with Alertmanager).
 
 ---
 

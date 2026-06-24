@@ -202,15 +202,16 @@ as overkill — [ADR-0007](../monitoring/DECISIONS.md#adr-0007).)
 
 ---
 
-## 9. Open questions for review
+## 9. Decisions — all resolved (2026-06-24)
 
-1. **Alert channel:** Telegram (recommended — free, rich, easy bot) vs ntfy (simplest) vs Resend
-   email (already wired)?
-2. **Grafana public?** Recommend **yes, read-only** (it's the showcase). Confirm you want dashboards
-   publicly viewable at `grafana.<domain>`.
-3. **PSI cron location:** VPS systemd timer → internal Pushgateway (recommended, keeps key internal)
-   vs GitHub Actions (key off-box but Pushgateway must be exposed)?
-4. ~~Faro now or later?~~ **Resolved: rejected** as overkill — [ADR-0007](../monitoring/DECISIONS.md#adr-0007).
-5. **Disable `studio` in prod** to free 191 MB and make the stack ~net-neutral on RAM?
-6. **Self-host Grafana (recommended for ops cred) vs Grafana Cloud free tier** (always-up, less to
-   maintain, less "I ran it")?
+Every question is settled; full rationale in the [ADR log](../monitoring/DECISIONS.md). Ready for
+Phase 0.
+
+| # | Question | Resolution | Record |
+|---|---|---|---|
+| 1 | Alert channel | **Telegram** | [ADR-0005](../monitoring/DECISIONS.md#adr-0005) |
+| 2 | Grafana public? | **Yes — read-only anonymous** | [ADR-0006](../monitoring/DECISIONS.md#adr-0006) |
+| 3 | PSI cron location | **VPS systemd timer → internal Pushgateway** | [ADR-0003](../monitoring/DECISIONS.md#adr-0003) |
+| 4 | Grafana Faro? | **Rejected** (overkill) | [ADR-0007](../monitoring/DECISIONS.md#adr-0007) |
+| 5 | Disable `studio`? | **No — keep it** (RAM headroom is fine; useful for DB admin) | — |
+| 6 | Self-host vs Grafana Cloud | **Self-host** | [ADR-0002](../monitoring/DECISIONS.md#adr-0002) |
