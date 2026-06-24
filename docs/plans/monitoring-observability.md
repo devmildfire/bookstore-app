@@ -175,7 +175,7 @@ whole project.
 |---|---|---|
 | **0 — Foundation** ✅ | `monitoring/` compose: Prometheus + Grafana, internal net, mem_limits, 15d retention; Grafana exposed read-only via tunnel; provisioning scaffold | ✅ **Done 2026-06-24** — live at grafana.mildfire.dev (anon read-only), targets healthy. See README "Deployment notes". |
 | **1 — Infra/USE** ✅ | cAdvisor + node-exporter + postgres-exporter; USE + Database dashboards | ✅ **Done 2026-06-24** — 15 named containers + host CPU/mem/disk in the Infra/USE dashboard; DB metrics scraping (a dedicated Database dashboard is a small follow-up). |
-| **2 — App/RED** | `prom-client` in Next, internal `/metrics`, RED dashboard | Live traffic shows rate/error/latency; p95 panel populated |
+| **2 — App/RED** ✅ | ~~`prom-client` in Next~~ → nginx ingress log exporter ([ADR-0008](../monitoring/DECISIONS.md#adr-0008)); RED dashboard | ✅ **Done 2026-06-24** — App/RED dashboard live (rate by status, 5xx error rate, latency p50/p90/p99, req/s by vhost). Real traffic: p50 ~92ms. |
 | **3 — RUM/CWV** | `web-vitals` + `/api/vitals` + histograms; Core Web Vitals dashboard | Real visits produce p75 LCP/INP/CLS |
 | **4 — Synthetic** | PSI systemd timer → Pushgateway → Prometheus; Synthetic dashboard | Daily PSI median points trend over time |
 | **5 — Alerting/SLOs** | Alertmanager + recording/alerting rules + burn-rate; Telegram routing | A forced SLO breach pages; alert resolves on recovery |

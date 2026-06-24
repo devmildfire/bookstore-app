@@ -14,6 +14,7 @@ it. Scope: the observability stack ([README](./README.md), [plan](../plans/monit
 | [0005](#adr-0005) | Alert on SLO multi-window burn-rate, not static thresholds | Accepted |
 | [0006](#adr-0006) | Expose only Grafana, anonymous read-only | Accepted |
 | [0007](#adr-0007) | Core Web Vitals via `prom-client` histogram; Grafana Faro rejected as overkill | Accepted |
+| [0008](#adr-0008) | App RED measured at the nginx ingress (log exporter), not in-app prom-client | Accepted |
 
 ---
 
@@ -185,3 +186,35 @@ cost that dilutes the performance story. *No RUM (CrUX only)* — rejected: insu
 acceptable. Frontend error tracking is out of scope; if ever genuinely needed it would be a separate,
 explicitly-justified change, not part of this stack. Works because the Next app is a persistent
 container (not serverless).
+
+---
+
+## ADR-0008
+### App RED measured at the nginx ingress (log exporter), not in-app prom-client
+**Status:** Accepted · 2026-06-24
+
+**Context.** Phase 2 needs App RED (request **R**ate, **E**rrors, **D**uration). The plan assumed
+`prom-client` inside Next. But Next's App Router has **no clean in-process hook that sees a request's
+final status + duration**: middleware (`proxy.ts`) runs *before* the response, so it can count
+requests but can't observe errors or latency. True in-app RED would require a custom server or
+OpenTelemetry-metrics wiring.
+
+**Decision.** Measure RED at the **nginx ingress** — the single entry point all traffic already flows
+through — with `prometheus-nginxlog-exporter`. nginx ships each access line over syslog/UDP (a `red`
+log_format) → exporter → Prometheus (`nginx_http_response_count_total{vhost,method,status}` +
+`nginx_http_response_time_seconds{...,quantile}`).
+
+**Rationale.** Complete RED (rate/errors/latency, per vhost) with **no app code change and no app
+redeploy** — lowest risk to the live storefront — and it measures what's actually served. In-app
+OTel/custom-server would add deps + a redeploy + fiddlier setup for no better data on a single-ingress
+app. The exporter runs over syslog (no shared volume, no nginx recreate — just a reload).
+
+**Alternatives considered.** *In-app `prom-client`* — cleanly yields only Rate (middleware); errors +
+duration need a custom server. *In-app OpenTelemetry metrics* — first-class but deps + redeploy +
+fiddlier. *nginx `stub_status` exporter* — rate/connections only, no per-status or latency.
+
+**Consequences.** RED reflects served HTTP at the ingress (includes static/404s/all vhosts; filter by
+`vhost` for the storefront), not app-internal route timings. Latency is exposed as a **summary**
+(p50/p90/p99), not a histogram — fine for this single nginx instance (can't aggregate quantiles across
+instances, which doesn't apply here). Operational note: a `prometheus.yml` change needs a **container
+recreate**, not a file-replace — the single-file bind mount pins to the original inode.

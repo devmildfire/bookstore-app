@@ -1,0 +1,26 @@
+# prometheus-nginxlog-exporter — RED metrics from the nginx ingress.
+# nginx ships each access log line to us over syslog (UDP) using the matching
+# `red` log_format (see /opt/chtivo/nginx/conf.d/app.conf). We parse status,
+# method (from $request), request_time and host → Prometheus metrics:
+#   nginx_http_response_count_total{vhost,method,status}        (Rate + Errors)
+#   nginx_http_response_time_seconds{vhost,method,status,quantile}  (Duration — summary)
+# Note: this exporter emits request_time as a SUMMARY (quantile=0.5/0.9/0.99),
+# not a histogram — the App/RED dashboard reads those quantiles directly.
+listen:
+  port: 4040
+  metrics_endpoint: "/metrics"
+
+namespaces:
+  - name: nginx
+    format: '$host $remote_addr - "$request" $status $request_time'
+    source:
+      syslog:
+        listen_address: "udp://0.0.0.0:5140"
+        format: "rfc3164"
+        tags:
+          - nginx
+    labels:
+      service: "chtivo"
+    relabel_configs:
+      - target_label: "vhost"
+        from: "host"

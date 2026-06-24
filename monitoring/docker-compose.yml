@@ -80,6 +80,16 @@ services:
     mem_limit: 128m
     networks: [chtivo_default]
 
+  nginxlog-exporter:
+    # RED from the nginx ingress: nginx ships access logs here over syslog/UDP.
+    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.1
+    restart: unless-stopped
+    command: ['-config-file', '/etc/nginxlog/config.yml']
+    volumes:
+      - ./nginxlog-exporter/config.yml:/etc/nginxlog/config.yml:ro
+    mem_limit: 64m
+    networks: [chtivo_default]
+
 networks:
   chtivo_default:
     external: true

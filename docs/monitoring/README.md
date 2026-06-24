@@ -156,7 +156,7 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
-## Deployment notes (as built — Phases 0–1, 2026-06-24)
+## Deployment notes (as built — Phases 0–2, 2026-06-24)
 
 Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
@@ -177,6 +177,17 @@ trusting one.
    added `grafana.mildfire.dev → http://nginx:80`, path `*`, matching the existing `bookstore-app`/`api`
    routes. This auto-created the DNS record. Request path: CF edge → tunnel → `nginx:80` (Host-routed)
    → `grafana:3000`.
+
+**App RED (Phase 2) — measured at the nginx ingress:** Next's App Router has no clean in-process hook
+for response status+duration, so RED is collected at nginx (the single entry point) rather than in-app
+(see [ADR-0008](./DECISIONS.md#adr-0008)). nginx ships access logs over **syslog/UDP** to
+`prometheus-nginxlog-exporter` (`monitoring/nginxlog-exporter/config.yml` + the `red` log_format in
+`monitoring/nginx/00-red-logging.conf`, deployed to `/opt/chtivo/nginx/conf.d/`). Metrics:
+`nginx_http_response_count_total{vhost,method,status}` (rate/errors) +
+`nginx_http_response_time_seconds{...,quantile}` (latency, a **summary** p50/p90/p99). No app code
+change, no app redeploy. **Op note:** editing `prometheus.yml` requires a container *recreate*
+(`docker compose … up -d --force-recreate prometheus`), not a file-replace — the single-file bind mount
+pins to the original inode, so a `tar`/replace is invisible until recreate.
 
 ## For developers & agents
 
