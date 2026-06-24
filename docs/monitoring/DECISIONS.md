@@ -13,7 +13,7 @@ it. Scope: the observability stack ([README](./README.md), [plan](../plans/monit
 | [0004](#adr-0004) | Structure observability as three pillars + synthetic (USE/RED/CWV) | Accepted |
 | [0005](#adr-0005) | Alert on SLO multi-window burn-rate, not static thresholds | Accepted |
 | [0006](#adr-0006) | Expose only Grafana, anonymous read-only | Accepted |
-| [0007](#adr-0007) | Web Vitals via `prom-client` histogram now; Grafana Faro deferred | Proposed |
+| [0007](#adr-0007) | Core Web Vitals via `prom-client` histogram; Grafana Faro rejected as overkill | Accepted |
 
 ---
 
@@ -160,21 +160,27 @@ patched Grafana, **no sensitive labels** (URLs/user-ids/hostnames), optional CF 
 ---
 
 ## ADR-0007
-### Web Vitals via `prom-client` histogram now; Grafana Faro deferred
-**Status:** Proposed · 2026-06-24
+### Core Web Vitals via `prom-client` histogram; Grafana Faro rejected
+**Status:** Accepted · 2026-06-24
 
 **Context.** RUM can be collected with a `web-vitals` beacon into a `prom-client` histogram, or with
-Grafana Faro (richer: JS errors, sessions, traces) which needs Grafana Alloy as a receiver.
+Grafana Faro (richer: JS errors, sessions, traces) which needs a Grafana Alloy receiver + Loki/Tempo.
 
-**Decision.** Phase 3 uses the `prom-client` histogram (self-contained, p75 via `histogram_quantile`).
-Faro is an optional Phase 7 upgrade.
+**Decision.** Collect Core Web Vitals with `web-vitals` → `prom-client` histogram (Phase 3), p75 via
+`histogram_quantile`. **Faro is rejected** — not deferred — for this project.
 
-**Rationale.** The histogram approach needs no extra component, demonstrates histogram/PromQL fluency,
-and covers Core Web Vitals fully. Faro adds real value (frontend errors/sessions) but also an Alloy
-component and config; not worth blocking the core RUM pillar on.
+**Rationale.** The histogram covers the CWV showcase fully with **zero added client JS and zero extra
+components**, and demonstrates histogram/PromQL fluency. Faro's extra detail (per-session, frontend
+errors, traces) is real but **overkill for a low-traffic portfolio**: it adds tens of KB of client JS
+to a site whose whole story is performance (the tool degrading the metric it measures), plus 2–3 more
+services (Alloy/Loki/Tempo) for telemetry that's sparse without volume. The goal is a **strong, clear,
+unambiguous competence signal — and right-sizing (knowing what to leave out) *is* that signal**;
+bolting on unused depth would read as the opposite.
 
-**Alternatives considered.** *Faro from the start* — richer but heavier; deferred. *No RUM (CrUX only)*
-— rejected: insufficient traffic for CrUX.
+**Alternatives considered.** *Grafana Faro* — rejected (above): richness this scale doesn't need, at a
+cost that dilutes the performance story. *No RUM (CrUX only)* — rejected: insufficient traffic for CrUX.
 
-**Consequences.** Histogram RUM is aggregate-only (no per-session drill-down) until/unless Faro lands.
-Works because the Next app is a persistent container (not serverless).
+**Consequences.** RUM is aggregate-only (p75 trends, no per-session/error drill-down) — intentional and
+acceptable. Frontend error tracking is out of scope; if ever genuinely needed it would be a separate,
+explicitly-justified change, not part of this stack. Works because the Next app is a persistent
+container (not serverless).

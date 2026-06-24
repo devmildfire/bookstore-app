@@ -102,8 +102,9 @@ network only (never exposed publicly).
 → `POST /api/vitals` → recorded into `prom-client` histograms (`web_vitals_lcp_seconds`,
 `_inp_`, `_cls_`) with **low-cardinality** labels (`page_type`, `device` — never URL or user).
 Grafana shows **p75** via `histogram_quantile(0.75, …)` — exactly how CWV are defined. Works because
-the app is a persistent container (not serverless). *Alternative considered: Grafana Faro (richer:
-JS errors + sessions) — deferred to optional Phase 7 since it needs Alloy as a Faro receiver.*
+the app is a persistent container (not serverless). *Grafana Faro (richer frontend RUM: JS errors +
+sessions + traces) was considered and **rejected** as overkill for a low-traffic portfolio — adds
+client JS to a perf-focused site + 2–3 services; see [ADR-0007](../monitoring/DECISIONS.md#adr-0007).*
 
 **Synthetic — lab PSI:** the existing PSI batch script runs as a **VPS systemd timer** (daily),
 samples ~8 cache-busted mobile runs, takes the **median** (never a single run — that's the tail-noise
@@ -179,10 +180,11 @@ whole project.
 | **4 — Synthetic** | PSI systemd timer → Pushgateway → Prometheus; Synthetic dashboard | Daily PSI median points trend over time |
 | **5 — Alerting/SLOs** | Alertmanager + recording/alerting rules + burn-rate; Telegram routing | A forced SLO breach pages; alert resolves on recovery |
 | **6 — Documentation** | `docs/monitoring/README.md`: architecture diagram, three-pillars narrative, dashboard screenshots, runbook, "why these choices" | A reviewer understands & could operate the stack from the README alone |
-| **7 — (optional) Faro** | Grafana Faro frontend SDK + Alloy receiver: JS errors + sessions | Frontend errors and session vitals appear |
 
-Phases 0–1 deliver visible value immediately (infra dashboard). 5 and 6 are where the *showcase*
-value concentrates — do not skip them; SLO alerting + documentation are the senior differentiators.
+Phases 0–6 are the complete scope. Phases 0–1 deliver visible value immediately (infra dashboard);
+5 and 6 are where the *showcase* value concentrates — do not skip them; SLO alerting + documentation
+are the senior differentiators. (Grafana Faro was considered for a frontend-RUM Phase 7 and rejected
+as overkill — [ADR-0007](../monitoring/DECISIONS.md#adr-0007).)
 
 ---
 
@@ -208,7 +210,7 @@ value concentrates — do not skip them; SLO alerting + documentation are the se
    publicly viewable at `grafana.<domain>`.
 3. **PSI cron location:** VPS systemd timer → internal Pushgateway (recommended, keeps key internal)
    vs GitHub Actions (key off-box but Pushgateway must be exposed)?
-4. **Faro (Phase 7) now or later?** Adds JS-error + session RUM at the cost of an Alloy component.
+4. ~~Faro now or later?~~ **Resolved: rejected** as overkill — [ADR-0007](../monitoring/DECISIONS.md#adr-0007).
 5. **Disable `studio` in prod** to free 191 MB and make the stack ~net-neutral on RAM?
 6. **Self-host Grafana (recommended for ops cred) vs Grafana Cloud free tier** (always-up, less to
    maintain, less "I ran it")?
