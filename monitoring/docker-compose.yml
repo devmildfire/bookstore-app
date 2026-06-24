@@ -40,10 +40,16 @@ services:
     networks: [chtivo_default]
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    # v0.55+ required: this host's Docker uses the containerd snapshotter (Storage
+    # Driver: overlayfs, no classic image/overlay2/layerdb). v0.49 fails the rw-layer
+    # lookup and emits ZERO per-container metrics; v0.55.1 handles it cleanly.
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
     restart: unless-stopped
-    command: ['--housekeeping_interval=30s', '--docker_only=true']
+    command: ['--housekeeping_interval=30s', '--store_container_labels=false']
     privileged: true
+    # cgroup v2 + cgroupns: cAdvisor must share the host cgroup namespace or it only
+    # sees its own cgroup, not the other containers' (no per-container metrics).
+    cgroup: host
     devices: ['/dev/kmsg']
     volumes:
       - /:/rootfs:ro
