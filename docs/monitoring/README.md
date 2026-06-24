@@ -156,6 +156,29 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
+## Deployment notes (as built — Phases 0–1, 2026-06-24)
+
+Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
+on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
+in this repo. Grafana admin password is in the VPS `.env` (`GRAFANA_ADMIN_PASSWORD`, never committed).
+
+**cAdvisor gotcha (host-specific, important):** this host runs Docker on the **containerd
+snapshotter** (`Storage Driver: overlayfs`) with **cgroup v2 + cgroupns**. Two non-obvious requirements
+or cAdvisor emits *zero* per-container metrics:
+- `cgroup: host` — without it cAdvisor only sees its own cgroup namespace, not other containers.
+- **cAdvisor ≥ v0.55** — v0.49 fails the rw-layer lookup (`failed to identify the read-write layer
+  ID … image/overlayfs/layerdb/…: no such file`) because there's no classic `overlay2/layerdb`, and
+  creates no container handlers. v0.55.1 handles the snapshotter cleanly. (`--disable_metrics=disk`
+  does **not** work around it on v0.49 — the lookup isn't gated by that flag.)
+
+**Exposure (how Grafana was published):**
+1. **nginx** (`/opt/chtivo/nginx/conf.d/app.conf`) — added a `server { server_name grafana.mildfire.dev; … proxy_pass http://$grafana_upstream; }` block (variable upstream + `resolver 127.0.0.11` so it survives container IP changes), mirroring the app/api blocks. `nginx -t` then `nginx -s reload`.
+2. **Cloudflare tunnel** (`chtivo-vps`) — token-managed, so routing is in the dashboard under
+   **Connectors → chtivo-vps → Published application routes** (the new name for public hostnames):
+   added `grafana.mildfire.dev → http://nginx:80`, path `*`, matching the existing `bookstore-app`/`api`
+   routes. This auto-created the DNS record. Request path: CF edge → tunnel → `nginx:80` (Host-routed)
+   → `grafana:3000`.
+
 ## For developers & agents
 
 - **Implementation status / phases:** [docs/plans/monitoring-observability.md](../plans/monitoring-observability.md)

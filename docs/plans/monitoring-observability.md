@@ -173,8 +173,8 @@ whole project.
 
 | Phase | Deliverable | Acceptance |
 |---|---|---|
-| **0 — Foundation** | `monitoring/` compose: Prometheus + Grafana, internal net, mem_limits, 15d retention; Grafana exposed read-only via tunnel; provisioning scaffold | Grafana loads publicly read-only; Prometheus `/targets` healthy |
-| **1 — Infra/USE** | cAdvisor + node-exporter + postgres-exporter; USE + Database dashboards | All chtivo containers + host + DB visible with CPU/mem/disk |
+| **0 — Foundation** ✅ | `monitoring/` compose: Prometheus + Grafana, internal net, mem_limits, 15d retention; Grafana exposed read-only via tunnel; provisioning scaffold | ✅ **Done 2026-06-24** — live at grafana.mildfire.dev (anon read-only), targets healthy. See README "Deployment notes". |
+| **1 — Infra/USE** ✅ | cAdvisor + node-exporter + postgres-exporter; USE + Database dashboards | ✅ **Done 2026-06-24** — 15 named containers + host CPU/mem/disk in the Infra/USE dashboard; DB metrics scraping (a dedicated Database dashboard is a small follow-up). |
 | **2 — App/RED** | `prom-client` in Next, internal `/metrics`, RED dashboard | Live traffic shows rate/error/latency; p95 panel populated |
 | **3 — RUM/CWV** | `web-vitals` + `/api/vitals` + histograms; Core Web Vitals dashboard | Real visits produce p75 LCP/INP/CLS |
 | **4 — Synthetic** | PSI systemd timer → Pushgateway → Prometheus; Synthetic dashboard | Daily PSI median points trend over time |
