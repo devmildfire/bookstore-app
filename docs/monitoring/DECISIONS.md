@@ -1,0 +1,180 @@
+# Architecture Decision Records — Monitoring
+
+[Architecture Decision Records](https://adr.github.io/) capture *significant* decisions with their
+context and rationale, so future devs and agents understand **why** the system is the way it is — not
+just what it is. Each record is immutable once Accepted; a reversal is a *new* record that supersedes
+it. Scope: the observability stack ([README](./README.md), [plan](../plans/monitoring-observability.md)).
+
+| ADR | Decision | Status |
+|---|---|---|
+| [0001](#adr-0001) | Industry stack (Prometheus + Grafana) over a cron + Supabase utility | Accepted |
+| [0002](#adr-0002) | Self-host the stack rather than Grafana Cloud | Accepted |
+| [0003](#adr-0003) | PSI synthetic runs on the VPS → internal Pushgateway | Accepted |
+| [0004](#adr-0004) | Structure observability as three pillars + synthetic (USE/RED/CWV) | Accepted |
+| [0005](#adr-0005) | Alert on SLO multi-window burn-rate, not static thresholds | Accepted |
+| [0006](#adr-0006) | Expose only Grafana, anonymous read-only | Accepted |
+| [0007](#adr-0007) | Web Vitals via `prom-client` histogram now; Grafana Faro deferred | Proposed |
+
+---
+
+## ADR-0001
+### Use an industry stack (Prometheus + Grafana) rather than a cron + Supabase utility
+**Status:** Accepted · 2026-06-23
+
+**Context.** This is a portfolio project ([portfolio, not revenue]). Monitoring serves two goals:
+real utility *and* demonstrating production-observability skill to reviewers. A minimal solution —
+a scheduled job storing PSI + `docker stats` rows in Supabase, alerting via ntfy — would fully cover
+the utility goal at near-zero cost/maintenance.
+
+**Decision.** Build the industry-standard stack (Prometheus, Grafana, exporters, Alertmanager).
+
+**Rationale.** For a portfolio, "demonstrate I can operate production observability" is a real
+requirement, not gold-plating. The minimal solution under-delivers the *showcase* deliverable even
+though it satisfies utility. The VPS has the headroom (ADR-0002), so the trade is maintenance
+attention, not resources.
+
+**Alternatives considered.** *Cron + Supabase + ntfy* — rejected: utilitarian, only legible to its
+author, signals nothing about industry tooling. *Paid SaaS (Datadog/New Relic)* — rejected: cost,
+and "I can pay for a tool" is a weaker signal than "I can run the stack."
+
+**Consequences.** Higher build + upkeep effort; the stack must stay *live and documented* or it
+showcases the opposite of competence. The rejected cron approach is preserved as the synthetic pillar
+(ADR-0003/0004), so its value isn't lost.
+
+---
+
+## ADR-0002
+### Self-host the stack on the existing VPS rather than Grafana Cloud
+**Status:** Accepted · 2026-06-24
+
+**Context.** Collection + dashboards can run self-hosted (compose on the VPS) or be pushed to Grafana
+Cloud's free tier via Alloy `remote_write`. VPS measured at 3 vCPU / 8 GB / ~6 GB free; the stack
+budgets ~0.6–0.75 GB.
+
+**Decision.** Self-host everything in the existing docker-compose.
+
+**Rationale.** For a showcase, *operating* the stack (compose orchestration, exporter wiring, PromQL,
+alert rules, secure exposure) is a stronger signal than pointing an agent at a SaaS. Resource cost is
+comfortable (~12% of available RAM, no swap → no observer-effect). Cost stays $0.
+
+**Alternatives considered.** *Grafana Cloud free tier + Alloy* — always-up, less maintenance, public
+dashboards built-in, but shows less "I ran it" and adds a third-party dependency.
+
+**Consequences.** We own uptime, patching, and securing the public Grafana (ADR-0006). Versions are
+pinned; retention and `mem_limit`s are capped so a mistake can't starve the app.
+
+---
+
+## ADR-0003
+### Run the PSI synthetic check on the VPS, pushing to an internal Pushgateway
+**Status:** Accepted · 2026-06-24
+
+**Context.** A daily PSI sample (median of ~8 cache-busted runs — never a single run; see
+[psi-baseline.md](../perf/psi-baseline.md)) feeds the synthetic pillar. It could run on GitHub
+Actions (free, off-box) or as a VPS systemd timer.
+
+**Decision.** Run it as a VPS systemd timer that pushes results to an **internal** Pushgateway, which
+Prometheus scrapes.
+
+**Rationale.** Pushgateway is the canonical sink for periodic *batch-job* metrics. Keeping the job and
+the gateway on the VPS means the gateway is never exposed and the PSI service-account key never needs
+a public endpoint. Reuses the existing `psi-batch.mjs` tooling.
+
+**Alternatives considered.** *GitHub Actions cron* — keeps the key off the prod box, but then
+Pushgateway must be publicly reachable (attack surface) or results must route through Supabase
+(breaks the single-Prometheus story).
+
+**Consequences.** The PSI key lives in a root-only env file on the VPS (never committed). One more
+systemd unit to maintain.
+
+---
+
+## ADR-0004
+### Structure observability as three pillars + synthetic, by USE/RED/CWV
+**Status:** Accepted · 2026-06-23
+
+**Context.** Metrics need an organizing principle, or dashboards become an unstructured pile.
+
+**Decision.** Four vantage points: **Infra/USE** (resources), **App/RED** (service), **RUM/CWV** (real
+users), **Synthetic** (scheduled probe). Dashboards and alerts are organized by these methods.
+
+**Rationale.** USE (Gregg) + RED (Wilkie) are the recognized methods for resources and services
+respectively, both rooted in Google SRE's Four Golden Signals; CWV is Google's real-user standard.
+Using the named methods makes the design legible to any reviewer and gives **triangulation** — a fault
+appears in some pillars and not others, which locates it (demonstrated by the 2026-06-23 PSI scare:
+three pillars green + synthetic-only drop = measurement artifact, not regression).
+
+**Alternatives considered.** *Ad-hoc dashboards* — rejected: no shared vocabulary, harder to reason
+about, weaker signal.
+
+**Consequences.** Requires app instrumentation (`prom-client` for RED, `/api/vitals` for RUM), not
+just infra exporters. CrUX is *not* used for RUM (insufficient traffic) — self-collected web-vitals
+instead.
+
+---
+
+## ADR-0005
+### Alert on SLO multi-window burn-rate, not static thresholds
+**Status:** Accepted · 2026-06-23
+
+**Context.** Alerting can be naive (`error rate > 1% → page`) or SLO-based.
+
+**Decision.** Define SLIs → SLOs → error budgets for user-experience metrics, and alert on
+**multi-window burn-rate** (fast 1 h + slow 6 h must both burn). Binary infra catastrophes (disk > 85%,
+OOM/restart-loop, host down) keep plain threshold guards. Alertmanager handles grouping, inhibition,
+silencing, routing.
+
+**Rationale.** Static thresholds both over-page (a 2-min blip wakes you) and under-page (a steady
+sub-threshold burn silently exhausts the budget). Burn-rate scales alert severity to budget-impact;
+multi-window kills false pages. This is the Google SRE workbook pattern and the strongest senior
+signal in the project. Thresholds remain correct for binary "fix-now" infra conditions.
+
+**Alternatives considered.** *Static thresholds everywhere* — rejected for experience metrics (above).
+*No alerting, dashboards only* — rejected: defeats the utility goal.
+
+**Consequences.** Requires recording rules + an error-budget model; SLO targets are initial guesses to
+tune after a baseline. Alert channel (Telegram vs ntfy vs email) is a pending sub-decision.
+
+---
+
+## ADR-0006
+### Expose only Grafana, anonymous read-only
+**Status:** Accepted · 2026-06-24
+
+**Context.** The dashboards are part of the showcase, so reviewers should see them without an account.
+Prometheus has no auth by default; exporters leak internal structure.
+
+**Decision.** Expose only `grafana.<domain>` via the CF tunnel with anonymous org role = **Viewer**
+(read-only). Admin stays password-protected. Prometheus, Alertmanager, Pushgateway, exporters remain
+internal-only.
+
+**Rationale.** Grafana is the only component with proper auth and a safe read-only public mode. Public
+dashboards realize the showcase value with minimal surface.
+
+**Alternatives considered.** *Private (auth-gated) Grafana* — safer but reviewers can't see it without
+credentials, losing showcase value. *Expose Prometheus too* — rejected: no auth, leaks internals.
+
+**Consequences.** A public dashboard is an attack surface: mitigate with read-only anon, pinned +
+patched Grafana, **no sensitive labels** (URLs/user-ids/hostnames), optional CF rate-limiting.
+
+---
+
+## ADR-0007
+### Web Vitals via `prom-client` histogram now; Grafana Faro deferred
+**Status:** Proposed · 2026-06-24
+
+**Context.** RUM can be collected with a `web-vitals` beacon into a `prom-client` histogram, or with
+Grafana Faro (richer: JS errors, sessions, traces) which needs Grafana Alloy as a receiver.
+
+**Decision.** Phase 3 uses the `prom-client` histogram (self-contained, p75 via `histogram_quantile`).
+Faro is an optional Phase 7 upgrade.
+
+**Rationale.** The histogram approach needs no extra component, demonstrates histogram/PromQL fluency,
+and covers Core Web Vitals fully. Faro adds real value (frontend errors/sessions) but also an Alloy
+component and config; not worth blocking the core RUM pillar on.
+
+**Alternatives considered.** *Faro from the start* — richer but heavier; deferred. *No RUM (CrUX only)*
+— rejected: insufficient traffic for CrUX.
+
+**Consequences.** Histogram RUM is aggregate-only (no per-session drill-down) until/unless Faro lands.
+Works because the Next app is a persistent container (not serverless).
