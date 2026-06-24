@@ -1,0 +1,23 @@
+# Prometheus scrape config — Phase 1 (infra/USE + DB).
+# Targets are resolved by Docker service name on the chtivo_default network.
+# App RED metrics (Phase 2) and Pushgateway/PSI (Phase 4) get added later.
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: cadvisor          # per-container USE (CPU/mem/net/disk)
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: node              # host USE
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: postgres          # Supabase Postgres
+    static_configs:
+      - targets: ['postgres-exporter:9187']

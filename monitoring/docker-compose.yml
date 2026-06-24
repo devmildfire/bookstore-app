@@ -1,0 +1,83 @@
+# Observability stack — Prometheus + Grafana + exporters (Phases 0–1).
+# Joins the existing chtivo_default network so Prometheus can scrape exporters by
+# service name and nginx can reach `grafana:3000`. Nothing is published to the host
+# or exposed publicly here — exposure is one nginx server block + one Cloudflare
+# tunnel public-hostname (see docs/monitoring/README.md). Versions pinned.
+#
+# Deploy on the VPS:  docker compose -p monitoring --env-file .env up -d
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.53.2
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=15d'
+      - '--storage.tsdb.retention.size=2GB'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    mem_limit: 512m
+    networks: [chtivo_default]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set in .env}
+      # Public read-only: anonymous viewers, no sign-up, admin stays password-gated.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_VIEWERS_CAN_EDIT: "false"
+      GF_SERVER_ROOT_URL: "https://grafana.mildfire.dev"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    mem_limit: 256m
+    networks: [chtivo_default]
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    restart: unless-stopped
+    command: ['--housekeeping_interval=30s', '--docker_only=true']
+    privileged: true
+    devices: ['/dev/kmsg']
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    mem_limit: 256m
+    networks: [chtivo_default]
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    restart: unless-stopped
+    command: ['--path.rootfs=/host']
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+    mem_limit: 64m
+    networks: [chtivo_default]
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    restart: unless-stopped
+    environment:
+      # Reuses the stack's Postgres password (set in .env). `db` is the Supabase
+      # Postgres service alias on chtivo_default.
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:?set in .env}@db:5432/postgres?sslmode=disable"
+    mem_limit: 128m
+    networks: [chtivo_default]
+
+networks:
+  chtivo_default:
+    external: true
+
+volumes:
+  prometheus_data:
+  grafana_data:
