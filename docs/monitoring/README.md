@@ -162,14 +162,13 @@ Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/cht
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
 in this repo. Grafana admin password is in the VPS `.env` (`GRAFANA_ADMIN_PASSWORD`, never committed).
 
-**cAdvisor gotcha (host-specific, important):** this host runs Docker on the **containerd
-snapshotter** (`Storage Driver: overlayfs`) with **cgroup v2 + cgroupns**. Two non-obvious requirements
-or cAdvisor emits *zero* per-container metrics:
-- `cgroup: host` — without it cAdvisor only sees its own cgroup namespace, not other containers.
-- **cAdvisor ≥ v0.55** — v0.49 fails the rw-layer lookup (`failed to identify the read-write layer
-  ID … image/overlayfs/layerdb/…: no such file`) because there's no classic `overlay2/layerdb`, and
-  creates no container handlers. v0.55.1 handles the snapshotter cleanly. (`--disable_metrics=disk`
-  does **not** work around it on v0.49 — the lookup isn't gated by that flag.)
+**cAdvisor config — why `v0.55.1` + `cgroup: host`:** this host runs Docker on the **containerd
+snapshotter** (`Storage Driver: overlayfs`) with **cgroup v2 + cgroupns**. Both settings are required
+or cAdvisor reports *zero* per-container metrics: `cgroup: host` so it can see other containers'
+cgroups (not just its own namespace), and **≥ v0.55** because earlier versions can't read the
+containerd snapshotter's layer metadata (there's no classic `overlay2/layerdb`). A stock cAdvisor
+compose silently produces nothing here — check `docker info` (storage driver + cgroup version) before
+trusting one.
 
 **Exposure (how Grafana was published):**
 1. **nginx** (`/opt/chtivo/nginx/conf.d/app.conf`) — added a `server { server_name grafana.mildfire.dev; … proxy_pass http://$grafana_upstream; }` block (variable upstream + `resolver 127.0.0.11` so it survives container IP changes), mirroring the app/api blocks. `nginx -t` then `nginx -s reload`.
