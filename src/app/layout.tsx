@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Montserrat, Syncopate } from 'next/font/google'
 import localFont from 'next/font/local'
 import Providers from './providers'
+import WebVitals from '@/components/common/WebVitals'
 import '@/styles/globals.scss'
 
 const montserrat = Montserrat({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Storefront chrome (Header/Footer) lives in the (site) route group,
             not here — so /admin can render its own header-free layout. */}
         <Providers>{children}</Providers>
+        <WebVitals />
       </body>
     </html>
   )
