@@ -156,7 +156,7 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
-## Deployment notes (as built — Phases 0–2, 2026-06-24)
+## Deployment notes (as built — Phases 0–3, 2026-06-24)
 
 Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
@@ -188,6 +188,19 @@ for response status+duration, so RED is collected at nginx (the single entry poi
 change, no app redeploy. **Op note:** editing `prometheus.yml` requires a container *recreate*
 (`docker compose … up -d --force-recreate prometheus`), not a file-replace — the single-file bind mount
 pins to the original inode, so a `tar`/replace is invisible until recreate.
+
+**RUM / Core Web Vitals (Phase 3) — in-app:** unlike RED, RUM *is* in-app — the browser collects
+CWV and beacons them. `web-vitals` is dynamically imported after hydration (deferred chunk, no LCP
+impact) in `components/common/WebVitals`, beaconing to `POST /api/vitals` → `prom-client` histograms
+(`web_vitals_{lcp,inp,cls,fcp,ttfb}`, `device` label from UA) in `src/lib/metrics.ts`, exposed at
+`GET /metrics` (also `nodejs_*` process metrics). Prometheus scrapes `app:3000` **internally**; the
+public `/metrics` is blocked at nginx (`location = /metrics { return 404; }` in the storefront server)
+so internal metrics aren't exposed. CWV dashboard shows p75 by device. Deployed via CI (app code →
+image → promote). Pinned `prom-client` + `web-vitals`.
+
+**Coverage gate (CI):** new untested code trips the line-coverage ratchet (`vitest.config.ts`
+thresholds). Phase 3 needed a unit test for `/api/vitals` to clear it — budget a small test for any
+app code added in future phases.
 
 ## For developers & agents
 
