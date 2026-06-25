@@ -1,6 +1,7 @@
 # Stress Testing — plan
 
-**Status:** implemented
+**Status:** implemented (all phases ++ CWV attribution)
+**Test suite branch:** `stress-testing`
 **Author/date:** 2026-06-25
 **Related:** [docs/monitoring/README.md](../monitoring/README.md),
 the Chrome DevTools MCP (https://github.com/ChromeDevTools/chrome-devtools-mcp)
@@ -33,6 +34,24 @@ Endurance / soak test the live bookstore site by driving real Chrome browsers th
 | **`Node.js`** | Test runner runtime (no framework) |
 
 The Chrome DevTools MCP is wired into `.opencode.json` for interactive sessions. The automated soak runner is a standalone Node.js script using the same CDP primitives — an MCP-mediated test would be too slow and token-expensive for a 30-minute multi-session soak.
+
+### CWV measurement methodology
+
+The stress test collects CWV using the browser's PerformanceObserver API (injected in-page via `lib/cwv.mjs`), not the `web-vitals` library. This allows capturing attribution data (which element caused the CLS, which tag+class drove the LCP) that the aggregate `web-vitals` beacon cannot provide.
+
+| Metric | API | Field recorded | Attribution |
+|---|---|---|---|
+| **TTFB** | `performance.getEntriesByType('navigation')[0].responseStart` | `cwv.ttfb.value` (ms) | — |
+| **FCP** | `performance.getEntriesByType('paint')` | `cwv.fcp.value` (ms) | — |
+| **LCP** | `PerformanceObserver('largest-contentful-paint')` | `cwv.lcp.value` (ms) | `cwv.lcp.element` (tag, id, className), `cwv.lcp.url` |
+| **CLS** | `PerformanceObserver('layout-shift')` | `cwv.cls.value` (score) | `cwv.cls.sources[]` — up to 10 shifted elements with `{node: {tag, id, className, text}, prev: {x,y,w,h}, cur: {x,y,w,h}}` |
+| **INP** | `PerformanceObserver('event')` stored on `window.__stressInp` | `cwv.inp.value` (ms) | `cwv.inp.element` (tag, id, className, text), `cwv.inp.type` |
+
+**TTFB vs connectionTime:** The test records both `ttfb` (full `responseStart`, matching the `web-vitals` library and Grafana's RUM data) and `connectionTime` (`connectEnd - connectStart`). The server-only response time can be derived as `ttfb - connectionTime`. On warm navigations (connection reused via HTTP keep-alive) `connectionTime` is 0 and `ttfb` equals the server response time.
+
+**Warmup:** Before the first measured navigation, the test navigates to `/robots.txt` (a plain-text endpoint with zero page resources). This establishes the browser-level HTTP connection (DNS+TCP+TLS) without caching any images, fonts, JS bundles, or CSS that would skew subsequent LCP/FCP measurements. The `/robots.txt` warmup does not trigger the `<WebVitals />` beacon. Real browsers reuse HTTP connections via keep-alive on subsequent navigations, so this matches real-user conditions — and PSI/Lighthouse, which measures from persistent connections.
+
+**Why not `responseStart - requestStart`:** The `web-vitals` library (which feeds Grafana's RUM data) uses `responseStart`. The stress test matches this methodology so JSONL data is comparable to the Grafana dashboard. Separately recording `connectionTime` lets analysis scripts isolate the server portion when needed.
 
 ---
 
@@ -116,18 +135,33 @@ node scripts/stress-test/stress-runner.mjs \
 
 | Output | Format | Content |
 |---|---|---|
-| Console (live) | Text | Session started/completed, step progress, per-step timing, errors, final summary |
-| JSONL file | `stress-results-<timestamp>.jsonl` | One JSON object per action: `{timestamp, sessionId, iteration, step, route, action, durationMs, ok, error?}` |
+| Console (live) | Text | Session started/completed, step progress, per-step timing, errors, final summary by device |
+| JSONL files (per device) | `stress-results/stress-results-{mobile,desktop}-<timestamp>.jsonl` | One JSON per action: `{timestamp, sessionId, deviceType, step, action, durationMs, ok, error?, cwv?}` |
+
+Each action entry may include a `cwv` object with measured Core Web Vitals (present on `navigate` steps and some `click` steps):
+
+```json
+{
+  "sessionId": "mobile-1782417144500-698c",
+  "deviceType": "mobile",
+  "step": "navigate",
+  "action": "goto /cart",
+  "durationMs": 2184,
+  "ok": true,
+  "cwv": {
+    "ttfb": {"value": 134},
+    "connectionTime": {"value": 0},
+    "lcp": {"value": 436, "element": {"tag": "IMG", "className": "CartItemRow-module__image"}, "url": "..."},
+    "cls": {"value": 0.21, "sources": [{"node": {"tag": "FOOTER", "text": "(812) 915-83-67..."}, "prev": {"x":0,"y":486,"w":375,"h":358}, "cur": {"x":0,"y":0,"w":0,"h":0}}]}
+  }
+}
+```
 
 Summary line at the end:
 ```
-=== Stress test complete ===
-Duration: 30m 12s
-Sessions: 2 (1 mobile, 1 desktop)
-Iterations: mobile=14, desktop=12
-Actions: 624 total, 618 ok, 6 errors (0.96%)
-Orders created: 26 (all cleaned up)
-Memory (RSS max): mobile=342MB, desktop=368MB
+=== Results by device ===
+  [mobile] 337 actions, 332 ok, 5 errors, 19 orders
+  [desktop] 336 actions, 329 ok, 7 errors, 17 orders
 ```
 
 ---
@@ -140,7 +174,34 @@ On normal completion or SIGINT, the runner calls `cancel_pending_order` RPC (via
 
 ---
 
-## 8. Implementation phases
+## 8. Analysis
+
+The `analyze.mjs` script reads all JSONL files from `stress-results/` and produces a structured CWV report:
+
+```bash
+node scripts/stress-test/analyze.mjs
+```
+
+Output: `stress-results/cwv-report-<timestamp>.json` with:
+
+- **`perRoute`** — pages grouped by route and device, with p75/median/avg/min/max for each metric
+- **`perRoute[route].lcp_elements`** — top 5 LCP-driving elements per page (tag+class, avg time, occurrence count)
+- **`perRoute[route].cls_elements`** — top 10 CLS-causing elements per page (tag+text, max shift, occurrence count)
+- **`issues`** — metrics flagged beyond thresholds (🔴 bad / 🟡 warn), sorted by severity, with attribution
+
+Thresholds:
+
+| Metric | Warn | Bad |
+|---|---|---|
+| TTFB | > 400ms | > 800ms |
+| FCP | > 1.8s | > 3.0s |
+| LCP | > 2.5s | > 4.0s |
+| CLS | > 0.1 | > 0.25 |
+| INP | > 100ms | > 200ms |
+
+---
+
+## 9. Implementation phases
 
 | Phase | Deliverable | Acceptance |
 |---|---|---|
@@ -150,10 +211,12 @@ On normal completion or SIGINT, the runner calls `cancel_pending_order` RPC (via
 | **4 — Reporter** | `lib/reporter.mjs` — JSONL writer with auto-flush, console summary formatter | File + console output verified |
 | **5 — Soak loop + cleanup** | `stress-runner.mjs` — session pool, duration-based loop, SIGINT handler, order cleanup via admin RPC | 2-minute smoke run creates orders then deletes them |
 | **6 — Full run** | Execute `--duration 30 --sessions 2 --device both` against live site | All phases green, JSONL file written, orders cleaned |
+| **7 — CWV collector** | `lib/cwv.mjs` — TTFB/FCP/LCP/CLS/INP with element attribution via PerformanceObserver | Per-page CWV data in JSONL output |
+| **8 — Analysis** | `analyze.mjs` — report generator with issue detection by thresholds | Structured JSON report identifying weak spots |
 
 ---
 
-## 9. Tracker
+## 10. Tracker
 
 ```
 Status legend:
@@ -167,11 +230,13 @@ Status legend:
   [x] 4 — Reporter (JSONL + console summary)
   [x] 5 — Soak loop + cleanup (pool, duration, order deletion)
   [x] 6 — Full run against live site
+  [x] 7 — CWV collector (attribution via PerformanceObserver)
+  [x] 8 — Analysis (report generator with threshold detection)
 ```
 
 ---
 
-## 10. Risks
+## 11. Risks
 
 - **Chrome not installed / wrong version** — `chrome-launcher` finds the system Chrome; fallback: install Chromium via `puppeteer` (bundled).
 - **Site changes break selectors** — all element selectors will need updating if the UI changes. Mitigation: add a `selectors` config file for easy retargeting.
