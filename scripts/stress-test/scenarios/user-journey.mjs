@@ -39,7 +39,10 @@ async function findBookLinks(page) {
 }
 
 async function fillField(page, id, value) {
-  try { await page.evaluate((id, val) => { const el = document.getElementById(id); if (el) { el.value = val; el.dispatchEvent(new Event('input', { bubbles: true })) } }, id, value) } catch {}
+  try {
+    await page.evaluate((id) => { document.getElementById(id)?.focus() }, id)
+    await page.type(`#${id}`, value, { delay: 50 })
+  } catch {}
 }
 
 export async function runJourney(session, { url, reporter }) {
@@ -108,22 +111,26 @@ export async function runJourney(session, { url, reporter }) {
   await fillField(page, 'ship-postal', '190000')
   await delay(rand(500, 1000))
 
-  // 11. Click "Перейти к оплате"
-  await clickByText(page, 'button', 'Перейти к оплате', 'checkout_confirm', s)
+  // 11. Click "Перейти к оплате" — opens confirmation modal
+  await clickByText(page, 'button', 'Перейти к оплате', 'checkout_start', s)
 
-  // 12. Wait — might navigate to payment page or show modal
+  // 12. Click "Подтвердить оплату" in modal → creates pending order, redirects to /payments/mock
+  await delay(rand(1000, 2000))
+  await clickByText(page, 'button', 'Подтвердить оплату', 'checkout_confirm', s)
+
+  // 13. Wait for navigation to mock payment page
+  try {
+    await page.waitForFunction(() => window.location.href.includes('/payments/mock'), { timeout: 15000 }).catch(() => {})
+  } catch {}
+  await delay(rand(1000, 2000))
+
+  // 14. Click mock gateway payment button to complete the order
+  await clickByText(page, 'button', 'Оплатить', 'pay_complete', s)
   await delay(rand(3000, 5000))
 
-  const currentUrl = await page.evaluate(() => window.location.href).catch(() => '')
-  if (currentUrl.includes('/payments/mock') || currentUrl.includes('/payments/')) {
-    // Mock gateway — find and click the payment button
-    await clickByText(page, 'button', 'Оплатить', 'pay_complete', s)
-    await delay(rand(3000, 5000))
-  }
-
-  // 13. Navigate to order history
+  // 15. Navigate to order history
   try {
-    await page.waitForFunction(() => window.location.pathname.includes('/profile/orders'), { timeout: 10000 }).catch(() => {})
+    await page.waitForFunction(() => window.location.pathname.includes('/profile/orders'), { timeout: 15000 }).catch(() => {})
     await delay(rand(500, 1000))
   } catch {}
   await nav('/profile/orders', 500)
