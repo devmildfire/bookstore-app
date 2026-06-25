@@ -66,13 +66,13 @@ export async function runJourney(session, { url, reporter }) {
     s('navigate', `goto ${path}`, { durationMs, ok: true, ...(cwv ? { cwv } : {}) })
   }
 
-  // Warmup: navigate once to establish TCP/TLS connection so all subsequent
-  // measured navigations reflect warm connection times (like real users who
-  // reuse keep-alive, and like PSI/Lighthouse which measures from persistent
-  // connections). This first load's TTFB is discarded — only the connection
-  // overhead matters here, not the server response time.
-  await page.goto(url, { timeout: 30000 }).catch(() => {})
-  await delay(1000)
+  // Warmup: navigate once to establish the browser-level HTTP connection
+  // without caching the hero image or other LCP resources. We go to
+  // /robots.txt (a static text/plain response — no JS, no images, no CSS)
+  // so the browser opens the TCP/TLS socket without filling the cache
+  // with page resources that would skew LCP/FCP on the first real nav.
+  await page.goto(url + '/robots.txt', { timeout: 30000 }).catch(() => {})
+  await delay(500)
 
   // 2. Navigate to homepage
   await nav('/')
