@@ -99,19 +99,19 @@ observer-effect. See [ADR-0002](./DECISIONS.md#adr-0002).
 
 ## Dashboards
 
-A glance-screen on top, five drill-downs beneath (provisioned as version-controlled JSON — no
-click-ops).
+A single `observability` dashboard with labeled rows (provisioned as version-controlled JSON — no
+click-ops). One link, scroll top to bottom:
 
-| # | Dashboard | Shows |
-|---|---|---|
-| 1 | **Overview** | one health number per pillar: app up, req rate, error %, p95 latency, p75 LCP, top container mem, DB connections |
-| 2 | **Infra / USE** | per-container CPU/mem (table + series), host CPU/load/mem/disk, saturation (swap, throttling, I/O wait) |
-| 3 | **App / RED** | request rate by route-class, error rate by status, latency p50/p95/p99 |
-| 4 | **Core Web Vitals** | p75 LCP/INP/CLS over time with threshold lines, split by device |
-| 5 | **Synthetic (PSI)** | lab perf + LCP/FCP/CLS median trend, annotated with deploy markers |
-| 6 | **Database** | connections vs max, cache-hit ratio, tx rate, locks, size growth |
+| Row | Shows |
+|---|---|
+| **Infra / USE** | per-container CPU/mem (table + series), host CPU/mem/disk |
+| **App / RED** | request rate by status, error rate, latency p50/p90/p99, req/s by vhost |
+| **Core Web Vitals** | p75 LCP/INP/CLS/FCP/TTFB, split by device, threshold lines |
+| **Synthetic (PSI)** | lab perf score + LCP/FCP median trend, CLS, sample size |
+| **Database** | connections vs max, cache-hit ratio, tx rate, size, deadlocks |
 
 Convention: **percentiles, not averages** (p95/p99 latency, p75 vitals) — averages hide the bad tail.
+(Per-pillar dashboards were prototyped then folded into this single board.)
 
 ---
 
@@ -223,11 +223,11 @@ resolved; `alertmanager_notifications_total{telegram}` 0 failures). Two operatio
   real `chat_id`; the bot token never enters git. Get the chat ID once via
   `https://api.telegram.org/bot<token>/getUpdates` after messaging the bot.
 
-**Dashboards & home page:** six dashboards — five focused (`infra-use`, `app-red`, `web-vitals`,
-`synthetic`, `database`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED ·
-Core Web Vitals · Synthetic · Database) that serves as the **home page**. The `database` board uses
-postgres-exporter (connections vs max, cache-hit ratio, tx rate, DB size, deadlocks). The "Welcome to Grafana" banner is replaced by setting the
-consolidated board as the org home dashboard, and the blog/news feed is off (`GF_NEWS_NEWS_FEED_ENABLED=false`).
+**Dashboards & home page:** a single **`observability`** dashboard with labeled rows — Infra/USE ·
+App/RED · Core Web Vitals (LCP/INP/CLS/FCP/TTFB p75) · Synthetic (PSI) · Database (postgres-exporter).
+(Earlier per-pillar dashboards were collapsed into this one — nobody opens them separately.) It's the
+**home page**: the "Welcome to Grafana" banner is replaced by setting it as the org home dashboard,
+and the blog/news feed is off (`GF_NEWS_NEWS_FEED_ENABLED=false`).
 Note: `GF_USERS_DEFAULT_HOME_DASHBOARD_PATH` is **not honored in Grafana 11.3**, so the home dashboard
 is set via the org-preference API (persists in the `grafana_data` volume). To re-apply after a volume
 reset:
