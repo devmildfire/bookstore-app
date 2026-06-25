@@ -85,8 +85,15 @@ a public endpoint. Reuses the existing `psi-batch.mjs` tooling.
 Pushgateway must be publicly reachable (attack surface) or results must route through Supabase
 (breaks the single-Prometheus story).
 
-**Consequences.** The PSI key lives in a root-only env file on the VPS (never committed). One more
-systemd unit to maintain.
+**Consequences.** The PSI key lives in a root-only file on the VPS (`/opt/chtivo/monitoring/psi/
+sa-key.json`, chmod 600, gitignored).
+
+**Update (2026-06-25, implementation):** the scheduler is **not** a systemd timer — the deploy user
+has no passwordless sudo to install units and the host cron daemon is off. Instead a small
+**`psi-scheduler` compose service** (a `node:20-alpine` loop: run → `sleep 6h`) runs the probe. This is
+*more* reproducible than a host timer (it's in the compose, version-controlled, deploys with the
+stack) and needs no root. The core decision stands: PSI runs on the box and pushes to an internal
+Pushgateway.
 
 ---
 

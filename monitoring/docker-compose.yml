@@ -95,6 +95,27 @@ services:
     mem_limit: 64m
     networks: [chtivo_default]
 
+  pushgateway:
+    # Sink for the synthetic PSI batch job; Prometheus scrapes it with honor_labels
+    # so the pushed job/strategy labels are preserved.
+    image: prom/pushgateway:v1.10.0
+    restart: unless-stopped
+    mem_limit: 64m
+    networks: [chtivo_default]
+
+  psi-scheduler:
+    # Containerized scheduler for the synthetic PSI probe. A loop (not host cron/systemd)
+    # because the deploy user has no passwordless sudo and the host cron daemon is off —
+    # and a compose service is more reproducible anyway (see ADR-0003). Runs on start,
+    # then every 6h; `timeout` guards a hung run. Reads the SA key from ./psi (ro).
+    image: node:20-alpine
+    restart: unless-stopped
+    command: ["sh", "-c", "while true; do timeout 300 node /psi/psi-push.mjs || echo 'psi run failed'; sleep 21600; done"]
+    volumes:
+      - ./psi:/psi:ro
+    mem_limit: 128m
+    networks: [chtivo_default]
+
 networks:
   chtivo_default:
     external: true

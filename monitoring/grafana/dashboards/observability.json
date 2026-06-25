@@ -119,6 +119,27 @@
       "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
       "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(increase(web_vitals_lcp_seconds_count[24h]))", "legendFormat": "LCP samples" } ]
+    },
+
+    { "type": "row", "id": 400, "title": "Synthetic — PSI lab (median / 6h)", "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 47 } },
+    {
+      "id": 31, "type": "timeseries", "title": "PSI mobile performance score (good >= 90)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 48 },
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0, "max": 100, "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 6, "showPoints": "always", "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 90 } ] } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "psi_performance_score{strategy=\"mobile\"}", "legendFormat": "performance" } ]
+    },
+    {
+      "id": 32, "type": "timeseries", "title": "PSI LCP / FCP median (s)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 48 },
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "pointSize": 6, "showPoints": "always" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "psi_lcp_seconds{strategy=\"mobile\"}", "legendFormat": "LCP" },
+        { "refId": "B", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "psi_fcp_seconds{strategy=\"mobile\"}", "legendFormat": "FCP" }
+      ]
     }
   ]
 }

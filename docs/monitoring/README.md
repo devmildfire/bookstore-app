@@ -156,7 +156,7 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
-## Deployment notes (as built — Phases 0–3, 2026-06-24)
+## Deployment notes (as built — Phases 0–4)
 
 Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
@@ -202,9 +202,18 @@ image → promote). Pinned `prom-client` + `web-vitals`.
 thresholds). Phase 3 needed a unit test for `/api/vitals` to clear it — budget a small test for any
 app code added in future phases.
 
-**Dashboards & home page:** four dashboards — three focused per-pillar (`infra-use`, `app-red`,
-`web-vitals`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED · Core Web
-Vitals) that serves as the **home page**. The "Welcome to Grafana" banner is replaced by setting the
+**Synthetic / PSI (Phase 4):** a `psi-scheduler` compose service (`node:20-alpine` loop, every 6h)
+runs `monitoring/psi/psi-push.mjs` — N=8 cache-busted PSI mobile traces, **median** pushed (never a
+single run) to **Pushgateway** → Prometheus scrapes it with `honor_labels`. Metrics
+`psi_{performance_score,lcp_seconds,fcp_seconds,cls,…}{strategy="mobile"}`. Scheduler is a container
+(not systemd/cron — no sudo, host cron off; see [ADR-0003](./DECISIONS.md#adr-0003)). The SA key is at
+`/opt/chtivo/monitoring/psi/sa-key.json` (chmod 600, gitignored). Synthetic dashboard + a row on the
+consolidated board. *This pillar gives a controlled trend even at zero real traffic — and corroborated
+the LH-13 baseline (median ~93–96).*
+
+**Dashboards & home page:** five dashboards — four focused (`infra-use`, `app-red`, `web-vitals`,
+`synthetic`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED · Core Web
+Vitals · Synthetic) that serves as the **home page**. The "Welcome to Grafana" banner is replaced by setting the
 consolidated board as the org home dashboard, and the blog/news feed is off (`GF_NEWS_NEWS_FEED_ENABLED=false`).
 Note: `GF_USERS_DEFAULT_HOME_DASHBOARD_PATH` is **not honored in Grafana 11.3**, so the home dashboard
 is set via the org-preference API (persists in the `grafana_data` volume). To re-apply after a volume
