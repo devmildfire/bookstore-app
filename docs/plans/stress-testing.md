@@ -1,6 +1,6 @@
 # Stress Testing — plan
 
-**Status:** proposed (for review)
+**Status:** implemented
 **Author/date:** 2026-06-25
 **Related:** [docs/monitoring/README.md](../monitoring/README.md),
 the Chrome DevTools MCP (https://github.com/ChromeDevTools/chrome-devtools-mcp)
@@ -161,12 +161,12 @@ Status legend:
 
 ## Phases
 
-  [ ] 1 — Scaffold (dir, deps, CLI, MCP wiring)
-  [ ] 2 — Browser + device (launch, emulation, session lifecycle)
-  [ ] 3 — Journey steps (all 17 steps as async scenario)
-  [ ] 4 — Reporter (JSONL + console summary)
-  [ ] 5 — Soak loop + cleanup (pool, duration, order deletion)
-  [ ] 6 — Full run against live site
+  [x] 1 — Scaffold (dir, deps, CLI, MCP wiring)
+  [x] 2 — Browser + device (launch, emulation, session lifecycle)
+  [x] 3 — Journey steps (all 17 steps as async scenario)
+  [x] 4 — Reporter (JSONL + console summary)
+  [x] 5 — Soak loop + cleanup (pool, duration, order deletion)
+  [x] 6 — Full run against live site
 ```
 
 ---
