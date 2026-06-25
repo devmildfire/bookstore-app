@@ -129,10 +129,10 @@
 }
 
 // Contained-variant card row: spans the full wrapper width (no outer
-// gutter columns) with a smaller gap. Column count is set inline via
-// `style` from the JS-driven ResizeObserver count.
+// gutter columns). auto-fill grid responds to container width without JS.
 .cardRowContained {
   grid-column: 1 / -1;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   column-gap: $space-6;
   min-width: 0;
 
@@ -155,36 +155,6 @@
   // Constrain the Scroller host so the wide book grid scrolls inside it
   // rather than pushing the expansion past the wrapper edge.
   max-width: 100%;
-}
-
-// Partial-row modifiers. Each card keeps the same width it has in a full
-// 3-up row (one-third of the row at desktop, one-half at tablet), and the
-// row is centered so a single item or a pair isn't stranded to the left.
-.cols1 {
-  grid-template-columns: minmax(0, calc((100% - 2 * #{$space-13}) / 3));
-  justify-content: center;
-
-  @include breakpoint(tablet) {
-    grid-template-columns: minmax(0, calc((100% - #{$space-8}) / 2));
-  }
-
-  @include breakpoint(phone) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cols2 {
-  grid-template-columns: repeat(2, minmax(0, calc((100% - 2 * #{$space-13}) / 3)));
-  justify-content: center;
-
-  @include breakpoint(tablet) {
-    grid-template-columns: repeat(2, 1fr);
-    justify-content: stretch;
-  }
-
-  @include breakpoint(phone) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
