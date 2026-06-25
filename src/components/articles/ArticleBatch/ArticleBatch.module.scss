@@ -1,22 +1,31 @@
 @use '@/styles/common' as *;
 
+// CSS multi-column layout — no JS column distribution needed.
+// Columns respond to viewport at breakpoints matching the articles feed
+// design (1 col mobile, 2 col tablet, 3 col desktop+).
+// Breakpoints match ArticleBatch's pickColumnCount thresholds.
 .batch {
-  display: grid;
-  grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
-  gap: 0;
+  columns: 1;
+  column-gap: 0;
   width: 100%;
+
+  @media (min-width: 533px) {
+    columns: 2;
+  }
+
+  @media (min-width: 1200px) {
+    columns: 3;
+  }
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  min-width: 0;
-}
-
+// Prevent cards from breaking across columns.
 .cell {
   position: relative;
   width: 100%;
+  break-inside: avoid;
+  // Multi-column layout adds its own vertical gap; we suppress it here
+  // since the original grid had gap:0 and cards are meant to stack flush.
+  margin-bottom: 0;
 }
 
 .sentinel {

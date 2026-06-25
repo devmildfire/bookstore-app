@@ -1,8 +1,15 @@
-// Route content slot — fills the height between <Header /> and <Footer />
-// so the footer always sits at the screen bottom on short pages. Pages
-// that want to fill main vertically (e.g. /profile with its top-to-bottom
-// sidebar) can opt in via `min-height: 100%` on their own outermost
-// element; default block sizing is otherwise unchanged.
+// Root flex container: pins the footer to the bottom of the viewport
+// on short pages so async content (cart items, subscription images)
+// doesn't cause a CLS when it pushes the footer down.
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+// Route content slot — fills available space between <Header /> and
+// <Footer />, pushing the footer down. Pages can opt in to full-height
+// content via `min-height: 100%` on their own outermost element.
 .main {
   flex: 1 0 auto;
   display: flex;
