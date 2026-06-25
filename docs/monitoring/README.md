@@ -156,7 +156,7 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
-## Deployment notes (as built — Phases 0–4)
+## Deployment notes (as built — Phases 0–5)
 
 Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
@@ -210,6 +210,18 @@ single run) to **Pushgateway** → Prometheus scrapes it with `honor_labels`. Me
 `/opt/chtivo/monitoring/psi/sa-key.json` (chmod 600, gitignored). Synthetic dashboard + a row on the
 consolidated board. *This pillar gives a controlled trend even at zero real traffic — and corroborated
 the LH-13 baseline (median ~93–96).*
+
+**Alerting (Phase 5):** Prometheus rules (`monitoring/prometheus/rules/slo.yml`) → Alertmanager →
+Telegram. SLO **multi-window burn-rate** on the storefront 5xx error budget (fast 1h+5m @ 14.4×, slow
+6h+1h @ 6×) plus infra guards (TargetDown, PostgresDown, disk, memory, low synthetic PSI). Verified
+end-to-end with a real breach (stopped node-exporter → `TargetDown` fired to Telegram → restart →
+resolved; `alertmanager_notifications_total{telegram}` 0 failures). Two operational notes:
+- **Token perms:** the bot token is a `600` file (`alertmanager/telegram_token`, gitignored); the AM
+  container therefore runs as **`user: "1000:1000"`** (the owner) with `--storage.path=/tmp/alertmanager`,
+  so the secret isn't world-readable.
+- **Config render:** `alertmanager.yml` is gitignored and rendered on the VPS from `.example` with the
+  real `chat_id`; the bot token never enters git. Get the chat ID once via
+  `https://api.telegram.org/bot<token>/getUpdates` after messaging the bot.
 
 **Dashboards & home page:** five dashboards — four focused (`infra-use`, `app-red`, `web-vitals`,
 `synthetic`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED · Core Web
