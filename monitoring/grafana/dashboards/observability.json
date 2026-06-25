@@ -94,7 +94,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 2.5 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (rate(web_vitals_lcp_seconds_bucket[24h])))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_lcp_seconds_bucket))", "legendFormat": "{{device}}" } ]
     },
     {
       "id": 22, "type": "timeseries", "title": "INP p75 by device (good < 200ms)",
@@ -102,7 +102,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.2 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (rate(web_vitals_inp_seconds_bucket[24h])))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_inp_seconds_bucket))", "legendFormat": "{{device}}" } ]
     },
     {
       "id": 23, "type": "timeseries", "title": "CLS p75 by device (good < 0.1)",
@@ -110,15 +110,15 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
       "fieldConfig": { "defaults": { "unit": "none", "decimals": 3, "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.1 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (rate(web_vitals_cls_bucket[24h])))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_cls_bucket))", "legendFormat": "{{device}}" } ]
     },
     {
-      "id": 24, "type": "stat", "title": "RUM samples (24h)",
+      "id": 24, "type": "stat", "title": "RUM samples (total)",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
       "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
       "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(increase(web_vitals_lcp_seconds_count[24h]))", "legendFormat": "LCP samples" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(web_vitals_lcp_seconds_count)", "legendFormat": "LCP samples" } ]
     },
 
     { "type": "row", "id": 400, "title": "Synthetic — PSI lab (median / 6h)", "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 47 } },
