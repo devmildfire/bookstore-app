@@ -8,10 +8,8 @@ import { useEffect } from 'react'
 // even on page unload). Mounted once in the root layout.
 export default function WebVitals() {
   useEffect(() => {
-    let cancelled = false
     void import('web-vitals')
       .then(({ onLCP, onINP, onCLS, onFCP, onTTFB }) => {
-        if (cancelled) return
         const send = (metric: { name: string; value: number }) => {
           try {
             navigator.sendBeacon?.(
@@ -29,9 +27,6 @@ export default function WebVitals() {
         onTTFB(send)
       })
       .catch(() => {})
-    return () => {
-      cancelled = true
-    }
   }, [])
   return null
 }
