@@ -76,7 +76,7 @@
       "gridPos": { "h": 6, "w": 8, "x": 0, "y": 24 },
       "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "decimals": 2, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } }, "overrides": [] },
       "options": { "colorMode": "background", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "100 * sum(rate(nginx_http_response_count_total{vhost=\"bookstore-app.mildfire.dev\",status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_response_count_total{vhost=\"bookstore-app.mildfire.dev\"}[5m])), 1)" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "100 * (sum(rate(nginx_http_response_count_total{vhost=\"bookstore-app.mildfire.dev\",status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(nginx_http_response_count_total{vhost=\"bookstore-app.mildfire.dev\"}[5m])) or vector(0), 1)" } ]
     },
     {
       "id": 14, "type": "timeseries", "title": "Requests/s by vhost (all ingress)",
