@@ -66,6 +66,14 @@ export async function runJourney(session, { url, reporter }) {
     s('navigate', `goto ${path}`, { durationMs, ok: true, ...(cwv ? { cwv } : {}) })
   }
 
+  // Warmup: navigate once to establish TCP/TLS connection so all subsequent
+  // measured navigations reflect warm connection times (like real users who
+  // reuse keep-alive, and like PSI/Lighthouse which measures from persistent
+  // connections). This first load's TTFB is discarded — only the connection
+  // overhead matters here, not the server response time.
+  await page.goto(url, { timeout: 30000 }).catch(() => {})
+  await delay(1000)
+
   // 2. Navigate to homepage
   await nav('/')
   await delay(rand(500, 1500))
