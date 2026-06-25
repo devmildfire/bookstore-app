@@ -27,7 +27,7 @@ export default async function AboutPage() {
 
   return (
     <main className={styles.page}>
-      <HeroVideo videoUrl={videoUrl} posterUrl={heroPoster.src} />
+      <HeroVideo videoUrl={videoUrl} posterUrl={heroPoster.src} posterWidth={heroPoster.width} posterHeight={heroPoster.height} />
 
       <AboutManifestoSection />
 
