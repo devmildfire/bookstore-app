@@ -123,7 +123,13 @@ services:
     # real chat_id, and the token is in a mounted file). See docs/monitoring/README.md.
     image: prom/alertmanager:v0.27.0
     restart: unless-stopped
-    command: ['--config.file=/etc/alertmanager/alertmanager.yml']
+    # Run as the deploy user (uid 1000) that owns the 600 token file, so the secret
+    # stays 600 (not world-readable); data dir → /tmp since that uid can't write the
+    # image's default /alertmanager.
+    user: "1000:1000"
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/tmp/alertmanager'
     volumes:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./alertmanager/telegram_token:/etc/alertmanager/telegram_token:ro
