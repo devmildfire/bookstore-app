@@ -6,10 +6,17 @@ async function snapshotInPage(page, waitMs) {
   return page.evaluate((delay) => new Promise((resolve) => {
     const results = {}
 
-    // TTFB — Navigation Timing
+    // TTFB — server response time only (excludes DNS/TCP/TLS connection overhead).
+    // Uses responseStart - requestStart (pure HTTP round-trip: request sent → first
+    // byte back), matching how PageSpeed Insights / Lighthouse reports TTFB. The
+    // full navigation timing including connection establishment is misleading for
+    // analytics because every fresh browser profile pays a one-time TCP+TLS cost
+    // (~1000ms) that real users amortize over subsequent requests via keep-alive.
     const navEntries = performance.getEntriesByType('navigation')
     if (navEntries.length) {
-      results.ttfb = { value: Math.round(navEntries[0].responseStart) }
+      const n = navEntries[0]
+      results.ttfb = { value: Math.max(0, Math.round(n.responseStart - n.requestStart)) }
+      results.connectionTime = { value: Math.max(0, Math.round(n.connectEnd - n.connectStart)) }
     }
 
     // FCP — Paint Timing
