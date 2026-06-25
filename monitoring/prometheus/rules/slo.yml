@@ -1,0 +1,67 @@
+# SLO burn-rate + infra-guard alerting rules.
+#
+# SLO: 99% of storefront requests succeed (non-5xx) over 30d → error budget = 1%.
+# We alert on multi-window burn-rate (Google SRE workbook): a fast window AND a
+# slow window must BOTH exceed the burn threshold, so a brief blip doesn't page but
+# a sustained burn does. burn_rate × budget(0.01) = the 5xx-ratio threshold.
+# clamp_min(denominator,1) keeps the ratio at ~0 (not NaN) when there's no traffic,
+# so the alert is dormant on a quiet site instead of flapping.
+groups:
+  - name: slo_sli_recording
+    interval: 30s
+    rules:
+      - record: sli:storefront_5xx:ratio_rate5m
+        expr: sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev",status=~"5.."}[5m])) / clamp_min(sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev"}[5m])), 1)
+      - record: sli:storefront_5xx:ratio_rate1h
+        expr: sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev",status=~"5.."}[1h])) / clamp_min(sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev"}[1h])), 1)
+      - record: sli:storefront_5xx:ratio_rate6h
+        expr: sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev",status=~"5.."}[6h])) / clamp_min(sum(rate(nginx_http_response_count_total{vhost="bookstore-app.mildfire.dev"}[6h])), 1)
+
+  - name: slo_burn_rate_alerts
+    rules:
+      - alert: StorefrontErrorBudgetBurnFast
+        expr: sli:storefront_5xx:ratio_rate1h > (14.4 * 0.01) and sli:storefront_5xx:ratio_rate5m > (14.4 * 0.01)
+        for: 2m
+        labels: { severity: page, slo: storefront_availability }
+        annotations:
+          summary: "Storefront error budget burning FAST (>14.4×)"
+          description: "5xx ratio (1h) is {{ $value | humanizePercentage }} — at this rate ~2 days of 30d budget is spent per hour."
+      - alert: StorefrontErrorBudgetBurnSlow
+        expr: sli:storefront_5xx:ratio_rate6h > (6 * 0.01) and sli:storefront_5xx:ratio_rate1h > (6 * 0.01)
+        for: 15m
+        labels: { severity: ticket, slo: storefront_availability }
+        annotations:
+          summary: "Storefront error budget burning (>6×, sustained)"
+
+  - name: infra_guards
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels: { severity: page }
+        annotations:
+          summary: "Prometheus target DOWN: {{ $labels.job }} ({{ $labels.instance }})"
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 2m
+        labels: { severity: page }
+        annotations:
+          summary: "Postgres unreachable (pg_up = 0)"
+      - alert: HostDiskAlmostFull
+        expr: 100 * (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}) > 85
+        for: 10m
+        labels: { severity: page }
+        annotations:
+          summary: "Host disk >85% full ({{ $value | printf \"%.0f\" }}%)"
+      - alert: HostMemoryHigh
+        expr: 100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 90
+        for: 10m
+        labels: { severity: warn }
+        annotations:
+          summary: "Host memory >90% ({{ $value | printf \"%.0f\" }}%)"
+      - alert: SyntheticPSILow
+        expr: psi_performance_score{strategy="mobile"} < 80
+        for: 0m
+        labels: { severity: warn }
+        annotations:
+          summary: "Synthetic PSI mobile median < 80: {{ $value }}"

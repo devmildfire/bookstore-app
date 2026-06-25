@@ -1,2 +1,4 @@
 .env
 psi/sa-key.json
+alertmanager/alertmanager.yml
+alertmanager/telegram_token

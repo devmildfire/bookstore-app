@@ -17,6 +17,7 @@ services:
       - '--web.enable-lifecycle'
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
       - prometheus_data:/prometheus
     mem_limit: 512m
     networks: [chtivo_default]
@@ -114,6 +115,19 @@ services:
     volumes:
       - ./psi:/psi:ro
     mem_limit: 128m
+    networks: [chtivo_default]
+
+  alertmanager:
+    # Routes firing alerts (from Prometheus) to Telegram. Config + bot token live on
+    # the VPS only (gitignored; alertmanager.yml is rendered from .example with the
+    # real chat_id, and the token is in a mounted file). See docs/monitoring/README.md.
+    image: prom/alertmanager:v0.27.0
+    restart: unless-stopped
+    command: ['--config.file=/etc/alertmanager/alertmanager.yml']
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./alertmanager/telegram_token:/etc/alertmanager/telegram_token:ro
+    mem_limit: 64m
     networks: [chtivo_default]
 
 networks:
