@@ -11,13 +11,16 @@ import styles from './layout.module.scss'
 // be statically prerendered. (Under PPR, a dedicated cart-badge island can server-render
 // the count if we want it in the initial HTML.) See
 // docs/plans/frontend-architecture-rendering.md Phase 0.
+// Root flex container: 100dvh min-height keeps the footer at the
+// screen bottom even on short pages (cart, subscriptions, dino-magazine),
+// preventing CLS from footer re-positioning after async content loads.
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className={styles.root}>
       <ScrollToTopOnNavigate />
       <Header />
       <main className={styles.main}>{children}</main>
       <Footer />
-    </>
+    </div>
   )
 }
