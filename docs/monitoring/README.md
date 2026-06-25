@@ -156,7 +156,7 @@ symptoms), silences (maintenance), and routes to Telegram. See [ADR-0005](./DECI
 
 ---
 
-## Deployment notes (as built — Phases 0–5)
+## Deployment notes (as built — Phases 0–6)
 
 Live: **https://grafana.mildfire.dev** (anonymous read-only). Stack at `/opt/chtivo/monitoring/`
 on the VPS (`docker compose -p monitoring --env-file .env up -d`); source of truth is `monitoring/`
@@ -223,9 +223,10 @@ resolved; `alertmanager_notifications_total{telegram}` 0 failures). Two operatio
   real `chat_id`; the bot token never enters git. Get the chat ID once via
   `https://api.telegram.org/bot<token>/getUpdates` after messaging the bot.
 
-**Dashboards & home page:** five dashboards — four focused (`infra-use`, `app-red`, `web-vitals`,
-`synthetic`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED · Core Web
-Vitals · Synthetic) that serves as the **home page**. The "Welcome to Grafana" banner is replaced by setting the
+**Dashboards & home page:** six dashboards — five focused (`infra-use`, `app-red`, `web-vitals`,
+`synthetic`, `database`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED ·
+Core Web Vitals · Synthetic · Database) that serves as the **home page**. The `database` board uses
+postgres-exporter (connections vs max, cache-hit ratio, tx rate, DB size, deadlocks). The "Welcome to Grafana" banner is replaced by setting the
 consolidated board as the org home dashboard, and the blog/news feed is off (`GF_NEWS_NEWS_FEED_ENABLED=false`).
 Note: `GF_USERS_DEFAULT_HOME_DASHBOARD_PATH` is **not honored in Grafana 11.3**, so the home dashboard
 is set via the org-preference API (persists in the `grafana_data` volume). To re-apply after a volume

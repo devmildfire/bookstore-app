@@ -179,7 +179,7 @@ whole project.
 | **3 — RUM/CWV** ✅ | `web-vitals` + `/api/vitals` + histograms; Core Web Vitals dashboard | ✅ **Done 2026-06-24** — beacon→histogram→/metrics→Prometheus verified (live FCP/TTFB from a real browser load); CWV dashboard shows p75 by device. Public /metrics blocked at nginx. |
 | **4 — Synthetic** ✅ | PSI scheduler (compose loop) → Pushgateway → Prometheus; Synthetic dashboard | ✅ **Done 2026-06-25** — `psi-scheduler` runs N=8 PSI traces every 6h, pushes median (`psi_*{strategy=mobile}`); Synthetic dashboard + consolidated row. (Container scheduler, not systemd — no sudo/cron; [ADR-0003](../monitoring/DECISIONS.md#adr-0003).) |
 | **5 — Alerting/SLOs** ✅ | Alertmanager + recording/alerting rules + burn-rate; Telegram routing | ✅ **Done 2026-06-25** — SLO multi-window burn-rate (storefront 5xx) + infra guards → Telegram. Verified end-to-end: real `TargetDown` fired + resolved (notifications 0 failures). |
-| **6 — Documentation** | `docs/monitoring/README.md`: architecture diagram, three-pillars narrative, dashboard screenshots, runbook, "why these choices" | A reviewer understands & could operate the stack from the README alone |
+| **6 — Documentation + Database** ✅ | `docs/monitoring/README.md` (architecture, pillars, decisions, as-built runbook) + the Database dashboard | ✅ **Done 2026-06-25** — Database dashboard live (connections, cache-hit 99.99%, tx rate, size, deadlocks) + a Database row on the consolidated board; README is the full writeup. *Optional remainder: dashboard screenshots (owner-captured).* |
 
 Phases 0–6 are the complete scope. Phases 0–1 deliver visible value immediately (infra dashboard);
 5 and 6 are where the *showcase* value concentrates — do not skip them; SLO alerting + documentation

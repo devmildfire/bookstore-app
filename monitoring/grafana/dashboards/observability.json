@@ -140,6 +140,35 @@
         { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "psi_lcp_seconds{strategy=\"mobile\"}", "legendFormat": "LCP" },
         { "refId": "B", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "psi_fcp_seconds{strategy=\"mobile\"}", "legendFormat": "FCP" }
       ]
+    },
+
+    { "type": "row", "id": 500, "title": "Database — Postgres", "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 56 } },
+    {
+      "id": 41, "type": "timeseries", "title": "Connections (active vs max)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 57 },
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "sum(pg_stat_database_numbackends)", "legendFormat": "active" },
+        { "refId": "B", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "max(pg_settings_max_connections)", "legendFormat": "max" }
+      ]
+    },
+    {
+      "id": 42, "type": "stat", "title": "Cache hit ratio (good >= 99%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 57 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "decimals": 2, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 95 }, { "color": "green", "value": 99 } ] } }, "overrides": [] },
+      "options": { "colorMode": "background", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "100 * sum(pg_stat_database_blks_hit) / clamp_min(sum(pg_stat_database_blks_hit) + sum(pg_stat_database_blks_read), 1)" } ]
+    },
+    {
+      "id": 43, "type": "stat", "title": "DB size (postgres)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 57 },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "pg_database_size_bytes{datname=\"postgres\"}" } ]
     }
   ]
 }
