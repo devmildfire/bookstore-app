@@ -32,6 +32,11 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_USERS_VIEWERS_CAN_EDIT: "false"
       GF_SERVER_ROOT_URL: "https://grafana.mildfire.dev"
+      # Drop the blog/news feed — this is a focused showcase, not a Grafana intro.
+      # (The home dashboard is set to the consolidated "observability" board via the
+      # org-preference API — GF_USERS_DEFAULT_HOME_DASHBOARD_PATH isn't honored in 11.3;
+      # see docs/monitoring/README.md. The preference persists in the grafana_data volume.)
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro

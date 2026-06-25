@@ -202,6 +202,19 @@ image → promote). Pinned `prom-client` + `web-vitals`.
 thresholds). Phase 3 needed a unit test for `/api/vitals` to clear it — budget a small test for any
 app code added in future phases.
 
+**Dashboards & home page:** four dashboards — three focused per-pillar (`infra-use`, `app-red`,
+`web-vitals`) plus a **consolidated** `observability` board (rows: Infra/USE · App/RED · Core Web
+Vitals) that serves as the **home page**. The "Welcome to Grafana" banner is replaced by setting the
+consolidated board as the org home dashboard, and the blog/news feed is off (`GF_NEWS_NEWS_FEED_ENABLED=false`).
+Note: `GF_USERS_DEFAULT_HOME_DASHBOARD_PATH` is **not honored in Grafana 11.3**, so the home dashboard
+is set via the org-preference API (persists in the `grafana_data` volume). To re-apply after a volume
+reset:
+```
+docker run --rm --network chtivo_default curlimages/curl -s -X PUT -u admin:$GF_PW \
+  -H 'Content-Type: application/json' -d '{"homeDashboardUID":"observability"}' \
+  http://grafana:3000/api/org/preferences
+```
+
 ## For developers & agents
 
 - **Implementation status / phases:** [docs/plans/monitoring-observability.md](../plans/monitoring-observability.md)
