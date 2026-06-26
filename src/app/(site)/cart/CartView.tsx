@@ -17,17 +17,33 @@ type Props = {
 
 export default function CartView({ initialItems, initialQuote }: Props = {}) {
   const {
-    items,
-    total,
-    itemCount,
+    items: liveItems,
+    total: liveTotal,
+    itemCount: liveItemCount,
     updateQuantity,
     removeItem,
     appliedPromo,
-    discountAmount,
-    finalTotal,
+    discountAmount: liveDiscount,
+    finalTotal: liveFinalTotal,
     giftCardAppliedTotal,
     amountDue,
+    isCartReady,
   } = useCart()
+
+  // Until the client cart query has resolved, render from the server-fetched
+  // props (passed by page.tsx). SSR and the first client render both take this
+  // branch → identical markup, zero CLS. Once the query settles, the live cart
+  // drives everything (handles edits/empties correctly). Gift-card selection
+  // and the promo-code label are client-only, so they stay on the live values
+  // (0 / null pre-resolution — matching SSR, no shift).
+  const showInitial = !isCartReady && initialItems !== undefined
+  const items = showInitial ? initialItems : liveItems
+  const total = showInitial ? (initialQuote?.subtotal ?? 0) : liveTotal
+  const itemCount = showInitial
+    ? initialItems.reduce((sum, item) => sum + item.quantity, 0)
+    : liveItemCount
+  const discountAmount = showInitial ? (initialQuote?.discountAmount ?? 0) : liveDiscount
+  const finalTotal = showInitial ? (initialQuote?.total ?? 0) : liveFinalTotal
 
   const isEmpty = items.length === 0
 

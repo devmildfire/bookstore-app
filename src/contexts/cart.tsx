@@ -3,7 +3,6 @@
 import { createContext, useContext, useCallback, useMemo, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import useSessionActive from '@/hooks/useSessionActive'
-import { useCartInitialData } from '@/app/(site)/cart/cartInitialData'
 import {
   useQuery,
   useMutation,
@@ -64,6 +63,10 @@ type CartContextValue = CartState & {
   amountDue: number
   // Checkout helpers
   hasPhysicalItems: boolean
+  // True once the client-side cart query has resolved. Until then, consumers
+  // (CartView) render from server-fetched props so SSR + first client render
+  // match — zero CLS. See src/app/(site)/cart/page.tsx.
+  isCartReady: boolean
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -90,19 +93,19 @@ export function CartProvider({ children }: Props) {
   // (/cart, /checkout), once the user interacts, or when a session already exists (returning
   // visitor → instant, correct badge, no flash). getAuthedClient ensures the session before each
   // query resolves, so there's no read-before-sign-in race.
-  // SSR-initialized cart data (server-fetched via CartPage, hydrated immediately).
-  // Keeps the useQuery enabled so mutations + refetches work the same way; the
-  // initialData just skips the loading state on first paint — zero CLS.
-  const initial = useCartInitialData()
-
   const onCartRoute = pathname === '/cart' || pathname === '/checkout'
   const cartEnabled = useSessionActive() || onCartRoute
 
-  const { data: items = [] } = useQuery({
+  // `isCartReady` flips true once this query resolves. CartView renders from
+  // server props until then (zero CLS) — see page.tsx. We deliberately do NOT
+  // use `initialData` here: CartProvider is a global ancestor of the cart page,
+  // so page-fetched data can never reach its render (context flows down, and on
+  // the server the provider renders before the page). The SSR fill happens in
+  // CartView via props instead.
+  const { data: items = [], isSuccess: isCartReady } = useQuery({
     queryKey: cartQueryKey,
     queryFn: getCart,
     enabled: cartEnabled,
-    initialData: initial.items.length > 0 ? initial.items : undefined,
   })
 
   const { data: appliedPromo = null } = useQuery({
@@ -133,7 +136,6 @@ export function CartProvider({ children }: Props) {
     queryFn: getCartQuote,
     placeholderData: keepPreviousData,
     enabled: cartEnabled,
-    initialData: initial.quote ?? undefined,
   })
   const totals = quote ?? { subtotal: 0, discountAmount: 0, total: 0, giftCardEligibleTotal: 0 }
 
@@ -373,6 +375,7 @@ export function CartProvider({ children }: Props) {
         giftCardAppliedTotal,
         amountDue,
         hasPhysicalItems,
+        isCartReady,
       }}
     >
       {children}

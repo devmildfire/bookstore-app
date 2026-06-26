@@ -18,6 +18,7 @@ import type {
   ShippingFormValues,
 } from '@/entities/order/validation'
 import type { PlaceOrderInput } from '@/api/orders/createPendingOrder'
+import type { CartItem } from '@/entities/cart/client'
 import styles from './page.module.scss'
 
 type PendingOrder = {
@@ -25,24 +26,38 @@ type PendingOrder = {
   shippingSummary: string | null
 }
 
-export default function CheckoutView() {
+type Props = {
+  initialItems?: CartItem[]
+  initialHasPhysical?: boolean
+}
+
+export default function CheckoutView({ initialItems, initialHasPhysical }: Props = {}) {
   const router = useRouter()
   const {
-    items,
+    items: liveItems,
     appliedPromo,
-    hasPhysicalItems,
+    hasPhysicalItems: liveHasPhysical,
     giftCardPayments,
     amountDue,
     clearGiftCardSelection,
+    isCartReady,
   } = useCart()
   const { data: profile } = useQuery({ queryKey: profileQueryKey, queryFn: getProfile })
   const { isAnonymous } = useSupabaseUser()
   const [pending, setPending] = useState<PendingOrder | null>(null)
   const [modalState, setModalState] = useState<PaymentModalState>({ kind: 'idle' })
 
+  // Render from server props (passed by page.tsx) until the client cart query
+  // resolves, so SSR + first client render pick the same form → no email→delivery
+  // swap, zero CLS. Only `hasPhysicalItems` drives layout (the form choice) here.
+  const showInitial = !isCartReady && initialItems !== undefined
+  const hasPhysicalItems = showInitial ? (initialHasPhysical ?? false) : liveHasPhysical
+
+  // Only bounce to /cart once the cart query has settled — otherwise a hard load
+  // of /checkout redirects before the client query populates a non-empty cart.
   useEffect(() => {
-    if (items.length === 0) router.replace('/cart')
-  }, [items.length, router])
+    if (isCartReady && liveItems.length === 0) router.replace('/cart')
+  }, [isCartReady, liveItems.length, router])
 
   function buildShippingSummary(values: ShippingFormValues): string {
     const addressParts = [values.city, values.street, values.building, values.postalCode]
