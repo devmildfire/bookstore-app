@@ -3,6 +3,7 @@
 import { createContext, useContext, useCallback, useMemo, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import useSessionActive from '@/hooks/useSessionActive'
+import { useCartInitialData } from '@/app/(site)/cart/cartInitialData'
 import {
   useQuery,
   useMutation,
@@ -89,6 +90,11 @@ export function CartProvider({ children }: Props) {
   // (/cart, /checkout), once the user interacts, or when a session already exists (returning
   // visitor → instant, correct badge, no flash). getAuthedClient ensures the session before each
   // query resolves, so there's no read-before-sign-in race.
+  // SSR-initialized cart data (server-fetched via CartPage, hydrated immediately).
+  // Keeps the useQuery enabled so mutations + refetches work the same way; the
+  // initialData just skips the loading state on first paint — zero CLS.
+  const initial = useCartInitialData()
+
   const onCartRoute = pathname === '/cart' || pathname === '/checkout'
   const cartEnabled = useSessionActive() || onCartRoute
 
@@ -96,6 +102,7 @@ export function CartProvider({ children }: Props) {
     queryKey: cartQueryKey,
     queryFn: getCart,
     enabled: cartEnabled,
+    initialData: initial.items.length > 0 ? initial.items : undefined,
   })
 
   const { data: appliedPromo = null } = useQuery({
@@ -126,6 +133,7 @@ export function CartProvider({ children }: Props) {
     queryFn: getCartQuote,
     placeholderData: keepPreviousData,
     enabled: cartEnabled,
+    initialData: initial.quote ?? undefined,
   })
   const totals = quote ?? { subtotal: 0, discountAmount: 0, total: 0, giftCardEligibleTotal: 0 }
 

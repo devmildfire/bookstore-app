@@ -6,9 +6,16 @@ import CartTotals from '@/components/cart/CartTotals'
 import EmptyCart from '@/components/cart/EmptyCart'
 import GiftCardPicker from '@/components/cart/GiftCardPicker'
 import PromoCodeForm from '@/components/cart/PromoCodeForm'
+import type { CartItem } from '@/entities/cart/client'
+import type { CartQuote } from '@/api/cart/quoteCart'
 import styles from './page.module.scss'
 
-export default function CartView() {
+type Props = {
+  initialItems?: CartItem[]
+  initialQuote?: CartQuote | null
+}
+
+export default function CartView({ initialItems, initialQuote }: Props = {}) {
   const {
     items,
     total,
