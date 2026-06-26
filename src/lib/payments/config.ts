@@ -48,7 +48,7 @@ function readAlgo(): HashAlgo {
 
 export function getPaymentConfig(): PaymentConfig {
   const provider = readProvider()
-  const siteUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
+  const siteUrl = (process.env.APP_BASE_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '')
 
   // In mock mode the buyer is redirected to our own stand-in page; in prod to
   // Robokassa's hosted form. The recurring charge target mirrors this split.

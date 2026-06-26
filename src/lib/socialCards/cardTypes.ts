@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { getSiteOrigin } from '@/lib/siteUrl'
 
 export const SOCIAL_CARD_KINDS = ['home', 'book', 'author', 'article'] as const
 export type SocialCardKind = (typeof SOCIAL_CARD_KINDS)[number]
@@ -36,7 +36,7 @@ export function isSocialCardVariant(value: string): value is SocialCardVariant {
 }
 
 export function getAbsoluteSiteUrl(path: string = '/'): string {
-  return new URL(path, SITE_ORIGIN).toString()
+  return new URL(path, getSiteOrigin()).toString()
 }
 
 function normalizeTargetParts(target: SocialCardTarget): string[] {

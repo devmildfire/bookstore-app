@@ -257,11 +257,17 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
     risks a missed absolute-URL image). Remove after a prod image audit.
   - [ ] OAuth full round-trip — app side done; GoTrue's external callback URL is prod config → verify
     end-to-end during 1.2 cutover.
-- [ ] **1.1b (newly surfaced) — `NEXT_PUBLIC_BASE_URL` → runtime.** Also build-baked + env-specific
-  (`SITE_ORIGIN`, `metadataBase`, payments, email links). Harmless for the Supabase scope, but the
-  image isn't fully env-agnostic until it's runtime — and **1.3 (CI e2e against the image) needs it**
-  (the image runs at `localhost:3000` in CI but would otherwise carry the prod base URL → wrong
-  redirects). Resolve from `X-Forwarded-Host` (nginx already sets it) before 1.3.
+- [x] **1.1b — runtime app origin (`APP_BASE_URL`)** — DONE (2026-06-26). Runtime redirects + payment
+  callbacks must resolve per-instance (the CI image runs at `localhost:3000` but baked
+  `NEXT_PUBLIC_BASE_URL` is prod). `siteUrl.ts` `SITE_ORIGIN` const → **`getSiteOrigin()` function**
+  reading `APP_BASE_URL ?? NEXT_PUBLIC_BASE_URL` per call (a const would freeze the build value if SSG
+  evaluated it first). Refactored all callers (auth confirm/callback/google, redeem, newsletter ×2,
+  social-card abs URL). `getPaymentConfig().siteUrl` → same runtime-first read (mock gateway/callback
+  URLs need absolute + env-correct — used in a server-side `fetch` + `new URL`, so relative won't do).
+  tsc + eslint + 82 unit green. **Intentionally left build-baked** (prod public identity, not
+  e2e-relevant): `metadataBase`, `robots.ts`, `sitemap.ts`, email links — these define the canonical
+  prod site even in the CI-run image. **1.3 must set `APP_BASE_URL=http://localhost:3000`** when it
+  runs the image; prod can rely on the `NEXT_PUBLIC_BASE_URL` fallback or set `APP_BASE_URL` in compose.
 - [ ] 1.2 Prod proxy + env cutover (compose `SUPABASE_INTERNAL_URL`, drop `NEXT_PUBLIC_SUPABASE_URL`
   build-arg; backup; promote; live smoke)
 - [ ] 1.3 CI e2e runs the **built image** (`docker run` on host network; Playwright no-webServer)

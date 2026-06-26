@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
-import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { getSiteOrigin } from '@/lib/siteUrl'
 import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 // Verifies the token_hash from auth emails (signup / email_change / recovery)
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/profile'
 
   if (!tokenHash || !type || !VALID_TYPES.includes(type)) {
-    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
+    const errorUrl = new URL('/auth/login', getSiteOrigin())
     errorUrl.searchParams.set('auth_error', 'Ссылка недействительна или устарела')
     return NextResponse.redirect(errorUrl)
   }
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   // On success we land on `next` (the cabinet for signup/email_change). Mark it
   // so the destination can show a one-time "email confirmed" success modal.
   // Recovery goes to the reset-password screen — no success modal there.
-  const successUrl = new URL(safeNext, SITE_ORIGIN)
+  const successUrl = new URL(safeNext, getSiteOrigin())
   if (type !== 'recovery') successUrl.searchParams.set('email_confirmed', '1')
   const response = NextResponse.redirect(successUrl)
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
   const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
   if (error) {
-    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
+    const errorUrl = new URL('/auth/login', getSiteOrigin())
     errorUrl.searchParams.set('auth_error', error.message)
     return NextResponse.redirect(errorUrl)
   }

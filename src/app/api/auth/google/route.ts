@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { PENDING_ANON_COOKIE } from '@/lib/profile/constants'
-import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { getSiteOrigin } from '@/lib/siteUrl'
 
 // GET /api/auth/google
 //
@@ -32,13 +32,13 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${SITE_ORIGIN}/auth/callback?next=/profile`,
+      redirectTo: `${getSiteOrigin()}/auth/callback?next=/profile`,
       skipBrowserRedirect: true,
     },
   })
 
   if (error || !data?.url) {
-    const errorUrl = new URL('/auth/login', SITE_ORIGIN)
+    const errorUrl = new URL('/auth/login', getSiteOrigin())
     errorUrl.searchParams.set('auth_error', error?.message ?? 'Google OAuth недоступен')
     return NextResponse.redirect(errorUrl)
   }
@@ -61,6 +61,6 @@ export async function GET(request: NextRequest) {
   // query preserved. (GoTrue's own OAuth callback to Google still uses its
   // configured external URL; verify that end-to-end during the prod cutover.)
   const src = new URL(data.url)
-  const authorizeUrl = new URL(`/sb${src.pathname}${src.search}`, SITE_ORIGIN)
+  const authorizeUrl = new URL(`/sb${src.pathname}${src.search}`, getSiteOrigin())
   return NextResponse.redirect(authorizeUrl.toString())
 }

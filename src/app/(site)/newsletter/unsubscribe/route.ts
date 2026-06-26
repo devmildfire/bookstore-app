@@ -1,12 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { removeFromAudience } from '@/lib/email/audience'
-import { SITE_ORIGIN } from '@/lib/siteUrl'
+import { getSiteOrigin } from '@/lib/siteUrl'
 
 // One-click unsubscribe link target (carried in every marketing email).
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  const result = (status: string) => NextResponse.redirect(new URL(`/newsletter?status=${status}`, SITE_ORIGIN))
+  const result = (status: string) => NextResponse.redirect(new URL(`/newsletter?status=${status}`, getSiteOrigin()))
 
   if (!token) return result('invalid')
 
