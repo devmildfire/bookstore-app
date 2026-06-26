@@ -236,7 +236,42 @@ Status legend:
 
 ---
 
-## 11. Risks
+## 11. Cart CLS investigation
+
+### Finding
+
+The 2-hour stress test revealed CLS on `/cart` (mobile 0.21, desktop 0.17) and `/subscription` (mobile 0.46). Root cause for cart: **TanStack Query fetches cart items client-side, causing an EmptyCart→items grid DOM swap that pushes the footer down.**
+
+### SSR attempt (failed)
+
+`CartPage` prefetches data via `getCartServer()` → passes as `initialData` to `useQuery`. Problem: `createClient()` cannot find the Supabase auth cookie (`sb-api-auth-token`) during SSR because the session is created client-side by `ensureAnonSession()` after the first interaction. The server always renders empty cart → SSR fix cannot work.
+
+Attribution data (exact CLS sources from PerformanceObserver, `buffered: true`):
+
+```
+t=696ms  value=+0.1035
+  <FOOTER> y:486→674  h:358→170   footer moves down 188px, shortens
+  <DIV>   y:673→0     h:44→0      social icons reference detached
+  <A>     y:737→0     h:42→0      credit link reference detached
+```
+
+The footer shift happens at **696ms** after navigation — coinciding with React hydration + TanStack Query fetch completing. The old footer DOM nodes are detached and replaced (the `y:0 h:0` entries), proving a React re-render, not a CSS font-swap.
+
+### Proposed fix: always-render skeleton grid
+
+Replace the `isEmpty ? <EmptyCart /> : <itemsGrid />` switch with a grid that always renders. While items are loading, show `<SkeletonCartRow />` components matching `CartItemRow` dimensions:
+
+| Property | CartItemRow | SkeletonCartRow |
+|---|---|---|
+| Image | `aspect-ratio: 2/3`, `max-width: 114px` | Same aspect-ratio, shimmer background |
+| Padding | `$space-6 0` (24px top + 24px bottom) | Same |
+| Text lines | title (18px), subtitle (16px), type | Shimmer bars at same line-height |
+
+When TanStack Query resolves with items, the 1:1 skeleton→real swap causes zero height change → zero CLS.
+
+---
+
+## 12. Risks
 
 - **Chrome not installed / wrong version** — `chrome-launcher` finds the system Chrome; fallback: install Chromium via `puppeteer` (bundled).
 - **Site changes break selectors** — all element selectors will need updating if the UI changes. Mitigation: add a `selectors` config file for easy retargeting.
