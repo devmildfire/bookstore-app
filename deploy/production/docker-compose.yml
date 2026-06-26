@@ -41,14 +41,18 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # Canonical public identity (metadataBase / OG / sitemap) — baked into the
+      # image at build; set here too for parity / any runtime read.
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
-      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-      # Server-side reads/auth hit kong directly over the docker network instead of
-      # hairpinning out to the public api.mildfire.dev → Cloudflare → tunnel. The
-      # browser still uses NEXT_PUBLIC_SUPABASE_URL; signed/public storage URLs
-      # (createAdminClient) deliberately stay on the public URL.
+      # Runtime origin for redirects + payment callbacks (getSiteOrigin reads this
+      # FIRST). Must be the real public URL so the env-agnostic image resolves its
+      # own origin without relying on the build-baked value.
+      APP_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      # The browser talks to its own origin under /sb; the app's middleware proxies
+      # /sb/* to Supabase via SUPABASE_INTERNAL_URL and injects SUPABASE_ANON_KEY.
+      # All Supabase config is RUNTIME now — nothing Supabase-specific is baked.
       SUPABASE_INTERNAL_URL: ${SUPABASE_INTERNAL_URL:-http://kong:8000}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SEND_EMAIL_HOOK_SECRET: ${SEND_EMAIL_HOOK_SECRET}
       RESEND_API_KEY: ${RESEND_API_KEY}

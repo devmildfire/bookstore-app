@@ -53,7 +53,6 @@ jobs:
           push: true
           tags: ${{ steps.tags.outputs.list }}
           build-args: |
-            NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
-            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL || 'https://bookstore-app.mildfire.dev' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

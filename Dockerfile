@@ -22,12 +22,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# NEXT_PUBLIC_* are inlined into the client bundle at build time, so they must be
-# present during `next build` (not just at runtime). CI passes them as build args.
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Supabase URL/key are NO LONGER baked: the browser talks to its own origin under
+# /sb (the middleware proxies to Supabase + injects the runtime anon key), so the
+# image is env-agnostic. Only NEXT_PUBLIC_BASE_URL is inlined at build — it's the
+# canonical public site identity for metadataBase / OG / sitemap (the RUNTIME
+# origin for redirects/payments comes from APP_BASE_URL, set per-instance).
+ARG NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
