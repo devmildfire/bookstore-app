@@ -1,4 +1,4 @@
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+import { SUPABASE_PROXY_PREFIX } from '@/lib/supabase/sameOrigin'
 
 const COVERS_BUCKET = 'covers'
 const AVATARS_BUCKET = 'avatars'
@@ -18,16 +18,30 @@ const DEMOS_BUCKET = 'demos'
 /**
  * Build a public Supabase Storage URL from a bare object key (or pass through a
  * value that is already a full URL). Most columns store bare keys (e.g.
- * `murlo.jpg`, `{user_id}/avatar.jpg`); we build the URL from
- * NEXT_PUBLIC_SUPABASE_URL at runtime so callers don't instantiate the
- * supabase-js browser client at render time (it needs `window` and crashes
- * during SSR). Set NEXT_PUBLIC_SUPABASE_URL to the public-facing URL when
- * self-hosting behind a reverse proxy.
+ * `murlo.jpg`, `{user_id}/avatar.jpg`).
+ *
+ * Returns a SAME-ORIGIN RELATIVE path under `/sb` (the middleware proxies it to
+ * Supabase — see src/proxy.ts). Relative → `next/image` treats it as a local
+ * image (no `remotePatterns` needed) and NO env-specific host is baked into SSG
+ * HTML, so one image works in every environment. For absolute URLs (email / OG /
+ * social cards), use `absoluteStorageUrl()` below.
  */
 function publicUrl(bucket: string, path: string | null): string | null {
   if (!path) return null
   if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${supabaseUrl}/storage/v1/object/public/${bucket}/${path}`
+  return `${SUPABASE_PROXY_PREFIX}/storage/v1/object/public/${bucket}/${path}`
+}
+
+/**
+ * Absolute form of a storage URL, for contexts that can't use a relative path:
+ * transactional emails, Open Graph / social-card image metadata. `origin` is the
+ * site origin (e.g. `NEXT_PUBLIC_BASE_URL` or the request origin) — the `/sb`
+ * path on it is proxied to Supabase like any other.
+ */
+export function absoluteStorageUrl(origin: string, relativeUrl: string | null): string | null {
+  if (!relativeUrl) return null
+  if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) return relativeUrl
+  return `${origin.replace(/\/$/, '')}${relativeUrl}`
 }
 
 export const getCoverUrl = (filename: string | null) => publicUrl(COVERS_BUCKET, filename)
@@ -58,8 +72,7 @@ export const getAwardUrl = (image: string | null) =>
  *   booktrailers/{slug}/poster.jpg   (only when has_poster is true)
  */
 export function getBooktrailerUrls(slug: string, hasPoster: boolean) {
-  if (!supabaseUrl) return null
-  const base = `${supabaseUrl}/storage/v1/object/public/${BOOKTRAILERS_BUCKET}/${slug}`
+  const base = `${SUPABASE_PROXY_PREFIX}/storage/v1/object/public/${BOOKTRAILERS_BUCKET}/${slug}`
   return {
     mp4: `${base}/video.mp4`,
     webm: `${base}/video.webm`,

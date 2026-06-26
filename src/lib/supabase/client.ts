@@ -1,6 +1,8 @@
 // src/lib/supabase/client.ts
 import { createBrowserClient, type CookieOptions } from '@supabase/ssr'
 import type { Database } from '@/types/supabase'
+import { PLACEHOLDER_ANON_KEY, SUPABASE_PROXY_PREFIX } from '@/lib/supabase/sameOrigin'
+import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
 
 type BrowserClient = ReturnType<typeof createBrowserClient<Database>>
 
@@ -50,10 +52,18 @@ export function createClient() {
     )
   }
   if (!globalThis.__supabaseBrowserClient) {
+    // Talk to our OWN origin under /sb — the middleware (src/proxy.ts) rewrites it
+    // to the real Supabase and injects the real anon key. Both args here are
+    // constants (origin is runtime-derived, key is a placeholder the proxy swaps),
+    // so nothing env-specific is baked into the bundle → one image, any environment.
     globalThis.__supabaseBrowserClient = createBrowserClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      `${window.location.origin}${SUPABASE_PROXY_PREFIX}`,
+      PLACEHOLDER_ANON_KEY,
       {
+        // Pin the cookie name to the shared constant so the server reads the same
+        // cookie (the /sb origin would otherwise derive a different name from the
+        // app host — see authCookie.ts).
+        cookieOptions: { name: SUPABASE_AUTH_COOKIE_NAME },
         cookies: {
           // Match the server. With tokens-only, the user object lives in
           // localStorage (default userStorage), and the cookies hold just

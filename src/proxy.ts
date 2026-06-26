@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { SUPABASE_AUTH_COOKIE_NAME } from '@/lib/supabase/authCookie'
+import { PLACEHOLDER_ANON_KEY, SUPABASE_PROXY_PREFIX } from '@/lib/supabase/sameOrigin'
 
 const CART_COOKIE = 'bookstore_cart_id'
 // Non-HttpOnly hint read by the client (Providers) to gate anonymous sign-in,
@@ -16,6 +17,28 @@ const HAS_SESSION_COOKIE = 'bookstore_has_session'
 const ADMIN_LOGIN_PATH = '/admin/login'
 
 export async function proxy(request: NextRequest) {
+  // ── Same-origin Supabase proxy ──────────────────────────────────────────────
+  // The browser only ever talks to its own origin under /sb/*; rewrite to the real
+  // Supabase (runtime SUPABASE_INTERNAL_URL) and inject the real anon key here, so
+  // the shipped image bakes NO env-specific Supabase host or key. Per-env config
+  // (routing target + key) lives in runtime env, not the bundle. Returns before the
+  // session/cart/admin logic — /sb is a pure pass-through to Supabase.
+  if (request.nextUrl.pathname.startsWith(`${SUPABASE_PROXY_PREFIX}/`)) {
+    const anonKey = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const base = process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const upstreamPath = request.nextUrl.pathname.slice(SUPABASE_PROXY_PREFIX.length)
+    const target = new URL(upstreamPath + request.nextUrl.search, base)
+    const headers = new Headers(request.headers)
+    headers.set('apikey', anonKey)
+    // Anon requests send `Bearer <placeholder>` (or nothing); give them the real
+    // anon key. A real user-JWT Authorization passes through untouched.
+    const auth = headers.get('authorization')
+    if (!auth || auth === `Bearer ${PLACEHOLDER_ANON_KEY}`) {
+      headers.set('authorization', `Bearer ${anonKey}`)
+    }
+    return NextResponse.rewrite(target, { request: { headers } })
+  }
+
   let response = NextResponse.next({ request })
 
   // /auth/callback owns its cookie writes — running getUser() here can
@@ -134,6 +157,9 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // Always run for /sb/* — even storage object paths ending in an image
+    // extension (authenticated uploads/downloads need the injected apikey).
+    '/sb/:path*',
     // Skip Next.js internals and static files
     '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],

@@ -1,65 +1,52 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
+import {
+  getCoverUrl,
+  getAvatarUrl,
+  getDemoUrl,
+  getAwardUrl,
+  getBooktrailerUrls,
+  absoluteStorageUrl,
+} from './storage'
 
-// storage.ts reads NEXT_PUBLIC_SUPABASE_URL once at module load, so each test
-// stubs the env then re-imports the module (resetModules) to control the base.
-const BASE = 'https://xyz.supabase.co'
-
-beforeEach(() => {
-  vi.resetModules()
-  vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', BASE)
-})
-
-afterEach(() => {
-  vi.unstubAllEnvs()
-})
-
-async function load() {
-  return import('./storage')
-}
+// Storage URLs are now SAME-ORIGIN RELATIVE paths under /sb (the middleware
+// proxies them to Supabase) — no env-specific host is baked in. See
+// src/proxy.ts + docs/plans/cicd-single-image-and-edge-tests.md.
+const SB = '/sb/storage/v1/object/public'
 
 describe('publicUrl-backed builders', () => {
-  it('builds a public Storage URL from a bare object key', async () => {
-    const { getCoverUrl, getAvatarUrl } = await load()
-    expect(getCoverUrl('murlo.jpg')).toBe(`${BASE}/storage/v1/object/public/covers/murlo.jpg`)
-    expect(getAvatarUrl('user-1/avatar.jpg')).toBe(
-      `${BASE}/storage/v1/object/public/avatars/user-1/avatar.jpg`,
-    )
+  it('builds a relative /sb Storage path from a bare object key', () => {
+    expect(getCoverUrl('murlo.jpg')).toBe(`${SB}/covers/murlo.jpg`)
+    expect(getAvatarUrl('user-1/avatar.jpg')).toBe(`${SB}/avatars/user-1/avatar.jpg`)
   })
 
-  it('returns null for null/empty input', async () => {
-    const { getCoverUrl, getDemoUrl } = await load()
+  it('returns null for null/empty input', () => {
     expect(getCoverUrl(null)).toBeNull()
     expect(getDemoUrl(null)).toBeNull()
   })
 
-  it('passes through values that are already absolute URLs', async () => {
-    const { getCoverUrl } = await load()
+  it('passes through values that are already absolute URLs', () => {
     expect(getCoverUrl('https://cdn.example.com/x.jpg')).toBe('https://cdn.example.com/x.jpg')
     expect(getCoverUrl('http://cdn.example.com/x.jpg')).toBe('http://cdn.example.com/x.jpg')
   })
 })
 
 describe('getAwardUrl', () => {
-  it('passes through legacy root-relative /awards paths untouched', async () => {
-    const { getAwardUrl } = await load()
+  it('passes through legacy root-relative /awards paths untouched', () => {
     expect(getAwardUrl('/awards/book_of_the_year.svg')).toBe('/awards/book_of_the_year.svg')
   })
 
-  it('builds a Storage URL from a bare filename', async () => {
-    const { getAwardUrl } = await load()
-    expect(getAwardUrl('best_2019.svg')).toBe(`${BASE}/storage/v1/object/public/awards/best_2019.svg`)
+  it('builds a relative /sb path from a bare filename', () => {
+    expect(getAwardUrl('best_2019.svg')).toBe(`${SB}/awards/best_2019.svg`)
   })
 
-  it('returns null for null input', async () => {
-    const { getAwardUrl } = await load()
+  it('returns null for null input', () => {
     expect(getAwardUrl(null)).toBeNull()
   })
 })
 
 describe('getBooktrailerUrls', () => {
-  it('builds mp4/webm and a poster only when hasPoster', async () => {
-    const { getBooktrailerUrls } = await load()
-    const base = `${BASE}/storage/v1/object/public/booktrailers/my-slug`
+  it('builds relative mp4/webm and a poster only when hasPoster', () => {
+    const base = `${SB}/booktrailers/my-slug`
     expect(getBooktrailerUrls('my-slug', true)).toEqual({
       mp4: `${base}/video.mp4`,
       webm: `${base}/video.webm`,
@@ -67,11 +54,18 @@ describe('getBooktrailerUrls', () => {
     })
     expect(getBooktrailerUrls('my-slug', false)?.poster).toBeNull()
   })
+})
 
-  it('returns null when the Supabase URL is unset', async () => {
-    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', '')
-    vi.resetModules()
-    const { getBooktrailerUrls } = await load()
-    expect(getBooktrailerUrls('my-slug', true)).toBeNull()
+describe('absoluteStorageUrl', () => {
+  it('prefixes a relative /sb path with the given origin', () => {
+    expect(absoluteStorageUrl('https://app.example.com', '/sb/storage/v1/object/public/covers/x.jpg')).toBe(
+      'https://app.example.com/sb/storage/v1/object/public/covers/x.jpg',
+    )
+  })
+
+  it('trims a trailing slash on the origin and passes through absolute URLs / null', () => {
+    expect(absoluteStorageUrl('https://app.example.com/', '/sb/a.jpg')).toBe('https://app.example.com/sb/a.jpg')
+    expect(absoluteStorageUrl('https://app.example.com', 'https://cdn/x.jpg')).toBe('https://cdn/x.jpg')
+    expect(absoluteStorageUrl('https://app.example.com', null)).toBeNull()
   })
 })

@@ -240,9 +240,20 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 
 ### Part 1 — Plumbing
 - [x] 1.0 Proxy mechanism: **A (Next rewrites)** chosen (2026-06-26)
-- [ ] 1.0b Sub-decision: **anon-key handling** (env-specific → can't be baked for a single image). See "Anon key" below. Options: (1) runtime config fetch, (2) proxy-injected apikey. Pending pick.
-- [ ] 1.1 Same-origin app changes (browser client `/sb`, relative storage URLs, absolute helper for
-  email/OG, rewrite, server `SUPABASE_INTERNAL_URL`, remotePatterns, `storage.test.ts`) — local-verified, SSG intact
+- [x] 1.0b Anon-key handling: **Option 2 — proxy-injected apikey** chosen (2026-06-26). Consequence: `/sb` routing lives in **middleware (`src/proxy.ts`)**, not `next.config` rewrites (only middleware can mutate the forwarded request headers). Mechanism A is realized via the proxy. **First step is a spike** to confirm Next 16 middleware can rewrite `/sb/*` to an external URL *with* mutated request headers.
+- [~] 1.1 Same-origin app changes (local-first). **Browser-facing slice DONE + browser-verified**
+  (2026-06-26): `/sb` proxy in `src/proxy.ts` (apikey + Authorization injection, matcher) — spike +
+  live (REST `/sb` 200 no-key, `POST /sb/auth/v1/signup` 200, cart `201`, covers via
+  `/_next/image?url=%2Fsb%2F…`); browser client → `${origin}/sb` + placeholder key; `authCookie.ts`
+  pinned to a constant (fixes the prod cookie-name mismatch the host-derived name would cause);
+  `storage.ts` → relative `/sb` + `absoluteStorageUrl()`; `storage.test.ts` updated. `sameOrigin.ts`
+  added. Remaining 1.1 sub-tasks (work via NEXT_PUBLIC fallbacks for now, so nothing is broken):
+  - [ ] Server anon key `NEXT_PUBLIC_SUPABASE_ANON_KEY` → runtime `SUPABASE_ANON_KEY` (`server.ts` ×3)
+  - [ ] Photo helpers `getBookPhotos` / `getAdminBookPhotos` → relative `/sb`
+  - [ ] `createAdminClient` signed-URL host → app-origin `/sb` (currently public URL — browser-reachable, works)
+  - [ ] OAuth `/api/auth/google` + `server.ts:89` public-origin handling under `/sb`
+  - [ ] Email / OG / social-card → `absoluteStorageUrl()`
+  - [ ] `next.config` remotePatterns cleanup once all srcs are relative; confirm book-page SSG intact
 - [ ] 1.2 Prod proxy + env cutover (compose `SUPABASE_INTERNAL_URL`, drop `NEXT_PUBLIC_SUPABASE_URL`
   build-arg; backup; promote; live smoke)
 - [ ] 1.3 CI e2e runs the **built image** (`docker run` on host network; Playwright no-webServer)
