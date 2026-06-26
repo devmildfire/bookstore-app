@@ -17,12 +17,14 @@ npm run test:e2e         # E2E (Playwright vs full stack — CI)
 **Phase 1 of the testing strategy is implemented** (Vitest unit + integration, Playwright
 E2E). Unit tests are co-located (`src/**/*.test.ts`), pure, and run anywhere. Integration
 (`tests/integration/`) and E2E (`tests/e2e/`) need the local Supabase stack and are
-**CI-authoritative** — they `describe.skipIf` / no-op without the stack, so `npm test`
-stays green locally without Docker. CI: `.github/workflows/test.yml` (unit → integration
-on push/PR to main) + `test-e2e.yml` (feature branches + PRs). Lint + unit-related tests
-run on staged files via the pre-commit hook. The hard production-deploy test gate is the
-next step (not yet wired) — see [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md) §10
-step 5.
+**CI-authoritative** — integration tests `describe.skipIf` without the stack (so `npm test`
+stays green locally without Docker); E2E is CI-only with no local no-op guard. CI:
+`.github/workflows/ci.yml` (audit → lint → unit → integration → build → e2e on push/PR to
+main) + `test-e2e.yml` (feature-branch pushes only — `feature/**`/`feat/**`; PRs run e2e
+inside `ci.yml`). Lint + unit-related tests run on staged files via the pre-commit hook.
+The hard production-deploy test gate is wired — `deploy-production.yml` blocks build/deploy
+unless `ci.yml` is green for the deployed SHA — see [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md)
+§10 step 5.
 
 The full testing strategy — stack, layering (unit → integration → E2E), and the CI plan
 for reproducing the full Next.js + Supabase stack on GitHub Actions — is in
@@ -58,8 +60,9 @@ with:
 node scripts/check-rls.mjs   # exits non-zero on drift; run after any schema change
 ```
 
-(Background: catalog tables `Titles`/`Authors`/`CardBooks`/`Titles_Authors` once shipped
-RLS-off with anon write grants — see [docs/audits/data-architecture.md](docs/audits/data-architecture.md) F1.)
+(Background: catalog tables `Titles`/`Authors`/`Titles_Authors` (and the former `CardBooks`,
+since consolidated into the unified `Editions` table) once shipped RLS-off with anon write
+grants — see [docs/audits/data-architecture.md](docs/audits/data-architecture.md) F1.)
 
 ### Destructive DB/storage ops — STOP and ask first (HARD RULE)
 
@@ -77,9 +80,7 @@ explicit user approval first, AND take a fresh backup first.** This applies to:
 `supabase db reset`, `DROP`/`TRUNCATE`, bulk `DELETE`/`UPDATE`, destructive
 migrations, `pg_restore`/restoring a dump over a live DB, and any storage bucket
 or object deletion (`storage … remove/emptyBucket/deleteBucket`, `delete from
-storage.*`). When in doubt, treat it as destructive and ask. (A local Claude Code
-PreToolUse guard in `.claude/hooks/` also intercepts these and forces a prompt —
-do not try to bypass it.)
+storage.*`). When in doubt, treat it as destructive and ask.
 
 **Always create a fresh DB backup before ANY destructive database operation.**
 Backups go in the gitignored `backups/` dir:
@@ -123,17 +124,16 @@ src/
       auth/       login/, register/, forgot-password/, reset-password/, confirm/ routes
       profile/    User cabinet (books/, courses/, subscriptions/, orders/, gift-cards/, favorites/)
       books/      Catalog
-        (catalog)/  Catalog listing (page.tsx, loading.tsx, error.tsx). Nested route group
-                    so its loading.tsx is NOT a Suspense ancestor of /books/[slug]
-                    — the catalog grid skeleton would otherwise flash on book-detail loads.
         [slug]/     Book detail (own loading.tsx mirrors the real page layout)
       cart/       Cart page
-      checkout/   Checkout and success/
-      payments/   In-app mock payment gateway (mock/)
+      checkout/   Checkout (success/ + fail/ live under payments/)
+      payments/   In-app mock payment gateway (mock/) + success/ + fail/
       dino-magazine/, gift-cards/, subscription/, authors/, abzac/, about/, …  (storefront pages)
     admin/      Admin panel — header-free chrome. login/ + guarded (panel)/ route group
       (panel)/    orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/
-                  articles/ featured/ submissions/ audit/ + dashboard
+                  articles/ periodicals/ awards/ featured/ partners/ team/ submissions/
+                  subscribers/ social-cards/ audit/ + dashboard
+                  (`dino-magazine/` is a redirect to `/admin/articles`)
   api/          Supabase API modules — one directory per domain (books/, cart/, orders/, …, admin/)
   assets/       SVGs, images (SVGs imported via @svgr/webpack)
   components/   UI components, grouped by domain; common/ for shared primitives (Modal, Scroller, Skeleton, etc.); admin/ for admin UI
@@ -144,7 +144,7 @@ src/
   lib/          Helpers: auth/actions.ts, supabase/client.ts + server.ts, storage.ts, etc.
   styles/       globals.scss and shared style tokens
   types/        Shared TypeScript types; supabase.ts is generated — do not edit manually
-  utils/        Utility functions, default exports (currently empty placeholder)
+  utils/        Utility functions, default exports (e.g. cn.ts)
 ```
 
 ### Import alias
@@ -158,30 +158,30 @@ There is no global client-side state library. Server state is managed by TanStac
 ### Entity / data layer pattern
 
 Each domain entity in `src/entities/<name>/` has:
-- `server.ts` — Supabase query definitions and server-side types (use `QueryData<typeof query>` for inferred types)
+- `server.ts` — Supabase query definitions and server-side row types (hand-written `ServerRow` types matching the RPC result shape)
 - `client.ts` — normalized TypeScript interfaces used in the frontend
 - `normalize.ts` — transforms server shape → client shape via `normalizeObject`
 - `validation.ts` — Zod schemas
 
-API calls go through `src/api/<domain>/` modules that import the Supabase client from `@/lib/supabase/client` (browser) or `@/lib/supabase/server` (RSC / Server Actions) and call Supabase directly (no REST wrapper layer).
+API calls go through `src/api/<domain>/` modules that import the Supabase client from `@/lib/supabase/client` (browser, via `getBrowserClient`) or `@/lib/supabase/server` (RSC / Server Actions, via `createDataClient`) and call Supabase directly (no REST wrapper layer).
 
 ### Layout system
 
-Layouts use the App Router convention: each route segment can have a `layout.tsx` that wraps its children. The root layout (`src/app/layout.tsx`) sets the HTML shell, loads fonts, and renders `<Header>` and the `Providers` wrapper. There is no `getLayout` pattern — that was a Pages Router convention.
+Layouts use the App Router convention: each route segment can have a `layout.tsx` that wraps its children. The root layout (`src/app/layout.tsx`) sets the HTML shell, loads fonts, and renders the `Providers` wrapper (plus `<WebVitals>`) — no chrome. The storefront `<Header>`/`<Footer>` chrome lives in the `(site)` route-group layout (`src/app/(site)/layout.tsx`), so `/admin` can render its own header-free layout. There is no `getLayout` pattern — that was a Pages Router convention.
 
 ### Auth flow
 
-On app load, `src/app/providers.tsx` checks for an existing Supabase session client-side. If none exists it calls `supabase.auth.signInAnonymously()`. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`; Google OAuth via the `GET /api/auth/google` route handler (`src/app/api/auth/google/route.ts`), triggered by `window.location.assign('/api/auth/google')`. It is deliberately a route handler, **not** a Server Action — the old action shape raced Firefox's RSC stream reader ("Error in input stream"); a top-level navigation to a GET → 302 has no streaming response to abort.
+On app load, `src/app/providers.tsx` reads the `bookstore_has_session` hint cookie client-side; if no session exists it defers an anonymous sign-in (`ensureAnonSession()` from `@/lib/supabase/authedClient`) until the first real interaction (pointerdown/keydown/touchstart/wheel/scroll), so a passive/PSI visit never signs in. `src/proxy.ts` (the Next.js 16 proxy file) refreshes sessions on every request (verifying the JWT locally via `getClaims()` against JWKS, avoiding a per-request `getUser()` round-trip) and sets the `bookstore_cart_id` cookie for anonymous users. Real accounts are created via `/auth/register`; login via `/auth/login`; Google OAuth via the `GET /api/auth/google` route handler (`src/app/api/auth/google/route.ts`), triggered by `window.location.assign('/api/auth/google')`. It is deliberately a route handler, **not** a Server Action — the old action shape raced Firefox's RSC stream reader ("Error in input stream"); a top-level navigation to a GET → 302 has no streaming response to abort.
 
 Registration uses **double opt-in** (`enable_confirmations = true`) — see the Email section. Password reset is `/auth/forgot-password` → recovery email → `/auth/reset-password`. All auth-email links land on `/auth/confirm` (`verifyOtp`, sets session cookies, forwards to `next`). The cabinet's sign-in-method label is read from the session JWT's `amr` claim (`getClaims()` in `profile/layout.tsx`), **not** from `identities` — adding a password to an OAuth account creates no `email` identity and password sign-in doesn't bump an identity's `last_sign_in_at`, so the identity list would mislabel a password login.
 
-When an anonymous user signs in (OAuth or email/password), their Cart, Orders, Profile, GiftCards, and Likes are migrated onto the resolved authenticated user and the anon row is deleted, in a single atomic SQL transaction (`migrate_anonymous_user` RPC, in the consolidated baseline). We deliberately do **not** use `linkIdentity`. Outstanding pre-launch auth ops (prod Google OAuth client, anon-row GC via `pg_cron`, reverse-proxy `/auth/v1/*` routing) are tracked in [docs/CONCERNS.md](docs/CONCERNS.md).
+When an anonymous user signs in (OAuth or email/password), their Cart, Orders, Profile, GiftCards, and Likes are migrated onto the resolved authenticated user and the anon row is deleted, in a single atomic SQL transaction (`migrate_anonymous_user` RPC, in the consolidated baseline). We deliberately do **not** use `linkIdentity`. The remaining auth ops (prod Google OAuth functional verification) and the completed pre-launch items (reverse-proxy `/auth/v1/*` routing, anon-row GC via `pg_cron`) are tracked in [docs/CONCERNS.md](docs/CONCERNS.md).
 
 ### Profile cabinet (`/profile`)
 
 The user's cabinet lives at `/profile` (the old `/account` route was deleted, no back-compat redirect — project was still in dev when renamed). Reachable in one click from the header profile icon for anon **and** real users alike; the header icon never logs anyone out.
 
-Layout is multi-route: `/profile`, `/profile/books`, `/profile/courses`, `/profile/subscriptions`, `/profile/orders`, `/profile/gift-cards`, `/profile/favorites` all share `/profile/layout.tsx`. Favorites is a placeholder ("Пока ничего нет") — actual favorites feature is out of scope. The shell is a 450 px wide `$color-sidebar` (`#1A0F0F`) stripe on the left + free-flowing main panel on the right.
+Layout is multi-route: `/profile`, `/profile/books`, `/profile/courses`, `/profile/subscriptions`, `/profile/orders`, `/profile/gift-cards`, `/profile/favorites` all share `/profile/layout.tsx`. Favorites is SSR-rendered from the user's likes (`getLikedTitlesServer` / `getLikedBoxSetsServer`); "Пока ничего нет" is the empty-state copy. The shell is a 450 px wide `$color-sidebar` (`#1A0F0F`) stripe on the left + free-flowing main panel on the right.
 
 Key invariants:
 - `Profiles` table is FK'd to `auth.users(id) ON DELETE CASCADE` with RLS scoped to owner. One row per user; default `nickname = 'Никнейм'` (literal Cyrillic — matches Figma placeholder). Fields: nickname, avatar_path, full_name, phone, birthday, **city**, about, recovery_email.
@@ -189,7 +189,7 @@ Key invariants:
 - Avatars live in the `avatars` public bucket (2 MB cap, JPEG/PNG/WEBP). Path is `avatars/{user_id}.{ext}` — `Profiles.avatar_path` stores the bare object key.
 - The sidebar header strip carries avatar (77 × 78) + nickname over a red→black gradient overlay on `$color-sidebar`. The "active" nav-item color is `$color-accent-on-dark`.
 - Sidebar nav: **Мои книги** → `/profile/books`, **Мои курсы** → `/profile/courses`, **Мои подписки** → `/profile/subscriptions`, **Заказы** → `/profile/orders`, **Карты даров** → `/profile/gift-cards`, **Избранное** → `/profile/favorites`, **Стать автором** → `/suggest-manuscript` (existing stub, real authors page is future work). Items + icons live in `ProfileSideNav` `NAV_ITEMS`.
-- The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal`, which has an **email + password form** on top — built on the shared `AdminInput`, dispatched via `loginAction` inside `startTransition`, refreshes the route on success — and four line-art OAuth icons below: Google is wired, Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
+- The sidebar bottom CTA is the auth slot: anonymous users see **Войти** (opens `LoginModal`, which has an **email + password form** on top — built on the shared `Input` (`@/components/common/Input`), dispatched via `loginAction` inside `startTransition`, refreshes the route on success — and four line-art OAuth icons below: Google is wired, Yandex/VK/Telegram show a "Скоро" hint); authenticated users see **Выйти** which submits `logoutAction`. There is no separate `SecurityCard` — login + logout both live here.
 - **`isAnon` must be resolved server-side and passed down as a prop.** With `encode: 'tokens-only'` the live session tokens are in HttpOnly cookies the browser cannot read; `localStorage` only holds a cached `User` object that goes stale after a server-side OAuth exchange. `ProfileLayout` reads `user.is_anonymous` from `createClient()` (server) and passes `isAnon` to `ProfileSideNav`. Do not use `useSupabaseUser()` for sign-in CTAs.
 - Profile editing happens in `EditProfileModal` triggered by the outlined "Редактировать профиль" button in the main panel. Avatar upload is inside the modal, not the read-only main panel.
 - See also: `Profiles` table + `get_or_create_profile` RPC in the consolidated baseline (`supabase/migrations/20260101000000_baseline_schema.sql`); `src/components/profile/{ProfileSideNav,ProfileAuthSlot,ProfileMainPanel,LoginModal,AnonRecoveryModal,EditProfileModal,ProfileEditor,AvatarUpload,MyBooksList,MyCoursesList,SubscriptionList,OrderHistoryList}/`. (The Войти/Выйти CTA lives in `ProfileAuthSlot`.)
@@ -208,8 +208,8 @@ Key invariants:
 - **Two-phase order, not atomic.** `create_pending_order(...)` writes `Orders` (status `'pending'`, `paid_at=null`) + `OrderItems` and **does not** wipe the cart. The buyer is POSTed to the gateway; on a valid payment callback, `mark_order_paid(p_inv_id, p_out_sum)` — **idempotent** — verifies the amount, sets `status='paid'`/`paid_at=now()`, wipes that user's `Cart`+`CartPromo`, and (for recurring/subscription lines) creates the `UserSubscriptions` anchor. An order fully covered by gift cards settles immediately (`startCheckoutAction` returns `paid`).
 - **Provider** is chosen by `PAYMENT_PROVIDER` (`mock` default, `robokassa` in prod) in `src/lib/payments/config.ts`; `mock` flips the gateway URLs to in-app endpoints (`/payments/mock`). Signature/receipt/recurring logic in `src/lib/payments/robokassa/`.
 - `Orders` rows are **immutable price snapshots**: `original_total`, `book_discount_total`, `promo_code`, `promo_discount`, and shipping fields are written once at order time. Recomputing later from current prices is forbidden.
-- BoxSet physicality is computed by `box_set_is_physical(box_set_id)` from `BoxSetBooks` rows. Entry with `product_id` like `PrintBook-N` or `Book2.0-N` ⇒ physical; entry with `NULL product_id` ⇒ check whether the title has a row in `PrintedBooks` or `CardBooks`.
-- Digital files live in the private `digital-files` bucket. Per-edition columns: `Ebooks.file_path`, `Audiobooks.file_path`, `CardBooks.file_path`. Served via signed URLs with 1 h TTL.
+- BoxSet physicality is computed by `box_set_is_physical(box_set_id)` from `BoxSetBooks` rows. Entry with `product_id` like `PrintBook-N` or `Book2.0-N` ⇒ physical; entry with `NULL product_id` ⇒ check whether the title has a `PrintBook`/`Book2.0` row in the `Editions` table.
+- Digital files live in the private `digital-files` bucket. The unified `Editions` table (kinds EBook/AudioBook/PrintBook/Book2.0) carries a single `Editions.file_path` column (object key in the bucket). Served via signed URLs with 1 h TTL.
 - Anonymous users complete checkout fine — `Orders.user_id` accepts the anon UID. The anon→OAuth/email migration (see auth flow above) moves those orders to the real user on sign-in.
 - **Failed/cancelled payment ≠ cancelled order.** A gateway FailURL hit leaves the order `pending` so the buyer can resume payment from order history (`src/app/(site)/payments/fail/route.ts`); cancellation is a separate explicit user action (`cancelOrderAction` → `cancel_pending_order` RPC). Stale `pending` orders auto-expire after 7 days (`expire_stale_pending_orders`).
 - A paid order sends one idempotent **order-confirmation email** (Resend — see Email below). Out of scope and stubbed: BoxSet/GiftCard/Subscription/Course file downloads. (The single-shot `place_order` RPC + `src/api/orders/placeOrder.ts` were legacy and have been removed — migration `20260614150000_drop_legacy_place_order.sql` drops both overloads; the two-phase flow above is the checkout path.)
@@ -243,17 +243,17 @@ Key invariants:
 
 Staff back-office, **header-free chrome** (its own shell, not the storefront Header/Footer). Shipped.
 
-- **Routing:** `src/app/admin/login/` (unguarded) + `src/app/admin/(panel)/` (guarded route group). Sections under `(panel)/`: `orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/ articles/ periodicals/ awards/ featured/ partners/ team/ submissions/ subscribers/ audit/` + the dashboard. (`dino-magazine/` is a redirect to `/admin/articles` — the «Динозавр» magazine is the Articles collection.)
+- **Routing:** `src/app/admin/login/` (unguarded) + `src/app/admin/(panel)/` (guarded route group). Sections under `(panel)/`: `orders/ books/ authors/ box-sets/ gift-cards/ subscriptions/ promo-codes/ articles/ periodicals/ awards/ featured/ partners/ team/ submissions/ subscribers/ social-cards/ audit/` + the dashboard. (`dino-magazine/` is a redirect to `/admin/articles` — the «Динозавр» magazine is the Articles collection.)
 - **Auth/guard:** admin role lives in `auth.users.app_metadata.role` (`= 'admin'`), set only via service-role (not user-editable). `src/lib/admin/auth.ts` (`isAdmin`, `requireAdmin`, `ADMIN_ROLE`); the `(panel)/layout.tsx` calls `requireAdmin()` (defense-in-depth alongside the `proxy.ts` gate). Seed/promote an admin with `node --env-file=.env scripts/seed-admin.mjs <email> <password>`.
 - **Chrome:** `AdminShell` (sticky topbar + breadcrumb + bell→`/audit`, off-canvas drawer ≤`search-bar`) + `AdminSideNav` (grouped nav with count chips from `getAdminNavCounts`).
-- **Shared UI — ONE component set for admin + storefront (do NOT reinvent per-section, do NOT fork admin vs site):** the shared primitives live in `src/components/common/`: `Input`, `Textarea`, `Select` (custom dropdown — controlled or `name`+hidden-input form mode), `Pagination` (`variant` simple/numbered), `Badge` (`tone`), `DatePicker`, `Button` (variants incl. `cta`/`ctaOutline` + `href` link mode), `icons/`, `Modal`, `Scroller`, `Checkbox`, `Spinner`, `ComingSoon`, … Number inputs reject non-numerics; fields are bare or labelled. Still under `admin/` (single components, not duplicates — review tracked in [docs/plans/ui-component-unification.md](docs/plans/ui-component-unification.md)): `AdminList`, `AdminFilterBar`, `AdminPageHeader`, `ImageUploader`. Genuinely admin-only chrome: `AdminShell`, `AdminSideNav`. Dark design tokens in `src/styles/params.scss`; the `field-base` mixin is the app-wide field base. Need a variation? **add a prop**, never a new component. Plus per-domain folders under `src/components/admin/<domain>/`.
+- **Shared UI — ONE component set for admin + storefront (do NOT reinvent per-section, do NOT fork admin vs site):** the shared primitives live in `src/components/common/`: `Input`, `Textarea`, `Select` (custom dropdown — controlled or `name`+hidden-input form mode), `Pagination` (`variant` simple/numbered), `Badge` (`tone`), `DatePicker`, `Button` (variants incl. `cta`/`ctaOutline` + `href` link mode), `icons/`, `Modal`, `Scroller`, `Checkbox`, `Spinner`, … Number inputs reject non-numerics; fields are bare or labelled. Still under `admin/` (single components, not duplicates — review tracked in [docs/plans/ui-component-unification.md](docs/plans/ui-component-unification.md)): `AdminList`, `AdminFilterBar`, `AdminPageHeader`, `ImageUploader`. Genuinely admin-only chrome: `AdminShell`, `AdminSideNav`. Dark design tokens in `src/styles/params.scss`; the `field-base` mixin is the app-wide field base. Need a variation? **add a prop**, never a new component. Plus per-domain folders under `src/components/admin/<domain>/`.
 - **Data:** reads via `src/api/admin/<domain>/`; writes via Server Actions in `src/lib/admin/<domain>/actions.ts`. Audit log = `AdminAuditLog`.
 
 ## Storage & Images
 
 ### Cover images
 
-Book covers are stored in a **Supabase Storage bucket called `covers`** (public, 20 MB file limit).
+Book covers are stored in a **Supabase Storage bucket called `covers`** (public, 5 MB file limit).
 
 **How it works:**
 - The `Titles.cover` column stores **bare filenames only** (e.g., `murlo.jpg`, `povelitel-bloh.png`).

@@ -15,8 +15,10 @@ This document defines the testing strategy for the bookstore-app: the stack, the
 (unit → integration → E2E), what gets tested where, and how the full Next.js + Supabase
 stack is reproduced in GitHub Actions CI for E2E on every feature-branch push.
 
-The project currently has **no automated tests** — the sole quality gate is ESLint via a
-pre-commit hook on staged files (`AGENTS.md`). This doc is the plan for changing that.
+The testing baseline now has Phase 1 in place (see the **Status** block above) — co-located
+Vitest unit tests, integration tests against the local Supabase stack, and Playwright E2E.
+Earlier drafts of this doc opened with "the project currently has no automated tests"; that
+no longer applies.
 
 > See also: [`docs/testing/promo-codes.md`](promo-codes.md) — the existing manual-test
 > fixture reference for the promo-code cart flow (seeded codes + expected behaviors).
