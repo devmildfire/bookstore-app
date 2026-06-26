@@ -268,17 +268,22 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
   e2e-relevant): `metadataBase`, `robots.ts`, `sitemap.ts`, email links — these define the canonical
   prod site even in the CI-run image. **1.3 must set `APP_BASE_URL=http://localhost:3000`** when it
   runs the image; prod can rely on the `NEXT_PUBLIC_BASE_URL` fallback or set `APP_BASE_URL` in compose.
-- [~] 1.2 Prod proxy + env cutover.
+- [x] 1.2 Prod proxy + env cutover — **DONE + live (2026-06-26)**.
   - [x] **Repo changes (CI-validated, non-deploying):** Dockerfile drops the `NEXT_PUBLIC_SUPABASE_*`
     build-args (now `NEXT_PUBLIC_BASE_URL` only, for metadataBase); `build-push-reusable` build-args
     updated; prod `docker-compose.yml` adds runtime `APP_BASE_URL` + `SUPABASE_ANON_KEY` (and drops the
     dead `NEXT_PUBLIC_SUPABASE_*`); `.env.example` mirrors. nginx unchanged — the app proxies `/sb`
     itself (→ `SUPABASE_INTERNAL_URL=http://kong:8000`, already set). The CI image is now fully
     env-agnostic and proven via the 1.3 image-e2e.
-  - [ ] **Prod cutover (VPS, needs explicit go + DB backup):** on `/opt/chtivo` — back up the DB, add
-    `APP_BASE_URL` + `SUPABASE_ANON_KEY` to the live `.env`, sync the compose, then promote
-    `main → production` (deploy pulls the env-agnostic image + `up -d`). Smoke: images via `/sb`, auth,
-    cart, **OAuth round-trip** (verify GoTrue's external callback URL), signed downloads.
+  - [x] **Prod cutover (VPS) — done.** Backed up the prod DB (4.3 MB pg_dump, `backups/…-pre-sb-cutover`);
+    diffed the live compose vs repo (only the intended env changes) → synced `docker-compose.yml`
+    (`.env` already had `NEXT_PUBLIC_BASE_URL`+`ANON_KEY`, so no `.env` change); `docker compose config`
+    valid; promoted `main e5ae2340 → production` (deploy CI-gate green → image promoted → `up -d`).
+    **Smoke (live, all 200):** home; `/sb/rest/v1/Titles` with NO apikey → real data (proxy injects the
+    prod anon key); `/sb/auth/v1/health`; home + SSG book-page covers + raw storage object via `/sb`
+    (`image/jpeg`). **OAuth round-trip still needs a manual click-through** (curl can't do Google) —
+    `/sb/auth/v1/health` is 200 and the authorize route goes via `/sb`; GoTrue's external callback uses
+    its own config and `api.mildfire.dev` is still routed, so it should work — verify by signing in.
   - **Note:** the running VPS compose/.env are NOT auto-synced from the repo — the deploy workflow only
     `pull`s + `up`s the existing on-VPS compose. So the `.env`/compose edits must be applied on the VPS
     before the promote, or the new image will start without `APP_BASE_URL`/`SUPABASE_ANON_KEY`.
