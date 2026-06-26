@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/server'
 import { BOOK_PHOTOS_BUCKET } from '@/lib/storage'
+import { SUPABASE_PROXY_PREFIX } from '@/lib/supabase/sameOrigin'
 import { BOOK_PHOTO_FOLDERS, type BookPhotoFolder } from '@/consts/bookPhotos'
 
 export type AdminBookPhoto = {
@@ -21,7 +22,6 @@ export async function getAdminBookPhotos(slug: string): Promise<AdminEditionPhot
   if (!slug) return out
 
   const admin = createAdminClient()
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 
   await Promise.all(
     BOOK_PHOTO_FOLDERS.map(async (folder) => {
@@ -36,7 +36,7 @@ export async function getAdminBookPhotos(slug: string): Promise<AdminEditionPhot
           const v = encodeURIComponent(f.updated_at ?? f.created_at ?? '')
           return {
             name: f.name,
-            url: `${supabaseUrl}/storage/v1/object/public/${BOOK_PHOTOS_BUCKET}/${slug}/${folder}/${f.name}${v ? `?v=${v}` : ''}`,
+            url: `${SUPABASE_PROXY_PREFIX}/storage/v1/object/public/${BOOK_PHOTOS_BUCKET}/${slug}/${folder}/${f.name}${v ? `?v=${v}` : ''}`,
           }
         })
     })

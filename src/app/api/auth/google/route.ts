@@ -54,13 +54,13 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  // data.url is built from the supabase client's base URL, which is the INTERNAL
-  // kong URL (SUPABASE_INTERNAL_URL) for server-side perf — the browser can't
-  // reach kong:8000. Rebuild the authorize URL on the PUBLIC origin (path + PKCE
-  // query preserved). Using URL(path, origin) — not .host — so kong's :8000 port
-  // is dropped (the host setter would otherwise retain it).
+  // data.url is built from the supabase client's base URL (the internal kong URL,
+  // SUPABASE_INTERNAL_URL) which the browser can't reach. Rebuild it on OUR OWN
+  // origin under /sb — the middleware forwards /auth/v1/* to Supabase — so no
+  // env-specific Supabase host is baked in (one image, any environment). PKCE
+  // query preserved. (GoTrue's own OAuth callback to Google still uses its
+  // configured external URL; verify that end-to-end during the prod cutover.)
   const src = new URL(data.url)
-  const publicOrigin = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).origin
-  const authorizeUrl = new URL(src.pathname + src.search, publicOrigin)
+  const authorizeUrl = new URL(`/sb${src.pathname}${src.search}`, SITE_ORIGIN)
   return NextResponse.redirect(authorizeUrl.toString())
 }

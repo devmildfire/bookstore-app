@@ -247,13 +247,21 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
   `/_next/image?url=%2Fsb%2F…`); browser client → `${origin}/sb` + placeholder key; `authCookie.ts`
   pinned to a constant (fixes the prod cookie-name mismatch the host-derived name would cause);
   `storage.ts` → relative `/sb` + `absoluteStorageUrl()`; `storage.test.ts` updated. `sameOrigin.ts`
-  added. Remaining 1.1 sub-tasks (work via NEXT_PUBLIC fallbacks for now, so nothing is broken):
-  - [ ] Server anon key `NEXT_PUBLIC_SUPABASE_ANON_KEY` → runtime `SUPABASE_ANON_KEY` (`server.ts` ×3)
-  - [ ] Photo helpers `getBookPhotos` / `getAdminBookPhotos` → relative `/sb`
-  - [ ] `createAdminClient` signed-URL host → app-origin `/sb` (currently public URL — browser-reachable, works)
-  - [ ] OAuth `/api/auth/google` + `server.ts:89` public-origin handling under `/sb`
-  - [ ] Email / OG / social-card → `absoluteStorageUrl()`
-  - [ ] `next.config` remotePatterns cleanup once all srcs are relative; confirm book-page SSG intact
+  added. **Server-side slice also DONE (2026-06-26)** — all server-side anon reads runtime-first; OAuth authorize via /sb; admin signed-URLs mapped to /sb; OG handled by metadataBase, email/social embed no storage images:
+  - [x] Server anon key `NEXT_PUBLIC_SUPABASE_ANON_KEY` → runtime `SUPABASE_ANON_KEY` (`server.ts` ×3)
+  - [x] Photo helpers `getBookPhotos` / `getAdminBookPhotos` → relative `/sb`
+  - [x] `createAdminClient` signed-URL host → app-origin `/sb` (currently public URL — browser-reachable, works)
+  - [x] OAuth `/api/auth/google` + `server.ts:89` public-origin handling under `/sb`
+  - [x] Email / OG / social-card → `absoluteStorageUrl()`
+  - [ ] `next.config` remotePatterns cleanup — **deferred** (kept as harmless dead config; removing
+    risks a missed absolute-URL image). Remove after a prod image audit.
+  - [ ] OAuth full round-trip — app side done; GoTrue's external callback URL is prod config → verify
+    end-to-end during 1.2 cutover.
+- [ ] **1.1b (newly surfaced) — `NEXT_PUBLIC_BASE_URL` → runtime.** Also build-baked + env-specific
+  (`SITE_ORIGIN`, `metadataBase`, payments, email links). Harmless for the Supabase scope, but the
+  image isn't fully env-agnostic until it's runtime — and **1.3 (CI e2e against the image) needs it**
+  (the image runs at `localhost:3000` in CI but would otherwise carry the prod base URL → wrong
+  redirects). Resolve from `X-Forwarded-Host` (nginx already sets it) before 1.3.
 - [ ] 1.2 Prod proxy + env cutover (compose `SUPABASE_INTERNAL_URL`, drop `NEXT_PUBLIC_SUPABASE_URL`
   build-arg; backup; promote; live smoke)
 - [ ] 1.3 CI e2e runs the **built image** (`docker run` on host network; Playwright no-webServer)

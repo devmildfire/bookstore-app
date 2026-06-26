@@ -44,6 +44,20 @@ export function absoluteStorageUrl(origin: string, relativeUrl: string | null): 
   return `${origin.replace(/\/$/, '')}${relativeUrl}`
 }
 
+/**
+ * Map an absolute Supabase storage/signed URL to the same-origin `/sb` path so
+ * the browser can fetch it. The admin client (createSignedUrl) builds URLs from
+ * the internal kong host, which the browser can't reach; keep everything from
+ * `/storage/v1/...` (the signing token + query is preserved) and serve it via
+ * the proxy. The signed token authorizes the object; the proxy adds the apikey.
+ */
+export function toSameOriginStorageUrl(url: string): string {
+  const marker = '/storage/v1/'
+  const i = url.indexOf(marker)
+  if (i === -1) return url
+  return `${SUPABASE_PROXY_PREFIX}${url.slice(i)}`
+}
+
 export const getCoverUrl = (filename: string | null) => publicUrl(COVERS_BUCKET, filename)
 export const getAvatarUrl = (path: string | null) => publicUrl(AVATARS_BUCKET, path)
 export const getSubscriptionImageUrl = (filename: string | null) => publicUrl(SUBSCRIPTIONS_BUCKET, filename)

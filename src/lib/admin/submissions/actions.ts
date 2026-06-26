@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { createAdminClient } from '@/lib/supabase/server'
+import { toSameOriginStorageUrl } from '@/lib/storage'
 import { STORY_SUBMISSIONS_BUCKET } from '@/api/admin/submissions'
 
 export type DownloadResult = { status: 'ok'; url: string } | { status: 'error'; message: string }
@@ -25,7 +26,7 @@ export async function getSubmissionDownloadUrlAction(formData: FormData): Promis
     .from(STORY_SUBMISSIONS_BUCKET)
     .createSignedUrl(path, 60 * 60, { download: true })
   if (error || !data) return { status: 'error', message: error?.message ?? 'Не удалось создать ссылку.' }
-  return { status: 'ok', url: data.signedUrl }
+  return { status: 'ok', url: toSameOriginStorageUrl(data.signedUrl) }
 }
 
 export async function deleteSubmissionAction(formData: FormData): Promise<SubmissionActionResult> {

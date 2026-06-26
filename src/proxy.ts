@@ -65,7 +65,7 @@ export async function proxy(request: NextRequest) {
     // doesn't hairpin out to the public host on every request. Falls back to the
     // public URL (local dev, or if the var isn't available in this runtime).
     process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       // Pin cookie name to the public-url-derived value (the internal kong URL
       // would otherwise derive sb-kong-… and miss the browser's session cookie).

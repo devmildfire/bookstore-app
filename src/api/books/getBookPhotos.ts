@@ -1,5 +1,6 @@
 import { createDataClient } from '@/lib/supabase/server'
 import { BOOK_PHOTOS_BUCKET } from '@/lib/storage'
+import { SUPABASE_PROXY_PREFIX } from '@/lib/supabase/sameOrigin'
 import { BOOK_PHOTO_SECTIONS } from '@/consts/bookPhotos'
 import type { ProductCategory } from '@/types/database'
 
@@ -19,7 +20,6 @@ export type EditionPhotos = Partial<Record<ProductCategory, BookPhoto[]>>
  */
 export async function getEditionPhotos(slug: string): Promise<EditionPhotos> {
   const supabase = createDataClient()
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 
   const titleRes = await supabase
     .from('Titles')
@@ -38,7 +38,7 @@ export async function getEditionPhotos(slug: string): Promise<EditionPhotos> {
       const photos: BookPhoto[] = (data ?? [])
         .filter((f) => f.name && !f.name.startsWith('.'))
         .map((f) => ({
-          url: `${supabaseUrl}/storage/v1/object/public/${BOOK_PHOTOS_BUCKET}/${slug}/${folder}/${f.name}`,
+          url: `${SUPABASE_PROXY_PREFIX}/storage/v1/object/public/${BOOK_PHOTOS_BUCKET}/${slug}/${folder}/${f.name}`,
           blurDataURL: blurs[`${folder}/${f.name}`] ?? null,
         }))
 

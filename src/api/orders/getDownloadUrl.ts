@@ -1,4 +1,5 @@
 import { createAdminClient, createClient } from '@/lib/supabase/server'
+import { toSameOriginStorageUrl } from '@/lib/storage'
 
 export type DownloadUrlResult =
   | { status: 'ok'; url: string; expiresIn: number }
@@ -125,5 +126,5 @@ export async function getDownloadUrl(orderItemId: number): Promise<DownloadUrlRe
     return { status: 'error', reason: 'sign_failed', message: signError?.message }
   }
 
-  return { status: 'ok', url: signed.signedUrl, expiresIn: SIGNED_URL_TTL_SECONDS }
+  return { status: 'ok', url: toSameOriginStorageUrl(signed.signedUrl), expiresIn: SIGNED_URL_TTL_SECONDS }
 }

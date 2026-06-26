@@ -10,10 +10,16 @@ import { SUPABASE_AUTH_COOKIE_NAME } from './authCookie'
 // Cloudflare → tunnel and back. Falls back to the public URL when unset (local
 // dev, or any path where the internal hostname isn't resolvable).
 //
-// NOTE: only for clients that *fetch data / manage auth* server-side.
-// createAdminClient stays on the PUBLIC url below — its createSignedUrl results
-// are handed to the browser and must be publicly reachable.
+// All server clients (including the admin client) use this internal URL. The
+// admin client's createSignedUrl results would be kong-internal and unreachable
+// by the browser, so callers map them to the same-origin /sb path
+// (toSameOriginStorageUrl in lib/storage.ts) before handing them out.
 const SERVER_SUPABASE_URL = process.env.SUPABASE_INTERNAL_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!
+
+// Anon key for server-side data/auth clients. Runtime (NOT NEXT_PUBLIC_, which
+// Next inlines at build) so one image works in every environment; falls back to
+// the public var for local dev / CI that haven't set the runtime name yet.
+const SERVER_ANON_KEY = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 // Auth client — uses SSR for cookie-based session management (Server Components & Server Actions)
 export async function createClient() {
@@ -21,7 +27,7 @@ export async function createClient() {
 
   return createServerClient<Database>(
     SERVER_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SERVER_ANON_KEY,
     {
       // Pin the cookie name to the PUBLIC-url-derived value (sb-api-auth-token).
       // SERVER_SUPABASE_URL points at kong internally, which would otherwise make
@@ -64,7 +70,7 @@ export async function createClient() {
 export function createDataClient() {
   return createSupabaseClient<Database>(
     SERVER_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SERVER_ANON_KEY,
     {
       auth: {
         autoRefreshToken: false,
@@ -73,7 +79,7 @@ export function createDataClient() {
       },
       global: {
         headers: {
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          apikey: SERVER_ANON_KEY,
         },
       },
     }
@@ -86,7 +92,7 @@ export function createDataClient() {
 // client to a code path that hasn't already done its own access check.
 export function createAdminClient() {
   return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    SERVER_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       auth: {

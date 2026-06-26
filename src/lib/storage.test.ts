@@ -6,6 +6,7 @@ import {
   getAwardUrl,
   getBooktrailerUrls,
   absoluteStorageUrl,
+  toSameOriginStorageUrl,
 } from './storage'
 
 // Storage URLs are now SAME-ORIGIN RELATIVE paths under /sb (the middleware
@@ -67,5 +68,17 @@ describe('absoluteStorageUrl', () => {
     expect(absoluteStorageUrl('https://app.example.com/', '/sb/a.jpg')).toBe('https://app.example.com/sb/a.jpg')
     expect(absoluteStorageUrl('https://app.example.com', 'https://cdn/x.jpg')).toBe('https://cdn/x.jpg')
     expect(absoluteStorageUrl('https://app.example.com', null)).toBeNull()
+  })
+})
+
+describe('toSameOriginStorageUrl', () => {
+  it('maps an absolute signed URL (any host) to the same-origin /sb path, keeping the token', () => {
+    expect(
+      toSameOriginStorageUrl('http://kong:8000/storage/v1/object/sign/digital-files/x.epub?token=abc&download=true'),
+    ).toBe('/sb/storage/v1/object/sign/digital-files/x.epub?token=abc&download=true')
+  })
+
+  it('passes through a URL with no /storage/v1/ marker unchanged', () => {
+    expect(toSameOriginStorageUrl('https://elsewhere/x')).toBe('https://elsewhere/x')
   })
 })
