@@ -3,8 +3,7 @@
 **Status:** implemented (all phases ++ CWV attribution)
 **Test suite branch:** `stress-testing`
 **Author/date:** 2026-06-25
-**Related:** [docs/monitoring/README.md](../monitoring/README.md),
-the Chrome DevTools MCP (https://github.com/ChromeDevTools/chrome-devtools-mcp)
+**Related:** [docs/monitoring/README.md](../monitoring/README.md)
 
 ---
 
@@ -26,14 +25,19 @@ Endurance / soak test the live bookstore site by driving real Chrome browsers th
 
 ## 2. Stack
 
+> **Refactored 2026-06-26** to the project's own browser-automation stack. Was
+> `puppeteer-core` + `chrome-launcher` (one OS Chrome per session) + an unused
+> `chrome-devtools-mcp` dep. Now **Playwright** (`@playwright/test`, already a
+> project dep for E2E) — one shared Chromium, N isolated contexts, auto-waiting
+> text locators, built-in device profiles. No separate `package.json`/lockfile;
+> run it via `npm run stress`.
+
 | Component | Role |
 |---|---|
-| **Chrome DevTools MCP** | Interactive debugging & scenario development |
-| **`puppeteer-core`** | Programmatic Chrome control for the soak runner |
-| **`chrome-launcher`** | Finds/launches a local Chrome installation |
-| **`Node.js`** | Test runner runtime (no framework) |
+| **`@playwright/test`** | Browser control — `chromium.launch()` once, one `browser.newContext()` per session; `devices['Pixel 5' / 'Desktop Chrome']` for emulation; `getByRole`/`getByText` auto-waiting locators |
+| **`Node.js`** (`util.parseArgs`) | Runner runtime + CLI parsing (no framework) |
 
-The Chrome DevTools MCP is wired into `.opencode.json` for interactive sessions. The automated soak runner is a standalone Node.js script using the same CDP primitives — an MCP-mediated test would be too slow and token-expensive for a 30-minute multi-session soak.
+One Chromium process serves all sessions; each session is a fresh context (clean cookies/storage = a new anon user), so concurrency scales by contexts, not OS processes.
 
 ### CWV measurement methodology
 
@@ -45,9 +49,11 @@ The stress test collects CWV using the browser's PerformanceObserver API (inject
 | **FCP** | `performance.getEntriesByType('paint')` | `cwv.fcp.value` (ms) | — |
 | **LCP** | `PerformanceObserver('largest-contentful-paint')` | `cwv.lcp.value` (ms) | `cwv.lcp.element` (tag, id, className), `cwv.lcp.url` |
 | **CLS** | `PerformanceObserver('layout-shift')` | `cwv.cls.value` (score) | `cwv.cls.sources[]` — up to 10 shifted elements with `{node: {tag, id, className, text}, prev: {x,y,w,h}, cur: {x,y,w,h}}` |
-| **INP** | `PerformanceObserver('event')` stored on `window.__stressInp` | `cwv.inp.value` (ms) | `cwv.inp.element` (tag, id, className, text), `cwv.inp.type` |
+| **INP** | `PerformanceObserver('event')` stored on `window.__cwv.inp` | `cwv.inp.value` (ms) | `cwv.inp.element` (tag, id, className, text), `cwv.inp.type` |
 
-**TTFB vs connectionTime:** The test records both `ttfb` (full `responseStart`, matching the `web-vitals` library and Grafana's RUM data) and `connectionTime` (`connectEnd - connectStart`). The server-only response time can be derived as `ttfb - connectionTime`. On warm navigations (connection reused via HTTP keep-alive) `connectionTime` is 0 and `ttfb` equals the server response time.
+The observers are registered via `context.addInitScript(cwvInitScript)` so they exist **before** page scripts run (capturing the first LCP/CLS/INP of every navigation into `window.__cwv`, fresh per document); `measureNavigation` reads the snapshot after the page settles. (`connectionTime` was recorded but never consumed by any analysis, so it was dropped in the 2026-06-26 refactor.)
+
+**TTFB:** full `responseStart`, matching the `web-vitals` library and Grafana's RUM data, so JSONL is comparable to the dashboard.
 
 **Warmup:** Before the first measured navigation, the test navigates to `/robots.txt` (a plain-text endpoint with zero page resources). This establishes the browser-level HTTP connection (DNS+TCP+TLS) without caching any images, fonts, JS bundles, or CSS that would skew subsequent LCP/FCP measurements. The `/robots.txt` warmup does not trigger the `<WebVitals />` beacon. Real browsers reuse HTTP connections via keep-alive on subsequent navigations, so this matches real-user conditions — and PSI/Lighthouse, which measures from persistent connections.
 
@@ -117,17 +123,17 @@ Each session runs this loop for the configured duration. Some steps are randomiz
 ## 5. CLI
 
 ```
-node scripts/stress-test/stress-runner.mjs \
-  --sessions 2              # concurrent browser sessions (default 2)
+npm run stress -- \
+  --sessions 2              # concurrent browser contexts (default 2)
   --duration 30             # minutes (default 30)
   --device both             # mobile, desktop, or both (default both)
-  --url https://bookstore-app.mildfire.dev
+  --url http://localhost:3000   # default localhost (point at a remote target explicitly)
   --keep                    # skip cleanup of test orders
 ```
 
-- `--device both` spawns one mobile + one desktop session
-- `--device mobile` or `--device desktop` spawns that type only
-- Sessions run independently; each spawns its own headed Chrome window
+- Default target is **localhost** — running against a remote/prod target writes real (mock-paid) orders there, so it's opt-in and prints a warning.
+- `--device both` spawns one mobile + one desktop worker; `--device mobile`/`desktop` spawns that type only.
+- Workers run concurrently against one shared Chromium; each loop iteration uses a fresh context (new anon user).
 
 ---
 
@@ -150,7 +156,6 @@ Each action entry may include a `cwv` object with measured Core Web Vitals (pres
   "ok": true,
   "cwv": {
     "ttfb": {"value": 134},
-    "connectionTime": {"value": 0},
     "lcp": {"value": 436, "element": {"tag": "IMG", "className": "CartItemRow-module__image"}, "url": "..."},
     "cls": {"value": 0.21, "sources": [{"node": {"tag": "FOOTER", "text": "(812) 915-83-67..."}, "prev": {"x":0,"y":486,"w":375,"h":358}, "cur": {"x":0,"y":0,"w":0,"h":0}}]}
   }
@@ -168,9 +173,11 @@ Summary line at the end:
 
 ## 7. Cleanup
 
-On normal completion or SIGINT, the runner calls `cancel_pending_order` RPC (via Supabase service-role admin client) for every order the test created. This cleans both `pending` and `paid` test orders.
+The journey fills **every** checkout's email field (both the delivery form's `#ship-email` and the email-only form's `#checkout-email` are `type=email`) with a marker address `stress-…@example.com`. On completion, the runner deletes orders by that marker — a single service-role `DELETE /rest/v1/Orders?email=like.stress-*@example.com` (OrderItems cascade).
 
-`--keep` flag skips cleanup so orders can be inspected manually.
+**Deleting by marker, not by time window** (the original cut every order created during the run) means a real customer order placed during a run is **never** touched — important because the runner can target a remote site. `--keep` skips cleanup so orders can be inspected; cleanup also no-ops without `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`.
+
+On `SIGINT` the first Ctrl-C lets in-flight journeys finish, then cleanup + summary run once (a second Ctrl-C force-quits). The old handler reassigned a `const`, which threw — so interrupting skipped cleanup entirely; fixed in the 2026-06-26 refactor.
 
 ---
 
@@ -269,8 +276,8 @@ The always-render `SkeletonCartRow` idea is therefore **not needed** — SSR sho
 
 ## 12. Risks
 
-- **Chrome not installed / wrong version** — `chrome-launcher` finds the system Chrome; fallback: install Chromium via `puppeteer` (bundled).
-- **Site changes break selectors** — all element selectors will need updating if the UI changes. Mitigation: add a `selectors` config file for easy retargeting.
+- **Chromium not installed** — Playwright's bundled Chromium is used (`chromium.launch()`); it's already installed for E2E (`npx playwright install chromium` if missing).
+- **Site changes break selectors** — text/role locators (`getByRole('button', { name: 'Добавить в корзину' })`) are resilient to markup changes but tied to the Russian copy; update if labels change.
 - **Mock gateway interactive flow changes** — the mock payment form has click targets that could change.
-- **Rate limiting / WAF** — sustained activity may trigger Cloudflare challenges. Mitigation: respect delays, randomize timing, avoid bot-like patterns.
-- **Headless detection** — headed mode reduces detection risk, but some sites use bot-detection JS. Mitigation: standard UA + viewport from real device profiles.
+- **Rate limiting / WAF** — sustained activity may trigger Cloudflare challenges on a remote target. Mitigation: respect delays, randomize timing, avoid bot-like patterns.
+- **Concurrency ceiling** — one Chromium, N contexts is light, but each context is still a full page + JS; a single machine realistically drives ~10–20 concurrent sessions before CPU/memory caps. For higher load, this is the wrong tool (it's a browser-level soak/CWV test, not an HTTP load generator).

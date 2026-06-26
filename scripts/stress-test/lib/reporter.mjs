@@ -1,5 +1,11 @@
 import { createWriteStream, mkdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+// Output dir is co-located with the harness (scripts/stress-test/stress-results),
+// independent of where the runner is invoked from — keeps it under the local
+// .gitignore regardless of cwd.
+const RESULTS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'stress-results')
 
 export function createReporter() {
   const log = []
@@ -9,7 +15,7 @@ export function createReporter() {
   function open() {
     if (stream) return
     const ts = new Date().toISOString().replace(/[:.]/g, '-')
-    const dir = join(process.cwd(), 'stress-results')
+    const dir = RESULTS_DIR
     mkdirSync(dir, { recursive: true })
     filePath = join(dir, `stress-results-${ts}.jsonl`)
     stream = createWriteStream(filePath, { flags: 'a' })

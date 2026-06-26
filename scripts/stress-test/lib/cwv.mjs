@@ -1,136 +1,75 @@
-// Core Web Vitals collector with attribution.
-// Measures TTFB, FCP, LCP, CLS, INP with DOM element attribution
-// via PerformanceObserver APIs injected in-browser.
+// Core Web Vitals collector with element attribution (Playwright).
+// `cwvInitScript` is registered via context.addInitScript so the observers are
+// installed BEFORE page scripts run — capturing the first LCP/CLS/INP of every
+// navigation (state is fresh per document). TTFB/FCP read from timing entries.
 
-async function snapshotInPage(page, waitMs) {
-  return page.evaluate((delay) => new Promise((resolve) => {
-    const results = {}
+// Runs in-page. Self-contained (no outer refs) so Playwright can serialize it.
+export function cwvInitScript() {
+  window.__cwv = { lcp: null, cls: 0, clsSources: [], inp: null }
+  const node = (n) =>
+    n ? { tag: n.tagName, id: n.id, className: typeof n.className === 'string' ? n.className : '', text: (n.textContent || '').slice(0, 80) } : null
+  const rect = (r) =>
+    r ? { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) } : { x: 0, y: 0, w: 0, h: 0 }
 
-    // TTFB — matches web-vitals library (responseStart), matching Grafana's RUM data.
-    // connectionTime is tracked separately so the server-only portion can be derived:
-    //   server_ttfb = ttfb - connectionTime
-    // Warm navigations (connection reused) show ttfb ≈ server_ttfb (connectionTime=0).
-    // See stress-testing plan for methodology.
-    const navEntries = performance.getEntriesByType('navigation')
-    if (navEntries.length) {
-      const n = navEntries[0]
-      results.ttfb = { value: Math.max(0, Math.round(n.responseStart)) }
-      results.connectionTime = { value: Math.max(0, Math.round(n.connectEnd - n.connectStart)) }
-    }
-
-    // FCP — Paint Timing
-    const paintEntries = performance.getEntriesByType('paint')
-    const fcpEntry = paintEntries.find(e => e.name === 'first-contentful-paint')
-    if (fcpEntry) {
-      results.fcp = { value: Math.round(fcpEntry.startTime) }
-    }
-
-    // LCP — Largest Contentful Paint with element attribution
-    let lcpEntry = null
-    try {
-      new PerformanceObserver((list) => {
-        const entries = list.getEntries()
-        if (entries.length) lcpEntry = entries[entries.length - 1]
-      }).observe({ type: 'largest-contentful-paint', buffered: true })
-    } catch {}
-
-    // CLS — Cumulative Layout Shift with source element attribution
-    let clsScore = 0
-    let clsShifts = []
-    try {
-      new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (!entry.hadRecentInput) {
-            clsScore += entry.value
-            if (entry.sources && entry.sources.length) {
-              for (const s of entry.sources) {
-                clsShifts.push({
-                  node: s.node ? { tag: s.node.tagName, id: s.node.id, className: s.node.className, text: (s.node.textContent || '').slice(0, 80) } : null,
-                  prev: { x: s.previousRect?.x || 0, y: s.previousRect?.y || 0, w: s.previousRect?.width || 0, h: s.previousRect?.height || 0 },
-                  cur: { x: s.currentRect?.x || 0, y: s.currentRect?.y || 0, w: s.currentRect?.width || 0, h: s.currentRect?.height || 0 },
-                })
-              }
-            }
-          }
-        }
-      }).observe({ type: 'layout-shift', buffered: true })
-    } catch {}
-
-    // INP — persistent observer stored on window.__stressInp
-    // so it can be read before the next navigation (not just in 3s window)
-    // If window.__stressInp already exists from a previous observer, update it.
-    // Otherwise create a new one.
-    if (!window.__stressInp) {
-      window.__stressInp = { value: 0, element: null, type: null }
-      try {
-        new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (entry.duration > window.__stressInp.value && entry.duration > 0 && entry.interactionId) {
-              window.__stressInp.value = Math.round(entry.duration)
-              window.__stressInp.element = entry.target ? { tag: entry.target.tagName, id: entry.target.id, className: entry.target.className, text: (entry.target.textContent || '').slice(0, 80) } : null
-              window.__stressInp.type = entry.name || null
-            }
-          }
-        }).observe({ type: 'event', durationThreshold: 0, buffered: true })
-      } catch {}
-    }
-    if (window.__stressInp.value > 0) {
-      results.inp = { value: window.__stressInp.value, element: window.__stressInp.element, type: window.__stressInp.type }
-    }
-
-    setTimeout(() => {
-      if (lcpEntry) {
-        results.lcp = {
-          value: Math.round(lcpEntry.renderTime || lcpEntry.loadTime || 0),
-          element: lcpEntry.element ? { tag: lcpEntry.element.tagName, id: lcpEntry.element.id, className: lcpEntry.element.className } : null,
-          url: lcpEntry.url || null,
-        }
-      }
-      if (clsScore > 0) {
-        results.cls = { value: +clsScore.toFixed(4), sources: clsShifts.slice(0, 10) }
-      }
-      resolve(results)
-    }, delay)
-  }), waitMs)
-}
-
-/**
- * Read INP value stored on the page (from the persistent observer).
- * Call this before navigating away from a page with interactions.
- */
-export async function collectInp(page) {
   try {
-    return await page.evaluate(() => {
-      const stored = window.__stressInp
-      if (!stored || !stored.value) return null
-      return { value: stored.value, element: stored.element, type: stored.type }
-    })
-  } catch { return null }
+    new PerformanceObserver((l) => {
+      const es = l.getEntries()
+      const last = es[es.length - 1]
+      if (last) window.__cwv.lcp = { value: Math.round(last.renderTime || last.loadTime || 0), element: node(last.element), url: last.url || null }
+    }).observe({ type: 'largest-contentful-paint', buffered: true })
+  } catch {}
+
+  try {
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries()) {
+        if (e.hadRecentInput) continue
+        window.__cwv.cls += e.value
+        for (const sourceEntry of e.sources || []) {
+          window.__cwv.clsSources.push({ node: node(sourceEntry.node), prev: rect(sourceEntry.previousRect), cur: rect(sourceEntry.currentRect) })
+        }
+      }
+    }).observe({ type: 'layout-shift', buffered: true })
+  } catch {}
+
+  try {
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries()) {
+        if (e.interactionId && e.duration > (window.__cwv.inp ? window.__cwv.inp.value : 0)) {
+          window.__cwv.inp = { value: Math.round(e.duration), element: node(e.target), type: e.name || null }
+        }
+      }
+    }).observe({ type: 'event', durationThreshold: 0, buffered: true })
+  } catch {}
 }
 
-/**
- * Navigate to a URL and measure CWV with attribution.
- */
-export async function measureNavigation(page, baseUrl, path, waitMs = 3000) {
+// Runs in-page. Reads the accumulated CWV after the page has settled.
+function snapshot() {
+  const r = {}
+  const nav = performance.getEntriesByType('navigation')[0]
+  if (nav) r.ttfb = { value: Math.max(0, Math.round(nav.responseStart)) }
+  const fcp = performance.getEntriesByType('paint').find((p) => p.name === 'first-contentful-paint')
+  if (fcp) r.fcp = { value: Math.round(fcp.startTime) }
+  const c = window.__cwv
+  if (c) {
+    if (c.lcp) r.lcp = c.lcp
+    if (c.cls > 0) r.cls = { value: +c.cls.toFixed(4), sources: c.clsSources.slice(0, 10) }
+    if (c.inp) r.inp = c.inp
+  }
+  return Object.keys(r).length ? r : null
+}
+
+// Read INP from the current page (call before navigating away — clicks land
+// their interaction timing after the initial post-nav snapshot).
+export async function readInp(page) {
+  return page.evaluate(() => (window.__cwv && window.__cwv.inp) || null).catch(() => null)
+}
+
+// Navigate to an absolute URL and snapshot CWV once the page has settled.
+export async function measureNavigation(page, absoluteUrl, settleMs = 1500) {
   const start = Date.now()
-  await page.goto(`${baseUrl}${path}`, { timeout: 30000 }).catch(() => {})
-  const navMs = Date.now() - start
-
-  let cwv = {}
-  try {
-    cwv = await snapshotInPage(page, waitMs)
-  } catch {}
-
-  return { durationMs: Math.round(navMs), cwv: Object.keys(cwv).length ? cwv : undefined }
-}
-
-/**
- * Measure CWV on the current page (no navigation).
- */
-export async function measureCurrentPage(page, waitMs = 3000) {
-  let cwv = {}
-  try {
-    cwv = await snapshotInPage(page, waitMs)
-  } catch {}
-  return Object.keys(cwv).length ? cwv : undefined
+  await page.goto(absoluteUrl, { timeout: 30000, waitUntil: 'load' }).catch(() => {})
+  const durationMs = Date.now() - start
+  await page.waitForTimeout(settleMs)
+  const cwv = await page.evaluate(snapshot).catch(() => null)
+  return { durationMs, cwv: cwv || undefined }
 }

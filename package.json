@@ -24,6 +24,7 @@
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "stress": "node scripts/stress-test/stress-runner.mjs",
     "prepare": "husky"
   },
   "dependencies": {
