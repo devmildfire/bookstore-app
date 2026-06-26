@@ -52,7 +52,13 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.tags.outputs.list }}
+          # NEXT_PUBLIC_BASE_URL is inlined (OG/metadataBase). SUPABASE_* are
+          # build-time-only server vars for the SSG prerender data fetch — a
+          # publicly reachable Supabase (the runner can't reach internal kong);
+          # they're not inlined into the client and don't reach the runner image.
           build-args: |
             NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL || 'https://bookstore-app.mildfire.dev' }}
+            SUPABASE_INTERNAL_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
+            SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

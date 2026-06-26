@@ -22,13 +22,21 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Supabase URL/key are NO LONGER baked: the browser talks to its own origin under
-# /sb (the middleware proxies to Supabase + injects the runtime anon key), so the
-# image is env-agnostic. Only NEXT_PUBLIC_BASE_URL is inlined at build — it's the
-# canonical public site identity for metadataBase / OG / sitemap (the RUNTIME
-# origin for redirects/payments comes from APP_BASE_URL, set per-instance).
+# NEXT_PUBLIC_BASE_URL is inlined into the client bundle (metadataBase / OG /
+# sitemap = the canonical public identity). No NEXT_PUBLIC_SUPABASE_* is baked —
+# the browser talks to its own origin under /sb (the middleware proxies to
+# Supabase + injects the runtime anon key), so the client bundle is env-agnostic.
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+# BUILD-TIME ONLY (this `builder` stage, not the runner): `next build` prerenders
+# catalog/book pages by fetching from Supabase, so it needs a reachable URL + anon
+# key here. These are plain server vars (NOT inlined into the client) and do NOT
+# carry into the runner image — runtime config comes from compose. Point at a
+# publicly reachable Supabase (the CI runner can't reach the internal kong host).
+ARG SUPABASE_INTERNAL_URL
+ARG SUPABASE_ANON_KEY
+ENV SUPABASE_INTERNAL_URL=$SUPABASE_INTERNAL_URL
+ENV SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
