@@ -16,7 +16,11 @@ export default function DeferredSubscriptions({ subscriptions }: { subscriptions
   return (
     <div
       ref={ref}
-      style={{ width: '100%', alignSelf: 'stretch', minHeight: inView ? undefined : 640 }}
+      // minHeight stays as a floor even after inView — the ssr:false body renders
+      // nothing until its chunk downloads, so removing the floor collapses the
+      // section to 0px and yanks the footer into the viewport (catastrophic CLS).
+      // The floor only prevents shrinking; the body grows past it once rendered.
+      style={{ width: '100%', alignSelf: 'stretch', minHeight: 640 }}
     >
       {inView && <SubscriptionsBody subscriptions={subscriptions} />}
     </div>

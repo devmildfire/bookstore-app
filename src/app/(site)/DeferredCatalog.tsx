@@ -54,6 +54,13 @@ export default function DeferredCatalog({ catalog, filters }: Props) {
           <div className={styles.reserve} aria-hidden />
         </>
       )}
+      {/* Keep the reserve as a height floor after mount too. The ssr:false
+          NewProducts renders nothing until its JS chunk downloads (seconds on
+          slow connections) — without this floor the section collapses to ~0px,
+          yanking the footer up into the viewport (catastrophic CLS = 0.99 mobile).
+          Once NewProducts renders, the section grows past this floor naturally;
+          the floor only prevents shrinking, never blocks growth. */}
+      {mounted && <div className={styles.reserve} aria-hidden />}
     </section>
   )
 }

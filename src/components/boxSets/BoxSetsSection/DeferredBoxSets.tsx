@@ -23,8 +23,11 @@ export default function DeferredBoxSets({ boxSets, booksMap }: Props) {
     <div
       ref={ref}
       // width/align-self replicate the section's full-bleed so the placeholder spans full width
-      // in both block (home) and flex (book detail) parents; min-height reserves space pre-mount.
-      style={{ width: '100%', alignSelf: 'stretch', minHeight: inView ? undefined : 640 }}
+      // in both block (home) and flex (book detail) parents. minHeight stays as a floor even
+      // after inView — the ssr:false body renders nothing until its chunk downloads, so removing
+      // the floor collapses the section to 0px and yanks the footer into the viewport (CLS).
+      // The floor only prevents shrinking; the body grows past it once rendered.
+      style={{ width: '100%', alignSelf: 'stretch', minHeight: 640 }}
     >
       {inView && <BoxSetsBody boxSets={boxSets} booksMap={booksMap} />}
     </div>
