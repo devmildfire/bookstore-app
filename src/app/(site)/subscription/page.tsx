@@ -11,5 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default function SubscriptionPage() {
-  return <SubscriptionsSection />
+  // eager: this page is the section's above-the-fold content — SSR it (no defer)
+  // so there's no pop-in shift and the LCP image is in the initial document.
+  return <SubscriptionsSection eager />
 }

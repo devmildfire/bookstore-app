@@ -1,6 +1,7 @@
 'use client'
 
 import SubscriptionCard from './SubscriptionCard'
+import SubscriptionsCarousel from './SubscriptionsCarousel'
 import SubscriptionsCarouselLazy from './SubscriptionsCarouselLazy'
 import type { Subscription } from '@/entities/subscription'
 import styles from './SubscriptionsSection.module.scss'
@@ -8,7 +9,17 @@ import styles from './SubscriptionsSection.module.scss'
 // The visual body of the subscriptions section. Split out so it can be dynamically
 // imported (ssr:false) by DeferredSubscriptions and mounted on scroll — keeping its
 // JS chunk, images and DOM out of the initial/LCP window.
-export default function SubscriptionsBody({ subscriptions }: { subscriptions: Subscription[] }) {
+//
+// `eager` (the dedicated /subscription page): SSR the mobile carousel directly
+// instead of the ssr:false lazy wrapper. There the carousel is above-the-fold,
+// so deferring it pops in on hydration (CLS) and makes its image a late LCP.
+export default function SubscriptionsBody({
+  subscriptions,
+  eager = false,
+}: {
+  subscriptions: Subscription[]
+  eager?: boolean
+}) {
   // The `.section` wrapper lives HERE (the lazy body), not in DeferredSubscriptions — so this
   // module's CSS only ships in the lazy chunk, never the eager render-blocking bundle.
   return (
@@ -25,7 +36,11 @@ export default function SubscriptionsBody({ subscriptions }: { subscriptions: Su
       </div>
 
       <div className={styles.mobileCarousel}>
-        <SubscriptionsCarouselLazy items={subscriptions} />
+        {eager ? (
+          <SubscriptionsCarousel items={subscriptions} />
+        ) : (
+          <SubscriptionsCarouselLazy items={subscriptions} />
+        )}
       </div>
     </section>
   )
