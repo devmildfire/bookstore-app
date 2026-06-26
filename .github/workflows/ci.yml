@@ -1,0 +1,72 @@
+name: CI
+
+# The single pipeline for main + PRs: audit → lint → unit → integration → e2e,
+# then (main pushes only) build + push the Docker image — gated on ALL of the
+# above. The image that main produces is fully tested, so deploy-production.yml
+# just promotes + ships it (no re-testing). Tests run once, the image is built
+# once. Feature branches get their own faster feedback via audit.yml / test-e2e.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    uses: ./.github/workflows/audit-reusable.yml
+
+  lint:
+    name: Lint & build check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+      # Reuse Next's incremental build cache for the PR build check below.
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'src/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
+      - run: npm ci
+      - run: npm run lint
+      # PR only: validate the production build without producing an image. On main
+      # pushes the build job below builds the Docker image (which runs `next build`
+      # itself), so building here too would be redundant work.
+      - name: Build (validate)
+        if: github.event_name == 'pull_request'
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+  unit:
+    uses: ./.github/workflows/test-unit-reusable.yml
+
+  integration:
+    needs: unit
+    uses: ./.github/workflows/test-integration-reusable.yml
+
+  e2e:
+    uses: ./.github/workflows/test-e2e-reusable.yml
+
+  # Main pushes only: build + push the image, gated on the full test matrix.
+  # deploy-production.yml promotes this exact image — no rebuild, no re-test.
+  build:
+    if: github.event_name == 'push'
+    needs: [audit, lint, unit, integration, e2e]
+    uses: ./.github/workflows/build-push-reusable.yml
+    permissions:
+      contents: read
+      packages: write
+    secrets: inherit
+    with:
+      tag: ${{ github.sha }}

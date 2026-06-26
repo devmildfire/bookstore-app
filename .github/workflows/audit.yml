@@ -1,11 +1,11 @@
 name: Audit
 
-# Dependency vulnerability scan on every branch push + PR, so feature branches are checked
-# before they reach the trunk. Delegates to the reusable workflow (audit-reusable.yml), which
-# the production deploy gate also calls — one definition, two callers.
+# Dependency vulnerability scan for feature branches, so they're checked before they reach
+# the trunk. main + PRs run audit inside ci.yml (gating the image build), so this excludes
+# them to avoid a duplicate run. One definition (audit-reusable.yml), two callers.
 on:
   push:
-  pull_request:
+    branches-ignore: [main, production]
 
 concurrency:
   group: audit-${{ github.ref }}

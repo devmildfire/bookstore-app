@@ -1,8 +1,15 @@
 name: Deploy production
 
-# Promote to deploy: push to the `production` branch (e.g. `git push origin main:production`)
-# or run manually from the Actions tab. Owns its own test jobs so it never polls other
-# pipelines. Builds the app image, pushes it to GHCR, then SSHes to the VPS to roll.
+# Deploy-ONLY. main's CI (ci.yml) already ran audit → lint → unit → integration →
+# e2e and pushed a fully-tested image tagged with the main SHA. Promoting to prod
+# just retags that image and rolls the VPS — no re-testing, no rebuild.
+#
+# The image's existence IS the gate: if main's pipeline didn't pass, the `:<sha>`
+# image was never pushed, so `docker pull` below fails and the deploy aborts.
+#
+# Promote by pushing main onto production:  git push origin main:production
+# (fast-forward keeps production an exact mirror of main; a --no-ff merge also
+# works — the SHA resolver handles both.) Or run manually from the Actions tab.
 on:
   push:
     branches: [production]
@@ -16,60 +23,44 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
-  audit:
-    uses: ./.github/workflows/audit-reusable.yml
-
-  unit:
-    uses: ./.github/workflows/test-unit-reusable.yml
-
-  integration:
-    needs: unit
-    uses: ./.github/workflows/test-integration-reusable.yml
-
-  e2e:
-    uses: ./.github/workflows/test-e2e-reusable.yml
-
-  # Resolve the main SHA from the merge commit and promote the pre-built
-  # image (built by main CI) to the production tag — no rebuild needed.
-  promote:
-    name: Promote pre-built image
-    needs: [audit, unit, integration, e2e]
+  deploy:
+    name: Promote image + deploy to VPS
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    outputs:
-      source_sha: ${{ steps.resolve.outputs.source_sha }}
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 10
-      - name: Resolve main SHA from merge commit
+
+      - name: Resolve the main SHA to deploy
         id: resolve
         run: |
-          # On a --no-ff merge commit parents[0]=old_production, parents[1]=main_sha
-          MAIN_SHA=$(git rev-list --parents -1 HEAD | awk '{print $3}')
-          echo "source_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
-          echo "Resolved main SHA: $MAIN_SHA"
+          # Fast-forward / direct push → HEAD itself is the main commit.
+          # --no-ff merge promote → parents are [old_production, main]; take parent 2.
+          read -ra P <<< "$(git rev-list --parents -1 HEAD)"
+          if [ "${#P[@]}" -ge 3 ]; then SHA="${P[2]}"; else SHA="${P[0]}"; fi
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "Deploying image for main SHA: $SHA"
+
       - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Pull pre-built image and tag as production
-        env:
-          SOURCE_SHA: ${{ steps.resolve.outputs.source_sha }}
-        run: |
-          docker pull ${{ env.IMAGE }}:$SOURCE_SHA
-          docker tag  ${{ env.IMAGE }}:$SOURCE_SHA ${{ env.IMAGE }}:production
-          docker push ${{ env.IMAGE }}:production
 
-  deploy:
-    name: Deploy to VPS
-    needs: promote
-    runs-on: ubuntu-latest
-    steps:
+      - name: Promote pre-built image to :production
+        env:
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          # Fails (aborting the deploy) if the image doesn't exist — i.e. main CI
+          # didn't build/push it because a test gate failed.
+          docker pull "${IMAGE}:${SHA}"
+          docker tag  "${IMAGE}:${SHA}" "${IMAGE}:production"
+          docker push "${IMAGE}:production"
+
       - name: Roll the app container over SSH
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}

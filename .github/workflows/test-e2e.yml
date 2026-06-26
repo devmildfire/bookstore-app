@@ -1,12 +1,11 @@
 name: E2E tests
 
 # Playwright E2E against the full stack (local Supabase + Next.js dev server).
-# Runs on feature-branch pushes, PRs into main, and main pushes.
+# Feature-branch feedback only — main + PRs run e2e inside ci.yml (gating the image
+# build), so they're excluded here to avoid a duplicate run.
 on:
   push:
-    branches: ['main', 'feature/**', 'feat/**']
-  pull_request:
-    branches: ['main']
+    branches: ['feature/**', 'feat/**']
 
 concurrency:
   group: e2e-${{ github.ref }}
