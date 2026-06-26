@@ -7,6 +7,11 @@ on:
         required: true
         type: string
         description: 'Image tag to push (e.g. <sha> or "production")'
+      latest:
+        required: false
+        type: boolean
+        default: false
+        description: 'Also tag/push :latest (only for canonical main builds, not PR images)'
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}
@@ -31,14 +36,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Compute tags
+        id: tags
+        run: |
+          {
+            echo 'list<<EOF'
+            echo "${IMAGE}:${{ inputs.tag }}"
+            [ "${{ inputs.latest }}" = "true" ] && echo "${IMAGE}:latest"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ inputs.tag }}
-            ${{ env.IMAGE }}:latest
+          tags: ${{ steps.tags.outputs.list }}
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL || 'https://api.mildfire.dev' }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

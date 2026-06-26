@@ -270,9 +270,16 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
   runs the image; prod can rely on the `NEXT_PUBLIC_BASE_URL` fallback or set `APP_BASE_URL` in compose.
 - [ ] 1.2 Prod proxy + env cutover (compose `SUPABASE_INTERNAL_URL`, drop `NEXT_PUBLIC_SUPABASE_URL`
   build-arg; backup; promote; live smoke)
-- [ ] 1.3 CI e2e runs the **built image** (`docker run` on host network; Playwright no-webServer)
-- [ ] 1.4 `ci.yml` order audit+unit+integration → build → e2e(image); deploy gates on the SHA's CI
-  conclusion (no test re-run)
+- [x] 1.3 CI e2e runs the **built image** (2026-06-26) — `test-e2e-reusable.yml` gains an `image`
+  input: `docker run --network host` the GHCR `:<sha>` with runtime env only
+  (`SUPABASE_INTERNAL_URL`/`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY`/`APP_BASE_URL=localhost:3000`/
+  `PAYMENT_PROVIDER=mock`), wait for ready, Playwright drives it (`E2E_AGAINST_IMAGE` → no dev
+  webServer). Feature-branch `test-e2e.yml` keeps dev-server mode (no `image`). Proves the
+  env-agnostic image runs against a test stack. *(Validating in CI.)*
+- [x] 1.4 `ci.yml` reordered: audit+lint+unit+integration → **build** (runs on PR too, pushes `:<sha>`;
+  `:latest` only on canonical main) → **e2e(image)**. Since the image now predates e2e,
+  `deploy-production.yml` gates on the **SHA's CI run conclusion** (`gh run list --commit … --workflow=ci.yml`),
+  not image existence — refuses to deploy a non-green SHA, still no test re-run.
 
 ### Part 2 — Coverage
 - [ ] 2.1 Route-handler invoke harness (`stack.ts` extension)

@@ -17,7 +17,9 @@ export default defineConfig({
     ? [['list'], ['junit', { outputFile: 'results.junit.xml' }], ['github'], ['html']]
     : 'list',
   use: {
-    baseURL: 'http://localhost:3000',
+    // E2E_BASE_URL is set when testing the already-running production IMAGE
+    // (ci.yml 1.3); otherwise the dev server below serves localhost:3000.
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -29,18 +31,23 @@ export default defineConfig({
       testIgnore: /.*mobile.*/,
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    env: {
-      NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
-      PAYMENT_PROVIDER: 'mock',
-      SEND_EMAIL_HOOK_SECRET: 'whsec_test_secret_for_ci',
-    },
-  },
+  // When E2E_AGAINST_IMAGE is set, the built production image is already running
+  // (ci.yml `docker run`s it) — don't start a dev server. Otherwise (local dev,
+  // feature-branch e2e) launch `next dev`.
+  webServer: process.env.E2E_AGAINST_IMAGE
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        env: {
+          NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
+          PAYMENT_PROVIDER: 'mock',
+          SEND_EMAIL_HOOK_SECRET: 'whsec_test_secret_for_ci',
+        },
+      },
 })
