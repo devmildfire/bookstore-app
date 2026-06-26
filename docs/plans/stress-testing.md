@@ -9,11 +9,12 @@
 
 ## 1. Goals
 
-Endurance / soak test the live bookstore site by driving real Chrome browsers through full user journeys. The test surfaces memory leaks, resource exhaustion, performance degradation under sustained activity, and broken flows that only appear under realistic use.
+Endurance / soak test the **live prod site** by driving real Chrome browsers through full user journeys. The test surfaces memory leaks, resource exhaustion, performance degradation under sustained activity, and broken flows that only appear under realistic use — and lets us watch the **Grafana dashboard** react under load to decide what to fix. Running against prod is the intended use (not a hazard): the marker-based cleanup removes only test orders.
 
 **Specific goals:**
 
-- Verify the site survives 30+ minutes of continuous simulated user activity without degrading
+- Verify the prod site survives 30+ minutes of continuous simulated user activity without degrading
+- Watch the Grafana monitoring dashboard under sustained load — spot which signals move (TTFB, error rate, DB) and prioritise fixes
 - Exercise every major storefront route under realistic browsing patterns
 - Complete the full checkout-to-paid-order flow end-to-end
 - Collect timing data per action to spot regressions
@@ -127,11 +128,11 @@ npm run stress -- \
   --sessions 2              # concurrent browser contexts (default 2)
   --duration 30             # minutes (default 30)
   --device both             # mobile, desktop, or both (default both)
-  --url http://localhost:3000   # default localhost (point at a remote target explicitly)
+  --url https://bookstore-app.mildfire.dev   # default: the prod live site
   --keep                    # skip cleanup of test orders
 ```
 
-- Default target is **localhost** — running against a remote/prod target writes real (mock-paid) orders there, so it's opt-in and prints a warning.
+- Default target is **prod** — the whole point is to stress the live site, surface real weaknesses, and watch the Grafana dashboard react under load. Marker-based cleanup (§7) makes this safe: only test orders are removed. Point `--url` at localhost to dry-run a journey change.
 - `--device both` spawns one mobile + one desktop worker; `--device mobile`/`desktop` spawns that type only.
 - Workers run concurrently against one shared Chromium; each loop iteration uses a fresh context (new anon user).
 

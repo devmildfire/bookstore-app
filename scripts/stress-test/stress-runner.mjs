@@ -11,7 +11,7 @@ Options:
   --sessions <n>    Concurrent browser contexts (default: 2)
   --duration <n>    Test duration in minutes (default: 30)
   --device <type>   mobile | desktop | both (default: both)
-  --url <url>       Target URL (default: http://localhost:3000)
+  --url <url>       Target URL (default: the prod live site)
   --keep            Skip cleanup of test orders
   --help            Show this help
 
@@ -27,7 +27,10 @@ try {
       sessions: { type: 'string', default: '2' },
       duration: { type: 'string', default: '30' },
       device: { type: 'string', default: 'both' },
-      url: { type: 'string', default: 'http://localhost:3000' },
+      // Prod by default — the point is to stress the live site and watch the
+      // Grafana dashboard / surface real weaknesses. Marker-based cleanup makes
+      // this safe: only test orders are removed, never real ones.
+      url: { type: 'string', default: 'https://bookstore-app.mildfire.dev' },
       keep: { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
     },
@@ -47,7 +50,6 @@ const sessionCount = Number(flags.sessions)
 const durationMin = Number(flags.duration)
 const TARGET = flags.url.replace(/\/$/, '')
 const deviceTypes = flags.device === 'both' ? ['mobile', 'desktop'] : [flags.device]
-const isLocal = /localhost|127\.0\.0\.1/.test(TARGET)
 
 const SUPABASE_URL = process.env.SUPABASE_URL || ''
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
@@ -106,8 +108,11 @@ async function runWorker(browser, deviceType) {
 
 async function main() {
   console.log(`stress test: ${sessionCount} session(s), ${durationMin}min, ${flags.device}, target=${TARGET}`)
-  if (!isLocal) console.log('⚠ REMOTE target — the journey writes real (mock-paid) orders; they are removed afterward by marker email (unless --keep)')
-  console.log(canCleanup ? 'cleanup: enabled (delete test orders by marker email)' : 'cleanup: disabled')
+  console.log(
+    canCleanup
+      ? 'cleanup: enabled — test orders (marker email) removed afterward'
+      : 'cleanup: DISABLED — test orders will remain (set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY and drop --keep)',
+  )
 
   const browser = await launchBrowser()
   await Promise.allSettled(
