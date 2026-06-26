@@ -11,6 +11,8 @@ Options:
   --sessions <n>    Concurrent browser contexts (default: 2)
   --duration <n>    Test duration in minutes (default: 30)
   --device <type>   mobile | desktop | both (default: both)
+  --throttle <p>    none | slow-3g | fast-3g (default: slow-3g)
+                    Slow-3g reproduces the reflow that drives prod's catastrophic CLS.
   --url <url>       Target URL (default: the prod live site)
   --keep            Skip cleanup of test orders
   --help            Show this help
@@ -27,6 +29,7 @@ try {
       sessions: { type: 'string', default: '2' },
       duration: { type: 'string', default: '30' },
       device: { type: 'string', default: 'both' },
+      throttle: { type: 'string', default: 'slow-3g' },
       // Prod by default — the point is to stress the live site and watch the
       // Grafana dashboard / surface real weaknesses. Marker-based cleanup makes
       // this safe: only test orders are removed, never real ones.
@@ -43,6 +46,10 @@ try {
 if (flags.help) { console.log(USAGE); process.exit(0) }
 if (!['mobile', 'desktop', 'both'].includes(flags.device)) {
   console.error(`--device must be mobile, desktop, or both\n${USAGE}`)
+  process.exit(1)
+}
+if (!['none', 'slow-3g', 'fast-3g'].includes(flags.throttle)) {
+  console.error(`--throttle must be none, slow-3g, or fast-3g\n${USAGE}`)
   process.exit(1)
 }
 
@@ -88,7 +95,7 @@ async function runWorker(browser, deviceType) {
   while (!stopping && Date.now() < endTime) {
     let session
     try {
-      session = await createSession(browser, deviceType)
+      session = await createSession(browser, deviceType, flags.throttle)
     } catch (e) {
       // Can't open a context = the browser is gone (crash/OOM). Don't hot-loop.
       reporter.record({ sessionId: deviceType, deviceType, timestamp: new Date().toISOString(), action: 'worker_aborted', ok: false, error: e.message })
@@ -107,7 +114,7 @@ async function runWorker(browser, deviceType) {
 }
 
 async function main() {
-  console.log(`stress test: ${sessionCount} session(s), ${durationMin}min, ${flags.device}, target=${TARGET}`)
+  console.log(`stress test: ${sessionCount} session(s), ${durationMin}min, ${flags.device}, throttle=${flags.throttle}, target=${TARGET}`)
   console.log(
     canCleanup
       ? 'cleanup: enabled — test orders (marker email) removed afterward'

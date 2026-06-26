@@ -84,35 +84,35 @@
       "datasource": { "type": "prometheus", "uid": "prometheus" }, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 31 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 2.5 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_lcp_seconds_bucket))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device, page_type) (web_vitals_lcp_seconds_bucket))", "legendFormat": "{{device}} / {{page_type}}" } ]
     },
     {
       "id": 22, "type": "timeseries", "title": "INP p75 (good < 200ms)",
       "datasource": { "type": "prometheus", "uid": "prometheus" }, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 31 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.2 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_inp_seconds_bucket))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device, page_type) (web_vitals_inp_seconds_bucket))", "legendFormat": "{{device}} / {{page_type}}" } ]
     },
     {
       "id": 23, "type": "timeseries", "title": "CLS p75 (good < 0.1)",
       "datasource": { "type": "prometheus", "uid": "prometheus" }, "gridPos": { "h": 8, "w": 8, "x": 16, "y": 31 },
       "fieldConfig": { "defaults": { "unit": "none", "decimals": 3, "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.1 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_cls_bucket))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device, page_type) (web_vitals_cls_bucket))", "legendFormat": "{{device}} / {{page_type}}" } ]
     },
     {
       "id": 24, "type": "timeseries", "title": "FCP p75 (good < 1.8s)",
       "datasource": { "type": "prometheus", "uid": "prometheus" }, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 39 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1.8 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_fcp_seconds_bucket))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device, page_type) (web_vitals_fcp_seconds_bucket))", "legendFormat": "{{device}} / {{page_type}}" } ]
     },
     {
       "id": 25, "type": "timeseries", "title": "TTFB p75 (good < 0.8s)",
       "datasource": { "type": "prometheus", "uid": "prometheus" }, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 39 },
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "thresholdsStyle": { "mode": "line" } }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.8 } ] } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
-      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device) (web_vitals_ttfb_seconds_bucket))", "legendFormat": "{{device}}" } ]
+      "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.75, sum by (le, device, page_type) (web_vitals_ttfb_seconds_bucket))", "legendFormat": "{{device}} / {{page_type}}" } ]
     },
     {
       "id": 26, "type": "stat", "title": "RUM samples (total)",

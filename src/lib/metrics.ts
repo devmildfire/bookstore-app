@@ -4,7 +4,7 @@ import { Registry, Histogram, collectDefaultMetrics } from 'prom-client'
 // /api/vitals beacon handler. Both run in the same Node process under `next start`,
 // so a module-level singleton works; we stash it on globalThis to survive dev
 // hot-reload (which would otherwise re-run collectDefaultMetrics and throw).
-type Vitals = Record<'lcp' | 'inp' | 'fcp' | 'ttfb' | 'cls', Histogram<'device'>>
+type Vitals = Record<'lcp' | 'inp' | 'fcp' | 'ttfb' | 'cls', Histogram<'device' | 'pageType'>>
 type Metrics = { registry: Registry; vitals: Vitals }
 
 const store = globalThis as unknown as { __chtivoMetrics?: Metrics }
@@ -13,8 +13,12 @@ function build(): Metrics {
   const registry = new Registry()
   collectDefaultMetrics({ register: registry }) // nodejs_* process metrics (bonus app/USE)
 
+  // `pageType` is a coarse page classifier (home/book/cart/…) beacons by the
+  // browser — low cardinality (≤20 values, allow-listed server-side) so per-page
+  // CLS/LCP attribution doesn't balloon the TSDB. Matches the monitoring README's
+  // "low-cardinality labels only" rule.
   const hist = (name: string, help: string, buckets: number[]) =>
-    new Histogram({ name, help, labelNames: ['device'], buckets, registers: [registry] })
+    new Histogram({ name, help, labelNames: ['device', 'pageType'], buckets, registers: [registry] })
 
   const vitals: Vitals = {
     lcp: hist('web_vitals_lcp_seconds', 'Largest Contentful Paint (seconds)', [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 7.5, 10]),

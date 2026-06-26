@@ -65,7 +65,10 @@ export async function readInp(page) {
 }
 
 // Navigate to an absolute URL and snapshot CWV once the page has settled.
-export async function measureNavigation(page, absoluteUrl, settleMs = 1500) {
+// settleMs defaults to 5000 (was 1500) — late-arrival layout shifts from
+// async data, images, or fonts loading after hydration need more than 1.5s
+// to manifest; the shorter settle missed the catastrophic CLS prod RUM shows.
+export async function measureNavigation(page, absoluteUrl, settleMs = 5000) {
   const start = Date.now()
   await page.goto(absoluteUrl, { timeout: 30000, waitUntil: 'load' }).catch(() => {})
   const durationMs = Date.now() - start

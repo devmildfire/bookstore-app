@@ -13,17 +13,32 @@ const post = (body: unknown, ua = 'Mozilla/5.0') =>
 
 describe('POST /api/vitals', () => {
   it('records a valid LCP from a mobile UA and returns 204', async () => {
-    const res = await post({ name: 'LCP', value: 2300 }, 'Mozilla/5.0 (iPhone)')
+    const res = await post({ name: 'LCP', value: 2300, page_type: 'home' }, 'Mozilla/5.0 (iPhone)')
     expect(res.status).toBe(204)
     const out = await metrics.registry.metrics()
     expect(out).toContain('web_vitals_lcp_seconds')
     expect(out).toContain('device="mobile"')
+    expect(out).toContain('pageType="home"')
   })
 
-  it('records CLS (unitless) from a desktop UA', async () => {
-    const res = await post({ name: 'CLS', value: 0.05 }, 'Mozilla/5.0 (X11; Linux x86_64)')
+  it('records CLS (unitless) from a desktop UA with page_type', async () => {
+    const res = await post({ name: 'CLS', value: 0.05, page_type: 'cart' }, 'Mozilla/5.0 (X11; Linux x86_64)')
     expect(res.status).toBe(204)
-    expect(await metrics.registry.metrics()).toContain('web_vitals_cls')
+    const out = await metrics.registry.metrics()
+    expect(out).toContain('web_vitals_cls')
+    expect(out).toContain('pageType="cart"')
+  })
+
+  it('falls back to pageType="other" for an invalid page_type', async () => {
+    await post({ name: 'CLS', value: 0.1, page_type: 'javascript:alert(1)' })
+    const out = await metrics.registry.metrics()
+    expect(out).toContain('pageType="other"')
+  })
+
+  it('falls back to pageType="other" when page_type is missing', async () => {
+    await post({ name: 'CLS', value: 0.1 })
+    const out = await metrics.registry.metrics()
+    expect(out).toContain('pageType="other"')
   })
 
   it('ignores invalid payloads without throwing (still 204)', async () => {

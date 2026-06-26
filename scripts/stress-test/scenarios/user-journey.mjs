@@ -106,4 +106,31 @@ export async function runJourney(session, { url, reporter }) {
   if (Math.random() < 0.5) { await nav('/subscription'); await scrollPage(page, rand(1, 2)) }
   if (Math.random() < 0.5) { await nav('/dino-magazine'); await scrollPage(page, rand(1, 2)) }
   if (Math.random() < 0.3) { await nav('/about') }
+
+  // Comprehensive page sweep — deterministic, covers every storefront route
+  // so CLS attribution lands on ALL pages (the probabilistic section above
+  // skips routes on many runs, leaving gaps in the per-route CLS report).
+  // Profile subpages require auth; anon visits render the LoginModal shell.
+  for (const path of [
+    '/authors', '/contacts', '/abzac', '/suggest-manuscript',
+    '/profile/books', '/profile/courses', '/profile/subscriptions',
+    '/profile/gift-cards', '/profile/favorites',
+  ]) {
+    await nav(path)
+    await scrollPage(page, rand(1, 2))
+  }
+
+  // One book detail page (pick from the homepage links if available).
+  const bookHrefs = await page
+    .evaluate(() =>
+      Array.from(document.querySelectorAll('a[href*="/books/"]'))
+        .filter((a) => !a.href.includes('#'))
+        .map((a) => a.href),
+    )
+    .catch(() => [])
+  if (bookHrefs.length) {
+    const { durationMs, cwv } = await measureNavigation(page, bookHrefs[rand(0, bookHrefs.length - 1)])
+    s('navigate', 'goto /books/[slug]', { durationMs, ok: true, ...(cwv ? { cwv } : {}) })
+    await scrollPage(page, rand(2, 3))
+  }
 }
