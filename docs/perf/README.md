@@ -149,6 +149,10 @@ For any client dependency or query, ask in order:
   - **All card strips** (subscriptions, articles, author articles, gift cards) — the shared eager
     `src/components/common/CardCarousel/` (loop + optional autoplay, pauses on drag, respects
     `prefers-reduced-motion`). Off-home carousels do **not** defer (they're eager on their own pages).
+    The mechanism is an `eager` prop: e.g. `SubscriptionsSection` defers (home) by default but the
+    dedicated `/subscription` page passes `eager` to SSR the grid **and** the mobile carousel. (Until
+    2026-06-26 the page wrongly went through the deferred home path → CLS 0.16/0.27 + a 1.9–2.1 s LCP;
+    see [frontend-architecture-rendering Post-Phase-7](../plans/frontend-architecture-rendering.md).)
   - **Why eager (the rationale that matters):** carousels used to defer Embla itself behind the first
     interaction (`ProgressiveEmblaCarousel`, since deleted). The [100-run PSI baseline](./psi-baseline.md)
     showed the score is **LCP-bound with ~170 ms of unused TBT headroom**, so eager Embla measured

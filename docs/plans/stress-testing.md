@@ -242,10 +242,6 @@ Status legend:
 
 The 2-hour stress test revealed CLS on `/cart` (mobile 0.21, desktop 0.17) and `/subscription` (mobile 0.46). Root cause for cart: **TanStack Query fetches cart items client-side, causing an EmptyCart→items grid DOM swap that pushes the footer down.**
 
-### SSR attempt (failed)
-
-`CartPage` prefetches data via `getCartServer()` → passes as `initialData` to `useQuery`. Problem: `createClient()` cannot find the Supabase auth cookie (`sb-api-auth-token`) during SSR because the session is created client-side by `ensureAnonSession()` after the first interaction. The server always renders empty cart → SSR fix cannot work.
-
 Attribution data (exact CLS sources from PerformanceObserver, `buffered: true`):
 
 ```
@@ -257,17 +253,17 @@ t=696ms  value=+0.1035
 
 The footer shift happens at **696ms** after navigation — coinciding with React hydration + TanStack Query fetch completing. The old footer DOM nodes are detached and replaced (the `y:0 h:0` entries), proving a React re-render, not a CSS font-swap.
 
-### Proposed fix: always-render skeleton grid
+### First SSR attempt (looked like it failed — wrong root cause)
 
-Replace the `isEmpty ? <EmptyCart /> : <itemsGrid />` switch with a grid that always renders. While items are loading, show `<SkeletonCartRow />` components matching `CartItemRow` dimensions:
+The first attempt prefetched `getCartServer()` and fed it to `useQuery` as `initialData` **through a React context** (`CartInitialDataProvider`) rendered inside `CartPage`. It rendered empty and was written up as "SSR can't work — `createClient()` has no auth cookie at SSR." **That diagnosis was wrong.** The real cause: `CartProvider` is a **global ancestor** (root `providers.tsx`), and the context Provider was its **descendant** — context only flows *down*, so `useCartInitialData()` inside `CartProvider` always read the default empty value. `initialData` was permanently `undefined`; the server fetch was dead. (Independently, even a working `initialData` on the ancestor provider couldn't fill the SSR HTML — the provider renders before the page on the server.)
 
-| Property | CartItemRow | SkeletonCartRow |
-|---|---|---|
-| Image | `aspect-ratio: 2/3`, `max-width: 114px` | Same aspect-ratio, shimmer background |
-| Padding | `$space-6 0` (24px top + 24px bottom) | Same |
-| Text lines | title (18px), subtitle (16px), type | Shimmer bars at same line-height |
+### Resolution (shipped 2026-06-26) — SSR works, via props not context
 
-When TanStack Query resolves with items, the 1:1 skeleton→real swap causes zero height change → zero CLS.
+`/cart` (and `/checkout`) fetch the cart server-side and pass it to `CartView`/`CheckoutView` as **props**; the view renders from props until the client query resolves (`isCartReady`). The cookie is **not** a blocker: the anon session's `sb-*-auth-token` cookie is written client-side on add-to-cart and sent on the next navigation, so `getCartServer()` reads it at SSR time.
+
+**Verified in a fresh isolated browser context** (no prior cookies → add item → first `/cart` load): the SSR HTML (`fetch('/cart')`) contains the real item, not an empty cart. Measured CLS `/cart` **0** (desktop + mobile), `/subscription` **0** (was 0.16/0.27 — fixed by rendering that section `eager`, a separate but related defer-above-the-fold bug). Full write-up: [frontend-architecture-rendering Post-Phase-7](./frontend-architecture-rendering.md).
+
+The always-render `SkeletonCartRow` idea is therefore **not needed** — SSR shows the real cart on first paint, which is strictly better than a skeleton. Keep it in reserve only if a future change makes the SSR cart fetch impossible (e.g. moving the session fully out of cookies).
 
 ---
 

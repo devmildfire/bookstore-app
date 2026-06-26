@@ -200,6 +200,8 @@ Single-page checkout. The cart's content determines the form:
 - **Has physical items** (`PrintBook`, `Book2.0`, or a `BoxSet` containing either) → shipping address form.
 - **Digital only** → single optional email field.
 
+Both `/cart` and `/checkout` **SSR the cart server-side** (`getCartServer` / `getCartQuoteServer` / `getCartHasPhysicalServer` in the page) and pass it to `CartView` / `CheckoutView` as **props**; the views render from props until the client cart query resolves (`isCartReady` from `contexts/cart.tsx`), so SSR + first client render match → zero CLS, no `EmptyCart` flash / no email→delivery form swap. This makes those two routes dynamic on purpose (props, not context or `HydrationBoundary` — `CartProvider` is a global ancestor that can't be seeded from the page). See [docs/plans/frontend-architecture-rendering.md](docs/plans/frontend-architecture-rendering.md) Post-Phase-7.
+
 Confirmation modal → `startCheckoutAction` → two-phase payment via Robokassa (with a swappable in-app **mock** gateway). The processing modal stays up while the browser is handed off to the gateway by full-page POST.
 
 Key invariants:

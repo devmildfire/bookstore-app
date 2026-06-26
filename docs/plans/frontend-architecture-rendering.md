@@ -22,6 +22,9 @@ Four parallel read-only audits (file:line evidence):
 - **Server-prefetch + `dehydrate`/`<HydrationBoundary>` + client `useQuery`** is used
   correctly for all user-scoped state (cart/likes/promo/gift-cards/orders). `cart.tsx`
   is exemplary; pricing stays server-authoritative (`quote_cart`).
+  *(Audit-time snapshot. Since superseded for the cart: Phase 0 moved it to client-fetch,
+  then Post-Phase-7 to SSR-via-props on `/cart` + `/checkout`. Profile orders/books/courses
+  still use the `HydrationBoundary` pattern described here.)*
 - **Fonts**: `next/font` (Montserrat swap + local Chequeblack) via CSS vars — no FOIT.
 - **LCP images**: hero `Slider` cover + `BookCover` use `priority` + `placeholder="blur"`
   from the DB blur columns — the blur pipeline is actually consumed. No raw `<img>` in
@@ -57,7 +60,7 @@ cookie-free and Suspense boundaries exist.
 - D1 — Book detail head waterfall: `getPeriodical → getPeriodicalIssueRedirect → getBook` sequential (`books/[slug]/page.tsx:56-65`).
 - D2 — **Duplicate RPC**: `getBook` and `getBookEditions` both call `get_catalog_book_by_slug` with the same arg → runs twice per book render. `generateMetadata` re-fetches it a third time.
 - D3 — **No `cache()` / `unstable_cache` / `revalidate` in the read path** (systemic). No per-request dedup; catalog re-queried every request.
-- D4 — Checkout fetches profile client-side, **never prefetched** (`checkout/page.tsx:40`); also uses `useSupabaseUser` for `isAnonymous` — CLAUDE.md explicitly warns against this. Resolve server-side.
+- D4 — Checkout fetches profile client-side, **never prefetched** (`checkout/page.tsx:40`); also uses `useSupabaseUser` for `isAnonymous` — CLAUDE.md explicitly warns against this. Resolve server-side. *(Partially resolved — see Post-Phase-7 below: the cart→form choice is now SSR'd; profile defaults + `isAnonymous` are still client-side.)*
 - D5 — Profile has two unreconciled sources (context `initialProfile` + parallel TanStack `profileQueryKey`).
 - D6 — `getBooks` tail waterfall (`getPeriodicalHrefs`: Titles then Periodicals serial) — minor.
 - D7 — `MyBooksList`/`MyCoursesList` ship the full orders payload + derive client-side — could derive server-side.
@@ -179,7 +182,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done
 - [x] `(site)` layout reads no cookies — removed the per-user server prefetch; `CartProvider`/`LikeButton` client-fetch. *(Pivoted from the Option-A Suspense island after a browser test showed it double-fetched (server prefetch + client refetch ≈ 12 requests) and didn't hydrate pre-PPR. Server-prefetch-hydrate is incompatible with static rendering; per-user data must be client-fetched — or a dedicated cart-badge island under PPR.)*
 - [x] Root `app/layout.tsx` auth-free — removed `getUser()` (duplicated the proxy's per-request call). Proxy sets non-HttpOnly `bookstore_has_session` hint cookie; `providers.tsx` gates anon sign-in client-side off it (stays client-side, so JS-less bots don't create anon users). Duplicate auth call gone = the **P3 win**.
 - [x] `getUser()→getClaims()` confirmed **moot under HS256** (SDK falls back to network `getUser`) → asymmetric-key migration is **Solution B (Phase 5)**.
-- [x] `books/[slug]` + `/` no longer cookie-forced-dynamic — static routes **3 → 13**; remaining `ƒ` on hero pages is `searchParams` (home → Phase 4) + missing `generateStaticParams` (dynamic segments → Phase 2), not cookies.
+- [x] `books/[slug]` + `/` no longer cookie-forced-dynamic — static routes **3 → 13**; remaining `ƒ` on hero pages is `searchParams` (home → Phase 4) + missing `generateStaticParams` (dynamic segments → Phase 2), not cookies. *(`/cart` + `/checkout` later reverted to `ƒ` on purpose — they SSR the per-user cart for zero CLS; static had no value on these per-user, interaction-gated routes. See **Post-Phase-7**.)*
 - [x] Browser smoke test: fresh-visitor anon sign-in fires; reload preserves same anon user (hint 0→1, no clobber); cart/likes 200; zero console errors.
 - [ ] Merge `feat/ppr-phase0-layout` → `update`.
 
@@ -285,3 +288,42 @@ After the box-set WebP fix dropped the home doc 2.7 MB → 0.21 MB, further real
 - [ ] **Legacy JavaScript (13 KiB, unscored)** → **WON'T-FIX (accepted).** Not our code — our SWC build + modern `browserslist` is correct (no babel config). It's `@supabase/supabase-js` bundling its **realtime client** (inlined core-js polyfills: Object.hasOwn/fromEntries, Array.at/flat/flatMap, String.trim*). **We use realtime 0×**, but the `SupabaseClient` constructor hard-instantiates `RealtimeClient`, so it can't be tree-shaken. Stripping it needs replacing `createClient` with the individual `@supabase/postgrest-js`+`@supabase/auth-js` clients — a risky data-layer refactor for a 13 KiB, off-critical-path, unscored item. Not worth it.
 
 **Remaining structural lever: TTFB.** The home is a dynamic (`ƒ`) route running getBooks + getFeaturedBooks + getSubscriptions + getBoxSets per request (~1–1.5 s on mobile) — a floor under FCP/LCP that only caching/ISR/PPR can break. Needs an explicit decision (changes the home's rendering model).
+
+## Post-Phase-7 — cart / checkout / subscription CLS: SSR per-user data on non-static routes — **DONE + browser-verified (2026-06-26)**
+
+Phase 0 client-fetched all per-user state to keep the storefront static/PPR-ready, which made
+`/cart` + `/checkout` static. But a static cart page ships **empty** HTML, then the client query
+fills it → a large CLS (measured **0.16–0.27**) and an `EmptyCart`→full flash. Static rendering has
+**no value** on these routes (per-user, interaction-gated, not SEO/LCP landing pages), so we trade it
+back — Phase 0's "per-user data must be client-fetched" holds only where static rendering *has* value
+(catalog/home/marketing), not here.
+
+- **`/cart`, `/checkout` now SSR the cart** (`getCartServer` / `getCartQuoteServer` /
+  `getCartHasPhysicalServer` in the page) and pass it to `CartView` / `CheckoutView` as **props**. The
+  views render from props until the client cart query resolves (`isCartReady`, exposed from
+  `contexts/cart.tsx`), so SSR and the first client render are identical → **CLS 0**, no flash. The
+  client `useQuery` then takes over for optimistic add/remove + invalidations. Reading cookies in these
+  pages makes them `ƒ` again — accepted (supersedes the Phase-0 static list for these two routes).
+- **Props, not context or `HydrationBoundary`.** `CartProvider` is a global ancestor (root
+  `providers.tsx`), so page-level data can't reach its render (context flows down; on the server the
+  provider renders before the page, so `HydrationBoundary` in the page can't seed the ancestor's SSR
+  pass either). The first attempt wired a React context whose Provider was a *descendant* of
+  `CartProvider` → it silently never delivered. The working shape is props into the descendant view.
+  *(Profile orders/books/courses DO use `HydrationBoundary` correctly — their consumers sit **inside**
+  the boundary. The cart's ancestor-provider topology is what makes it the exception.)*
+- **D4 (checkout) partially resolved:** the cart→form choice (delivery vs email-only) is SSR'd, killing
+  the email→delivery swap; the redirect-to-`/cart` now waits for `isCartReady` (was bouncing a
+  non-empty cart on hard load). Profile defaults + `isAnonymous` are still client-side — D4's original
+  point stands there.
+- **Subscriptions:** `/subscription` now renders the section **`eager`** (SSR'd desktop grid **and**
+  mobile carousel) instead of `DeferredSubscriptions` / `SubscriptionsCarouselLazy`. Those defers are a
+  **home**-page below-fold LCP win; on the dedicated page the section is above the fold, so deferring it
+  shipped an empty 640 px placeholder that popped in (CLS) and pushed the LCP image out of the initial
+  document (1.9–2.1 s LCP). This finally honors the documented rule "off-home carousels are eager on
+  their own pages" ([perf/README §Carousels](../perf/README.md)). **BoxSets needed no change** — it is
+  only ever rendered below the fold (home + bottom of book detail), so its `useInView`/`ssr:false`
+  deferral is correctly applied.
+
+**Verified (Chrome DevTools, dev server), desktop / mobile CLS:** `/subscription` 0.16 / 0.27 → **0 / 0**
+(LCP 1888 / 2085 ms → 412 / 720 ms); `/cart` **0 / 0**; `/checkout` **0 / 0**; `/` (home, regression
+check after the shared `SubscriptionsBody` change) **0.01 / 0**.
