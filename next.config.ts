@@ -69,33 +69,11 @@ const nextConfig: NextConfig = {
     // serve from a shared edge cache; AVIF (~93%) would break more old browsers when one cached
     // variant is served to all. Edge-caching the LCP cover beats AVIF's ~few-KB size win.
     formats: ['image/webp'],
-    remotePatterns: [
-      // Supabase Cloud — matches any project subdomain
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        pathname: '/storage/v1/object/public/**',
-      },
-      // Local development — matches Docker Supabase on default ports
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '54321',
-        pathname: '/storage/v1/object/public/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '54321',
-        pathname: '/storage/v1/object/public/**',
-      },
-      // Self-hosted Supabase on the same VPS — add your production hostname here.
-      {
-        protocol: 'https',
-        hostname: 'api.mildfire.dev',
-        pathname: '/storage/v1/object/public/**',
-      },
-    ],
+    // No remotePatterns: all storage image srcs are now same-origin RELATIVE
+    // paths under /sb (the middleware proxies them to Supabase — see src/proxy.ts
+    // + docs/plans/cicd-single-image-and-edge-tests.md), which next/image treats
+    // as local images. No Supabase host is referenced from the browser, so no
+    // host allowlist is needed.
   },
   // PRODUCTION BUILD runs on Turbopack (`next build`, no `--webpack`) — it natively
   // keeps dev-only code (next-devtools overlay, HMR/hot-reloader) out of the prod
