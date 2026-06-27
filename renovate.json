@@ -14,6 +14,7 @@
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },
   "major": { "dependencyDashboardApproval": true },
   "packageRules": [
+    { "matchDepTypes": ["engines"], "enabled": false },
     { "matchDepTypes": ["dependencies"], "automerge": false },
     { "matchDatasources": ["docker"], "automerge": false },
     { "matchUpdateTypes": ["major"], "automerge": false },

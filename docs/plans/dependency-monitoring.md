@@ -111,6 +111,10 @@ Four independent signals, each matched to its domain; no shared always-on servic
     // { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
     // { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
 
+    // ── Leave engines alone: `engines.node` is a deliberate floor (>=22), not a pin-to-latest target.
+    //    Without this, rangeStrategy:pin rewrites it to the newest Node (wrong — we run Node 22). ──
+    { "matchDepTypes": ["engines"], "enabled": false },
+
     // ── Manual-only tiers (D5) — present from Phase 1 (these are all automerge:false) ──
     { "matchDepTypes": ["dependencies"], "automerge": false },            // prod deps: always review
     { "matchDatasources": ["docker"], "automerge": false },              // base/compose images: review
