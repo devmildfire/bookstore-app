@@ -304,7 +304,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [x] 2.2 Payment callbacks (`tests/integration/api/robokassa-result.test.ts`) — valid sig → `OK{invId}`+paid; **bad sig → 400, stays pending**; amount mismatch → 500, stays pending; duplicate callback idempotent. (email send mocked.)
 - [x] 2.3 Send-email webhook (`tests/integration/api/send-email-hook.test.ts`) — valid Standard-Webhooks sig → 200 + sends to recipient (new_email preferred); **tampered / wrong-secret → 401, sends nothing**; no recipient → 400. (sendEmail mocked; no stack needed.)
 - [x] 2.4 Newsletter confirm/unsubscribe (`tests/integration/api/newsletter.test.ts`) — valid token → confirmed/unsubscribed + DB status flips; unknown/missing token → invalid. (audience mocked; real stack.) **Redeem-token deferred** — `redeem/[token]` uses cookie-based `createClient()`, not import-and-invokable in Vitest → cover via e2e or an RPC-level test.
-- [x] 2.5 Vitals sink (`tests/integration/api/vitals.test.ts`) — valid obs increments the histogram; malformed/negative/unknown → 204 + records nothing; UA→device. (3/3 pass locally, no stack needed.)
+- [x] 2.5 Vitals sink — **consolidated into the co-located unit test** `src/app/api/vitals/route.test.ts` (no stack needed → unit job, not integration). Added the count-increment assertion (valid obs records exactly one; malformed records nothing) to the existing device/pageType/204 coverage; removed the duplicate `tests/integration/api/vitals.test.ts`.
 - [ ] 2.6 `startCheckoutAction` money path (optional)
 - [x] Updated `docs/testing/STRATEGY.md` (money-path/app-edge integration done; CI model) + this tracker
 
