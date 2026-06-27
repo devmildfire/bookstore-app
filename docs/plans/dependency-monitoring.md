@@ -356,9 +356,11 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       behaving as designed.
 - [x] Verify a Renovate PR **triggers `ci.yml`** — confirmed: PR #2 (`@playwright/test` patch, forced
       via the dashboard) triggered the CI `pull_request` run. PAT identity works.
-- [ ] **Acceptance — digest pinning lands:** the "pin docker digests" + "pin dependencies" branches are
-      queued under *Awaiting Schedule* (Monday), or force them now via the dashboard checkboxes; merge so
-      `node:22-alpine`, the compose tags, and the Actions get immutable digests.
+- [x] **Acceptance — digest pinning lands:** forced via the dashboard + merged — PR #3 (Actions +
+      Dockerfile syntax + compose digests, incl. the stateful trio by `@sha256`) and PR #4
+      (`node:22-alpine` → `node:22.23.1-alpine@sha256`). `node`, compose tags, and all Actions are now
+      digest-pinned on `main`. *(The compose digests reach the VPS on the next manual infra sync; the
+      Dockerfile pin takes effect on the next image build.)*
 
 ### Phase 2 — Dependabot alerts
 - [ ] Enable Dependency graph + Dependabot alerts; confirm Security updates are OFF.
