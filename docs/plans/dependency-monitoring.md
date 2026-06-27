@@ -1,6 +1,6 @@
 # Dependency & Vulnerability Monitoring — Implementation Plan
 
-**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v2 (external review incorporated — see §9)
+**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v3 (two external review passes incorporated — see §9)
 **Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
 precise, repo-specific execution).
 **Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
@@ -104,30 +104,41 @@ Four independent signals, each matched to its domain; no shared always-on servic
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },  // Renovate raises CVE PRs (D3)
   "major": { "dependencyDashboardApproval": true },                       // majors are opt-in (D5)
   "packageRules": [
-    // ── Automerge tier (D5): only low-risk classes, gated on green ci.yml ──
+    // ── PHASE 4 ONLY — automerge tier (D5). DO NOT include these until branch protection is live. ──
+    //    ⚠ `automerge: true` lets Renovate merge via its OWN API once checks pass; `platformAutomerge:
+    //    false` does NOT disable that (it only turns off GitHub-native auto-merge). So in Phase 1 these
+    //    rules must be ABSENT, or Renovate will merge before main is protected (finding #1).
     { "matchManagers": ["github-actions"], "automerge": true },
     { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
 
-    // ── Manual-only tiers (D5) ──
+    // ── Manual-only tiers (D5) — present from Phase 1 (these are all automerge:false) ──
     { "matchDepTypes": ["dependencies"], "automerge": false },            // prod deps: always review
     { "matchDatasources": ["docker"], "automerge": false },              // base/compose images: review
     { "matchUpdateTypes": ["major"], "automerge": false },
 
-    // ── Ignore the migration-coupled stateful images (D4) ──
+    // ── Migration-coupled stateful images (D4): block version + digest UPDATES, but ALLOW the
+    //    one-time digest PIN so the exact approved image is locked by sha (finding #5). Version moves
+    //    only ever happen via the rehearsed-restore process, never an auto-PR. ──
     { "matchDatasources": ["docker"],
       "matchPackageNames": [
         "public.ecr.aws/supabase/postgres",
         "public.ecr.aws/supabase/gotrue",
         "public.ecr.aws/supabase/storage-api"
       ],
+      "matchUpdateTypes": ["major", "minor", "patch", "digest"],         // pinDigest is NOT listed → still allowed
       "enabled": false }
   ],
-  "platformAutomerge": false                        // START false (Phase 1); flip to true in Phase 4 once main is protected (D10)
+  "platformAutomerge": false                        // Phase 4: flip to true (GitHub-native auto-merge). NOTE: this is NOT the automerge on/off switch — see the packageRules note above.
 }
 ```
 
 Notes:
+- **Automerge is governed by the `automerge` packageRules, not `platformAutomerge`.** Phase 1 ships
+  *without* the three `automerge: true` rules; Phase 4 adds them once `main` is protected and flips
+  `platformAutomerge: true` so the merge uses GitHub-native auto-merge.
+- The stateful trio still gets a one-time **digest-pin** PR (safe — same image, locked by sha); only
+  *version* and *digest-update* PRs are suppressed.
 - `rangeStrategy: "pin"` + already-pinned manifest ⇒ Renovate emits exact→exact bumps, honoring
   the HARD RULE. (Verified mentally against `package.json`: 0 ranges today.)
 - `config:recommended` already covers `npm`, `dockerfile`, `docker-compose`, and
@@ -185,6 +196,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  packages: read                      # pull :production / :latest from GHCR (matches ci.yml's e2e job)
   security-events: write              # SARIF upload to Code scanning
 jobs:
   # ── Gating: the DEPLOYED image (:production), HIGH/CRIT gate, CRITICAL→Telegram (D6/D8, finding #1/#3) ──
@@ -243,7 +255,7 @@ jobs:
           format: sarif
           output: trivy-fs.sarif
           severity: HIGH,CRITICAL
-          trivyignores: .trivyignore          # committed after the baseline run (Phase 3a)
+          trivyignores: .trivyignore          # commit an EMPTY .trivyignore with this workflow so the input resolves (finding #4); populate after the baseline triage
           exit-code: '0'                       # Phase 3a: 0 (report-only). Phase 3b: flip to 1 to gate.
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
@@ -314,7 +326,7 @@ Settings → Branches → add a rule for `main`:
 
 | Secret | For | Notes |
 |--------|-----|-------|
-| `RENOVATE_TOKEN` | Renovate Action | Fine-grained PAT, **this repo only**, `contents: write` + `pull-requests: write`. Set a calendar reminder for expiry (D2). |
+| `RENOVATE_TOKEN` | Renovate Action | Fine-grained PAT, **this repo only**. Permissions: `contents: write` (push branches), `pull-requests: write` (open PRs), `issues: write` (Dependency Dashboard issue), `workflows: write` (**required** — Renovate edits `.github/workflows/*` for the Actions digest pins; GitHub blocks workflow-file pushes without it), `checks: read` (read CI status for automerge), and `Dependabot alerts: read` if the fine-grained UI exposes it (for `vulnerabilityAlerts`). Set a calendar reminder for expiry (D2). |
 | `TELEGRAM_BOT_TOKEN` | Trivy → Telegram | Same bot as the monitoring stack (token currently only on the VPS in `monitoring/alertmanager/telegram_token`). |
 | `TELEGRAM_CHAT_ID` | Trivy → Telegram | The existing alert chat. |
 
@@ -329,8 +341,10 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [ ] Create the fine-grained PAT; add `RENOVATE_TOKEN` secret.
 - [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets (from the VPS bot).
 
-### Phase 1 — Renovate (PRs only, automerge OFF initially)
-- [ ] Add `renovate.json` (`platformAutomerge: false` for now — Phase 4 flips it).
+### Phase 1 — Renovate (PRs only, NO automerge)
+- [ ] Add `renovate.json` **without the three `automerge: true` packageRules** and with
+      `platformAutomerge: false`. (Both matter — `automerge: true` alone would let Renovate merge via
+      its own API before `main` is protected; finding #1.) Keep the `automerge: false` manual-tier rules.
 - [ ] Add `.github/workflows/renovate.yml`.
 - [ ] Manual `workflow_dispatch`; confirm the Dependency Dashboard issue + the first onboarding PR.
 - [ ] Verify a Renovate PR **triggers `ci.yml`** (proves the PAT identity works).
@@ -345,10 +359,11 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 ### Phase 3 — Trivy
 **3a — report-only baseline (no gate yet; finding #4):**
 - [ ] Add `.github/workflows/trivy.yml` with the **filesystem** scan at `exit-code: 0` and the
-      `:production` image scan present.
+      `:production` image scan present. **Commit an empty `.trivyignore` in the same change** so the
+      `trivyignores:` input resolves on the first run.
 - [ ] `workflow_dispatch` run; triage the first filesystem findings (misconfig/secret false
       positives are expected from docs/test fixtures + IaC).
-- [ ] Commit a `.trivyignore` (and/or `trivy.yaml`) capturing the accepted/handled findings.
+- [ ] Populate `.trivyignore` (and/or `trivy.yaml`) with the accepted/handled findings.
 - [ ] Confirm SARIF appears in **Security ▸ Code scanning** for both `trivy-prod-image` + `trivy-fs`.
 
 **3b — turn the gates on:**
@@ -361,8 +376,9 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
 - [ ] Enable branch protection on `main` with the required checks (§4.5).
 - [ ] Turn on repo Allow-auto-merge + delete-on-merge.
-- [ ] Flip `platformAutomerge: true` in `renovate.json`; verify a low-risk PR (e.g. an Actions
-      bump) auto-merges on green and a prod-dep PR does **not**.
+- [ ] **Add** the three `automerge: true` packageRules **and** flip `platformAutomerge: true` in
+      `renovate.json`; verify a low-risk PR (e.g. an Actions bump) auto-merges on green and a prod-dep
+      PR does **not**.
 - [ ] Update `docs/deployment/github-actions-ci-cd.md` + `README.md` for the PR-based trunk flow.
 
 ### Phase 5 — Docs
@@ -416,3 +432,15 @@ Incorporated an external review pass. All seven findings were sound:
 | 5 | Guessed branch-protection check names | **§4.5** now says select exact contexts from the first PR run; no hard-coded list. |
 | 6 | Actions not digest-pinned | Added **`helpers:pinGitHubActionDigests`** to `extends`. |
 | 7 | Sample `platformAutomerge:true` vs Phase 1 "off" | Sample now `false`; flipped in Phase 4. |
+
+### v3 (2026-06-27) — second review pass
+
+All five findings sound:
+
+| # | Finding | Resolution |
+|---|---------|-----------|
+| 1 | `platformAutomerge:false` does NOT disable automerge; the `automerge:true` rules would still merge in Phase 1 | **Phase 1 now omits the `automerge:true` rules entirely**; they're added in Phase 4. Sample + notes flag that automerge is governed by the packageRules, not `platformAutomerge`. |
+| 2 | `RENOVATE_TOKEN` perms too narrow | Expanded to `contents/pull-requests/issues/workflows: write` + `checks: read` + `Dependabot alerts: read` — `workflows: write` is **required** for the Actions digest-pin PRs. |
+| 3 | Trivy workflow missing `packages: read` | Added (matches `ci.yml`'s e2e job). |
+| 4 | `.trivyignore` referenced before it exists | Commit an **empty** `.trivyignore` with the workflow; populate after baseline triage. |
+| 5 | Stateful trio fully ignored → can't digest-pin the approved image | Rule now blocks version + digest *updates* but **allows the one-time `pinDigest`**, locking the approved image by sha. |
