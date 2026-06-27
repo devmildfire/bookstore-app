@@ -68,93 +68,56 @@
 }
 
 // ─── Grid ─────────────────────────────────────────────────────────────────────
-// Outer grid: side columns are the page padding. Card rows sit in column 2.
-// Expansion panel spans all 3 columns = naturally full wrapper width, no overflow tricks.
+// Flat responsive grid: cards are direct children, expansions span all columns
+// (grid-column: 1 / -1). grid-auto-flow: row dense backfills gaps above the
+// full-width expansion with the next card, so the expansion always sits below
+// the entire row of the clicked card — correct at every breakpoint (3/2/1 cols).
+// Padding on the wrapper replaces the old outer gutter columns; the expansion
+// breaks out of the padding via negative margins for a full-bleed background.
 
 .gridWrap {
   display: grid;
-  grid-template-columns: $layout-px 1fr $layout-px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-flow: row dense;
+  column-gap: $space-13;
   row-gap: $space-13;
+  padding: 0 $layout-px;
   width: 100%;
 
   @include breakpoint(tablet) {
-    grid-template-columns: $layout-px-tablet 1fr $layout-px-tablet;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: $space-8;
     row-gap: $space-8;
+    padding: 0 $layout-px-tablet;
   }
 
   @include breakpoint(tablet-small) {
-    grid-template-columns: $layout-px-tablet-small 1fr $layout-px-tablet-small;
+    padding: 0 $layout-px-tablet-small;
   }
 
   @include breakpoint(phone) {
-    grid-template-columns: $layout-px-phone 1fr $layout-px-phone;
+    grid-template-columns: 1fr;
     row-gap: $space-4;
+    padding: 0 $layout-px-phone;
   }
 }
 
-// Contained variant: no outer gutter columns — the wrapper is already
-// inside a padded container (e.g. /profile right column). Card rows
-// span the full wrapper width and the column count is driven by a
-// ResizeObserver in BoxSetsGrid (~300 px min card width).
-//
-// `min-width: 0` on the wrapper itself, and on every grid item via
-// `> *`, prevents the inner `previewGrid` (which is `width: max-content`)
-// from forcing the surrounding grid columns to expand beyond their
-// container — without it the expansion blowout cascades up and stretches
-// the card row too.
+// Contained variant: no page padding (the wrapper is already inside a padded
+// container like /profile). auto-fill grid responds to container width.
 .gridWrapContained {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  column-gap: $space-6;
   row-gap: $space-6;
+  padding: 0;
   min-width: 0;
 
   > * {
     min-width: 0;
   }
-}
-
-.cardRow {
-  grid-column: 2; // center column only — side columns provide padding
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: $space-13;
-
-  @include breakpoint(tablet) {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: $space-8;
-  }
-
-  @include breakpoint(phone) {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Contained-variant card row: spans the full wrapper width (no outer
-// gutter columns). auto-fill grid responds to container width without JS.
-.cardRowContained {
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  column-gap: $space-6;
-  min-width: 0;
 
   @include breakpoint(phone) {
     column-gap: $space-3;
   }
-}
-
-// When the expansion is inside the contained-variant wrapper, swap the
-// preview's heavy page-gutter padding for a snug one and let the
-// previewInner clip the horizontally-scrolling book list at the
-// container edge instead of leaking into the rest of the layout.
-.gridWrapContained .expansion {
-  min-width: 0;
-}
-
-.gridWrapContained .previewInner {
-  padding: $space-5 $space-5;
-  min-width: 0;
-  // Constrain the Scroller host so the wide book grid scrolls inside it
-  // rather than pushing the expansion past the wrapper edge.
-  max-width: 100%;
 }
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
@@ -305,9 +268,40 @@
 // ─── Expansion panel ──────────────────────────────────────────────────────────
 
 .expansion {
-  grid-column: 1 / -1; // spans all 3 outer columns = full wrapper width, no overflow
+  grid-column: 1 / -1; // spans all columns = full width, sits below the entire row
   background: $color-surface-dark;
   animation: expandIn 0.2s ease;
+  // Break out of the wrapper's horizontal padding for a full-bleed background.
+  margin-left: -$layout-px;
+  margin-right: -$layout-px;
+
+  @include breakpoint(tablet) {
+    margin-left: -$layout-px-tablet;
+    margin-right: -$layout-px-tablet;
+  }
+
+  @include breakpoint(tablet-small) {
+    margin-left: -$layout-px-tablet-small;
+    margin-right: -$layout-px-tablet-small;
+  }
+
+  @include breakpoint(phone) {
+    margin-left: -$layout-px-phone;
+    margin-right: -$layout-px-phone;
+  }
+}
+
+// Contained variant: no negative margins (the wrapper has no padding to break out of).
+.gridWrapContained .expansion {
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 0;
+}
+
+.gridWrapContained .previewInner {
+  padding: $space-5 $space-5;
+  min-width: 0;
+  max-width: 100%;
 }
 
 // ─── Preview (book list inside expansion) ────────────────────────────────────
