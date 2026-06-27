@@ -19,7 +19,7 @@ name: chtivo
 services:
   # ── Reverse proxy (internal): Host-based routing, real visitor IP, body limits ──
   nginx:
-    image: nginx:1.27-alpine
+    image: nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
     restart: unless-stopped
     depends_on: [app, kong]
     volumes:
@@ -28,7 +28,7 @@ services:
 
   # ── Cloudflare Tunnel: the ONLY ingress. No public host ports anywhere. ─────────
   cloudflared:
-    image: cloudflare/cloudflared:2026.6.0
+    image: cloudflare/cloudflared:2026.6.0@sha256:ba461b8aa9c042156dbd39c38657fe7431bafa063220eab8d5330a523863da9f
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
@@ -66,7 +66,7 @@ services:
 
   # ── Supabase API gateway (stateless → official tested version) ─────────────────
   kong:
-    image: kong/kong:3.9.1
+    image: kong/kong:3.9.1@sha256:6addf50e6bd8d578314cb9ce4f2d2d1e3781d2edecef59f707e00c6e05d384f5
     restart: unless-stopped
     environment:
       KONG_DATABASE: "off"
@@ -84,7 +84,7 @@ services:
 
   # ── Auth / GoTrue (STATEFUL: pinned to local) ──────────────────────────────────
   auth:
-    image: public.ecr.aws/supabase/gotrue:v2.188.1
+    image: public.ecr.aws/supabase/gotrue:v2.188.1@sha256:87db8c737af49a64236c461882ed3925f8b1e5c2c47176c64694dedc65153573
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
@@ -142,7 +142,7 @@ services:
 
   # ── PostgREST (stateless) ──────────────────────────────────────────────────────
   rest:
-    image: public.ecr.aws/supabase/postgrest:v14.10
+    image: public.ecr.aws/supabase/postgrest:v14.10@sha256:bca3f86f69d8ef7aa1e5ee65e66ce9a20c6c147be637517a7be8399e102901d1
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
@@ -165,7 +165,7 @@ services:
   #    /mnt/stub/stub/<bucket>/<key>/<version> files resolve. Image transforms off
   #    (app uses next/image on public URLs, not Supabase render) → no imgproxy.
   storage:
-    image: public.ecr.aws/supabase/storage-api:v1.54.1
+    image: public.ecr.aws/supabase/storage-api:v1.54.1@sha256:09c0f6f63ba79f1fea1917dfa2bc1ada8ef262f3f37a4d9f6c12add27707b0cd
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
@@ -199,7 +199,7 @@ services:
 
   # ── postgres-meta (stateless; backs Studio) ────────────────────────────────────
   meta:
-    image: public.ecr.aws/supabase/postgres-meta:v0.96.4
+    image: public.ecr.aws/supabase/postgres-meta:v0.96.4@sha256:4dd3e0ff3e9a0f9f62dd1a1a827f124645549b439ddb2a53598575744585e32d
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
@@ -214,7 +214,7 @@ services:
 
   # ── Studio (PRIVATE — no nginx route; reach via SSH tunnel to kong:8000/Studio) ─
   studio:
-    image: public.ecr.aws/supabase/studio:2026.04.28-sha-89d08a2
+    image: public.ecr.aws/supabase/studio:2026.04.28-sha-89d08a2@sha256:b5fb9c41dd7ef672989ce1a6fecfb260da52f948fecde76c292210cc4ffaf9c9
     restart: unless-stopped
     depends_on:
       meta: { condition: service_started }
@@ -231,7 +231,7 @@ services:
 
   # ── Postgres (STATEFUL: MUST match the dump's version exactly) ──────────────────
   db:
-    image: public.ecr.aws/supabase/postgres:17.6.1.106
+    image: public.ecr.aws/supabase/postgres:17.6.1.106@sha256:21ab971149317ea9cd12a8126fe4ebb34def08c8972956b0958cba0924409dab
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
