@@ -1,6 +1,6 @@
 # Dependency & Vulnerability Monitoring — Implementation Plan
 
-**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v4 (three external review passes incorporated — see §9)
+**Status:** planning (no code yet) · **Created:** 2026-06-27
 **Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
 precise, repo-specific execution).
 **Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
@@ -93,8 +93,8 @@ Four independent signals, each matched to its domain; no shared always-on servic
   "extends": [
     "config:recommended",
     ":dependencyDashboard",
-    "docker:pinDigests",                  // pin Docker tags → digests (node, nginx, etc. — finding #2)
-    "helpers:pinGitHubActionDigests"      // pin Actions @vN → digest (integrity parity — finding #6)
+    "docker:pinDigests",                  // pin Docker tags → digests (node, nginx, etc.)
+    "helpers:pinGitHubActionDigests"      // pin Actions @vN → digest (integrity parity)
   ],
   "timezone": "Asia/Yekaterinburg",
   "schedule": ["before 6am on monday"],          // weekly, low-noise (D5)
@@ -105,7 +105,7 @@ Four independent signals, each matched to its domain; no shared always-on servic
   "major": { "dependencyDashboardApproval": true },                       // majors are opt-in (D5)
   "packageRules": [
     // ── PHASE 4 ONLY — automerge tier (D5). Left COMMENTED OUT so this snippet is the safe Phase-1
-    //    config (finding #1: `automerge: true` merges via Renovate's own API once checks pass even with
+    //    config (`automerge: true` merges via Renovate's own API once checks pass even with
     //    `platformAutomerge: false`). Uncomment these THREE rules in Phase 4, after main is protected. ──
     // { "matchManagers": ["github-actions"], "automerge": true },
     // { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
@@ -117,7 +117,7 @@ Four independent signals, each matched to its domain; no shared always-on servic
     { "matchUpdateTypes": ["major"], "automerge": false },
 
     // ── Migration-coupled stateful images (D4): block version + digest UPDATES, but ALLOW the
-    //    one-time digest PIN so the exact approved image is locked by sha (finding #5). Version moves
+    //    one-time digest PIN so the exact approved image is locked by sha. Version moves
     //    only ever happen via the rehearsed-restore process, never an auto-PR. ──
     { "matchDatasources": ["docker"],
       "matchPackageNames": [
@@ -198,7 +198,7 @@ permissions:
   packages: read                      # pull :production / :latest from GHCR (matches ci.yml's e2e job)
   security-events: write              # SARIF upload to Code scanning
 jobs:
-  # ── Gating: the DEPLOYED image (:production), HIGH/CRIT gate, CRITICAL→Telegram (D6/D8, finding #1/#3) ──
+  # ── Gating: the DEPLOYED image (:production), HIGH/CRIT gate, CRITICAL→Telegram (D6/D8) ──
   app-image:
     runs-on: ubuntu-latest
     steps:
@@ -241,7 +241,7 @@ jobs:
         with: { image-ref: ghcr.io/devmildfire/bookstore-app:production, severity: HIGH,CRITICAL, ignore-unfixed: true, exit-code: '1', format: table }
     # ponytail: 3 Trivy passes share a cached DB; if it ever drags, collapse to one JSON + jq.
 
-  # ── Filesystem: misconfig + secret + vuln. REPORT-ONLY until a baseline is committed (finding #4). ──
+  # ── Filesystem: misconfig + secret + vuln. REPORT-ONLY until a baseline is committed. ──
   filesystem:
     runs-on: ubuntu-latest
     steps:
@@ -254,7 +254,7 @@ jobs:
           format: sarif
           output: trivy-fs.sarif
           severity: HIGH,CRITICAL
-          trivyignores: .trivyignore          # commit an EMPTY .trivyignore with this workflow so the input resolves (finding #4); populate after the baseline triage
+          trivyignores: .trivyignore          # commit an EMPTY .trivyignore with this workflow so the input resolves; populate after the baseline triage
           exit-code: '0'                       # Phase 3a: 0 (report-only). Phase 3b: flip to 1 to gate.
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
@@ -267,7 +267,7 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - ghcr.io/devmildfire/bookstore-app:latest      # early warning for the next promote (finding #1)
+          - ghcr.io/devmildfire/bookstore-app:latest      # early warning for the next promote
           - public.ecr.aws/supabase/postgres:17.6.1.106
           - public.ecr.aws/supabase/gotrue:v2.188.1
           - public.ecr.aws/supabase/storage-api:v1.54.1
@@ -343,12 +343,12 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 ### Phase 1 — Renovate (PRs only, NO automerge)
 - [ ] Add `renovate.json` exactly as in §4.1 — the three `automerge: true` rules stay **commented
       out** and `platformAutomerge: false`. (Both matter — `automerge: true` alone would let Renovate
-      merge via its own API before `main` is protected; finding #1.) The `automerge: false` manual-tier
+      merge via its own API before `main` is protected.) The `automerge: false` manual-tier
       rules stay active.
 - [ ] Add `.github/workflows/renovate.yml`.
 - [ ] Manual `workflow_dispatch`; confirm the Dependency Dashboard issue + the first onboarding PR.
 - [ ] Verify a Renovate PR **triggers `ci.yml`** (proves the PAT identity works).
-- [ ] **Acceptance — digest pinning lands (findings #2/#6):** merge Renovate's first digest-pin PRs
+- [ ] **Acceptance — digest pinning lands:** merge Renovate's first digest-pin PRs
       so `node:22-alpine`, the compose tags (`nginx`, `kong`, …), and the GitHub Actions (`@vN`)
       are pinned to immutable digests. Without this the "same source → same image" guarantee in the
       CI/CD docs is weaker than claimed.
@@ -357,7 +357,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [ ] Enable Dependency graph + Dependabot alerts; confirm Security updates are OFF.
 
 ### Phase 3 — Trivy
-**3a — report-only baseline (no gate yet; finding #4):**
+**3a — report-only baseline (no gate yet):**
 - [ ] Add `.github/workflows/trivy.yml` with the **filesystem** scan at `exit-code: 0` and the
       `:production` image scan present. **Commit an empty `.trivyignore` in the same change** so the
       `trivyignores:` input resolves on the first run.
@@ -416,41 +416,3 @@ Automatically detected, with the mechanism:
 | Newly disclosed CVEs after deploy | Dependabot alerts (continuous) + nightly Trivy on `:production` |
 
 Developer effort reduces to: review PRs + occasional security findings.
-
----
-
-## 9. Review responses (v2, 2026-06-27)
-
-Incorporated an external review pass. All seven findings were sound:
-
-| # | Finding | Resolution |
-|---|---------|-----------|
-| 1 | Scanned `:latest`, not the deployed `:production` | **Reworked §4.3/D6** — `:production` is the gated scan; `:latest` + Supabase images are informational. |
-| 2 | Mutable `node:22-alpine` / `nginx` tags | `docker:pinDigests` (already present) + **Phase 1 acceptance** that the first digest-pin PRs are merged. |
-| 3 | D8 said CRITICAL but workflow paged on HIGH | **Reworked D8/§4.3** — GitHub fails on HIGH+CRIT; a dedicated CRITICAL pass drives the Telegram page. |
-| 4 | fs gate would fail on first run | **Split Phase 3 → 3a report-only baseline (+`.trivyignore`) → 3b gate.** |
-| 5 | Guessed branch-protection check names | **§4.5** now says select exact contexts from the first PR run; no hard-coded list. |
-| 6 | Actions not digest-pinned | Added **`helpers:pinGitHubActionDigests`** to `extends`. |
-| 7 | Sample `platformAutomerge:true` vs Phase 1 "off" | Sample now `false`; flipped in Phase 4. |
-
-### v3 (2026-06-27) — second review pass
-
-All five findings sound:
-
-| # | Finding | Resolution |
-|---|---------|-----------|
-| 1 | `platformAutomerge:false` does NOT disable automerge; the `automerge:true` rules would still merge in Phase 1 | **Phase 1 now omits the `automerge:true` rules entirely**; they're added in Phase 4. Sample + notes flag that automerge is governed by the packageRules, not `platformAutomerge`. |
-| 2 | `RENOVATE_TOKEN` perms too narrow | Expanded to `contents/pull-requests/issues/workflows: write` + `checks: read` + `Dependabot alerts: read` — `workflows: write` is **required** for the Actions digest-pin PRs. |
-| 3 | Trivy workflow missing `packages: read` | Added (matches `ci.yml`'s e2e job). |
-| 4 | `.trivyignore` referenced before it exists | Commit an **empty** `.trivyignore` with the workflow; populate after baseline triage. |
-| 5 | Stateful trio fully ignored → can't digest-pin the approved image | Rule now blocks version + digest *updates* but **allows the one-time `pinDigest`**, locking the approved image by sha. |
-
-### v4 (2026-06-27) — third review pass (doc-consistency)
-
-All three sound (documentation consistency, no design change):
-
-| # | Finding | Resolution |
-|---|---------|-----------|
-| 1 | Copy-pasteable snippet still had active `automerge: true` rules | **Commented them out** in the §4.1 snippet so the snippet *is* the safe Phase-1 config; Phase 4 says "uncomment". |
-| 2 | D2 still said "contents + PRs: write" | Updated D2 to the full §5 permission set (incl. `workflows: write`). |
-| 3 | "outdated compose images" row didn't note the stateful digest-pin exception | Reworded: stateless = version updates; stateful = digest pin only. |
