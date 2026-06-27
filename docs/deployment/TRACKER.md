@@ -116,7 +116,7 @@ Status legend:
 - [ ] Add Cloudflare WAF verified-bot skip rule.
 - [ ] Add Cloudflare WAF challenge rules gradually.
 - [ ] Keep Bot Fight Mode off unless tested.
-- [ ] Add monitoring alerts.
+- [x] Add monitoring alerts.
 - [ ] Add backup failure alerting.
 
 ## 7. Launch Gate

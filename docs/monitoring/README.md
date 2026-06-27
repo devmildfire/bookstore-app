@@ -1,6 +1,6 @@
 # Observability & Monitoring
 
-**Status:** planned (see [implementation plan](../plans/monitoring-observability.md) for phases &
+**Status:** live (see [implementation plan](../plans/monitoring-observability.md) for phases &
 acceptance; [DECISIONS.md](./DECISIONS.md) for the architecture-decision records).
 
 A self-hosted Prometheus + Grafana observability stack for the chtivo storefront, structured around

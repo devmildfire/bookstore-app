@@ -1,6 +1,6 @@
 # Monitoring & Observability — plan
 
-**Status:** proposed (for review)
+**Status:** implemented
 **Author/date:** 2026-06-23
 **Related:** [docs/perf/psi-baseline.md](../perf/psi-baseline.md), [docs/perf/README.md](../perf/README.md),
 the PSI batch tooling, [docs/deployment/](../deployment/)
