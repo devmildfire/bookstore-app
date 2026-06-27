@@ -343,17 +343,18 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [x] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets — set from the VPS bot (2026-06-27).
 
 ### Phase 1 — Renovate (PRs only, NO automerge)
-- [ ] Add `renovate.json` exactly as in §4.1 — the three `automerge: true` rules stay **commented
-      out** and `platformAutomerge: false`. (Both matter — `automerge: true` alone would let Renovate
-      merge via its own API before `main` is protected.) The `automerge: false` manual-tier
-      rules stay active.
-- [ ] Add `.github/workflows/renovate.yml`.
-- [ ] Manual `workflow_dispatch`; confirm the Dependency Dashboard issue + the first onboarding PR.
-- [ ] Verify a Renovate PR **triggers `ci.yml`** (proves the PAT identity works).
-- [ ] **Acceptance — digest pinning lands:** merge Renovate's first digest-pin PRs
-      so `node:22-alpine`, the compose tags (`nginx`, `kong`, …), and the GitHub Actions (`@vN`)
-      are pinned to immutable digests. Without this the "same source → same image" guarantee in the
-      CI/CD docs is weaker than claimed.
+- [x] Add `renovate.json` — implemented as strict JSON with the `automerge: true` rules **omitted**
+      (cleaner than commenting; Phase 4 adds them) and `platformAutomerge: false`. The
+      `automerge: false` manual-tier rules + the stateful-trio exclusion are active.
+- [x] Add `.github/workflows/renovate.yml` (action digest-pinned to `v46.1.16`).
+- [x] Manual `workflow_dispatch` — Dependency Dashboard (#1) created; updates detected across npm /
+      Docker / Actions; schedule-gating, major-approval, and the stateful-trio exclusion all verified
+      behaving as designed.
+- [x] Verify a Renovate PR **triggers `ci.yml`** — confirmed: PR #2 (`@playwright/test` patch, forced
+      via the dashboard) triggered the CI `pull_request` run. PAT identity works.
+- [ ] **Acceptance — digest pinning lands:** the "pin docker digests" + "pin dependencies" branches are
+      queued under *Awaiting Schedule* (Monday), or force them now via the dashboard checkboxes; merge so
+      `node:22-alpine`, the compose tags, and the Actions get immutable digests.
 
 ### Phase 2 — Dependabot alerts
 - [ ] Enable Dependency graph + Dependabot alerts; confirm Security updates are OFF.
