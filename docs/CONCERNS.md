@@ -9,6 +9,13 @@ Tracked issues that are not part of an active plan but haven't been resolved.
 > unverified in prod — is tracked in [docs/deployment/TRACKER.md](deployment/TRACKER.md), the
 > authoritative source. Where this file and the TRACKER disagree, the TRACKER wins; the
 > prod-cutover notes in G2/P1/P2 below are reconciled against it.
+>
+> **Single env-agnostic image (live 2026-06-26):** the app no longer bakes any Supabase host/key.
+> The browser uses same-origin `/sb` (proxied to Supabase + anon key injected by `src/proxy.ts`);
+> Supabase config + the app origin (`APP_BASE_URL`) are runtime env. CI builds one image, e2e's it,
+> and that exact digest is promoted to prod. **Still to verify in prod: the Google OAuth round-trip**
+> (authorize now routes via `/sb`; needs a manual sign-in). Design:
+> [docs/plans/cicd-single-image-and-edge-tests.md](plans/cicd-single-image-and-edge-tests.md).
 
 ---
 

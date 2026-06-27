@@ -53,8 +53,19 @@ The local dev stack uses the **public Supabase demo keys** (`…supabase-demo…
 `sb_secret_N7UND0…`). Reusing them in production = anyone can mint `service_role` tokens.
 Generate fresh values into `.env` (see `.env.example` header). `ANON_KEY` and
 `SERVICE_ROLE_KEY` must be JWTs signed with the **new** `JWT_SECRET` (roles `anon` /
-`service_role`). After generating, the app's `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the new
-`ANON_KEY` (already wired via `${ANON_KEY}`).
+`service_role`). The app reads them at runtime via `${ANON_KEY}` / `${SERVICE_ROLE_KEY}`.
+
+## App env model — same-origin `/sb` (single image, 2026-06-26)
+The app image bakes **nothing** environment-specific. The browser talks to its own origin
+under `/sb`; the app's middleware (`src/proxy.ts`) proxies `/sb/*` to Supabase and injects the
+anon key — all from **runtime** env:
+- `SUPABASE_INTERNAL_URL` (default `http://kong:8000`) — where `/sb` is proxied + server-side reads.
+- `SUPABASE_ANON_KEY=${ANON_KEY}` — injected into `/sb` requests by the proxy (browser ships a placeholder).
+- `APP_BASE_URL=${NEXT_PUBLIC_BASE_URL}` — runtime origin for redirects + payment callbacks (`getSiteOrigin()`).
+- `NEXT_PUBLIC_BASE_URL` — build-time only: canonical public identity for `metadataBase`/OG/sitemap.
+
+Because none of this is baked, the **same** GHCR image CI tests (against the local Supabase stack)
+is the one promoted to prod. Full design: [docs/plans/cicd-single-image-and-edge-tests.md](../../docs/plans/cicd-single-image-and-edge-tests.md).
 
 ## Cloudflare Tunnel
 Token-based tunnel: create it in Zero Trust → Networks → Tunnels, put the token in

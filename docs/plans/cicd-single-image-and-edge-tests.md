@@ -309,5 +309,5 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [x] Updated `docs/testing/STRATEGY.md` (money-path/app-edge integration done; CI model) + this tracker
 
 ### Docs
-- [ ] Update `frontend-architecture-rendering.md` (same-origin Supabase note) + `deploy/production`
+- [x] Update `frontend-architecture-rendering.md` (same-origin Supabase note) + `deploy/production`
   README/.env.example + `docs/CONCERNS.md` prod-env items on cutover

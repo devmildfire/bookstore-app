@@ -327,3 +327,14 @@ back — Phase 0's "per-user data must be client-fetched" holds only where stati
 **Verified (Chrome DevTools, dev server), desktop / mobile CLS:** `/subscription` 0.16 / 0.27 → **0 / 0**
 (LCP 1888 / 2085 ms → 412 / 720 ms); `/cart` **0 / 0**; `/checkout` **0 / 0**; `/` (home, regression
 check after the shared `SubscriptionsBody` change) **0.01 / 0**.
+
+## Post-Phase-7b — same-origin Supabase (`/sb`) + single env-agnostic image — **DONE + live (2026-06-26)**
+
+Supersedes the "browser client-fetches Supabase from `NEXT_PUBLIC_SUPABASE_URL`" model. The browser now
+talks only to its **own origin** under **`/sb`** (a baked constant); `src/proxy.ts` rewrites that to
+Supabase (runtime `SUPABASE_INTERNAL_URL`) and injects the runtime anon key. Storage/image URLs are
+relative `/sb/...`; the app origin for redirects/payment callbacks is the runtime `APP_BASE_URL`
+(`getSiteOrigin()`), with `NEXT_PUBLIC_BASE_URL` kept only for build-time `metadataBase`/OG/sitemap. Net:
+the image bakes nothing environment-specific → **one image runs in CI (vs the local stack) and prod**.
+Full plan + the resulting CI pipeline (build once → e2e the *image* → deploy that same digest, gated on
+the SHA's CI conclusion): [cicd-single-image-and-edge-tests.md](./cicd-single-image-and-edge-tests.md).
