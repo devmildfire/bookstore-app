@@ -28,7 +28,7 @@ services:
 
   # ── Cloudflare Tunnel: the ONLY ingress. No public host ports anywhere. ─────────
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.6.0
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
