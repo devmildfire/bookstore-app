@@ -1,0 +1,2 @@
+# Accepted/handled Trivy findings (populated after the Phase 3a baseline triage).
+# Format: one finding ID per line (CVE-…, AVD-… for misconfig), optional "# reason".

@@ -1,0 +1,102 @@
+name: Trivy
+
+# Nightly vulnerability + misconfig + secret scanning. Phase 3a: REPORT-ONLY —
+# every scan is exit-code 0 (nothing fails the run) so we can establish a baseline,
+# triage the filesystem findings, and populate .trivyignore before turning the gates
+# on in Phase 3b (image HIGH/CRIT gate + CRITICAL→Telegram).
+on:
+  schedule:
+    - cron: '0 3 * * *' # nightly 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read # pull :production / :latest from GHCR
+  security-events: write # SARIF upload to Code scanning
+
+jobs:
+  # ── The DEPLOYED image (:production). Phase 3b adds the HIGH/CRIT gate + CRITICAL→Telegram. ──
+  app-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - name: GHCR login
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trivy — :production → SARIF (report only)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: ghcr.io/devmildfire/bookstore-app:production
+          format: sarif
+          output: trivy-prod.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '0'
+      - uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3.36.2
+        if: always()
+        with:
+          sarif_file: trivy-prod.sarif
+          category: trivy-prod-image
+
+  # ── Filesystem: vuln + misconfig + secret. REPORT-ONLY until a baseline is committed. ──
+  filesystem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - name: Trivy — fs → SARIF (report only)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: fs
+          scanners: vuln,misconfig,secret
+          format: sarif
+          output: trivy-fs.sarif
+          severity: HIGH,CRITICAL
+          trivyignores: .trivyignore
+          exit-code: '0' # Phase 3b: flip to '1' to gate
+      - uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3.36.2
+        if: always()
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+
+  # ── Informational (NO gate): next-promote image :latest + the third-party Supabase stack. ──
+  informational-images:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ghcr.io/devmildfire/bookstore-app:latest
+          - public.ecr.aws/supabase/postgres:17.6.1.106
+          - public.ecr.aws/supabase/gotrue:v2.188.1
+          - public.ecr.aws/supabase/storage-api:v1.54.1
+          - public.ecr.aws/supabase/postgrest:v14.10
+          - public.ecr.aws/supabase/postgres-meta:v0.96.4
+          - kong/kong:3.9.1
+    steps:
+      - name: GHCR login
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trivy — ${{ matrix.image }} (report only)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: ${{ matrix.image }}
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+          output: trivy-info.txt
+      - name: Publish to job summary
+        if: always()
+        run: |
+          {
+            echo "## Trivy (informational) — ${{ matrix.image }}"
+            echo '```'
+            cat trivy-info.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
