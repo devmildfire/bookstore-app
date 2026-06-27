@@ -384,8 +384,8 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 **3b — gates on:**
 - [x] Filesystem scan gates (`exit-code: 1`); informational job (`:latest` + Supabase) never fails.
 - [x] `:production` gates on HIGH/CRITICAL; verified the gated run passes clean now that the image is fixed.
-- [x] CRITICAL→Telegram **wired** (dedicated CRITICAL-only pass drives the page; HIGH-only fails the run
-      but does not page). Not live-fired — no CRITICAL exists to trigger it; will page on a real one.
+- [x] CRITICAL→Telegram **live-verified** (2026-06-27) — a throwaway scan of a known-vulnerable image
+      fired the page end-to-end (message delivered). HIGH-only fails the run but does not page.
 
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
 - [ ] Enable branch protection on `main` with the required checks (§4.5).
