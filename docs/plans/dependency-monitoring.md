@@ -1,6 +1,6 @@
 # Dependency & Vulnerability Monitoring — Implementation Plan
 
-**Status:** planning (no code yet) · **Created:** 2026-06-27
+**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v2 (external review incorporated — see §9)
 **Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
 precise, repo-specific execution).
 **Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
@@ -46,9 +46,9 @@ These were decided up-front; the rationale is the point of the document.
 | D3 | **Renovate is the single PR source**; Dependabot **Alerts ON, Security Updates OFF** | Both bots can raise CVE-fix PRs; running both = duplicate PRs. Renovate raises everything (incl. `vulnerabilityAlerts`); Dependabot's alert graph stays for the native Security dashboard + email. No `dependabot.yml` (that file is for *version* updates, which Renovate owns). |
 | D4 | Renovate manages **stateless** compose images; **ignores** `postgres`/`gotrue`/`storage-api` | Those three are coupled to the restored dump + migration state — see [deploy/production/README.md](../../deploy/production/README.md) "Version pinning rationale". A bump requires a rehearsed restore, so it must never arrive as an auto-PR. |
 | D5 | **Limited automerge**, gated on green `ci.yml` | Risk-tiered: automerge only GitHub Actions updates, devDependency patch/minor, and lockfile maintenance — *because* the unit+integration+e2e suite gates them. App deps (any), majors, and all Docker/base/compose bumps stay manual PRs. Ties the real test suite into the update flow. |
-| D6 | **Trivy** scans app image (gates HIGH/CRIT) + filesystem (misconfig + secrets) + Supabase images (**informational**, no gate) | The app image + repo are what we can fix → they gate. The Supabase images are third-party + deliberately pinned → report-only visibility of the full deployed CVE surface, without a gate we can't act on. |
+| D6 | **Trivy** scans the **deployed** image `:production` (gates HIGH/CRIT) + the next-trunk image `:latest` (informational) + filesystem (misconfig + secrets) + Supabase images (**informational**) | "Detect CVEs after deployment" means scanning *what is actually running* — that is `:production` (a promoted SHA that can lag `main` or be rolled back), **not** `:latest` (only the newest main build). `:latest` is scanned too as early warning for the next promote. App image + repo are what we can fix → they gate; `:latest` + Supabase images are third-party/pinned/not-yet-deployed → report-only. |
 | D7 | Trivy findings → **SARIF to GitHub Security** (Code scanning) | Repo is public, so Code scanning is free. Browsable/dismissable/historical, dedups with Dependabot — the idiomatic GitHub-native integration. |
-| D8 | **Mirror CRITICAL Trivy failures to Telegram** | Reuses the existing alert bot (Bot API call from the workflow). Supply-chain PRs/alerts stay GitHub-native; only the high-severity *runtime-relevant* scanner failures also page Telegram, alongside the existing SLO alerts. |
+| D8 | GitHub fails+notifies on **HIGH/CRITICAL**; **Telegram pages on CRITICAL only** | We don't *ship* a HIGH/CRITICAL build (gate fails → GitHub email/notification covers HIGH). But the existing Telegram channel is reserved for things that warrant interrupting you — so only **CRITICAL** mirrors there, alongside the SLO alerts. A dedicated CRITICAL-severity Trivy pass drives the page (see §4.3). |
 | D9 | **Keep the `npm audit` deploy gate** | Synchronous + blocking: a known high/critical npm CVE stops the build from shipping. Renovate/Dependabot are async (PRs/alerts) and cannot stop a deploy. Complementary defense-in-depth. |
 | D10 | **Protect `main`** with required CI checks | Trunk hygiene + enables Renovate's native auto-merge. **Consequence: ends direct push-to-main** — all changes (yours included) go through PRs. `ci.yml` already runs on `pull_request → main`, so the flow is fully supported. |
 
@@ -90,7 +90,12 @@ Four independent signals, each matched to its domain; no shared always-on servic
 ```jsonc
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard", "docker:pinDigests"],
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    "docker:pinDigests",                  // pin Docker tags → digests (node, nginx, etc. — finding #2)
+    "helpers:pinGitHubActionDigests"      // pin Actions @vN → digest (integrity parity — finding #6)
+  ],
   "timezone": "Asia/Yekaterinburg",
   "schedule": ["before 6am on monday"],          // weekly, low-noise (D5)
   "prConcurrentLimit": 8,
@@ -118,7 +123,7 @@ Four independent signals, each matched to its domain; no shared always-on servic
       ],
       "enabled": false }
   ],
-  "platformAutomerge": true                         // use GitHub native auto-merge (needs D10)
+  "platformAutomerge": false                        // START false (Phase 1); flip to true in Phase 4 once main is protected (D10)
 }
 ```
 
@@ -182,33 +187,50 @@ permissions:
   contents: read
   security-events: write              # SARIF upload to Code scanning
 jobs:
-  # ── Gating: our app image + repo filesystem ──
+  # ── Gating: the DEPLOYED image (:production), HIGH/CRIT gate, CRITICAL→Telegram (D6/D8, finding #1/#3) ──
   app-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Trivy — app image (gate HIGH/CRIT)
+      - name: GHCR login                       # :production is public but GHCR wants a token
+        uses: docker/login-action@v4
+        with: { registry: ghcr.io, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+
+      # 1) Visibility: scan once → SARIF, never aborts (exit-code 0).
+      - name: Trivy — :production → SARIF
         uses: aquasecurity/trivy-action@<pin>
         with:
-          image-ref: ghcr.io/devmildfire/bookstore-app:latest
+          image-ref: ghcr.io/devmildfire/bookstore-app:production
           format: sarif
-          output: trivy-app.sarif
+          output: trivy-prod.sarif
           severity: HIGH,CRITICAL
-          exit-code: '1'              # FAIL on HIGH/CRITICAL
-          ignore-unfixed: true        # only actionable (a fix exists)
-      - if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with: { sarif_file: trivy-app.sarif, category: trivy-app-image }
-      - name: Notify Telegram on failure (CRITICAL)         # D8
-        if: failure()
-        env:
-          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ignore-unfixed: true                 # only actionable (a fix exists)
+          exit-code: '0'
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with: { sarif_file: trivy-prod.sarif, category: trivy-prod-image }
+
+      # 2) CRITICAL-only pass drives the Telegram page (D8). DB is cached → cheap re-scan.
+      - name: Trivy — :production CRITICAL check
+        id: crit
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@<pin>
+        with: { image-ref: ghcr.io/devmildfire/bookstore-app:production, severity: CRITICAL, ignore-unfixed: true, exit-code: '1', format: table }
+      - name: Telegram page — CRITICAL only
+        if: steps.crit.outcome == 'failure'
+        env: { TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}, TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }} }
         run: |
           curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
             -d chat_id="${TG_CHAT}" \
-            -d text="🛑 Trivy: HIGH/CRITICAL in bookstore-app image — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            -d text="🛑 Trivy: CRITICAL CVE in DEPLOYED image (:production) — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
+      # 3) Gate: fail the job (→ GitHub email/notification) on HIGH *or* CRITICAL.
+      - name: Trivy — :production gate (HIGH,CRITICAL)
+        uses: aquasecurity/trivy-action@<pin>
+        with: { image-ref: ghcr.io/devmildfire/bookstore-app:production, severity: HIGH,CRITICAL, ignore-unfixed: true, exit-code: '1', format: table }
+    # ponytail: 3 Trivy passes share a cached DB; if it ever drags, collapse to one JSON + jq.
+
+  # ── Filesystem: misconfig + secret + vuln. REPORT-ONLY until a baseline is committed (finding #4). ──
   filesystem:
     runs-on: ubuntu-latest
     steps:
@@ -221,19 +243,20 @@ jobs:
           format: sarif
           output: trivy-fs.sarif
           severity: HIGH,CRITICAL
-          exit-code: '1'
-      - if: always()
-        uses: github/codeql-action/upload-sarif@v3
+          trivyignores: .trivyignore          # committed after the baseline run (Phase 3a)
+          exit-code: '0'                       # Phase 3a: 0 (report-only). Phase 3b: flip to 1 to gate.
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
         with: { sarif_file: trivy-fs.sarif, category: trivy-fs }
-      # (same Telegram-on-failure step)
 
-  # ── Informational: the prod Supabase images, no gate (D6) ──
-  supabase-images:
+  # ── Informational (NO gate, D6): next-promote image :latest + the third-party Supabase stack ──
+  informational-images:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         image:
+          - ghcr.io/devmildfire/bookstore-app:latest      # early warning for the next promote (finding #1)
           - public.ecr.aws/supabase/postgres:17.6.1.106
           - public.ecr.aws/supabase/gotrue:v2.188.1
           - public.ecr.aws/supabase/storage-api:v1.54.1
@@ -241,29 +264,27 @@ jobs:
           - public.ecr.aws/supabase/postgres-meta:v0.96.4
           - kong/kong:3.9.1
     steps:
+      - name: GHCR login                       # for the :latest entry
+        uses: docker/login-action@v4
+        with: { registry: ghcr.io, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
       - name: Trivy — ${{ matrix.image }} (report only)
         uses: aquasecurity/trivy-action@<pin>
-        with:
-          image-ref: ${{ matrix.image }}
-          format: table
-          severity: HIGH,CRITICAL
-          exit-code: '0'              # never fail (third-party + pinned)
-          output: trivy-${{ strategy.job-index }}.txt
+        with: { image-ref: ${{ matrix.image }}, format: table, severity: HIGH,CRITICAL, exit-code: '0', output: report.txt }
       - name: Publish to job summary
         if: always()
-        run: { ... cat report into $GITHUB_STEP_SUMMARY ... }
-      - uses: actions/upload-artifact@v7
-        with: { name: trivy-supabase-${{ strategy.job-index }}, path: 'trivy-*.txt' }
+        run: cat report.txt >> "$GITHUB_STEP_SUMMARY"
 ```
 
 Notes:
 - `ignore-unfixed: true` on the gating scans → only fail when a fix is actually available
   (avoids blocking on un-actionable CVEs). The informational job keeps unfixed too (full
   visibility).
-- The image is `:latest` (pushed by `ci.yml`'s build job on main). The Supabase image list is
-  kept in sync with `docker-compose.yml` (a small drift risk — call it out in the file comment;
-  Renovate updates the compose tags, this list is updated in the same PR by hand. `ponytail:`
-  duplicated list, dedupe via a parsed compose only if it churns).
+- The gated image is `:production` (the SHA actually promoted + running on the VPS — `:latest`
+  only tracks the newest main build and ignores rollbacks). `:latest` is scanned informationally
+  as early warning for the next promote.
+- The informational image list mirrors `docker-compose.yml` by hand (a small drift risk — note
+  it in the file comment; Renovate bumps the compose tags, this list updates in the same PR).
+  `ponytail:` duplicated list, dedupe via a parsed compose only if it churns.
 
 ### 4.4 npm audit gate (unchanged — D9)
 
@@ -273,9 +294,11 @@ documented here so the full picture is in one place.
 ### 4.5 Branch protection on `main` (D10)
 
 Settings → Branches → add a rule for `main`:
-- **Require status checks to pass before merging** — required contexts (exact strings appear
-  after the first PR run; expected: `audit / npm-audit`, `Lint & build check`, `unit / unit`,
-  `integration / integration`, `build / build-and-push`, `e2e / Playwright E2E`).
+- **Require status checks to pass before merging.** ⚠ Because `ci.yml` uses *reusable* workflows,
+  the visible check-context strings are not reliably guessable (they render as caller/inner and
+  can vary). **Do not hard-code them** — open one throwaway PR, let `ci.yml` run, then in the
+  branch-protection UI **select the exact contexts from the list it presents** (the jobs we want:
+  audit, lint, unit, integration, build, e2e).
 - **Require branches to be up to date before merging.**
 - Do **not** require linear history / signed commits (not used today).
 - Repo setting → **Allow auto-merge: ON**; **Automatically delete head branches: ON**.
@@ -307,18 +330,33 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets (from the VPS bot).
 
 ### Phase 1 — Renovate (PRs only, automerge OFF initially)
-- [ ] Add `renovate.json` (automerge rules present but `platformAutomerge: false` for the first run).
+- [ ] Add `renovate.json` (`platformAutomerge: false` for now — Phase 4 flips it).
 - [ ] Add `.github/workflows/renovate.yml`.
 - [ ] Manual `workflow_dispatch`; confirm the Dependency Dashboard issue + the first onboarding PR.
 - [ ] Verify a Renovate PR **triggers `ci.yml`** (proves the PAT identity works).
+- [ ] **Acceptance — digest pinning lands (findings #2/#6):** merge Renovate's first digest-pin PRs
+      so `node:22-alpine`, the compose tags (`nginx`, `kong`, …), and the GitHub Actions (`@vN`)
+      are pinned to immutable digests. Without this the "same source → same image" guarantee in the
+      CI/CD docs is weaker than claimed.
 
 ### Phase 2 — Dependabot alerts
 - [ ] Enable Dependency graph + Dependabot alerts; confirm Security updates are OFF.
 
 ### Phase 3 — Trivy
-- [ ] Add `.github/workflows/trivy.yml` (app image + fs gating, Supabase informational).
-- [ ] `workflow_dispatch` run; confirm SARIF appears in Security ▸ Code scanning.
-- [ ] Force a failure path (e.g. temporarily lower severity) → confirm the Telegram message.
+**3a — report-only baseline (no gate yet; finding #4):**
+- [ ] Add `.github/workflows/trivy.yml` with the **filesystem** scan at `exit-code: 0` and the
+      `:production` image scan present.
+- [ ] `workflow_dispatch` run; triage the first filesystem findings (misconfig/secret false
+      positives are expected from docs/test fixtures + IaC).
+- [ ] Commit a `.trivyignore` (and/or `trivy.yaml`) capturing the accepted/handled findings.
+- [ ] Confirm SARIF appears in **Security ▸ Code scanning** for both `trivy-prod-image` + `trivy-fs`.
+
+**3b — turn the gates on:**
+- [ ] Flip the filesystem scan to `exit-code: 1`.
+- [ ] Confirm the `:production` HIGH/CRITICAL gate fails the job as designed.
+- [ ] Force a CRITICAL (e.g. a known-vulnerable test image) → confirm the **Telegram page fires on
+      CRITICAL only**, and that a HIGH-only finding fails the job but does **not** page Telegram.
+- [ ] Confirm the informational job (`:latest` + Supabase images) never fails the run.
 
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
 - [ ] Enable branch protection on `main` with the required checks (§4.5).
@@ -355,10 +393,26 @@ Automatically detected, with the mechanism:
 | Outdated npm packages | Renovate PRs |
 | Vulnerable npm packages | Dependabot alerts + Renovate vuln PRs + `npm audit` gate |
 | Outdated Docker base image | Renovate (`dockerfile` manager) |
-| Vulnerable OS packages (our image) | Trivy app-image scan (gates) |
+| Vulnerable OS packages (deployed image) | Trivy `:production` scan (gates HIGH/CRIT) |
 | Vulnerable OS packages (Supabase stack) | Trivy informational matrix |
 | Outdated GitHub Actions | Renovate (`github-actions` manager, automerged) |
 | Outdated compose images | Renovate (stateless set; stateful trio intentionally excluded) |
-| Newly disclosed CVEs after deploy | Dependabot alerts (continuous) + nightly Trivy |
+| Newly disclosed CVEs after deploy | Dependabot alerts (continuous) + nightly Trivy on `:production` |
 
 Developer effort reduces to: review PRs + occasional security findings.
+
+---
+
+## 9. Review responses (v2, 2026-06-27)
+
+Incorporated an external review pass. All seven findings were sound:
+
+| # | Finding | Resolution |
+|---|---------|-----------|
+| 1 | Scanned `:latest`, not the deployed `:production` | **Reworked §4.3/D6** — `:production` is the gated scan; `:latest` + Supabase images are informational. |
+| 2 | Mutable `node:22-alpine` / `nginx` tags | `docker:pinDigests` (already present) + **Phase 1 acceptance** that the first digest-pin PRs are merged. |
+| 3 | D8 said CRITICAL but workflow paged on HIGH | **Reworked D8/§4.3** — GitHub fails on HIGH+CRIT; a dedicated CRITICAL pass drives the Telegram page. |
+| 4 | fs gate would fail on first run | **Split Phase 3 → 3a report-only baseline (+`.trivyignore`) → 3b gate.** |
+| 5 | Guessed branch-protection check names | **§4.5** now says select exact contexts from the first PR run; no hard-coded list. |
+| 6 | Actions not digest-pinned | Added **`helpers:pinGitHubActionDigests`** to `extends`. |
+| 7 | Sample `platformAutomerge:true` vs Phase 1 "off" | Sample now `false`; flipped in Phase 4. |
