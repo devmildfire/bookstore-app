@@ -9,7 +9,14 @@ import path from 'node:path'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { '@': path.resolve(__dirname, './src') },
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      // `server-only`/`client-only` are Next build-guards (no runtime behavior)
+      // that don't resolve under Vitest. Stub them so integration tests can
+      // import server modules (route handlers) directly.
+      'server-only': path.resolve(__dirname, './tests/__stubs__/empty.ts'),
+      'client-only': path.resolve(__dirname, './tests/__stubs__/empty.ts'),
+    },
   },
   test: {
     globals: true,

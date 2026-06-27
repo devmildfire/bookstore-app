@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { NextRequest } from 'next/server'
 import type { Database } from '@/types/supabase'
 
 // Shared helpers for integration tests that run against the real local Supabase
@@ -26,4 +27,18 @@ export async function signInAnon(): Promise<{ client: Client; uid: string }> {
   const { data, error } = await client.auth.signInAnonymously()
   if (error) throw error
   return { client, uid: data.user!.id }
+}
+
+/**
+ * Build a form-encoded POST NextRequest for invoking an App-Router route handler
+ * directly (import the exported POST/GET and call it). Used by the app-edge tests
+ * that exercise the HTTP boundary (signature checks, idempotency) against the
+ * real stack — see api/*.test.ts.
+ */
+export function formPostRequest(url: string, params: Record<string, string>): NextRequest {
+  return new NextRequest(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(params).toString(),
+  })
 }
