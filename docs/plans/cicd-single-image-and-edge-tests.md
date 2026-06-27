@@ -1,7 +1,7 @@
 # Single-Image CI/CD + App-Edge Test Coverage — Refactor Plan
 
-**Status:** Part 1 DONE + live in prod (single-image cutover deployed 2026-06-26); Part 2 in progress
-(2.1/2.2/2.5 done; 2.3/2.4/2.6 pending) · **Created:** 2026-06-26
+**Status:** Part 1 DONE + live in prod (single-image cutover deployed 2026-06-26); Part 2 nearly done
+(2.1–2.5 done; 2.6 optional + redeem-token deferred remaining) · **Created:** 2026-06-26
 **Related:** [docs/plans/frontend-architecture-rendering.md](./frontend-architecture-rendering.md),
 [docs/testing/STRATEGY.md](../testing/STRATEGY.md), [docs/deployment/README.md](../deployment/README.md),
 `.github/workflows/ci.yml` + `deploy-production.yml`
@@ -302,11 +302,11 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 ### Part 2 — Coverage
 - [x] 2.1 Route-handler invoke harness — `stack.ts` gains `formPostRequest()`; vitest aliases `server-only`/`client-only` to an empty stub so handlers can be imported (`tests/__stubs__/empty.ts`).
 - [x] 2.2 Payment callbacks (`tests/integration/api/robokassa-result.test.ts`) — valid sig → `OK{invId}`+paid; **bad sig → 400, stays pending**; amount mismatch → 500, stays pending; duplicate callback idempotent. (email send mocked.)
-- [ ] 2.3 Send-email webhook — signature accept/reject, recipient
-- [ ] 2.4 Redeem token + newsletter confirm/unsubscribe
+- [x] 2.3 Send-email webhook (`tests/integration/api/send-email-hook.test.ts`) — valid Standard-Webhooks sig → 200 + sends to recipient (new_email preferred); **tampered / wrong-secret → 401, sends nothing**; no recipient → 400. (sendEmail mocked; no stack needed.)
+- [x] 2.4 Newsletter confirm/unsubscribe (`tests/integration/api/newsletter.test.ts`) — valid token → confirmed/unsubscribed + DB status flips; unknown/missing token → invalid. (audience mocked; real stack.) **Redeem-token deferred** — `redeem/[token]` uses cookie-based `createClient()`, not import-and-invokable in Vitest → cover via e2e or an RPC-level test.
 - [x] 2.5 Vitals sink (`tests/integration/api/vitals.test.ts`) — valid obs increments the histogram; malformed/negative/unknown → 204 + records nothing; UA→device. (3/3 pass locally, no stack needed.)
 - [ ] 2.6 `startCheckoutAction` money path (optional)
-- [ ] Update `docs/testing/STRATEGY.md` (money-path integration done) + this tracker
+- [x] Updated `docs/testing/STRATEGY.md` (money-path/app-edge integration done; CI model) + this tracker
 
 ### Docs
 - [ ] Update `frontend-architecture-rendering.md` (same-origin Supabase note) + `deploy/production`

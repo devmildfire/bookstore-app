@@ -1,11 +1,15 @@
 # Testing Strategy
 
-**Status:** Phase 1 implemented (unit + integration + E2E harness, first tests, CI
-workflows, coverage with a ratchet — §8/§10 steps 1–4 + 7) **and the production deploy
-gate (§10 step 5)**: `deploy-production.yml` blocks build/deploy until the `Tests` + `E2E
-tests` workflows are green for the deployed SHA (E2E now also runs on `main` so the
-promoted SHA has a result). Phase 2+ (component tests, money-path integration, broader
-E2E) pending. Last updated: 2026-06-22.
+**Status:** Phase 1 implemented (unit + integration + E2E harness, CI workflows, coverage
+ratchet). **CI consolidated + single-image (2026-06-26):** one `ci.yml` pipeline —
+audit + lint + unit + integration → **build the image once** → **E2E drives that built
+image** → deploy promotes the same digest, gated on the SHA's CI conclusion (no test
+re-runs). **Phase-2 money-path / app-edge integration DONE:** route-handler tests for the
+payment ResultURL webhook (signature / amount / idempotency), the Send-Email hook signature
+gate, and newsletter token confirm/unsubscribe — see
+[docs/plans/cicd-single-image-and-edge-tests.md](../plans/cicd-single-image-and-edge-tests.md).
+Still pending: component tests, broader E2E, redeem-token (cookie-based handler → e2e).
+Last updated: 2026-06-27.
 
 > **Branch model (as of 2026-06-22):** the trunk is `main`; production deploys are the
 > `production` branch. The old `update`/`develop`/`staging` branches are retired — wherever
