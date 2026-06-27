@@ -16,5 +16,6 @@ gives caller/dependent/callee context that file scanning cannot. Drive it via th
 `code-review-graph` CLI (`status`, `detect-changes`, `visualize`) or by querying
 `.code-review-graph/graph.db` directly with `sqlite3`/`python3 -c "import sqlite3"`.
 
-Note: this project has **no test suite** (no test framework, zero test-flagged nodes
-in the graph) — do not rely on test-coverage tooling here.
+Note: the graph does not index the test suite, but one **does** exist — Vitest unit
+(`src/**/*.test.ts`) + integration (`tests/integration/`) and Playwright e2e
+(`tests/e2e/`). See [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md).

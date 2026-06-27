@@ -1,6 +1,7 @@
 # Frontend Architecture & Rendering Strategy — Audit + Plan
 
-**Status:** planning (no code changes yet). **Created:** 2026-06-16.
+**Status:** DONE — Phases 0–7 + Post-Phase-7 (cart/checkout/subscription SSR) + Post-Phase-7b
+(same-origin `/sb` single image) shipped & live in prod. **Created:** 2026-06-16.
 
 Goal: push as much rendering as possible to the server, reserve `'use client'` for
 **interactive leaves**, and move the hero pages (home, book detail) toward a

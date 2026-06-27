@@ -1,185 +1,124 @@
-# GitHub Actions CI/CD Plan
+# GitHub Actions CI/CD
 
-This document defines the intended CI/CD flow for deploying `bookstore-app` to the VPS.
+How `bookstore-app` is tested and deployed to the VPS. The pipeline is consolidated:
+**tests run once, the image is built once, and that same image is promoted to prod** —
+no re-testing on the deploy side.
 
-## Branch Model
+## Branch model
 
-| Branch type | Purpose | Deploys? |
+| Branch | Purpose | Deploys? |
 | --- | --- | --- |
-| Feature branches | Development work | No |
-| `update` | De-facto trunk / integration branch, CI validation | No |
-| `production` | Production release branch (branched from `update`) | Yes |
-
-> **Reality note:** the originally-planned `master` integration branch was never created.
-> `update` is the trunk (hundreds of commits ahead of the stale `main`); `production`
-> branches from `update`.
-
-Actual workflow:
+| `feature/**`, `feat/**` | Development work | No |
+| `main` | Trunk. Full CI; builds + pushes the tested image. | No (builds only) |
+| `production` | Exact mirror of `main`, deploy-only. | Yes |
 
 ```text
-feature branch -> PR -> update (trunk, CI) -> production -> deploy
+feature branch -> PR -> main (full CI + image build) -> production (promote + deploy)
 ```
 
-There is no staging server. Production deploys must only happen from `production`.
+`main` is the single source of truth and stays identical to `production` at all times —
+`production` is just `main` with a deploy trigger attached. Promote by pushing `main` onto
+`production`:
+
+```bash
+git push origin main:production
+```
+
+A fast-forward push keeps `production` an exact mirror; a `--no-ff` merge also works (the
+deploy workflow's SHA resolver handles both). There is no staging server, no `update`/
+`master` integration branch.
 
 ## Workflows
 
-### 1. CI Workflow — `.github/workflows/docker-publish.yml` (job name "CI")
+### `ci.yml` — the pipeline (push + PR to `main`)
 
-Trigger (as implemented):
+One ordered pipeline; later jobs `need` the earlier ones:
 
-- pushes to `update`, `main`, `staging`;
-- pull requests into `main`, `staging`.
-
-Jobs (single `lint-and-build` job):
-
-- install dependencies with `npm ci`;
-- lint with `npm run lint`;
-- build with `npm run build` (with `NEXT_PUBLIC_SUPABASE_URL` repo var + `NEXT_PUBLIC_SUPABASE_ANON_KEY` secret);
-- run e2e tests once an e2e suite exists (not yet present).
-
-Notes:
-
-- The Next.js build may fetch Google font assets. CI must have outbound network access.
-- No production deployment happens from this workflow.
-- Despite the filename `docker-publish.yml`, this workflow only lints + builds — it does **not**
-  publish an image. Image build/push lives in the deploy workflow below.
-
-### 1b. Dependency Audit — `.github/workflows/audit.yml`
-
-Trigger: **every branch push and every PR** (so feature branches are scanned before they reach
-the trunk).
-
-Job `npm-audit`: checkout + `npm audit --audit-level=high` against the committed `package-lock.json`
-(no `npm ci` needed — fast).
-
-- **`--audit-level=high`** fails the job only on **high/critical** advisories. The repo currently
-  carries transitive **moderate/low** advisories (`tar` via the `supabase` dev CLI, `js-yaml`,
-  `@babel/core`) that would otherwise hard-block every push and deploy. Tighten to `moderate` once
-  those are cleared.
-- The **same check gates production** — `deploy-production.yml`'s `build-and-push` job has
-  `needs: audit`, so a failing audit stops the image build and therefore the deploy.
-
-> **Reality note:** the "Production Image Workflow" and "VPS Deploy Workflow" below are
-> implemented as **one** file — `.github/workflows/deploy-production.yml` — with three jobs:
-> `audit` (npm audit gate), `build-and-push` (`needs: audit`, builds + pushes the GHCR image) and
-> `deploy` (`needs: build-and-push`, SSH-rolls the app on the VPS). They are documented separately
-> here for clarity.
-
-### 2. Production Image Workflow (job `build-and-push`)
-
-Trigger:
-
-- push to `production`;
-- optional manual `workflow_dispatch`.
-
-Required jobs:
-
-1. Checkout repository.
-2. Build Docker image using the repo `Dockerfile`.
-3. Tag image:
-   - `ghcr.io/devmildfire/bookstore-app:<git-sha>`
-   - `ghcr.io/devmildfire/bookstore-app:production`
-4. Push image to GitHub Container Registry.
-
-### 3. VPS Deploy Workflow (job `deploy`)
-
-Trigger:
-
-- `needs: build-and-push` — runs after the image is pushed.
-
-Deployment method:
-
-- GitHub Actions SSHes into the VPS as `deploy` (using `VPS_SSH_KEY`);
-- the GHCR image is **public**, so the VPS pulls anonymously (no GHCR login needed);
-- the VPS does **not** rewrite `/opt/chtivo/.env` — secrets live there already (see the deploy-model split in `deploy/production/README.md`);
-- Docker Compose pulls and restarts the `app` service only.
-
-Implemented deploy command (the compose service is **`app`**, not `bookstore-app`):
-
-```bash
-cd /opt/chtivo
-docker compose pull app
-docker compose up -d app
-docker image prune -f
-docker compose ps app
+```text
+audit → lint → unit → integration → build → e2e
 ```
 
-**This rolls the app image only** — it does not sync `/opt/chtivo` infra files
+- **audit** — `npm audit --audit-level=high` (reusable `audit-reusable.yml`). Fails only on
+  high/critical advisories (transitive moderate/low from the dev `supabase` CLI are tolerated).
+- **lint** — `npm run lint`. On **PRs only** it also runs `npm run build` as a compile check
+  (on `main` pushes the image build below runs `next build` itself, so a second build here
+  would be redundant).
+- **unit** — `test-unit-reusable.yml` (Vitest, pure, no infra).
+- **integration** — `test-integration-reusable.yml` (Vitest against a local Supabase stack;
+  `needs: unit`).
+- **build** — `build-push-reusable.yml`. Builds the Docker image and pushes `:<git-sha>` (on
+  PRs too, so e2e can pull it); pushes `:latest` only on a canonical `main` push. `needs:
+  [audit, lint, unit, integration]`.
+- **e2e** — `test-e2e-reusable.yml`, run **against the built image** (`docker run` the real
+  standalone image + local Supabase stack, Playwright drives it), not `next dev`. `needs: build`.
+
+The image `main` produces is therefore fully tested by the time it exists. Because e2e runs
+*after* build, an image tag existing no longer implies e2e passed — so the deploy gate checks
+the **CI run's conclusion**, not image existence (see below).
+
+### `deploy-production.yml` — promote + deploy (push to `production`)
+
+Deploy-**only**. No rebuild, no re-test. Jobs:
+
+1. **Resolve the main SHA** — for a fast-forward push, `HEAD` is the main commit; for a
+   `--no-ff` merge promote, parent 2 is the main commit.
+2. **Require green CI for this SHA** — `gh run list --commit <sha> --workflow=ci.yml`; refuses
+   to deploy unless that run's conclusion is `success`.
+3. **Promote the pre-built image** — `docker pull <image>:<sha>` (fails the deploy if `main`
+   CI never built it), retag `:production`, push.
+4. **Roll the app over SSH** — `docker compose pull app && docker compose up -d app` on the VPS.
+
+This **rolls the app image only** — it does not sync `/opt/chtivo` infra files
 (`docker-compose.yml`/`.env`/`nginx`/`volumes`). Those are synced by hand; see
-`deploy/production/README.md` → "Deploy model".
+[deploy/production/README.md](../../deploy/production/README.md) → "Deploy model".
 
-## GitHub Secrets
+### Feature-branch feedback
 
-Required GitHub repository secrets:
+- **`audit.yml`** — runs the audit on every branch push *except* `main`/`production`.
+- **`test-e2e.yml`** — runs e2e on `feature/**` / `feat/**` pushes (PRs into `main` get e2e
+  inside `ci.yml` instead).
+
+## Single env-agnostic image
+
+The image bakes **nothing** environment-specific (no Supabase host/key). The browser talks to
+its own origin under `/sb` (proxied to Supabase + anon key injected by `src/proxy.ts`);
+Supabase config + the app origin are **runtime** env. So the exact image CI tested against the
+local stack is the one promoted to prod. The image build takes `SUPABASE_INTERNAL_URL` +
+`NEXT_PUBLIC_BASE_URL` as build args and the anon key via a BuildKit **secret mount** (never an
+`ARG`/`ENV` — avoids `SecretsUsedInArgOrEnv`). Full design:
+[docs/plans/cicd-single-image-and-edge-tests.md](../plans/cicd-single-image-and-edge-tests.md).
+
+## GitHub secrets
 
 | Secret | Purpose |
 | --- | --- |
-| `VPS_HOST` | VPS IP or DNS alias (stored as a secret — never written into docs) |
+| `VPS_HOST` | VPS IP or DNS alias (secret — never in docs) |
 | `VPS_USER` | `deploy` |
 | `VPS_SSH_KEY` | Private key for deploy-only SSH access |
 | `VPS_SSH_PORT` | Usually `22` |
-| `GHCR_TOKEN` | Optional if `GITHUB_TOKEN` is insufficient for package access |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key — fed to the image build (secret mount) + the PR validate-build |
 
-Production application secrets should not be passed on every deploy unless there is a deliberate secret-sync workflow. Prefer storing production `.env` on the VPS with strict permissions and rotating it manually or through a separate controlled process.
+The GHCR image is **public** (`ghcr.io/devmildfire/bookstore-app`), so the VPS pulls
+anonymously; the deploy job logs in to GHCR only to *push* the promoted `:production` tag.
+Production app secrets live in `/opt/chtivo/.env` on the VPS (strict perms), not synced on every
+deploy.
 
-## VPS SSH Key Policy
+## VPS SSH key policy
 
-Use a dedicated deploy key for GitHub Actions. It should:
+A dedicated deploy key for GitHub Actions: belongs only to the deploy pipeline, restricted to
+the `deploy` user, removable without affecting personal SSH, never reused for local dev.
 
-- belong only to GitHub Actions deployment;
-- be restricted to the `deploy` user;
-- be removable without affecting personal SSH access;
-- not be reused for local development.
+## Image tags & rollback
 
-## Image Tags
+Immutable `:<git-sha>` for reliable rollbacks; moving `:production` for the running release.
+Roll back by retagging a previous known-good SHA, or set `APP_IMAGE` in `/opt/chtivo/.env` to
+a previous `:<sha>` and `docker compose up -d app`. (See TRACKER §5 "Rollback".)
 
-Use immutable SHA tags for reliable rollbacks:
+## Status
 
-```text
-ghcr.io/devmildfire/bookstore-app:<git-sha>
-```
-
-Also keep a moving production tag for convenience:
-
-```text
-ghcr.io/devmildfire/bookstore-app:production
-```
-
-The compose file should prefer a pinned SHA during deploy if the workflow writes or exports one, or use the `production` tag if simple deployment is preferred at first.
-
-## Rollback Model
-
-Every production deployment should record:
-
-- git SHA;
-- Docker image tag/digest;
-- migration state;
-- backup file if migrations were run;
-- deploy timestamp.
-
-Rollback target — set `APP_IMAGE` in `/opt/chtivo/.env` to the previous known-good
-immutable SHA tag, then recreate the `app` service:
-
-```bash
-cd /opt/chtivo
-# edit .env: APP_IMAGE=ghcr.io/devmildfire/bookstore-app:<previous-sha>
-docker compose up -d app
-```
-
-Or re-run the deploy workflow from the known-good commit. (See TRACKER §5 "Rollback".)
-
-## Implementation status
-
-- [x] CI workflow — shipped as `.github/workflows/docker-publish.yml` (lint + build).
-- [x] Production deploy workflow — `.github/workflows/deploy-production.yml` (build+push image, then SSH-roll `app`).
-- [x] GHCR permissions configured; image is public (`ghcr.io/devmildfire/bookstore-app`), VPS pulls anonymously.
-- [x] VPS deploy SSH key added to GitHub secrets (`VPS_SSH_KEY`).
-- [x] Production compose file on VPS (`/opt/chtivo/docker-compose.yml`).
-- [x] Image-tag strategy: compose pulls the rolling `:production` tag; immutable `:<git-sha>` kept for rollback.
-- [~] Smoke checks after deploy — the workflow prints `docker compose ps app`; a real HTTP
-  smoke check is still **deferred** (see TRACKER §5). Intended targets:
-  - `https://bookstore-app.mildfire.dev`;
-  - selected public storage URL;
-  - auth endpoint through `api.mildfire.dev`;
-  - admin login page.
+- [x] `ci.yml` consolidated pipeline (audit → lint → unit → integration → build → e2e).
+- [x] `deploy-production.yml` — promote-only, gated on the SHA's green CI run.
+- [x] Single env-agnostic image (same-origin `/sb`), live in prod 2026-06-26.
+- [x] GHCR public; VPS pulls anonymously; deploy SSH key + prod compose on the VPS.
+- [~] Post-deploy HTTP smoke check still deferred — the workflow prints `docker compose ps app`
+  only (see TRACKER §5).

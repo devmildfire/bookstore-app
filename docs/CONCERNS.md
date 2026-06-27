@@ -2,7 +2,7 @@
 
 Tracked issues that are not part of an active plan but haven't been resolved.
 
-**Last reviewed:** 2026-06-20.
+**Last reviewed:** 2026-06-27.
 
 > **Production went live 2026-06-15** (`bookstore-app.mildfire.dev` + `api.mildfire.dev` via
 > Cloudflare Tunnel). Deployment status — including which launch-gate items are still
@@ -548,7 +548,7 @@ to `Pick<Row, 'col1' | 'col2' | …>` so `tsc` enforces the projection covers wh
 normalizer reads (same pattern as fix-plan §5.2). This cannot be safely done without
 running `tsc`/`npm run build` to verify the type narrowing, and `node_modules` is not
 installed in the current environment. **Defer to when CI can verify** — make the change
-on a branch, push, and let the `docker-publish.yml` CI workflow (lint + build) catch any
+on a branch, push, and let the `ci.yml` CI workflow (lint + build) catch any
 type mismatch. The 7 storefront/API `select('*')` calls to tighten:
 1. `src/api/cart/getCart.ts:12` — Cart (normalizer reads: id, name, subtitle, price, quantity, picture, discount, category; query also orders by created_at, id)
 2. `src/api/cart/cartServer.ts:15` — Cart (same as above)

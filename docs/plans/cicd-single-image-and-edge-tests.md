@@ -1,7 +1,8 @@
 # Single-Image CI/CD + App-Edge Test Coverage — Refactor Plan
 
-**Status:** Part 1 DONE + live in prod (single-image cutover 2026-06-26); **Part 2 DONE** (app-edge tests:
-(Part 2 done: 2.1–2.6; redeem-token + remotePatterns cleanup deferred) · **Created:** 2026-06-26
+**Status:** DONE + live in prod — Part 1 (single-image cutover 2026-06-26) + Part 2 (app-edge tests
+2.1–2.6); remotePatterns cleanup shipped. Only the redeem-token handler test is deferred (cookie-based →
+e2e, not integration). · **Created:** 2026-06-26
 **Related:** [docs/plans/frontend-architecture-rendering.md](./frontend-architecture-rendering.md),
 [docs/testing/STRATEGY.md](../testing/STRATEGY.md), [docs/deployment/README.md](../deployment/README.md),
 `.github/workflows/ci.yml` + `deploy-production.yml`

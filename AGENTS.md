@@ -257,7 +257,7 @@ Book covers are stored in a **Supabase Storage bucket called `covers`** (public,
 
 **How it works:**
 - The `Titles.cover` column stores **bare filenames only** (e.g., `murlo.jpg`, `povelitel-bloh.png`).
-- The `getCoverUrl()` function in `src/lib/storage.ts` converts filenames to full URLs at runtime using `NEXT_PUBLIC_SUPABASE_URL`.
+- The `getCoverUrl()` function in `src/lib/storage.ts` converts filenames to **same-origin relative `/sb` URLs** (`/sb/storage/v1/object/public/covers/{filename}`) — `src/proxy.ts` proxies `/sb/*` to Supabase. No Supabase host is referenced from the browser, so `next/image` treats these as local images (no `remotePatterns` needed).
 - All code paths (`getBooks`, `getBook`, `searchBooks`) go through `normalizeBook()` → `getCoverUrl()`.
 - `next/image` handles optimization and resizing — no separate thumbnails needed.
 
@@ -266,10 +266,9 @@ Book covers are stored in a **Supabase Storage bucket called `covers`** (public,
 2. Set `Titles.cover = 'filename.jpg'` in the database (bare filename, no path prefix)
 
 **Self-hosted Supabase (same VPS):**
-- `NEXT_PUBLIC_SUPABASE_URL` must be the **public-facing** URL (e.g., `https://api.example.com`), not an internal Docker hostname, because it's used in browser-side image URLs.
-- Add the hostname to `remotePatterns` in `next.config.ts` so `next/image` can optimize the images.
-- The Supabase Storage API serves images at `{NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/{filename}`.
-- If using a reverse proxy (nginx/caddy), ensure it proxies `/storage/v1/object/public/` requests to the Supabase Storage container.
+- Storage URLs are **same-origin relative** (`/sb/storage/v1/object/public/covers/{filename}`); the app's own middleware proxies them, so there's no Supabase host in browser image URLs and no `remotePatterns` allowlist.
+- Server-side reads + the proxy target use `SUPABASE_INTERNAL_URL` (runtime env, e.g. `http://kong:8000`) — see the same-origin `/sb` model in [docs/plans/cicd-single-image-and-edge-tests.md](docs/plans/cicd-single-image-and-edge-tests.md).
+- The reverse proxy (nginx) must proxy `/storage/v1/object/public/` to the Supabase Storage container — but the app's `/sb` middleware already fronts that for the browser.
 
 **Scripts:**
 - `scripts/scrape-books.mjs` — Scrapes book data from the old chtivo.spb.ru site

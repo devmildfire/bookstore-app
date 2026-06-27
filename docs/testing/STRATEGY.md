@@ -563,10 +563,10 @@ jobs:
 ```
 
 This runs on every push to `main` + PRs into `main`. Unit tests (~5s) gate
-integration tests (~60s with Supabase warm). Total ~2-3 min. The existing `docker-publish.yml`
-CI workflow (lint + build) stays as-is; this adds the test gate alongside it. Neither this
-workflow nor the E2E workflow below assumes the developer ran any tests locally — CI is the
-authoritative runner.
+integration tests (~60s with Supabase warm). Total ~2-3 min. This is now part of the
+consolidated `ci.yml` pipeline (`audit → lint → unit → integration → build → e2e`) — lint +
+build and the test gates live in one workflow. Neither this gate nor the E2E gate assumes the
+developer ran any tests locally — CI is the authoritative runner.
 
 ### 5.6 The `audit.yml` extension
 

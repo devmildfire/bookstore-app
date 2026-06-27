@@ -20,7 +20,7 @@ Status legend:
 - [x] Pin production Supabase images to current local versions for initial launch.
 - [x] Use GitHub Actions + GHCR for Next.js app deployment.
 - [x] Deploy from `production` branch.
-- [x] Use an integration/e2e branch. (Revised: **`update`** is the de-facto trunk — the planned `master` was never created; see §5.)
+- [x] Use an integration/e2e branch. (**`main`** is the trunk — full CI runs there; `production` is an exact mirror for deploy. See §5.)
 - [x] Keep feature branches for active work.
 
 ## 2. VPS Baseline
@@ -86,9 +86,9 @@ Status legend:
 
 ## 5. GitHub Actions / CI/CD
 
-- [x] Integration/trunk branch. (`update` is the de-facto trunk — 1864 commits ahead of the stale `main`. No separate `master` created; `production` branches from `update`.)
-- [x] Create `production` deploy branch. (Created from `update` HEAD 2026-06-15; push to it triggers the deploy workflow.)
-- [x] Add CI workflow for PRs/pushes. (Existing `docker-publish.yml` runs lint + build on `update`/`main`/`staging` + PRs.)
+- [x] Integration/trunk branch. (`main` is the trunk — full CI runs there and builds the tested image. The old `update` branch was retired; `production` is now an exact mirror of `main`.)
+- [x] Create `production` deploy branch. (Mirrors `main`; promote with `git push origin main:production`, which triggers the deploy workflow.)
+- [x] Add CI workflow for PRs/pushes. (`.github/workflows/ci.yml` runs `audit → lint → unit → integration → build → e2e` on pushes + PRs to `main`; feature branches get `audit.yml` + `test-e2e.yml`.)
 - [x] Add production image workflow for `production`. (`.github/workflows/deploy-production.yml`: push to `production` or manual dispatch.)
 - [x] Publish app images to GHCR. (`ghcr.io/devmildfire/bookstore-app:production` + `:<sha>`, public — VPS pulls anonymously.)
 - [x] Add dedicated GitHub Actions deploy SSH key. (ed25519 `github-actions-deploy@chtivo`, authorized on VPS `deploy`; private key in `VPS_SSH_KEY` secret only.)

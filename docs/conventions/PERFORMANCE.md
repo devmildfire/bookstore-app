@@ -76,9 +76,10 @@ Rules:
 - Use `priority` on the LCP image (the first book cover visible above the fold)
 - Decorative images: `alt=""`
 
-Remote image domains must be added to `next.config.ts` `images.remotePatterns`.
-For book cover storage rules, including how `Titles.cover` maps to Supabase
-Storage URLs, see `docs/conventions/DATA.md`.
+Storage images are served same-origin under `/sb` (proxied by `src/proxy.ts`), so
+`next/image` treats them as local — **no `remotePatterns` allowlist** (it was removed). A
+genuinely external host would still need one. For book cover storage rules, including how
+`Titles.cover` maps to the `/sb` URL, see `docs/conventions/DATA.md`.
 
 ## Blur Placeholders for Bucket Images
 

@@ -1,6 +1,6 @@
 # Editions Consolidation — Execution Plan (clean-slate)
 
-**Status:** PROPOSED — awaiting review. No code changed yet.
+**Status:** DONE — the unified `Editions` table shipped (baseline + `20260615200000_editions_for_titles.sql`); `Ebooks`/`Audiobooks`/`PrintedBooks`/`CardBooks` and their worker joins are gone.
 **Premise (user-confirmed 2026-06-14):** current `Orders`/`Cart`/issued `GiftCards`/
 `UserSubscriptions` are throwaway test data and **may be wiped**. Priority is clean,
 maintainable, expandable architecture + good DB design — not preserving those rows.

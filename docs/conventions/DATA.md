@@ -226,7 +226,7 @@ The app turns the filename into a public URL in one place:
 ```ts
 // src/lib/storage.ts
 getCoverUrl('sin-greha.jpg')
-// => `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/sin-greha.jpg`
+// => `/sb/storage/v1/object/public/covers/sin-greha.jpg`  (same-origin; src/proxy.ts proxies /sb)
 ```
 
 All book API paths must normalize rows through `normalizeBook()`, which calls
