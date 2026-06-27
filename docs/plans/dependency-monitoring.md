@@ -1,6 +1,6 @@
 # Dependency & Vulnerability Monitoring — Implementation Plan
 
-**Status:** planning (no code yet) · **Created:** 2026-06-27
+**Status:** implemented & live (all 5 phases shipped 2026-06-27) · **Created:** 2026-06-27
 **Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
 precise, repo-specific execution).
 **Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
@@ -395,12 +395,21 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       (`audit / npm audit …`, `Lint & build check`, `unit / Unit tests`, `integration / Integration tests`,
       `build / Build & push`, `e2e / Playwright E2E`); strict (up-to-date) + enforced for admins → **no
       direct push to `main`**. No required reviews (solo repo). Repo Allow-auto-merge + delete-on-merge on.
-- [ ] Verify on the next Renovate cycle: a low-risk PR (Actions/devDep-patch/lockfile) auto-merges on
-      green; a prod-dep / major / Docker PR waits for manual merge.
+- [x] Verified: PR #6 (trivy-action digest, a github-actions update) was opened by Renovate with
+      GitHub native auto-merge enabled and **auto-merged on green** (branch auto-deleted). Prod-dep /
+      major / Docker PRs still require manual merge (automerge:false / dashboard approval).
 
-### Phase 5 — Docs
-- [ ] Mark this plan done; add a short "Dependency monitoring" section to `docs/deployment/`
-      (or a `docs/security/` note) describing the four signals + the weekly/monthly review ritual.
+### Phase 5 — Docs ✅
+- [x] Marked this plan implemented; added a "Dependency & vulnerability monitoring" section to
+      [docs/deployment/README.md](../deployment/README.md) (the four signals + review ritual) and an
+      operating note to `AGENTS.md` (protected `main`, PR-only flow, the four signals).
+
+### Deferred follow-up
+- [ ] **Fast-path doc-only PRs.** All 6 `ci.yml` jobs are required checks, so a docs-only PR still runs
+      `build` + `e2e` (~10 min) before it can merge. Gate `build`/`e2e` on non-doc paths with a
+      passthrough that still reports the required check green (e.g. `dorny/paths-filter` + a status
+      shim). Deliberately **not** bundled with this docs PR — a mistake in the required-check wiring
+      would block *all* merges, so it needs its own tested change.
 
 ---
 
