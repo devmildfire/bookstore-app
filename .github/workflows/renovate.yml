@@ -1,0 +1,34 @@
+name: Renovate
+
+# Self-hosted Renovate (not the Mend hosted App). Runs weekly + on manual dispatch,
+# authenticating as the fine-grained PAT in RENOVATE_TOKEN so its PRs trigger ci.yml
+# (the default GITHUB_TOKEN cannot — GitHub suppresses workflow triggers from it).
+# Renovate reads the per-repo config from renovate.json ON THE DEFAULT BRANCH (main).
+on:
+  schedule:
+    - cron: '0 1 * * 1' # Mon 01:00 UTC (~06:00 Asia/Yekaterinburg)
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Renovate log level'
+        default: 'info'
+        required: false
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+# The action uses RENOVATE_TOKEN for all GitHub API calls, so the workflow's own
+# GITHUB_TOKEN needs no permissions.
+permissions: {}
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: renovatebot/github-action@6d859fc95779be83a0335ca704879b47e5d79641 # v46.1.16
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}

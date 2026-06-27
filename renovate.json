@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "Asia/Yekaterinburg",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 8,
+  "rangeStrategy": "pin",
+  "lockFileMaintenance": { "enabled": true, "schedule": ["before 6am on monday"] },
+  "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },
+  "major": { "dependencyDashboardApproval": true },
+  "packageRules": [
+    { "matchDepTypes": ["dependencies"], "automerge": false },
+    { "matchDatasources": ["docker"], "automerge": false },
+    { "matchUpdateTypes": ["major"], "automerge": false },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "public.ecr.aws/supabase/postgres",
+        "public.ecr.aws/supabase/gotrue",
+        "public.ecr.aws/supabase/storage-api"
+      ],
+      "matchUpdateTypes": ["major", "minor", "patch", "digest"],
+      "enabled": false
+    }
+  ],
+  "platformAutomerge": false
+}
