@@ -1,9 +1,9 @@
 name: Trivy
 
-# Nightly vulnerability + misconfig + secret scanning. Phase 3a: REPORT-ONLY —
-# every scan is exit-code 0 (nothing fails the run) so we can establish a baseline,
-# triage the filesystem findings, and populate .trivyignore before turning the gates
-# on in Phase 3b (image HIGH/CRIT gate + CRITICAL→Telegram).
+# Nightly vulnerability + misconfig + secret scanning. The deployed :production image
+# and the repo filesystem GATE on HIGH/CRITICAL (fail the run → GitHub notifies); a
+# CRITICAL in the image additionally pages Telegram. The next-promote image (:latest)
+# and the third-party Supabase images are scanned informationally (never fail).
 on:
   schedule:
     - cron: '0 3 * * *' # nightly 03:00 UTC
@@ -15,7 +15,7 @@ permissions:
   security-events: write # SARIF upload to Code scanning
 
 jobs:
-  # ── The DEPLOYED image (:production). Phase 3b adds the HIGH/CRIT gate + CRITICAL→Telegram. ──
+  # ── The DEPLOYED image (:production): SARIF for visibility, CRITICAL→Telegram, HIGH/CRIT gate. ──
   app-image:
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Trivy — :production → SARIF (report only)
+      - name: Trivy — :production → SARIF (visibility)
         uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           image-ref: ghcr.io/devmildfire/bookstore-app:production
@@ -34,19 +34,46 @@ jobs:
           output: trivy-prod.sarif
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: '0'
+          exit-code: '0' # this pass only produces the SARIF; the gate below fails the run
       - uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3.36.2
         if: always()
         with:
           sarif_file: trivy-prod.sarif
           category: trivy-prod-image
+      - name: Trivy — :production CRITICAL check (drives the Telegram page)
+        id: crit
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: ghcr.io/devmildfire/bookstore-app:production
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+      - name: Telegram page — CRITICAL only
+        if: steps.crit.outcome == 'failure'
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT}" \
+            -d text="🛑 Trivy: CRITICAL CVE in DEPLOYED image (:production) — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - name: Trivy — :production gate (fail on HIGH,CRITICAL)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: ghcr.io/devmildfire/bookstore-app:production
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
 
-  # ── Filesystem: vuln + misconfig + secret. REPORT-ONLY until a baseline is committed. ──
+  # ── Filesystem: vuln + misconfig + secret. Gates on HIGH/CRITICAL. ──
   filesystem:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-      - name: Trivy — fs → SARIF (report only)
+      - name: Trivy — fs (vuln + misconfig + secret), gate on HIGH/CRITICAL
         uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
           scan-type: fs
@@ -55,7 +82,7 @@ jobs:
           output: trivy-fs.sarif
           severity: HIGH,CRITICAL
           trivyignores: .trivyignore
-          exit-code: '0' # Phase 3b: flip to '1' to gate
+          exit-code: '1'
       - uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3.36.2
         if: always()
         with:
