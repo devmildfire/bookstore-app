@@ -8,7 +8,7 @@
 
 services:
   prometheus:
-    image: prom/prometheus:v2.53.2
+    image: prom/prometheus:v2.53.2@sha256:cafe963e591c872d38f3ea41ff8eb22cee97917b7c97b5c0ccd43a419f11f613
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -23,7 +23,7 @@ services:
     networks: [chtivo_default]
 
   grafana:
-    image: grafana/grafana:11.3.0
+    image: grafana/grafana:11.3.0@sha256:a0f881232a6fb71a0554a47d0fe2203b6888fe77f4cefb7ea62bed7eb54e13c3
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set in .env}
@@ -49,7 +49,7 @@ services:
     # v0.55+ required: this host's Docker uses the containerd snapshotter (Storage
     # Driver: overlayfs, no classic image/overlay2/layerdb). v0.49 fails the rw-layer
     # lookup and emits ZERO per-container metrics; v0.55.1 handles it cleanly.
-    image: gcr.io/cadvisor/cadvisor:v0.55.1
+    image: gcr.io/cadvisor/cadvisor:v0.55.1@sha256:3de2bd5203120b866d74a9b283b2ffb8ec382fbf9dc321814700c6ea6f44ec57
     restart: unless-stopped
     command: ['--housekeeping_interval=30s', '--store_container_labels=false']
     privileged: true
@@ -67,7 +67,7 @@ services:
     networks: [chtivo_default]
 
   node-exporter:
-    image: prom/node-exporter:v1.8.2
+    image: prom/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706
     restart: unless-stopped
     command: ['--path.rootfs=/host']
     pid: host
@@ -77,7 +77,7 @@ services:
     networks: [chtivo_default]
 
   postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:v0.15.0@sha256:386b12d19eab2a37d7cd8ca8b4c7491cc7a830d9581f49af6c98a393da9605e6
     restart: unless-stopped
     environment:
       # Reuses the stack's Postgres password (set in .env). `db` is the Supabase
@@ -88,7 +88,7 @@ services:
 
   nginxlog-exporter:
     # RED from the nginx ingress: nginx ships access logs here over syslog/UDP.
-    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.1
+    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.1@sha256:c95538499b25302c48b6b7aa6d41f7c46fbe30b35cadf45a3a5849b35027bf59
     restart: unless-stopped
     command: ['-config-file', '/etc/nginxlog/config.yml']
     volumes:
@@ -99,7 +99,7 @@ services:
   pushgateway:
     # Sink for the synthetic PSI batch job; Prometheus scrapes it with honor_labels
     # so the pushed job/strategy labels are preserved.
-    image: prom/pushgateway:v1.10.0
+    image: prom/pushgateway:v1.10.0@sha256:7a4d0696a24ef4e8bad62bee5656855a0aff2f26416d8cb32009dc28d6263604
     restart: unless-stopped
     mem_limit: 64m
     networks: [chtivo_default]
@@ -121,7 +121,7 @@ services:
     # Routes firing alerts (from Prometheus) to Telegram. Config + bot token live on
     # the VPS only (gitignored; alertmanager.yml is rendered from .example with the
     # real chat_id, and the token is in a mounted file). See docs/monitoring/README.md.
-    image: prom/alertmanager:v0.27.0
+    image: prom/alertmanager:v0.27.0@sha256:e13b6ed5cb929eeaee733479dce55e10eb3bc2e9c4586c705a4e8da41e5eacf5
     restart: unless-stopped
     # Run as the deploy user (uid 1000) that owns the 600 token file, so the secret
     # stays 600 (not world-readable); data dir → /tmp since that uid can't write the
