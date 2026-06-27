@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:22-alpine AS base
 
 # Install dependencies only when needed
@@ -30,20 +31,22 @@ ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 # BUILD-TIME ONLY (this `builder` stage, not the runner): `next build` prerenders
 # catalog/book pages by fetching from Supabase, so it needs a reachable URL + anon
-# key here. These are plain server vars (NOT inlined into the client) and do NOT
-# carry into the runner image — runtime config comes from compose. Point at a
-# publicly reachable Supabase (the CI runner can't reach the internal kong host).
+# key here. The URL is a plain build-arg; the anon key comes via a BuildKit SECRET
+# mount on the build RUN below (never written to an ARG/ENV/image layer). Neither
+# carries into the runner image — runtime config comes from compose.
 ARG SUPABASE_INTERNAL_URL
-ARG SUPABASE_ANON_KEY
 ENV SUPABASE_INTERNAL_URL=$SUPABASE_INTERNAL_URL
-ENV SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN \
+# The anon key is read from a BuildKit secret (mounted only for this RUN, never
+# persisted) and exported into the build's env so `next build` can prerender.
+RUN --mount=type=secret,id=supabase_anon_key \
+  SUPABASE_ANON_KEY="$(cat /run/secrets/supabase_anon_key 2>/dev/null || echo '')"; \
+  export SUPABASE_ANON_KEY; \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
