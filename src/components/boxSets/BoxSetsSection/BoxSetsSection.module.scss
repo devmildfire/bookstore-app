@@ -83,6 +83,11 @@
   row-gap: $space-13;
   padding: 0 $layout-px;
   width: 100%;
+  // Grid items must not be inflated by their content's intrinsic width
+  // (the previewGrid's width:max-content would stretch 1fr tracks otherwise).
+  > * {
+    min-width: 0;
+  }
 
   @include breakpoint(tablet) {
     grid-template-columns: repeat(2, 1fr);
@@ -110,10 +115,6 @@
   row-gap: $space-6;
   padding: 0;
   min-width: 0;
-
-  > * {
-    min-width: 0;
-  }
 
   @include breakpoint(phone) {
     column-gap: $space-3;
@@ -274,6 +275,13 @@
   // Break out of the wrapper's horizontal padding for a full-bleed background.
   margin-left: -$layout-px;
   margin-right: -$layout-px;
+  // min-width:0 + overflow:hidden prevent the inner previewGrid (width:max-content)
+  // from inflating the 1fr grid track — without this, a box set with many books
+  // stretches the track (and every card in it) to the books' intrinsic width,
+  // blowing past the viewport on mobile. The Scroller inside handles horizontal
+  // scrolling of the book list.
+  min-width: 0;
+  overflow: hidden;
 
   @include breakpoint(tablet) {
     margin-left: -$layout-px-tablet;
