@@ -336,9 +336,11 @@ Settings → Branches → add a rule for `main`:
 Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 
 ### Phase 0 — Pre-reqs (no behavior change)
-- [ ] Pin `cloudflare/cloudflared:latest` → explicit version in `deploy/production/docker-compose.yml`.
-- [ ] Create the fine-grained PAT; add `RENOVATE_TOKEN` secret.
-- [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets (from the VPS bot).
+- [x] Pin `cloudflare/cloudflared` → `2026.6.0` in `deploy/production/docker-compose.yml` (the version
+      currently running in prod; no behavior change). *(VPS compose copy still says `:latest` — syncs on
+      the next manual infra push; the repo file is what Renovate reads.)*
+- [ ] Create the fine-grained PAT; add `RENOVATE_TOKEN` secret. **← only remaining Phase 0 item (needs you).**
+- [x] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets — set from the VPS bot (2026-06-27).
 
 ### Phase 1 — Renovate (PRs only, NO automerge)
 - [ ] Add `renovate.json` exactly as in §4.1 — the three `automerge: true` rules stay **commented
