@@ -388,12 +388,15 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       fired the page end-to-end (message delivered). HIGH-only fails the run but does not page.
 
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
-- [ ] Enable branch protection on `main` with the required checks (§4.5).
-- [ ] Turn on repo Allow-auto-merge + delete-on-merge.
-- [ ] **Uncomment** the three `automerge: true` packageRules **and** flip `platformAutomerge: true` in
-      `renovate.json`; verify a low-risk PR (e.g. an Actions bump) auto-merges on green and a prod-dep
-      PR does **not**.
-- [ ] Update `docs/deployment/github-actions-ci-cd.md` + `README.md` for the PR-based trunk flow.
+- [x] Added the three `automerge: true` packageRules + flipped `platformAutomerge: true` in
+      `renovate.json` (the `false`/major rules are ordered after, so they override on overlap).
+- [x] Updated `docs/deployment/github-actions-ci-cd.md` for the PR-based trunk flow.
+- [x] Enabled branch protection on `main`: required status checks = the 6 `ci.yml` jobs
+      (`audit / npm audit …`, `Lint & build check`, `unit / Unit tests`, `integration / Integration tests`,
+      `build / Build & push`, `e2e / Playwright E2E`); strict (up-to-date) + enforced for admins → **no
+      direct push to `main`**. No required reviews (solo repo). Repo Allow-auto-merge + delete-on-merge on.
+- [ ] Verify on the next Renovate cycle: a low-risk PR (Actions/devDep-patch/lockfile) auto-merges on
+      green; a prod-dep / major / Docker PR waits for manual merge.
 
 ### Phase 5 — Docs
 - [ ] Mark this plan done; add a short "Dependency monitoring" section to `docs/deployment/`

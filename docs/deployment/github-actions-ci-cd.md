@@ -9,12 +9,17 @@ no re-testing on the deploy side.
 | Branch | Purpose | Deploys? |
 | --- | --- | --- |
 | `feature/**`, `feat/**` | Development work | No |
-| `main` | Trunk. Full CI; builds + pushes the tested image. | No (builds only) |
+| `main` | **Protected** trunk. Full CI; builds + pushes the tested image. | No (builds only) |
 | `production` | Exact mirror of `main`, deploy-only. | Yes |
 
 ```text
 feature branch -> PR -> main (full CI + image build) -> production (promote + deploy)
 ```
+
+> **`main` is branch-protected** (required status checks = all `ci.yml` jobs; up-to-date required;
+> enforced for admins too). **There is no direct push to `main`** — every change, including the
+> owner's, lands via a PR that passes CI. No required reviews (solo repo), so a green PR can
+> self-merge. Renovate's low-risk tier auto-merges on green (see [dependency-monitoring.md](../plans/dependency-monitoring.md)).
 
 `main` is the single source of truth and stays identical to `production` at all times —
 `production` is just `main` with a deploy trigger attached. Promote by pushing `main` onto

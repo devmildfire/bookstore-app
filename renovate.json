@@ -15,6 +15,9 @@
   "major": { "dependencyDashboardApproval": true },
   "packageRules": [
     { "matchDepTypes": ["engines"], "enabled": false },
+    { "matchManagers": ["github-actions"], "automerge": true },
+    { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
+    { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
     { "matchDepTypes": ["dependencies"], "automerge": false },
     { "matchDatasources": ["docker"], "automerge": false },
     { "matchUpdateTypes": ["major"], "automerge": false },
@@ -29,5 +32,5 @@
       "enabled": false
     }
   ],
-  "platformAutomerge": false
+  "platformAutomerge": true
 }
