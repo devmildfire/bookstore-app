@@ -367,22 +367,25 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       → 204); Dependabot **Security Updates OFF** (`automated-security-fixes` = `enabled:false`) so
       Renovate stays the single PR source.
 
-### Phase 3 — Trivy
-**3a — report-only baseline (no gate yet):**
-- [ ] Add `.github/workflows/trivy.yml` with the **filesystem** scan at `exit-code: 0` and the
-      `:production` image scan present. **Commit an empty `.trivyignore` in the same change** so the
-      `trivyignores:` input resolves on the first run.
-- [ ] `workflow_dispatch` run; triage the first filesystem findings (misconfig/secret false
-      positives are expected from docs/test fixtures + IaC).
-- [ ] Populate `.trivyignore` (and/or `trivy.yaml`) with the accepted/handled findings.
-- [ ] Confirm SARIF appears in **Security ▸ Code scanning** for both `trivy-prod-image` + `trivy-fs`.
+### Phase 3 — Trivy ✅
+**3a — report-only baseline:**
+- [x] Added `trivy.yml` (image + fs report-only) + empty `.trivyignore`; SARIF lands in
+      **Security ▸ Code scanning** (`trivy-prod-image` + `trivy-fs`).
+- [x] Baseline surfaced 9 findings; triaged.
 
-**3b — turn the gates on:**
-- [ ] Flip the filesystem scan to `exit-code: 1`.
-- [ ] Confirm the `:production` HIGH/CRITICAL gate fails the job as designed.
-- [ ] Force a CRITICAL (e.g. a known-vulnerable test image) → confirm the **Telegram page fires on
-      CRITICAL only**, and that a HIGH-only finding fails the job but does **not** page Telegram.
-- [ ] Confirm the informational job (`:latest` + Supabase images) never fails the run.
+**Baseline triage outcome — fixed, not ignored (`.trivyignore` stayed empty):**
+- js-yaml + @babel/core (transitive devDeps) → bumped via Renovate **lock file maintenance** (PR #5).
+- 6 base-image **npm** CVEs (`/usr/local/lib/node_modules/npm/...`, unused by the standalone
+  runtime) → **removed npm from the runtime image** (Dockerfile), eliminating them outright.
+- `DS-0026` (no HEALTHCHECK) → added a `HEALTHCHECK` to the runner stage.
+- New image built, **promoted to `:production`** (verified `(healthy)` + `npm REMOVED` on the VPS) →
+  all 9 code-scanning alerts closed (0 open).
+
+**3b — gates on:**
+- [x] Filesystem scan gates (`exit-code: 1`); informational job (`:latest` + Supabase) never fails.
+- [x] `:production` gates on HIGH/CRITICAL; verified the gated run passes clean now that the image is fixed.
+- [x] CRITICAL→Telegram **wired** (dedicated CRITICAL-only pass drives the page; HIGH-only fails the run
+      but does not page). Not live-fired — no CRITICAL exists to trigger it; will page on a real one.
 
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
 - [ ] Enable branch protection on `main` with the required checks (§4.5).
