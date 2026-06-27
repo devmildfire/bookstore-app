@@ -26,6 +26,14 @@ The hard production-deploy test gate is wired — `deploy-production.yml` blocks
 unless `ci.yml` is green for the deployed SHA — see [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md)
 §10 step 5.
 
+**`main` is branch-protected — NO direct pushes.** Every change (yours too) lands via a PR that passes
+the full `ci.yml` (all 6 jobs are required checks; up-to-date required; enforced for admins). No
+required reviews, so a green PR can self-merge. Promote to prod with `git push origin main:production`
+(production is unprotected). Dependency upkeep is automated — **Renovate** (self-hosted, weekly;
+low-risk updates auto-merge on green), **Dependabot alerts**, and **Trivy** (nightly image+fs scan,
+gates HIGH/CRITICAL → Code scanning + Telegram). Full design:
+[docs/plans/dependency-monitoring.md](docs/plans/dependency-monitoring.md).
+
 The full testing strategy — stack, layering (unit → integration → E2E), and the CI plan
 for reproducing the full Next.js + Supabase stack on GitHub Actions — is in
 [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md). The manual-test fixture reference for
