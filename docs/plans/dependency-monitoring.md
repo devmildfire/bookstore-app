@@ -1,6 +1,6 @@
 # Dependency & Vulnerability Monitoring — Implementation Plan
 
-**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v3 (two external review passes incorporated — see §9)
+**Status:** planning (no code yet) · **Created:** 2026-06-27 · **Rev:** v4 (three external review passes incorporated — see §9)
 **Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
 precise, repo-specific execution).
 **Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
@@ -42,7 +42,7 @@ These were decided up-front; the rationale is the point of the document.
 | # | Decision | Rationale |
 |---|----------|-----------|
 | D1 | **Self-hosted Renovate** (GitHub Action on cron), not the Mend hosted App | Consistent with the project's self-hosted-everything thesis (Supabase, Prometheus/Grafana). No third-party GitHub App gets read/write to the repo. We own the schedule + execution. |
-| D2 | **Fine-grained PAT** (`RENOVATE_TOKEN`), repo-scoped (contents + PRs: write) | Simpler than a dedicated GitHub App; sufficient for self-hosted Renovate. Critically: a non-`GITHUB_TOKEN` identity is **required** so Renovate's PRs trigger `ci.yml` (GitHub suppresses workflow triggers from `GITHUB_TOKEN`), which the automerge-on-green tier depends on. Cost: account-bound, manual expiry — tracked in the maintenance policy. |
+| D2 | **Fine-grained PAT** (`RENOVATE_TOKEN`), repo-scoped (full permission set in §5 — `contents/pull-requests/issues/workflows: write` + `checks`/`Dependabot alerts: read`) | Simpler than a dedicated GitHub App; sufficient for self-hosted Renovate. Critically: a non-`GITHUB_TOKEN` identity is **required** so Renovate's PRs trigger `ci.yml` (GitHub suppresses workflow triggers from `GITHUB_TOKEN`), which the automerge-on-green tier depends on. `workflows: write` is required for the Actions digest-pin PRs. Cost: account-bound, manual expiry — tracked in the maintenance policy. |
 | D3 | **Renovate is the single PR source**; Dependabot **Alerts ON, Security Updates OFF** | Both bots can raise CVE-fix PRs; running both = duplicate PRs. Renovate raises everything (incl. `vulnerabilityAlerts`); Dependabot's alert graph stays for the native Security dashboard + email. No `dependabot.yml` (that file is for *version* updates, which Renovate owns). |
 | D4 | Renovate manages **stateless** compose images; **ignores** `postgres`/`gotrue`/`storage-api` | Those three are coupled to the restored dump + migration state — see [deploy/production/README.md](../../deploy/production/README.md) "Version pinning rationale". A bump requires a rehearsed restore, so it must never arrive as an auto-PR. |
 | D5 | **Limited automerge**, gated on green `ci.yml` | Risk-tiered: automerge only GitHub Actions updates, devDependency patch/minor, and lockfile maintenance — *because* the unit+integration+e2e suite gates them. App deps (any), majors, and all Docker/base/compose bumps stay manual PRs. Ties the real test suite into the update flow. |
@@ -104,13 +104,12 @@ Four independent signals, each matched to its domain; no shared always-on servic
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },  // Renovate raises CVE PRs (D3)
   "major": { "dependencyDashboardApproval": true },                       // majors are opt-in (D5)
   "packageRules": [
-    // ── PHASE 4 ONLY — automerge tier (D5). DO NOT include these until branch protection is live. ──
-    //    ⚠ `automerge: true` lets Renovate merge via its OWN API once checks pass; `platformAutomerge:
-    //    false` does NOT disable that (it only turns off GitHub-native auto-merge). So in Phase 1 these
-    //    rules must be ABSENT, or Renovate will merge before main is protected (finding #1).
-    { "matchManagers": ["github-actions"], "automerge": true },
-    { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
-    { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
+    // ── PHASE 4 ONLY — automerge tier (D5). Left COMMENTED OUT so this snippet is the safe Phase-1
+    //    config (finding #1: `automerge: true` merges via Renovate's own API once checks pass even with
+    //    `platformAutomerge: false`). Uncomment these THREE rules in Phase 4, after main is protected. ──
+    // { "matchManagers": ["github-actions"], "automerge": true },
+    // { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
+    // { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
 
     // ── Manual-only tiers (D5) — present from Phase 1 (these are all automerge:false) ──
     { "matchDepTypes": ["dependencies"], "automerge": false },            // prod deps: always review
@@ -342,9 +341,10 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [ ] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets (from the VPS bot).
 
 ### Phase 1 — Renovate (PRs only, NO automerge)
-- [ ] Add `renovate.json` **without the three `automerge: true` packageRules** and with
-      `platformAutomerge: false`. (Both matter — `automerge: true` alone would let Renovate merge via
-      its own API before `main` is protected; finding #1.) Keep the `automerge: false` manual-tier rules.
+- [ ] Add `renovate.json` exactly as in §4.1 — the three `automerge: true` rules stay **commented
+      out** and `platformAutomerge: false`. (Both matter — `automerge: true` alone would let Renovate
+      merge via its own API before `main` is protected; finding #1.) The `automerge: false` manual-tier
+      rules stay active.
 - [ ] Add `.github/workflows/renovate.yml`.
 - [ ] Manual `workflow_dispatch`; confirm the Dependency Dashboard issue + the first onboarding PR.
 - [ ] Verify a Renovate PR **triggers `ci.yml`** (proves the PAT identity works).
@@ -376,7 +376,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 ### Phase 4 — Branch protection + automerge (the disruptive step, last)
 - [ ] Enable branch protection on `main` with the required checks (§4.5).
 - [ ] Turn on repo Allow-auto-merge + delete-on-merge.
-- [ ] **Add** the three `automerge: true` packageRules **and** flip `platformAutomerge: true` in
+- [ ] **Uncomment** the three `automerge: true` packageRules **and** flip `platformAutomerge: true` in
       `renovate.json`; verify a low-risk PR (e.g. an Actions bump) auto-merges on green and a prod-dep
       PR does **not**.
 - [ ] Update `docs/deployment/github-actions-ci-cd.md` + `README.md` for the PR-based trunk flow.
@@ -412,7 +412,7 @@ Automatically detected, with the mechanism:
 | Vulnerable OS packages (deployed image) | Trivy `:production` scan (gates HIGH/CRIT) |
 | Vulnerable OS packages (Supabase stack) | Trivy informational matrix |
 | Outdated GitHub Actions | Renovate (`github-actions` manager, automerged) |
-| Outdated compose images | Renovate (stateless set; stateful trio intentionally excluded) |
+| Outdated compose images | Renovate — stateless set gets version updates; the stateful trio gets a digest pin only (version moves stay manual via rehearsed restore) |
 | Newly disclosed CVEs after deploy | Dependabot alerts (continuous) + nightly Trivy on `:production` |
 
 Developer effort reduces to: review PRs + occasional security findings.
@@ -444,3 +444,13 @@ All five findings sound:
 | 3 | Trivy workflow missing `packages: read` | Added (matches `ci.yml`'s e2e job). |
 | 4 | `.trivyignore` referenced before it exists | Commit an **empty** `.trivyignore` with the workflow; populate after baseline triage. |
 | 5 | Stateful trio fully ignored → can't digest-pin the approved image | Rule now blocks version + digest *updates* but **allows the one-time `pinDigest`**, locking the approved image by sha. |
+
+### v4 (2026-06-27) — third review pass (doc-consistency)
+
+All three sound (documentation consistency, no design change):
+
+| # | Finding | Resolution |
+|---|---------|-----------|
+| 1 | Copy-pasteable snippet still had active `automerge: true` rules | **Commented them out** in the §4.1 snippet so the snippet *is* the safe Phase-1 config; Phase 4 says "uncomment". |
+| 2 | D2 still said "contents + PRs: write" | Updated D2 to the full §5 permission set (incl. `workflows: write`). |
+| 3 | "outdated compose images" row didn't note the stateful digest-pin exception | Reworded: stateless = version updates; stateful = digest pin only. |
