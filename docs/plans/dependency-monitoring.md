@@ -363,7 +363,9 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       Dockerfile pin takes effect on the next image build.)*
 
 ### Phase 2 — Dependabot alerts
-- [ ] Enable Dependency graph + Dependabot alerts; confirm Security updates are OFF.
+- [x] Dependency graph on (default, public repo); Dependabot **Alerts ON** (`PUT vulnerability-alerts`
+      → 204); Dependabot **Security Updates OFF** (`automated-security-fixes` = `enabled:false`) so
+      Renovate stays the single PR source.
 
 ### Phase 3 — Trivy
 **3a — report-only baseline (no gate yet):**
