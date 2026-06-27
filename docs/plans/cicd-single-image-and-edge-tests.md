@@ -1,7 +1,7 @@
 # Single-Image CI/CD + App-Edge Test Coverage — Refactor Plan
 
-**Status:** Part 1 DONE + live in prod (single-image cutover deployed 2026-06-26); Part 2 nearly done
-(2.1–2.5 done; 2.6 optional + redeem-token deferred remaining) · **Created:** 2026-06-26
+**Status:** Part 1 DONE + live in prod (single-image cutover 2026-06-26); **Part 2 DONE** (app-edge tests:
+(Part 2 done: 2.1–2.6; redeem-token + remotePatterns cleanup deferred) · **Created:** 2026-06-26
 **Related:** [docs/plans/frontend-architecture-rendering.md](./frontend-architecture-rendering.md),
 [docs/testing/STRATEGY.md](../testing/STRATEGY.md), [docs/deployment/README.md](../deployment/README.md),
 `.github/workflows/ci.yml` + `deploy-production.yml`
@@ -305,7 +305,7 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - [x] 2.3 Send-email webhook (`tests/integration/api/send-email-hook.test.ts`) — valid Standard-Webhooks sig → 200 + sends to recipient (new_email preferred); **tampered / wrong-secret → 401, sends nothing**; no recipient → 400. (sendEmail mocked; no stack needed.)
 - [x] 2.4 Newsletter confirm/unsubscribe (`tests/integration/api/newsletter.test.ts`) — valid token → confirmed/unsubscribed + DB status flips; unknown/missing token → invalid. (audience mocked; real stack.) **Redeem-token deferred** — `redeem/[token]` uses cookie-based `createClient()`, not import-and-invokable in Vitest → cover via e2e or an RPC-level test.
 - [x] 2.5 Vitals sink — **consolidated into the co-located unit test** `src/app/api/vitals/route.test.ts` (no stack needed → unit job, not integration). Added the count-increment assertion (valid obs records exactly one; malformed records nothing) to the existing device/pageType/204 coverage; removed the duplicate `tests/integration/api/vitals.test.ts`.
-- [ ] 2.6 `startCheckoutAction` money path (optional)
+- [x] 2.6 `startCheckoutAction` (`tests/integration/api/start-checkout.test.ts`) — empty cart → error `empty_cart`; non-owned gift card → error `invalid_gift_cards`; normal paid cart → `redirect` with a signed gateway POST + pending order. (Supabase clients mocked to stack-backed anon user; email mocked.) **Deferred:** the fully-covered→`paid` branch needs a valid owned gift-card fixture (non-null product_id FK) — leave to e2e / an RPC-level gift-card test.
 - [x] Updated `docs/testing/STRATEGY.md` (money-path/app-edge integration done; CI model) + this tracker
 
 ### Docs
