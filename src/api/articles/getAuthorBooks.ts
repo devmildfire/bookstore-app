@@ -1,4 +1,5 @@
 import { createDataClient } from '@/lib/supabase/server'
+import { attachEditions } from '@/api/books/attachEditions'
 import { normalizeBook } from '@/entities/book/normalize'
 import type { Book } from '@/entities/book/client'
 import type { BookServerRow } from '@/entities/book/server'
@@ -29,5 +30,8 @@ export async function getAuthorBooks(authorId: number, limit = 12): Promise<Book
 
   if (error) throw new Error(`Не удалось загрузить книги автора: ${error.message}`)
 
-  return ((data ?? []) as BookServerRow[]).map(normalizeBook)
+  // attachEditions is required: get_catalog_books returns only book-level fields, so the
+  // per-edition rows (used by the add-to-cart modal) come from this separate query. Without
+  // it every book has editions: [] and the modal renders empty. (Matches getBooks/getFeaturedBooks.)
+  return attachEditions(((data ?? []) as BookServerRow[]).map(normalizeBook), supabase)
 }
