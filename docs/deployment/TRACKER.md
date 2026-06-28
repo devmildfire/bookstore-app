@@ -88,7 +88,7 @@ Status legend:
 
 - [x] Integration/trunk branch. (`main` is the trunk — full CI runs there and builds the tested image. The old `update` branch was retired; `production` is now an exact mirror of `main`.)
 - [x] Create `production` deploy branch. (Mirrors `main`; promote with `git push origin main:production`, which triggers the deploy workflow.)
-- [x] Add CI workflow for PRs/pushes. (`.github/workflows/ci.yml` runs `audit → lint → unit → integration → build → e2e` on pushes + PRs to `main`; feature branches get `audit.yml` + `test-e2e.yml`.)
+- [x] Add CI workflow for PRs/pushes. (`.github/workflows/ci.yml` runs `audit → lint → unit → integration → build → e2e` on pushes + PRs to `main`. `main` is PR-only — no standalone branch-push CI workflows.)
 - [x] Add production image workflow for `production`. (`.github/workflows/deploy-production.yml`: push to `production` or manual dispatch.)
 - [x] Publish app images to GHCR. (`ghcr.io/devmildfire/bookstore-app:production` + `:<sha>`, public — VPS pulls anonymously.)
 - [x] Add dedicated GitHub Actions deploy SSH key. (ed25519 `github-actions-deploy@chtivo`, authorized on VPS `deploy`; private key in `VPS_SSH_KEY` secret only.)

@@ -77,11 +77,10 @@ This **rolls the app image only** — it does not sync `/opt/chtivo` infra files
 (`docker-compose.yml`/`.env`/`nginx`/`volumes`). Those are synced by hand; see
 [deploy/production/README.md](../../deploy/production/README.md) → "Deploy model".
 
-### Feature-branch feedback
+### Branch CI
 
-- **`audit.yml`** — runs the audit on every branch push *except* `main`/`production`.
-- **`test-e2e.yml`** — runs e2e on `feature/**` / `feat/**` pushes (PRs into `main` get e2e
-  inside `ci.yml` instead).
+`main` is PR-only, so there are **no standalone branch-push CI workflows** — every change runs the
+full `ci.yml` via its PR. Want CI on work in progress? Open a **draft PR**.
 
 ### Scheduled / on-demand (dependency monitoring)
 

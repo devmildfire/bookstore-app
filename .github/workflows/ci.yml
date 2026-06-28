@@ -4,7 +4,8 @@ name: CI
 # then (main pushes only) build + push the Docker image — gated on ALL of the
 # above. The image that main produces is fully tested, so deploy-production.yml
 # just promotes + ships it (no re-testing). Tests run once, the image is built
-# once. Feature branches get their own faster feedback via audit.yml / test-e2e.yml.
+# once. `main` is PR-only, so every change runs this pipeline via its PR — there are no
+# standalone branch-push CI workflows.
 on:
   push:
     branches: [main]
