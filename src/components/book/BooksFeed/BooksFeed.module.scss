@@ -1,0 +1,10 @@
+// Reveal wrappers for the render-ahead batches. `hidden` keeps a batch out of the grid
+// layout while its eager covers preload; `shown` dissolves the wrapper (display:contents) so
+// its cards become direct grid items and flow into the shared grid in document order.
+.hidden {
+  display: none;
+}
+
+.shown {
+  display: contents;
+}

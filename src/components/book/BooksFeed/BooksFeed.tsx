@@ -7,23 +7,28 @@ import { getBooksPageAction } from '@/api/books/getBooksPageAction'
 import type { Book, BookFilters } from '@/entities/book/client'
 import gridStyles from '@/components/book/BookGrid/BookGrid.module.scss'
 import btnStyles from '@/components/book/NewProducts/NewProducts.module.scss'
+import styles from './BooksFeed.module.scss'
 
 type Props = {
-  // Server-rendered page-1 cards (BookCard renders server-side here, in NewProducts).
+  // Batch 1 — server-fetched, rendered visible.
   children: React.ReactNode
+  // Batch 2 — server-fetched, rendered HIDDEN with eager covers so it preloads. Revealed
+  // instantly on the first "load more" (CSS flip — no fetch, images already loaded).
+  prefetched: React.ReactNode
   filters: BookFilters
-  initialCount: number // number of books in the server-rendered page 1
+  initialCount: number // books in batch 1 (the visible-at-start set)
+  prefetchedCount: number // books in batch 2 (the hidden-ahead set)
   total: number
 }
 
-// Instant, anticipatory "load more": the first page is the server-rendered `children`; this
-// client island fetches subsequent pages via getBooksPageAction and ALWAYS keeps one page
-// fetched ahead of what's revealed. Clicking reveals the already-cached next page instantly
-// (no navigation, no whole-page reload) and prefetches the one after it. Filter/sort changes
-// remount this (keyed by filters in NewProducts), resetting the feed.
-export default function BooksFeed({ children, filters, initialCount, total }: Props) {
-  // How many client pages (page 2, 3, …) are currently shown. Fetched-but-unrevealed pages
-  // sit in the query cache, so revealing one is instant.
+// Zero-perceived-latency "load more": there is ALWAYS one batch rendered-and-hidden ahead of
+// what's revealed, with its covers already loading (eager). Clicking flips that batch visible
+// instantly (CSS only) and kicks off fetching + hidden-preloading the NEXT batch — so by the
+// time the user clicks again, it's ready too. Batches 1+2 are server-fetched (no client round
+// trip); batches 3+ come from getBooksPageAction. Hidden batches use `display:none`; revealed
+// ones `display:contents`, so the cards flow into the shared grid in document order.
+export default function BooksFeed({ children, prefetched, filters, initialCount, prefetchedCount, total }: Props) {
+  // How many batches BEYOND batch 1 are revealed. 0 = only batch 1 visible (batch 2 hidden-ahead).
   const [revealed, setRevealed] = useState(0)
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
@@ -35,35 +40,48 @@ export default function BooksFeed({ children, filters, initialCount, total }: Pr
   >({
     queryKey: ['booksFeed', filters] as const,
     queryFn: ({ pageParam }) => getBooksPageAction(filters, pageParam),
-    initialPageParam: 2, // page 1 is the server-rendered children
+    initialPageParam: 3, // batches 1+2 are server-rendered; client pages start at 3
     getNextPageParam: (_lastPage, allPages) => {
-      const loaded = initialCount + allPages.reduce((n, p) => n + p.length, 0)
-      return loaded < total ? allPages.length + 2 : undefined
+      const loaded = initialCount + prefetchedCount + allPages.reduce((n, p) => n + p.length, 0)
+      return loaded < total ? allPages.length + 3 : undefined
     },
     staleTime: 60 * 1000,
   })
 
   const pages = data?.pages ?? []
 
-  // Keep exactly one page fetched ahead of what's revealed (anticipatory prefetch).
+  // Keep one CLIENT batch fetched ahead of what's revealed, so its covers preload while hidden.
+  // revealed=0 → batch 2 (server) is the ready-ahead, no client fetch. revealed=k≥1 → the
+  // hidden-ahead is client page[k-1], so we need pages.length ≥ k.
   useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage && pages.length < revealed + 1) {
+    if (hasNextPage && !isFetchingNextPage && pages.length < revealed) {
       void fetchNextPage()
     }
   }, [hasNextPage, isFetchingNextPage, pages.length, revealed, fetchNextPage])
 
-  const revealedBooks = pages.slice(0, revealed).flat()
-  const shownCount = initialCount + revealedBooks.length
+  // Books currently visible: batch 1 + (batch 2 if revealed) + revealed client batches.
+  const clientShown = pages.slice(0, Math.max(0, revealed - 1)).reduce((n, p) => n + p.length, 0)
+  const shownCount = initialCount + (revealed >= 1 ? prefetchedCount : 0) + clientShown
   const hasMore = shownCount < total
-  // Only block if the user has outrun the prefetch (clicked faster than a page can load).
-  const waiting = isFetchingNextPage && revealed >= pages.length
+  // The batch the next click reveals is ready unless the user out-ran the client prefetch.
+  const nextReady = revealed === 0 || pages.length >= revealed
 
   return (
     <>
       <div className={gridStyles.grid}>
         {children}
-        {revealedBooks.map((book) => (
-          <BookCard key={book.id} book={book} />
+
+        {/* Batch 2 — hidden until the first reveal. */}
+        <div className={revealed >= 1 ? styles.shown : styles.hidden}>{prefetched}</div>
+
+        {/* Batches 3+ — each client page in its own reveal wrapper. The last fetched one
+            (index === revealed - 1) stays hidden as the preloading ahead-batch. */}
+        {pages.slice(0, revealed).map((page, i) => (
+          <div key={i} className={i < revealed - 1 ? styles.shown : styles.hidden}>
+            {page.map((book) => (
+              <BookCard key={book.id} book={book} eager />
+            ))}
+          </div>
         ))}
       </div>
 
@@ -73,9 +91,9 @@ export default function BooksFeed({ children, filters, initialCount, total }: Pr
             type="button"
             className={btnStyles.button}
             onClick={() => setRevealed((r) => r + 1)}
-            disabled={waiting}
+            disabled={!nextReady}
           >
-            {waiting ? 'Загрузка…' : 'Загрузить больше'}
+            {nextReady ? 'Загрузить больше' : 'Загрузка…'}
           </button>
         </div>
       )}
