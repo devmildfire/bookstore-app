@@ -350,6 +350,23 @@
   gap: $space-4;
   align-items: flex-start;
   max-width: 300px;
+  text-decoration: none;
+
+  &:hover .previewCover {
+    transform: scale(1.06);
+    box-shadow: 0 0 48px 14px rgba($color-accent-on-dark, 0.55);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent-on-dark;
+    outline-offset: 4px;
+    border-radius: $radius-sm;
+
+    .previewCover {
+      transform: scale(1.06);
+      box-shadow: 0 0 48px 14px rgba($color-accent-on-dark, 0.55);
+    }
+  }
 }
 
 .previewCover {
@@ -358,6 +375,7 @@
   object-fit: cover;
   flex-shrink: 0;
   display: block;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .previewCoverEmpty {
