@@ -11,6 +11,14 @@ gate, and newsletter token confirm/unsubscribe — see
 Still pending: component tests, broader E2E, redeem-token (cookie-based handler → e2e).
 Last updated: 2026-06-27.
 
+> **As-built note.** The CI design in §5/§10 below is the *original* phased plan — a separate
+> `test.yml` + `test-e2e.yml`. It shipped **consolidated as one `ci.yml`** pipeline
+> (audit → lint → unit → integration → build → e2e), with `deploy-production.yml` gating on that
+> run's conclusion. Read `test.yml` below as "the unit + integration jobs of `ci.yml`." The
+> authoritative as-built CI reference is
+> [docs/deployment/github-actions-ci-cd.md](../deployment/github-actions-ci-cd.md). `main` is now
+> branch-protected (PR-only).
+
 > **Branch model (as of 2026-06-22):** the trunk is `main`; production deploys are the
 > `production` branch. The old `update`/`develop`/`staging` branches are retired — wherever
 > an example workflow below targets a trunk branch, it means `main`.
@@ -57,9 +65,9 @@ no longer applies.
   layer that can optionally run locally (they're pure, no Supabase dependency);
   integration and E2E tests run in CI only. See §5 for the CI design and §9 for the local
   dev workflow (unit-only).
-- **CI must gate production deployment.** The existing `deploy-production.yml` workflow
-  must require the test workflows (`test.yml` + `test-e2e.yml`) to pass before the
-  build-and-push + deploy jobs run. No green tests → no deploy. See §5.7.
+- **CI must gate production deployment.** `deploy-production.yml` refuses to deploy unless the
+  consolidated `ci.yml` (which runs the tests) is green for the promoted SHA. No green CI → no
+  deploy. See §5.7.
 - **591 TS/TSX source files, 72 pages, 14 API routes, 30 SQL RPC functions, 20 Server
   Action files.** Full coverage is not realistic day-one; the plan below prioritizes the
   high-risk surfaces first.
@@ -857,7 +865,7 @@ export default defineConfig({
 | Unit | `src/lib/*` + `src/entities/*/normalize.ts` + `src/entities/*/validation.ts` | High — pure functions, fast wins |
 | Integration | Catalog RPCs + cart pricing + promo codes | High — highest-risk business logic |
 | E2E | Home → catalog → book detail + add-to-cart → checkout (mock) | High — the critical user journey |
-| CI | `test.yml` (unit + integration) + `test-e2e.yml` on feature branches | High |
+| CI | consolidated `ci.yml` (audit → lint → unit → integration → build → e2e); feature branches also get `audit.yml` / `test-e2e.yml` | High |
 | Coverage | 40% statements, 30% branches | Lenient — get the harness green first |
 
 ### Phase 2 (expand coverage)

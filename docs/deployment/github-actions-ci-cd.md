@@ -83,6 +83,16 @@ This **rolls the app image only** — it does not sync `/opt/chtivo` infra files
 - **`test-e2e.yml`** — runs e2e on `feature/**` / `feat/**` pushes (PRs into `main` get e2e
   inside `ci.yml` instead).
 
+### Scheduled / on-demand (dependency monitoring)
+
+- **`renovate.yml`** — self-hosted Renovate, weekly + manual dispatch. Opens dependency-update +
+  digest-pin PRs (npm, Docker, Actions); the low-risk tier auto-merges on green.
+- **`trivy.yml`** — nightly + manual. Scans the deployed `:production` image + repo filesystem,
+  **gating on HIGH/CRITICAL** → SARIF in Security ▸ Code scanning; a CRITICAL also pages Telegram.
+  `:latest` + the Supabase images are scanned informationally.
+
+Full design + the review ritual: [docs/plans/dependency-monitoring.md](../plans/dependency-monitoring.md).
+
 ## Single env-agnostic image
 
 The image bakes **nothing** environment-specific (no Supabase host/key). The browser talks to
@@ -102,6 +112,8 @@ local stack is the one promoted to prod. The image build takes `SUPABASE_INTERNA
 | `VPS_SSH_KEY` | Private key for deploy-only SSH access |
 | `VPS_SSH_PORT` | Usually `22` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key — fed to the image build (secret mount) + the PR validate-build |
+| `RENOVATE_TOKEN` | Renovate's fine-grained PAT (repo-scoped) so its PRs trigger `ci.yml` — perms in [dependency-monitoring.md](../plans/dependency-monitoring.md) §5 |
+| `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | Trivy CRITICAL→Telegram (same bot as the monitoring stack) |
 
 The GHCR image is **public** (`ghcr.io/devmildfire/bookstore-app`), so the VPS pulls
 anonymously; the deploy job logs in to GHCR only to *push* the promoted `:production` tag.
