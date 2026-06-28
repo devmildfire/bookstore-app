@@ -27,7 +27,9 @@
 .coverWrap {
   position: relative;
   aspect-ratio: 2 / 3;
-  background-color: $color-bg-muted;
+  // Transparent on purpose: the cover shows nothing → blur placeholder → final image. A solid
+  // colour here flashes through for ~1 frame during next/image's blur→loaded swap.
+  background-color: transparent;
   overflow: hidden;
   transition: box-shadow 0.25s ease;
 
