@@ -13,7 +13,11 @@ type Props = {
 // (rendered eagerly + permanently there, so the heading never re-mounts/blinks). This is the heavy
 // part that's deferred to interaction.
 export default function NewProducts({ catalog, filters }: Props) {
-  const books = catalog.books
+  // HomeCatalog fetches two batches' worth of books (filters.limit * 2). Batch 1 renders
+  // visible; batch 2 is handed to BooksFeed as the hidden, eager-preloading "ahead" batch so
+  // the first "load more" is an instant CSS reveal. Batches 3+ are fetched client-side.
+  const batch1 = catalog.books.slice(0, filters.limit)
+  const batch2 = catalog.books.slice(filters.limit)
 
   return (
     <>
@@ -24,17 +28,18 @@ export default function NewProducts({ catalog, filters }: Props) {
         years={catalog.years}
       />
 
-      {books.length > 0 ? (
-        // First page = server-rendered BookCards passed as children. BooksFeed appends later
-        // pages client-side with anticipatory prefetch — instant "load more", no navigation,
-        // no whole-page reload. Keyed by filters so a filter/sort change remounts + resets it.
+      {batch1.length > 0 ? (
         <BooksFeed
           key={JSON.stringify(filters)}
           filters={filters}
-          initialCount={books.length}
+          initialCount={batch1.length}
+          prefetchedCount={batch2.length}
           total={catalog.total}
+          prefetched={batch2.map((book) => (
+            <BookCard key={book.id} book={book} eager />
+          ))}
         >
-          {books.map((book) => (
+          {batch1.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
         </BooksFeed>

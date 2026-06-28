@@ -10,11 +10,15 @@ import styles from './BookCard.module.scss'
 type Props = {
   book: Book
   className?: string
+  // Load the cover eagerly instead of lazily. Used for the render-ahead batches that sit
+  // hidden (display:none) in the catalog feed: a lazy image never loads while hidden, so the
+  // prefetched batch must load eagerly to preload its covers before it's revealed.
+  eager?: boolean
 }
 
 // Server component — the card body (cover, prices, link) renders on the server. The only
 // client islands are the leaf <LikeButton> and <AddToCartTrigger> (the cart button + modal).
-export default function BookCard({ book, className }: Props) {
+export default function BookCard({ book, className, eager = false }: Props) {
   return (
     <article className={cn(styles.card, className)}>
       <div className={styles.coverWrap}>
@@ -26,6 +30,7 @@ export default function BookCard({ book, className }: Props) {
               fill
               sizes='(max-width: 767px) 45vw, (max-width: 1200px) 30vw, 220px'
               className={styles.cover}
+              loading={eager ? 'eager' : 'lazy'}
               placeholder={book.coverBlurDataUrl ? 'blur' : 'empty'}
               blurDataURL={book.coverBlurDataUrl ?? undefined}
             />
