@@ -1,8 +1,7 @@
 name: Audit (reusable)
 
-# Single source of truth for the dependency vulnerability scan, called by:
-#   - audit.yml (every branch push + PR)
-#   - deploy-production.yml (hard gate before build-and-push)
+# Single source of truth for the dependency vulnerability scan. Called by ci.yml's `audit`
+# job (runs on every push + PR to main).
 on:
   workflow_call:
 

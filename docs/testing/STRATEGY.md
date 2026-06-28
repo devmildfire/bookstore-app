@@ -865,7 +865,7 @@ export default defineConfig({
 | Unit | `src/lib/*` + `src/entities/*/normalize.ts` + `src/entities/*/validation.ts` | High — pure functions, fast wins |
 | Integration | Catalog RPCs + cart pricing + promo codes | High — highest-risk business logic |
 | E2E | Home → catalog → book detail + add-to-cart → checkout (mock) | High — the critical user journey |
-| CI | consolidated `ci.yml` (audit → lint → unit → integration → build → e2e); feature branches also get `audit.yml` / `test-e2e.yml` | High |
+| CI | consolidated `ci.yml` (audit → lint → unit → integration → build → e2e) on every PR + main push | High |
 | Coverage | 40% statements, 30% branches | Lenient — get the harness green first |
 
 ### Phase 2 (expand coverage)

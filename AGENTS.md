@@ -20,8 +20,9 @@ E2E). Unit tests are co-located (`src/**/*.test.ts`), pure, and run anywhere. In
 **CI-authoritative** — integration tests `describe.skipIf` without the stack (so `npm test`
 stays green locally without Docker); E2E is CI-only with no local no-op guard. CI:
 `.github/workflows/ci.yml` (audit → lint → unit → integration → build → e2e on push/PR to
-main) + `test-e2e.yml` (feature-branch pushes only — `feature/**`/`feat/**`; PRs run e2e
-inside `ci.yml`). Lint + unit-related tests run on staged files via the pre-commit hook.
+main). `main` is PR-only, so there are no standalone branch-push CI workflows — every change runs
+`ci.yml` via its PR (open a draft PR for WIP feedback). Lint + unit-related tests run on staged
+files via the pre-commit hook.
 The hard production-deploy test gate is wired — `deploy-production.yml` blocks build/deploy
 unless `ci.yml` is green for the deployed SHA — see [docs/testing/STRATEGY.md](docs/testing/STRATEGY.md)
 §10 step 5.
