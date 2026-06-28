@@ -1,5 +1,6 @@
 export type BoxSetBook = {
   titleId: number
+  slug: string
   name: string
   coverUrl: string | null
   authorName: string

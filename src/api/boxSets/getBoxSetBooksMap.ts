@@ -13,6 +13,7 @@ type Row = {
   Titles: {
     id: number
     name: string
+    slug: string
     cover: string | null
     Titles_Authors: Array<{ Authors: { name: string } | null }>
   } | null
@@ -33,6 +34,7 @@ export async function getBoxSetBooksMap(
       Titles (
         id,
         name,
+        slug,
         cover,
         Titles_Authors (
           Authors ( name )
@@ -54,6 +56,7 @@ export async function getBoxSetBooksMap(
       .sort((a, b) => a.localeCompare(b, 'ru'))
     ;(map[row.box_set_id] ??= []).push({
       titleId: title.id,
+      slug: title.slug,
       name: title.name,
       coverUrl: getCoverUrl(title.cover),
       authorName: authorNames.length > 0 ? authorNames.join(', ') : 'Автор не указан',

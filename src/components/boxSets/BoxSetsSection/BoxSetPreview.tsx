@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import cn from 'classnames'
 import Scroller from '@/components/common/Scroller'
 import type { BoxSetBook } from '@/entities/boxSet/client'
@@ -26,7 +27,7 @@ export default function BoxSetPreview({ books }: Props) {
     <Scroller className={styles.previewInner} axis='horizontal'>
       <div className={styles.previewGrid}>
         {books.map((book) => (
-          <div key={book.titleId} className={styles.previewBook}>
+          <Link key={book.titleId} href={`/books/${book.slug}`} className={styles.previewBook}>
             {book.coverUrl ? (
               <Image
                 src={book.coverUrl}
@@ -42,7 +43,7 @@ export default function BoxSetPreview({ books }: Props) {
               <p className={styles.previewBookTitle}>{book.name}</p>
               <p className={styles.previewBookAuthor}>{book.authorName}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </Scroller>
