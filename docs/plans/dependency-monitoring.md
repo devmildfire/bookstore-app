@@ -404,13 +404,6 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
       [docs/deployment/README.md](../deployment/README.md) (the four signals + review ritual) and an
       operating note to `AGENTS.md` (protected `main`, PR-only flow, the four signals).
 
-### Deferred follow-up
-- [ ] **Fast-path doc-only PRs.** All 6 `ci.yml` jobs are required checks, so a docs-only PR still runs
-      `build` + `e2e` (~10 min) before it can merge. Gate `build`/`e2e` on non-doc paths with a
-      passthrough that still reports the required check green (e.g. `dorny/paths-filter` + a status
-      shim). Deliberately **not** bundled with this docs PR — a mistake in the required-check wiring
-      would block *all* merges, so it needs its own tested change.
-
 ---
 
 ## 7. Maintenance policy
