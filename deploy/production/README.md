@@ -26,13 +26,18 @@ in and runs `docker compose pull app && docker compose up -d app`. It does **not
 the files in `/opt/chtivo`.
 
 So changes to **`docker-compose.yml`, `.env`, `nginx/`, `volumes/`** are NOT picked up by a
-normal deploy — they must be synced to the VPS by hand, then the affected service recreated:
+normal deploy — they must be synced to the VPS by hand, then the affected service recreated.
+
+> ⚠ **Do not run a blind sync.** `tar -x` overwrites tracked files with the repo version, so any
+> VPS-only edit to a tracked file is wiped (this is what broke `grafana.mildfire.dev` → 502). Always
+> run the drift audit first, and recreate **only** the changed services — never a bare
+> `docker compose up -d`, never `db`/`storage`. The full, safe procedure is in
+> **[infra-sync.md](infra-sync.md)**:
 
 ```bash
-# From the repo (syncs all tracked deploy/ files; the gitignored .env is left untouched):
-git archive --format=tar HEAD:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'
-# Then recreate whatever changed, e.g.:
-ssh portfolio-vps 'cd /opt/chtivo && docker compose up -d app'
+scripts/check-infra-drift.sh                  # 1. ALWAYS audit repo-vs-VPS drift first
+git archive --format=tar origin/main:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'   # 2. sync
+ssh portfolio-vps 'cd /opt/chtivo && docker compose pull <svc> && docker compose up -d <svc>'        # 3. recreate ONLY <svc>
 ```
 
 `.env` itself is never in git — edit `/opt/chtivo/.env` directly on the VPS and
