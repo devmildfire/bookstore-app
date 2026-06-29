@@ -94,6 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      max-parallel: 2 # gentle on public.ecr.aws's anonymous pull rate limit (avoids TOOMANYREQUESTS)
       matrix:
         image:
           - ghcr.io/devmildfire/bookstore-app:latest
@@ -110,7 +111,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # continue-on-error: this scan is purely informational. A transient ECR rate-limit /
+      # pull failure here must NOT fail the run (exit-code:'0' only suppresses *vuln* findings,
+      # not Trivy's fatal "can't pull image" error).
       - name: Trivy — ${{ matrix.image }} (report only)
+        continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ matrix.image }}
@@ -124,6 +129,6 @@ jobs:
           {
             echo "## Trivy (informational) — ${{ matrix.image }}"
             echo '```'
-            cat trivy-info.txt
+            cat trivy-info.txt 2>/dev/null || echo "(scan unavailable — image pull failed / rate-limited)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
