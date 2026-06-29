@@ -6,11 +6,9 @@
     "docker:pinDigests",
     "helpers:pinGitHubActionDigests"
   ],
-  "timezone": "Asia/Yekaterinburg",
-  "schedule": ["before 6am on monday"],
   "prConcurrentLimit": 8,
   "rangeStrategy": "pin",
-  "lockFileMaintenance": { "enabled": true, "schedule": ["before 6am on monday"] },
+  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },
   "major": { "dependencyDashboardApproval": true },
   "packageRules": [

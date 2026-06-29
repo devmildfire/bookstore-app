@@ -96,11 +96,14 @@ Four independent signals, each matched to its domain; no shared always-on servic
     "docker:pinDigests",                  // pin Docker tags → digests (node, nginx, etc.)
     "helpers:pinGitHubActionDigests"      // pin Actions @vN → digest (integrity parity)
   ],
-  "timezone": "Asia/Yekaterinburg",
-  "schedule": ["before 6am on monday"],          // weekly, low-noise (D5)
+  // No top-level `schedule` and no `timezone`: the workflow cron (renovate.yml) is the SOLE timing
+  // control, so a run (scheduled or dispatched) always opens due PRs. (An in-renovate.json schedule
+  // that disagreed with the cron previously caused runs to open nothing — see the cron note below.)
   "prConcurrentLimit": 8,
   "rangeStrategy": "pin",                          // never widen an exact pin (reality #1)
-  "lockFileMaintenance": { "enabled": true, "schedule": ["before 6am on monday"] },
+  // lockFileMaintenance's Renovate DEFAULT schedule is "before 4am on monday" — override to
+  // "at any time" so the cron alone gates it (otherwise a non-Monday cron never triggers it).
+  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },  // Renovate raises CVE PRs (D3)
   "major": { "dependencyDashboardApproval": true },                       // majors are opt-in (D5)
   "packageRules": [
@@ -156,7 +159,7 @@ Notes:
 ```yaml
 name: Renovate
 on:
-  schedule: [{ cron: '0 1 * * 1' }]   # Mon 01:00 UTC (~06:00 Yekaterinburg)
+  schedule: [{ cron: '47 3 * * 2' }]  # Tue 03:47 UTC — off the :00 high-load slot (GitHub crons are best-effort)
   workflow_dispatch:
     inputs:
       logLevel: { description: 'Renovate log level', default: 'info' }
