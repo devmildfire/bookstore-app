@@ -199,7 +199,7 @@ services:
 
   # ── postgres-meta (stateless; backs Studio) ────────────────────────────────────
   meta:
-    image: public.ecr.aws/supabase/postgres-meta:v0.96.4@sha256:4dd3e0ff3e9a0f9f62dd1a1a827f124645549b439ddb2a53598575744585e32d
+    image: public.ecr.aws/supabase/postgres-meta:v0.96.6@sha256:a84cc713585eea7b401e4a2561ec4a1e48c87083d1c7ecb4502f204bb4391300
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
