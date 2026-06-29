@@ -17,9 +17,9 @@
     { "matchManagers": ["github-actions"], "automerge": true },
     { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
-    { "matchDepTypes": ["dependencies"], "automerge": false },
-    { "matchDatasources": ["docker"], "automerge": false },
-    { "matchUpdateTypes": ["major"], "automerge": false },
+    { "matchDepTypes": ["dependencies"], "automerge": false, "addLabels": ["needs-review"] },
+    { "matchDatasources": ["docker"], "automerge": false, "addLabels": ["needs-review"] },
+    { "matchUpdateTypes": ["major"], "automerge": false, "addLabels": ["needs-review"] },
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": [
