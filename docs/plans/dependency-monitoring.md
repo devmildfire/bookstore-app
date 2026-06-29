@@ -100,6 +100,7 @@ Four independent signals, each matched to its domain; no shared always-on servic
   // control, so a run (scheduled or dispatched) always opens due PRs. (An in-renovate.json schedule
   // that disagreed with the cron previously caused runs to open nothing — see the cron note below.)
   "prConcurrentLimit": 8,
+  "prHourlyLimit": 0,                              // no per-hour cap (default is 2) — prConcurrentLimit governs
   "rangeStrategy": "pin",                          // never widen an exact pin (reality #1)
   // lockFileMaintenance's Renovate DEFAULT schedule is "before 4am on monday" — override to
   // "at any time" so the cron alone gates it (otherwise a non-Monday cron never triggers it).

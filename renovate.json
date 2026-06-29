@@ -7,6 +7,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "prConcurrentLimit": 8,
+  "prHourlyLimit": 0,
   "rangeStrategy": "pin",
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },
