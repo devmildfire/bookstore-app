@@ -175,6 +175,7 @@ monthly — held majors, Node/base-image moves, `RENOVATE_TOKEN` expiry. Full de
 ## Related Documents
 
 - [GitHub Actions CI/CD](github-actions-ci-cd.md)
+- [Infra sync protocol](infra-sync.md) — how to apply `deploy/`+`monitoring/` config to the VPS safely (drift audit → scoped recreate)
 - [Dependency & vulnerability monitoring](../plans/dependency-monitoring.md)
 - [Supabase Production Bootstrap](supabase-production-bootstrap.md)
 - [Deployment Tracker](TRACKER.md)
