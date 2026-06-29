@@ -120,9 +120,11 @@ Four independent signals, each matched to its domain; no shared always-on servic
     { "matchDepTypes": ["engines"], "enabled": false },
 
     // ── Manual-only tiers (D5) — present from Phase 1 (these are all automerge:false) ──
-    { "matchDepTypes": ["dependencies"], "automerge": false },            // prod deps: always review
-    { "matchDatasources": ["docker"], "automerge": false },              // base/compose images: review
-    { "matchUpdateTypes": ["major"], "automerge": false },
+    // Manual tiers — automerge:false + a `needs-review` label so they're filterable (auto-merge
+    // tiers stay unlabelled and self-clear; filter `label:needs-review` to see what needs you).
+    { "matchDepTypes": ["dependencies"], "automerge": false, "addLabels": ["needs-review"] },  // prod deps
+    { "matchDatasources": ["docker"], "automerge": false, "addLabels": ["needs-review"] },     // base/compose images
+    { "matchUpdateTypes": ["major"], "automerge": false, "addLabels": ["needs-review"] },
 
     // ── Migration-coupled stateful images (D4): block version + digest UPDATES, but ALLOW the
     //    one-time digest PIN so the exact approved image is locked by sha. Version moves
