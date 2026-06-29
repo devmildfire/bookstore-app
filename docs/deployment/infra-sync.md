@@ -78,6 +78,27 @@ Every public hostname goes **Cloudflare Tunnel → nginx → service** — inclu
 block in `deploy/production/nginx/conf.d/app.conf`** (now incl. grafana). If you add a tunnel
 hostname, add its nginx vhost **in the repo** — never only on the box.
 
+## Restore from backup
+The nightly `backup.sh` snapshots infra **config** + **secrets** alongside the DB/storage (see
+[DATABASE_BACKUP.md → Infra config + secrets backup](../DATABASE_BACKUP.md#infra-config--secrets-backup)).
+Use these to rebuild `/opt/chtivo` or recover a wiped file (e.g. the grafana vhost).
+
+1. **Config** (plaintext) — unpack into `/opt/chtivo`:
+   ```bash
+   tar -xzf chtivo-prod-config-<ts>.tar.gz -C /opt/chtivo
+   ```
+2. **Secrets** (encrypted) — decrypt with the **password-manager private key**, then unpack:
+   ```bash
+   gpg --import < backup-private-key.asc        # paste from your password manager; remove after
+   gpg -d chtivo-prod-secrets-<ts>.tar.gz.gpg | tar -xz -C /opt/chtivo
+   chmod 600 /opt/chtivo/.env
+   ```
+   The private key never lives on the box — import it only for the restore, then `gpg --delete-secret-keys`.
+3. **Apply** — recreate only the affected services (Step 3 above): never a bare `up -d`, never `db`/`storage`.
+
+For a full new-VPS rebuild, combine this with the data restore in
+[supabase-production-bootstrap.md](supabase-production-bootstrap.md#production-restore).
+
 ## Known follow-ups
 - `monitoring/nginx/00-red-logging.conf` is stored under `monitoring/` in the repo but is actually
   deployed into the *production* nginx (`/opt/chtivo/nginx/conf.d/`). Harmless (sync can't wipe it),
