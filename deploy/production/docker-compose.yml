@@ -66,7 +66,7 @@ services:
 
   # ── Supabase API gateway (stateless → official tested version) ─────────────────
   kong:
-    image: kong/kong:3.9.1@sha256:6addf50e6bd8d578314cb9ce4f2d2d1e3781d2edecef59f707e00c6e05d384f5
+    image: kong/kong:3.9.3@sha256:9a2ae6699a2ce0d60592eb176555d3594a22782c20cc6557a61ff3a7e8b559a3
     restart: unless-stopped
     environment:
       KONG_DATABASE: "off"
@@ -199,7 +199,7 @@ services:
 
   # ── postgres-meta (stateless; backs Studio) ────────────────────────────────────
   meta:
-    image: public.ecr.aws/supabase/postgres-meta:v0.96.4@sha256:4dd3e0ff3e9a0f9f62dd1a1a827f124645549b439ddb2a53598575744585e32d
+    image: public.ecr.aws/supabase/postgres-meta:v0.96.6@sha256:a84cc713585eea7b401e4a2561ec4a1e48c87083d1c7ecb4502f204bb4391300
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }

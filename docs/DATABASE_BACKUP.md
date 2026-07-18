@@ -92,4 +92,60 @@ If objects already exist you'll get conflicts — prefer restoring onto a fresh 
   bucket created by a script rather than a migration (e.g. `covers`).
 - Keep a backup until the destructive operation is verified successful. Prune old
   dumps manually; they are not tracked or auto-rotated.
+
+## Infra config + secrets backup
+
+The DB dump + storage tarball cover the *data*. The prod **`backup.sh`** also snapshots the
+**infra** in `/opt/chtivo` — the gap that let the grafana 502 happen (a VPS-only nginx vhost was in
+no backup) and, more importantly, the gap that left the **secrets** unprotected:
+
+- **`chtivo-prod-config-*.tar.gz`** — plaintext: `docker-compose.yml`, `nginx/`, `volumes/*.sql`,
+  `kong.yml`, `monitoring/` config. (Mostly also in git; its unique value is capturing any VPS-only
+  drift and enabling a `/opt/chtivo` restore without git.)
+- **`chtivo-prod-secrets-*.tar.gz.gpg`** — **GPG-encrypted**: `.env` (prod Supabase keys + **JWT
+  secret**), `monitoring/alertmanager/alertmanager.yml`, `telegram_token`. These are **gitignored
+  (VPS-only)** — so this is the *only* thing protecting them. Lose the VPS without this and the JWT
+  secret is gone (a from-scratch re-key, not a restore).
+
+Data volumes (`db-data`, `storage-data`) are **not** in the config tarball — they're the DB dump +
+storage tarball's job.
+
+### Why GPG, and where the keys live (the important part)
+
+Encryption is **asymmetric** — the two halves live in different places:
+
+| Key | Where | Used for |
+|---|---|---|
+| **Public** | imported into the VPS `deploy` user's gpg keyring; id in `BACKUP_GPG_RECIPIENT` | **encrypting** (backup) — not sensitive |
+| **Private** | **your password manager** (+ an offline copy) — *never* on the VPS or any disk | **decrypting** (restore only) |
+
+This is what makes the encryption meaningful, not theatre:
+- **Backups need no secret key anywhere** — the VPS seals the secrets with the public key alone.
+- **Local machine compromised** → the attacker has your SSH key → the VPS → the *live* `.env`. True.
+  But they do **not** have the gpg private key (it's in your password manager, not on disk) → they
+  **cannot decrypt the archived secret backups** (rotated/historical secrets, and any offsite copies).
+  So this protects *more* than the SSH key already exposes — it is not redundant.
+- ⚠ If you instead keep the private key **on the same disk** as the SSH key, encryption only protects
+  against lost/leaked *backup media*, not a local compromise. **Off-disk (password manager) is the
+  point.**
+
+### One-time setup
+```bash
+# 1. Generate a keypair (anywhere private — e.g. your laptop):
+gpg --quick-generate-key "chtivo-backup <backup@mildfire.dev>" default default never
+gpg --armor --export        chtivo-backup > backup-recipient.pub      # PUBLIC  → goes to the VPS
+gpg --armor --export-secret-keys chtivo-backup > backup-private.asc    # PRIVATE → password manager, then DELETE this file
+
+# 2. On the VPS (deploy user): import the PUBLIC key + point the backup at it:
+#    scp backup-recipient.pub portfolio-vps:~ ; ssh portfolio-vps 'gpg --import backup-recipient.pub'
+#    Add to the backup service env (or ~/chtivo-backup.sh):  BACKUP_GPG_RECIPIENT=backup@mildfire.dev
+
+# 3. Store backup-private.asc in your password manager (+ a printed/offline copy). Shred the file.
+```
+Until `BACKUP_GPG_RECIPIENT` is set, `backup.sh` logs a warning and **skips only the secrets** step
+(DB / storage / config still run).
+
+### Restore
+Config + secrets restore (unpack config; decrypt secrets with the password-manager key) is in
+[docs/deployment/infra-sync.md → Restore from backup](deployment/infra-sync.md#restore-from-backup).
 </content>

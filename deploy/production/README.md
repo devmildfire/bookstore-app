@@ -26,13 +26,18 @@ in and runs `docker compose pull app && docker compose up -d app`. It does **not
 the files in `/opt/chtivo`.
 
 So changes to **`docker-compose.yml`, `.env`, `nginx/`, `volumes/`** are NOT picked up by a
-normal deploy — they must be synced to the VPS by hand, then the affected service recreated:
+normal deploy — they must be synced to the VPS by hand, then the affected service recreated.
+
+> ⚠ **Do not run a blind sync.** `tar -x` overwrites tracked files with the repo version, so any
+> VPS-only edit to a tracked file is wiped (this is what broke `grafana.mildfire.dev` → 502). Always
+> run the drift audit first, and recreate **only** the changed services — never a bare
+> `docker compose up -d`, never `db`/`storage`. The full, safe procedure is in
+> **[infra-sync.md](infra-sync.md)**:
 
 ```bash
-# From the repo (syncs all tracked deploy/ files; the gitignored .env is left untouched):
-git archive --format=tar HEAD:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'
-# Then recreate whatever changed, e.g.:
-ssh portfolio-vps 'cd /opt/chtivo && docker compose up -d app'
+scripts/check-infra-drift.sh                  # 1. ALWAYS audit repo-vs-VPS drift first
+git archive --format=tar origin/main:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'   # 2. sync
+ssh portfolio-vps 'cd /opt/chtivo && docker compose pull <svc> && docker compose up -d <svc>'        # 3. recreate ONLY <svc>
 ```
 
 `.env` itself is never in git — edit `/opt/chtivo/.env` directly on the VPS and
@@ -132,21 +137,30 @@ Two tiers, **pull-only** (the VPS never reaches into the workstation — one-way
 
 **1. On the VPS (daily 04:00 UTC).** `backup.sh` (installed at `~deploy/chtivo-backup.sh`) dumps
 the DB (`pg_dump -Fc`, with ownership for self-host restore) and archives the `chtivo_storage-data`
-volume (`tar --xattrs` — mandatory, or restored objects 500) into `~deploy/chtivo-backups/`, then
-rotates (keep 30d DB / 7d storage). Scheduled by a **systemd `--user` timer** (`systemd/chtivo-backup.{service,timer}`),
+volume (`tar --xattrs` — mandatory, or restored objects 500) into `~deploy/chtivo-backups/`. It also
+tars the **infra config** (compose / nginx / kong / init-SQL / monitoring — plaintext) and the
+**secrets** (`.env` + alertmanager token/config) **GPG-encrypted to a public key** — the matching
+private key lives in your **password manager**, never on the VPS, so neither a VPS nor a workstation
+compromise decrypts archived secrets (setup: [docs/DATABASE_BACKUP.md](../../docs/DATABASE_BACKUP.md#infra-config--secrets-backup)).
+Then it rotates (keep 30d DB / 7d storage / 30d config+secrets). Scheduled by a **systemd `--user` timer** (`systemd/chtivo-backup.{service,timer}`),
 not cron — the VPS has no cron installed and `deploy` has no sudo. Linger is enabled
 (`loginctl enable-linger`) so the timer runs unattended. (DB row-level GC of stale anon users is a
 separate pg_cron job inside Postgres — see `docs/CONCERNS.md` P1.)
 
 **2. On the workstation (daily 05:00 + ~3 min after login/resume).** `~/bin/chtivo-pull-backups.sh`
 copies any backups it doesn't already hold off the VPS via `ssh`+`scp` (no rsync on the VPS) into
-`~/backups/chtivo-prod/`, keeping a longer history (90d DB / 30d storage). A `flock` serializes
+`~/backups/chtivo-prod/`, keeping a longer history (90d DB / 30d storage; config+secrets ride along
+since the puller grabs *any* new file in the dir). A `flock` serializes
 overlapping runs; transfers are atomic (`.part` → `mv`). Scheduled by a systemd `--user` timer with
 `Persistent=true`: a **suspended machine runs no timer**, but the missed run is caught up shortly
 after resume/boot, and the script grabs *all* missing files so multi-day gaps heal in one run.
 (These workstation files are machine-specific — they hard-code the `portfolio-vps` ssh alias — so
 they live on the box, not in this repo; the logic is documented here.)
 
-**Restore:** the bootstrap restore procedure (DB as `supabase_admin` with owners; storage extracted
-`--xattrs`) is in [docs/deployment/supabase-production-bootstrap.md](../../docs/deployment/supabase-production-bootstrap.md#production-restore)
+**Restore — data:** the bootstrap restore procedure (DB as `supabase_admin` with owners; storage
+extracted `--xattrs`) is in [docs/deployment/supabase-production-bootstrap.md](../../docs/deployment/supabase-production-bootstrap.md#production-restore)
 — the daily dumps + tarballs are drop-in inputs to it.
+
+**Restore — config + secrets:** unpack `chtivo-prod-config-*.tar.gz` into `/opt/chtivo`, and decrypt
+`chtivo-prod-secrets-*.tar.gz.gpg` with the password-manager private key — full steps in
+[docs/deployment/infra-sync.md](../../docs/deployment/infra-sync.md#restore-from-backup).
