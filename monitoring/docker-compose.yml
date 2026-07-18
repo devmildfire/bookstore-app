@@ -67,7 +67,7 @@ services:
     networks: [chtivo_default]
 
   node-exporter:
-    image: prom/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706
+    image: prom/node-exporter:v1.12.0@sha256:9b0ade5e607f9dbedb0a8e11151b6011ae5bd79304c261804cfdd2cadf200a80
     restart: unless-stopped
     command: ['--path.rootfs=/host']
     pid: host
