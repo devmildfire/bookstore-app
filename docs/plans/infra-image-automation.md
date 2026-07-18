@@ -133,12 +133,16 @@ backup + restore-rehearsal gate. This is a meaningful win — it unfreezes the l
 | Postgres major upgrade | **`pg_upgrade`** / **logical replication** (Postgres-native) — RDS Blue/Green model | Never hand-roll DB upgrade logic |
 | Migration-compat check | apply candidate migration to prod-schema copy, assert old version serves | Small bespoke test; unavoidable |
 
-**Decision to make (D-SWARM):** adopt **Docker Swarm mode** as the update engine, or **script
-blue-green on plain Compose**? Swarm gives start-first + health-gated auto-rollback natively (less code,
-proven), at the cost of a compose→swarm migration (overlay networks, volumes, `docker secret`) and
-Swarm still can't blue-green Class D. Recommendation: **script on Compose for Phase 1** (lowest change,
-full control), **evaluate Swarm at Phase 2** when generalizing — don't migrate the whole stack to Swarm
-just for this.
+**Decision D-SWARM — RESOLVED: script blue-green on plain Compose; do NOT adopt Swarm.** Swarm mode
+gives start-first + health-gated auto-rollback natively, but adopting it means **re-platforming a working
+prod stack** (`container_name` unsupported, bind-mounts/fixed-ports/`depends_on` rework, secrets →
+`docker secret`, overlay networks) — the exact disruptive infra change we avoid — and it **still can't
+blue-green Class D** (Postgres). It's also a waning ecosystem (k8s won orchestration). For one VPS with
+low-frequency bumps, a small switch script buys the same rollback at a fraction of the risk. If we ever
+outgrow one host, the path is **k8s / a managed platform**, not Swarm. (Aside: **Kamal** — zero-downtime
+Docker deploys with health-checked rollback on a plain VPS — is a strong fit for the **app image
+specifically** and worth revisiting for that alone; it's an awkward fit for wrapping the whole
+self-hosted-Supabase stack.)
 
 ---
 
@@ -185,16 +189,47 @@ proxy flip, seconds.
 
 ## 6. Phased implementation
 
-**Phase 0 — make infra images testable (do this regardless; useful even fully-manual).**
-- Add `healthcheck:` to every stateless service (nginx, kong, postgrest, meta, app) — today only
-  db/auth/storage have them.
-- Author one **smoke test per service** exercising a real path (kong: proxy a request, assert auth
-  header survives; postgrest: a real select; gotrue: health *and* a token exchange; storage-api: fetch
-  a signed URL; nginx: route matrix returns expected codes).
-- New **CI job**: boot the candidate infra image in an ephemeral compose stack and run its smoke test →
-  gives infra bumps the "inherent test" they lack. Wire into the Renovate PR check.
-- **Migration-compat test** for Class C: apply the candidate gotrue/storage migration to a prod-schema
-  copy; assert the current version still serves.
+**Phase 0 — make infra images testable (COMMITTED next step; standalone-valuable even fully-manual).**
+
+This is the agreed starting point: it needs no staging server, and it makes *today's* manual syncs
+safer (it would have caught any behavioral break in this week's kong/nginx bumps). Three deliverables.
+
+**0.1 — Healthchecks on every stateless service** (today only db/auth/storage have them). Target
+commands (⚠ verify exact endpoints/ports against each image before wiring):
+
+| Service | Healthcheck approach |
+|---|---|
+| app (Next.js) | add a cheap `/api/health` route → `wget -qO- localhost:3000/api/health` (node image lacks curl) |
+| nginx | add an internal `location /healthz { return 200; }` → busybox `wget -q --spider localhost/healthz` |
+| kong | `kong health` (ships in the image) — or HTTP on the Status API `:8100/status` |
+| postgrest | enable the admin server → probe `/ready` (falls back to API root `GET /`) |
+| postgres-meta | HTTP `/health` on its service port |
+| cloudflared | enable `--metrics` → probe `/ready` |
+
+**0.2 — One smoke test per service** — a real path, not just `/health`. Intent per service:
+
+| Service | Smoke assertion (real behavior, catches config-semantics breaks) |
+|---|---|
+| nginx | curl the public route matrix (`bookstore-app` / `api` / `grafana` hosts) → expected status codes |
+| kong | send a request *through* kong to postgrest/gotrue → assert it routes **and preserves the `apikey`/`Authorization` header** |
+| postgrest | `GET /<known_table>?limit=1` with the anon key → 200 + JSON |
+| gotrue | `GET /health` → 200, then a **real** anonymous sign-in / token grant → 200 with a JWT |
+| storage-api | request a signed URL for a known object (or list a bucket) → 200 |
+| postgres-meta | `GET /tables` → 200 list |
+| app | `GET /` → 200 + a known DOM marker (or `/api/health`) |
+
+**0.3 — CI job: test the candidate image in an ephemeral stack** (D-STAGING: this *is* our "staging").
+- Trigger: PRs touching `deploy/production/docker-compose.yml` or `monitoring/docker-compose.yml`
+  (path filter) — i.e. every Renovate image bump.
+- Boot a minimal compose stack with the **bumped** image + only its needed deps (kong→db+postgrest,
+  postgrest→db, …), seed a minimal schema, run that service's 0.2 smoke test. Green = the infra bump has
+  an "inherent test" it lacked; red = it never reaches the manual sync. Reuses the existing
+  integration/e2e CI stack pattern.
+
+**0.4 — Migration-compat test (Class C — gotrue/storage-api)** — ephemeral in CI: start the **new**
+image against a Postgres loaded with the current prod *schema*, let its boot migrations run, then start
+the **old** image against the same DB and assert it still serves (proves the migration is
+expand-compatible → safe to blue-green; red → needs a maintenance window).
 
 **Phase 1 — one human-triggered blue-green switch (script on Compose).**
 - Pick `app` or `kong` first. Implement the §4 flow as a script: pull → green → gate → switch → bake →
@@ -228,12 +263,20 @@ proxy flip, seconds.
 
 ---
 
-## 8. Open decisions
+## 8. Decisions
+
+**Resolved**
+
+| # | Decision | Resolution |
+|---|---|---|
+| D-SWARM | Update engine | **Plain Compose + a switch script. No Swarm** — re-platform risk, doesn't fix Class D, waning ecosystem. Kamal noted for the app image only (§3). |
+| D-STAGING | Where to rehearse Class-C/D | **No standing staging stack.** Ephemeral stack in CI for migration-compat + smoke (0.3/0.4); on-VPS throwaway-Postgres-from-backup for pg_upgrade rehearsal. Fits single-VPS / no-heavy-procedure. |
+| D-ORDER | What's first | **Phase 0** — prerequisite + standalone-valuable, no staging server needed. |
+
+**Still open**
 
 | # | Decision | Options |
 |---|---|---|
-| D-SWARM | Update engine | Script-on-Compose (Phase 1) vs Docker Swarm mode (Phase 2+) |
-| D-SMOKE | Smoke/load tool | k6 vs reuse Playwright vs plain curl gates |
-| D-PGMINOR | Automate Postgres minors? | Yes, gated by backup+restore-rehearsal — vs keep fully manual |
-| D-STAGING | Is there a staging stack to rehearse Class-C/D on? | Need one for migration-compat + pg_upgrade rehearsal |
-| D-TRIAGE | Where triage docs live | `docs/triage/` in-repo vs an artifact store + Telegram link |
+| D-SMOKE | Smoke/load tool | k6 (load) vs reuse Playwright (e2e smoke) vs plain curl gates. Lean: curl gates for 0.2, k6 only if "ready under *load*" proves necessary |
+| D-PGMINOR | Automate Postgres minors? | Yes, gated by backup + restore-rehearsal — vs keep fully manual |
+| D-TRIAGE | Where triage docs live | `docs/triage/` in-repo vs artifact store + Telegram link |
