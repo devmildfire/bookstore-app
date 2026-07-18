@@ -23,7 +23,7 @@ services:
     networks: [chtivo_default]
 
   grafana:
-    image: grafana/grafana:11.3.0@sha256:a0f881232a6fb71a0554a47d0fe2203b6888fe77f4cefb7ea62bed7eb54e13c3
+    image: grafana/grafana:11.6.16@sha256:d67af92050b8d93b393dc741864752a69c9da1ffa39c1bb9af49ad5d9e47d2c3
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set in .env}
@@ -67,7 +67,7 @@ services:
     networks: [chtivo_default]
 
   node-exporter:
-    image: prom/node-exporter:v1.8.2@sha256:4032c6d5bfd752342c3e631c2f1de93ba6b86c41db6b167b9a35372c139e7706
+    image: prom/node-exporter:v1.12.0@sha256:9b0ade5e607f9dbedb0a8e11151b6011ae5bd79304c261804cfdd2cadf200a80
     restart: unless-stopped
     command: ['--path.rootfs=/host']
     pid: host
@@ -88,7 +88,7 @@ services:
 
   nginxlog-exporter:
     # RED from the nginx ingress: nginx ships access logs here over syslog/UDP.
-    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.1@sha256:c95538499b25302c48b6b7aa6d41f7c46fbe30b35cadf45a3a5849b35027bf59
+    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.2@sha256:62987d855bb07edc5d126b926751c733e6683a6a6d2844026d3af332bac654be
     restart: unless-stopped
     command: ['-config-file', '/etc/nginxlog/config.yml']
     volumes:
