@@ -88,7 +88,7 @@ services:
 
   nginxlog-exporter:
     # RED from the nginx ingress: nginx ships access logs here over syslog/UDP.
-    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.1@sha256:c95538499b25302c48b6b7aa6d41f7c46fbe30b35cadf45a3a5849b35027bf59
+    image: ghcr.io/martin-helmich/prometheus-nginxlog-exporter/exporter:v1.9.2@sha256:62987d855bb07edc5d126b926751c733e6683a6a6d2844026d3af332bac654be
     restart: unless-stopped
     command: ['-config-file', '/etc/nginxlog/config.yml']
     volumes:
