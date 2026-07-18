@@ -96,14 +96,18 @@ jobs:
       fail-fast: false
       max-parallel: 2 # gentle on public.ecr.aws's anonymous pull rate limit (avoids TOOMANYREQUESTS)
       matrix:
+        # Mirrors the third-party image versions in deploy/production/docker-compose.yml.
+        # Hand-maintained: Renovate bumps those compose pins (kong / postgres-meta) but NOT
+        # this list, so update these tags whenever the compose pins move, or the scan silently
+        # reports on stale versions. See docs/plans/dependency-monitoring.md §7.
         image:
           - ghcr.io/devmildfire/bookstore-app:latest
           - public.ecr.aws/supabase/postgres:17.6.1.106
           - public.ecr.aws/supabase/gotrue:v2.188.1
           - public.ecr.aws/supabase/storage-api:v1.54.1
           - public.ecr.aws/supabase/postgrest:v14.10
-          - public.ecr.aws/supabase/postgres-meta:v0.96.4
-          - kong/kong:3.9.1
+          - public.ecr.aws/supabase/postgres-meta:v0.96.6
+          - kong/kong:3.9.3
     steps:
       - name: GHCR login
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
