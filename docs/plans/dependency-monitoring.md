@@ -429,6 +429,25 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
   [supabase-production-bootstrap.md](../deployment/supabase-production-bootstrap.md); never a
   drive-by merge.
 
+### From detection to deployment (this doc = *detection*; the apply is separate)
+
+Renovate/Trivy only **detect + PR**. Merging a PR changes **git, not the VPS.** How a merged update
+actually reaches production depends on what it is:
+
+| Update kind | Path to prod |
+|---|---|
+| **App image** (our code) | Automated — `git push origin main:production` → `deploy-production.yml` (gated on the SHA's green `ci.yml`) → `docker compose pull app && up -d app`. Has real tests (unit/integration/e2e). |
+| **Infra images / compose / nginx** (kong, nginx, monitoring, …) | **Manual, deliberate** — [infra-sync.md](../deployment/infra-sync.md): drift-audit → backup → sync → validate (`nginx -t`) → recreate **by name** → verify. No inherent tests, so it stays human-gated. |
+| **Stateful trio** (postgres/gotrue/storage) | Rehearsed restore / documented runbook — never a drive-by. |
+
+The manual infra path is **proven** (2026-07: monitoring bumps + the nginx `1.27→1.31` window applied
+this way) and reaches prod over SSH as the `deploy` user (owns `/opt/chtivo`, in the `docker` group;
+see infra-sync.md). Making that path **safer and mostly-automated** — health-gated blue-green with
+auto-rollback, and the reason infra images need authored tests — is designed in
+[infra-image-automation.md](infra-image-automation.md). Health probes for that gate are being added
+per its Phase 0.1 (app + nginx done; the distroless services use external probing via the monitoring
+stack).
+
 ---
 
 ## 8. Success criteria (maps to the brief)
