@@ -21,14 +21,7 @@
     { "matchManagers": ["github-actions"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
     {
-      "description": "Infra images with a Tier-1 candidate test (nginx, kong): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Majors handled by the rule below.",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["nginx", "kong/kong"],
-      "matchUpdateTypes": ["patch", "minor", "digest"],
-      "automerge": true
-    },
-    {
-      "description": "Untested docker images (monitoring, cloudflared, postgrest, meta): CI can't verify them yet, so they stay manual until they get candidate tests. A weekly digest pings so they don't pile silently.",
+      "description": "Default for docker: manual (untested — monitoring, cloudflared, postgrest, meta). CI can't verify them yet; a weekly digest pings so they don't pile silently. Overridden below for candidate-tested images.",
       "matchDatasources": ["docker"],
       "automerge": false,
       "addLabels": ["needs-review"]
@@ -39,6 +32,13 @@
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "addLabels": ["needs-review"]
+    },
+    {
+      "description": "Infra images WITH a Tier-1 candidate test (nginx, kong): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["nginx", "kong/kong"],
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true
     },
     {
       "description": "FROZEN stateful trio: auto-update is unsafe (migration/data coupling; storage has NO restore source, so 'roll back on failure' is impossible). Bumped only via a rehearsed restore.",
