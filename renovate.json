@@ -14,6 +14,11 @@
   "packageRules": [
     { "matchDepTypes": ["engines"], "enabled": false },
     {
+      "description": "Label every major so the failure alert can flag it as a BREAKING change needing a decision. Majors still auto-attempt (they fail CI + alert if they break) — deliberately NOT gated.",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["major"]
+    },
+    {
       "description": "Autonomous loop: auto-merge all npm (dev+runtime, incl. major) on green. The real suite (unit+integration+e2e on a live stack) is the gate — a breaking bump fails CI and never merges.",
       "matchManagers": ["npm"],
       "automerge": true
