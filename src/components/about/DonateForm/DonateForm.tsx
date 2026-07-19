@@ -9,7 +9,7 @@ import styles from './DonateForm.module.scss'
 
 const schema = z.object({
   amount: z
-    .number({ invalid_type_error: 'Введите число' })
+    .number({ error: 'Введите число' })
     .int('Сумма должна быть целым числом')
     .min(100, 'Минимальная сумма — 100 ₽'),
 })
