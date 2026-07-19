@@ -253,14 +253,27 @@ to boot:
   The workflow diffs the compose to find which Tier-1 image changed and tests only that; verified
   locally to PASS known-good pins, SKIP unknown services, and FAIL a broken candidate. Monitoring
   images (grafana `/api/health`, prometheus `/-/ready`, …) are the natural next Tier-1 additions.
-- **Tier 2 — candidate-in-stack + `smoke.mjs`** (DB-coupled: postgrest, gotrue, storage, postgres-meta):
-  a dedicated CI compose boots seeded postgres + the candidate service, then `smoke.mjs --only <svc>`.
-  Bigger build — deferred (Tier 1 covers the highest-value/cheapest cases first).
+- **Tier 2 — throwaway Postgres + candidate + probe. ✅ BUILT** (DB-coupled: postgrest `rest`,
+  postgres-meta `meta`, postgres-exporter): boot a throwaway postgres + the candidate on a shared
+  network and probe the candidate's health. Catches an image that can't connect/serve.
+- **Tier 3 — migration-compat gate (the stateful trio). ✅ BUILT** (2026-07-19) — see 0.4.
 
-**0.4 — Migration-compat test (Class C — gotrue/storage-api)** — ephemeral in CI: start the **new**
-image against a Postgres loaded with the current prod *schema*, let its boot migrations run, then start
-the **old** image against the same DB and assert it still serves (proves the migration is
-expand-compatible → safe to blue-green; red → needs a maintenance window).
+**0.4 — Migration-compat test (Class C/D — db, gotrue, storage-api). ✅ BUILT & PROVEN** (2026-07-19,
+`scripts/smoke/candidate-boot.sh` Tier-3, wired into `candidate-image-test.yml`; base ref passed as
+arg 3). Ephemeral in CI, per service:
+- **auth / storage:** boot the **base** image against a throwaway **prod-postgres** DB (establishes the
+  current schema), then the **candidate** — it must apply its boot migration and serve — then the
+  **base** again on the candidate-migrated schema — it must still serve (expand-compatible → safe
+  rollback/blue-green; red → maintenance window). The service's `supabase_*_admin` role is empowered via
+  the socket superuser (`supabase_admin`), since `postgres` isn't a superuser in the Supabase image.
+- **db (postgres):** start the **candidate** on a data dir written by the **base** image with a canary
+  row — must boot with data intact. A minor (same on-disk format) passes; a **major** can't start on the
+  old catalog → correctly FAILS, keeping majors manual (pg_upgrade / logical-replication).
+
+With the gate green-required, the frozen trio moved to **candidate-tested auto-merge** for
+patch/minor/digest (renovate.json), majors staying manual. Auto-merge lands the tested-good version in
+the **repo**; the prod **apply** stays the manual rehearsed runbook (backup → per-service swap → verify
+→ rollback).
 
 **Phase 1 — one human-triggered blue-green switch (script on Compose).**
 - Pick `app` or `kong` first. Implement the §4 flow as a script: pull → green → gate → switch → bake →
