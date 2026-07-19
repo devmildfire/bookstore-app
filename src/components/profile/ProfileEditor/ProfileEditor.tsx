@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useProfile } from '@/contexts/profile'
 import { updateProfileAction } from '@/lib/profile/actions'
 import { profileEditSchema, type ProfileEditValues } from '@/entities/profile/validation'
@@ -21,7 +22,7 @@ export default function ProfileEditor({ onDone }: Props) {
   const { profile, setProfile } = useProfile()
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm<ProfileEditValues>({
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm<z.input<typeof profileEditSchema>, unknown, z.output<typeof profileEditSchema>>({
     resolver: zodResolver(profileEditSchema),
     defaultValues: {
       nickname: profile.nickname,
