@@ -160,7 +160,9 @@ export const config = {
     // Always run for /sb/* — even storage object paths ending in an image
     // extension (authenticated uploads/downloads need the injected apikey).
     '/sb/:path*',
-    // Skip Next.js internals and static files
-    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Skip Next.js internals, static files, and the liveness probe (/api/health
+    // must not create a Supabase client or refresh sessions — it's dependency-free
+    // by design; see docs/plans/infra-image-automation.md §0).
+    '/((?!_next/static|_next/image|favicon\\.ico|api/health|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

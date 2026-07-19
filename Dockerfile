@@ -88,8 +88,10 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Liveness probe (also satisfies Trivy DS-0026). busybox wget ships in alpine.
+# Hits /api/health — a dependency-free liveness route — NOT /, whose full SSR
+# render reads Supabase and would mark the app unhealthy on a DB blip.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1
+  CMD wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
