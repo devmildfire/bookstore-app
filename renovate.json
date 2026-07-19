@@ -9,7 +9,6 @@
   "prConcurrentLimit": 8,
   "prHourlyLimit": 0,
   "rangeStrategy": "pin",
-  "rebaseWhen": "conflicted",
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"], "automerge": true },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": true },
   "packageRules": [
