@@ -168,16 +168,28 @@ case "$SVC" in
     echo "[$SVC] boot throwaway prod-postgres ($PGIMG)"
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw "$PGIMG" >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; docker logs "$PG" 2>&1 | tail -25; exit 1; }
-    # Connect as the postgres SUPERUSER (password = POSTGRES_PASSWORD = pw) in this
-    # disposable DB, so the test measures MIGRATION compatibility, not privilege
-    # plumbing (the baked supabase_*_admin roles have no known login password here).
+    # In the Supabase postgres image `postgres` is NOT a superuser (supabase_admin is),
+    # and the auth/storage schemas are owned by supabase_*_admin. So: reach a superuser
+    # over the local socket and give the service's real admin role a known login +
+    # SUPERUSER — the test then measures MIGRATION compat, not privilege plumbing.
+    ADMIN=$([ "$SVC" = auth ] && echo supabase_auth_admin || echo supabase_storage_admin)
+    SU=""
+    for u in supabase_admin postgres supabase_auth_admin; do
+      if docker exec "$PG" psql -U "$u" -d postgres -tAc \
+           "select rolsuper from pg_catalog.pg_roles where rolname=current_user" 2>/dev/null | grep -qx t; then
+        SU="$u"; break
+      fi
+    done
+    echo "[$SVC] setup superuser over socket: ${SU:-<NONE FOUND>}"
+    docker exec "$PG" psql -U "${SU:-postgres}" -d postgres \
+      -c "ALTER ROLE $ADMIN WITH LOGIN SUPERUSER PASSWORD 'pw';" 2>&1 | sed 's/^/    /' || true
 
     # Build a gotrue/storage run (base and candidate share the same env).
     run_svc() { # $1=container-name $2=image
       if [ "$SVC" = auth ]; then
         docker run -d --name "$1" --network "$NET" -p '127.0.0.1::9999' \
           -e GOTRUE_DB_DRIVER=postgres \
-          -e GOTRUE_DB_DATABASE_URL="postgres://postgres:pw@$PG:5432/postgres" \
+          -e GOTRUE_DB_DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
           -e GOTRUE_API_HOST=0.0.0.0 -e GOTRUE_API_PORT=9999 \
           -e API_EXTERNAL_URL=http://localhost:9999 \
           -e GOTRUE_SITE_URL=http://localhost -e GOTRUE_JWT_SECRET="$SECRET" \
@@ -188,7 +200,7 @@ case "$SVC" in
       else
         docker run -d --name "$1" --network "$NET" -p '127.0.0.1::5000' \
           -e ANON_KEY="$ANON" -e SERVICE_KEY="$SERVICE" -e AUTH_JWT_SECRET="$SECRET" \
-          -e DATABASE_URL="postgres://postgres:pw@$PG:5432/postgres" \
+          -e DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
           -e POSTGREST_URL=http://localhost:3000 \
           -e FILE_SIZE_LIMIT=52428800 -e STORAGE_BACKEND=file \
           -e FILE_STORAGE_BACKEND_PATH=/tmp/stg -e TENANT_ID=stub -e REGION=local \
