@@ -99,7 +99,7 @@ services:
   pushgateway:
     # Sink for the synthetic PSI batch job; Prometheus scrapes it with honor_labels
     # so the pushed job/strategy labels are preserved.
-    image: prom/pushgateway:v1.10.0@sha256:7a4d0696a24ef4e8bad62bee5656855a0aff2f26416d8cb32009dc28d6263604
+    image: prom/pushgateway:v1.11.3@sha256:74fa117cef2d7e383112d25139ff1c2d2e309c35389a9e0554a47136a1482e48
     restart: unless-stopped
     mem_limit: 64m
     networks: [chtivo_default]
