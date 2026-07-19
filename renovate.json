@@ -34,9 +34,17 @@
       "addLabels": ["needs-review"]
     },
     {
-      "description": "Infra images WITH a Tier-1 candidate test (nginx, kong): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
+      "description": "Infra images WITH a Tier-1 candidate test: auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check (boots the candidate with real config and probes health). Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
       "matchDatasources": ["docker"],
-      "matchPackageNames": ["nginx", "kong/kong"],
+      "matchPackageNames": [
+        "nginx",
+        "kong/kong",
+        "grafana/grafana",
+        "prom/prometheus",
+        "prom/node-exporter",
+        "prom/pushgateway",
+        "prom/alertmanager"
+      ],
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true
     },
