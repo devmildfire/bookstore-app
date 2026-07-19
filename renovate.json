@@ -11,10 +11,11 @@
   "rangeStrategy": "pin",
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"], "automerge": true },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": true },
+  "major": { "dependencyDashboardApproval": true },
   "packageRules": [
     { "matchDepTypes": ["engines"], "enabled": false },
     {
-      "description": "Autonomous loop: auto-merge all npm (dev+runtime, incl. major) on green. The real suite (unit+integration+e2e on a live stack) is the gate — a breaking bump fails CI and never merges.",
+      "description": "Autonomous loop: auto-merge npm (dev+runtime) on green — the real suite (unit+integration+e2e on a live stack) gates them. MAJORS don't auto-open: they wait for dashboard-approval (`major` config above), because breaking majors would just churn CI + spam failure alerts. Once you approve one, it auto-merges on green like the rest.",
       "matchManagers": ["npm"],
       "automerge": true
     },
