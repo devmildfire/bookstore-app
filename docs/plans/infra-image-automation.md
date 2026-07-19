@@ -272,11 +272,16 @@ expand-compatible → safe to blue-green; red → needs a maintenance window).
 | D-SWARM | Update engine | **Plain Compose + a switch script. No Swarm** — re-platform risk, doesn't fix Class D, waning ecosystem. Kamal noted for the app image only (§3). |
 | D-STAGING | Where to rehearse Class-C/D | **No standing staging stack.** Ephemeral stack in CI for migration-compat + smoke (0.3/0.4); on-VPS throwaway-Postgres-from-backup for pg_upgrade rehearsal. Fits single-VPS / no-heavy-procedure. |
 | D-ORDER | What's first | **Phase 0** — prerequisite + standalone-valuable, no staging server needed. |
+| D-DOWNTIME | Postgres upgrade posture | **Accept short scheduled windows; reject method 3 (logical replication).** On one VPS, method 3 isn't even truly zero-downtime (write-pause + services repoint at cutover = seconds) and carries Supabase-specific hazards (pgsodium/vault key transfer, unreplicated sequences, realtime slots, split-brain fencing) for a benefit that only applies to *rare majors*. Documented as an escape hatch only if the business ever can't tolerate the seconds. |
+| D-PGMINOR | Automate Postgres minors? | **Yes** — frequent (~2–4/yr) but *seconds* (in-place image swap + restart). Automate through the harness: backup → swap → restart → healthcheck → smoke, with **old-volume rollback**. |
+| D-PGMAJOR | Method for Postgres majors | **Dump & restore onto a FRESH volume** (old volume left pristine = instant rollback). Rare (~every 2–4 yr), *minutes* of downtime. **Never automated** — a rehearsed runbook. Not `pg_upgrade` (painful with Supabase images), not logical replication (D-DOWNTIME). |
+
+**Downtime budget** (the planned downtime this posture accepts): minors ≈ **seconds, ~2–4×/year** (batchable; prompt only for critical CVEs) + majors ≈ **minutes, once every ~2–4 years**. Postgres majors ship ~annually but each major is supported 5 years, so cadence is our choice, and the frozen image (D4) means nothing forces a bump. App graceful-degradation (cached catalog stays up; only checkout/auth pauses) makes the minor blips near-invisible.
 
 **Still open**
 
 | # | Decision | Options |
 |---|---|---|
 | D-SMOKE | Smoke/load tool | k6 (load) vs reuse Playwright (e2e smoke) vs plain curl gates. Lean: curl gates for 0.2, k6 only if "ready under *load*" proves necessary |
-| D-PGMINOR | Automate Postgres minors? | Yes, gated by backup + restore-rehearsal — vs keep fully manual |
 | D-TRIAGE | Where triage docs live | `docs/triage/` in-repo vs artifact store + Telegram link |
+| D-DEGRADE | App graceful-degradation during DB blip | Serve cached/SSG catalog + friendly "checkout back shortly" vs hard errors. Orthogonal but amplifies the downtime posture |
