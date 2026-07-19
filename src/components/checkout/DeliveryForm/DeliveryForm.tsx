@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { shippingSchema, type ShippingFormValues } from '@/entities/order/validation'
 import Input from '@/components/common/Input'
 import styles from './DeliveryForm.module.scss'
@@ -23,7 +24,7 @@ export default function DeliveryForm({ onSubmit, isPending, defaults }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ShippingFormValues>({
+  } = useForm<z.input<typeof shippingSchema>, unknown, z.output<typeof shippingSchema>>({
     resolver: zodResolver(shippingSchema),
     defaultValues: {
       name: defaults?.name ?? '',

@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { emailOnlySchema, type EmailOnlyFormValues } from '@/entities/order/validation'
 import Input from '@/components/common/Input'
 import styles from './EmailOnlyForm.module.scss'
@@ -26,7 +27,7 @@ export default function EmailOnlyForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<EmailOnlyFormValues>({
+  } = useForm<z.input<typeof emailOnlySchema>, unknown, z.output<typeof emailOnlySchema>>({
     resolver: zodResolver(emailOnlySchema),
     defaultValues: { email: defaultEmail ?? '' },
   })
