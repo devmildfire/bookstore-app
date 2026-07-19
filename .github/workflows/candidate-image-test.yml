@@ -8,11 +8,10 @@ name: Candidate infra image test
 # Also runs (as a no-op "nothing to test") when the harness itself changes, so the
 # workflow is exercised on its own PRs.
 on:
+  # Runs on EVERY PR so it can be a required gate — auto-merge of a candidate-tested
+  # infra image (nginx/kong) must wait for this to pass. It fast-exits "nothing to
+  # test" when no Tier-1 image changed, so non-infra PRs pay only a few seconds.
   pull_request:
-    paths:
-      - 'deploy/production/docker-compose.yml'
-      - 'scripts/smoke/**'
-      - '.github/workflows/candidate-image-test.yml'
   workflow_dispatch:
     inputs:
       service:

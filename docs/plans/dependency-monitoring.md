@@ -10,6 +10,28 @@ precise, repo-specific execution).
 
 ---
 
+## 0. Update policy — the autonomous loop (2026-07, supersedes the conservative D5)
+
+Goal: **no backlog, no babysitting.** The loop auto-updates everything it can *verify*, and only
+interrupts a human when it genuinely can't proceed safely.
+
+| Update class | Behaviour |
+|---|---|
+| **npm** (dev + runtime, incl. **major**) | **Auto-merge on green** — CI (unit + integration + e2e on a live stack) genuinely exercises them, so a breaking bump fails CI and never merges. |
+| GitHub Actions, lockfile, security fixes | **Auto-merge on green.** |
+| **Candidate-tested infra images** (nginx, kong) | **Auto-merge patch/minor/digest**, gated by the **required `Tier-1 candidate boot` check** (boots the candidate with the real config — see [infra-image-automation.md](infra-image-automation.md) §0.3). |
+| Untested docker (monitoring, cloudflared, postgrest, meta) | **Manual** — CI can't verify them yet. Shrinks to zero as they get candidate tests. Weekly Telegram digest so they don't pile silently. |
+| Docker **majors** | **Manual** — larger config surface than the Tier-1 test covers. |
+| **Stateful trio** (postgres/gotrue/storage) | **Frozen.** Auto-update is unsafe — migration/data coupling, and storage has no restore source, so "roll back on failure" is impossible. Rehearsed restore only; Trivy pages on a CVE. |
+
+**"When it goes wrong → call me":** a broken auto-update **fails CI → auto-merge holds (nothing lands) →
+[renovate-alert.yml](../../.github/workflows/renovate-alert.yml) pings Telegram** with the failing run.
+The residual manual items ping via the weekly digest in [renovate.yml](../../.github/workflows/renovate.yml).
+(True auto-rollback of a *deployed* change is Phase 1 blue-green — not built; the manual, verified
+`main→production` promote is today's prod gate, so nothing reaches prod unattended.)
+
+---
+
 ## 1. Goal
 
 Keep dependencies current and catch newly-disclosed vulnerabilities — across npm packages,
