@@ -24,6 +24,14 @@ services:
     depends_on: [app, kong]
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    # Liveness: nginx is serving (busybox wget ships in nginx:alpine). Hits the
+    # default_server /healthz (returns 200 regardless of Host) — see nginx/conf.d/app.conf.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     # No ports: cloudflared reaches it at http://nginx:80 on the internal network.
 
   # ── Cloudflare Tunnel: the ONLY ingress. No public host ports anywhere. ─────────

@@ -417,7 +417,13 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
 - **Weekly** — triage the Renovate Dependency Dashboard; merge safe non-automerged PRs;
   glance at any new Code-scanning findings.
 - **Monthly** — review held major upgrades (dashboard-approval gated); decide Node LTS / base
-  image moves; check the `RENOVATE_TOKEN` expiry.
+  image moves; check the `RENOVATE_TOKEN` expiry. Also **manually check the frozen trio**
+  (`postgres`/`gotrue`/`storage-api`) for upstream releases — Renovate is `enabled:false` for them
+  (D4), so no PR will ever surface a new version; the only signal otherwise is a CVE advisory.
+- **When a hand-maintained image pin moves** (Renovate bumps `kong`/`postgres-meta`/`nginx` in the
+  prod compose, or you bump the frozen trio) — also update the **Trivy informational matrix** in
+  [.github/workflows/trivy.yml](../../.github/workflows/trivy.yml), which mirrors those tags by hand.
+  Out of sync ⇒ the nightly scan silently reports on stale versions.
 - **On a stateful-image advisory** (postgres/gotrue/storage-api flagged by the informational
   Trivy job) — schedule a **rehearsed restore** + version bump per
   [supabase-production-bootstrap.md](../deployment/supabase-production-bootstrap.md); never a
