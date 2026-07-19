@@ -38,7 +38,6 @@ jobs:
           DISPATCH_IMG: ${{ github.event.inputs.image }}
         run: |
           set -euo pipefail
-          FILE=deploy/production/docker-compose.yml
           img_of() { python3 -c "import yaml,sys; d=yaml.safe_load(sys.stdin) or {}; print((d.get('services',{}).get('$1',{}) or {}).get('image',''))"; }
 
           # Manual dispatch: test exactly what was asked.
@@ -52,15 +51,21 @@ jobs:
           # PR: for each Tier-1 service, test only if its image line changed vs the base.
           git fetch -q origin "$BASE"
           tested=0
-          for svc in nginx kong; do
-            base=$(git show "origin/$BASE:$FILE" 2>/dev/null | img_of "$svc" || true)
-            head=$(img_of "$svc" < "$FILE")
-            if [ -n "$head" ] && [ "$base" != "$head" ]; then
-              echo "→ $svc image changed: ${base:-none} → $head"
-              echo "::group::candidate $svc ($head)"
-              bash scripts/smoke/candidate-boot.sh "$svc" "$head"
-              echo "::endgroup::"
-              tested=1
-            fi
-          done
+          test_file() {
+            local file="$1"; shift
+            for svc in "$@"; do
+              local base head
+              base=$(git show "origin/$BASE:$file" 2>/dev/null | img_of "$svc" || true)
+              head=$(img_of "$svc" < "$file" 2>/dev/null || true)
+              if [ -n "$head" ] && [ "$base" != "$head" ]; then
+                echo "→ $svc changed in $file: ${base:-none} → $head"
+                echo "::group::candidate $svc ($head)"
+                bash scripts/smoke/candidate-boot.sh "$svc" "$head"
+                echo "::endgroup::"
+                tested=1
+              fi
+            done
+          }
+          test_file deploy/production/docker-compose.yml nginx kong
+          test_file monitoring/docker-compose.yml grafana prometheus node-exporter pushgateway alertmanager
           [ "$tested" = 1 ] || echo "No Tier-1 infra image changed — nothing to test."
