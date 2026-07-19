@@ -25,6 +25,13 @@ careless sync can break live services.
 `.env`, `alertmanager.yml`, `telegram_token` are **gitignored** → never in the archive, never touched
 by a sync. (Correct — they hold secrets and are intentionally VPS-only.)
 
+**SSH identity.** `portfolio-vps` maps to the **`deploy`** user (uid 1000) — it **owns `/opt/chtivo`**
+and is in the **`docker`** group, so every command here (the `tar -x` overwrite, `docker compose …`)
+runs without `sudo`. If `check-infra-drift.sh` reports every file `MISSING`, that's a **failed SSH
+connection**, not an empty box (the script swallows ssh errors) — fix connectivity before trusting it.
+Also authorized on that account: `github-actions-deploy@chtivo` (CI/CD) — **append** keys to
+`authorized_keys`, never overwrite.
+
 ## Procedure
 
 ### 1. Pre-sync — ALWAYS audit for drift first
