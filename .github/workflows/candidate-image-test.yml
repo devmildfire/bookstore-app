@@ -8,10 +8,11 @@ name: Candidate infra image test
 # Also runs (as a no-op "nothing to test") when the harness itself changes, so the
 # workflow is exercised on its own PRs.
 on:
-  # Runs on EVERY PR so it can be a required gate — auto-merge of a candidate-tested
-  # infra image (nginx/kong) must wait for this to pass. It fast-exits "nothing to
-  # test" when no Tier-1 image changed, so non-infra PRs pay only a few seconds.
+  # Runs on EVERY PR (required gate for candidate-tested infra images) AND in the merge
+  # queue (else queued PRs stall waiting for this required check). Fast-exits "nothing to
+  # test" when no Tier-1 image changed, so non-infra entries pay only a few seconds.
   pull_request:
+  merge_group:
   workflow_dispatch:
     inputs:
       service:
@@ -33,7 +34,8 @@ jobs:
         run: python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
       - name: Test candidate infra image(s)
         env:
-          BASE: ${{ github.base_ref }}
+          # PR events set base_ref; merge_group doesn't (base is always main).
+          BASE: ${{ github.base_ref || 'main' }}
           DISPATCH_SVC: ${{ github.event.inputs.service }}
           DISPATCH_IMG: ${{ github.event.inputs.image }}
         run: |
