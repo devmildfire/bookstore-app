@@ -168,22 +168,18 @@ case "$SVC" in
     echo "[$SVC] boot throwaway prod-postgres ($PGIMG)"
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw "$PGIMG" >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; docker logs "$PG" 2>&1 | tail -25; exit 1; }
-    # Give the service's admin role a known login (superuser in this disposable DB so the
-    # test measures MIGRATION compatibility, not privilege plumbing).
-    ADMIN=$([ "$SVC" = auth ] && echo supabase_auth_admin || echo supabase_storage_admin)
-    docker exec "$PG" psql -U postgres -q -v ON_ERROR_STOP=0 -c "
-      DO \$\$ BEGIN
-        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='$ADMIN') THEN CREATE ROLE $ADMIN; END IF;
-      END \$\$;
-      ALTER ROLE $ADMIN SUPERUSER LOGIN PASSWORD 'pw';" >/dev/null 2>&1
+    # Connect as the postgres SUPERUSER (password = POSTGRES_PASSWORD = pw) in this
+    # disposable DB, so the test measures MIGRATION compatibility, not privilege
+    # plumbing (the baked supabase_*_admin roles have no known login password here).
 
-    # Build the env array for a gotrue/storage run (base and candidate share it).
+    # Build a gotrue/storage run (base and candidate share the same env).
     run_svc() { # $1=container-name $2=image
       if [ "$SVC" = auth ]; then
         docker run -d --name "$1" --network "$NET" -p '127.0.0.1::9999' \
           -e GOTRUE_DB_DRIVER=postgres \
-          -e GOTRUE_DB_DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
+          -e GOTRUE_DB_DATABASE_URL="postgres://postgres:pw@$PG:5432/postgres" \
           -e GOTRUE_API_HOST=0.0.0.0 -e GOTRUE_API_PORT=9999 \
+          -e API_EXTERNAL_URL=http://localhost:9999 \
           -e GOTRUE_SITE_URL=http://localhost -e GOTRUE_JWT_SECRET="$SECRET" \
           -e GOTRUE_JWT_ADMIN_ROLES=service_role -e GOTRUE_JWT_AUD=authenticated \
           -e GOTRUE_JWT_DEFAULT_GROUP_NAME=authenticated \
@@ -192,7 +188,7 @@ case "$SVC" in
       else
         docker run -d --name "$1" --network "$NET" -p '127.0.0.1::5000' \
           -e ANON_KEY="$ANON" -e SERVICE_KEY="$SERVICE" -e AUTH_JWT_SECRET="$SECRET" \
-          -e DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
+          -e DATABASE_URL="postgres://postgres:pw@$PG:5432/postgres" \
           -e POSTGREST_URL=http://localhost:3000 \
           -e FILE_SIZE_LIMIT=52428800 -e STORAGE_BACKEND=file \
           -e FILE_STORAGE_BACKEND_PATH=/tmp/stg -e TENANT_ID=stub -e REGION=local \
