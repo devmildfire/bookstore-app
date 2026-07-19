@@ -16,11 +16,14 @@ on:
   workflow_dispatch:
     inputs:
       service:
-        description: 'service to test (nginx|kong)'
+        description: 'service to test (nginx|kong|db|auth|storage|…)'
         required: true
       image:
         description: 'candidate image ref'
         required: true
+      base_image:
+        description: 'base image ref (REQUIRED for Tier-3: db|auth|storage)'
+        required: false
 
 jobs:
   tier1:
@@ -38,19 +41,22 @@ jobs:
           BASE: ${{ github.base_ref || 'main' }}
           DISPATCH_SVC: ${{ github.event.inputs.service }}
           DISPATCH_IMG: ${{ github.event.inputs.image }}
+          DISPATCH_BASE: ${{ github.event.inputs.base_image }}
         run: |
           set -euo pipefail
           img_of() { python3 -c "import yaml,sys; d=yaml.safe_load(sys.stdin) or {}; print((d.get('services',{}).get('$1',{}) or {}).get('image',''))"; }
 
-          # Manual dispatch: test exactly what was asked.
+          # Manual dispatch: test exactly what was asked (base_image needed for Tier-3).
           if [ -n "${DISPATCH_SVC:-}" ]; then
             echo "::group::candidate ${DISPATCH_SVC} (${DISPATCH_IMG})"
-            bash scripts/smoke/candidate-boot.sh "$DISPATCH_SVC" "$DISPATCH_IMG"
+            bash scripts/smoke/candidate-boot.sh "$DISPATCH_SVC" "$DISPATCH_IMG" "${DISPATCH_BASE:-}"
             echo "::endgroup::"
             exit 0
           fi
 
-          # PR: for each Tier-1 service, test only if its image line changed vs the base.
+          # PR: for each service, test only if its image line changed vs the base.
+          # base ref is passed as arg 3 — required by the Tier-3 migration-compat tests
+          # (db/auth/storage), ignored by Tier-1/2.
           git fetch -q origin "$BASE"
           tested=0
           test_file() {
@@ -62,12 +68,13 @@ jobs:
               if [ -n "$head" ] && [ "$base" != "$head" ]; then
                 echo "→ $svc changed in $file: ${base:-none} → $head"
                 echo "::group::candidate $svc ($head)"
-                bash scripts/smoke/candidate-boot.sh "$svc" "$head"
+                bash scripts/smoke/candidate-boot.sh "$svc" "$head" "$base"
                 echo "::endgroup::"
                 tested=1
               fi
             done
           }
-          test_file deploy/production/docker-compose.yml nginx kong rest meta
+          # Tier-1/2 + Tier-3 (db auth storage) in the prod compose; Tier-1 in monitoring.
+          test_file deploy/production/docker-compose.yml nginx kong rest meta db auth storage
           test_file monitoring/docker-compose.yml grafana prometheus node-exporter pushgateway alertmanager postgres-exporter
-          [ "$tested" = 1 ] || echo "No Tier-1 infra image changed — nothing to test."
+          [ "$tested" = 1 ] || echo "No candidate-tested infra image changed — nothing to test."

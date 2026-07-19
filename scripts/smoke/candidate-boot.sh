@@ -1,39 +1,66 @@
 #!/usr/bin/env bash
-# Tier-1 candidate-image test: boot a candidate infra image with its REAL prod
-# config and prove it starts + serves. Catches config/startup incompatibility —
-# the #1 infra-bump risk (e.g. an nginx directive or kong declarative-config
-# change) — BEFORE a merge. This is the "inherent test" these third-party images
-# otherwise lack. See docs/plans/infra-image-automation.md §0.3 (Tier 1).
+# Candidate-image test for third-party infra images: boot a candidate image with
+# its REAL prod config and prove it starts + serves BEFORE merge — the "inherent
+# test" these images otherwise lack. See docs/plans/infra-image-automation.md.
 #
-# Usage: candidate-boot.sh <service> <image>   (service = compose service name)
-#   Tier-1 (config-only, no DB): nginx, kong, grafana, prometheus, node-exporter,
-#                                pushgateway, alertmanager
+# Usage: candidate-boot.sh <service> <candidate-image> [base-image]
+#   Tier-1 (config-only, no DB):  nginx, kong, grafana, prometheus, node-exporter,
+#                                 pushgateway, alertmanager
 #   Tier-2 (throwaway Postgres):  rest (postgrest), meta (postgres-meta), postgres-exporter
+#   Tier-3 (migration-compat):    db (postgres), auth (gotrue), storage (storage-api)
+#                                 — REQUIRES [base-image]; proves the candidate's boot
+#                                 migration applies to a prod-like schema AND the old
+#                                 version still serves the migrated schema (safe upgrade).
 # Exit: 0 = candidate healthy · 1 = failed · 3 = no candidate test for this service (skip).
 set -uo pipefail
-SVC="${1:?usage: candidate-boot.sh <service> <image>}"
-IMG="${2:?usage: candidate-boot.sh <service> <image>}"
+SVC="${1:?usage: candidate-boot.sh <service> <candidate-image> [base-image]}"
+IMG="${2:?usage: candidate-boot.sh <service> <candidate-image> [base-image]}"
+BASE_IMG="${3:-}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 NAME="smoke-cand-${SVC}-$$"
-PG=""   # Tier-2: throwaway postgres container name (set below when needed)
-NET=""  # Tier-2: throwaway docker network name
+NAME2="smoke-base-${SVC}-$$"   # Tier-3: the base-version container (compat check)
+PG=""    # Tier-2/3: throwaway postgres container
+NET=""   # Tier-2/3: throwaway docker network
+VOL=""   # Tier-3 (db): shared data volume across base→candidate boots
 cleanup() {
-  docker rm -f "$NAME" >/dev/null 2>&1 || true
-  [ -n "$PG" ] && docker rm -f "$PG" >/dev/null 2>&1 || true
+  docker rm -f "$NAME" "$NAME2" >/dev/null 2>&1 || true
+  [ -n "$PG" ]  && docker rm -f "$PG"  >/dev/null 2>&1 || true
   [ -n "$NET" ] && docker network rm "$NET" >/dev/null 2>&1 || true
+  [ -n "$VOL" ] && docker volume rm "$VOL" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
 # Poll a URL until it returns the expected status (services take a moment to bind).
 probe() {
   local url="$1" exp="$2" code=""
-  for _ in $(seq 1 20); do
+  for _ in $(seq 1 30); do
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 "$url" 2>/dev/null)
     [ "$code" = "$exp" ] && { echo "  ✓ $url → $code"; return 0; }
     sleep 1
   done
   echo "  ✗ $url → ${code:-timeout} (expected $exp)"
   return 1
+}
+wait_pg() { for _ in $(seq 1 40); do docker exec "$1" pg_isready -U postgres >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
+hostport() { docker port "$1" "$2/tcp" | head -1 | sed 's/.*://'; }
+# Mint an HS256 JWT (stdlib only) so storage/auth accept the anon/service keys at boot.
+mint_jwt() {
+  python3 - "$1" "$2" <<'PY'
+import sys,hmac,hashlib,base64,json
+role,secret=sys.argv[1],sys.argv[2]
+b=lambda x: base64.urlsafe_b64encode(x).rstrip(b'=')
+h=b(json.dumps({"alg":"HS256","typ":"JWT"},separators=(',',':')).encode())
+p=b(json.dumps({"role":role,"iss":"supabase","iat":0,"exp":9999999999},separators=(',',':')).encode())
+s=b(hmac.new(secret.encode(),h+b'.'+p,hashlib.sha256).digest())
+print((h+b'.'+p+b'.'+s).decode())
+PY
+}
+
+# The throwaway Postgres for Tier-3 auth/storage = the prod postgres image (bakes the
+# supabase roles/schemas the services migrate against). Read it from the head compose.
+prod_pg_image() {
+  grep -oE 'public\.ecr\.aws/supabase/postgres:[^"[:space:]]+' \
+    "$ROOT/deploy/production/docker-compose.yml" | head -1
 }
 
 case "$SVC" in
@@ -57,8 +84,6 @@ case "$SVC" in
     probe http://localhost:18000/ 404 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     ;;
   grafana | prometheus | node-exporter | pushgateway | alertmanager)
-    # Monitoring images: boot standalone (default config baked in, no DB) and probe
-    # the service's own health endpoint. Catches a bad/incompatible image build.
     case "$SVC" in
       grafana)       CPORT=3000; HP=/api/health ;;
       prometheus)    CPORT=9090; HP=/-/healthy ;;
@@ -68,19 +93,17 @@ case "$SVC" in
     esac
     echo "[$SVC] boot $IMG + probe $HP (standalone)"
     docker run -d --name "$NAME" -p "127.0.0.1::$CPORT" "$IMG" >/dev/null || exit 1
-    HOSTPORT=$(docker port "$NAME" "$CPORT/tcp" | head -1 | sed 's/.*://')
+    HOSTPORT=$(hostport "$NAME" "$CPORT")
     [ -z "$HOSTPORT" ] && { echo "  ✗ no published port for $CPORT"; docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     probe "http://127.0.0.1:$HOSTPORT$HP" 200 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     ;;
   rest | meta | postgres-exporter)
     # Tier-2: DB-coupled (compose service names: rest=postgrest, meta=postgres-meta).
-    # Boot a throwaway Postgres + the candidate on a shared network, then probe the
-    # candidate's health. Catches an image that can't connect/serve.
     NET="smoke-net-$$"; PG="smoke-pg-$$"
     docker network create "$NET" >/dev/null 2>&1 || exit 1
     echo "[$SVC] boot throwaway postgres"
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw postgres:16-alpine >/dev/null || exit 1
-    for _ in $(seq 1 30); do docker exec "$PG" pg_isready -U postgres >/dev/null 2>&1 && break; sleep 1; done
+    wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; exit 1; }
     echo "[$SVC] boot $IMG against it + probe"
     case "$SVC" in
       postgres-exporter)
@@ -99,12 +122,105 @@ case "$SVC" in
           -e PG_META_DB_USER=postgres -e PG_META_DB_PASSWORD=pw "$IMG" >/dev/null || exit 1
         CPORT=8080; HP=/health ;;
     esac
-    HOSTPORT=$(docker port "$NAME" "$CPORT/tcp" | head -1 | sed 's/.*://')
+    HOSTPORT=$(hostport "$NAME" "$CPORT")
     [ -z "$HOSTPORT" ] && { echo "  ✗ no published port for $CPORT"; docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     probe "http://127.0.0.1:$HOSTPORT$HP" 200 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     ;;
+
+  # ── Tier-3: migration-compat gate for the (formerly frozen) stateful trio ───────
+  db)
+    # Postgres data-dir compatibility: can the CANDIDATE start on a data dir written
+    # by the BASE image, with data intact? Minor (same on-disk format) → yes. A major
+    # (17→18) cannot start on the old catalog → this FAILS, correctly gating majors.
+    [ -n "$BASE_IMG" ] || { echo "[db] Tier-3 needs a base image (arg 3)"; exit 1; }
+    VOL="smoke-pgdata-$$"; docker volume create "$VOL" >/dev/null || exit 1
+    echo "[db] init data dir with BASE ($BASE_IMG) + write canary"
+    docker run -d --name "$NAME2" -e POSTGRES_PASSWORD=pw \
+      -v "$VOL:/var/lib/postgresql/data" "$BASE_IMG" >/dev/null || exit 1
+    wait_pg "$NAME2" || { echo "  ✗ base postgres never ready"; docker logs "$NAME2" 2>&1 | tail -25; exit 1; }
+    docker exec "$NAME2" psql -U postgres -q \
+      -c "CREATE TABLE canary(id int primary key, v text); INSERT INTO canary VALUES (1,'survived');" \
+      || { echo "  ✗ could not seed canary"; exit 1; }
+    docker rm -f "$NAME2" >/dev/null 2>&1; NAME2=""
+    echo "[db] start CANDIDATE ($IMG) on the SAME data dir"
+    docker run -d --name "$NAME" -e POSTGRES_PASSWORD=pw \
+      -v "$VOL:/var/lib/postgresql/data" "$IMG" >/dev/null || exit 1
+    if ! wait_pg "$NAME"; then
+      echo "  ✗ candidate could NOT start on the base data dir (on-disk incompatible — likely a MAJOR needing pg_upgrade)"
+      docker logs "$NAME" 2>&1 | tail -25; exit 1
+    fi
+    got=$(docker exec "$NAME" psql -U postgres -tAc "SELECT v FROM canary WHERE id=1" 2>/dev/null | tr -d '[:space:]')
+    [ "$got" = "survived" ] && echo "  ✓ candidate booted on base data dir; canary intact" \
+      || { echo "  ✗ data not intact after upgrade (got '$got')"; docker logs "$NAME" 2>&1 | tail -25; exit 1; }
+    ;;
+  auth | storage)
+    # Boot-migration compatibility for gotrue/storage-api:
+    #   1) base version migrates a prod-image DB to the CURRENT schema state
+    #   2) candidate migrates on top and comes up healthy   (migration applies cleanly)
+    #   3) base version boots again on the candidate-migrated schema, still healthy
+    #      (expand-compatible → old code tolerates new schema → safe rollback/blue-green)
+    [ -n "$BASE_IMG" ] || { echo "[$SVC] Tier-3 needs a base image (arg 3)"; exit 1; }
+    PGIMG=$(prod_pg_image); [ -n "$PGIMG" ] || { echo "[$SVC] could not resolve prod postgres image"; exit 1; }
+    NET="smoke-net-$$"; PG="smoke-pg-$$"
+    SECRET="super-secret-jwt-token-with-at-least-32-chars"
+    ANON=$(mint_jwt anon "$SECRET"); SERVICE=$(mint_jwt service_role "$SECRET")
+    docker network create "$NET" >/dev/null 2>&1 || exit 1
+    echo "[$SVC] boot throwaway prod-postgres ($PGIMG)"
+    docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw "$PGIMG" >/dev/null || exit 1
+    wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; docker logs "$PG" 2>&1 | tail -25; exit 1; }
+    # Give the service's admin role a known login (superuser in this disposable DB so the
+    # test measures MIGRATION compatibility, not privilege plumbing).
+    ADMIN=$([ "$SVC" = auth ] && echo supabase_auth_admin || echo supabase_storage_admin)
+    docker exec "$PG" psql -U postgres -q -v ON_ERROR_STOP=0 -c "
+      DO \$\$ BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='$ADMIN') THEN CREATE ROLE $ADMIN; END IF;
+      END \$\$;
+      ALTER ROLE $ADMIN SUPERUSER LOGIN PASSWORD 'pw';" >/dev/null 2>&1
+
+    # Build the env array for a gotrue/storage run (base and candidate share it).
+    run_svc() { # $1=container-name $2=image
+      if [ "$SVC" = auth ]; then
+        docker run -d --name "$1" --network "$NET" -p '127.0.0.1::9999' \
+          -e GOTRUE_DB_DRIVER=postgres \
+          -e GOTRUE_DB_DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
+          -e GOTRUE_API_HOST=0.0.0.0 -e GOTRUE_API_PORT=9999 \
+          -e GOTRUE_SITE_URL=http://localhost -e GOTRUE_JWT_SECRET="$SECRET" \
+          -e GOTRUE_JWT_ADMIN_ROLES=service_role -e GOTRUE_JWT_AUD=authenticated \
+          -e GOTRUE_JWT_DEFAULT_GROUP_NAME=authenticated \
+          -e GOTRUE_EXTERNAL_EMAIL_ENABLED=true -e GOTRUE_MAILER_AUTOCONFIRM=true \
+          "$2" >/dev/null
+      else
+        docker run -d --name "$1" --network "$NET" -p '127.0.0.1::5000' \
+          -e ANON_KEY="$ANON" -e SERVICE_KEY="$SERVICE" -e AUTH_JWT_SECRET="$SECRET" \
+          -e DATABASE_URL="postgres://$ADMIN:pw@$PG:5432/postgres" \
+          -e POSTGREST_URL=http://localhost:3000 \
+          -e FILE_SIZE_LIMIT=52428800 -e STORAGE_BACKEND=file \
+          -e FILE_STORAGE_BACKEND_PATH=/tmp/stg -e TENANT_ID=stub -e REGION=local \
+          -e GLOBAL_S3_BUCKET=stub -e ENABLE_IMAGE_TRANSFORMATION=false \
+          "$2" >/dev/null
+      fi
+    }
+    [ "$SVC" = auth ] && { CPORT=9999; HP=/health; } || { CPORT=5000; HP=/status; }
+
+    echo "[$SVC] (1/3) base $BASE_IMG migrates the DB to current schema"
+    run_svc "$NAME2" "$BASE_IMG" || exit 1
+    probe "http://127.0.0.1:$(hostport "$NAME2" "$CPORT")$HP" 200 \
+      || { echo "  ✗ BASE never healthy (test setup problem, not the candidate)"; docker logs "$NAME2" 2>&1 | tail -30; exit 1; }
+    docker rm -f "$NAME2" >/dev/null 2>&1; NAME2=""
+
+    echo "[$SVC] (2/3) candidate $IMG applies its migration + serves"
+    run_svc "$NAME" "$IMG" || exit 1
+    probe "http://127.0.0.1:$(hostport "$NAME" "$CPORT")$HP" 200 \
+      || { echo "  ✗ CANDIDATE migration/boot FAILED"; docker logs "$NAME" 2>&1 | tail -30; exit 1; }
+    docker rm -f "$NAME" >/dev/null 2>&1
+
+    echo "[$SVC] (3/3) base $BASE_IMG still serves the candidate-migrated schema (expand-compat)"
+    run_svc "$NAME2" "$BASE_IMG" || exit 1
+    probe "http://127.0.0.1:$(hostport "$NAME2" "$CPORT")$HP" 200 \
+      || { echo "  ✗ NOT expand-compatible: old version cannot serve new schema (needs a maintenance window, not blue-green)"; docker logs "$NAME2" 2>&1 | tail -30; exit 1; }
+    ;;
   *)
-    echo "[$SVC] no Tier-1/2 test defined — skipping"
+    echo "[$SVC] no candidate test defined — skipping"
     exit 3
     ;;
 esac
