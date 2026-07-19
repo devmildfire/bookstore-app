@@ -46,7 +46,7 @@
       "addLabels": ["needs-review"]
     },
     {
-      "description": "Infra images WITH a Tier-1 candidate test: auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check (boots the candidate with real config and probes health). Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
+      "description": "Infra images WITH a candidate test (Tier-1 config-boot or Tier-2 DB-coupled): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check (boots the candidate with real config/DB and probes health). Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "nginx",
@@ -55,7 +55,10 @@
         "prom/prometheus",
         "prom/node-exporter",
         "prom/pushgateway",
-        "prom/alertmanager"
+        "prom/alertmanager",
+        "public.ecr.aws/supabase/postgrest",
+        "public.ecr.aws/supabase/postgres-meta",
+        "prometheuscommunity/postgres-exporter"
       ],
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true

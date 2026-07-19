@@ -68,6 +68,6 @@ jobs:
               fi
             done
           }
-          test_file deploy/production/docker-compose.yml nginx kong
-          test_file monitoring/docker-compose.yml grafana prometheus node-exporter pushgateway alertmanager
+          test_file deploy/production/docker-compose.yml nginx kong rest meta
+          test_file monitoring/docker-compose.yml grafana prometheus node-exporter pushgateway alertmanager postgres-exporter
           [ "$tested" = 1 ] || echo "No Tier-1 infra image changed — nothing to test."
