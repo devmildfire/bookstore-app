@@ -69,7 +69,7 @@
     "@types/node": "20.19.43",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
-    "@vitejs/plugin-react": "4.7.0",
+    "@vitejs/plugin-react": "6.0.3",
     "@vitest/coverage-v8": "4.1.10",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.10",
@@ -81,10 +81,12 @@
     "sass": "1.101.0",
     "supabase": "2.109.1",
     "typescript": "5.9.3",
+    "vite": "8.1.5",
     "vitest": "4.1.10"
   },
   "overrides": {
-    "postcss": "8.5.20"
+    "postcss": "8.5.20",
+    "@babel/core": "7.29.7"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
