@@ -64,15 +64,27 @@
       "automerge": true
     },
     {
-      "description": "FROZEN stateful trio: auto-update is unsafe (migration/data coupling; storage has NO restore source, so 'roll back on failure' is impossible). Bumped only via a rehearsed restore.",
+      "description": "Formerly-frozen stateful trio (postgres/gotrue/storage-api): now gated by the Tier-3 MIGRATION-COMPAT candidate test (auth/storage: base migrates a prod-image DB → candidate applies its boot migration + serves → base still serves the migrated schema = expand-compat; db: candidate postgres must start on the base image's data dir with data intact). Auto-merge patch/minor/digest ON GREEN. NOTE: auto-merge lands the tested-good version in the REPO only — the prod APPLY stays the manual rehearsed runbook (backup → per-service swap → verify → rollback), because migrations/data must be applied by a human with a fresh backup. Ordered AFTER the general docker rules so it wins.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "public.ecr.aws/supabase/postgres",
         "public.ecr.aws/supabase/gotrue",
         "public.ecr.aws/supabase/storage-api"
       ],
-      "matchUpdateTypes": ["major", "minor", "patch", "digest"],
-      "enabled": false
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Trio MAJORS stay manual: a postgres major needs pg_upgrade / logical-replication (not a compose swap), and the Tier-3 gate will correctly FAIL it (candidate can't start on the old data dir). Labeled for an explicit human decision + the MAJOR Telegram alert.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "public.ecr.aws/supabase/postgres",
+        "public.ecr.aws/supabase/gotrue",
+        "public.ecr.aws/supabase/storage-api"
+      ],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["needs-review", "major"]
     }
   ],
   "platformAutomerge": true
