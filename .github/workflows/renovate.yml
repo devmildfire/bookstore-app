@@ -35,3 +35,28 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+
+  # Residual digest: the autonomous loop auto-merges everything it can verify. Whatever
+  # is left needs YOU (an untested docker image, or a docker major) — ping so it never
+  # piles silently. Failures of auto-merge PRs are covered separately by renovate-alert.yml.
+  digest:
+    needs: renovate
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Ping Telegram if manual-review updates await
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REPO: ${{ github.repository }}
+        run: |
+          count=$(gh pr list --repo "$REPO" --state open --label needs-review --json number -q 'length')
+          echo "needs-review PRs: ${count:-0}"
+          if [ "${count:-0}" -gt 0 ]; then
+            curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+              -d chat_id="${TG_CHAT}" \
+              --data-urlencode "text=🔧 ${count} dependency update(s) need your review — can't auto-merge (untested infra image or docker major): https://github.com/${REPO}/pulls?q=is%3Aopen+label%3Aneeds-review"
+          fi

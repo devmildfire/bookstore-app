@@ -9,18 +9,39 @@
   "prConcurrentLimit": 8,
   "prHourlyLimit": 0,
   "rangeStrategy": "pin",
-  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
-  "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },
-  "major": { "dependencyDashboardApproval": true },
+  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"], "automerge": true },
+  "vulnerabilityAlerts": { "labels": ["security"], "automerge": true },
   "packageRules": [
     { "matchDepTypes": ["engines"], "enabled": false },
-    { "matchManagers": ["github-actions"], "automerge": true },
-    { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
-    { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
-    { "matchDepTypes": ["dependencies"], "automerge": false, "addLabels": ["needs-review"] },
-    { "matchDatasources": ["docker"], "automerge": false, "addLabels": ["needs-review"] },
-    { "matchUpdateTypes": ["major"], "automerge": false, "addLabels": ["needs-review"] },
     {
+      "description": "Autonomous loop: auto-merge all npm (dev+runtime, incl. major) on green. The real suite (unit+integration+e2e on a live stack) is the gate — a breaking bump fails CI and never merges.",
+      "matchManagers": ["npm"],
+      "automerge": true
+    },
+    { "matchManagers": ["github-actions"], "automerge": true },
+    { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
+    {
+      "description": "Infra images with a Tier-1 candidate test (nginx, kong): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Majors handled by the rule below.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["nginx", "kong/kong"],
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Untested docker images (monitoring, cloudflared, postgrest, meta): CI can't verify them yet, so they stay manual until they get candidate tests. A weekly digest pings so they don't pile silently.",
+      "matchDatasources": ["docker"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    },
+    {
+      "description": "Docker majors: manual regardless — larger config surface than the Tier-1 candidate test covers.",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["needs-review"]
+    },
+    {
+      "description": "FROZEN stateful trio: auto-update is unsafe (migration/data coupling; storage has NO restore source, so 'roll back on failure' is impossible). Bumped only via a rehearsed restore.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "public.ecr.aws/supabase/postgres",
