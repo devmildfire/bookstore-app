@@ -8,6 +8,13 @@ on:
   workflow_run:
     workflows: ['CI']
     types: [completed]
+    # Only trigger for CI runs on renovate branches. Without this, EVERY CI
+    # completion (incl. every push to main) spawns a run of this workflow that
+    # immediately skips via the job `if` — cluttering the Actions tab with
+    # "Renovate failure alert … skipped" entries. Filtering here means main/
+    # feature-branch CI never creates a skipped run; real renovate CI failures
+    # still fire. The job-level branch check below stays as defense-in-depth.
+    branches: ['renovate/**']
 
 permissions:
   pull-requests: read
