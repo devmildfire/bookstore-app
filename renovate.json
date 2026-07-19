@@ -18,6 +18,12 @@
       "matchManagers": ["npm"],
       "automerge": true
     },
+    {
+      "description": "Group ALL non-major npm updates into ONE PR. Every npm PR touches package-lock.json, so multiple open at once conflict the moment one merges (the queue clogs). One grouped PR = one lockfile change in flight = no sibling conflicts. Majors stay individual for blast-radius isolation.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
+      "groupName": "npm (non-major)"
+    },
     { "matchManagers": ["github-actions"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
     {
