@@ -238,19 +238,24 @@ cloudflared — §0.1) are health-gated by exactly this external harness. Verifi
 (keyless subset passes; the app check correctly flags that prod's app image predates the `/api/health`
 route — it needs an app deploy).
 
-**0.3 — CI job: test the candidate image in an ephemeral stack** (D-STAGING: this *is* our "staging").
-- Trigger: PRs touching `deploy/production/docker-compose.yml` or `monitoring/docker-compose.yml`
-  (path filter) — i.e. every Renovate image bump.
-- Boot a stack with the **bumped** image + its needed deps, seed a minimal schema, run
-  `smoke.mjs --strict` against it. Green = the infra bump has an "inherent test" it lacked.
-- ⚠ **Open design decision (D-CANDIDATE-STACK).** The existing integration CI stack boots via
-  `supabase start`, which uses the **Supabase CLI's** bundled image versions — **NOT** our pinned prod
-  compose images (kong `3.9.3`, gotrue `v2.188.1`, …). So it can't test a *candidate prod image*
-  directly. Options: (a) boot `deploy/production/docker-compose.yml` in CI with the candidate image
-  (needs prod env + a seeded DB — the "reproduce prod stack in CI" problem, partly in
-  [cicd-single-image-and-edge-tests.md](cicd-single-image-and-edge-tests.md)); (b) a minimal per-service
-  compose (just the bumped service + direct deps) + `smoke.mjs --only <svc>`. Lean: (b) — smallest,
-  matches how the blue-green switch tests one service at a time. Resolve before building 0.3.
+**0.3 — CI: test the candidate image before merge.** **D-CANDIDATE-STACK resolved: two tiers.** The
+integration CI stack boots via `supabase start`, which uses the **Supabase CLI's** image versions — NOT
+our pinned prod images — so it can't test a candidate prod image. Instead, split by what a service needs
+to boot:
+
+- **Tier 1 — standalone boot + probe (no DB). ✅ BUILT** (`scripts/smoke/candidate-boot.sh` +
+  `.github/workflows/candidate-image-test.yml`). On a PR that bumps a Tier-1 service's image, boot the
+  **candidate** with its **real prod config** and prove it starts + serves — catching config/startup
+  incompatibility (the #1 risk; exactly the nginx-config class behind the #38 caution) before merge.
+  Shipped services:
+  - **nginx** — `nginx -t` against the real `app.conf`, then boot + `/healthz` 200.
+  - **kong** — `kong config parse` (DB-less) against the real `kong.yml`, then boot + unrouted `/` → 404.
+  The workflow diffs the compose to find which Tier-1 image changed and tests only that; verified
+  locally to PASS known-good pins, SKIP unknown services, and FAIL a broken candidate. Monitoring
+  images (grafana `/api/health`, prometheus `/-/ready`, …) are the natural next Tier-1 additions.
+- **Tier 2 — candidate-in-stack + `smoke.mjs`** (DB-coupled: postgrest, gotrue, storage, postgres-meta):
+  a dedicated CI compose boots seeded postgres + the candidate service, then `smoke.mjs --only <svc>`.
+  Bigger build — deferred (Tier 1 covers the highest-value/cheapest cases first).
 
 **0.4 — Migration-compat test (Class C — gotrue/storage-api)** — ephemeral in CI: start the **new**
 image against a Postgres loaded with the current prod *schema*, let its boot migrations run, then start

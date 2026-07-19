@@ -1,0 +1,67 @@
+name: Candidate infra image test
+
+# Gives third-party infra images the "inherent test" they lack (Phase 0.3, Tier 1 —
+# see docs/plans/infra-image-automation.md). On a PR that bumps a Tier-1 service's
+# image in the prod compose, boot the CANDIDATE image with its real config and prove
+# it starts + serves — catching config/startup incompatibility BEFORE merge.
+#
+# Also runs (as a no-op "nothing to test") when the harness itself changes, so the
+# workflow is exercised on its own PRs.
+on:
+  pull_request:
+    paths:
+      - 'deploy/production/docker-compose.yml'
+      - 'scripts/smoke/**'
+      - '.github/workflows/candidate-image-test.yml'
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'service to test (nginx|kong)'
+        required: true
+      image:
+        description: 'candidate image ref'
+        required: true
+
+jobs:
+  tier1:
+    name: Tier-1 candidate boot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0 # need the base compose to diff image lines
+      - name: Ensure PyYAML
+        run: python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
+      - name: Test candidate infra image(s)
+        env:
+          BASE: ${{ github.base_ref }}
+          DISPATCH_SVC: ${{ github.event.inputs.service }}
+          DISPATCH_IMG: ${{ github.event.inputs.image }}
+        run: |
+          set -euo pipefail
+          FILE=deploy/production/docker-compose.yml
+          img_of() { python3 -c "import yaml,sys; d=yaml.safe_load(sys.stdin) or {}; print((d.get('services',{}).get('$1',{}) or {}).get('image',''))"; }
+
+          # Manual dispatch: test exactly what was asked.
+          if [ -n "${DISPATCH_SVC:-}" ]; then
+            echo "::group::candidate ${DISPATCH_SVC} (${DISPATCH_IMG})"
+            bash scripts/smoke/candidate-boot.sh "$DISPATCH_SVC" "$DISPATCH_IMG"
+            echo "::endgroup::"
+            exit 0
+          fi
+
+          # PR: for each Tier-1 service, test only if its image line changed vs the base.
+          git fetch -q origin "$BASE"
+          tested=0
+          for svc in nginx kong; do
+            base=$(git show "origin/$BASE:$FILE" 2>/dev/null | img_of "$svc" || true)
+            head=$(img_of "$svc" < "$FILE")
+            if [ -n "$head" ] && [ "$base" != "$head" ]; then
+              echo "→ $svc image changed: ${base:-none} → $head"
+              echo "::group::candidate $svc ($head)"
+              bash scripts/smoke/candidate-boot.sh "$svc" "$head"
+              echo "::endgroup::"
+              tested=1
+            fi
+          done
+          [ "$tested" = 1 ] || echo "No Tier-1 infra image changed — nothing to test."
