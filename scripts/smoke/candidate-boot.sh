@@ -214,7 +214,7 @@ case "$SVC" in
     run_svc "$NAME2" "$BASE_IMG" || exit 1
     probe "http://127.0.0.1:$(hostport "$NAME2" "$CPORT")$HP" 200 \
       || { echo "  ✗ BASE never healthy (test setup problem, not the candidate)"; docker logs "$NAME2" 2>&1 | tail -30; exit 1; }
-    docker rm -f "$NAME2" >/dev/null 2>&1; NAME2=""
+    docker rm -f "$NAME2" >/dev/null 2>&1   # keep $NAME2 set — step 3 recreates under it
 
     echo "[$SVC] (2/3) candidate $IMG applies its migration + serves"
     run_svc "$NAME" "$IMG" || exit 1
