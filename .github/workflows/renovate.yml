@@ -5,10 +5,17 @@ name: Renovate
 # (the default GITHUB_TOKEN cannot — GitHub suppresses workflow triggers from it).
 # Renovate reads the per-repo config from renovate.json ON THE DEFAULT BRANCH (main).
 on:
+  # REBASING MECHANISM: run Renovate after every merge to main. Because strict-up-to-date
+  # is OFF, a clean-behind PR just merges as-is — so we rebase ONLY genuinely CONFLICTED
+  # PRs (rebaseWhen: "conflicted" in renovate.json). Renovate regenerates the lockfile for
+  # those, CI re-runs on the rebased PR, it auto-merges → pushes main → triggers this again:
+  # a self-draining cascade that clears rebase-stalls WITHOUT re-running CI on every behind
+  # branch (rebaseWhen: "behind-base-branch" would do exactly that — an N² CI storm).
+  # `concurrency: renovate` serialises overlapping runs; it converges when nothing is left.
+  push:
+    branches: [main]
   schedule:
-    # Tue 03:47 UTC (~08:47 Asia/Yekaterinburg). Off the top-of-hour `:00` slot and in a quiet
-    # global window to minimise GitHub's scheduled-run delay/drop. renovate.json has no schedule,
-    # so this cron is the SOLE timing control — every run opens due PRs (scheduled or dispatched).
+    # Weekly full sweep + backstop for a lone stalled PR (no merge to trigger the cascade).
     - cron: '47 3 * * 2'
   workflow_dispatch:
     inputs:
@@ -41,7 +48,9 @@ jobs:
   # piles silently. Failures of auto-merge PRs are covered separately by renovate-alert.yml.
   digest:
     needs: renovate
-    if: always()
+    # Not on push — the rebasing cascade runs Renovate on every merge; we don't want a
+    # residual-review ping on each one. Only the weekly sweep / manual dispatch digests.
+    if: ${{ always() && github.event_name != 'push' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read

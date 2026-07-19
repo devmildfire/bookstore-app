@@ -9,6 +9,7 @@
   "prConcurrentLimit": 8,
   "prHourlyLimit": 0,
   "rangeStrategy": "pin",
+  "rebaseWhen": "conflicted",
   "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"], "automerge": true },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": true },
   "packageRules": [
@@ -17,6 +18,12 @@
       "description": "Autonomous loop: auto-merge all npm (dev+runtime, incl. major) on green. The real suite (unit+integration+e2e on a live stack) is the gate — a breaking bump fails CI and never merges.",
       "matchManagers": ["npm"],
       "automerge": true
+    },
+    {
+      "description": "Group ALL non-major npm updates into ONE PR. Every npm PR touches package-lock.json, so multiple open at once conflict the moment one merges (the queue clogs). One grouped PR = one lockfile change in flight = no sibling conflicts. Majors stay individual for blast-radius isolation.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
+      "groupName": "npm (non-major)"
     },
     { "matchManagers": ["github-actions"], "automerge": true },
     { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
