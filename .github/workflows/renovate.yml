@@ -5,9 +5,14 @@ name: Renovate
 # (the default GITHUB_TOKEN cannot — GitHub suppresses workflow triggers from it).
 # Renovate reads the per-repo config from renovate.json ON THE DEFAULT BRANCH (main).
 on:
-  # Renovate only OPENS/refreshes PRs (weekly + manual). Merging + rebasing is owned by
-  # GitHub's merge queue (see branch protection) — it rebases each PR against the queue
-  # head one at a time, so no on-push rebasing cascade is needed here.
+  # SELF-HEALING REBASE: run Renovate after every merge to main. Any open PR now CONFLICTED
+  # (rebaseWhen: "conflicted" in renovate.json — e.g. a lockfile clash) gets its lockfile
+  # regenerated → CI re-runs → auto-merges → pushes main → triggers this again: a self-
+  # draining cascade. Only *conflicted* PRs rebase (not every behind branch), so no CI storm;
+  # grouping keeps conflicts rare. (This is the interim mechanism until the repo moves to an
+  # org and gets a native merge queue — see docs/plans/org-merge-queue.md.)
+  push:
+    branches: [main]
   schedule:
     - cron: '47 3 * * 2'
   workflow_dispatch:
@@ -41,7 +46,8 @@ jobs:
   # piles silently. Failures of auto-merge PRs are covered separately by renovate-alert.yml.
   digest:
     needs: renovate
-    if: always()
+    # Not on push — the rebase cascade runs Renovate on every merge; don't ping each time.
+    if: ${{ always() && github.event_name != 'push' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
