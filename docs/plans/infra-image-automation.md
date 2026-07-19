@@ -194,17 +194,28 @@ proxy flip, seconds.
 This is the agreed starting point: it needs no staging server, and it makes *today's* manual syncs
 safer (it would have caught any behavioral break in this week's kong/nginx bumps). Three deliverables.
 
-**0.1 — Healthchecks on every stateless service** (today only db/auth/storage have them). Target
-commands (⚠ verify exact endpoints/ports against each image before wiring):
+**0.1 — Health mechanism for every stateless service. ✅ DONE** (2026-07-19).
 
-| Service | Healthcheck approach |
-|---|---|
-| app (Next.js) | add a cheap `/api/health` route → `wget -qO- localhost:3000/api/health` (node image lacks curl) |
-| nginx | add an internal `location /healthz { return 200; }` → busybox `wget -q --spider localhost/healthz` |
-| kong | `kong health` (ships in the image) — or HTTP on the Status API `:8100/status` |
-| postgrest | enable the admin server → probe `/ready` (falls back to API root `GET /`) |
-| postgres-meta | HTTP `/health` on its service port |
-| cloudflared | enable `--metrics` → probe `/ready` |
+Reality check on first pass: **most services already had a healthcheck** — `docker compose ps` showed
+`app auth db kong meta storage` all `(healthy)`. So the actual gap was small. Final matrix:
+
+| Service | Health mechanism | Status |
+|---|---|---|
+| **app** (Next.js) | Dockerfile `HEALTHCHECK` → **`/api/health`** (dependency-free liveness; excluded from the proxy so a DB blip doesn't mark it unhealthy) | ✅ shipped — PR #45 |
+| **nginx** | compose `healthcheck` → **`/healthz`** on the default_server (200 regardless of Host; everything else still 444) | ✅ shipped + **applied to prod** — PR #46/#38 |
+| auth, db, storage, kong, meta | already had compose/image healthchecks | ✅ pre-existing |
+| **postgrest (rest)** | ⚠ **distroless image — no shell/`wget`/`curl` → a docker `healthcheck` is impossible.** Correct mechanism = **external HTTP probe** of its admin `/ready` (enable with `PGRST_ADMIN_SERVER_PORT`), scraped by the monitoring stack (blackbox-exporter) / used as the blue-green gate | 📋 deferred to the monitoring-probe wiring (0.2/Phase 1) |
+| **cloudflared** | ⚠ **distroless — same constraint.** Correct mechanism = external probe of `/ready` (enable with `--metrics 0.0.0.0:2000`), scraped by Prometheus. Applying it also needs a cloudflared recreate = an ingress window | 📋 deferred (bundle with a future cloudflared bump) |
+| studio | private (SSH-tunnel only, not proxied); shows `(unhealthy)` pre-existing | out of scope — track separately |
+
+**Key finding — distroless services can't self-healthcheck.** `postgrest` and `cloudflared` ship
+distroless (no shell, no probe binary), so Docker's in-container `healthcheck` cannot run. Forcing one
+(e.g. a custom wrapper image with a static busybox) would abandon the upstream tested image and add a
+build step — not worth it. The industry-standard answer is **external probing**: enable the service's
+own `/ready` endpoint (one-line config each, above) and probe it from **outside** — via the monitoring
+stack's blackbox-exporter (continuous, alerts through the existing Alertmanager→Telegram path) and/or
+the blue-green switch gate. That work lands in 0.2 / Phase 1, where a probe consumer actually exists —
+enabling the endpoints now (with no consumer, needing recreates) would be premature drift.
 
 **0.2 — One smoke test per service** — a real path, not just `/health`. Intent per service:
 
