@@ -48,6 +48,22 @@ case "$SVC" in
       -v "$ROOT/deploy/production/volumes/api/kong.yml:/home/kong/kong.yml:ro" "$IMG" >/dev/null || exit 1
     probe http://localhost:18000/ 404 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     ;;
+  grafana | prometheus | node-exporter | pushgateway | alertmanager)
+    # Monitoring images: boot standalone (default config baked in, no DB) and probe
+    # the service's own health endpoint. Catches a bad/incompatible image build.
+    case "$SVC" in
+      grafana)       CPORT=3000; HP=/api/health ;;
+      prometheus)    CPORT=9090; HP=/-/healthy ;;
+      node-exporter) CPORT=9100; HP=/metrics ;;
+      pushgateway)   CPORT=9091; HP=/-/ready ;;
+      alertmanager)  CPORT=9093; HP=/-/healthy ;;
+    esac
+    echo "[$SVC] boot $IMG + probe $HP (standalone)"
+    docker run -d --name "$NAME" -p "127.0.0.1::$CPORT" "$IMG" >/dev/null || exit 1
+    HOSTPORT=$(docker port "$NAME" "$CPORT/tcp" | head -1 | sed 's/.*://')
+    [ -z "$HOSTPORT" ] && { echo "  ✗ no published port for $CPORT"; docker logs "$NAME" 2>&1 | tail -20; exit 1; }
+    probe "http://127.0.0.1:$HOSTPORT$HP" 200 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
+    ;;
   *)
     echo "[$SVC] no Tier-1 test defined — skipping"
     exit 3
