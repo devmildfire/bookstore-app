@@ -5,12 +5,13 @@ name: Renovate
 # (the default GITHUB_TOKEN cannot — GitHub suppresses workflow triggers from it).
 # Renovate reads the per-repo config from renovate.json ON THE DEFAULT BRANCH (main).
 on:
-  # REBASING MECHANISM: run Renovate after every merge to main. Any open PR that is
-  # now behind/conflicted (e.g. a lockfile clash) gets rebased — Renovate regenerates
-  # the lockfile, CI re-runs, it auto-merges, which pushes main and triggers this again:
-  # a self-draining cascade that clears rebase-stalls regardless of cause. The
-  # `concurrency: renovate` group below serialises overlapping runs; it converges when
-  # nothing is left to do. (allow_update_branch handles clean-behind; this handles dirty.)
+  # REBASING MECHANISM: run Renovate after every merge to main. Because strict-up-to-date
+  # is OFF, a clean-behind PR just merges as-is — so we rebase ONLY genuinely CONFLICTED
+  # PRs (rebaseWhen: "conflicted" in renovate.json). Renovate regenerates the lockfile for
+  # those, CI re-runs on the rebased PR, it auto-merges → pushes main → triggers this again:
+  # a self-draining cascade that clears rebase-stalls WITHOUT re-running CI on every behind
+  # branch (rebaseWhen: "behind-base-branch" would do exactly that — an N² CI storm).
+  # `concurrency: renovate` serialises overlapping runs; it converges when nothing is left.
   push:
     branches: [main]
   schedule:
