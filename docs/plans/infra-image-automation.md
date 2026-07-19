@@ -217,25 +217,40 @@ stack's blackbox-exporter (continuous, alerts through the existing Alertmanager�
 the blue-green switch gate. That work lands in 0.2 / Phase 1, where a probe consumer actually exists —
 enabling the endpoints now (with no consumer, needing recreates) would be premature drift.
 
-**0.2 — One smoke test per service** — a real path, not just `/health`. Intent per service:
+**0.2 — Smoke harness. ✅ CORE DONE** (PR #48 — `scripts/smoke/smoke.mjs`).
 
-| Service | Smoke assertion (real behavior, catches config-semantics breaks) |
+A single **portable, zero-dependency** harness (Node 22 `fetch`, exit 0 iff all selected checks pass),
+env-configured, reused across CI (0.3), the blue-green gate (Phase 1), and prod post-sync verify. It
+asserts real behaviour, not `/health` liveness:
+
+| Check | Assertion |
 |---|---|
-| nginx | curl the public route matrix (`bookstore-app` / `api` / `grafana` hosts) → expected status codes |
-| kong | send a request *through* kong to postgrest/gotrue → assert it routes **and preserves the `apikey`/`Authorization` header** |
-| postgrest | `GET /<known_table>?limit=1` with the anon key → 200 + JSON |
-| gotrue | `GET /health` → 200, then a **real** anonymous sign-in / token grant → 200 with a JWT |
-| storage-api | request a signed URL for a known object (or list a bucket) → 200 |
-| postgres-meta | `GET /tables` → 200 list |
-| app | `GET /` → 200 + a known DOM marker (or `/api/health`) |
+| app | `/api/health` → 200 `{status:ok}` |
+| gotrue | `/auth/v1/health` → 200 (through kong) |
+| postgrest | `/rest/v1/` → 200 (through kong) |
+| postgrest-data | `GET /rest/v1/Titles?limit=1` with anon key → 200 array — **proves kong forwards the apikey** + a real RLS read |
+| storage | `/storage/v1/status` → 200 (through kong) |
+| kong | unrouted `/` → 404 (kong responding = gateway up) |
+| nginx | internal `/healthz` → 200 (CI/internal; publicly covered transitively) |
+
+Hitting a service *through kong* covers the gateway transitively. Distroless services (postgrest,
+cloudflared — §0.1) are health-gated by exactly this external harness. Verified against live prod
+(keyless subset passes; the app check correctly flags that prod's app image predates the `/api/health`
+route — it needs an app deploy).
 
 **0.3 — CI job: test the candidate image in an ephemeral stack** (D-STAGING: this *is* our "staging").
 - Trigger: PRs touching `deploy/production/docker-compose.yml` or `monitoring/docker-compose.yml`
   (path filter) — i.e. every Renovate image bump.
-- Boot a minimal compose stack with the **bumped** image + only its needed deps (kong→db+postgrest,
-  postgrest→db, …), seed a minimal schema, run that service's 0.2 smoke test. Green = the infra bump has
-  an "inherent test" it lacked; red = it never reaches the manual sync. Reuses the existing
-  integration/e2e CI stack pattern.
+- Boot a stack with the **bumped** image + its needed deps, seed a minimal schema, run
+  `smoke.mjs --strict` against it. Green = the infra bump has an "inherent test" it lacked.
+- ⚠ **Open design decision (D-CANDIDATE-STACK).** The existing integration CI stack boots via
+  `supabase start`, which uses the **Supabase CLI's** bundled image versions — **NOT** our pinned prod
+  compose images (kong `3.9.3`, gotrue `v2.188.1`, …). So it can't test a *candidate prod image*
+  directly. Options: (a) boot `deploy/production/docker-compose.yml` in CI with the candidate image
+  (needs prod env + a seeded DB — the "reproduce prod stack in CI" problem, partly in
+  [cicd-single-image-and-edge-tests.md](cicd-single-image-and-edge-tests.md)); (b) a minimal per-service
+  compose (just the bumped service + direct deps) + `smoke.mjs --only <svc>`. Lean: (b) — smallest,
+  matches how the blue-green switch tests one service at a time. Resolve before building 0.3.
 
 **0.4 — Migration-compat test (Class C — gotrue/storage-api)** — ephemeral in CI: start the **new**
 image against a Postgres loaded with the current prod *schema*, let its boot migrations run, then start
