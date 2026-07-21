@@ -92,7 +92,7 @@ services:
 
   # ── Auth / GoTrue (STATEFUL: pinned to local) ──────────────────────────────────
   auth:
-    image: public.ecr.aws/supabase/gotrue:v2.193.0@sha256:ac6d4b1e961ae5a1a24d283967485f8195b767a8476e1044959d7a250c2da3f0
+    image: public.ecr.aws/supabase/gotrue:v2.193.1@sha256:1399c3e86b23400d1858ac830a8aeb4ce55fd3e25a2b9205133e0b21b08ac8e5
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
