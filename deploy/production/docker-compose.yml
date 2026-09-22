@@ -239,7 +239,7 @@ services:
 
   # ── Postgres (STATEFUL: MUST match the dump's version exactly) ──────────────────
   db:
-    image: public.ecr.aws/supabase/postgres:17.6.1.150@sha256:19b86755fe8c19488956e1514cd28f7dfde5f426e3ca82b7658b38ea557dafc1
+    image: public.ecr.aws/supabase/postgres:17.6.1.175@sha256:b6134ab527571cb9fdeb27b17d1f871409d718a3ec4fcabf53fa1ddec53b16b4
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
