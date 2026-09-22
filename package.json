@@ -54,7 +54,7 @@
     "react-dom": "19.2.7",
     "react-hook-form": "7.82.0",
     "resend": "6.17.2",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "standardwebhooks": "1.0.0",
     "web-vitals": "5.3.0",
     "zod": "4.4.3"
