@@ -49,7 +49,11 @@ jobs:
           has() { [[ " $labels " == *" $1 "* ]]; }
 
           if [ "$CONCLUSION" = success ]; then
-            if has alerted; then gh pr edit "$num" --repo "$REPO" --remove-label alerted; fi
+            # Two workflows report on each PR (CI + candidate test): clear only when ALL checks pass,
+            # else a green CI would un-mark a still-red candidate test (and re-alert on the next commit).
+            if has alerted && gh pr checks "$num" --repo "$REPO" > /dev/null 2>&1; then
+              gh pr edit "$num" --repo "$REPO" --remove-label alerted
+            fi
             exit 0
           fi
           if has alerted; then echo "#$num already alerted — not re-pinging"; exit 0; fi
