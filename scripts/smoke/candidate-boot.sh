@@ -4,7 +4,7 @@
 # test" these images otherwise lack. See docs/plans/infra-image-automation.md.
 #
 # Usage: candidate-boot.sh <service> <candidate-image> [base-image]
-#   Tier-1 (config-only, no DB):  nginx, kong, grafana, prometheus, node-exporter,
+#   Tier-1 (config-only, no DB):  nginx, kong, cloudflared, grafana, prometheus, node-exporter,
 #                                 pushgateway, alertmanager
 #   Tier-2 (throwaway Postgres):  rest (postgrest), meta (postgres-meta), postgres-exporter
 #   Tier-3 (migration-compat):    db (postgres), auth (gotrue), storage (storage-api)
@@ -45,11 +45,21 @@ probe() {
 # server while init scripts execute (Supabase image: creates supabase_auth_admin & co), and a
 # socket pg_isready says "ready" during it — on a cold CI runner, before those roles exist.
 wait_pg() { for _ in $(seq 1 90); do docker exec "$1" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
-# public.ecr.aws throttles anonymous pulls per IP (CI: "toomanyrequests") — retry with backoff
-# instead of failing the gate on a registry hiccup.
+# Pull with retry; PRINTS the ref to run. public.ecr.aws throttles anonymous pulls and has a
+# monthly anonymous DATA quota shared across GitHub's runner IPs ("toomanyrequests: Data limit
+# exceeded" — retrying doesn't help). Supabase publishes the same images on Docker Hub with
+# IDENTICAL digests, so for digest-pinned refs fall back to docker.io/supabase/… — the digest
+# guarantees byte-identical content. Tag-only refs never fall back.
 pull() {
-  for t in 1 2 3 4 5; do docker pull -q "$1" >/dev/null 2>&1 && return 0; echo "  … pull $1 failed (try $t), retrying"; sleep $((t * 15)); done
-  docker pull "$1" # last attempt, with output
+  local ref="$1" t
+  for t in 1 2 3; do docker pull -q "$ref" >/dev/null 2>&1 && { echo "$ref"; return 0; }; echo "  … pull $ref failed (try $t)" >&2; sleep $((t * 10)); done
+  case "$ref" in public.ecr.aws/supabase/*@sha256:*)
+    local hub="docker.io/supabase/${ref#public.ecr.aws/supabase/}"
+    echo "  … falling back to the Docker Hub mirror (same digest): $hub" >&2
+    for t in 1 2 3; do docker pull -q "$hub" >/dev/null 2>&1 && { echo "$hub"; return 0; }; sleep $((t * 10)); done ;;
+  esac
+  docker pull "$ref" >&2 # last attempt, with output
+  return 1
 }
 hostport() { docker port "$1" "$2/tcp" | head -1 | sed 's/.*://'; }
 # Mint an HS256 JWT (stdlib only) so storage/auth accept the anon/service keys at boot.
@@ -72,8 +82,8 @@ prod_pg_image() {
     "$ROOT/deploy/production/docker-compose.yml" | head -1
 }
 
-pull "$IMG" || exit 1
-[ -n "$BASE_IMG" ] && { pull "$BASE_IMG" || exit 1; }
+IMG=$(pull "$IMG") || exit 1
+if [ -n "$BASE_IMG" ]; then BASE_IMG=$(pull "$BASE_IMG") || exit 1; fi
 
 case "$SVC" in
   nginx)
@@ -95,6 +105,24 @@ case "$SVC" in
       -v "$ROOT/deploy/production/volumes/api/kong.yml:/home/kong/kong.yml:ro" "$IMG" >/dev/null || exit 1
     probe http://localhost:18000/ 404 || { docker logs "$NAME" 2>&1 | tail -20; exit 1; }
     ;;
+  cloudflared)
+    # Prod runs a REMOTELY-managed tunnel: ingress lives in Cloudflare, the container only gets
+    # `tunnel --no-autoupdate run` + TUNNEL_TOKEN. So the repo-side contract a bump can break is:
+    # that exact command line + env var still accepted, token format still parsed, tunnel starts.
+    # A well-formed fake token proves it: the candidate must log "Starting tunnel" for OUR tunnel id
+    # and stay up (dialing the edge, which rejects it later). Bad flag / token format → exits at once.
+    TID=$(python3 -c 'import uuid; print(uuid.uuid4())')
+    TOKEN=$(python3 -c "import base64,json; print(base64.b64encode(json.dumps({'a':'0'*32,'t':'$TID','s':base64.b64encode(b'x'*32).decode()}).encode()).decode())")
+    echo "[cloudflared] start $IMG with the prod command line + a well-formed fake token"
+    docker run -d --name "$NAME" -e TUNNEL_TOKEN="$TOKEN" "$IMG" tunnel --no-autoupdate run >/dev/null || exit 1
+    for _ in $(seq 1 20); do docker logs "$NAME" 2>&1 | grep -q "Starting tunnel tunnelID=$TID" && break; sleep 1; done
+    sleep 5 # must survive past argument/token parsing
+    if [ "$(docker inspect -f '{{.State.Running}}' "$NAME")" = true ] && docker logs "$NAME" 2>&1 | grep -q "Starting tunnel tunnelID=$TID"; then
+      echo "  ✓ accepted command line + TUNNEL_TOKEN, tunnel $TID starting"
+    else
+      echo "  ✗ candidate rejected the prod command line / token"; docker logs "$NAME" 2>&1 | tail -20; exit 1
+    fi
+    ;;
   grafana | prometheus | node-exporter | pushgateway | alertmanager)
     case "$SVC" in
       grafana)       CPORT=3000; HP=/api/health ;;
@@ -114,7 +142,7 @@ case "$SVC" in
     NET="smoke-net-$$"; PG="smoke-pg-$$"
     docker network create "$NET" >/dev/null 2>&1 || exit 1
     echo "[$SVC] boot throwaway postgres"
-    pull postgres:16-alpine || exit 1
+    pull postgres:16-alpine >/dev/null || exit 1
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw postgres:16-alpine >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; exit 1; }
     echo "[$SVC] boot $IMG against it + probe"
@@ -180,7 +208,7 @@ case "$SVC" in
     ANON=$(mint_jwt anon "$SECRET"); SERVICE=$(mint_jwt service_role "$SECRET")
     docker network create "$NET" >/dev/null 2>&1 || exit 1
     echo "[$SVC] boot throwaway prod-postgres ($PGIMG)"
-    pull "$PGIMG" || exit 1
+    PGIMG=$(pull "$PGIMG") || exit 1
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw "$PGIMG" >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; docker logs "$PG" 2>&1 | tail -25; exit 1; }
     # In the Supabase postgres image `postgres` is NOT a superuser (supabase_admin is),

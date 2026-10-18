@@ -80,6 +80,6 @@ jobs:
             done
           }
           # Tier-1/2 + Tier-3 (db auth storage) in the prod compose; Tier-1 in monitoring.
-          test_file deploy/production/docker-compose.yml nginx kong rest meta db auth storage
+          test_file deploy/production/docker-compose.yml nginx kong cloudflared rest meta db auth storage
           test_file monitoring/docker-compose.yml grafana prometheus node-exporter pushgateway alertmanager postgres-exporter
           [ "$tested" = 1 ] || echo "No candidate-tested infra image changed — nothing to test."
