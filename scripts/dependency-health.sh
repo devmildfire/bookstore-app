@@ -17,18 +17,21 @@ if [ -z "$last" ]; then warn+=("No merged Renovate PR found in the last 100 merg
 elif [ "$(age "$last")" -gt $STALL_DAYS ]; then warn+=("Loop stalled: last Renovate merge $(age "$last")d ago")
 else info+=("Last Renovate merge: $(age "$last")d ago"); fi
 
-# 2. Stuck PRs: open renovate PRs, the oldest, and the ones with a failing check.
-prs=$(gh pr list --repo "$REPO" --state open -L 100 --json number,title,headRefName,createdAt,statusCheckRollup \
-  -q '[.[] | select(.headRefName | startswith("renovate/"))]')
-n=$(jq length <<< "$prs")
-if [ "$n" -gt 0 ]; then
-  oldest=$(jq -r 'map(.createdAt) | min' <<< "$prs")
-  line="Open Renovate PRs: $n (oldest $(age "$oldest")d)"
-  if [ "$(age "$oldest")" -gt $STALL_DAYS ]; then warn+=("$line"); else info+=("$line"); fi
-  while IFS= read -r f; do warn+=("Red: $f"); done < <(jq -r '.[]
-    | select([.statusCheckRollup[]? | (.conclusion // .state)] | any(. == "FAILURE" or . == "ERROR"))
-    | "#\(.number) \(.title)"' <<< "$prs")
-fi
+# 2. Open renovate PRs, split by what they need: red (broken), green but manual (waiting on YOU —
+#    untested images by policy), and auto-merge PRs that sit too long (stuck: e.g. pending checks).
+prs=$(gh pr list --repo "$REPO" --state open -L 100 --json number,title,headRefName,createdAt,statusCheckRollup,autoMergeRequest \
+  -q '[.[] | select(.headRefName | startswith("renovate/"))
+       | .red = ([.statusCheckRollup[]? | (.conclusion // .state)] | any(. == "FAILURE" or . == "ERROR"))]')
+info+=("Open Renovate PRs: $(jq length <<< "$prs")")
+while IFS=$'\t' read -r num created title; do warn+=("Red: #$num $title"); done < <(jq -r '.[] | select(.red)
+  | [.number, .createdAt, .title] | @tsv' <<< "$prs")
+while IFS=$'\t' read -r num created title; do
+  line="Waiting for your merge ($(age "$created")d): #$num $title"
+  if [ "$(age "$created")" -gt $STALL_DAYS ]; then warn+=("$line"); else info+=("$line"); fi
+done < <(jq -r '.[] | select((.red | not) and .autoMergeRequest == null) | [.number, .createdAt, .title] | @tsv' <<< "$prs")
+while IFS=$'\t' read -r num created title; do
+  [ "$(age "$created")" -gt $STALL_DAYS ] && warn+=("Auto-merge stuck ($(age "$created")d): #$num $title")
+done < <(jq -r '.[] | select((.red | not) and .autoMergeRequest != null) | [.number, .createdAt, .title] | @tsv' <<< "$prs")
 
 # 3. Waiting on you: majors / untested images parked for Dependency Dashboard approval.
 pending=$(gh issue list --repo "$REPO" --state open --search 'Dependency Dashboard in:title' -L 1 --json body \

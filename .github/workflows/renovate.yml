@@ -20,6 +20,10 @@ on:
         description: 'Renovate log level'
         default: 'info'
         required: false
+      digest:
+        description: 'Also send the health digest to Telegram'
+        type: boolean
+        default: false
 
 concurrency:
   group: renovate
@@ -67,8 +71,9 @@ jobs:
   # Always sent on the schedule — the ✅ heartbeat also proves the alert path is alive.
   digest:
     needs: renovate
-    # Not on push (the rebase cascade runs Renovate on every merge) — weekly + manual only.
-    if: ${{ always() && github.event_name != 'push' }}
+    # Weekly only (+ manual dispatch with digest=true). Not on push (the rebase cascade) and not on
+    # trivy.yml's fast-track dispatch — repeat digests on the same day are noise.
+    if: ${{ always() && (github.event_name == 'schedule' || inputs.digest) }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
