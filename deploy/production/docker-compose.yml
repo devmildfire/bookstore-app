@@ -74,7 +74,7 @@ services:
 
   # ── Supabase API gateway (stateless → official tested version) ─────────────────
   kong:
-    image: kong/kong:3.9.3@sha256:9a2ae6699a2ce0d60592eb176555d3594a22782c20cc6557a61ff3a7e8b559a3
+    image: kong/kong:3.9.4@sha256:da2afeecfec0561dd2e06612b09c6283d79245a0387acdc3715271dbf5691a05
     restart: unless-stopped
     environment:
       KONG_DATABASE: "off"
