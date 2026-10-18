@@ -31,6 +31,16 @@
       "automerge": true
     },
     {
+      "description": "Keep lockstep monorepo siblings together (scripts/sync-monorepo-siblings.mjs). Security fixes are FORCED into per-package branches (vulnerabilityAlerts groupName:null — packageRules can't override it), so e.g. vitest got bumped without @vitest/coverage-v8 (exact peer) and both that PR and the grouped PR broke `npm ci`. The task moves same-repo, same-version siblings along and rewrites the lockfile with CI's npm. Allowed via RENOVATE_ALLOWED_COMMANDS in renovate.yml.",
+      "matchManagers": ["npm"],
+      "postUpgradeTasks": {
+        "commands": ["node scripts/sync-monorepo-siblings.mjs"],
+        "fileFilters": ["package.json", "package-lock.json"],
+        "executionMode": "branch",
+        "installTools": { "node": {} }
+      }
+    },
+    {
       "description": "Group ALL non-major npm updates into ONE PR (every npm PR touches package-lock.json; siblings conflict the moment one merges). High priority: this PR + lockFileMaintenance carry most transitive security fixes, so they must never be starved by prConcurrentLimit (2026-07→10 they were — the loop deadlocked).",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor", "pin", "digest"],

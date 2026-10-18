@@ -40,7 +40,7 @@ Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [doc
 |---|---|
 | **npm** patch/minor/pin/digest | ONE grouped PR `npm (non-major)`, auto-merge on green. `prPriority` 5. |
 | **Lock file maintenance** | Auto-merge on green, `prPriority` 10 (carries most transitive security fixes). |
-| **Security fixes** (`vulnerabilityAlerts`) | Separate PR per package, label `security`, auto-merge on green. Known gap: a package that must move with its monorepo sibling (vitest ↔ @vitest/coverage-v8) breaks `npm ci` on its own — the grouped PR / lockfile maintenance then carries it. |
+| **Security fixes** (`vulnerabilityAlerts`) | Separate PR per package (Renovate forces this; not overridable), label `security`, auto-merge on green. Lockstep siblings move with it — see below. |
 | **Majors** (all managers except Actions) | **Dependency Dashboard approval** first; once approved, auto-merge on green like the rest (labelled `major`). |
 | **GitHub Actions** (incl. majors) | Auto-merge on green. |
 | **Candidate-tested images** (nginx, kong, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgrest, postgres-meta, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
@@ -48,6 +48,15 @@ Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [doc
 | **App Dockerfile base images** (node, docker/dockerfile) + `node` everywhere (setup-node, monitoring compose) | patch/minor/digest auto-merge — CI builds + e2e-tests the image on every PR. |
 | **Untested images** (cloudflared, studio, cadvisor, nginxlog-exporter, node in monitoring) | **Dashboard approval** → PR → manual merge. |
 | **Renovate itself** (`RENOVATE_VERSION` in `renovate.yml`) | patch/minor auto-merge. |
+
+**Lockstep siblings** (`scripts/sync-monorepo-siblings.mjs`, a Renovate `postUpgradeTask` on every npm
+branch): when Renovate changes `X a→b`, every other dep that was at exactly `a`, is published at `b` and
+comes from the same source repo moves to `b` too (vitest ↔ @vitest/*, next ↔ eslint-config-next ↔
+@next/*, react ↔ react-dom, lexical ↔ @lexical/*); DefinitelyTyped is excluded (shared repo, not
+lockstep). The lockfile is rewritten with **CI's npm** (bundled with `node-version` in `ci.yml`), since
+npm versions disagree on optional `@emnapi/*` entries. Without it, a security PR for `vitest` alone
+broke `npm ci` — and so did the grouped PR it was pulled out of. Any failure is non-fatal (Renovate's
+own change is kept). Test locally: edit one pin, run `node scripts/sync-monorepo-siblings.mjs`.
 
 Why approval instead of open PRs for majors/untested images: an open PR nobody merges holds a
 `prConcurrentLimit` slot forever. That is exactly how the high-value grouped/lockfile PRs got starved.
@@ -101,7 +110,8 @@ A security fix is not done until it is **promoted**: Trivy keeps scanning `:prod
    stuck PRs are hogging slots — close the stale ones (Renovate recreates them when relevant).
 3. Stale security PRs targeting an outdated fix version: close them; Renovate reopens with the current target.
 
-**Security PR red** — usually a monorepo split (see §2) or a breaking change in the fixed version.
+**Security PR red** — a breaking change in the fixed version, or a sibling family the sync script
+didn't catch (different version numbers / repos — check its output in the Renovate log).
 Do it by hand: bump the package + its siblings, `npm audit --omit=dev`, lint/unit/build, PR, then
 **promote to prod**. Regenerate the lockfile with CI's npm (`npx npm@<node's bundled npm> install`);
 a different npm version can drop optional `@emnapi/*` entries and break `npm ci`.
