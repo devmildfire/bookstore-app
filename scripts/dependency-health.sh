@@ -44,13 +44,14 @@ if [ -n "$pdate" ]; then
 fi
 
 # 5. Open critical findings (Trivy → code scanning, Dependabot).
-count() { # paginated API → summed count, or "?" if the token can't read it
-  local out; out=$(gh api --paginate "$1" -q "$2" 2>/dev/null) || { echo '?'; return; }
+count() { # [token] paginated API → summed count, or "?" if the token can't read it
+  local out; out=$(GH_TOKEN="${3:-${GH_TOKEN:-}}" gh api --paginate "$1" -q "$2" 2>/dev/null) || { echo '?'; return; }
   awk '{s+=$1} END {print s+0}' <<< "$out"
 }
 cs=$(count "repos/$REPO/code-scanning/alerts?state=open&per_page=100" \
   '[.[] | select(.rule.security_severity_level == "critical")] | length')
-db=$(count "repos/$REPO/dependabot/alerts?state=open&severity=critical&per_page=100" 'length')
+# GITHUB_TOKEN can't read Dependabot alerts; RENOVATE_TOKEN has "Dependabot alerts: read".
+db=$(count "repos/$REPO/dependabot/alerts?state=open&severity=critical&per_page=100" 'length' "${RENOVATE_TOKEN:-}")
 line="Open CRITICAL alerts: $cs code-scanning, $db Dependabot"
 if [ "$cs" = 0 ] && [ "$db" = 0 ]; then info+=("$line")
 elif [ "$cs" != '?' ] && [ "$cs" -gt 0 ] || { [ "$db" != '?' ] && [ "$db" -gt 0 ]; }; then warn+=("$line")
