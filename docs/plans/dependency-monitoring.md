@@ -43,6 +43,7 @@ Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [doc
 | **Security fixes** (`vulnerabilityAlerts`) | Separate PR per package (Renovate forces this; not overridable), label `security`, auto-merge on green. Lockstep siblings move with it — see below. |
 | **Majors** (all managers except Actions) | **Dependency Dashboard approval** first; once approved, auto-merge on green like the rest (labelled `major`). |
 | **GitHub Actions** (incl. majors) | Auto-merge on green. |
+| **Runner OS** (`runs-on: ubuntu-24.04`, pinned) | Dashboard approval — PR CI doesn't exercise deploy/trivy/renovate on a new OS. |
 | **Candidate-tested images** (nginx, kong, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgrest, postgres-meta, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
 | **Stateful trio** (postgres/gotrue/storage-api) | patch/minor/digest auto-merge, gated by the **Tier-3 migration-compat** test (same required check). Lands in the repo only — prod apply is the rehearsed runbook. |
 | **App Dockerfile base images** (node, docker/dockerfile) + `node` everywhere (setup-node, monitoring compose) | patch/minor/digest auto-merge — CI builds + e2e-tests the image on every PR. |

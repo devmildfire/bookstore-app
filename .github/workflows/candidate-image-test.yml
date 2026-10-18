@@ -28,7 +28,7 @@ on:
 jobs:
   tier1:
     name: Tier-1 candidate boot
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -57,13 +57,18 @@ jobs:
           # PR: for each service, test only if its image line changed vs the base.
           # base ref is passed as arg 3 — required by the Tier-3 migration-compat tests
           # (db/auth/storage), ignored by Tier-1/2.
-          git fetch -q origin "$BASE"
+          # Compare against the base THIS merge commit was built from (pull_request / merge_group check
+          # out a merge commit: parent 1 = base). Comparing with a freshly fetched main instead made
+          # stale PRs and re-runs "test" other services' changes in reverse (e.g. postgrest downgraded).
+          if [ "$(git rev-list --parents -n1 HEAD | wc -w)" -ge 3 ]; then BASEREV=$(git rev-parse HEAD^1)
+          else git fetch -q origin "$BASE"; BASEREV="origin/$BASE"; fi
+          echo "Comparing against $BASEREV"
           tested=0
           test_file() {
             local file="$1"; shift
             for svc in "$@"; do
               local base head
-              base=$(git show "origin/$BASE:$file" 2>/dev/null | img_of "$svc" || true)
+              base=$(git show "$BASEREV:$file" 2>/dev/null | img_of "$svc" || true)
               head=$(img_of "$svc" < "$file" 2>/dev/null || true)
               if [ -n "$head" ] && [ "$base" != "$head" ]; then
                 echo "→ $svc changed in $file: ${base:-none} → $head"

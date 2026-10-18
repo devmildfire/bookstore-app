@@ -22,7 +22,7 @@ permissions:
 jobs:
   # ── The DEPLOYED image (:production): what is actually running. ──
   app-image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: GHCR login
@@ -47,7 +47,7 @@ jobs:
 
   # ── Repo filesystem: misconfig + secrets. (Dependency CVEs: Dependabot + the PR audit gate.) ──
   filesystem:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Trivy — fs (misconfig + secret) → SARIF
@@ -69,7 +69,7 @@ jobs:
   alert:
     needs: [app-image, filesystem]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       security-events: read
@@ -108,7 +108,7 @@ jobs:
 
   # ── Informational (never pages): next-promote image + every third-party image in both composes. ──
   images:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       list: ${{ steps.ls.outputs.list }}
     steps:
@@ -133,7 +133,7 @@ jobs:
 
   informational-images:
     needs: images
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       max-parallel: 2 # gentle on public.ecr.aws's anonymous pull rate limit (avoids TOOMANYREQUESTS)

@@ -41,7 +41,16 @@ probe() {
   echo "  ✗ $url → ${code:-timeout} (expected $exp)"
   return 1
 }
-wait_pg() { for _ in $(seq 1 40); do docker exec "$1" pg_isready -U postgres >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
+# Wait for the FINAL server over TCP. The postgres entrypoint first runs a temporary socket-only
+# server while init scripts execute (Supabase image: creates supabase_auth_admin & co), and a
+# socket pg_isready says "ready" during it — on a cold CI runner, before those roles exist.
+wait_pg() { for _ in $(seq 1 90); do docker exec "$1" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
+# public.ecr.aws throttles anonymous pulls per IP (CI: "toomanyrequests") — retry with backoff
+# instead of failing the gate on a registry hiccup.
+pull() {
+  for t in 1 2 3 4 5; do docker pull -q "$1" >/dev/null 2>&1 && return 0; echo "  … pull $1 failed (try $t), retrying"; sleep $((t * 15)); done
+  docker pull "$1" # last attempt, with output
+}
 hostport() { docker port "$1" "$2/tcp" | head -1 | sed 's/.*://'; }
 # Mint an HS256 JWT (stdlib only) so storage/auth accept the anon/service keys at boot.
 mint_jwt() {
@@ -62,6 +71,9 @@ prod_pg_image() {
   grep -oE 'public\.ecr\.aws/supabase/postgres:[^"[:space:]]+' \
     "$ROOT/deploy/production/docker-compose.yml" | head -1
 }
+
+pull "$IMG" || exit 1
+[ -n "$BASE_IMG" ] && { pull "$BASE_IMG" || exit 1; }
 
 case "$SVC" in
   nginx)
@@ -102,6 +114,7 @@ case "$SVC" in
     NET="smoke-net-$$"; PG="smoke-pg-$$"
     docker network create "$NET" >/dev/null 2>&1 || exit 1
     echo "[$SVC] boot throwaway postgres"
+    pull postgres:16-alpine || exit 1
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw postgres:16-alpine >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; exit 1; }
     echo "[$SVC] boot $IMG against it + probe"
@@ -111,7 +124,8 @@ case "$SVC" in
           -e DATA_SOURCE_NAME="postgresql://postgres:pw@$PG:5432/postgres?sslmode=disable" "$IMG" >/dev/null || exit 1
         CPORT=9187; HP=/metrics ;;
       rest)
-        docker exec "$PG" psql -U postgres -q -c "CREATE ROLE authenticator LOGIN PASSWORD 'pw' NOINHERIT; CREATE ROLE anon NOLOGIN; GRANT anon TO authenticator;" >/dev/null 2>&1
+        docker exec "$PG" psql -U postgres -q -v ON_ERROR_STOP=1 -c "CREATE ROLE authenticator LOGIN PASSWORD 'pw' NOINHERIT; CREATE ROLE anon NOLOGIN; GRANT anon TO authenticator;" \
+          || { echo "  ✗ role setup failed (test setup problem, not the candidate)"; exit 1; }
         docker run -d --name "$NAME" --network "$NET" -p '127.0.0.1::3000' \
           -e PGRST_DB_URI="postgresql://authenticator:pw@$PG:5432/postgres" \
           -e PGRST_DB_ANON_ROLE=anon -e PGRST_DB_SCHEMAS=public "$IMG" >/dev/null || exit 1
@@ -166,6 +180,7 @@ case "$SVC" in
     ANON=$(mint_jwt anon "$SECRET"); SERVICE=$(mint_jwt service_role "$SECRET")
     docker network create "$NET" >/dev/null 2>&1 || exit 1
     echo "[$SVC] boot throwaway prod-postgres ($PGIMG)"
+    pull "$PGIMG" || exit 1
     docker run -d --name "$PG" --network "$NET" -e POSTGRES_PASSWORD=pw "$PGIMG" >/dev/null || exit 1
     wait_pg "$PG" || { echo "  ✗ throwaway postgres never ready"; docker logs "$PG" 2>&1 | tail -25; exit 1; }
     # In the Supabase postgres image `postgres` is NOT a superuser (supabase_admin is),
@@ -181,8 +196,10 @@ case "$SVC" in
       fi
     done
     echo "[$SVC] setup superuser over socket: ${SU:-<NONE FOUND>}"
-    docker exec "$PG" psql -U "${SU:-postgres}" -d postgres \
-      -c "ALTER ROLE $ADMIN WITH LOGIN SUPERUSER PASSWORD 'pw';" 2>&1 | sed 's/^/    /' || true
+    [ -n "$SU" ] || { echo "  ✗ no superuser found (test setup problem, not the candidate)"; exit 1; }
+    docker exec "$PG" psql -U "$SU" -d postgres -v ON_ERROR_STOP=1 \
+      -c "ALTER ROLE $ADMIN WITH LOGIN SUPERUSER PASSWORD 'pw';" \
+      || { echo "  ✗ could not prepare $ADMIN (test setup problem, not the candidate)"; exit 1; }
 
     # Build a gotrue/storage run (base and candidate share the same env).
     run_svc() { # $1=container-name $2=image
