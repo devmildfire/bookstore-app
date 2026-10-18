@@ -50,17 +50,24 @@ Only proceed when every diff is understood and the repo is authoritative.
 ### 2. Sync the files (one stack at a time)
 ```bash
 # Production infra:
-git archive --format=tar origin/main:deploy/production | ssh portfolio-vps 'tar -x -C /opt/chtivo'
+git archive --format=tar origin/main:deploy/production | ssh portfolio-vps 'tar -x --overwrite -C /opt/chtivo'
 # Monitoring infra:
-git archive --format=tar origin/main:monitoring       | ssh portfolio-vps 'tar -x -C /opt/chtivo/monitoring'
+git archive --format=tar origin/main:monitoring       | ssh portfolio-vps 'tar -x --overwrite -C /opt/chtivo/monitoring'
 ```
 `tar -x` overwrites tracked files; it does **not** delete extra on-box files, and leaves the
 gitignored `.env`/secrets alone.
+
+> **`--overwrite` is required.** Without it GNU tar *replaces* each file (unlink + create = new
+> inode). Single-file bind mounts — e.g. `prometheus.yml`, `kong.yml`, nginx confs — stay attached
+> to the OLD inode, so the container keeps reading the stale file and a reload/SIGHUP silently
+> changes nothing. `--overwrite` rewrites in place (same inode). Verify from inside the container,
+> e.g. `docker exec <ctr> grep <new-line> /etc/prometheus/prometheus.yml`.
 
 ### 3. Apply — recreate ONLY what changed (never a bare `up -d`)
 | Changed | Apply |
 |---|---|
 | **nginx config** (`app.conf`, …) | `ssh portfolio-vps 'docker exec chtivo-nginx-1 nginx -t && docker exec chtivo-nginx-1 nginx -s reload'` — **zero-downtime; no recreate**. `nginx -t` first: a bad config won't reload. |
+| **Prometheus config/rules only** | `ssh portfolio-vps 'cd /opt/chtivo/monitoring && docker compose kill -s SIGHUP prometheus'` — reload in place (keeps its image); check `docker compose logs prometheus` for "Completed loading of configuration file". |
 | **a service image/env** (kong, meta, grafana, prometheus, …) | `ssh portfolio-vps 'cd <stack-dir> && docker compose pull <svc> && docker compose up -d <svc>'` — name the services explicitly |
 | **cloudflared** | same as above — but ⚠ it's the **only ingress**, so recreate = a few seconds of site downtime |
 
