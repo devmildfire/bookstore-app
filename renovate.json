@@ -55,6 +55,13 @@
       "dependencyDashboardApproval": true
     },
     {
+      "description": "The app's Dockerfile base images (node, docker/dockerfile): CI builds the image and runs e2e against it on every PR, so patch/minor/digest auto-merge on green (base-image OS CVEs — e.g. Alpine openssl — land via these). Ordered AFTER the docker default so it wins.",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true,
+      "dependencyDashboardApproval": false
+    },
+    {
       "description": "Infra images WITH a candidate test (Tier-1 config-boot / Tier-2 DB-coupled): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Ordered AFTER the docker default so it wins. Majors stay approval-gated.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
