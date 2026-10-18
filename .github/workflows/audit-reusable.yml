@@ -1,12 +1,19 @@
 name: Audit (reusable)
 
-# Single source of truth for the dependency vulnerability scan. Called by ci.yml's `audit`
-# job (runs on every push + PR to main).
+# Single source of truth for the dependency vulnerability gate. Called by ci.yml's `audit` job.
+#
+# DIFF GATE: fails only when the change ADDS a high/critical advisory to the RUNTIME tree
+# (--omit=dev) versus its base commit. It used to fail on ANY advisory in the whole tree,
+# which deadlocked the Renovate loop (2026-07 → 10): one advisory disclosed against main
+# turned every PR red — including the PR that fixed it — and nothing merged for 12 weeks.
+# Advisories already on main are surfaced by Dependabot alerts + the nightly Trivy scan
+# (trivy.yml → Telegram), not by blocking unrelated PRs.
 on:
   workflow_call:
 
 jobs:
   npm-audit:
+    # Name kept verbatim — it is a required status check on main.
     name: npm audit (fail on high/critical)
     runs-on: ubuntu-latest
     steps:
@@ -18,9 +25,43 @@ jobs:
         with:
           node-version: '24.18.0'
 
-      # --audit-level=high fails on high/critical only. The repo carries transitive
-      # moderate/low advisories (tar via the supabase dev CLI, js-yaml, @babel/core) that
-      # would otherwise hard-block every push/deploy. Tighten to `moderate` once cleared.
-      # Uses the committed lockfile — no npm ci needed, so this is fast.
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+      # Uses the committed lockfiles — no npm ci needed, so this is fast.
+      - name: Audit — new runtime high/critical advisories vs base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          export LC_ALL=C # comm needs a stable collation
+          ids() { # dir → sorted "GHSA-id package severity" lines, high/critical only
+            local json
+            json=$(cd "$1" && npm audit --omit=dev --json 2>/dev/null || true)
+            # No .vulnerabilities key = the audit itself failed (registry error) — never pass silently.
+            jq -e 'has("vulnerabilities")' <<< "$json" > /dev/null || { echo "::error::npm audit failed in $1"; echo "$json" | head -20; exit 1; }
+            jq -r '
+              [.vulnerabilities | .[].via[] | objects
+               | select(.severity == "high" or .severity == "critical")
+               | "\(.url | split("/") | last) \(.name) \(.severity)"] | .[]' | sort -u
+          }
+          ids . > head.txt
+          base=/tmp/base
+          mkdir -p "$base"
+          if [ -n "${BASE_SHA:-}" ] && [ "${BASE_SHA}" != 0000000000000000000000000000000000000000 ] \
+             && git fetch -q --depth=1 origin "$BASE_SHA" \
+             && git show "$BASE_SHA:package.json" > "$base/package.json" \
+             && git show "$BASE_SHA:package-lock.json" > "$base/package-lock.json"; then
+            ids "$base" > base.txt
+          else
+            echo "::warning::No base commit — comparing against an empty baseline (full audit)."
+            : > base.txt
+          fi
+          echo "Runtime high/critical on base: $(wc -l < base.txt) · on this change: $(wc -l < head.txt)"
+          new=$(comm -13 base.txt head.txt)
+          if [ -n "$new" ]; then
+            echo "::error::This change introduces runtime high/critical advisories:"
+            echo "$new"
+            exit 1
+          fi
+          if [ -s head.txt ]; then
+            echo "::warning::Pre-existing runtime advisories (not introduced here — fix via Renovate/Trivy):"
+            cat head.txt
+          fi

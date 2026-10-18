@@ -16,16 +16,9 @@ const nextConfig: NextConfig = {
   // .map files fetched only by devtools — they do not add to the page's JS payload.
   productionBrowserSourceMaps: true,
   experimental: {
-    // CSS isolation per route. The default ('loose') merges CSS Modules across routes into a few
-    // shared render-blocking bundles via webpack SplitChunks — so the storefront home shipped
-    // admin-panel, article, gift-card and book-detail CSS it never paints (~12 KB dead weight).
-    // 'strict' does NOT fix this (it only changes merge ordering, not co-location). 'false' emits
-    // one stylesheet per CSS Module, included only on routes that import it: measured home
-    // render-blocking CSS 30.8 KB → 18.9 KB (−39%, 9 files → 4), with the cross-route leak gone.
-    // Verified no cascade regression — gift-cards/book detail pixel-identical, home diff 0.09%
-    // (async cover/badge load timing only). CSS Modules are scoped, so cross-module cascade order
-    // doesn't matter here. See docs/perf/home-lcp-trace-findings.md.
-    cssChunking: false,
+    // cssChunking: false REMOVED (Next 16.3+ errors: "only supported with webpack"). The prod build
+    // is Turbopack, which never honoured it, so dropping it is a no-op for the shipped bundle. The
+    // per-route CSS measurement it was based on: docs/perf/home-lcp-trace-findings.md.
     // inlineCss MEASURED AND REJECTED (2026-06-18, second attempt). Even with the above-fold set
     // shrunk to ~14 KB (box-set SVGs now WebP; deferred-section CSS no longer leaking), enabling
     // it inflated the home document 22→65 KB gz (inlined CSS + RSC-flight duplication). On Slow-4G
