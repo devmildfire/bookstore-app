@@ -37,7 +37,7 @@ env:
 
 jobs:
   renovate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read # sparse checkout of the notify script (Renovate itself uses RENOVATE_TOKEN)
     steps:
@@ -74,7 +74,7 @@ jobs:
     # Weekly only (+ manual dispatch with digest=true). Not on push (the rebase cascade) and not on
     # trivy.yml's fast-track dispatch — repeat digests on the same day are noise.
     if: ${{ always() && (github.event_name == 'schedule' || inputs.digest) }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: read
