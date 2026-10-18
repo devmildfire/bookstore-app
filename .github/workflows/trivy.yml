@@ -1,9 +1,14 @@
 name: Trivy
 
-# Nightly vulnerability + misconfig + secret scanning. The deployed :production image
-# and the repo filesystem GATE on HIGH/CRITICAL (fail the run → GitHub notifies); a
-# CRITICAL in the image additionally pages Telegram. The next-promote image (:latest)
-# and the third-party Supabase images are scanned informationally (never fail).
+# Nightly CVE / misconfig / secret DETECTION. Findings land in Security ▸ Code scanning (which
+# tracks state + dedups), and Telegram pages only for NEW critical alerts — with CVE, package and
+# fix — then dispatches Renovate to fast-track the fix PR. Open criticals are re-surfaced weekly by
+# the renovate.yml digest.
+#
+# No "gate": a scheduled scan of an already-deployed image can't block anything, it can only go
+# red. It did — 89 nights straight (2026-07→10) with an identical, detail-free nightly page that
+# nobody could act on any differently. The blocking gate is the PR-time audit (audit-reusable.yml).
+# The run fails only if a scan itself breaks (→ Telegram too).
 on:
   schedule:
     - cron: '0 3 * * *' # nightly 03:00 UTC
@@ -12,10 +17,10 @@ on:
 permissions:
   contents: read
   packages: read # pull :production / :latest from GHCR
-  security-events: write # SARIF upload to Code scanning
+  security-events: write # SARIF upload + read alerts
 
 jobs:
-  # ── The DEPLOYED image (:production): SARIF for visibility, CRITICAL→Telegram, HIGH/CRIT gate. ──
+  # ── The DEPLOYED image (:production): what is actually running. ──
   app-image:
     runs-on: ubuntu-latest
     steps:
@@ -26,88 +31,114 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Trivy — :production → SARIF (visibility)
+      - name: Trivy — :production → SARIF
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ghcr.io/devmildfire/bookstore-app:production
           format: sarif
           output: trivy-prod.sarif
           severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: '0' # this pass only produces the SARIF; the gate below fails the run
+          ignore-unfixed: true # only actionable findings (a fix exists)
+          exit-code: '0'
       - uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        if: always()
         with:
           sarif_file: trivy-prod.sarif
           category: trivy-prod-image
-      - name: Trivy — :production CRITICAL check (drives the Telegram page)
-        id: crit
-        continue-on-error: true
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          image-ref: ghcr.io/devmildfire/bookstore-app:production
-          severity: CRITICAL
-          ignore-unfixed: true
-          exit-code: '1'
-          format: table
-      - name: Telegram page — CRITICAL only
-        if: steps.crit.outcome == 'failure'
-        env:
-          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-            -d chat_id="${TG_CHAT}" \
-            -d text="🛑 Trivy: CRITICAL CVE in DEPLOYED image (:production) — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-      - name: Trivy — :production gate (fail on HIGH,CRITICAL)
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          image-ref: ghcr.io/devmildfire/bookstore-app:production
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: '1'
-          format: table
 
-  # ── Filesystem: vuln + misconfig + secret. Gates on HIGH/CRITICAL. ──
+  # ── Repo filesystem: misconfig + secrets. (Dependency CVEs: Dependabot + the PR audit gate.) ──
   filesystem:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Trivy — fs (vuln + misconfig + secret), gate on HIGH/CRITICAL
+      - name: Trivy — fs (misconfig + secret) → SARIF
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: fs
-          scanners: vuln,misconfig,secret
+          scanners: misconfig,secret
           format: sarif
           output: trivy-fs.sarif
           severity: HIGH,CRITICAL
           trivyignores: .trivyignore
-          exit-code: '1'
+          exit-code: '0'
       - uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        if: always()
         with:
           sarif_file: trivy-fs.sarif
           category: trivy-fs
 
-  # ── Informational (NO gate): next-promote image :latest + the third-party Supabase stack. ──
+  # ── Page on what's NEW (code scanning already dedups; created_at = first detection). ──
+  alert:
+    needs: [app-image, filesystem]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: read
+      actions: write # dispatch renovate.yml
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts/notify-telegram.sh
+          sparse-checkout-cone-mode: false
+      - name: New critical findings → Telegram + fast-track Renovate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          REPO: ${{ github.repository }}
+          SCANS_OK: ${{ needs.app-image.result == 'success' && needs.filesystem.result == 'success' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$SCANS_OK" != true ]; then
+            scripts/notify-telegram.sh "🔴 Trivy scan itself FAILED — no CVE detection until fixed: $RUN_URL"
+          fi
+          since=$(date -u -d '25 hours ago' +%FT%TZ)
+          # Trivy's SARIF message text: "Package: x\nInstalled Version: y\n…\nFixed Version: z\n…"
+          new=$(gh api --paginate "repos/$REPO/code-scanning/alerts?state=open&tool_name=Trivy&severity=critical&per_page=100" \
+            -q ".[] | select(.created_at > \"$since\")
+                 | (.most_recent_instance.message.text | split(\"\n\")) as \$m
+                 | def f(k): (\$m | map(select(startswith(k + \": \")))[0] // \"\" | sub(k + \": \"; \"\"));
+                   \"• \(.rule.id) \(f(\"Package\")) \(f(\"Installed Version\")) → \(f(\"Fixed Version\")) [\(.most_recent_instance.category)] \(.html_url)\"")
+          [ -n "$new" ] || { echo "No new critical findings."; exit 0; }
+          echo "$new"
+          scripts/notify-telegram.sh "🛑 Trivy: NEW CRITICAL finding(s)
+          $new
+          Renovate dispatched for a fix PR; prod only changes after: git push origin main:production"
+          gh workflow run renovate.yml --repo "$REPO" || echo "::warning::could not dispatch renovate.yml"
+
+  # ── Informational (never pages): next-promote image + every third-party image in both composes. ──
+  images:
+    runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.ls.outputs.list }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            deploy/production/docker-compose.yml
+            monitoring/docker-compose.yml
+          sparse-checkout-cone-mode: false
+      # Derived from the compose files — the old hand-kept list drifted (4 of 6 tags stale by 2026-10).
+      - id: ls
+        run: |
+          python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
+          python3 - >> "$GITHUB_OUTPUT" <<'EOF'
+          import json, yaml
+          files = ('deploy/production/docker-compose.yml', 'monitoring/docker-compose.yml')
+          imgs = {(s or {}).get('image', '') for f in files
+                  for s in (yaml.safe_load(open(f)).get('services') or {}).values()}
+          imgs = sorted(i for i in imgs if i and '$' not in i)  # skip ${APP_IMAGE} (= :production, scanned above)
+          print('list=' + json.dumps(['ghcr.io/devmildfire/bookstore-app:latest'] + imgs))
+          EOF
+
   informational-images:
+    needs: images
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 2 # gentle on public.ecr.aws's anonymous pull rate limit (avoids TOOMANYREQUESTS)
       matrix:
-        # Mirrors the third-party image versions in deploy/production/docker-compose.yml.
-        # Hand-maintained: Renovate bumps those compose pins (kong / postgres-meta) but NOT
-        # this list, so update these tags whenever the compose pins move, or the scan silently
-        # reports on stale versions. See docs/plans/dependency-monitoring.md §7.
-        image:
-          - ghcr.io/devmildfire/bookstore-app:latest
-          - public.ecr.aws/supabase/postgres:17.6.1.106
-          - public.ecr.aws/supabase/gotrue:v2.188.1
-          - public.ecr.aws/supabase/storage-api:v1.54.1
-          - public.ecr.aws/supabase/postgrest:v14.10
-          - public.ecr.aws/supabase/postgres-meta:v0.96.6
-          - kong/kong:3.9.3
+        image: ${{ fromJSON(needs.images.outputs.list) }}
     steps:
       - name: GHCR login
         uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
@@ -115,9 +146,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # continue-on-error: this scan is purely informational. A transient ECR rate-limit /
-      # pull failure here must NOT fail the run (exit-code:'0' only suppresses *vuln* findings,
-      # not Trivy's fatal "can't pull image" error).
+      # continue-on-error: informational only — a transient pull/rate-limit failure must not fail
+      # the run (exit-code '0' suppresses findings, not Trivy's fatal "can't pull image").
       - name: Trivy — ${{ matrix.image }} (report only)
         continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -125,6 +155,7 @@ jobs:
           image-ref: ${{ matrix.image }}
           format: table
           severity: HIGH,CRITICAL
+          ignore-unfixed: true
           exit-code: '0'
           output: trivy-info.txt
       - name: Publish to job summary

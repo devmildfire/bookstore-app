@@ -1,20 +1,19 @@
 name: Renovate
 
-# Self-hosted Renovate (not the Mend hosted App). Runs weekly + on manual dispatch,
-# authenticating as the fine-grained PAT in RENOVATE_TOKEN so its PRs trigger ci.yml
-# (the default GITHUB_TOKEN cannot — GitHub suppresses workflow triggers from it).
-# Renovate reads the per-repo config from renovate.json ON THE DEFAULT BRANCH (main).
+# Self-hosted Renovate (not the Mend hosted App), authenticating as the fine-grained PAT in
+# RENOVATE_TOKEN so its PRs trigger ci.yml (GitHub suppresses workflow triggers from GITHUB_TOKEN).
+# Renovate reads renovate.json ON THE DEFAULT BRANCH (main). Operating guide:
+# docs/plans/dependency-monitoring.md.
 on:
-  # SELF-HEALING REBASE: run Renovate after every merge to main. Any open PR now CONFLICTED
-  # (rebaseWhen: "conflicted" in renovate.json — e.g. a lockfile clash) gets its lockfile
-  # regenerated → CI re-runs → auto-merges → pushes main → triggers this again: a self-
-  # draining cascade. Only *conflicted* PRs rebase (not every behind branch), so no CI storm;
-  # grouping keeps conflicts rare. (This is the interim mechanism until the repo moves to an
-  # org and gets a native merge queue — see docs/plans/org-merge-queue.md.)
+  # SELF-HEALING REBASE: run after every merge to main so PRs it left CONFLICTED (rebaseWhen:
+  # conflicted — e.g. a lockfile clash) get regenerated → CI → auto-merge → push → again. Interim
+  # until the repo gets a native merge queue (docs/plans/org-merge-queue.md). NOTE: this only
+  # drains while things merge — a stalled loop is caught by the weekly digest below, not here.
   push:
     branches: [main]
   schedule:
     - cron: '47 3 * * 2'
+  # Also dispatched by trivy.yml when a NEW critical finding appears (fast-tracks the fix PR).
   workflow_dispatch:
     inputs:
       logLevel:
@@ -26,43 +25,66 @@ concurrency:
   group: renovate
   cancel-in-progress: false
 
-# The action uses RENOVATE_TOKEN for all GitHub API calls, so the workflow's own
-# GITHUB_TOKEN needs no permissions.
 permissions: {}
+
+env:
+  # renovate: datasource=docker depName=ghcr.io/renovatebot/renovate
+  RENOVATE_VERSION: 44.167.1
 
 jobs:
   renovate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # sparse checkout of the notify script (Renovate itself uses RENOVATE_TOKEN)
     steps:
       - uses: renovatebot/github-action@3064367f740a1a91cca218698a63902689cce200 # v46.1.20
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
+          renovate-version: ${{ env.RENOVATE_VERSION }}
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+          # Commits authored as the PAT owner (not Mend's renovate@whitesourcesoftware.com default).
+          RENOVATE_GIT_AUTHOR: 'devmildfire <97608157+devmildfire@users.noreply.github.com>'
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+      # Renovate itself breaking (expired PAT, config error) used to surface only as a GitHub email.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: failure()
+        with:
+          sparse-checkout: scripts/notify-telegram.sh
+          sparse-checkout-cone-mode: false
+      - name: Telegram — Renovate run failed
+        if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: >-
+          scripts/notify-telegram.sh "🔴 Renovate run FAILED (expired RENOVATE_TOKEN? config error?) —
+          no dependency updates until fixed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-  # Residual digest: the autonomous loop auto-merges everything it can verify. Whatever
-  # is left needs YOU (an untested docker image, or a docker major) — ping so it never
-  # piles silently. Failures of auto-merge PRs are covered separately by renovate-alert.yml.
+  # Weekly health digest of the loop ITSELF (stalls, red PRs, prod lag, open criticals, PAT expiry).
+  # Always sent on the schedule — the ✅ heartbeat also proves the alert path is alive.
   digest:
     needs: renovate
-    # Not on push — the rebase cascade runs Renovate on every merge; don't ping each time.
+    # Not on push (the rebase cascade runs Renovate on every merge) — weekly + manual only.
     if: ${{ always() && github.event_name != 'push' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
+      issues: read
+      security-events: read # code-scanning + Dependabot alert counts
     steps:
-      - name: Ping Telegram if manual-review updates await
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts
+      - name: Dependency-loop health → Telegram
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }} # only to read its own expiry header
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
           REPO: ${{ github.repository }}
         run: |
-          count=$(gh pr list --repo "$REPO" --state open --label needs-review --json number -q 'length')
-          echo "needs-review PRs: ${count:-0}"
-          if [ "${count:-0}" -gt 0 ]; then
-            curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-              -d chat_id="${TG_CHAT}" \
-              --data-urlencode "text=🔧 ${count} dependency update(s) need your review — can't auto-merge (untested infra image or docker major): https://github.com/${REPO}/pulls?q=is%3Aopen+label%3Aneeds-review"
-          fi
+          msg=$(scripts/dependency-health.sh)
+          echo "$msg" | tee -a "$GITHUB_STEP_SUMMARY"
+          scripts/notify-telegram.sh "$msg"

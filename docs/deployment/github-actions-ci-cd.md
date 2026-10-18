@@ -43,8 +43,8 @@ One ordered pipeline; later jobs `need` the earlier ones:
 audit → lint → unit → integration → build → e2e
 ```
 
-- **audit** — `npm audit --audit-level=high` (reusable `audit-reusable.yml`). Fails only on
-  high/critical advisories (transitive moderate/low from the dev `supabase` CLI are tolerated).
+- **audit** — diff gate (reusable `audit-reusable.yml`): fails only if the change *adds* a runtime
+  (`--omit=dev`) high/critical advisory vs its base commit; pre-existing ones warn, never block.
 - **lint** — `npm run lint`. On **PRs only** it also runs `npm run build` as a compile check
   (on `main` pushes the image build below runs `next build` itself, so a second build here
   would be redundant).
@@ -84,13 +84,9 @@ full `ci.yml` via its PR. Want CI on work in progress? Open a **draft PR**.
 
 ### Scheduled / on-demand (dependency monitoring)
 
-- **`renovate.yml`** — self-hosted Renovate, weekly + manual dispatch. Opens dependency-update +
-  digest-pin PRs (npm, Docker, Actions); the low-risk tier auto-merges on green.
-- **`trivy.yml`** — nightly + manual. Scans the deployed `:production` image + repo filesystem,
-  **gating on HIGH/CRITICAL** → SARIF in Security ▸ Code scanning; a CRITICAL also pages Telegram.
-  `:latest` + the Supabase images are scanned informationally.
-
-Full design + the review ritual: [docs/plans/dependency-monitoring.md](../plans/dependency-monitoring.md).
+`renovate.yml` (weekly + on merge to main + weekly health digest), `renovate-alert.yml` (once-per-PR
+failure ping), `trivy.yml` (nightly detection → Code scanning; pages on new criticals). Behaviour and
+runbook: [docs/plans/dependency-monitoring.md](../plans/dependency-monitoring.md).
 
 ## Single env-agnostic image
 
@@ -112,7 +108,7 @@ local stack is the one promoted to prod. The image build takes `SUPABASE_INTERNA
 | `VPS_SSH_PORT` | Usually `22` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key — fed to the image build (secret mount) + the PR validate-build |
 | `RENOVATE_TOKEN` | Renovate's fine-grained PAT (repo-scoped) so its PRs trigger `ci.yml` — perms in [dependency-monitoring.md](../plans/dependency-monitoring.md) §5 |
-| `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | Trivy CRITICAL→Telegram (same bot as the monitoring stack) |
+| `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | CI alerts via `scripts/notify-telegram.sh` — Renovate digest/failures, Trivy new criticals (same bot as the monitoring stack) |
 
 The GHCR image is **public** (`ghcr.io/devmildfire/bookstore-app`), so the VPS pulls
 anonymously; the deploy job logs in to GHCR only to *push* the promoted `:production` tag.

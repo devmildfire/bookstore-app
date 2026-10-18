@@ -1,48 +1,74 @@
 name: Renovate failure alert
 
-# The autonomous loop auto-merges updates on green CI. "When it goes wrong": an
-# auto-update that breaks FAILS ci.yml → auto-merge holds → this pings Telegram.
-# Majors (labeled `major` in renovate.json) get an explicit BREAKING-change message
-# so you know it needs a real decision, not just a transient flake.
+# An auto-update that breaks FAILS its checks → auto-merge holds → this pings Telegram ONCE per PR
+# (an `alerted` label marks it; the label is cleared when the branch goes green, so a later
+# regression alerts again). Previously it re-pinged on every CI re-run — ~5 identical messages a
+# week for the same stuck PRs, which trained everyone to ignore them.
+# Since the audit gate became a diff gate (audit-reusable.yml), a red check here means THIS
+# update broke something — not a pre-existing advisory on main.
 on:
   workflow_run:
-    workflows: ['CI']
+    workflows: ['CI', 'Candidate infra image test']
     types: [completed]
-    # Only trigger for CI runs on renovate branches. Without this, EVERY CI
-    # completion (incl. every push to main) spawns a run of this workflow that
-    # immediately skips via the job `if` — cluttering the Actions tab with
-    # "Renovate failure alert … skipped" entries. Filtering here means main/
-    # feature-branch CI never creates a skipped run; real renovate CI failures
-    # still fire. The job-level branch check below stays as defense-in-depth.
+    # Only renovate branches — avoids a skipped run for every main/feature CI completion.
     branches: ['renovate/**']
 
 permissions:
-  pull-requests: read
+  contents: read
+  actions: read # failed job names
+  pull-requests: write # alerted label
+  issues: write # create the label if missing
 
 jobs:
   alert:
     if: >-
-      github.event.workflow_run.conclusion == 'failure' &&
-      startsWith(github.event.workflow_run.head_branch, 'renovate/')
+      startsWith(github.event.workflow_run.head_branch, 'renovate/') &&
+      contains(fromJSON('["failure","success"]'), github.event.workflow_run.conclusion)
     runs-on: ubuntu-latest
     steps:
-      - name: Telegram — auto-update failed CI
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts/notify-telegram.sh
+          sparse-checkout-cone-mode: false
+      - name: Telegram once per failing update / clear on green
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
           BRANCH: ${{ github.event.workflow_run.head_branch }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
           REPO: ${{ github.repository }}
         run: |
-          title=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json title -q '.[0].title' 2>/dev/null)
-          url=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json url -q '.[0].url' 2>/dev/null)
-          is_major=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json labels -q '.[0].labels[].name' 2>/dev/null | grep -qx major && echo yes || echo no)
-          title=${title:-$BRANCH}; url=${url:-$RUN_URL}
-          if [ "$is_major" = yes ]; then
-            msg="🚨 MAJOR update — NEEDS YOUR DECISION. \"$title\" has BREAKING changes and FAILED CI, so the loop will NOT merge it. Migrate it or skip: $url"
-          else
-            msg="⚠️ Dependency auto-update FAILED CI — \"$title\". The loop will NOT merge it. Review: $url"
+          set -euo pipefail
+          pr=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number,title,url,labels -q '.[0] // empty')
+          [ -n "$pr" ] || { echo "No open PR for $BRANCH"; exit 0; }
+          num=$(jq -r .number <<< "$pr"); labels=$(jq -r '[.labels[].name] | join(" ")' <<< "$pr")
+          has() { [[ " $labels " == *" $1 "* ]]; }
+
+          if [ "$CONCLUSION" = success ]; then
+            if has alerted; then gh pr edit "$num" --repo "$REPO" --remove-label alerted; fi
+            exit 0
           fi
-          curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-            -d chat_id="${TG_CHAT}" --data-urlencode "text=${msg}"
+          if has alerted; then echo "#$num already alerted — not re-pinging"; exit 0; fi
+
+          title=$(jq -r .title <<< "$pr"); url=$(jq -r .url <<< "$pr")
+          jobs=$(gh run view "$RUN_ID" --repo "$REPO" --json jobs \
+            -q '[.jobs[] | select(.conclusion == "failure") | .name] | join(", ")' || echo '?')
+          if has major; then
+            head="🚨 MAJOR update needs your decision — breaking changes, will NOT merge"
+          elif has security; then
+            head="🛑 SECURITY update failed checks — the fix is NOT landing"
+          else
+            head="⚠️ Dependency update failed checks — will NOT merge"
+          fi
+          scripts/notify-telegram.sh "$head
+          \"$title\"
+          Failed ($WORKFLOW): ${jobs:-?}
+          PR: $url
+          Run: $RUN_URL"
+          gh label create alerted --repo "$REPO" --color BFD4F2 \
+            --description "renovate-alert.yml already pinged Telegram for this failure" 2>/dev/null || true
+          gh pr edit "$num" --repo "$REPO" --add-label alerted
