@@ -45,7 +45,7 @@ Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [doc
 | **GitHub Actions** (incl. majors) | Auto-merge on green. |
 | **Candidate-tested images** (nginx, kong, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgrest, postgres-meta, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
 | **Stateful trio** (postgres/gotrue/storage-api) | patch/minor/digest auto-merge, gated by the **Tier-3 migration-compat** test (same required check). Lands in the repo only — prod apply is the rehearsed runbook. |
-| **App Dockerfile base images** (node, docker/dockerfile) | patch/minor/digest auto-merge — CI builds + e2e-tests the image on every PR. |
+| **App Dockerfile base images** (node, docker/dockerfile) + `node` everywhere (setup-node, monitoring compose) | patch/minor/digest auto-merge — CI builds + e2e-tests the image on every PR. |
 | **Untested images** (cloudflared, studio, cadvisor, nginxlog-exporter, node in monitoring) | **Dashboard approval** → PR → manual merge. |
 | **Renovate itself** (`RENOVATE_VERSION` in `renovate.yml`) | patch/minor auto-merge. |
 

@@ -62,6 +62,13 @@
       "dependencyDashboardApproval": false
     },
     {
+      "description": "Node within the same major, everywhere it's pinned (Dockerfile, setup-node node-version, monitoring compose): Renovate groups these into one `node` branch, and without this rule the untested monitoring copy made the whole group (incl. base-image OS CVE fixes) wait for approval. CI exercises the Dockerfile + setup-node copies; the monitoring copy only runs a small PSI push script.",
+      "matchPackageNames": ["node"],
+      "matchUpdateTypes": ["patch", "minor", "digest"],
+      "automerge": true,
+      "dependencyDashboardApproval": false
+    },
+    {
       "description": "Infra images WITH a candidate test (Tier-1 config-boot / Tier-2 DB-coupled): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Ordered AFTER the docker default so it wins. Majors stay approval-gated.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
@@ -99,6 +106,11 @@
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "dependencyDashboardApproval": false
+    },
+    {
+      "description": "RENOVATE_VERSION is a plain version string fed to the action, not an image ref we run — no digest pin.",
+      "matchPackageNames": ["ghcr.io/renovatebot/renovate"],
+      "pinDigests": false
     }
   ],
   "platformAutomerge": true
