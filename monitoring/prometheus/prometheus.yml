@@ -19,6 +19,9 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   - job_name: cadvisor          # per-container USE (CPU/mem/net/disk)
+    # cAdvisor is the one slow exporter: a scrape slower than the 10s default timeout is
+    # recorded as up=0 and pages TargetDown. Allow up to 20s (< the 30s interval).
+    scrape_timeout: 20s
     static_configs:
       - targets: ['cadvisor:8080']
 

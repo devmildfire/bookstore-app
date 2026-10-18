@@ -51,7 +51,18 @@ services:
     # lookup and emits ZERO per-container metrics; v0.55.1 handles it cleanly.
     image: gcr.io/cadvisor/cadvisor:v0.55.1@sha256:3de2bd5203120b866d74a9b283b2ffb8ec382fbf9dc321814700c6ea6f44ec57
     restart: unless-stopped
-    command: ['--housekeeping_interval=30s', '--store_container_labels=false']
+    # Lean collection: the dashboards use only container_cpu_usage_seconds_total +
+    # container_memory_working_set_bytes. The defaults (incl. per-container filesystem usage,
+    # which walks container layers — costly on the containerd snapshotter) pinned cAdvisor at
+    # its 256m limit from 2026-10-16, pushing /metrics past the 10s scrape timeout → `up` flapped
+    # ~1000×/day → TargetDown paged all day. Measured on v0.55.1: 9283 → 654 series (−93%),
+    # scrape 138 → 8 ms, both dashboard metrics intact per container. Re-enable a collector
+    # here before building a panel on it.
+    command:
+      - '--housekeeping_interval=30s'
+      - '--store_container_labels=false'
+      - '--docker_only=true'
+      - '--enable_metrics=cpu,memory,network,diskIO,oom_event'
     privileged: true
     # cgroup v2 + cgroupns: cAdvisor must share the host cgroup namespace or it only
     # sees its own cgroup, not the other containers' (no per-container metrics).
