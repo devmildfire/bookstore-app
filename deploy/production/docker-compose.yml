@@ -150,7 +150,7 @@ services:
 
   # ── PostgREST (stateless) ──────────────────────────────────────────────────────
   rest:
-    image: public.ecr.aws/supabase/postgrest:v14.15@sha256:2f8e7b656f09db697a8875177694b417b35cb76c21370de07fc54e711e902326
+    image: public.ecr.aws/supabase/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
