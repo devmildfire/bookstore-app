@@ -1,490 +1,141 @@
-# Dependency & Vulnerability Monitoring — Implementation Plan
+# Dependency & Vulnerability Monitoring — Operating Guide
 
-**Status:** implemented & live (all 5 phases shipped 2026-06-27) · **Created:** 2026-06-27
-**Source brief:** `~/Downloads/dependency-monitoring-plan.md` (high-level goals; this plan is the
-precise, repo-specific execution).
-**Related:** [.github/workflows/ci.yml](../../.github/workflows/ci.yml),
-[deploy/production/docker-compose.yml](../../deploy/production/docker-compose.yml),
-[docs/deployment/github-actions-ci-cd.md](../deployment/github-actions-ci-cd.md),
-[docs/monitoring/README.md](../monitoring/README.md) (Telegram/Alertmanager path).
+**Status:** live · **Reworked:** 2026-10-18 (after a 12-week silent stall — see §6) · **First shipped:** 2026-06-27
+**Single source of truth** for dependency upkeep. `AGENTS.md`, `docs/deployment/README.md` and
+`docs/deployment/github-actions-ci-cd.md` only link here — change behaviour here, not there.
+**Related:** [infra-image-automation.md](infra-image-automation.md) (candidate image tests, prod apply),
+[org-merge-queue.md](org-merge-queue.md) (future: native merge queue replaces the push-rebase cascade).
 
 ---
 
-## 0. Update policy — the autonomous loop (2026-07, supersedes the conservative D5)
+## 1. The loop at a glance
 
-Goal: **no backlog, no babysitting.** The loop auto-updates everything it can *verify*, and only
-interrupts a human when it genuinely can't proceed safely.
+```
+ Renovate (weekly + on every merge to main + on new Trivy critical)
+   └─ PR ─▶ ci.yml (audit diff-gate → lint → unit → integration → build → e2e)
+           + candidate-image-test.yml (Tier-1/2/3 for infra images)
+             ├─ green ─▶ GitHub native auto-merge ─▶ main      (prod: manual promote, §4)
+             └─ red ───▶ renovate-alert.yml ─▶ Telegram ONCE per PR (label `alerted`)
+ Dependabot alerts (continuous) ─────────────▶ Security tab
+ Trivy (nightly) ─ SARIF ─▶ Code scanning ─▶ NEW critical ─▶ Telegram + dispatch Renovate
+ renovate.yml digest (weekly) ─▶ Telegram: loop health (stall / red PRs / prod lag / criticals / PAT)
+```
+
+Every Telegram message is one of four kinds, and each means something different:
+
+| Message | Source | Meaning / what to do |
+|---|---|---|
+| ✅/⚠️ **Dependency loop health** | weekly digest | ⚠️ lines are stall signals — see runbook §5. ✅ = nothing to do (also proves alerting works). |
+| ⚠️/🛑/🚨 **update failed checks** | `renovate-alert.yml` | THIS update broke something (audit is a diff gate, so not a pre-existing advisory). Fix, or close the PR / reject on the dashboard. Sent once per PR. |
+| 🛑 **Trivy: NEW CRITICAL** | `trivy.yml` | A newly detected fixable critical (CVE, package, fix version listed). Renovate is auto-dispatched; make sure the fix merges **and is promoted to prod**. |
+| 🔴 **Renovate / Trivy FAILED** | either workflow | The machinery is broken (expired `RENOVATE_TOKEN`, config error, scan error). Nothing is being updated/detected until fixed. |
+
+Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [docs/monitoring/README.md](../monitoring/README.md).
+
+---
+
+## 2. Update policy (`renovate.json`)
 
 | Update class | Behaviour |
 |---|---|
-| **npm** (dev + runtime, incl. **major**) | **Auto-merge on green** — CI (unit + integration + e2e on a live stack) genuinely exercises them, so a breaking bump fails CI and never merges. |
-| GitHub Actions, lockfile, security fixes | **Auto-merge on green.** |
-| **Candidate-tested infra images** (nginx, kong) | **Auto-merge patch/minor/digest**, gated by the **required `Tier-1 candidate boot` check** (boots the candidate with the real config — see [infra-image-automation.md](infra-image-automation.md) §0.3). |
-| Untested docker (monitoring, cloudflared, postgrest, meta) | **Manual** — CI can't verify them yet. Shrinks to zero as they get candidate tests. Weekly Telegram digest so they don't pile silently. |
-| Docker **majors** | **Manual** — larger config surface than the Tier-1 test covers. |
-| **Stateful trio** (postgres/gotrue/storage) | **Frozen.** Auto-update is unsafe — migration/data coupling, and storage has no restore source, so "roll back on failure" is impossible. Rehearsed restore only; Trivy pages on a CVE. |
+| **npm** patch/minor/pin/digest | ONE grouped PR `npm (non-major)`, auto-merge on green. `prPriority` 5. |
+| **Lock file maintenance** | Auto-merge on green, `prPriority` 10 (carries most transitive security fixes). |
+| **Security fixes** (`vulnerabilityAlerts`) | Separate PR per package, label `security`, auto-merge on green. Known gap: a package that must move with its monorepo sibling (vitest ↔ @vitest/coverage-v8) breaks `npm ci` on its own — the grouped PR / lockfile maintenance then carries it. |
+| **Majors** (all managers except Actions) | **Dependency Dashboard approval** first; once approved, auto-merge on green like the rest (labelled `major`). |
+| **GitHub Actions** (incl. majors) | Auto-merge on green. |
+| **Candidate-tested images** (nginx, kong, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgrest, postgres-meta, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
+| **Stateful trio** (postgres/gotrue/storage-api) | patch/minor/digest auto-merge, gated by the **Tier-3 migration-compat** test (same required check). Lands in the repo only — prod apply is the rehearsed runbook. |
+| **Untested images** (cloudflared, studio, cadvisor, nginxlog-exporter, node in monitoring) | **Dashboard approval** → PR → manual merge. |
+| **Renovate itself** (`RENOVATE_VERSION` in `renovate.yml`) | patch/minor auto-merge. |
 
-**"When it goes wrong → call me":** a broken auto-update **fails CI → auto-merge holds (nothing lands) →
-[renovate-alert.yml](../../.github/workflows/renovate-alert.yml) pings Telegram** with the failing run.
-The residual manual items ping via the weekly digest in [renovate.yml](../../.github/workflows/renovate.yml).
-(True auto-rollback of a *deployed* change is Phase 1 blue-green — not built; the manual, verified
-`main→production` promote is today's prod gate, so nothing reaches prod unattended.)
+Why approval instead of open PRs for majors/untested images: an open PR nobody merges holds a
+`prConcurrentLimit` slot forever. That is exactly how the high-value grouped/lockfile PRs got starved.
 
----
-
-## 1. Goal
-
-Keep dependencies current and catch newly-disclosed vulnerabilities — across npm packages,
-the Docker base image, the prod compose images, and GitHub Actions — with **minimal
-maintenance** and **no new always-on platform**. Everything is GitHub-native plus one
-self-hosted scanner job; the only standing cost is reviewing PRs and the occasional security
-finding.
-
-This plan adapts the generic brief to four hard realities of *this* repo:
-
-1. **Exact-pin discipline.** Every npm dep is an exact version — zero `^`/`~` ranges (project
-   HARD RULE). The updater must *replace* an exact pin with a new exact pin, never widen to a
-   range.
-2. **Migration-coupled images.** `postgres` / `gotrue` / `storage-api` in the prod compose are
-   pinned to match the restored DB dump + migration state; bumping them needs a rehearsed
-   restore, not an automated PR.
-3. **Manual infra deploys.** Compose / `.env` / nginx changes are hand-synced to the VPS; image
-   rolls are the only automated deploy. A compose-image PR updates the *repo*, not the running
-   stack.
-4. **Existing controls.** `npm audit --audit-level=high` already gates CI + deploy
-   (`audit-reusable.yml`), and a Telegram alert path already exists (Alertmanager on the VPS).
-   We extend these, not duplicate them.
+Exact pins: every npm dep is exact (`.npmrc save-exact=true`, `rangeStrategy: pin`) — project HARD RULE.
+`engines` is left alone (deliberate floor). `package.json` `overrides.postcss` is a security pin over
+next's nested postcss — keep it ≥ next's own pin; Renovate bumps it.
 
 ---
 
-## 2. Locked decisions (decision log)
+## 3. Gates and detectors
 
-These were decided up-front; the rationale is the point of the document.
+- **`audit-reusable.yml`** (required check `audit / npm audit (fail on high/critical)`) — **diff gate**:
+  fails only if the change *adds* a runtime (`--omit=dev`) high/critical advisory vs its base commit
+  (PR base / merge-group base / previous main commit). Fails loudly if `npm audit` itself errors.
+  Pre-existing advisories are printed as a warning, never block. Dev-only advisories: Dependabot.
+- **Dependabot** — alerts ON, security *updates* OFF (Renovate is the single PR source). No `dependabot.yml`.
+- **`trivy.yml`** nightly — `:production` image (what's running) → `trivy-prod-image`; repo fs
+  misconfig + secrets → `trivy-fs`; both SARIF → Code scanning. Informational (job summary only):
+  `:latest` + every third-party image in both compose files, **derived from the compose files**.
+  `ignore-unfixed` everywhere. Accepted risks → `.trivyignore` (or `.trivyignore.yaml` with `expired_at`).
+- **Candidate image tests** — [infra-image-automation.md](infra-image-automation.md) §0.3.
 
-| # | Decision | Rationale |
-|---|----------|-----------|
-| D1 | **Self-hosted Renovate** (GitHub Action on cron), not the Mend hosted App | Consistent with the project's self-hosted-everything thesis (Supabase, Prometheus/Grafana). No third-party GitHub App gets read/write to the repo. We own the schedule + execution. |
-| D2 | **Fine-grained PAT** (`RENOVATE_TOKEN`), repo-scoped (full permission set in §5 — `Contents/Pull requests/Issues/Workflows: write` + `Dependabot alerts/Metadata: read`) | Simpler than a dedicated GitHub App; sufficient for self-hosted Renovate. Critically: a non-`GITHUB_TOKEN` identity is **required** so Renovate's PRs trigger `ci.yml` (GitHub suppresses workflow triggers from `GITHUB_TOKEN`), which the automerge-on-green tier depends on. `workflows: write` is required for the Actions digest-pin PRs. Cost: account-bound, manual expiry — tracked in the maintenance policy. |
-| D3 | **Renovate is the single PR source**; Dependabot **Alerts ON, Security Updates OFF** | Both bots can raise CVE-fix PRs; running both = duplicate PRs. Renovate raises everything (incl. `vulnerabilityAlerts`); Dependabot's alert graph stays for the native Security dashboard + email. No `dependabot.yml` (that file is for *version* updates, which Renovate owns). |
-| D4 | Renovate manages **stateless** compose images; **ignores** `postgres`/`gotrue`/`storage-api` | Those three are coupled to the restored dump + migration state — see [deploy/production/README.md](../../deploy/production/README.md) "Version pinning rationale". A bump requires a rehearsed restore, so it must never arrive as an auto-PR. |
-| D5 | **Limited automerge**, gated on green `ci.yml` | Risk-tiered: automerge only GitHub Actions updates, devDependency patch/minor, and lockfile maintenance — *because* the unit+integration+e2e suite gates them. App deps (any), majors, and all Docker/base/compose bumps stay manual PRs. Ties the real test suite into the update flow. |
-| D6 | **Trivy** scans the **deployed** image `:production` (gates HIGH/CRIT) + the next-trunk image `:latest` (informational) + filesystem (misconfig + secrets) + Supabase images (**informational**) | "Detect CVEs after deployment" means scanning *what is actually running* — that is `:production` (a promoted SHA that can lag `main` or be rolled back), **not** `:latest` (only the newest main build). `:latest` is scanned too as early warning for the next promote. App image + repo are what we can fix → they gate; `:latest` + Supabase images are third-party/pinned/not-yet-deployed → report-only. |
-| D7 | Trivy findings → **SARIF to GitHub Security** (Code scanning) | Repo is public, so Code scanning is free. Browsable/dismissable/historical, dedups with Dependabot — the idiomatic GitHub-native integration. |
-| D8 | GitHub fails+notifies on **HIGH/CRITICAL**; **Telegram pages on CRITICAL only** | We don't *ship* a HIGH/CRITICAL build (gate fails → GitHub email/notification covers HIGH). But the existing Telegram channel is reserved for things that warrant interrupting you — so only **CRITICAL** mirrors there, alongside the SLO alerts. A dedicated CRITICAL-severity Trivy pass drives the page (see §4.3). |
-| D9 | **Keep the `npm audit` deploy gate** | Synchronous + blocking: a known high/critical npm CVE stops the build from shipping. Renovate/Dependabot are async (PRs/alerts) and cannot stop a deploy. Complementary defense-in-depth. |
-| D10 | **Protect `main`** with required CI checks | Trunk hygiene + enables Renovate's native auto-merge. **Consequence: ends direct push-to-main** — all changes (yours included) go through PRs. `ci.yml` already runs on `pull_request → main`, so the flow is fully supported. |
-
-### Rejected / out of scope
-- **Mend hosted Renovate App** — rejected per D1 (third-party repo access).
-- **Auto-bumping the stateful Supabase trio** — rejected per D4 (migration risk).
-- **Dependabot version updates** (`dependabot.yml` with `package-ecosystem` entries) — rejected
-  per D3 (Renovate owns versions; would duplicate PRs).
-- **External platforms (Snyk, Grafana panels for deps, etc.)** — out of scope per the brief;
-  GitHub-native + the existing Telegram bot only.
-- **Auto-*deploying* compose-image bumps** — out of scope; compose is manual infra (reality #3).
-  Renovate only opens the repo PR; the VPS sync stays a human step.
+Branch protection on `main`: 7 required checks (`audit / npm audit (fail on high/critical)`,
+`Lint & build check`, `unit / Unit tests`, `integration / Integration tests`, `build / Build & push`,
+`e2e / Playwright E2E`, `Tier-1 candidate boot`); **not** strict (branches needn't be up to date);
+enforced for admins; no required reviews. Renaming any of these jobs breaks protection — keep names.
 
 ---
 
-## 3. Architecture
+## 4. From merged to deployed
 
-```
-                 ┌─────────────────────────── GitHub-native ───────────────────────────┐
- npm / Docker /  │  Renovate (self-hosted Action, weekly) ── PRs ──▶ ci.yml ──▶ merge   │
- Actions /       │      └ low-risk tiers: native auto-merge on green                     │
- compose tags    │  Dependabot Alerts (graph) ─────────────▶ Security tab + email        │
-                 │  Trivy (Action, nightly) ── SARIF ──────▶ Security ▸ Code scanning     │
-                 │      └ HIGH/CRIT in app image/fs ─ fail ─▶ GitHub notify + Telegram    │
-                 │  npm audit (ci.yml, sync) ── HIGH/CRIT ─▶ BLOCKS build/deploy          │
-                 └───────────────────────────────────────────────────────────────────────┘
-```
-
-Four independent signals, each matched to its domain; no shared always-on service.
-
----
-
-## 4. Components — precise spec
-
-### 4.1 Renovate
-
-**`renovate.json`** (repo root). Key settings:
-
-```jsonc
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    ":dependencyDashboard",
-    "docker:pinDigests",                  // pin Docker tags → digests (node, nginx, etc.)
-    "helpers:pinGitHubActionDigests"      // pin Actions @vN → digest (integrity parity)
-  ],
-  // No top-level `schedule` and no `timezone`: the workflow cron (renovate.yml) is the SOLE timing
-  // control, so a run (scheduled or dispatched) always opens due PRs. (An in-renovate.json schedule
-  // that disagreed with the cron previously caused runs to open nothing — see the cron note below.)
-  "prConcurrentLimit": 8,
-  "prHourlyLimit": 0,                              // no per-hour cap (default is 2) — prConcurrentLimit governs
-  "rangeStrategy": "pin",                          // never widen an exact pin (reality #1)
-  // lockFileMaintenance's Renovate DEFAULT schedule is "before 4am on monday" — override to
-  // "at any time" so the cron alone gates it (otherwise a non-Monday cron never triggers it).
-  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"] },
-  "vulnerabilityAlerts": { "labels": ["security"], "automerge": false },  // Renovate raises CVE PRs (D3)
-  "major": { "dependencyDashboardApproval": true },                       // majors are opt-in (D5)
-  "packageRules": [
-    // ── PHASE 4 ONLY — automerge tier (D5). Left COMMENTED OUT so this snippet is the safe Phase-1
-    //    config (`automerge: true` merges via Renovate's own API once checks pass even with
-    //    `platformAutomerge: false`). Uncomment these THREE rules in Phase 4, after main is protected. ──
-    // { "matchManagers": ["github-actions"], "automerge": true },
-    // { "matchDepTypes": ["devDependencies"], "matchUpdateTypes": ["patch", "minor"], "automerge": true },
-    // { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
-
-    // ── Leave engines alone: `engines.node` is a deliberate floor (>=22), not a pin-to-latest target.
-    //    Without this, rangeStrategy:pin rewrites it to the newest Node (wrong — we run Node 22). ──
-    { "matchDepTypes": ["engines"], "enabled": false },
-
-    // ── Manual-only tiers (D5) — present from Phase 1 (these are all automerge:false) ──
-    // Manual tiers — automerge:false + a `needs-review` label so they're filterable (auto-merge
-    // tiers stay unlabelled and self-clear; filter `label:needs-review` to see what needs you).
-    { "matchDepTypes": ["dependencies"], "automerge": false, "addLabels": ["needs-review"] },  // prod deps
-    { "matchDatasources": ["docker"], "automerge": false, "addLabels": ["needs-review"] },     // base/compose images
-    { "matchUpdateTypes": ["major"], "automerge": false, "addLabels": ["needs-review"] },
-
-    // ── Migration-coupled stateful images (D4): block version + digest UPDATES, but ALLOW the
-    //    one-time digest PIN so the exact approved image is locked by sha. Version moves
-    //    only ever happen via the rehearsed-restore process, never an auto-PR. ──
-    { "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "public.ecr.aws/supabase/postgres",
-        "public.ecr.aws/supabase/gotrue",
-        "public.ecr.aws/supabase/storage-api"
-      ],
-      "matchUpdateTypes": ["major", "minor", "patch", "digest"],         // pinDigest is NOT listed → still allowed
-      "enabled": false }
-  ],
-  "platformAutomerge": false                        // Phase 4: flip to true (GitHub-native auto-merge). NOTE: this is NOT the automerge on/off switch — see the packageRules note above.
-}
-```
-
-Notes:
-- **Automerge is governed by the `automerge` packageRules, not `platformAutomerge`.** Phase 1 ships
-  *without* the three `automerge: true` rules; Phase 4 adds them once `main` is protected and flips
-  `platformAutomerge: true` so the merge uses GitHub-native auto-merge.
-- The stateful trio still gets a one-time **digest-pin** PR (safe — same image, locked by sha); only
-  *version* and *digest-update* PRs are suppressed.
-- `rangeStrategy: "pin"` + already-pinned manifest ⇒ Renovate emits exact→exact bumps, honoring
-  the HARD RULE. (Verified mentally against `package.json`: 0 ranges today.)
-- `config:recommended` already covers `npm`, `dockerfile`, `docker-compose`, and
-  `github-actions` managers — no manager config needed.
-- `docker:pinDigests` pins image tags to digests for stronger supply-chain integrity (optional;
-  can drop if digest churn is noisy).
-- Dependency Dashboard (a tracking issue) gives a single at-a-glance board — good operability +
-  reviewer signal.
-
-**`.github/workflows/renovate.yml`** — self-hosted runner (D1/D2):
-
-```yaml
-name: Renovate
-on:
-  schedule: [{ cron: '47 3 * * 2' }]  # Tue 03:47 UTC — off the :00 high-load slot (GitHub crons are best-effort)
-  workflow_dispatch:
-    inputs:
-      logLevel: { description: 'Renovate log level', default: 'info' }
-concurrency: { group: renovate, cancel-in-progress: false }
-jobs:
-  renovate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: renovatebot/github-action@v40   # pin to a digest/exact in impl
-        with:
-          token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: renovate.json
-        env:
-          RENOVATE_REPOSITORIES: devmildfire/bookstore-app
-          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
-```
-
-**Pre-req fix:** `deploy/production/docker-compose.yml` uses `cloudflare/cloudflared:latest`.
-Renovate can't track a moving `latest` tag — pin it to the current explicit version first
-(otherwise it's silently unmonitored). Confirm `nginx` / `kong` / `postgrest` / `postgres-meta`
-/ `studio` carry trackable tags (they do).
-
-### 4.2 Dependabot (alerts only — D3)
-
-No file. Repo Settings → **Code security and analysis**:
-- **Dependency graph**: ON (default for public repos).
-- **Dependabot alerts**: ON.
-- **Dependabot security updates**: **OFF** (Renovate raises the fix PRs).
-
-Result: GitHub's Security dashboard + email for new CVEs; Renovate does the PR.
-
-### 4.3 Trivy
-
-**`.github/workflows/trivy.yml`** — nightly + manual (D6/D7/D8):
-
-```yaml
-name: Trivy
-on:
-  schedule: [{ cron: '0 3 * * *' }]   # nightly 03:00 UTC
-  workflow_dispatch:
-permissions:
-  contents: read
-  packages: read                      # pull :production / :latest from GHCR (matches ci.yml's e2e job)
-  security-events: write              # SARIF upload to Code scanning
-jobs:
-  # ── Gating: the DEPLOYED image (:production), HIGH/CRIT gate, CRITICAL→Telegram (D6/D8) ──
-  app-image:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - name: GHCR login                       # :production is public but GHCR wants a token
-        uses: docker/login-action@v4
-        with: { registry: ghcr.io, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
-
-      # 1) Visibility: scan once → SARIF, never aborts (exit-code 0).
-      - name: Trivy — :production → SARIF
-        uses: aquasecurity/trivy-action@<pin>
-        with:
-          image-ref: ghcr.io/devmildfire/bookstore-app:production
-          format: sarif
-          output: trivy-prod.sarif
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true                 # only actionable (a fix exists)
-          exit-code: '0'
-      - uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with: { sarif_file: trivy-prod.sarif, category: trivy-prod-image }
-
-      # 2) CRITICAL-only pass drives the Telegram page (D8). DB is cached → cheap re-scan.
-      - name: Trivy — :production CRITICAL check
-        id: crit
-        continue-on-error: true
-        uses: aquasecurity/trivy-action@<pin>
-        with: { image-ref: ghcr.io/devmildfire/bookstore-app:production, severity: CRITICAL, ignore-unfixed: true, exit-code: '1', format: table }
-      - name: Telegram page — CRITICAL only
-        if: steps.crit.outcome == 'failure'
-        env: { TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}, TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }} }
-        run: |
-          curl -fsS "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-            -d chat_id="${TG_CHAT}" \
-            -d text="🛑 Trivy: CRITICAL CVE in DEPLOYED image (:production) — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-      # 3) Gate: fail the job (→ GitHub email/notification) on HIGH *or* CRITICAL.
-      - name: Trivy — :production gate (HIGH,CRITICAL)
-        uses: aquasecurity/trivy-action@<pin>
-        with: { image-ref: ghcr.io/devmildfire/bookstore-app:production, severity: HIGH,CRITICAL, ignore-unfixed: true, exit-code: '1', format: table }
-    # ponytail: 3 Trivy passes share a cached DB; if it ever drags, collapse to one JSON + jq.
-
-  # ── Filesystem: misconfig + secret + vuln. REPORT-ONLY until a baseline is committed. ──
-  filesystem:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - name: Trivy — fs (vuln + misconfig + secret)
-        uses: aquasecurity/trivy-action@<pin>
-        with:
-          scan-type: fs
-          scanners: vuln,misconfig,secret
-          format: sarif
-          output: trivy-fs.sarif
-          severity: HIGH,CRITICAL
-          trivyignores: .trivyignore          # commit an EMPTY .trivyignore with this workflow so the input resolves; populate after the baseline triage
-          exit-code: '0'                       # Phase 3a: 0 (report-only). Phase 3b: flip to 1 to gate.
-      - uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with: { sarif_file: trivy-fs.sarif, category: trivy-fs }
-
-  # ── Informational (NO gate, D6): next-promote image :latest + the third-party Supabase stack ──
-  informational-images:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        image:
-          - ghcr.io/devmildfire/bookstore-app:latest      # early warning for the next promote
-          - public.ecr.aws/supabase/postgres:17.6.1.106
-          - public.ecr.aws/supabase/gotrue:v2.188.1
-          - public.ecr.aws/supabase/storage-api:v1.54.1
-          - public.ecr.aws/supabase/postgrest:v14.10
-          - public.ecr.aws/supabase/postgres-meta:v0.96.4
-          - kong/kong:3.9.1
-    steps:
-      - name: GHCR login                       # for the :latest entry
-        uses: docker/login-action@v4
-        with: { registry: ghcr.io, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
-      - name: Trivy — ${{ matrix.image }} (report only)
-        uses: aquasecurity/trivy-action@<pin>
-        with: { image-ref: ${{ matrix.image }}, format: table, severity: HIGH,CRITICAL, exit-code: '0', output: report.txt }
-      - name: Publish to job summary
-        if: always()
-        run: cat report.txt >> "$GITHUB_STEP_SUMMARY"
-```
-
-Notes:
-- `ignore-unfixed: true` on the gating scans → only fail when a fix is actually available
-  (avoids blocking on un-actionable CVEs). The informational job keeps unfixed too (full
-  visibility).
-- The gated image is `:production` (the SHA actually promoted + running on the VPS — `:latest`
-  only tracks the newest main build and ignores rollbacks). `:latest` is scanned informationally
-  as early warning for the next promote.
-- The informational image list mirrors `docker-compose.yml` by hand (a small drift risk — note
-  it in the file comment; Renovate bumps the compose tags, this list updates in the same PR).
-  `ponytail:` duplicated list, dedupe via a parsed compose only if it churns.
-
-### 4.4 npm audit gate (unchanged — D9)
-
-`audit-reusable.yml` stays exactly as-is (sync gate in `ci.yml` + the deploy path). No change;
-documented here so the full picture is in one place.
-
-### 4.5 Branch protection on `main` (D10)
-
-Settings → Branches → add a rule for `main`:
-- **Require status checks to pass before merging.** ⚠ Because `ci.yml` uses *reusable* workflows,
-  the visible check-context strings are not reliably guessable (they render as caller/inner and
-  can vary). **Do not hard-code them** — open one throwaway PR, let `ci.yml` run, then in the
-  branch-protection UI **select the exact contexts from the list it presents** (the jobs we want:
-  audit, lint, unit, integration, build, e2e).
-- **Require branches to be up to date before merging.**
-- Do **not** require linear history / signed commits (not used today).
-- Repo setting → **Allow auto-merge: ON**; **Automatically delete head branches: ON**.
-
-> ⚠ This ends direct `git push origin main`. New flow: branch → PR → green `ci.yml` → merge
-> (Renovate auto-merges its low-risk tier; you merge yours). Promotion to prod is unchanged
-> (`git push origin main:production`). Update [docs/deployment/github-actions-ci-cd.md] +
-> [README.md] to describe the PR-based trunk flow when this lands.
-
----
-
-## 5. Secrets to add (repo → Settings → Secrets and variables → Actions)
-
-| Secret | For | Notes |
-|--------|-----|-------|
-| `RENOVATE_TOKEN` | Renovate Action | Fine-grained PAT, **this repo only**. Permissions (these are the real fine-grained-PAT names): `Contents: write` (push branches), `Pull requests: write` (open PRs), `Issues: write` (Dependency Dashboard issue), `Workflows: write` (**required** — Renovate edits `.github/workflows/*` for the Actions digest pins; GitHub blocks workflow-file pushes without it), `Dependabot alerts: read` (for `vulnerabilityAlerts`), and `Metadata: read` (mandatory/auto). There is **no "Checks" permission** in fine-grained PATs; CI-status reading for Phase-4 automerge is covered by Metadata (add `Commit statuses: read` only if needed). Set a calendar reminder for expiry (D2). |
-| `TELEGRAM_BOT_TOKEN` | Trivy → Telegram | Same bot as the monitoring stack (token currently only on the VPS in `monitoring/alertmanager/telegram_token`). |
-| `TELEGRAM_CHAT_ID` | Trivy → Telegram | The existing alert chat. |
-
----
-
-## 6. Implementation phases & tracker
-
-Legend: `[ ]` pending · `[~]` in progress · `[x]` done · `[!]` blocked
-
-### Phase 0 — Pre-reqs (no behavior change)
-- [x] Pin `cloudflare/cloudflared` → `2026.6.0` in `deploy/production/docker-compose.yml` (the version
-      currently running in prod; no behavior change). *(VPS compose copy still says `:latest` — syncs on
-      the next manual infra push; the repo file is what Renovate reads.)*
-- [ ] Create the fine-grained PAT; add `RENOVATE_TOKEN` secret. **← only remaining Phase 0 item (needs you).**
-- [x] Add `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` secrets — set from the VPS bot (2026-06-27).
-
-### Phase 1 — Renovate (PRs only, NO automerge)
-- [x] Add `renovate.json` — implemented as strict JSON with the `automerge: true` rules **omitted**
-      (cleaner than commenting; Phase 4 adds them) and `platformAutomerge: false`. The
-      `automerge: false` manual-tier rules + the stateful-trio exclusion are active.
-- [x] Add `.github/workflows/renovate.yml` (action digest-pinned to `v46.1.16`).
-- [x] Manual `workflow_dispatch` — Dependency Dashboard (#1) created; updates detected across npm /
-      Docker / Actions; schedule-gating, major-approval, and the stateful-trio exclusion all verified
-      behaving as designed.
-- [x] Verify a Renovate PR **triggers `ci.yml`** — confirmed: PR #2 (`@playwright/test` patch, forced
-      via the dashboard) triggered the CI `pull_request` run. PAT identity works.
-- [x] **Acceptance — digest pinning lands:** forced via the dashboard + merged — PR #3 (Actions +
-      Dockerfile syntax + compose digests, incl. the stateful trio by `@sha256`) and PR #4
-      (`node:22-alpine` → `node:22.23.1-alpine@sha256`). `node`, compose tags, and all Actions are now
-      digest-pinned on `main`. *(The compose digests reach the VPS on the next manual infra sync; the
-      Dockerfile pin takes effect on the next image build.)*
-
-### Phase 2 — Dependabot alerts
-- [x] Dependency graph on (default, public repo); Dependabot **Alerts ON** (`PUT vulnerability-alerts`
-      → 204); Dependabot **Security Updates OFF** (`automated-security-fixes` = `enabled:false`) so
-      Renovate stays the single PR source.
-
-### Phase 3 — Trivy ✅
-**3a — report-only baseline:**
-- [x] Added `trivy.yml` (image + fs report-only) + empty `.trivyignore`; SARIF lands in
-      **Security ▸ Code scanning** (`trivy-prod-image` + `trivy-fs`).
-- [x] Baseline surfaced 9 findings; triaged.
-
-**Baseline triage outcome — fixed, not ignored (`.trivyignore` stayed empty):**
-- js-yaml + @babel/core (transitive devDeps) → bumped via Renovate **lock file maintenance** (PR #5).
-- 6 base-image **npm** CVEs (`/usr/local/lib/node_modules/npm/...`, unused by the standalone
-  runtime) → **removed npm from the runtime image** (Dockerfile), eliminating them outright.
-- `DS-0026` (no HEALTHCHECK) → added a `HEALTHCHECK` to the runner stage.
-- New image built, **promoted to `:production`** (verified `(healthy)` + `npm REMOVED` on the VPS) →
-  all 9 code-scanning alerts closed (0 open).
-
-**3b — gates on:**
-- [x] Filesystem scan gates (`exit-code: 1`); informational job (`:latest` + Supabase) never fails.
-- [x] `:production` gates on HIGH/CRITICAL; verified the gated run passes clean now that the image is fixed.
-- [x] CRITICAL→Telegram **live-verified** (2026-06-27) — a throwaway scan of a known-vulnerable image
-      fired the page end-to-end (message delivered). HIGH-only fails the run but does not page.
-
-### Phase 4 — Branch protection + automerge (the disruptive step, last)
-- [x] Added the three `automerge: true` packageRules + flipped `platformAutomerge: true` in
-      `renovate.json` (the `false`/major rules are ordered after, so they override on overlap).
-- [x] Updated `docs/deployment/github-actions-ci-cd.md` for the PR-based trunk flow.
-- [x] Enabled branch protection on `main`: required status checks = the 6 `ci.yml` jobs
-      (`audit / npm audit …`, `Lint & build check`, `unit / Unit tests`, `integration / Integration tests`,
-      `build / Build & push`, `e2e / Playwright E2E`); strict (up-to-date) + enforced for admins → **no
-      direct push to `main`**. No required reviews (solo repo). Repo Allow-auto-merge + delete-on-merge on.
-- [x] Verified: PR #6 (trivy-action digest, a github-actions update) was opened by Renovate with
-      GitHub native auto-merge enabled and **auto-merged on green** (branch auto-deleted). Prod-dep /
-      major / Docker PRs still require manual merge (automerge:false / dashboard approval).
-
-### Phase 5 — Docs ✅
-- [x] Marked this plan implemented; added a "Dependency & vulnerability monitoring" section to
-      [docs/deployment/README.md](../deployment/README.md) (the four signals + review ritual) and an
-      operating note to `AGENTS.md` (protected `main`, PR-only flow, the four signals).
-
----
-
-## 7. Maintenance policy
-
-- **Weekly** — triage the Renovate Dependency Dashboard; merge safe non-automerged PRs;
-  glance at any new Code-scanning findings.
-- **Monthly** — review held major upgrades (dashboard-approval gated); decide Node LTS / base
-  image moves; check the `RENOVATE_TOKEN` expiry. Also **manually check the frozen trio**
-  (`postgres`/`gotrue`/`storage-api`) for upstream releases — Renovate is `enabled:false` for them
-  (D4), so no PR will ever surface a new version; the only signal otherwise is a CVE advisory.
-- **When a hand-maintained image pin moves** (Renovate bumps `kong`/`postgres-meta`/`nginx` in the
-  prod compose, or you bump the frozen trio) — also update the **Trivy informational matrix** in
-  [.github/workflows/trivy.yml](../../.github/workflows/trivy.yml), which mirrors those tags by hand.
-  Out of sync ⇒ the nightly scan silently reports on stale versions.
-- **On a stateful-image advisory** (postgres/gotrue/storage-api flagged by the informational
-  Trivy job) — schedule a **rehearsed restore** + version bump per
-  [supabase-production-bootstrap.md](../deployment/supabase-production-bootstrap.md); never a
-  drive-by merge.
-
-### From detection to deployment (this doc = *detection*; the apply is separate)
-
-Renovate/Trivy only **detect + PR**. Merging a PR changes **git, not the VPS.** How a merged update
-actually reaches production depends on what it is:
+Merging changes **git, not the VPS**.
 
 | Update kind | Path to prod |
 |---|---|
-| **App image** (our code) | Automated — `git push origin main:production` → `deploy-production.yml` (gated on the SHA's green `ci.yml`) → `docker compose pull app && up -d app`. Has real tests (unit/integration/e2e). |
-| **Infra images / compose / nginx** (kong, nginx, monitoring, …) | **Manual, deliberate** — [infra-sync.md](../deployment/infra-sync.md): drift-audit → backup → sync → validate (`nginx -t`) → recreate **by name** → verify. No inherent tests, so it stays human-gated. |
-| **Stateful trio** (postgres/gotrue/storage) | Rehearsed restore / documented runbook — never a drive-by. |
+| App deps / app image | `git push origin main:production` → `deploy-production.yml` (requires green `ci.yml` for the SHA). **Manual** — the digest warns when prod lags >30 days. |
+| Infra images / compose / nginx | Manual [infra-sync.md](../deployment/infra-sync.md): drift-audit → backup → sync → validate → recreate by name → verify. |
+| Stateful trio | Rehearsed restore / runbook ([supabase-production-bootstrap.md](../deployment/supabase-production-bootstrap.md)). |
 
-The manual infra path is **proven** (2026-07: monitoring bumps + the nginx `1.27→1.31` window applied
-this way) and reaches prod over SSH as the `deploy` user (owns `/opt/chtivo`, in the `docker` group;
-see infra-sync.md). Making that path **safer and mostly-automated** — health-gated blue-green with
-auto-rollback, and the reason infra images need authored tests — is designed in
-[infra-image-automation.md](infra-image-automation.md). Health probes for that gate are being added
-per its Phase 0.1 (app + nginx done; the distroless services use external probing via the monitoring
-stack).
+A security fix is not done until it is **promoted**: Trivy keeps scanning `:production`, not `main`.
 
 ---
 
-## 8. Success criteria (maps to the brief)
+## 5. Runbook
 
-Automatically detected, with the mechanism:
+**Loop stalled** (digest: "last Renovate merge Nd ago", old open PRs, "Red: #…"):
+1. Open a red PR → which check fails? If many PRs fail the *same* check, the cause is on `main`, not in
+   the PRs — fix `main` first (one manual PR), then tick "rebase all open PRs" on the Dependency Dashboard.
+2. Check the dashboard's **Rate-Limited** section: if lockfile maintenance / `npm (non-major)` sit there,
+   stuck PRs are hogging slots — close the stale ones (Renovate recreates them when relevant).
+3. Stale security PRs targeting an outdated fix version: close them; Renovate reopens with the current target.
 
-| Detect | Mechanism |
-|--------|-----------|
-| Outdated npm packages | Renovate PRs |
-| Vulnerable npm packages | Dependabot alerts + Renovate vuln PRs + `npm audit` gate |
-| Outdated Docker base image | Renovate (`dockerfile` manager) |
-| Vulnerable OS packages (deployed image) | Trivy `:production` scan (gates HIGH/CRIT) |
-| Vulnerable OS packages (Supabase stack) | Trivy informational matrix |
-| Outdated GitHub Actions | Renovate (`github-actions` manager, automerged) |
-| Outdated compose images | Renovate — stateless set gets version updates; the stateful trio gets a digest pin only (version moves stay manual via rehearsed restore) |
-| Newly disclosed CVEs after deploy | Dependabot alerts (continuous) + nightly Trivy on `:production` |
+**Security PR red** — usually a monorepo split (see §2) or a breaking change in the fixed version.
+Do it by hand: bump the package + its siblings, `npm audit --omit=dev`, lint/unit/build, PR, then
+**promote to prod**. Regenerate the lockfile with CI's npm (`npx npm@<node's bundled npm> install`);
+a different npm version can drop optional `@emnapi/*` entries and break `npm ci`.
 
-Developer effort reduces to: review PRs + occasional security findings.
+**New CRITICAL page** — check the listed fix version vs `main` (`npm ls <pkg>`). If `main` already has it,
+just promote. If not, merge the Renovate PR it dispatched (or do it by hand), then promote.
+
+**`RENOVATE_TOKEN` expiring / Renovate failed** — create a new fine-grained PAT, this repo only:
+`Contents`, `Pull requests`, `Issues`, `Workflows`: write; `Dependabot alerts`, `Metadata`: read.
+Update the secret, dispatch `renovate.yml`. (The digest reads the expiry from the
+`github-authentication-token-expiration` header and warns <30 days before.)
+
+**Accepting a finding** — `.trivyignore` line `ID # reason, owner, date`, or `.trivyignore.yaml` with
+`expired_at` so it resurfaces. Never dismiss silently.
+
+---
+
+## 6. History & decisions
+
+- **2026-06-27** — shipped: self-hosted Renovate (PAT so its PRs trigger CI; no Mend app), Dependabot
+  alerts only, Trivy nightly → SARIF, `npm audit --audit-level=high` gate, protected `main`.
+- **2026-07** — "autonomous loop": npm (incl. majors) + Actions auto-merge; candidate-tested infra
+  images (Tier-1/2) auto-merge; stateful trio un-frozen behind the Tier-3 migration-compat test.
+- **2026-07-22 → 10-18 — silent stall.** A Next.js advisory (later CVE-2026-75604, unauthenticated RCE)
+  hit `main`. The whole-tree audit gate then failed **every** PR, including the fixes; 11 stuck PRs
+  filled `prConcurrentLimit`, so the grouped/lockfile PRs that would have fixed it were never created;
+  per-package security PRs each failed on the others. Alerts fired correctly but were repetitive
+  (~5 identical per week + 89 identical nightly pages) and said nothing actionable, so the RCE ran in
+  prod for ~3 months. Nothing watched the loop itself.
+- **2026-10-18 — rework** (this doc): audit → diff gate; majors + untested images → dashboard approval;
+  `prPriority` for grouped/lockfile; `needs-review` label dropped (it was mis-applied via stacked
+  `addLabels`); Renovate version pinned + self-updating; failure alert once per PR with failed jobs;
+  Trivy pages only NEW criticals with details + dispatches Renovate; informational image list derived
+  from compose; weekly loop-health digest (stall, red PRs, prod lag, criticals, PAT expiry);
+  Renovate/Trivy self-failure alerts; one shared sender `scripts/notify-telegram.sh`.
+
+Rejected: Mend hosted app (third-party write access); Dependabot version updates (duplicate PRs);
+auto-deploying anything to prod from Renovate (prod promote stays human); external platforms (Snyk etc.).

@@ -152,22 +152,9 @@ Completed on the VPS:
 
 ## Dependency & vulnerability monitoring
 
-GitHub-native + self-hosted, no extra platform. Four signals:
-
-- **Renovate** (self-hosted Action, weekly) — version-update + digest-pin PRs across npm, Docker, and
-  GitHub Actions. Low-risk updates (Actions, devDep patch/minor, lockfile) auto-merge on green; prod
-  deps / majors / Docker need manual merge. The migration-coupled Supabase images (`postgres`/`gotrue`/
-  `storage-api`) get a digest pin only, never a version bump.
-- **Dependabot Alerts** — the GitHub Security dashboard for new CVEs (Renovate raises the fix PRs;
-  Dependabot security *updates* are off to avoid duplicates).
-- **Trivy** (nightly) — scans the deployed `:production` image + repo filesystem, **gating** on
-  HIGH/CRITICAL → SARIF in Security ▸ Code scanning; a CRITICAL also pages Telegram. `:latest` + the
-  Supabase images are scanned informationally.
-- **`npm audit`** — synchronous CI gate (blocks shipping a high/critical build).
-
-**Review ritual:** weekly — triage the Renovate Dependency Dashboard + new Code-scanning findings;
-monthly — held majors, Node/base-image moves, `RENOVATE_TOKEN` expiry. Full design + tracker:
-[docs/plans/dependency-monitoring.md](../plans/dependency-monitoring.md).
+Renovate (auto-merge on green), Dependabot alerts, the PR-time `npm audit` diff gate and nightly Trivy,
+with Telegram alerts + a weekly loop-health digest. What each signal means, the update policy and the
+runbook: [docs/plans/dependency-monitoring.md](../plans/dependency-monitoring.md).
 
 > Note: `main` is **branch-protected** — no direct pushes; every change lands via a PR that passes the
 > full `ci.yml`. See [github-actions-ci-cd.md](github-actions-ci-cd.md).

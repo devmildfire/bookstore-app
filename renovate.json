@@ -4,49 +4,58 @@
     "config:recommended",
     ":dependencyDashboard",
     "docker:pinDigests",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    "customManagers:githubActionsVersions"
   ],
   "prConcurrentLimit": 8,
   "prHourlyLimit": 0,
   "rangeStrategy": "pin",
   "rebaseWhen": "conflicted",
-  "lockFileMaintenance": { "enabled": true, "schedule": ["at any time"], "automerge": true },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "automerge": true
+  },
   "vulnerabilityAlerts": { "labels": ["security"], "automerge": true },
+  "major": { "dependencyDashboardApproval": true },
   "packageRules": [
     { "matchDepTypes": ["engines"], "enabled": false },
     {
-      "description": "Label every major so the failure alert can flag it as a BREAKING change needing a decision. Majors still auto-attempt (they fail CI + alert if they break) — deliberately NOT gated.",
+      "description": "Label majors so renovate-alert.yml can word a failure as a BREAKING change. Majors only open once approved on the Dependency Dashboard (`major` above) — unapproved breaking majors used to churn CI, spam alerts and hold PR slots.",
       "matchUpdateTypes": ["major"],
       "addLabels": ["major"]
     },
     {
-      "description": "Autonomous loop: auto-merge all npm (dev+runtime, incl. major) on green. The real suite (unit+integration+e2e on a live stack) is the gate — a breaking bump fails CI and never merges.",
+      "description": "Auto-merge npm (dev + runtime) on green — the real suite (unit + integration + e2e on a live stack) is the gate.",
       "matchManagers": ["npm"],
       "automerge": true
     },
     {
-      "description": "Group ALL non-major npm updates into ONE PR. Every npm PR touches package-lock.json, so multiple open at once conflict the moment one merges (the queue clogs). One grouped PR = one lockfile change in flight = no sibling conflicts. Majors stay individual for blast-radius isolation.",
+      "description": "Group ALL non-major npm updates into ONE PR (every npm PR touches package-lock.json; siblings conflict the moment one merges). High priority: this PR + lockFileMaintenance carry most transitive security fixes, so they must never be starved by prConcurrentLimit (2026-07→10 they were — the loop deadlocked).",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
-      "groupName": "npm (non-major)"
+      "groupName": "npm (non-major)",
+      "prPriority": 5
     },
-    { "matchManagers": ["github-actions"], "automerge": true },
-    { "matchUpdateTypes": ["lockFileMaintenance"], "automerge": true },
     {
-      "description": "Default for docker: manual (untested — monitoring, cloudflared, postgrest, meta). CI can't verify them yet; a weekly digest pings so they don't pile silently. Overridden below for candidate-tested images.",
+      "description": "Lock file maintenance first: it refreshes every transitive (most npm audit fixes land here).",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "prPriority": 10
+    },
+    {
+      "description": "GitHub Actions auto-merge on green, majors included (CI exercises every workflow it touches).",
+      "matchManagers": ["github-actions"],
+      "automerge": true,
+      "dependencyDashboardApproval": false
+    },
+    {
+      "description": "Docker default: images CI can't verify (cloudflared, studio, cadvisor, nginxlog-exporter, node in monitoring) wait for Dependency Dashboard approval instead of opening a PR — an unreviewed open PR holds a prConcurrentLimit slot forever. Approved → PR → manual merge. Overridden below for candidate-tested images.",
       "matchDatasources": ["docker"],
       "automerge": false,
-      "addLabels": ["needs-review"]
+      "dependencyDashboardApproval": true
     },
     {
-      "description": "Docker majors: manual regardless — larger config surface than the Tier-1 candidate test covers.",
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "addLabels": ["needs-review"]
-    },
-    {
-      "description": "Infra images WITH a candidate test (Tier-1 config-boot or Tier-2 DB-coupled): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check (boots the candidate with real config/DB and probes health). Ordered AFTER the general docker rules so it wins (Renovate: later rule overrides). Majors excluded → stay manual via the rule above.",
+      "description": "Infra images WITH a candidate test (Tier-1 config-boot / Tier-2 DB-coupled): auto-merge patch/minor/digest, gated by the REQUIRED 'Tier-1 candidate boot' check. Ordered AFTER the docker default so it wins. Majors stay approval-gated.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "nginx",
@@ -61,10 +70,11 @@
         "prometheuscommunity/postgres-exporter"
       ],
       "matchUpdateTypes": ["patch", "minor", "digest"],
-      "automerge": true
+      "automerge": true,
+      "dependencyDashboardApproval": false
     },
     {
-      "description": "Formerly-frozen stateful trio (postgres/gotrue/storage-api): now gated by the Tier-3 MIGRATION-COMPAT candidate test (auth/storage: base migrates a prod-image DB → candidate applies its boot migration + serves → base still serves the migrated schema = expand-compat; db: candidate postgres must start on the base image's data dir with data intact). Auto-merge patch/minor/digest ON GREEN. NOTE: auto-merge lands the tested-good version in the REPO only — the prod APPLY stays the manual rehearsed runbook (backup → per-service swap → verify → rollback), because migrations/data must be applied by a human with a fresh backup. Ordered AFTER the general docker rules so it wins.",
+      "description": "Stateful trio (postgres/gotrue/storage-api): gated by the Tier-3 MIGRATION-COMPAT candidate test (same required check). Auto-merge patch/minor/digest on green — this lands the tested version in the REPO only; the prod apply stays the manual rehearsed runbook (backup → swap → verify → rollback). Majors stay approval-gated (a postgres major needs pg_upgrade, which Tier-3 will correctly fail).",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "public.ecr.aws/supabase/postgres",
@@ -72,19 +82,16 @@
         "public.ecr.aws/supabase/storage-api"
       ],
       "matchUpdateTypes": ["patch", "minor", "digest"],
-      "automerge": true
+      "automerge": true,
+      "dependencyDashboardApproval": false
     },
     {
-      "description": "Trio MAJORS stay manual: a postgres major needs pg_upgrade / logical-replication (not a compose swap), and the Tier-3 gate will correctly FAIL it (candidate can't start on the old data dir). Labeled for an explicit human decision + the MAJOR Telegram alert.",
+      "description": "Renovate's own version (RENOVATE_VERSION in renovate.yml): keep the bot current — non-major auto-merges.",
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "public.ecr.aws/supabase/postgres",
-        "public.ecr.aws/supabase/gotrue",
-        "public.ecr.aws/supabase/storage-api"
-      ],
-      "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "addLabels": ["needs-review", "major"]
+      "matchPackageNames": ["ghcr.io/renovatebot/renovate"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "dependencyDashboardApproval": false
     }
   ],
   "platformAutomerge": true
