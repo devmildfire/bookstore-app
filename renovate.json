@@ -59,6 +59,12 @@
       "dependencyDashboardApproval": false
     },
     {
+      "description": "Runner OS (`runs-on: ubuntu-24.04`, pinned so GitHub's ubuntu-latest flips don't change CI under us): an OS move needs Dependency Dashboard approval — PR CI exercises ci.yml on the new runner, but not deploy-production/trivy/renovate.",
+      "matchDatasources": ["github-runners"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
       "description": "Docker default: images CI can't verify (cloudflared, studio, cadvisor, nginxlog-exporter, node in monitoring) wait for Dependency Dashboard approval instead of opening a PR — an unreviewed open PR holds a prConcurrentLimit slot forever. Approved → PR → manual merge. Overridden below for candidate-tested images.",
       "matchDatasources": ["docker"],
       "automerge": false,
