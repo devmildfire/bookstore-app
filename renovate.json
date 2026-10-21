@@ -96,8 +96,6 @@
         "prom/node-exporter",
         "prom/pushgateway",
         "prom/alertmanager",
-        "public.ecr.aws/supabase/postgrest",
-        "public.ecr.aws/supabase/postgres-meta",
         "prometheuscommunity/postgres-exporter"
       ],
       "matchUpdateTypes": ["patch", "minor", "digest"],
@@ -105,16 +103,17 @@
       "dependencyDashboardApproval": false
     },
     {
-      "description": "Stateful trio (postgres/gotrue/storage-api): gated by the Tier-3 MIGRATION-COMPAT candidate test (same required check). Auto-merge patch/minor/digest on green — this lands the tested version in the REPO only; the prod apply stays the manual rehearsed runbook (backup → swap → verify → rollback). Majors stay approval-gated (a postgres major needs pg_upgrade, which Tier-3 will correctly fail).",
+      "description": "Supabase images follow Supabase's own self-hosted stack, not their newest releases (policy 2026-10: Renovate had pushed postgres/storage-api past what Supabase ships and tests together). scripts/supabase-upstream.py, run weekly by renovate.yml, opens a PR moving these UP to upstream's versions; the Tier-2/3 candidate tests still gate it.",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "public.ecr.aws/supabase/postgres",
         "public.ecr.aws/supabase/gotrue",
-        "public.ecr.aws/supabase/storage-api"
+        "public.ecr.aws/supabase/storage-api",
+        "public.ecr.aws/supabase/postgrest",
+        "public.ecr.aws/supabase/postgres-meta",
+        "public.ecr.aws/supabase/studio"
       ],
-      "matchUpdateTypes": ["patch", "minor", "digest"],
-      "automerge": true,
-      "dependencyDashboardApproval": false
+      "enabled": false
     },
     {
       "description": "Renovate's own version (RENOVATE_VERSION in renovate.yml): keep the bot current — non-major auto-merges.",

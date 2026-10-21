@@ -11,7 +11,7 @@ on:
     workflows: ['CI', 'Candidate infra image test']
     types: [completed]
     # Only renovate branches — avoids a skipped run for every main/feature CI completion.
-    branches: ['renovate/**']
+    branches: ['renovate/**', 'deps/**']
 
 permissions:
   contents: read
@@ -22,7 +22,7 @@ permissions:
 jobs:
   alert:
     if: >-
-      startsWith(github.event.workflow_run.head_branch, 'renovate/') &&
+      (startsWith(github.event.workflow_run.head_branch, 'renovate/') || startsWith(github.event.workflow_run.head_branch, 'deps/')) &&
       contains(fromJSON('["failure","success"]'), github.event.workflow_run.conclusion)
     runs-on: ubuntu-26.04
     steps:
