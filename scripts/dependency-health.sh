@@ -12,7 +12,7 @@ warn=() info=()
 
 # 1. Is the loop merging? (Renovate PRs are pushed by the PAT owner, so match the branch prefix.)
 last=$(gh pr list --repo "$REPO" --state merged -L 100 --json headRefName,mergedAt \
-  -q '[.[] | select(.headRefName | startswith("renovate/")) | .mergedAt] | max // empty')
+  -q '[.[] | select(.headRefName | startswith("renovate/") or startswith("deps/")) | .mergedAt] | max // empty')
 if [ -z "$last" ]; then warn+=("No merged Renovate PR found in the last 100 merges")
 elif [ "$(age "$last")" -gt $STALL_DAYS ]; then warn+=("Loop stalled: last Renovate merge $(age "$last")d ago")
 else info+=("Last Renovate merge: $(age "$last")d ago"); fi
@@ -20,7 +20,7 @@ else info+=("Last Renovate merge: $(age "$last")d ago"); fi
 # 2. Open renovate PRs, split by what they need: red (broken), green but manual (waiting on YOU —
 #    untested images by policy), and auto-merge PRs that sit too long (stuck: e.g. pending checks).
 prs=$(gh pr list --repo "$REPO" --state open -L 100 --json number,title,headRefName,createdAt,statusCheckRollup,autoMergeRequest \
-  -q '[.[] | select(.headRefName | startswith("renovate/"))
+  -q '[.[] | select(.headRefName | startswith("renovate/") or startswith("deps/"))
        | .red = ([.statusCheckRollup[]? | (.conclusion // .state)] | any(. == "FAILURE" or . == "ERROR"))]')
 info+=("Open Renovate PRs: $(jq length <<< "$prs")")
 while IFS=$'\t' read -r num created title; do warn+=("Red: #$num $title"); done < <(jq -r '.[] | select(.red)
@@ -32,6 +32,16 @@ done < <(jq -r '.[] | select((.red | not) and .autoMergeRequest == null) | [.num
 while IFS=$'\t' read -r num created title; do
   [ "$(age "$created")" -gt $STALL_DAYS ] && warn+=("Auto-merge stuck ($(age "$created")d): #$num $title")
 done < <(jq -r '.[] | select((.red | not) and .autoMergeRequest != null) | [.number, .createdAt, .title] | @tsv' <<< "$prs")
+
+# 2b. Supabase images vs Supabase's own self-hosted stack (policy: never ahead of it).
+if [ -f scripts/supabase-upstream.py ]; then
+  while read -r st line; do
+    case "$st" in
+      AHEAD) warn+=("Supabase $line") ;;
+      BEHIND) info+=("Supabase upstream moved: $line (sync PR runs weekly)") ;;
+    esac
+  done < <(python3 scripts/supabase-upstream.py 2>/dev/null || echo "AHEAD upstream check failed — run scripts/supabase-upstream.py")
+fi
 
 # 3. Waiting on you: majors / untested images parked for Dependency Dashboard approval.
 pending=$(gh issue list --repo "$REPO" --state open --search 'Dependency Dashboard in:title' -L 1 --json body \

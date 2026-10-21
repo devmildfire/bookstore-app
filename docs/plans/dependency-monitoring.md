@@ -44,8 +44,8 @@ Runtime/SLO alerts (Prometheus → Alertmanager → same bot) are separate: [doc
 | **Majors** (all managers except Actions) | **Dependency Dashboard approval** first; once approved, auto-merge on green like the rest (labelled `major`). |
 | **GitHub Actions** (incl. majors) | Auto-merge on green. |
 | **Runner OS** (`runs-on: ubuntu-24.04`, pinned) | Dashboard approval — PR CI doesn't exercise deploy/trivy/renovate on a new OS. |
-| **Candidate-tested images** (nginx, kong, cloudflared, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgrest, postgres-meta, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
-| **Stateful trio** (postgres/gotrue/storage-api) | patch/minor/digest auto-merge, gated by the **Tier-3 migration-compat** test (same required check). Lands in the repo only — prod apply is the rehearsed runbook. |
+| **Candidate-tested images** (nginx, kong, cloudflared, grafana, prometheus, node-exporter, pushgateway, alertmanager, postgres-exporter) | patch/minor/digest auto-merge, gated by the required `Tier-1 candidate boot` check. |
+| **Supabase images** (postgres, gotrue, storage-api, postgrest, postgres-meta, studio) | **Track Supabase's own self-hosted stack** — Renovate is disabled for them; `scripts/supabase-upstream.py` (weekly job in `renovate.yml`) opens a `deps/supabase-upstream` PR moving them **up** to upstream's versions (never ahead of its release line, never down), gated by CI + Tier-2/3 candidate tests. The digest warns if anything is ahead. Prod apply stays manual ([infra-upgrade-2026-10.md](infra-upgrade-2026-10.md)). |
 | **App Dockerfile base images** (node, docker/dockerfile) + `node` everywhere (setup-node, monitoring compose) | patch/minor/digest auto-merge — CI builds + e2e-tests the image on every PR. |
 | **Untested images** (studio, cadvisor, nginxlog-exporter, node in monitoring) | **Dashboard approval** → PR → manual merge. |
 | **Renovate itself** (`RENOVATE_VERSION` in `renovate.yml`) | patch/minor auto-merge. |

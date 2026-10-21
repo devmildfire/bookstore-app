@@ -72,6 +72,16 @@ jobs:
               head=$(img_of "$svc" < "$file" 2>/dev/null || true)
               if [ -n "$head" ] && [ "$base" != "$head" ]; then
                 echo "→ $svc changed in $file: ${base:-none} → $head"
+                # Tier-3 (db/auth/storage) proves a FORWARD upgrade: base migrates, candidate migrates
+                # on top. A pin moved DOWN vs main (e.g. re-aligning to Supabase upstream) isn't that
+                # path — prod never ran the newer version. Verify those with a dispatch run whose
+                # base_image = the version prod actually runs (see docs/plans/infra-upgrade-2026-10.md).
+                tag() { sed -E 's/@sha256:.*//; s/.*://; s/^v//' <<< "$1"; }
+                if [[ " db auth storage " == *" $svc "* ]] && [ -n "$base" ] \
+                   && [ "$(printf '%s\n%s\n' "$(tag "$base")" "$(tag "$head")" | sort -V | tail -1)" = "$(tag "$base")" ]; then
+                  echo "  ↓ $svc moved DOWN vs main — Tier-3 is forward-only; skipping (verify via dispatch against prod's version)"
+                  continue
+                fi
                 echo "::group::candidate $svc ($head)"
                 bash scripts/smoke/candidate-boot.sh "$svc" "$head" "$base"
                 echo "::endgroup::"

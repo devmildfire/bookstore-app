@@ -69,6 +69,41 @@ jobs:
 
   # Weekly health digest of the loop ITSELF (stalls, red PRs, prod lag, open criticals, PAT expiry).
   # Always sent on the schedule — the ✅ heartbeat also proves the alert path is alive.
+  # Supabase images track Supabase's own self-hosted stack (renovate.json disables Renovate for
+  # them). Weekly: move pins UP to upstream's versions (never past, never down) and open a PR —
+  # the Tier-2/3 candidate tests + CI gate it like any update. Branch is deps/… not renovate/…
+  # (Renovate prunes renovate/* branches it didn't create).
+  supabase-upstream:
+    if: ${{ github.event_name == 'schedule' || inputs.digest }}
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read # pushes/PRs use RENOVATE_TOKEN so CI triggers (GITHUB_TOKEN can't)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+      - name: Sync Supabase pins to upstream → PR
+        env:
+          GH_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          BRANCH: deps/supabase-upstream
+        run: |
+          set -euo pipefail
+          python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
+          python3 scripts/supabase-upstream.py --apply | tee sync.txt
+          git diff --quiet && { echo "Already aligned with Supabase upstream."; exit 0; }
+          git config user.name 'devmildfire'
+          git config user.email '97608157+devmildfire@users.noreply.github.com'
+          git checkout -B "$BRANCH"
+          git commit -qam "chore(deps): align Supabase images with Supabase's self-hosted stack"
+          git push -qf origin "$BRANCH"
+          body="Moves Supabase images up to the versions Supabase's own [self-hosted compose](https://github.com/supabase/supabase/blob/master/docker/docker-compose.yml) ships (policy: never ahead of it). Gated by CI + Tier-2/3 candidate tests.
+          \`\`\`
+          $(cat sync.txt)
+          \`\`\`"
+          gh pr view "$BRANCH" >/dev/null 2>&1 || gh pr create --base main --head "$BRANCH" \
+            --title "chore(deps): align Supabase images with Supabase's self-hosted stack" --body "$body"
+          gh pr merge "$BRANCH" --auto --squash
+
   digest:
     needs: renovate
     # Weekly only (+ manual dispatch with digest=true). Not on push (the rebase cascade) and not on
@@ -83,7 +118,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          sparse-checkout: scripts
+          sparse-checkout: |
+            scripts
+            deploy/production/docker-compose.yml
       - name: Dependency-loop health → Telegram
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -92,6 +129,7 @@ jobs:
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
           REPO: ${{ github.repository }}
         run: |
+          python3 -c 'import yaml' 2>/dev/null || pip install --quiet pyyaml
           msg=$(scripts/dependency-health.sh)
           echo "$msg" | tee -a "$GITHUB_STEP_SUMMARY"
           scripts/notify-telegram.sh "$msg"
