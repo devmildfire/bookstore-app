@@ -56,6 +56,9 @@ Legend: `[ ]` pending · `[x]` done · `[!]` blocked
 
 ### Phase 1 — Monitoring stack (window 1; no user impact; memory-capped services)
 Order, each: guard → pull → recreate → verify target `up`/dashboard → guard.
+**[x] Done 2026-10-22 00:37–00:54 UTC** — all 5 steps clean, guard OK before/after every step, nothing
+rolled back. Snapshots kept on the box: `~/chtivo-backups/prometheus-data-pre-v3-20261022T0044Z.tar.gz`
+(322 MB), `~/chtivo-backups/grafana-data-pre-v12-20261022T0048Z.tar.gz` (13 MB) — delete after ~2 weeks.
 1. pushgateway 1.10 → 1.11.4 · node-exporter 1.12.0 → 1.12.1 · alertmanager 0.33.1 → 0.34.1
 2. postgres-exporter 0.15 → 0.20.1 (verify `pg_up` + dashboard DB panels)
 3. psi-scheduler `node:20` → `node:24.22.0` (verify next PSI push lands in pushgateway)
@@ -86,3 +89,10 @@ Verify after each: guard + `curl` bookstore-app / api / grafana → 200.
 ## Log
 - 2026-10-18 — cAdvisor TargetDown flapping fixed on the box (#160; lean collectors + 20 s timeout).
 - 2026-10-21 — survey; decisions D1–D4; Phase 0 started.
+- 2026-10-22 — Phase 1 (window 1, unattended). Drift: monitoring = repo; prod compose repo-ahead only
+  (Phase 2 pins). Results: pushgateway 1.11.4, node-exporter 1.12.1, alertmanager 0.34.1 (healthy,
+  Prometheus sees it) · postgres-exporter 0.20.1 (`pg_up`=1, all dashboard `pg_*` series present; benign
+  WARN "no postgres_exporter.yml") · psi-scheduler node 24.22.0 (first run pushed, perf=90) ·
+  Prometheus 2.53.2 → 2.55.1 → 3.15.0 (7/7 targets up, 3 groups / 10 rules health ok, 7-day history
+  intact) · Grafana 11.6.16 → 12.4.13 → 13.2.4 (db ok, dashboard 30 panels, `/api/ds/query` OK; benign
+  errors for absent provisioning/plugins + /alerting dirs). Box compose md5 = repo HEAD. VPN untouched.
