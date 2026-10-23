@@ -120,7 +120,7 @@ services:
     # because the deploy user has no passwordless sudo and the host cron daemon is off —
     # and a compose service is more reproducible anyway (see ADR-0003). Runs on start,
     # then every 6h; `timeout` guards a hung run. Reads the SA key from ./psi (ro).
-    image: node:24.22.0-alpine@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f
+    image: node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
     restart: unless-stopped
     command: ["sh", "-c", "while true; do timeout 300 node /psi/psi-push.mjs || echo 'psi run failed'; sleep 21600; done"]
     volumes:
