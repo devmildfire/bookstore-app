@@ -72,6 +72,9 @@ rolled back. Snapshots kept on the box: `~/chtivo-backups/prometheus-data-pre-v3
 postgres-meta v0.96.6 → v0.100.0 · postgrest v14.10 → v14.18 · studio → 2026.10.12 · kong 3.9.3 → 3.9.4 ·
 nginx (same tag, new digest) · **cloudflared last** (only ingress → ~5 s site downtime; VPN unaffected).
 Verify after each: guard + `curl` bookstore-app / api / grafana → 200.
+**[x] Done 2026-10-23 00:37–00:50 UTC** — all 6 services upgraded, guard OK before/after every step,
+no real failure. ⚠ The box compose now pins Phase-3 versions (storage-api v1.81.0, gotrue v2.197.0) while
+the old ones run — a bare `docker compose up -d` would upgrade them unrehearsed. Never run one.
 
 ### Phase 3 — Production, stateful (window 3, after go-ahead)
 - **Rehearsal off-box first:** restore last night's DB dump + storage tarball (workstation copy) into a
@@ -96,3 +99,13 @@ Verify after each: guard + `curl` bookstore-app / api / grafana → 200.
   Prometheus 2.53.2 → 2.55.1 → 3.15.0 (7/7 targets up, 3 groups / 10 rules health ok, 7-day history
   intact) · Grafana 11.6.16 → 12.4.13 → 13.2.4 (db ok, dashboard 30 panels, `/api/ds/query` OK; benign
   errors for absent provisioning/plugins + /alerting dirs). Box compose md5 = repo HEAD. VPN untouched.
+- 2026-10-23 — Phase 2 (window 2, unattended). Drift: only the 8 repo-ahead image pins; db pin = running
+  17.6.1.150. Pre-pulled all 6 images, then: postgres-meta v0.100.0 (healthy) · postgrest v14.18 (schema
+  cache loaded, 0 errors) · studio 2026.10.12 (Next ready; still "unhealthy" — the known healthcheck
+  issue, unchanged) · kong 3.9.4 (healthy) · nginx 1.31-alpine new digest (healthy, `nginx -t` ok) ·
+  cloudflared 2026.10.3 (4 tunnel connections registered). Site / book page / grafana 200, api root 404
+  (= baseline, no route at `/`). Box compose md5 = repo HEAD. VPN untouched.
+  Incidents: (1) meta was rolled back once by a bug in the step helper (trailing space in the URL-check
+  string compared ≠ expected); the service itself was fine and was redone. (2) SSH connects to the VPS
+  time out in bursts (connection rate limit; fail2ban active) — one studio recreate was silently skipped
+  and redone. Use SSH multiplexing (ControlMaster/ControlPersist) for future windows.
