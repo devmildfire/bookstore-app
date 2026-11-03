@@ -33,7 +33,7 @@ permissions: {}
 
 env:
   # renovate: datasource=docker depName=ghcr.io/renovatebot/renovate
-  RENOVATE_VERSION: 44.207.0
+  RENOVATE_VERSION: 44.208.0
 
 jobs:
   renovate:
