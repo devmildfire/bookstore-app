@@ -132,7 +132,7 @@ services:
     # Routes firing alerts (from Prometheus) to Telegram. Config + bot token live on
     # the VPS only (gitignored; alertmanager.yml is rendered from .example with the
     # real chat_id, and the token is in a mounted file). See docs/monitoring/README.md.
-    image: prom/alertmanager:v0.34.2@sha256:39d8bb3966c694a124428a3a88fbcffd40bd069129ecd47c059f8a3f17c55f3b
+    image: prom/alertmanager:v0.35.0@sha256:e638797febd034838eca8b98cdbd46f951e9bf7f178777aa8669167406a9946c
     restart: unless-stopped
     # Run as the deploy user (uid 1000) that owns the 600 token file, so the secret
     # stays 600 (not world-readable); data dir → /tmp since that uid can't write the
